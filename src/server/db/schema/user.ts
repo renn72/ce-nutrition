@@ -10,7 +10,7 @@ import { type AdapterAccount } from 'next-auth/adapters'
 
 import { notification } from './notification'
 
-export const createTable = sqliteTableCreator((name) => `good-lyft_${name}`)
+export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
 export const user = createTable(
   'user',

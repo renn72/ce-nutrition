@@ -45,6 +45,34 @@ const RootNavbar = () => {
   )
 }
 
+const GenUser = () => {
+  const ctx = api.useUtils()
+  const { mutate } = api.user.createUser.useMutation({
+    onSuccess: () => {
+      ctx.invalidate()
+      toast.success('Created')
+    },
+  })
+
+  return (
+    <Button
+      variant='outline'
+      onClick={() => {
+        mutate({
+          email: 'renn@warner.systems',
+          password: 'hklasd',
+          firstName: 'David',
+          lastName: 'Warner',
+          birthDate: new Date(1980, 0, 1),
+          isCreator: true,
+        })
+      }}
+    >
+      GenUser
+    </Button>
+  )
+}
+
 export const Navbar = () => {
   const ctx = api.useUtils()
   const { data: isUser, isLoading: isLoadingUser } = api.user.isUser.useQuery()
@@ -55,7 +83,6 @@ export const Navbar = () => {
     },
   })
 
-  const isCreator = isUser?.isCreator
   return (
     <div className='h-18 flex items-center justify-between px-2'>
       <div className='flex items-center gap-4'>
@@ -83,11 +110,12 @@ export const Navbar = () => {
         >
           <Database className='h-8 w-8 text-secondary' />
         </Button>
+        <GenUser />
       </div>
       {isLoadingUser ? null : (
         <div className='flex items-center gap-4'>
           {isUser ? <RootNavbar /> : null}
-          {isCreator ? (
+          {true ? (
             <Link href='/admin'>
               <Button variant='outline'>Admin</Button>
             </Link>

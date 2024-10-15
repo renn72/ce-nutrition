@@ -3,21 +3,13 @@ import { drizzle } from 'drizzle-orm/libsql'
 
 import { env } from '@/env'
 import * as user from './schema/user'
-import * as competition from './schema/competition'
-import * as entry from './schema/entry'
-import * as division from './schema/division'
-import * as event from './schema/event'
-import * as lift from './schema/lift'
 import * as notification from './schema/notification'
+import * as ingredient from './schema/ingredient'
 
 const schema = {
   ...user,
-  ...competition,
-  ...entry,
-  ...division,
-  ...event,
-  ...lift,
   ...notification,
+  ...ingredient,
 }
 
 /**

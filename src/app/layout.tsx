@@ -5,8 +5,6 @@ import { TRPCReactProvider } from '@/trpc/react'
 
 import { Toaster } from '@/components/ui/sonner'
 
-import { getServerSession } from "next-auth/next"
-import { getServerAuthSession } from "@/server/auth";
 import { Navbar } from '@/components/layout/navbar'
 import { ThemeProvider } from '@/components/misc/theme-provider'
 import { Providers } from '@/components/provider'
@@ -25,10 +23,6 @@ const font = Epilogue({ subsets: ['latin'] })
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  // const session = await getServerAuthSession()
-  // console.log('session', session)
-  // const serverSession = await getServerSession()
-  // console.log('serverSession', serverSession)
   return (
       <html
         lang='en'

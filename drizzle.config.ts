@@ -10,5 +10,5 @@ export default {
     url: env.DATABASE_SYNC_URL,
     authToken: env.DATABASE_AUTH_TOKEN,
   },
-  tablesFilter: ["good-lyft_*"],
+  tablesFilter: ["ce-nu_*"],
 } satisfies Config;
