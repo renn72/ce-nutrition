@@ -1,10 +1,9 @@
 import { relations, sql } from 'drizzle-orm'
 import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
 
-import { competition } from './competition'
 import { user } from './user'
 
-export const createTable = sqliteTableCreator((name) => `good-lyft_${name}`)
+export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
 export const notification = createTable(
   'notification',
@@ -13,12 +12,6 @@ export const notification = createTable(
     createdAt: int('created_at', { mode: 'timestamp' })
       .default(sql`(unixepoch())`)
       .notNull(),
-    competitionId: int('competition_id', { mode: 'number' }).references(
-      () => competition.id,
-      {
-        onDelete: 'cascade',
-      },
-    ),
     userId: text('user_id').references(() => user.id, {
       onDelete: 'cascade',
     }),
@@ -31,9 +24,6 @@ export const notification = createTable(
   },
   (e) => {
     return {
-      competitionidIdx: index('notification_competitionid_idx').on(
-        e.competitionId,
-      ),
       userIdIndex: index('notification_user_id_idx').on(e.userId),
     }
   },
@@ -41,11 +31,7 @@ export const notification = createTable(
 
 export const notificationRelations = relations(
   notification,
-  ({ one, many }) => ({
-    competition: one(competition, {
-      fields: [notification.competitionId],
-      references: [competition.id],
-    }),
+  ({ one, }) => ({
     user: one(user, {
       fields: [notification.userId],
       references: [user.id],
