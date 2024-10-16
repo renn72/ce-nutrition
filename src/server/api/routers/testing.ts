@@ -50,7 +50,7 @@ export const testRouter = createTRPCRouter({
         serveUnit: 'ml',
         publicFoodKey: row['Public Food Key'],
         classification: row['Classification'],
-        foodName: row['Food Name'],
+        foodName: row['Food name'],
         energyWithDietaryFibre:
           row['Energy with dietary fibre, equated \n(kJ)'],
         energyWithoutDietaryFibre:

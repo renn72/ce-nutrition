@@ -61,7 +61,9 @@ export const userRouter = createTRPCRouter({
     return res
   }),
   isUser: publicProcedure.query(async () => {
+    console.log('isUser')
     const session = await getServerAuthSession()
+    console.log('session')
     if (!session?.user) return null
     if (!session?.user?.id) return null
     return session.user

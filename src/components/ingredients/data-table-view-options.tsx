@@ -34,7 +34,7 @@ export function DataTableViewOptions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align='end'
-        className='w-[150px]'
+        className='w-[350px]'
       >
         <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
         <DropdownMenuSeparator />

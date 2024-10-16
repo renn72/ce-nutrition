@@ -3,21 +3,24 @@
 import { api } from '@/trpc/react'
 
 import { DataTable } from '@/components/ingredients/data-table'
+import { DataTableSkeleton } from '@/components/ingredients/data-table-skeleton'
 
 export default function Home() {
-  const { data } = api.ingredient.getAll.useQuery()
+
+  const { data, isLoading } = api.ingredient.getAll.useQuery()
   return (
-    <div className='flex min-h-screen flex-col'>
-      {data ? <DataTable ingredients={data} /> : null}
-      {data?.map((item) => (
-        <div
-          className='flex gap-2'
-          key={item.id}
-        >
-          <div>{item.foodName}</div>
-          <div>{item.energyWithDietaryFibre}</div>
+    <div className='flex min-h-screen flex-col items-center'>
+      {isLoading ? (
+        <DataTableSkeleton
+          columnCount={8}
+          rowCount={20}
+        />
+      ) : null}
+      {data ? (
+        <div className='px-4 py-8 space-y-4'>
+          <DataTable ingredients={data} />
         </div>
-      ))}
+      ) : null}
     </div>
   )
 }
