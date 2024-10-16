@@ -2,11 +2,13 @@
 
 import { api } from '@/trpc/react'
 
+import { DataTable } from '@/components/ingredients/data-table'
 
 export default function Home() {
   const { data } = api.ingredient.getAll.useQuery()
   return (
     <div className='flex min-h-screen flex-col'>
+      {data ? <DataTable ingredients={data} /> : null}
       {data?.map((item) => (
         <div
           className='flex gap-2'
