@@ -25,4 +25,12 @@ export const ingredientRouter = createTRPCRouter({
     const res = await ctx.db.query.ingredient.findMany()
     return res
   }),
+  get: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ input, ctx }) => {
+      const res = await ctx.db.query.ingredient.findFirst({
+        where: (ingredient, { eq }) => eq(ingredient.id, input.id),
+      })
+      return res
+    }),
 })
