@@ -112,57 +112,6 @@ export const userRouter = createTRPCRouter({
 
       return { user: input.email, password: input.password }
     }),
-  generateFakeUsers: rootProtectedProcedure.mutation(async () => {
-    const fakeUsers = [...Array(9).keys()].map(() => {
-      const name = generateFullName()
-      const pwd = generateFullName().replaceAll(' ', '')
-      return {
-        name: name,
-        firstName: name.split(' ')[0],
-        lastName: name.split(' ')[1],
-        email:
-          name.toLowerCase().replaceAll(' ', '') +
-          Math.floor(Math.random() * 1000).toString() +
-          '@warner.systems',
-        // generate a random birth date
-        birthDate: new Date(
-          Math.floor(Math.random() * 30) + 1980,
-          Math.floor(Math.random() * 12),
-          Math.floor(Math.random() * 26),
-        ),
-        password: pwd,
-        isFake: true,
-        address: `${Math.floor(Math.random() * 100)} ${generateName()} St`,
-        // generate a random phone number
-        phone: `04${Math.floor(Math.random() * 100)
-          .toString()
-          .padStart(3, '0')}${Math.floor(Math.random() * 100)
-          .toString()
-          .padStart(4, '0')}`,
-        notes: '',
-      }
-    })
-
-    for (const fUser of fakeUsers) {
-      const u = await db
-        .insert(user)
-        .values({
-          email: fUser.email,
-          name: fUser.name,
-          firstName: fUser.firstName,
-          lastName: fUser.lastName,
-          password: fUser.password,
-          birthDate: fUser.birthDate,
-          address: fUser.address,
-          phone: fUser.phone,
-          notes: fUser.notes,
-          isFake: true,
-        })
-        .returning({ id: user.id })
-    }
-
-    return true
-  }),
   deleteUser: rootProtectedProcedure
     .input(z.string())
     .mutation(async ({ ctx, input }) => {

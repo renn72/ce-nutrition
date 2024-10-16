@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "63aafb89-c64e-4869-b282-88206e2949f5",
+  "id": "4e074461-1825-49ba-a0da-390ccfabbb9a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "ce-nu_grocery_store": {
@@ -109,15 +109,15 @@
           "notNull": false,
           "autoincrement": false
         },
-        "energy_with_fibre": {
-          "name": "energy_with_fibre",
+        "energy_with_dietary_fibre": {
+          "name": "energy_with_dietary_fibre",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "energy_without_fibre": {
-          "name": "energy_without_fibre",
+        "energy_without_dietary_fibre": {
+          "name": "energy_without_dietary_fibre",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -795,8 +795,22 @@
           "notNull": false,
           "autoincrement": false
         },
-        "vitamin_d3_equivalents": {
-          "name": "vitamin_d3_equivalents",
+        "hydroxy_cholecalciferol": {
+          "name": "hydroxy_cholecalciferol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "hydroxy_ergocalciferol": {
+          "name": "hydroxy_ergocalciferol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "vitamin_d_equivalents": {
+          "name": "vitamin_d_equivalents",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -823,8 +837,22 @@
           "notNull": false,
           "autoincrement": false
         },
+        "beta_tocotrienol": {
+          "name": "beta_tocotrienol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "delta_tocopherol": {
           "name": "delta_tocopherol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "delta_tocotrienol": {
+          "name": "delta_tocotrienol",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -837,8 +865,50 @@
           "notNull": false,
           "autoincrement": false
         },
+        "gamma_tocotrienol": {
+          "name": "gamma_tocotrienol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "vitamin_e": {
           "name": "vitamin_e",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "total_saturated_fatty_acids": {
+          "name": "total_saturated_fatty_acids",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "total_monounsaturated_fatty_acids": {
+          "name": "total_monounsaturated_fatty_acids",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "total_polyunsaturated_fatty_acids": {
+          "name": "total_polyunsaturated_fatty_acids",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "total_long_chain_omega_3_fatty_acids": {
+          "name": "total_long_chain_omega_3_fatty_acids",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "total_trans_fatty_acids": {
+          "name": "total_trans_fatty_acids",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -979,6 +1049,482 @@
         },
         "valine": {
           "name": "valine",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c4": {
+          "name": "c4",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c6": {
+          "name": "c6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c8": {
+          "name": "c8",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c10": {
+          "name": "c10",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c11": {
+          "name": "c11",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c12": {
+          "name": "c12",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c13": {
+          "name": "c13",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c14": {
+          "name": "c14",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c15": {
+          "name": "c15",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c16": {
+          "name": "c16",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c17": {
+          "name": "c17",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c18": {
+          "name": "c18",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c19": {
+          "name": "c19",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c20": {
+          "name": "c20",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c21": {
+          "name": "c21",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c22": {
+          "name": "c22",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c23": {
+          "name": "c23",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c24": {
+          "name": "c24",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "total_saturated_fatty_acids_equated": {
+          "name": "total_saturated_fatty_acids_equated",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c10_1": {
+          "name": "c10_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c12_1": {
+          "name": "c12_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c14_1": {
+          "name": "c14_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c15_1": {
+          "name": "c15_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c16_1": {
+          "name": "c16_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c17_1": {
+          "name": "c17_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c18_1": {
+          "name": "c18_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c18_1w5": {
+          "name": "c18_1w5",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c18_1w6": {
+          "name": "c18_1w6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c18_1w7": {
+          "name": "c18_1w7",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c18_1w9": {
+          "name": "c18_1w9",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c20_1": {
+          "name": "c20_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c20_1w9": {
+          "name": "c20_1w9",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c20_1w13": {
+          "name": "c20_1w13",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c20_1w11": {
+          "name": "c20_1w11",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c22_1": {
+          "name": "c22_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c22_1w9": {
+          "name": "c22_1w9",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c22_1w11": {
+          "name": "c22_1w11",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c24_1": {
+          "name": "c24_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c24_1w9": {
+          "name": "c24_1w9",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c24_1w11": {
+          "name": "c24_1w11",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c24_1w13": {
+          "name": "c24_1w13",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "total_monounsaturated_fatty_acids_equated": {
+          "name": "total_monounsaturated_fatty_acids_equated",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c12_2": {
+          "name": "c12_2",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c16_2w4": {
+          "name": "c16_2w4",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c16_3": {
+          "name": "c16_3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c18_2w6": {
+          "name": "c18_2w6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c18_3w3": {
+          "name": "c18_3w3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c18_3w4": {
+          "name": "c18_3w4",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c18_3w6": {
+          "name": "c18_3w6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c18_4w1": {
+          "name": "c18_4w1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c18_4w3": {
+          "name": "c18_4w3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c20_2": {
+          "name": "c20_2",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c20_2w6": {
+          "name": "c20_2w6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c20_3": {
+          "name": "c20_3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c20_3w3": {
+          "name": "c20_3w3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c20_3w6": {
+          "name": "c20_3w6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c20_4": {
+          "name": "c20_4",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c20_4w3": {
+          "name": "c20_4w3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c20_4w6": {
+          "name": "c20_4w6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c20_5w3": {
+          "name": "c20_5w3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c21_5w3": {
+          "name": "c21_5w3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c22_2": {
+          "name": "c22_2",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c22_2w6": {
+          "name": "c22_2w6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c22_4w6": {
+          "name": "c22_4w6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c22_5w3": {
+          "name": "c22_5w3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c22_5w6": {
+          "name": "c22_5w6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "c22_6w3": {
+          "name": "c22_6w3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "total_polyunsaturated_fatty_acids_equated": {
+          "name": "total_polyunsaturated_fatty_acids_equated",
           "type": "text",
           "primaryKey": false,
           "notNull": false,

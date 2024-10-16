@@ -19,135 +19,217 @@ export const ingredient = createTable('ingredient', {
   publicFoodKey: text('public_food_key'),
   classification: text('classification'),
   foodName: text('food_name'),
-  energyWithFibre: text('energy_with_fibre'), // kJ
-  energyWithoutFibre: text('energy_without_fibre'), // kJ
-  moisture: text('moisture'), // g
-  protein: text('protein'), // g
-  nitrogen: text('nitrogen'), // g
-  fatTotal: text('fat_total'), // g
-  ash: text('ash'), // g
-  totalDietaryFibre: text('total_dietary_fibre'), // g
-  alcohol: text('alcohol'), // g
-  fructose: text('fructose'), // g
-  glucose: text('glucose'), // g
-  sucrose: text('sucrose'), // g
-  maltose: text('maltose'), // g
-  lactose: text('lactose'), // g
-  galactose: text('galactose'), // g
-  maltotrios: text('maltotrios'), // g
-  totalSugars: text('total_sugars'), // g
-  addedSugars: text('added_sugars'), // g
-  freeSugars: text('free_sugars'), // g
-  starch: text('starch'), // g
-  dextrin: text('dextrin'), // g
-  glycerol: text('glycerol'), // g
-  glycogen: text('glycogen'), // g
-  inulin: text('inulin'), // g
-  erythritol: text('erythritol'), // g
-  maltitol: text('maltitol'), // g
-  mannitol: text('mannitol'), // g
-  xylitol: text('xylitol'), // g
-  maltodextrin: text('maltodextrin'), // g
-  oligosaccharides: text('oligosaccharides'), // g
-  polydextrose: text('polydextrose'), // g
-  raffinose: text('raffinose'), // g
-  stachyose: text('stachyose'), // g
-  sorbitol: text('sorbitol'), // g
-  resistantStarch: text('resistant_starch'), // g
+  energyWithDietaryFibre: text('energy_with_dietary_fibre'),
+  energyWithoutDietaryFibre: text('energy_without_dietary_fibre'),
+  moisture: text('moisture'),
+  protein: text('protein'),
+  nitrogen: text('nitrogen'),
+  fatTotal: text('fat_total'),
+  ash: text('ash'),
+  totalDietaryFibre: text('total_dietary_fibre'),
+  alcohol: text('alcohol'),
+  fructose: text('fructose'),
+  glucose: text('glucose'),
+  sucrose: text('sucrose'),
+  maltose: text('maltose'),
+  lactose: text('lactose'),
+  galactose: text('galactose'),
+  maltotrios: text('maltotrios'),
+  totalSugars: text('total_sugars'),
+  addedSugars: text('added_sugars'),
+  freeSugars: text('free_sugars'),
+  starch: text('starch'),
+  dextrin: text('dextrin'),
+  glycerol: text('glycerol'),
+  glycogen: text('glycogen'),
+  inulin: text('inulin'),
+  erythritol: text('erythritol'),
+  maltitol: text('maltitol'),
+  mannitol: text('mannitol'),
+  xylitol: text('xylitol'),
+  maltodextrin: text('maltodextrin'),
+  oligosaccharides: text('oligosaccharides'),
+  polydextrose: text('polydextrose'),
+  raffinose: text('raffinose'),
+  stachyose: text('stachyose'),
+  sorbitol: text('sorbitol'),
+  resistantStarch: text('resistant_starch'),
   availableCarbohydrateWithoutSugarAlcohols: text(
     'available_carbohydrate_without_sugar_alcohols',
-  ), // g
+  ),
   availableCarbohydrateWithSugarAlcohols: text(
     'available_carbohydrate_with_sugar_alcohols',
-  ), // g
-  aceticAcid: text('acetic_acid'), // g
-  citricAcid: text('citric_acid'), // g
-  fumaricAcid: text('fumaric_acid'), // g
-  lacticAcid: text('lactic_acid'), // g
-  malicAcid: text('malic_acid'), // g
-  oxalicAcid: text('oxalic_acid'), // g
-  propionicAcid: text('propionic_acid'), // g
-  quinicAcid: text('quinic_acid'), // g
-  shikimicAcid: text('shikimic_acid'), // g
-  succinicAcid: text('succinic_acid'), // g
-  tartaricAcid: text('tartaric_acid'), // g
-  aluminium: text('aluminium'), // ug
-  antimony: text('antimony'), // ug
-  arsenic: text('arsenic'), // ug
-  cadmium: text('cadmium'), // ug
-  calcium: text('calcium'), // mg
-  chromium: text('chromium'), // ug
-  chloride: text('chloride'), // mg
-  cobalt: text('cobalt'), // ug
-  copper: text('copper'), // mg
-  fluoride: text('fluoride'), // ug
-  iodine: text('iodine'), // ug
-  iron: text('iron'), // mg
-  lead: text('lead'), // ug
-  magnesium: text('magnesium'), // mg
-  manganese: text('manganese'), // mg
-  mercury: text('mercury'), // ug
-  molybdenum: text('molybdenum'), // ug
-  nickel: text('nickel'), // ug
-  phosphorus: text('phosphorus'), // mg
-  potassium: text('potassium'), // mg
-  selenium: text('selenium'), // ug
-  sodium: text('sodium'), // mg
-  sulphur: text('sulphur'), // mg
-  tin: text('tin'), // ug
-  zinc: text('zinc'), // mg
-  retinol: text('retinol'), // ug
-  alphaCarotene: text('alpha_carotene'), // ug
-  betaCarotene: text('beta_carotene'), // ug
-  cryptoxanthin: text('cryptoxanthin'), // ug
-  betaCaroteneEquivalents: text('beta_carotene_equivalents'), // ug
-  vitaminARetinolEquivalents: text('vitamin_a_retinol_equivalents'), // ug
-  lutein: text('lutein'), // ug
-  lycopene: text('lycopene'), // ug
-  xanthophyl: text('xanthophyl'), // ug
-  thiamin: text('thiamin'), // mg
-  riboflavin: text('riboflavin'), // mg
-  niacin: text('niacin'), // mg
-  niacinDerivedFromTryptophan: text('niacin_derived_from_tryptophan'), // mg
-  niacinDerivedEquivalents: text('niacin_derived_equivalents'), // mg
-  pantothenicAcid: text('pantothenic_acid'), // mg
-  pyridoxine: text('pyridoxine'), // mg
-  biotin: text('biotin'), // ug
-  cobalamin: text('cobalamin'), // ug
-  folateNatural: text('folate_natural'), // ug
-  folicAcid: text('folic_acid'), // ug
-  totalFolates: text('total_folates'), // ug
-  dietaryFolateEquivalents: text('dietary_folate_equivalents'), // ug
-  vitaminC: text('vitamin_c'), // mg
-  cholecalciferol: text('cholecalciferol'), // ug
-  ergocalciferol: text('ergocalciferol'), // ug
-  vitaminD3Equivalents: text('vitamin_d3_equivalents'), // ug
-  alphaTocopherol: text('alpha_tocopherol'), // mg
-  alphaTocotrienol: text('alpha_tocotrienol'), // mg
-  betaTocopherol: text('beta_tocopherol'), // mg
-  deltaTocopherol: text('delta_tocopherol'), // mg
-  gammaTocopherol: text('gamma_tocopherol'), // mg
-  vitaminE: text('vitamin_e'), // mg
-  caffeine: text('caffeine'), // mg
-  cholesterol: text('cholesterol'), // mg
-  alanine: text('alanine'), // mg/gN
-  arginine: text('arginine'), // mg/gN
-  asparticAcid: text('aspartic_acid'), // mg/gN
-  cystinePlusCysteine: text('cystine_plus_cysteine'), // mg/gN
-  glutamicAcid: text('glutamic_acid'), // mg/gN
-  glycine: text('glycine'), // mg/gN
-  histidine: text('histidine'), // mg/gN
-  isoleucine: text('isoleucine'), // mg/gN
-  leucine: text('leucine'), // mg/gN
-  lysine: text('lysine'), // mg/gN
-  methionine: text('methionine'), // mg/gN
-  phenylalanine: text('phenylalanine'), // mg/gN
-  proline: text('proline'), // mg/gN
-  serine: text('serine'), // mg/gN
-  threonine: text('threonine'), // mg/gN
-  tyrosine: text('tyrosine'), // mg/gN
-  tryptophan: text('tryptophan'), // mg/gN
-  valine: text('valine'), // mg/gN
+  ),
+  aceticAcid: text('acetic_acid'),
+  citricAcid: text('citric_acid'),
+  fumaricAcid: text('fumaric_acid'),
+  lacticAcid: text('lactic_acid'),
+  malicAcid: text('malic_acid'),
+  oxalicAcid: text('oxalic_acid'),
+  propionicAcid: text('propionic_acid'),
+  quinicAcid: text('quinic_acid'),
+  shikimicAcid: text('shikimic_acid'),
+  succinicAcid: text('succinic_acid'),
+  tartaricAcid: text('tartaric_acid'),
+  aluminium: text('aluminium'),
+  antimony: text('antimony'),
+  arsenic: text('arsenic'),
+  cadmium: text('cadmium'),
+  calcium: text('calcium'),
+  chromium: text('chromium'),
+  chloride: text('chloride'),
+  cobalt: text('cobalt'),
+  copper: text('copper'),
+  fluoride: text('fluoride'),
+  iodine: text('iodine'),
+  iron: text('iron'),
+  lead: text('lead'),
+  magnesium: text('magnesium'),
+  manganese: text('manganese'),
+  mercury: text('mercury'),
+  molybdenum: text('molybdenum'),
+  nickel: text('nickel'),
+  phosphorus: text('phosphorus'),
+  potassium: text('potassium'),
+  selenium: text('selenium'),
+  sodium: text('sodium'),
+  sulphur: text('sulphur'),
+  tin: text('tin'),
+  zinc: text('zinc'),
+  retinol: text('retinol'),
+  alphaCarotene: text('alpha_carotene'),
+  betaCarotene: text('beta_carotene'),
+  cryptoxanthin: text('cryptoxanthin'),
+  betaCaroteneEquivalents: text('beta_carotene_equivalents'),
+  vitaminARetinolEquivalents: text('vitamin_a_retinol_equivalents'),
+  lutein: text('lutein'),
+  lycopene: text('lycopene'),
+  xanthophyl: text('xanthophyl'),
+  thiamin: text('thiamin'),
+  riboflavin: text('riboflavin'),
+  niacin: text('niacin'),
+  niacinDerivedFromTryptophan: text('niacin_derived_from_tryptophan'),
+  niacinDerivedEquivalents: text('niacin_derived_equivalents'),
+  pantothenicAcid: text('pantothenic_acid'),
+  pyridoxine: text('pyridoxine'),
+  biotin: text('biotin'),
+  cobalamin: text('cobalamin'),
+  folateNatural: text('folate_natural'),
+  folicAcid: text('folic_acid'),
+  totalFolates: text('total_folates'),
+  dietaryFolateEquivalents: text('dietary_folate_equivalents'),
+  vitaminC: text('vitamin_c'),
+  cholecalciferol: text('cholecalciferol'),
+  ergocalciferol: text('ergocalciferol'),
+  hydroxyCholecalciferol: text('hydroxy_cholecalciferol'),
+  hydroxyErgocalciferol: text('hydroxy_ergocalciferol'),
+  vitaminDEquivalents: text('vitamin_d_equivalents'),
+  alphaTocopherol: text('alpha_tocopherol'),
+  alphaTocotrienol: text('alpha_tocotrienol'),
+  betaTocopherol: text('beta_tocopherol'),
+  betaTocotrienol: text('beta_tocotrienol'),
+  deltaTocopherol: text('delta_tocopherol'),
+  deltaTocotrienol: text('delta_tocotrienol'),
+  gammaTocopherol: text('gamma_tocopherol'),
+  gammaTocotrienol: text('gamma_tocotrienol'),
+  vitaminE: text('vitamin_e'),
+  totalSaturatedFattyAcids: text('total_saturated_fatty_acids'),
+  totalMonounsaturatedFattyAcids: text('total_monounsaturated_fatty_acids'),
+  totalPolyunsaturatedFattyAcids: text('total_polyunsaturated_fatty_acids'),
+  totalLongChainOmega3FattyAcids: text('total_long_chain_omega_3_fatty_acids'),
+  totalTransFattyAcids: text('total_trans_fatty_acids'),
+  caffeine: text('caffeine'),
+  cholesterol: text('cholesterol'),
+  alanine: text('alanine'),
+  arginine: text('arginine'),
+  asparticAcid: text('aspartic_acid'),
+  cystinePlusCysteine: text('cystine_plus_cysteine'),
+  glutamicAcid: text('glutamic_acid'),
+  glycine: text('glycine'),
+  histidine: text('histidine'),
+  isoleucine: text('isoleucine'),
+  leucine: text('leucine'),
+  lysine: text('lysine'),
+  methionine: text('methionine'),
+  phenylalanine: text('phenylalanine'),
+  proline: text('proline'),
+  serine: text('serine'),
+  threonine: text('threonine'),
+  tyrosine: text('tyrosine'),
+  tryptophan: text('tryptophan'),
+  valine: text('valine'),
+  c4: text('c4'),
+  c6: text('c6'),
+  c8: text('c8'),
+  c10: text('c10'),
+  c11: text('c11'),
+  c12: text('c12'),
+  c13: text('c13'),
+  c14: text('c14'),
+  c15: text('c15'),
+  c16: text('c16'),
+  c17: text('c17'),
+  c18: text('c18'),
+  c19: text('c19'),
+  c20: text('c20'),
+  c21: text('c21'),
+  c22: text('c22'),
+  c23: text('c23'),
+  c24: text('c24'),
+  totalSaturatedFattyAcidsEquated: text('total_saturated_fatty_acids_equated'),
+  c10_1: text('c10_1'),
+  c12_1: text('c12_1'),
+  c14_1: text('c14_1'),
+  c15_1: text('c15_1'),
+  c16_1: text('c16_1'),
+  c17_1: text('c17_1'),
+  c18_1: text('c18_1'),
+  c18_1w5: text('c18_1w5'),
+  c18_1w6: text('c18_1w6'),
+  c18_1w7: text('c18_1w7'),
+  c18_1w9: text('c18_1w9'),
+  c20_1: text('c20_1'),
+  c20_1w9: text('c20_1w9'),
+  c20_1w13: text('c20_1w13'),
+  c20_1w11: text('c20_1w11'),
+  c22_1: text('c22_1'),
+  c22_1w9: text('c22_1w9'),
+  c22_1w11: text('c22_1w11'),
+  c24_1: text('c24_1'),
+  c24_1w9: text('c24_1w9'),
+  c24_1w11: text('c24_1w11'),
+  c24_1w13: text('c24_1w13'),
+  totalMonounsaturatedFattyAcidsEquated: text(
+    'total_monounsaturated_fatty_acids_equated',
+  ),
+  c12_2: text('c12_2'),
+  c16_2w4: text('c16_2w4'),
+  c16_3: text('c16_3'),
+  c18_2w6: text('c18_2w6'),
+  c18_3w3: text('c18_3w3'),
+  c18_3w4: text('c18_3w4'),
+  c18_3w6: text('c18_3w6'),
+  c18_4w1: text('c18_4w1'),
+  c18_4w3: text('c18_4w3'),
+  c20_2: text('c20_2'),
+  c20_2w6: text('c20_2w6'),
+  c20_3: text('c20_3'),
+  c20_3w3: text('c20_3w3'),
+  c20_3w6: text('c20_3w6'),
+  c20_4: text('c20_4'),
+  c20_4w3: text('c20_4w3'),
+  c20_4w6: text('c20_4w6'),
+  c20_5w3: text('c20_5w3'),
+  c21_5w3: text('c21_5w3'),
+  c22_2: text('c22_2'),
+  c22_2w6: text('c22_2w6'),
+  c22_4w6: text('c22_4w6'),
+  c22_5w3: text('c22_5w3'),
+  c22_5w6: text('c22_5w6'),
+  c22_6w3: text('c22_6w3'),
+  totalPolyunsaturatedFattyAcidsEquated: text(
+    'total_polyunsaturated_fatty_acids_equated',
+  ),
 })
 
 export const groceryStore = createTable('grocery_store', {
@@ -158,6 +240,3 @@ export const groceryStore = createTable('grocery_store', {
   name: text('name'),
   locations: text('locations'),
 })
-
-
-

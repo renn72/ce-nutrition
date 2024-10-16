@@ -73,6 +73,57 @@ const GenUser = () => {
   )
 }
 
+const ImportAFCDSolid = () => {
+  const ctx = api.useUtils()
+  const { mutate } = api.test.importAFCDSolid.useMutation({
+    onSuccess: () => {
+      ctx.invalidate()
+      toast.success('Imported')
+    },
+  })
+  const { mutate: importAFCDLiquid } = api.test.importAFCDLiquid.useMutation({
+    onSuccess: () => {
+      ctx.invalidate()
+      toast.success('Imported')
+    },
+  })
+  const { mutate: deleteAll } = api.test.deleteAllIngredients.useMutation({
+    onSuccess: () => {
+      ctx.invalidate()
+      toast.success('Deleted')
+    },
+  })
+
+  return (
+    <div className='flex items-center gap-4'>
+      <Button
+        variant='outline'
+        onClick={() => {
+          mutate()
+        }}
+      >
+        ImportAFCDSolid
+      </Button>
+      <Button
+        variant='outline'
+        onClick={() => {
+          importAFCDLiquid()
+        }}
+      >
+        ImportAFCDLiquid
+      </Button>
+      <Button
+        variant='outline'
+        onClick={() => {
+          deleteAll()
+        }}
+      >
+        DeleteAll
+      </Button>
+    </div>
+  )
+}
+
 export const Navbar = () => {
   const ctx = api.useUtils()
   const { data: isUser, isLoading: isLoadingUser } = api.user.isUser.useQuery()
@@ -111,6 +162,7 @@ export const Navbar = () => {
           <Database className='h-8 w-8 text-secondary' />
         </Button>
         <GenUser />
+        <ImportAFCDSolid />
       </div>
       {isLoadingUser ? null : (
         <div className='flex items-center gap-4'>
