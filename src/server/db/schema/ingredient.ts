@@ -5,7 +5,44 @@ import { user } from './user'
 
 export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
-export const ingredient = createTable('ingredient', {
+export const ingredient = createTable(
+  'ingredient',
+  {
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+    createdAt: int('created_at', { mode: 'timestamp' })
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+      () => new Date(),
+    ),
+    userId: text('user_id').references(() => user.id),
+    serveSize: text('serve_size'),
+    serveUnit: text('serve_unit'),
+    publicFoodKey: text('public_food_key'),
+    classification: text('classification'),
+    foodName: text('food_name'),
+    energyWithDietaryFibre: text('energy_with_dietary_fibre'),
+    energyWithoutDietaryFibre: text('energy_without_dietary_fibre'),
+    protein: text('protein'),
+    fatTotal: text('fat_total'),
+    totalDietaryFibre: text('total_dietary_fibre'),
+    totalSugars: text('total_sugars'),
+    addedSugars: text('added_sugars'),
+    freeSugars: text('free_sugars'),
+    resistantStarch: text('resistant_starch'),
+    availableCarbohydrateWithoutSugarAlcohols: text(
+      'available_carbohydrate_without_sugar_alcohols',
+    ),
+    availableCarbohydrateWithSugarAlcohols: text(
+      'available_carbohydrate_with_sugar_alcohols',
+    ),
+  },
+  (i) => ({
+    foodNameIndex: index('ingredient_food_name_idx').on(i.foodName),
+  }),
+)
+
+export const ingredientAdditionOne = createTable('ingredient_addition_one', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -13,20 +50,11 @@ export const ingredient = createTable('ingredient', {
   updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
-  userId: text('user_id').references(() => user.id),
-  serveSize: text('serve_size'),
-  serveUnit: text('serve_unit'),
-  publicFoodKey: text('public_food_key'),
-  classification: text('classification'),
-  foodName: text('food_name'),
-  energyWithDietaryFibre: text('energy_with_dietary_fibre'),
-  energyWithoutDietaryFibre: text('energy_without_dietary_fibre'),
+  ingredientId: text('ingredient_id').references(() => ingredient.id, {
+    onDelete: 'cascade',
+  }),
   moisture: text('moisture'),
-  protein: text('protein'),
   nitrogen: text('nitrogen'),
-  fatTotal: text('fat_total'),
-  ash: text('ash'),
-  totalDietaryFibre: text('total_dietary_fibre'),
   alcohol: text('alcohol'),
   fructose: text('fructose'),
   glucose: text('glucose'),
@@ -35,9 +63,7 @@ export const ingredient = createTable('ingredient', {
   lactose: text('lactose'),
   galactose: text('galactose'),
   maltotrios: text('maltotrios'),
-  totalSugars: text('total_sugars'),
-  addedSugars: text('added_sugars'),
-  freeSugars: text('free_sugars'),
+  ash: text('ash'),
   starch: text('starch'),
   dextrin: text('dextrin'),
   glycerol: text('glycerol'),
@@ -53,13 +79,19 @@ export const ingredient = createTable('ingredient', {
   raffinose: text('raffinose'),
   stachyose: text('stachyose'),
   sorbitol: text('sorbitol'),
-  resistantStarch: text('resistant_starch'),
-  availableCarbohydrateWithoutSugarAlcohols: text(
-    'available_carbohydrate_without_sugar_alcohols',
+})
+
+export const ingredientAdditionTwo = createTable('ingredient_addition_two', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  createdAt: int('created_at', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+    () => new Date(),
   ),
-  availableCarbohydrateWithSugarAlcohols: text(
-    'available_carbohydrate_with_sugar_alcohols',
-  ),
+  ingredientId: text('ingredient_id').references(() => ingredient.id, {
+    onDelete: 'cascade',
+  }),
   aceticAcid: text('acetic_acid'),
   citricAcid: text('citric_acid'),
   fumaricAcid: text('fumaric_acid'),
@@ -133,105 +165,124 @@ export const ingredient = createTable('ingredient', {
   gammaTocopherol: text('gamma_tocopherol'),
   gammaTocotrienol: text('gamma_tocotrienol'),
   vitaminE: text('vitamin_e'),
-  totalSaturatedFattyAcids: text('total_saturated_fatty_acids'),
-  totalMonounsaturatedFattyAcids: text('total_monounsaturated_fatty_acids'),
-  totalPolyunsaturatedFattyAcids: text('total_polyunsaturated_fatty_acids'),
-  totalLongChainOmega3FattyAcids: text('total_long_chain_omega_3_fatty_acids'),
-  totalTransFattyAcids: text('total_trans_fatty_acids'),
-  caffeine: text('caffeine'),
-  cholesterol: text('cholesterol'),
-  alanine: text('alanine'),
-  arginine: text('arginine'),
-  asparticAcid: text('aspartic_acid'),
-  cystinePlusCysteine: text('cystine_plus_cysteine'),
-  glutamicAcid: text('glutamic_acid'),
-  glycine: text('glycine'),
-  histidine: text('histidine'),
-  isoleucine: text('isoleucine'),
-  leucine: text('leucine'),
-  lysine: text('lysine'),
-  methionine: text('methionine'),
-  phenylalanine: text('phenylalanine'),
-  proline: text('proline'),
-  serine: text('serine'),
-  threonine: text('threonine'),
-  tyrosine: text('tyrosine'),
-  tryptophan: text('tryptophan'),
-  valine: text('valine'),
-  c4: text('c4'),
-  c6: text('c6'),
-  c8: text('c8'),
-  c10: text('c10'),
-  c11: text('c11'),
-  c12: text('c12'),
-  c13: text('c13'),
-  c14: text('c14'),
-  c15: text('c15'),
-  c16: text('c16'),
-  c17: text('c17'),
-  c18: text('c18'),
-  c19: text('c19'),
-  c20: text('c20'),
-  c21: text('c21'),
-  c22: text('c22'),
-  c23: text('c23'),
-  c24: text('c24'),
-  totalSaturatedFattyAcidsEquated: text('total_saturated_fatty_acids_equated'),
-  c10_1: text('c10_1'),
-  c12_1: text('c12_1'),
-  c14_1: text('c14_1'),
-  c15_1: text('c15_1'),
-  c16_1: text('c16_1'),
-  c17_1: text('c17_1'),
-  c18_1: text('c18_1'),
-  c18_1w5: text('c18_1w5'),
-  c18_1w6: text('c18_1w6'),
-  c18_1w7: text('c18_1w7'),
-  c18_1w9: text('c18_1w9'),
-  c20_1: text('c20_1'),
-  c20_1w9: text('c20_1w9'),
-  c20_1w13: text('c20_1w13'),
-  c20_1w11: text('c20_1w11'),
-  c22_1: text('c22_1'),
-  c22_1w9: text('c22_1w9'),
-  c22_1w11: text('c22_1w11'),
-  c24_1: text('c24_1'),
-  c24_1w9: text('c24_1w9'),
-  c24_1w11: text('c24_1w11'),
-  c24_1w13: text('c24_1w13'),
-  totalMonounsaturatedFattyAcidsEquated: text(
-    'total_monounsaturated_fatty_acids_equated',
-  ),
-  c12_2: text('c12_2'),
-  c16_2w4: text('c16_2w4'),
-  c16_3: text('c16_3'),
-  c18_2w6: text('c18_2w6'),
-  c18_3w3: text('c18_3w3'),
-  c18_3w4: text('c18_3w4'),
-  c18_3w6: text('c18_3w6'),
-  c18_4w1: text('c18_4w1'),
-  c18_4w3: text('c18_4w3'),
-  c20_2: text('c20_2'),
-  c20_2w6: text('c20_2w6'),
-  c20_3: text('c20_3'),
-  c20_3w3: text('c20_3w3'),
-  c20_3w6: text('c20_3w6'),
-  c20_4: text('c20_4'),
-  c20_4w3: text('c20_4w3'),
-  c20_4w6: text('c20_4w6'),
-  c20_5w3: text('c20_5w3'),
-  c21_5w3: text('c21_5w3'),
-  c22_2: text('c22_2'),
-  c22_2w6: text('c22_2w6'),
-  c22_4w6: text('c22_4w6'),
-  c22_5w3: text('c22_5w3'),
-  c22_5w6: text('c22_5w6'),
-  c22_6w3: text('c22_6w3'),
-  totalPolyunsaturatedFattyAcidsEquated: text(
-    'total_polyunsaturated_fatty_acids_equated',
-  ),
 })
 
+export const ingredientAdditionThree = createTable(
+  'ingredient_addition_three',
+  {
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+    createdAt: int('created_at', { mode: 'timestamp' })
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+      () => new Date(),
+    ),
+    ingredientId: text('ingredient_id').references(() => ingredient.id, {
+      onDelete: 'cascade',
+    }),
+    totalSaturatedFattyAcids: text('total_saturated_fatty_acids'),
+    totalMonounsaturatedFattyAcids: text('total_monounsaturated_fatty_acids'),
+    totalPolyunsaturatedFattyAcids: text('total_polyunsaturated_fatty_acids'),
+    totalLongChainOmega3FattyAcids: text(
+      'total_long_chain_omega_3_fatty_acids',
+    ),
+    totalTransFattyAcids: text('total_trans_fatty_acids'),
+    caffeine: text('caffeine'),
+    cholesterol: text('cholesterol'),
+    alanine: text('alanine'),
+    arginine: text('arginine'),
+    asparticAcid: text('aspartic_acid'),
+    cystinePlusCysteine: text('cystine_plus_cysteine'),
+    glutamicAcid: text('glutamic_acid'),
+    glycine: text('glycine'),
+    histidine: text('histidine'),
+    isoleucine: text('isoleucine'),
+    leucine: text('leucine'),
+    lysine: text('lysine'),
+    methionine: text('methionine'),
+    phenylalanine: text('phenylalanine'),
+    proline: text('proline'),
+    serine: text('serine'),
+    threonine: text('threonine'),
+    tyrosine: text('tyrosine'),
+    tryptophan: text('tryptophan'),
+    valine: text('valine'),
+    c4: text('c4'),
+    c6: text('c6'),
+    c8: text('c8'),
+    c10: text('c10'),
+    c11: text('c11'),
+    c12: text('c12'),
+    c13: text('c13'),
+    c14: text('c14'),
+    c15: text('c15'),
+    c16: text('c16'),
+    c17: text('c17'),
+    c18: text('c18'),
+    c19: text('c19'),
+    c20: text('c20'),
+    c21: text('c21'),
+    c22: text('c22'),
+    c23: text('c23'),
+    c24: text('c24'),
+    totalSaturatedFattyAcidsEquated: text(
+      'total_saturated_fatty_acids_equated',
+    ),
+    c10_1: text('c10_1'),
+    c12_1: text('c12_1'),
+    c14_1: text('c14_1'),
+    c15_1: text('c15_1'),
+    c16_1: text('c16_1'),
+    c17_1: text('c17_1'),
+    c18_1: text('c18_1'),
+    c18_1w5: text('c18_1w5'),
+    c18_1w6: text('c18_1w6'),
+    c18_1w7: text('c18_1w7'),
+    c18_1w9: text('c18_1w9'),
+    c20_1: text('c20_1'),
+    c20_1w9: text('c20_1w9'),
+    c20_1w13: text('c20_1w13'),
+    c20_1w11: text('c20_1w11'),
+    c22_1: text('c22_1'),
+    c22_1w9: text('c22_1w9'),
+    c22_1w11: text('c22_1w11'),
+    c24_1: text('c24_1'),
+    c24_1w9: text('c24_1w9'),
+    c24_1w11: text('c24_1w11'),
+    c24_1w13: text('c24_1w13'),
+    totalMonounsaturatedFattyAcidsEquated: text(
+      'total_monounsaturated_fatty_acids_equated',
+    ),
+    c12_2: text('c12_2'),
+    c16_2w4: text('c16_2w4'),
+    c16_3: text('c16_3'),
+    c18_2w6: text('c18_2w6'),
+    c18_3w3: text('c18_3w3'),
+    c18_3w4: text('c18_3w4'),
+    c18_3w6: text('c18_3w6'),
+    c18_4w1: text('c18_4w1'),
+    c18_4w3: text('c18_4w3'),
+    c20_2: text('c20_2'),
+    c20_2w6: text('c20_2w6'),
+    c20_3: text('c20_3'),
+    c20_3w3: text('c20_3w3'),
+    c20_3w6: text('c20_3w6'),
+    c20_4: text('c20_4'),
+    c20_4w3: text('c20_4w3'),
+    c20_4w6: text('c20_4w6'),
+    c20_5w3: text('c20_5w3'),
+    c21_5w3: text('c21_5w3'),
+    c22_2: text('c22_2'),
+    c22_2w6: text('c22_2w6'),
+    c22_4w6: text('c22_4w6'),
+    c22_5w3: text('c22_5w3'),
+    c22_5w6: text('c22_5w6'),
+    c22_6w3: text('c22_6w3'),
+    totalPolyunsaturatedFattyAcidsEquated: text(
+      'total_polyunsaturated_fatty_acids_equated',
+    ),
+  },
+)
 export const groceryStore = createTable('grocery_store', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
@@ -240,3 +291,84 @@ export const groceryStore = createTable('grocery_store', {
   name: text('name'),
   locations: text('locations'),
 })
+
+export const ingredientToGroceryStore = createTable(
+  'ingredient_to_grocery_store',
+  {
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+    createdAt: int('created_at', { mode: 'timestamp' })
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    ingredientId: text('ingredient_id').references(() => ingredient.id, {
+      onDelete: 'cascade',
+    }),
+    groceryStoreId: text('grocery_store_id').references(() => groceryStore.id, {
+      onDelete: 'cascade',
+    }),
+  },
+)
+
+export const groceryStoreRelations = relations(groceryStore, ({ many }) => ({
+  ingredientToGroceryStore: many(ingredientToGroceryStore),
+}))
+
+export const ingredientToGroceryStoreRelations = relations(
+  ingredientToGroceryStore,
+  ({ one }) => ({
+    ingredient: one(ingredient, {
+      fields: [ingredientToGroceryStore.ingredientId],
+      references: [ingredient.id],
+    }),
+    groceryStore: one(groceryStore, {
+      fields: [ingredientToGroceryStore.groceryStoreId],
+      references: [groceryStore.id],
+    }),
+  }),
+)
+
+export const ingredientRelations = relations(ingredient, ({ one, many }) => ({
+  user: one(user, { fields: [ingredient.userId], references: [user.id] }),
+  ingredientAdditionOne: one(ingredientAdditionOne, {
+    fields: [ingredient.id],
+    references: [ingredientAdditionOne.ingredientId],
+  }),
+  ingredientAdditionTwo: one(ingredientAdditionTwo, {
+    fields: [ingredient.id],
+    references: [ingredientAdditionTwo.ingredientId],
+  }),
+  ingredientAdditionThree: one(ingredientAdditionThree, {
+    fields: [ingredient.id],
+    references: [ingredientAdditionThree.ingredientId],
+  }),
+  ingredientToGroceryStore: many(ingredientToGroceryStore),
+}))
+
+export const ingredientAdditionOneRelations = relations(
+  ingredientAdditionOne,
+  ({ one }) => ({
+    ingredient: one(ingredient, {
+      fields: [ingredientAdditionOne.ingredientId],
+      references: [ingredient.id],
+    }),
+  }),
+)
+
+export const ingredientAdditionTwoRelations = relations(
+  ingredientAdditionTwo,
+  ({ one }) => ({
+    ingredient: one(ingredient, {
+      fields: [ingredientAdditionTwo.ingredientId],
+      references: [ingredient.id],
+    }),
+  }),
+)
+
+export const ingredientAdditionThreeRelations = relations(
+  ingredientAdditionThree,
+  ({ one }) => ({
+    ingredient: one(ingredient, {
+      fields: [ingredientAdditionThree.ingredientId],
+      references: [ingredient.id],
+    }),
+  }),
+)
