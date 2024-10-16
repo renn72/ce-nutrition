@@ -2,6 +2,8 @@
 
 import { api } from '@/trpc/react'
 
+import { DataTable } from '@/components/data-table/data-table'
+
 export default function Home() {
   const { data } = api.ingredient.getAll.useQuery()
   return (
