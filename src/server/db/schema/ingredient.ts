@@ -29,6 +29,7 @@ export const ingredient = createTable(
     totalSugars: text('total_sugars'),
     addedSugars: text('added_sugars'),
     freeSugars: text('free_sugars'),
+    starch: text('starch'),
     resistantStarch: text('resistant_starch'),
     availableCarbohydrateWithoutSugarAlcohols: text(
       'available_carbohydrate_without_sugar_alcohols',
@@ -39,6 +40,7 @@ export const ingredient = createTable(
   },
   (i) => ({
     foodNameIndex: index('ingredient_food_name_idx').on(i.foodName),
+    foodKeyIndex: index('ingredient_food_key_idx').on(i.publicFoodKey),
   }),
 )
 
@@ -50,7 +52,7 @@ export const ingredientAdditionOne = createTable('ingredient_addition_one', {
   updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
-  ingredientId: text('ingredient_id').references(() => ingredient.id, {
+  ingredientId: int('ingredient_id').references(() => ingredient.id, {
     onDelete: 'cascade',
   }),
   moisture: text('moisture'),
@@ -64,7 +66,6 @@ export const ingredientAdditionOne = createTable('ingredient_addition_one', {
   galactose: text('galactose'),
   maltotrios: text('maltotrios'),
   ash: text('ash'),
-  starch: text('starch'),
   dextrin: text('dextrin'),
   glycerol: text('glycerol'),
   glycogen: text('glycogen'),
@@ -89,7 +90,7 @@ export const ingredientAdditionTwo = createTable('ingredient_addition_two', {
   updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
-  ingredientId: text('ingredient_id').references(() => ingredient.id, {
+  ingredientId: int('ingredient_id').references(() => ingredient.id, {
     onDelete: 'cascade',
   }),
   aceticAcid: text('acetic_acid'),
@@ -177,7 +178,7 @@ export const ingredientAdditionThree = createTable(
     updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
       () => new Date(),
     ),
-    ingredientId: text('ingredient_id').references(() => ingredient.id, {
+    ingredientId: int('ingredient_id').references(() => ingredient.id, {
       onDelete: 'cascade',
     }),
     totalSaturatedFattyAcids: text('total_saturated_fatty_acids'),
@@ -299,10 +300,10 @@ export const ingredientToGroceryStore = createTable(
     createdAt: int('created_at', { mode: 'timestamp' })
       .default(sql`(unixepoch())`)
       .notNull(),
-    ingredientId: text('ingredient_id').references(() => ingredient.id, {
+    ingredientId: int('ingredient_id').references(() => ingredient.id, {
       onDelete: 'cascade',
     }),
-    groceryStoreId: text('grocery_store_id').references(() => groceryStore.id, {
+    groceryStoreId: int('grocery_store_id').references(() => groceryStore.id, {
       onDelete: 'cascade',
     }),
   },

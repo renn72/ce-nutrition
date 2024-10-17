@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "1728ba9a-be61-4076-a2d7-30bec801dddc",
+  "id": "65737401-dd90-46be-83bb-434ded14425a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "ce-nu_grocery_store": {
@@ -165,6 +165,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "starch": {
+          "name": "starch",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "resistant_starch": {
           "name": "resistant_starch",
           "type": "text",
@@ -241,7 +248,7 @@
         },
         "ingredient_id": {
           "name": "ingredient_id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -318,13 +325,6 @@
         },
         "ash": {
           "name": "ash",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "starch": {
-          "name": "starch",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -475,7 +475,7 @@
         },
         "ingredient_id": {
           "name": "ingredient_id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -1178,7 +1178,7 @@
         },
         "ingredient_id": {
           "name": "ingredient_id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -1734,14 +1734,14 @@
         },
         "ingredient_id": {
           "name": "ingredient_id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
         "grocery_store_id": {
           "name": "grocery_store_id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
