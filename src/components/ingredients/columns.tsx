@@ -1,24 +1,15 @@
 'use client'
 
-import Image from 'next/image'
-
 import { formatDate } from '@/lib/utils'
 import type { GetIngredientById } from '@/types'
 import { ColumnDef } from '@tanstack/react-table'
-import { Paperclip } from 'lucide-react'
 
-import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from '@/components/ui/hover-card'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
 
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
@@ -34,7 +25,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label='Select all'
-        className='translate-y-[2px]'
+        className='translate-y-[2px] mx-2'
       />
     ),
     cell: ({ row }) => (
@@ -42,7 +33,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label='Select row'
-        className='translate-y-[2px]'
+        className='translate-y-[2px] mx-2'
       />
     ),
     enableSorting: false,
@@ -57,8 +48,6 @@ export const columns: ColumnDef<GetIngredientById>[] = [
       />
     ),
     cell: ({ row }) => <div className='w-min'>{row.getValue('id')}</div>,
-    // enableSorting: false,
-    // enableHiding: false,
   },
   {
     accessorKey: 'createdAt',
@@ -89,9 +78,18 @@ export const columns: ColumnDef<GetIngredientById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='max-w-[500px] truncate font-medium'>
-            {row.getValue('foodName')}
-          </span>
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <span className='w-[400px] truncate font-medium'>
+                {row.getValue('foodName')}
+              </span>
+            </HoverCardTrigger>
+            <HoverCardContent>
+              <div className='flex space-x-2'>
+                <span className='font-medium'>{row.getValue('foodName')}</span>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
         </div>
       )
     },
@@ -187,7 +185,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
     },
   },
   {
-    accessorKey: 'fat',
+    accessorKey: 'fatTotal',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
@@ -198,14 +196,14 @@ export const columns: ColumnDef<GetIngredientById>[] = [
       return (
         <div className='flex space-x-2'>
           <span className='max-w-[100px] truncate font-medium'>
-            {row.getValue('fat')}g
+            {row.getValue('fatTotal')}g
           </span>
         </div>
       )
     },
   },
   {
-    accessorKey: 'availableCarbohydrateWithoutSugarAlcohol',
+    accessorKey: 'availableCarbohydrateWithoutSugarAlcohols',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}

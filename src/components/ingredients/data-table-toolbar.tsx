@@ -8,8 +8,9 @@ import { Table } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-import { DataTableFacetedFilter } from './data-table-faceted-filter'
 import { DataTableViewOptions } from './data-table-view-options'
+
+import { FormDialog } from './form-dialog'
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -27,28 +28,14 @@ export function DataTableToolbar<TData>({
       <div className='flex flex-1 items-center space-x-2'>
         <Input
           placeholder='Filter questions...'
-          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+          value={
+            (table.getColumn('foodName')?.getFilterValue() as string) ?? ''
+          }
           onChange={(event) =>
-            table.getColumn('name')?.setFilterValue(event.target.value)
+            table.getColumn('foodName')?.setFilterValue(event.target.value)
           }
           className='h-8 w-[150px] lg:w-[250px]'
         />
-        {table.getColumn('topics') && (
-          <div />
-          // <DataTableFacetedFilter
-          //   column={table.getColumn('topics')}
-          //   title='Topics'
-          //   options={topics?.map((topic) => topic.name ?? '')}
-          // />
-        )}
-        {table.getColumn('tags') && (
-          <div />
-          // <DataTableFacetedFilter
-          //   column={table.getColumn('tags')}
-          //   title='Tags'
-          //   options={tags?.map((tag) => tag.name ?? '')}
-          // />
-        )}
         {isFiltered && (
           <Button
             variant='ghost'
@@ -60,7 +47,27 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
+      <div className='flex items-center gap-2'>
+        <FormDialog />
       <DataTableViewOptions table={table} />
+      </div>
     </div>
   )
 }
+
+// {table.getColumn('topics') && (
+//   <div />
+//   // <DataTableFacetedFilter
+//   //   column={table.getColumn('topics')}
+//   //   title='Topics'
+//   //   options={topics?.map((topic) => topic.name ?? '')}
+//   // />
+// )}
+// {table.getColumn('tags') && (
+//   <div />
+//   // <DataTableFacetedFilter
+//   //   column={table.getColumn('tags')}
+//   //   title='Tags'
+//   //   options={tags?.map((tag) => tag.name ?? '')}
+//   // />
+// )}
