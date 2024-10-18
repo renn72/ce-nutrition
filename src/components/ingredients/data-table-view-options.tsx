@@ -17,6 +17,20 @@ interface DataTableViewOptionsProps<TData> {
   table: Table<TData>
 }
 
+const columMap = {
+  createdAt: 'Created',
+  id: 'ID',
+  foodName: 'Name',
+  serveSize: 'Serve Size',
+  serveUnit: 'Serve Unit',
+  energyWithDietaryFibre: 'Energy w Fibre',
+  energyWithoutDietaryFibre: 'Energy w/o Fibre',
+  protein: 'Protein',
+  fatTotal: 'Fat',
+  availableCarbohydrateWithSugarAlcohols: 'Carbs w Alcohols',
+  availableCarbohydrateWithoutSugarAlcohols: 'Carbs w/o Alcohols',
+}
+
 export function DataTableViewOptions<TData>({
   table,
 }: DataTableViewOptionsProps<TData>) {
@@ -34,7 +48,7 @@ export function DataTableViewOptions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align='end'
-        className='w-[350px]'
+        className='w-[250px]'
       >
         <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -52,7 +66,7 @@ export function DataTableViewOptions<TData>({
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
-                {column.id}
+                {columMap[column.id as keyof typeof columMap]}
               </DropdownMenuCheckboxItem>
             )
           })}
