@@ -11,6 +11,8 @@ import {
 import { asc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
+import { createIngredientSchema } from '@/server/api/schema/ingredient'
+
 function isTuple<T>(array: T[]): array is [T, ...T[]] {
   return array.length > 0
 }
@@ -38,6 +40,16 @@ export const ingredientRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       const res = await ctx.db.query.ingredient.findFirst({
         where: (ingredient, { eq }) => eq(ingredient.id, input.id),
+      })
+      return res
+    }),
+  create: protectedProcedure
+    .input(createIngredientSchema)
+    .mutation(async ({ input, ctx }) => {
+      const userId = ctx.session.user.id
+      const res = await ctx.db.insert(ingredient).values({
+        ...input,
+        userId,
       })
       return res
     }),

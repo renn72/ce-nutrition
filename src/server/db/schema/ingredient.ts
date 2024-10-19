@@ -1,9 +1,11 @@
 import { relations, sql } from 'drizzle-orm'
 import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
+import { z } from 'zod'
 
 import { user } from './user'
 
 export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+
 
 export const ingredient = createTable(
   'ingredient',
