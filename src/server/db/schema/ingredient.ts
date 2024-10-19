@@ -16,6 +16,7 @@ export const ingredient = createTable(
       () => new Date(),
     ),
     userId: text('user_id').references(() => user.id),
+    favouriteAt: int('favourite_at', { mode: 'timestamp' }),
     serveSize: text('serve_size'),
     serveUnit: text('serve_unit'),
     publicFoodKey: text('public_food_key'),
