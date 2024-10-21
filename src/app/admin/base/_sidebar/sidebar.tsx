@@ -6,21 +6,11 @@ import * as React from 'react'
 import { Check, ChevronsUpDown, GalleryVerticalEnd, Search } from 'lucide-react'
 
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb'
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
 import {
   Sidebar,
   SidebarContent,
@@ -28,14 +18,12 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
-  SidebarInput,
   SidebarInset,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
   SidebarRail,
-  SidebarTrigger,
 } from '@/components/ui/sidebar'
 
 const data = {
@@ -56,46 +44,11 @@ const data = {
       ],
     },
     {
-      title: 'Building Your Application',
+      title: 'another',
       url: '#',
       items: [
         {
           title: 'Routing',
-          url: '#',
-        },
-        {
-          title: 'Data Fetching',
-          url: '#',
-          isActive: true,
-        },
-        {
-          title: 'Rendering',
-          url: '#',
-        },
-        {
-          title: 'Caching',
-          url: '#',
-        },
-        {
-          title: 'Styling',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'API Reference',
-      url: '#',
-      items: [
-        {
-          title: 'Components',
-          url: '#',
-        },
-        {
-          title: 'File Conventions',
-          url: '#',
-        },
-        {
-          title: 'Functions',
           url: '#',
         },
       ],

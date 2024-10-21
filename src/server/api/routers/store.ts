@@ -17,8 +17,8 @@ export const groceryStoreRouter = createTRPCRouter({
   get: protectedProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input, ctx }) => {
-      const res = await ctx.db.query.ingredient.findFirst({
-        where: (ingredient, { eq }) => eq(ingredient.id, input.id),
+      const res = await ctx.db.query.groceryStore.findFirst({
+        where: (store, { eq }) => eq(store.id, input.id),
       })
       return res
     }),

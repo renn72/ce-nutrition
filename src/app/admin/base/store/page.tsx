@@ -3,13 +3,13 @@
 
 import { api } from '@/trpc/react'
 
-import { DataTable } from '@/components/ingredients/data-table'
-import { DataTableSkeleton } from '@/components/ingredients/data-table-skeleton'
+import { DataTable } from '@/components/grocery-store/data-table'
+import { DataTableSkeleton } from '@/components/grocery-store/data-table-skeleton'
 
 export default function Home() {
 
   const { data, isLoading } = api.groceryStore.getAll.useQuery()
-  console.log('ingredients', data)
+  console.log('store', data)
   return (
     <div className='flex min-h-screen flex-col items-center w-full'>
       {isLoading ? (
