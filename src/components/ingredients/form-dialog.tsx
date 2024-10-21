@@ -256,6 +256,7 @@ const FormDialog = () => {
                             <Input
                               placeholder='Carbohydrate'
                               {...field}
+                              onChange={e => field.onChange(Number(e.target.value))}
                               type='number'
                             />
                             <div className='absolute right-8 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
@@ -289,6 +290,7 @@ const FormDialog = () => {
                             <Input
                               placeholder='Enter total dietary fibre'
                               {...field}
+                              onChange={e => field.onChange(Number(e.target.value))}
                               type='number'
                             />
                           </FormControl>
@@ -306,6 +308,7 @@ const FormDialog = () => {
                             <Input
                               placeholder='Enter total sugars'
                               {...field}
+                              onChange={e => field.onChange(Number(e.target.value))}
                               type='number'
                             />
                           </FormControl>
@@ -323,6 +326,7 @@ const FormDialog = () => {
                             <Input
                               placeholder='Enter added sugars'
                               {...field}
+                              onChange={e => field.onChange(Number(e.target.value))}
                               type='number'
                             />
                           </FormControl>
@@ -340,6 +344,7 @@ const FormDialog = () => {
                             <Input
                               placeholder='Enter free sugars'
                               {...field}
+                              onChange={e => field.onChange(Number(e.target.value))}
                               type='number'
                             />
                           </FormControl>
@@ -357,6 +362,7 @@ const FormDialog = () => {
                             <Input
                               placeholder='Enter starch'
                               {...field}
+                              onChange={e => field.onChange(Number(e.target.value))}
                               type='number'
                             />
                           </FormControl>
@@ -374,6 +380,7 @@ const FormDialog = () => {
                             <Input
                               placeholder='Enter resistant starch'
                               {...field}
+                              onChange={e => field.onChange(Number(e.target.value))}
                               type='number'
                             />
                           </FormControl>
@@ -393,6 +400,7 @@ const FormDialog = () => {
                             <Input
                               placeholder='Enter available carbohydrate without sugar alcohol'
                               {...field}
+                              onChange={e => field.onChange(Number(e.target.value))}
                               type='number'
                             />
                           </FormControl>

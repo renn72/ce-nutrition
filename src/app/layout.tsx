@@ -38,7 +38,6 @@ export default async function RootLayout({
           >
             <Providers>
               <TRPCReactProvider>
-                <Navbar />
                 {children}
                 <Toaster />
               </TRPCReactProvider>
