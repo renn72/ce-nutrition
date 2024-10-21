@@ -2,7 +2,10 @@
 
 import { formatDate } from '@/lib/utils'
 import type { GetIngredientById } from '@/types'
-import { ColumnDef } from '@tanstack/react-table'
+import { ColumnDef,
+  SortingFn,
+} from '@tanstack/react-table'
+
 
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -13,6 +16,16 @@ import {
 
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
+
+
+const floatSortingFn: SortingFn<GetIngredientById> = (a, b, c) => {
+  // @ts-ignore
+  const aValue = parseFloat(a.getValue(c).replace(',', ''))
+  // @ts-ignore
+  const bValue = parseFloat(b.getValue(c).replace(',', ''))
+  return aValue - bValue
+}
+
 
 export const columns: ColumnDef<GetIngredientById>[] = [
   {
@@ -96,6 +109,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
   },
   {
     accessorKey: 'serveSize',
+    sortingFn: floatSortingFn,
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
@@ -138,6 +152,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
         title='Energy w Fibre'
       />
     ),
+    sortingFn: floatSortingFn,
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>

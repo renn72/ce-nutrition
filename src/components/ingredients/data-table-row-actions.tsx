@@ -1,7 +1,10 @@
 'use client'
 
+import { api } from '@/trpc/react'
+
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { Row } from '@tanstack/react-table'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -18,7 +21,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
 }
@@ -26,6 +28,13 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
+  const ctx = api.useUtils()
+  const { mutate: deleteIngredient } = api.ingredient.delete.useMutation({
+    onSuccess: () => {
+      ctx.ingredient.invalidate()
+      toast.success('Ingredient deleted successfully')
+    },
+  })
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -46,7 +55,9 @@ export function DataTableRowActions<TData>({
         <DropdownMenuItem>Favorite</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={() => deleteIngredient({ id: row.getValue('id') })}
+        >
           Delete
           <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
         </DropdownMenuItem>

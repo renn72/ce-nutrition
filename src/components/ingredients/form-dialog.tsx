@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { api } from '@/trpc/react'
 
-import {api} from '@/trpc/react'
+import { useState } from 'react'
 
 import { cn } from '@/lib/utils'
 import { createIngredientSchema } from '@/server/api/schema/ingredient'
@@ -78,7 +78,14 @@ const formSchema = z.object({
 
 const FormDialog = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const { mutate: createIngredient } = trpc.ingredient.create.useMutation()
+  const ctx = api.useUtils()
+  const { mutate: createIngredient } = api.ingredient.create.useMutation({
+    onSuccess: () => {
+      setIsOpen(false)
+      ctx.ingredient.invalidate()
+      toast.success('Ingredient added successfully')
+    },
+  })
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -98,17 +105,30 @@ const FormDialog = () => {
     },
   })
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data)
-    toast.success('Ingredient added successfully')
-    setTimeout(() => {
-      setIsOpen(false)
-    }, 1000)
+    createIngredient({
+      foodName: data.foodName,
+      servingSize: data.servingSize.toString(),
+      servingUnit: data.servingUnit.toString(),
+      protein: data.protein.toString(),
+      fatTotal: data.fatTotal.toString(),
+      totalDietaryFibre: data.totalDietaryFibre.toString(),
+      totalSugars: data.totalSugars.toString(),
+      addedSugars: data.addedSugars.toString(),
+      freeSugars: data.freeSugars.toString(),
+      starch: data.starch.toString(),
+      resistantStarch: data.resistantStarch.toString(),
+      availableCarbohydrateWithoutSugarAlcohols:
+        data.availableCarbohydrateWithoutSugarAlcohols.toString(),
+      availableCarbohydrateWithSugarAlcohols:
+        data.availableCarbohydrateWithSugarAlcohols.toString(),
+    })
   }
 
-  const unitType = form.watch('servingUnit')
-
   return (
-    <Dialog>
+    <Dialog
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
       <DialogTrigger asChild>
         <PlusCircle className='h-6 w-6 text-muted-foreground hover:text-foreground hover:scale-110 active:scale-125 transition-transform cursor-pointer' />
       </DialogTrigger>
@@ -146,7 +166,10 @@ const FormDialog = () => {
                           <Input
                             placeholder='serving size'
                             {...field}
-                            type='text'
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
+                            type='number'
                             className='w-full'
                           />
                         </FormControl>
@@ -185,6 +208,9 @@ const FormDialog = () => {
                             <Input
                               placeholder='Protein'
                               {...field}
+                              onChange={(e) =>
+                                field.onChange(Number(e.target.value))
+                              }
                               type='number'
                             />
                             <div className='absolute right-8 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
@@ -207,6 +233,7 @@ const FormDialog = () => {
                             <Input
                               placeholder='Fat Total'
                               {...field}
+                              onChange={e => field.onChange(Number(e.target.value))}
                               type='number'
                             />
                             <div className='absolute right-8 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>

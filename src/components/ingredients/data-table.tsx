@@ -30,23 +30,26 @@ import { columns } from './columns'
 import { DataTablePagination } from './data-table-pagination'
 import { DataTableToolbar } from './data-table-toolbar'
 
-const DataTable = ({
-  ingredients: data,
-}: {
-  ingredients: GetAllIngredients
-}) => {
+const DataTable = ({ ingredients: data }: { ingredients: GetAllIngredients }) => {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({
       createdAt: false,
       id: false,
-     availableCarbohydrateWithoutSugarAlcohols: false,
-    energyWithoutDietaryFibre: false,
-  })
+      availableCarbohydrateWithoutSugarAlcohols: false,
+      energyWithoutDietaryFibre: false,
+    })
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   )
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [sorting, setSorting] = React.useState<SortingState>([
+    {
+      id: 'createdAt',
+      desc: true,
+    },
+  ])
+
+  console.log(sorting)
 
   const table = useReactTable({
     data,

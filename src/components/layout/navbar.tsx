@@ -138,14 +138,14 @@ export const Navbar = () => {
     <div className='h-18 flex items-center justify-between px-2'>
       <div className='flex items-center gap-4'>
         <Link
-          className='hover:opacity-100 opacity-80 transition-all'
+          className='hover:opacity-100 opacity-80 transition-all py-2'
           href='/'
         >
           <Image
-            src='/logo/logo-black.webp'
+            src='/logo/ce.png'
             alt='logo'
-            width={90}
-            height={50.78}
+            width={30}
+            height={30}
             priority
             style={{
               width: '100%',
