@@ -1,5 +1,6 @@
 'use client'
 
+import { usePathname } from 'next/navigation'
 import * as React from 'react'
 
 import { Check, ChevronsUpDown, GalleryVerticalEnd, Search } from 'lucide-react'
@@ -41,16 +42,16 @@ const data = {
   versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],
   navMain: [
     {
-      title: 'Getting Started',
+      title: 'Building Blocks',
       url: '#',
       items: [
         {
-          title: 'Installation',
-          url: '#',
+          title: 'Ingredients',
+          url: '/admin/base/ingredient',
         },
         {
-          title: 'Project Structure',
-          url: '#',
+          title: 'Store',
+          url: '/admin/base/store',
         },
       ],
     },
@@ -102,8 +103,9 @@ const data = {
   ],
 }
 
-const AdminBaseSidebar = () => {
+const AdminBaseSidebar = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   const [selectedVersion, setSelectedVersion] = React.useState(data.versions[0])
+  const pathname = usePathname()
 
   return (
     <SidebarProvider>
@@ -158,7 +160,7 @@ const AdminBaseSidebar = () => {
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
                         asChild
-                        isActive={item.isActive}
+                        isActive={pathname === item.url}
                       >
                         <a href={item.url}>{item.title}</a>
                       </SidebarMenuButton>
@@ -171,35 +173,10 @@ const AdminBaseSidebar = () => {
         </SidebarContent>
         <SidebarRail />
       </Sidebar>
-      <SidebarInset>
-        <header className='flex h-16 shrink-0 items-center gap-2 border-b px-4'>
-          <SidebarTrigger className='-ml-1' />
-          <Separator
-            orientation='vertical'
-            className='mr-2 h-4'
-          />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className='hidden md:block'>
-                <BreadcrumbLink href='#'>
-                  Building Your Application
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className='hidden md:block' />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </header>
-        <div className='flex flex-1 flex-col gap-4 p-4'>
-          <div className='grid auto-rows-min gap-4 md:grid-cols-3'>
-            <div className='aspect-video rounded-xl bg-muted/50' />
-            <div className='aspect-video rounded-xl bg-muted/50' />
-            <div className='aspect-video rounded-xl bg-muted/50' />
-          </div>
-          <div className='min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min' />
-        </div>
+      <SidebarInset
+        className='w-full'
+      >
+        {children}
       </SidebarInset>
     </SidebarProvider>
   )

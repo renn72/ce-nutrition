@@ -8,7 +8,7 @@ import { DataTableSkeleton } from '@/components/ingredients/data-table-skeleton'
 
 export default function Home() {
 
-  const { data, isLoading } = api.ingredient.getAll.useQuery()
+  const { data, isLoading } = api.groceryStore.getAll.useQuery()
   console.log('ingredients', data)
   return (
     <div className='flex min-h-screen flex-col items-center w-full'>
@@ -27,3 +27,4 @@ export default function Home() {
     </div>
   )
 }
+

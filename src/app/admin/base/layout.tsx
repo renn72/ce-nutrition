@@ -1,12 +1,15 @@
-import { AdminBaseSidebar as Sidebar } from './_sidebar/sidebar'
+import { AdminBaseSidebar } from './_sidebar/sidebar'
+import { SidebarHeader } from './_sidebar/sidebar-header'
 
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div>
-      <Sidebar />
-      {children}
-    </div>
+      <>
+        <AdminBaseSidebar>
+          <SidebarHeader />
+          {children}
+        </AdminBaseSidebar>
+      </>
   )
 }
