@@ -73,6 +73,26 @@ const GenUser = () => {
   )
 }
 
+const GenStore = () => {
+  const ctx = api.useUtils()
+  const { mutate } = api.test.generateGroceryStores.useMutation({
+    onSuccess: () => {
+      ctx.invalidate()
+      toast.success('Created')
+    },
+  })
+
+  return (
+    <Button
+      variant='outline'
+      onClick={() => {
+        mutate()
+      }}
+    >
+      GenStore
+    </Button>
+  )
+}
 const ImportAFCDSolid = () => {
   const ctx = api.useUtils()
   const { mutate } = api.test.importAFCDSolid.useMutation({
@@ -163,6 +183,7 @@ export const Navbar = () => {
         </Button>
         <GenUser />
         <ImportAFCDSolid />
+        <GenStore />
       </div>
       {isLoadingUser ? null : (
         <div className='flex items-center gap-4'>

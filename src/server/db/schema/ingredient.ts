@@ -22,6 +22,7 @@ export const ingredient = createTable(
     deletedAt: int('deleted_at', { mode: 'timestamp' }),
     hiddenAt: int('hidden_at', { mode: 'timestamp' }),
     isAusFood: int('is_aus_food', { mode: 'boolean' }),
+    isAllStores: int('is_all_stores', { mode: 'boolean' }).default(true),
     serveSize: text('serve_size'),
     serveUnit: text('serve_unit'),
     publicFoodKey: text('public_food_key'),
@@ -33,8 +34,6 @@ export const ingredient = createTable(
     fatTotal: text('fat_total'),
     totalDietaryFibre: text('total_dietary_fibre'),
     totalSugars: text('total_sugars'),
-    addedSugars: text('added_sugars'),
-    freeSugars: text('free_sugars'),
     starch: text('starch'),
     resistantStarch: text('resistant_starch'),
     availableCarbohydrateWithoutSugarAlcohols: text(
@@ -61,6 +60,8 @@ export const ingredientAdditionOne = createTable('ingredient_addition_one', {
   ingredientId: int('ingredient_id').references(() => ingredient.id, {
     onDelete: 'cascade',
   }),
+    addedSugars: text('added_sugars'),
+    freeSugars: text('free_sugars'),
   moisture: text('moisture'),
   nitrogen: text('nitrogen'),
   alcohol: text('alcohol'),

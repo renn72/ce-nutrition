@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "8b47f77e-43c0-45b3-8f18-bc60e135040f",
+  "id": "7ba4ca68-39cf-4acd-8a64-506b7e8d04a0",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "ce-nu_grocery_store": {
@@ -102,6 +102,14 @@
           "notNull": false,
           "autoincrement": false
         },
+        "is_all_stores": {
+          "name": "is_all_stores",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": true
+        },
         "serve_size": {
           "name": "serve_size",
           "type": "text",
@@ -174,20 +182,6 @@
         },
         "total_sugars": {
           "name": "total_sugars",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "added_sugars": {
-          "name": "added_sugars",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "free_sugars": {
-          "name": "free_sugars",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -284,6 +278,20 @@
         "ingredient_id": {
           "name": "ingredient_id",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "added_sugars": {
+          "name": "added_sugars",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "free_sugars": {
+          "name": "free_sugars",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
