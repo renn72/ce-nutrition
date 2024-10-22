@@ -77,13 +77,13 @@ const ImportAFCDSolid = () => {
   const ctx = api.useUtils()
   const { mutate } = api.test.importAFCDSolid.useMutation({
     onSuccess: () => {
-      ctx.invalidate()
+      ctx.ingredient.invalidate()
       toast.success('Imported')
     },
   })
   const { mutate: importAFCDLiquid } = api.test.importAFCDLiquid.useMutation({
     onSuccess: () => {
-      ctx.invalidate()
+      ctx.ingredient.invalidate()
       toast.success('Imported')
     },
   })
