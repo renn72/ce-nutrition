@@ -27,6 +27,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -41,6 +42,8 @@ const formSchema = z.object({
   foodName: z.string().min(1),
   servingSize: z.number(),
   servingUnit: z.string().min(1),
+  energyWithDietaryFibre: z.number(),
+  energyWithoutDietaryFibre: z.number(),
   protein: z.number(),
   fatTotal: z.number(),
   totalDietaryFibre: z.number(),
@@ -49,7 +52,7 @@ const formSchema = z.object({
   resistantStarch: z.number(),
   availableCarbohydrateWithoutSugarAlcohols: z.number(),
   availableCarbohydrateWithSugarAlcohols: z.number(),
-  stores: z.array(z.string() ),
+  stores: z.array(z.string()),
   isAllStores: z.boolean(),
 })
 
@@ -70,6 +73,8 @@ const FormDialog = () => {
       foodName: '',
       servingSize: 100,
       servingUnit: 'grams',
+      energyWithDietaryFibre: 0,
+      energyWithoutDietaryFibre: 0,
       protein: 0,
       fatTotal: 0,
       totalDietaryFibre: 0,
@@ -87,6 +92,8 @@ const FormDialog = () => {
       foodName: data.foodName,
       servingSize: data.servingSize.toString(),
       servingUnit: data.servingUnit.toString(),
+      energyWithDietaryFibre: data.energyWithDietaryFibre.toString(),
+      energyWithoutDietaryFibre: data.energyWithoutDietaryFibre.toString(),
       protein: data.protein.toString(),
       fatTotal: data.fatTotal.toString(),
       totalDietaryFibre: data.totalDietaryFibre.toString(),
@@ -143,7 +150,10 @@ const FormDialog = () => {
                   name='servingSize'
                   render={({ field }) => (
                     <FormItem className='w-full'>
-                      <FormLabel>Serving Size</FormLabel>
+                      <div className='flex gap-2 items-baseline'>
+                        <FormLabel>Serving Size</FormLabel>
+                        <FormDescription>.</FormDescription>
+                      </div>
                       <FormControl>
                         <Input
                           placeholder='serving size'
@@ -164,7 +174,10 @@ const FormDialog = () => {
                   name='servingUnit'
                   render={({ field }) => (
                     <FormItem className='w-full'>
-                      <FormLabel>Serving Unit</FormLabel>
+                      <div className='flex gap-2 items-baseline'>
+                        <FormLabel>Serving Unit</FormLabel>
+                        <FormDescription>grams/mls/each</FormDescription>
+                      </div>
                       <FormControl>
                         <Input
                           placeholder='serving unit'
@@ -177,6 +190,63 @@ const FormDialog = () => {
                     </FormItem>
                   )}
                 />
+              </div>
+              <div className='flex gap-4 justify-between'>
+                <div className='w-full'>
+                <FormField
+                  control={form.control}
+                  name='energyWithoutDietaryFibre'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Calories w/0 fibre</FormLabel>
+                      <FormControl>
+                        <div className='relative w-full'>
+                          <Input
+                            placeholder='Calories'
+                            {...field}
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
+                            type='number'
+                          />
+                          <div className='absolute right-8 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
+                            grams
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                </div>
+                <div className='w-full'>
+                <FormField
+                  control={form.control}
+                  name='energyWithDietaryFibre'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Calories w fibre</FormLabel>
+                      <FormControl>
+                        <div className='relative w-full'>
+                          <Input
+                            placeholder='Calories'
+                            {...field}
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
+                            type='number'
+                          />
+                          <div className='absolute right-8 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
+                            grams
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+              </div>
               </div>
               <div className='flex gap-4 justify-between'>
                 <FormField
@@ -273,15 +343,20 @@ const FormDialog = () => {
               />
               <div
                 className={cn(
-                  isAllStores ? 'h-0 border-0 shadow-none' : 'h-max shadow border',
+                  isAllStores
+                    ? 'h-0 border-0 shadow-none'
+                    : 'h-max shadow border',
                   'transition-all duration-300 ease-in-out',
-                  'flex flex-row rounded-md ')}
+                  'flex flex-row rounded-md ',
+                )}
               >
                 <FormField
                   control={form.control}
                   name='stores'
                   render={({ field }) => (
-                    <FormItem className={cn('w-full p-4', isAllStores && 'hidden')}>
+                    <FormItem
+                      className={cn('w-full p-4', isAllStores && 'hidden')}
+                    >
                       <FormLabel>Stores</FormLabel>
                       <FormControl>
                         <div className='relative w-full'>
@@ -315,7 +390,6 @@ const FormDialog = () => {
                               </ToggleGroupItem>
                             ))}
                           </ToggleGroup>
-
                         </div>
                       </FormControl>
                       <FormMessage />

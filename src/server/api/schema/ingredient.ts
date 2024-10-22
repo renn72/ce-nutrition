@@ -4,6 +4,8 @@ export const createIngredientSchema = z.object({
   foodName: z.string().min(1),
   servingSize: z.string(),
   servingUnit: z.string().min(1),
+  energyWithDietaryFibre: z.string(),
+  energyWithoutDietaryFibre: z.string(),
   protein: z.string(),
   fatTotal: z.string(),
   totalDietaryFibre: z.string(),
@@ -12,4 +14,6 @@ export const createIngredientSchema = z.object({
   resistantStarch: z.string(),
   availableCarbohydrateWithoutSugarAlcohols: z.string(),
   availableCarbohydrateWithSugarAlcohols: z.string(),
+  isAllStores: z.boolean(),
+  stores: z.array(z.string()),
 })
