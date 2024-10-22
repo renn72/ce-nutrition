@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 
-import type { GetAllIngredients } from '@/types'
+import type { GetAllGroceryStores } from '@/types'
 import {
   ColumnFiltersState,
   flexRender,
@@ -30,14 +30,12 @@ import { columns } from './columns'
 import { DataTablePagination } from './data-table-pagination'
 import { DataTableToolbar } from './data-table-toolbar'
 
-const DataTable = ({ ingredients: data }: { ingredients: GetAllIngredients }) => {
+const DataTable = ({ groceryStores: data }: { groceryStores: GetAllGroceryStores }) => {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({
       createdAt: false,
       id: false,
-      availableCarbohydrateWithoutSugarAlcohols: false,
-      energyWithoutDietaryFibre: false,
     })
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],

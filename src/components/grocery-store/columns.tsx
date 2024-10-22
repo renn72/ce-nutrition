@@ -1,33 +1,15 @@
 'use client'
 
 import { formatDate } from '@/lib/utils'
-import type { GetIngredientById } from '@/types'
-import { ColumnDef,
-  SortingFn,
-} from '@tanstack/react-table'
-
+import type { GetGroceryStoreById } from '@/types'
+import { ColumnDef, } from '@tanstack/react-table'
 
 import { Checkbox } from '@/components/ui/checkbox'
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from '@/components/ui/hover-card'
 
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
 
-
-const floatSortingFn: SortingFn<GetIngredientById> = (a, b, c) => {
-  // @ts-ignore
-  const aValue = parseFloat(a.getValue(c).replace(',', ''))
-  // @ts-ignore
-  const bValue = parseFloat(b.getValue(c).replace(',', ''))
-  return aValue - bValue
-}
-
-
-export const columns: ColumnDef<GetIngredientById>[] = [
+export const columns: ColumnDef<GetGroceryStoreById>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -81,7 +63,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
     },
   },
   {
-    accessorKey: 'foodName',
+    accessorKey: 'name',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
@@ -91,163 +73,26 @@ export const columns: ColumnDef<GetIngredientById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <HoverCard>
-            <HoverCardTrigger asChild>
-              <span className='w-[400px] truncate font-medium'>
-                {row.getValue('foodName')}
-              </span>
-            </HoverCardTrigger>
-            <HoverCardContent>
-              <div className='flex space-x-2'>
-                <span className='font-medium'>{row.getValue('foodName')}</span>
-              </div>
-            </HoverCardContent>
-          </HoverCard>
+          <span className='w-[400px] truncate font-medium'>
+            {row.getValue('name')}
+          </span>
         </div>
       )
     },
   },
   {
-    accessorKey: 'serveSize',
-    sortingFn: floatSortingFn,
+    accessorKey: 'location',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Serve Size'
+        title='Location'
       />
     ),
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
           <span className='max-w-[50px] truncate font-medium'>
-            {row.getValue('serveSize')}
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'serveUnit',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Serve Unit'
-      />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className='flex space-x-2'>
-          <span className='max-w-[100px] truncate font-medium'>
-            {row.getValue('serveUnit')}
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'energyWithDietaryFibre',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Energy w Fibre'
-      />
-    ),
-    sortingFn: floatSortingFn,
-    cell: ({ row }) => {
-      return (
-        <div className='flex space-x-2'>
-          <span className='max-w-[100px] truncate font-medium'>
-            {row.getValue('energyWithDietaryFibre')}kJ
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'energyWithoutDietaryFibre',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Energy w/o Fibre'
-      />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className='flex space-x-2'>
-          <span className='max-w-[100px] truncate font-medium'>
-            {row.getValue('energyWithoutDietaryFibre')}kJ
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'protein',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Protein'
-      />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className='flex space-x-2'>
-          <span className='max-w-[100px] truncate font-medium'>
-            {row.getValue('protein')}g
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'fatTotal',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Fat'
-      />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className='flex space-x-2'>
-          <span className='max-w-[100px] truncate font-medium'>
-            {row.getValue('fatTotal')}g
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'availableCarbohydrateWithoutSugarAlcohols',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Carbs w Alcohols'
-      />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className='flex space-x-2'>
-          <span className='max-w-[100px] truncate font-medium'>
-            {row.getValue('availableCarbohydrateWithoutSugarAlcohols')}g
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'availableCarbohydrateWithSugarAlcohols',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Carbs w/o Alcohols'
-      />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className='flex space-x-2'>
-          <span className='max-w-[100px] truncate font-medium'>
-            {row.getValue('availableCarbohydrateWithSugarAlcohols')}g
+            {row.getValue('location')}
           </span>
         </div>
       )

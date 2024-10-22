@@ -20,15 +20,8 @@ interface DataTableViewOptionsProps<TData> {
 const columMap = {
   createdAt: 'Created',
   id: 'ID',
-  foodName: 'Name',
-  serveSize: 'Serve Size',
-  serveUnit: 'Serve Unit',
-  energyWithDietaryFibre: 'Energy w Fibre',
-  energyWithoutDietaryFibre: 'Energy w/o Fibre',
-  protein: 'Protein',
-  fatTotal: 'Fat',
-  availableCarbohydrateWithSugarAlcohols: 'Carbs w Alcohols',
-  availableCarbohydrateWithoutSugarAlcohols: 'Carbs w/o Alcohols',
+  name: 'Name',
+  location: 'Location',
 }
 
 export function DataTableViewOptions<TData>({

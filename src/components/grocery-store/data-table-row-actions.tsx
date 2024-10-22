@@ -29,9 +29,9 @@ export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
   const ctx = api.useUtils()
-  const { mutate: deleteIngredient } = api.ingredient.delete.useMutation({
+  const { mutate: deleteStore } = api.groceryStore.delete.useMutation({
     onSuccess: () => {
-      ctx.ingredient.invalidate()
+      ctx.groceryStore.invalidate()
       toast.success('Ingredient deleted successfully')
     },
   })
@@ -56,7 +56,7 @@ export function DataTableRowActions<TData>({
         <DropdownMenuSeparator />
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onSelect={() => deleteIngredient({ id: row.getValue('id') })}
+          onSelect={() => deleteStore({ id: row.getValue('id') })}
         >
           Delete
           <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
