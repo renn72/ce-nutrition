@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "65737401-dd90-46be-83bb-434ded14425a",
+  "id": "8b47f77e-43c0-45b3-8f18-bc60e135040f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "ce-nu_grocery_store": {
@@ -70,6 +70,34 @@
         "user_id": {
           "name": "user_id",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "favourite_at": {
+          "name": "favourite_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "hidden_at": {
+          "name": "hidden_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "is_aus_food": {
+          "name": "is_aus_food",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -199,6 +227,13 @@
           "name": "ingredient_food_name_idx",
           "columns": [
             "food_name"
+          ],
+          "isUnique": false
+        },
+        "ingredient_food_key_idx": {
+          "name": "ingredient_food_key_idx",
+          "columns": [
+            "public_food_key"
           ],
           "isUnique": false
         }

@@ -10,6 +10,10 @@ CREATE TABLE `ce-nu_ingredient` (
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer,
 	`user_id` text,
+	`favourite_at` integer,
+	`deleted_at` integer,
+	`hidden_at` integer,
+	`is_aus_food` integer,
 	`serve_size` text,
 	`serve_unit` text,
 	`public_food_key` text,
@@ -331,6 +335,7 @@ CREATE TABLE `ce-nu_verification_token` (
 );
 --> statement-breakpoint
 CREATE INDEX `ingredient_food_name_idx` ON `ce-nu_ingredient` (`food_name`);--> statement-breakpoint
+CREATE INDEX `ingredient_food_key_idx` ON `ce-nu_ingredient` (`public_food_key`);--> statement-breakpoint
 CREATE INDEX `notification_user_id_idx` ON `ce-nu_notification` (`user_id`);--> statement-breakpoint
 CREATE INDEX `account_user_id_idx` ON `ce-nu_account` (`user_id`);--> statement-breakpoint
 CREATE INDEX `session_userId_idx` ON `ce-nu_session` (`userId`);--> statement-breakpoint
