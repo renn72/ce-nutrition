@@ -97,6 +97,8 @@ const FormDialog = () => {
         data.availableCarbohydrateWithoutSugarAlcohols.toString(),
       availableCarbohydrateWithSugarAlcohols:
         data.availableCarbohydrateWithSugarAlcohols.toString(),
+      isAllStores: data.isAllStores,
+      stores: data.stores,
     })
   }
 
@@ -287,12 +289,13 @@ const FormDialog = () => {
                             type='multiple'
                             value={field.value}
                             onValueChange={field.onChange}
+                            className='flex-wrap gap-2'
                           >
                             {stores?.map((store) => (
                               <ToggleGroupItem
                                 key={store.id}
                                 value={store.id.toString()}
-                                className='flex flex-row items-center justify-between'
+                                className='flex flex-row items-center justify-between border rounded-md '
                               >
                                 <div className='flex flex-col gap-2'>
                                   <div className='flex flex-row items-center gap-2'>
@@ -304,7 +307,7 @@ const FormDialog = () => {
                                         {store.name}
                                       </div>
                                       <div className='text-xs text-gray-500'>
-                                        {store.locations}
+                                        {store.location}
                                       </div>
                                     </div>
                                   </div>

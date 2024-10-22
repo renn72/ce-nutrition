@@ -1,20 +1,8 @@
 import { createIngredientSchema } from '@/server/api/schema/ingredient'
-import { getServerAuthSession } from '@/server/auth'
-import { client, db } from '@/server/db'
-import { ingredient } from '@/server/db/schema/ingredient'
-import { TRPCError } from '@trpc/server'
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-  rootProtectedProcedure,
-} from '~/server/api/trpc'
-import { asc, desc, eq } from 'drizzle-orm'
+import { ingredient, ingredientToGroceryStore } from '@/server/db/schema/ingredient'
+import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
+import { desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
-
-function isTuple<T>(array: T[]): array is [T, ...T[]] {
-  return array.length > 0
-}
 
 export const ingredientRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -46,12 +34,20 @@ export const ingredientRouter = createTRPCRouter({
     .input(createIngredientSchema)
     .mutation(async ({ input, ctx }) => {
       const userId = ctx.session.user.id
-      console.log({ ...input, userId })
-      return true
+      const { stores, ...rest } = input
       const res = await ctx.db.insert(ingredient).values({
-        ...input,
+        ...rest,
         userId,
       })
+    console.log(res)
+      if (stores) {
+        // await ctx.db
+        //   .insert(ingredientToGroceryStore)
+        //   .values({
+        //     ingredientId: res[0].id as number,
+        //     groceryStoreId: stores,
+        //   })
+      }
       return res
     }),
   delete: protectedProcedure

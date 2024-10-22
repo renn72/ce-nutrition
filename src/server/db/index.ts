@@ -5,11 +5,13 @@ import { env } from '@/env'
 import * as user from './schema/user'
 import * as notification from './schema/notification'
 import * as ingredient from './schema/ingredient'
+import * as settings from './schema/settings'
 
 const schema = {
   ...user,
   ...notification,
   ...ingredient,
+  ...settings,
 }
 
 /**

@@ -44,12 +44,12 @@ const data = {
       ],
     },
     {
-      title: 'another',
+      title: 'Admin',
       url: '#',
       items: [
         {
-          title: 'Routing',
-          url: '#',
+          title: 'Settings',
+          url: '/admin/base/settings',
         },
       ],
     },
