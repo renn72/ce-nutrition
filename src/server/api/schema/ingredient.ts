@@ -8,8 +8,6 @@ export const createIngredientSchema = z.object({
   fatTotal: z.string(),
   totalDietaryFibre: z.string(),
   totalSugars: z.string(),
-  addedSugars: z.string(),
-  freeSugars: z.string(),
   starch: z.string(),
   resistantStarch: z.string(),
   availableCarbohydrateWithoutSugarAlcohols: z.string(),

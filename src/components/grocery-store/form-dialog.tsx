@@ -2,29 +2,15 @@ import { api } from '@/trpc/react'
 
 import { useState } from 'react'
 
-import { cn } from '@/lib/utils'
-import { createIngredientSchema } from '@/server/api/schema/ingredient'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { format } from 'date-fns'
 import {
-  CalendarIcon,
-  ChevronDown,
-  ChevronUp,
   PlusCircle,
-  XCircle,
 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
 import {
   Dialog,
   DialogContent,
@@ -41,22 +27,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 export const dynamic = 'force-dynamic'
 
@@ -98,6 +69,8 @@ const FormDialog = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create Ingredient</DialogTitle>
+        </DialogHeader>
+        <DialogDescription></DialogDescription>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className='flex flex-col gap-4'>
@@ -140,7 +113,6 @@ const FormDialog = () => {
               </div>
             </form>
           </Form>
-        </DialogHeader>
       </DialogContent>
     </Dialog>
   )

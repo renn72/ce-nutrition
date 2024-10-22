@@ -73,7 +73,7 @@ export const columns: ColumnDef<GetGroceryStoreById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='w-[400px] truncate font-medium'>
+          <span className='w-[300px] truncate font-medium'>
             {row.getValue('name')}
           </span>
         </div>
@@ -91,7 +91,7 @@ export const columns: ColumnDef<GetGroceryStoreById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='max-w-[50px] truncate font-medium'>
+          <span className='w-[300px] truncate font-medium'>
             {row.getValue('location')}
           </span>
         </div>

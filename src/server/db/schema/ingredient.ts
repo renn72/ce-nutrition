@@ -297,7 +297,7 @@ export const groceryStore = createTable('grocery_store', {
     .default(sql`(unixepoch())`)
     .notNull(),
   name: text('name'),
-  locations: text('locations'),
+  location: text('locations'),
 })
 
 export const ingredientToGroceryStore = createTable(
