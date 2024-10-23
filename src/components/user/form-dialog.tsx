@@ -3,14 +3,13 @@ import { api } from '@/trpc/react'
 import { useState } from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  PlusCircle,
-} from 'lucide-react'
+import { PlusCircle } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -32,14 +31,17 @@ import { Input } from '@/components/ui/input'
 export const dynamic = 'force-dynamic'
 
 const formSchema = z.object({
-  name: z.string().min(1),
-  location: z.string(),
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+  email: z.string().email(),
+  password: z.string().min(4),
+  isTrainer: z.boolean(),
 })
 
 const FormDialog = () => {
   const [isOpen, setIsOpen] = useState(false)
   const ctx = api.useUtils()
-  const { mutate: createStore } = api.groceryStore.create.useMutation({
+  const { mutate: createUser } = api.user.createUser.useMutation({
     onSuccess: () => {
       setIsOpen(false)
       ctx.groceryStore.invalidate()
@@ -50,12 +52,15 @@ const FormDialog = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      location: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      isTrainer: false,
     },
   })
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    createStore(data)
+    createUser(data)
   }
 
   return (
@@ -71,18 +76,19 @@ const FormDialog = () => {
           <DialogTitle>Create Ingredient</DialogTitle>
         </DialogHeader>
         <DialogDescription></DialogDescription>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <div className='flex flex-col gap-4'>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className='flex flex-col gap-4'>
+              <div className='flex gap-4 justify-between'>
                 <FormField
                   control={form.control}
-                  name='name'
+                  name='firstName'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel>First Name</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder='Name'
+                          placeholder='First Name'
                           {...field}
                           type='text'
                         />
@@ -93,13 +99,13 @@ const FormDialog = () => {
                 />
                 <FormField
                   control={form.control}
-                  name='location'
+                  name='lastName'
                   render={({ field }) => (
                     <FormItem className='w-full'>
-                      <FormLabel>Location</FormLabel>
+                      <FormLabel>Last Name</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder='Location'
+                          placeholder='Last Name'
                           {...field}
                         />
                       </FormControl>
@@ -107,12 +113,66 @@ const FormDialog = () => {
                     </FormItem>
                   )}
                 />
-                <div>
-                  <Button type='submit'>Submit</Button>
-                </div>
               </div>
-            </form>
-          </Form>
+              <FormField
+                control={form.control}
+                name='email'
+                render={({ field }) => (
+                  <FormItem className='w-full'>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='email'
+                        type='email'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='password'
+                render={({ field }) => (
+                  <FormItem className='w-full'>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='password'
+                        type='password'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='isTrainer'
+                render={({ field }) => (
+                  <FormItem className='flex flex-row items-end space-x-6 space-y-0 rounded-md border p-4 shadow'>
+                    <FormLabel>Is Trainer?</FormLabel>
+                    <FormControl>
+                      <Checkbox
+                        className='h-4'
+                        checked={field.value}
+                        onCheckedChange={(value) => {
+                          field.onChange(value)
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div>
+                <Button type='submit'>Submit</Button>
+              </div>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   )
