@@ -12,7 +12,7 @@ export default function Home() {
   const { data, isLoading } = api.user.getAll.useQuery()
   console.log('store', data)
   return (
-    <div className='flex min-h-screen flex-col items-center w-full'>
+    <div className='flex flex-col items-center w-full'>
       {isLoading ? (
         <DataTableSkeleton
           className='max-w-screen-xl'

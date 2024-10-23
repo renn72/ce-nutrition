@@ -12,6 +12,7 @@ import { ThemeProvider } from '@/components/misc/theme-provider'
 import { Providers } from '@/components/provider'
 
 import '@/styles/globals.css'
+import { CreatorMenu } from '@/components/creator/menu'
 
 export const metadata: Metadata = {
   title: 'Create T3 App',
@@ -26,7 +27,7 @@ export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const session = await getServerAuthSession()
-  console.log(session)
+  const isCreator = session?.user?.isCreator
   return (
       <html
         lang='en'
@@ -43,6 +44,7 @@ export default async function RootLayout({
             <Providers>
               <TRPCReactProvider>
                 {children}
+              { isCreator ? <CreatorMenu /> : null }
                 <Toaster />
               </TRPCReactProvider>
             </Providers>
