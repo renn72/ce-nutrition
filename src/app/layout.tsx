@@ -31,7 +31,7 @@ export default async function RootLayout({
   return (
       <html
         lang='en'
-        className={`${font.className}`}
+        className={`${font.className} relative`}
         suppressHydrationWarning
       >
         <body>

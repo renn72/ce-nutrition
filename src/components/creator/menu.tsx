@@ -120,23 +120,6 @@ export const CreatorMenu = () => {
           <Button
             variant='ghost'
             onClick={() => {
-              createUser({
-                email: 'renn@warner.systems',
-                password: 'hklasd',
-                firstName: 'David',
-                lastName: 'Warner',
-                birthDate: new Date(1980, 0, 1),
-                isCreator: true,
-              })
-            }}
-          >
-            GenUsers
-          </Button>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => {
               createStores()
             }}
           >

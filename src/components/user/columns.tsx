@@ -2,19 +2,18 @@
 
 import { formatDate } from '@/lib/utils'
 import type { GetUserById } from '@/types'
-import { ColumnDef, } from '@tanstack/react-table'
+import { ColumnDef } from '@tanstack/react-table'
+import { Star } from 'lucide-react'
 
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "@/components/ui/hover-card"
-
-import { Checkbox } from '@/components/ui/checkbox'
+} from '@/components/ui/hover-card'
 
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
-import { Star } from 'lucide-react'
 
 export const columns: ColumnDef<GetUserById>[] = [
   {
@@ -31,12 +30,14 @@ export const columns: ColumnDef<GetUserById>[] = [
       />
     ),
     cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label='Select row'
-        className='translate-y-[2px] mx-2'
-      />
+      <div onClick={(e) => e.stopPropagation()}>
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label='Select row'
+          className='translate-y-[2px] mx-2'
+        />
+      </div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -135,17 +136,15 @@ export const columns: ColumnDef<GetUserById>[] = [
       return (
         <HoverCard>
           <HoverCardTrigger>
-        <div className='flex space-x-2'>
-          <span className='w-[300px] truncate font-medium'>
-            {row.getValue('email')}
-          </span>
-        </div>
-        </HoverCardTrigger>
+            <div className='flex space-x-2'>
+              <span className='w-[300px] truncate font-medium'>
+                {row.getValue('email')}
+              </span>
+            </div>
+          </HoverCardTrigger>
           <HoverCardContent>
             <div className='flex flex-col space-y-2'>
-              <div className='text-sm font-medium'>
-                {row.getValue('email')}
-              </div>
+              <div className='text-sm font-medium'>{row.getValue('email')}</div>
             </div>
           </HoverCardContent>
         </HoverCard>
@@ -164,7 +163,14 @@ export const columns: ColumnDef<GetUserById>[] = [
       return (
         <div className='flex space-x-2'>
           <span className='w-[50px] truncate font-medium flex items-center justify-center'>
-            {row.getValue('isTrainer') ? <Star size={18} fill='text-primary'/> : ''}
+            {row.getValue('isTrainer') ? (
+              <Star
+                size={18}
+                fill='text-primary'
+              />
+            ) : (
+              ''
+            )}
           </span>
         </div>
       )

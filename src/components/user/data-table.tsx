@@ -2,6 +2,8 @@
 
 import * as React from 'react'
 
+import { useRouter } from 'next/navigation'
+
 import type { GetAllUsers} from '@/types'
 import {
   ColumnFiltersState,
@@ -81,6 +83,8 @@ const DataTable = ({ users: data }: { users: GetAllUsers }) => {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
+  const router = useRouter()
+
   return (
     <div className='space-y-4'>
       <DataTableToolbar table={table} />
@@ -113,6 +117,10 @@ const DataTable = ({ users: data }: { users: GetAllUsers }) => {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  className='cursor-pointer'
+                  onClick={() => {
+                    router.push(`/admin/user?user=${row.getValue('id')}`)
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
