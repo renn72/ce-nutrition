@@ -30,12 +30,16 @@ import { columns } from './columns'
 import { DataTablePagination } from './data-table-pagination'
 import { DataTableToolbar } from './data-table-toolbar'
 
+export const dynamic = 'force-dynamic'
+
 const DataTable = ({ users: data }: { users: GetAllUsers }) => {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({
       createdAt: false,
       id: false,
+      firstName: false,
+      lastName: false,
     })
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -59,10 +63,6 @@ const DataTable = ({ users: data }: { users: GetAllUsers }) => {
       columnFilters,
     },
     initialState: {
-      columnVisibility: {
-        createdAt: false,
-        id: false,
-      },
       pagination: {
         pageIndex: 0,
         pageSize: 20,

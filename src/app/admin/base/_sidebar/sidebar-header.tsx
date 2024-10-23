@@ -6,8 +6,6 @@ import * as React from 'react'
 
 import { usePathname } from 'next/navigation'
 
-import { Check, ChevronsUpDown, GalleryVerticalEnd, Search } from 'lucide-react'
-
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,13 +14,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import {
   SidebarTrigger,
@@ -35,6 +26,7 @@ const SidebarHeader = () => {
     <header className='flex h-16 shrink-0 items-center gap-2 border-b px-4'>
       <SidebarTrigger className='-ml-1' />
       <Separator
+        // @ts-ignore
         orientation='vertical'
         className='mr-2 h-4'
       />

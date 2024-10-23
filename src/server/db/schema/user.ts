@@ -37,6 +37,7 @@ export const user = createTable(
     password: text('password'),
     image: text('image'),
     isFake: int('is_fake', { mode: 'boolean' }).default(false),
+    isTrainer: int('is_trainer', { mode: 'boolean' }).default(false),
     isRoot: int('is_root', { mode: 'boolean' }).default(false),
     isCreator: int('is_creator', { mode: 'boolean' }).default(false),
     createdAt: int('created_at', { mode: 'timestamp' })
@@ -52,6 +53,11 @@ export const user = createTable(
     emailIndex: index('email_idx').on(u.email),
   }),
 )
+
+export const userToTrainer = createTable('user_to_trainer', {
+  userId: text('user_id').references(() => user.id),
+  trainerId: text('trainer_id').references(() => user.id),
+})
 
 export const role = createTable('role', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
@@ -139,4 +145,20 @@ export const userRelations = relations(user, ({ one, many }) => ({
   roles: many(role),
   notifications: many(notification),
   accounts: many(account),
+  trainers: many(userToTrainer),
+  clients: many(userToTrainer),
 }))
+
+export const userToTrainerRelations = relations(
+  userToTrainer,
+  ({ one, many }) => ({
+    user: one(user, {
+      fields: [userToTrainer.userId],
+      references: [user.id],
+    }),
+    trainer: one(user, {
+      fields: [userToTrainer.trainerId],
+      references: [user.id],
+    }),
+  }),
+)

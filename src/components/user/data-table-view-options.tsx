@@ -21,7 +21,11 @@ const columMap = {
   createdAt: 'Created',
   id: 'ID',
   name: 'Name',
-  location: 'Location',
+  firstName: 'First Name',
+  lastName: 'Last Name',
+  email: 'Email',
+  isTrainer: 'Trainer',
+
 }
 
 export function DataTableViewOptions<TData>({

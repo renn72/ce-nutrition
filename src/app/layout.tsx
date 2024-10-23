@@ -1,6 +1,8 @@
 import { type Metadata } from 'next'
 import { Epilogue } from 'next/font/google'
 
+import { getServerAuthSession } from '@/server/auth'
+
 import { TRPCReactProvider } from '@/trpc/react'
 
 import { Toaster } from '@/components/ui/sonner'
@@ -23,6 +25,8 @@ const font = Epilogue({ subsets: ['latin'] })
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const session = await getServerAuthSession()
+  console.log(session)
   return (
       <html
         lang='en'

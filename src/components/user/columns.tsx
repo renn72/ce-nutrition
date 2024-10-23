@@ -1,15 +1,22 @@
 'use client'
 
 import { formatDate } from '@/lib/utils'
-import type { GetGroceryStoreById } from '@/types'
+import type { GetUserById } from '@/types'
 import { ColumnDef, } from '@tanstack/react-table'
+
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card"
 
 import { Checkbox } from '@/components/ui/checkbox'
 
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
+import { Star } from 'lucide-react'
 
-export const columns: ColumnDef<GetGroceryStoreById>[] = [
+export const columns: ColumnDef<GetUserById>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -73,7 +80,7 @@ export const columns: ColumnDef<GetGroceryStoreById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='w-[300px] truncate font-medium'>
+          <span className='w-[100px] truncate font-medium'>
             {row.getValue('name')}
           </span>
         </div>
@@ -81,18 +88,83 @@ export const columns: ColumnDef<GetGroceryStoreById>[] = [
     },
   },
   {
-    accessorKey: 'location',
+    accessorKey: 'lastName',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Location'
+        title='Surname'
       />
     ),
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
+          <span className='w-[100px] truncate font-medium'>
+            {row.getValue('lastName')}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'firstName',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title='First Name'
+      />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className='flex space-x-2'>
+          <span className='w-[100px] truncate font-medium'>
+            {row.getValue('firstName')}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'email',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title='Email'
+      />
+    ),
+    cell: ({ row }) => {
+      return (
+        <HoverCard>
+          <HoverCardTrigger>
+        <div className='flex space-x-2'>
           <span className='w-[300px] truncate font-medium'>
-            {row.getValue('location')}
+            {row.getValue('email')}
+          </span>
+        </div>
+        </HoverCardTrigger>
+          <HoverCardContent>
+            <div className='flex flex-col space-y-2'>
+              <div className='text-sm font-medium'>
+                {row.getValue('email')}
+              </div>
+            </div>
+          </HoverCardContent>
+        </HoverCard>
+      )
+    },
+  },
+  {
+    accessorKey: 'isTrainer',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title='Trainer'
+      />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className='flex space-x-2'>
+          <span className='w-[50px] truncate font-medium flex items-center justify-center'>
+            {row.getValue('isTrainer') ? <Star size={18} fill='text-primary'/> : ''}
           </span>
         </div>
       )
