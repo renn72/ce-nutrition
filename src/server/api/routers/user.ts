@@ -101,7 +101,9 @@ export const userRouter = createTRPCRouter({
         firstName: z.string(),
         lastName: z.string(),
         birthDate: z.date().optional().nullable(),
-        isCreator: z.boolean(),
+        isCreator: z.boolean().optional(),
+        isTrainer: z.boolean().optional(),
+        isRoot: z.boolean().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -114,6 +116,75 @@ export const userRouter = createTRPCRouter({
 
       return { user: input.email, password: input.password }
     }),
+
+  createFakeUsers: rootProtectedProcedure.mutation(async ({ ctx }) => {
+    const users = [
+      {
+        firstName: generateName(),
+        lastName: generateName(),
+        isFake: true,
+      },
+      {
+        firstName: generateName(),
+        lastName: generateName(),
+        isFake: true,
+      },
+      {
+        firstName: generateName(),
+        lastName: generateName(),
+        isFake: true,
+      },
+      {
+        firstName: generateName(),
+        lastName: generateName(),
+        isFake: true,
+      },
+      {
+        firstName: generateName(),
+        lastName: generateName(),
+        isFake: true,
+      },
+      {
+        firstName: generateName(),
+        lastName: generateName(),
+        isFake: true,
+      },
+      {
+        firstName: generateName(),
+        lastName: generateName(),
+        isFake: true,
+      },
+      {
+        firstName: generateName(),
+        lastName: generateName(),
+        isFake: true,
+        isTrainer: true,
+      },
+    ]
+    const hashedPassword = await hash('hklasd', 10)
+    const res = await ctx.db.insert(user).values(
+      users.map((user) => ({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        name: user.firstName + ' ' + user.lastName,
+        email:
+          user.firstName.toLowerCase() +
+          user.lastName.toLowerCase() +
+          '@warner.systems',
+        password: hashedPassword,
+        isFake: user.isFake,
+        isTrainer: user.isTrainer || false,
+      })),
+    )
+
+    return res
+  }),
+  deleteFakeUsers: rootProtectedProcedure.mutation(async ({ ctx }) => {
+    const res = await ctx.db
+      .delete(user)
+      .where(eq(user.isFake, true))
+    return res
+  }),
   deleteUser: rootProtectedProcedure
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
@@ -133,14 +204,12 @@ export const userRouter = createTRPCRouter({
     const res = await ctx.db.query.user.findMany()
     return res
   }),
-  get: protectedProcedure
-    .input(z.string())
-    .query(async ({ ctx, input }) => {
-      const res = await ctx.db.query.user.findFirst({
-        where: (user, { eq }) => eq(user.id, input),
-      })
-      return res
-    }),
+  get: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
+    const res = await ctx.db.query.user.findFirst({
+      where: (user, { eq }) => eq(user.id, input),
+    })
+    return res
+  }),
   deleteFakeUsers: rootProtectedProcedure.mutation(async () => {
     const res = await db
       .delete(user)
