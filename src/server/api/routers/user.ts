@@ -129,10 +129,18 @@ export const userRouter = createTRPCRouter({
     })
     return res
   }),
-  getAllUsers: protectedProcedure.query(async ({ ctx }) => {
+  getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.user.findMany()
     return res
   }),
+  get: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const res = await ctx.db.query.user.findFirst({
+        where: (user, { eq }) => eq(user.id, input),
+      })
+      return res
+    }),
   deleteFakeUsers: rootProtectedProcedure.mutation(async () => {
     const res = await db
       .delete(user)

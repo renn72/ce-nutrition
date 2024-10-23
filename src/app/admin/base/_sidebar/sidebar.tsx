@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation'
 import * as React from 'react'
 
-import { Check, ChevronsUpDown, GalleryVerticalEnd, Search } from 'lucide-react'
+import { Check, ChevronsUpDown, GalleryVerticalEnd, LayoutDashboard, Search } from 'lucide-react'
 
 import {
   DropdownMenu,
@@ -41,6 +41,10 @@ const data = {
           title: 'Store',
           url: '/admin/base/store',
         },
+        {
+          title: 'Users',
+          url: '/admin/base/user',
+        },
       ],
     },
     {
@@ -66,39 +70,12 @@ const AdminBaseSidebar = ({ children }: Readonly<{ children: React.ReactNode }>)
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton
-                    size='lg'
-                    className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
-                  >
-                    <div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
-                      <GalleryVerticalEnd className='size-4' />
-                    </div>
-                    <div className='flex flex-col gap-0.5 leading-none'>
-                      <span className='font-semibold'>Documentation</span>
-                      <span className=''>v{selectedVersion}</span>
-                    </div>
-                    <ChevronsUpDown className='ml-auto' />
-                  </SidebarMenuButton>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className='w-[--radix-dropdown-menu-trigger-width]'
-                  align='start'
-                >
-                  {data.versions.map((version) => (
-                    <DropdownMenuItem
-                      key={version}
-                      onSelect={() => setSelectedVersion(version)}
-                    >
-                      v{version}{' '}
-                      {version === selectedVersion && (
-                        <Check className='ml-auto' />
-                      )}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className='flex items-end space-x-2 w-full py-1'>
+                <LayoutDashboard size={26} className='mb-1'/>
+                <h2 className='text-xl font-bold'>
+                  Dashboard
+                </h2>
+              </div>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>
