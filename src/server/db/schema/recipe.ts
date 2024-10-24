@@ -28,8 +28,38 @@ export const recipe = createTable('recipe', {
     hiddenAt: int('hidden_at', { mode: 'timestamp' }),
 })
 
+export const recipeToIngredient = createTable('recipe_to_ingredient', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  createdAt: int('created_at', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  recipeId: int('recipe_id').references(() => recipe.id, {
+    onDelete: 'cascade',
+  }),
+  ingredientId: int('ingredient_id').references(() => ingredient.id, {
+    onDelete: 'cascade',
+  }),
+  isProtein: int('is_protein', { mode: 'boolean' }),
+  isCarbohydrate: int('is_carbohydrate', { mode: 'boolean' }),
+  isFat: int('is_fat', { mode: 'boolean' }),
+})
+
+export const recipeToIngredientRelations = relations(
+  recipeToIngredient,
+  ({ one }) => ({
+    recipe: one(recipe, {
+      fields: [recipeToIngredient.recipeId],
+      references: [recipe.id],
+    }),
+    ingredient: one(ingredient, {
+      fields: [recipeToIngredient.ingredientId],
+      references: [ingredient.id],
+    }),
+  }),
+)
+
 export const recipeRelations = relations(recipe, ({ one, many }) => ({
   creator: one(user, { fields: [recipe.creatorId], references: [user.id] }),
-  ingredients: many(ingredient),
+  recipeToIngredient: many(recipeToIngredient),
 }))
 
