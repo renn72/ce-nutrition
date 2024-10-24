@@ -36,6 +36,10 @@ const data = {
       url: '#',
       items: [
         {
+          title: 'Recipes',
+          url: '/admin/base/recipe',
+        },
+        {
           title: 'Ingredients',
           url: '/admin/base/ingredient',
         },

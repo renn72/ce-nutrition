@@ -42,6 +42,7 @@ export const recipeToIngredient = createTable('recipe_to_ingredient', {
   isProtein: int('is_protein', { mode: 'boolean' }),
   isCarbohydrate: int('is_carbohydrate', { mode: 'boolean' }),
   isFat: int('is_fat', { mode: 'boolean' }),
+  note: text('note'),
 })
 
 export const recipeToIngredientRelations = relations(
