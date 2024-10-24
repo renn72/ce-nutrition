@@ -1,7 +1,5 @@
 'use client'
 
-import { api } from '@/trpc/react'
-
 import { Cross2Icon } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
 
@@ -19,8 +17,6 @@ export function DataTableToolbar<TData>({
   table,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0
-
-  const ctx = api.useUtils()
 
   return (
     <div className='flex items-center justify-between'>

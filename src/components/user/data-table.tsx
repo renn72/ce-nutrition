@@ -53,8 +53,6 @@ const DataTable = ({ users: data }: { users: GetAllUsers }) => {
     },
   ])
 
-  console.log(sorting)
-
   const table = useReactTable({
     data,
     columns,

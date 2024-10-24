@@ -1,4 +1,5 @@
 'use client'
+import { api } from '@/trpc/react'
 
 import { usePathname } from 'next/navigation'
 import * as React from 'react'
@@ -25,6 +26,7 @@ import {
   SidebarProvider,
   SidebarRail,
 } from '@/components/ui/sidebar'
+import Link from 'next/link'
 
 const data = {
   versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],
@@ -64,6 +66,12 @@ const AdminBaseSidebar = ({ children }: Readonly<{ children: React.ReactNode }>)
   const [selectedVersion, setSelectedVersion] = React.useState(data.versions[0])
   const pathname = usePathname()
 
+  const ctx = api.useUtils()
+
+  ctx.ingredient.getAll.ensureData()
+  ctx.groceryStore.getAll.ensureData()
+  ctx.user.getAll.ensureData()
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -92,7 +100,7 @@ const AdminBaseSidebar = ({ children }: Readonly<{ children: React.ReactNode }>)
                         asChild
                         isActive={pathname === item.url}
                       >
-                        <a href={item.url}>{item.title}</a>
+                        <Link href={item.url}>{item.title}</Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}

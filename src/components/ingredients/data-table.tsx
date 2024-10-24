@@ -48,8 +48,6 @@ const DataTable = ({ ingredients: data }: { ingredients: GetAllIngredients }) =>
     },
   ])
 
-  console.log(sorting)
-
   const table = useReactTable({
     data,
     columns,
