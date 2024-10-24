@@ -1,7 +1,7 @@
 'use client'
 
 import { formatDate } from '@/lib/utils'
-import type { GetGroceryStoreById } from '@/types'
+import type { GetRecipeById } from '@/types'
 import { ColumnDef, } from '@tanstack/react-table'
 
 import { Checkbox } from '@/components/ui/checkbox'
@@ -9,7 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const columns: ColumnDef<GetGroceryStoreById>[] = [
+export const columns: ColumnDef<GetRecipeById>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -81,18 +81,112 @@ export const columns: ColumnDef<GetGroceryStoreById>[] = [
     },
   },
   {
-    accessorKey: 'location',
+    accessorKey: 'notes',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Location'
+        title='Notes'
       />
     ),
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='w-[300px] truncate font-medium'>
-            {row.getValue('location')}
+          <span className='w-[200px] truncate font-medium'>
+            {row.getValue('notes')}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'recipeCategory',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title='Category'
+      />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className='flex space-x-2'>
+          <span className='w-[200px] truncate font-medium'>
+            {row.getValue('recipeCategory')}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'size',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title='Size'
+      />
+    ),
+    cell: ({ row }) => {
+      const recipe = row.original as GetRecipeById
+      const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
+        return acc + Number(curr?.serveSize)
+      }, 0)
+      return (
+        <div className='flex space-x-2'>
+          <span className='w-[90px] truncate font-medium'>
+            {size} {recipe?.recipeToIngredient[0]?.ingredient?.serveUnit}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'caloriesWFibre',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title='Calories w Fibre'
+      />
+    ),
+    cell: ({ row }) => {
+      const recipe = row.original as GetRecipeById
+      const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
+        const cal = Number(curr?.ingredient?.caloriesWFibre)
+        const scale = Number(curr?.ingredient?.serveSize) / Number(curr?.serveSize)
+
+        console.log({ curr,  cal, scale })
+
+        return acc + cal * scale
+      }, 0)
+      return (
+        <div className='flex space-x-2'>
+          <span className='w-[100px] truncate font-medium'>
+            {size?.toFixed(2)}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'caloriesWOFibre',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title='Calories wo Fibre'
+      />
+    ),
+    cell: ({ row }) => {
+      const recipe = row.original as GetRecipeById
+      const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
+        const cal = Number(curr?.ingredient?.caloriesWOFibre)
+        const scale = Number(curr?.ingredient?.serveSize) / Number(curr?.serveSize)
+
+        console.log({ curr,  cal, scale })
+
+        return acc + cal * scale
+      }, 0)
+      return (
+        <div className='flex space-x-2'>
+          <span className='w-[100px] truncate font-medium'>
+            {size?.toFixed(2)}
           </span>
         </div>
       )

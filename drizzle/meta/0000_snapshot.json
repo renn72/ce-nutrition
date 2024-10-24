@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "7ba4ca68-39cf-4acd-8a64-506b7e8d04a0",
+  "id": "d4c46b0c-ff30-4b43-8c2e-4538436459c8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "ce-nu_grocery_store": {
@@ -145,15 +145,15 @@
           "notNull": false,
           "autoincrement": false
         },
-        "energy_with_dietary_fibre": {
-          "name": "energy_with_dietary_fibre",
+        "calories_w_fibre": {
+          "name": "calories_w_fibre",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "energy_without_dietary_fibre": {
-          "name": "energy_without_dietary_fibre",
+        "calories_wo_fibre": {
+          "name": "calories_wo_fibre",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -278,6 +278,20 @@
         "ingredient_id": {
           "name": "ingredient_id",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "energy_with_dietary_fibre": {
+          "name": "energy_with_dietary_fibre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "energy_without_dietary_fibre": {
+          "name": "energy_without_dietary_fibre",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -1917,6 +1931,244 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "ce-nu_recipe": {
+      "name": "ce-nu_recipe",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "creator_id": {
+          "name": "creator_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "recipe_category": {
+          "name": "recipe_category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "favourite_at": {
+          "name": "favourite_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "hidden_at": {
+          "name": "hidden_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "ce-nu_recipe_creator_id_ce-nu_user_id_fk": {
+          "name": "ce-nu_recipe_creator_id_ce-nu_user_id_fk",
+          "tableFrom": "ce-nu_recipe",
+          "tableTo": "ce-nu_user",
+          "columnsFrom": [
+            "creator_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "ce-nu_recipe_to_ingredient": {
+      "name": "ce-nu_recipe_to_ingredient",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        },
+        "recipe_id": {
+          "name": "recipe_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "ingredient_id": {
+          "name": "ingredient_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "serve": {
+          "name": "serve",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "serve_unit": {
+          "name": "serve_unit",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "is_protein": {
+          "name": "is_protein",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "is_carbohydrate": {
+          "name": "is_carbohydrate",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "is_fat": {
+          "name": "is_fat",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "note": {
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "ce-nu_recipe_to_ingredient_recipe_id_ce-nu_recipe_id_fk": {
+          "name": "ce-nu_recipe_to_ingredient_recipe_id_ce-nu_recipe_id_fk",
+          "tableFrom": "ce-nu_recipe_to_ingredient",
+          "tableTo": "ce-nu_recipe",
+          "columnsFrom": [
+            "recipe_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "ce-nu_recipe_to_ingredient_ingredient_id_ce-nu_ingredient_id_fk": {
+          "name": "ce-nu_recipe_to_ingredient_ingredient_id_ce-nu_ingredient_id_fk",
+          "tableFrom": "ce-nu_recipe_to_ingredient",
+          "tableTo": "ce-nu_ingredient",
+          "columnsFrom": [
+            "ingredient_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "ce-nu_settings": {
+      "name": "ce-nu_settings",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "is_calories_with_fibre": {
+          "name": "is_calories_with_fibre",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "ce-nu_account": {
       "name": "ce-nu_account",
       "columns": {
@@ -2267,6 +2519,14 @@
           "autoincrement": false,
           "default": false
         },
+        "is_trainer": {
+          "name": "is_trainer",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": false
+        },
         "is_root": {
           "name": "is_root",
           "type": "integer",
@@ -2330,6 +2590,56 @@
         }
       },
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "ce-nu_user_to_trainer": {
+      "name": "ce-nu_user_to_trainer",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "trainer_id": {
+          "name": "trainer_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "ce-nu_user_to_trainer_user_id_ce-nu_user_id_fk": {
+          "name": "ce-nu_user_to_trainer_user_id_ce-nu_user_id_fk",
+          "tableFrom": "ce-nu_user_to_trainer",
+          "tableTo": "ce-nu_user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "ce-nu_user_to_trainer_trainer_id_ce-nu_user_id_fk": {
+          "name": "ce-nu_user_to_trainer_trainer_id_ce-nu_user_id_fk",
+          "tableFrom": "ce-nu_user_to_trainer",
+          "tableTo": "ce-nu_user",
+          "columnsFrom": [
+            "trainer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },

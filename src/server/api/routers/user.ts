@@ -210,11 +210,4 @@ export const userRouter = createTRPCRouter({
     })
     return res
   }),
-  deleteFakeUsers: rootProtectedProcedure.mutation(async () => {
-    const res = await db
-      .delete(user)
-      .where(eq(user.isFake, true))
-      .returning({ clerkId: user.clerkId })
-    return res
-  }),
 })

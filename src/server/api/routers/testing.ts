@@ -64,10 +64,8 @@ export const testRouter = createTRPCRouter({
           publicFoodKey: row['Public Food Key'],
           classification: row['Classification'],
           foodName: row['Food name'],
-          energyWithDietaryFibre:
-            row['Energy with dietary fibre, equated \n(kJ)'],
-          energyWithoutDietaryFibre:
-            row['Energy, without dietary fibre, equated \n(kJ)'],
+          caloriesWFibre: (Number(row['Energy with dietary fibre, equated \n(kJ)'])*0.239).toFixed(2),
+          caloriesWOFibre: (Number(row['Energy, without dietary fibre, equated \n(kJ)'])*0.239).toFixed(2),
           protein: row['Protein \n(g)'],
           fatTotal: row['Fat, total \n(g)'],
           totalDietaryFibre: row['Total dietary fibre \n(g)'],
@@ -93,6 +91,10 @@ export const testRouter = createTRPCRouter({
           ingredientId:
             r.find((i) => i.publicFoodKey == row['Public Food Key'])?.id ||
             null,
+          energyWithDietaryFibre:
+            row['Energy with dietary fibre, equated \n(kJ)'],
+          energyWithoutDietaryFibre:
+            row['Energy, without dietary fibre, equated \n(kJ)'],
           addedSugars: row['Added sugars (g)'],
           freeSugars: row['Free sugars \n(g)'],
           moisture: row['Moisture (water) \n(g)'],
@@ -367,10 +369,8 @@ export const testRouter = createTRPCRouter({
           publicFoodKey: row['Public Food Key'],
           classification: row['Classification'],
           foodName: row['Food Name'],
-          energyWithDietaryFibre:
-            row['Energy with dietary fibre, equated \n(kJ)'],
-          energyWithoutDietaryFibre:
-            row['Energy, without dietary fibre, equated \n(kJ)'],
+          caloriesWFibre: (Number(row['Energy with dietary fibre, equated \n(kJ)'])*0.239).toFixed(2),
+          caloriesWOFibre: (Number(row['Energy, without dietary fibre, equated \n(kJ)'])*0.239).toFixed(2),
           protein: row['Protein \n(g)'],
           fatTotal: row['Fat, total \n(g)'],
           totalDietaryFibre: row['Total dietary fibre \n(g)'],
@@ -396,6 +396,10 @@ export const testRouter = createTRPCRouter({
           ingredientId:
             r.find((i) => i.publicFoodKey == row['Public Food Key'])?.id ||
             null,
+          energyWithDietaryFibre:
+            row['Energy with dietary fibre, equated \n(kJ)'],
+          energyWithoutDietaryFibre:
+            row['Energy, without dietary fibre, equated \n(kJ)'],
           addedSugars: row['Added sugars (g)'],
           freeSugars: row['Free sugars \n(g)'],
           moisture: row['Moisture (water) \n(g)'],

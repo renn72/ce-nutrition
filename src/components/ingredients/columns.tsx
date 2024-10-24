@@ -63,6 +63,16 @@ export const columns: ColumnDef<GetIngredientById>[] = [
     cell: ({ row }) => <div className='w-min'>{row.getValue('id')}</div>,
   },
   {
+    accessorKey: 'publicFoodKey',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title='Food Key'
+      />
+    ),
+    cell: ({ row }) => <div className='w-min'>{row.getValue('publicFoodKey')}</div>,
+  },
+  {
     accessorKey: 'createdAt',
     header: ({ column }) => (
       <DataTableColumnHeader
@@ -145,11 +155,11 @@ export const columns: ColumnDef<GetIngredientById>[] = [
     },
   },
   {
-    accessorKey: 'energyWithDietaryFibre',
+    accessorKey: 'caloriesWFibre',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Energy w Fibre'
+        title='Calories w Fibre'
       />
     ),
     sortingFn: floatSortingFn,
@@ -157,25 +167,25 @@ export const columns: ColumnDef<GetIngredientById>[] = [
       return (
         <div className='flex space-x-2'>
           <span className='max-w-[100px] truncate font-medium'>
-            {row.getValue('energyWithDietaryFibre')}kJ
+            {row.getValue('caloriesWFibre')}
           </span>
         </div>
       )
     },
   },
   {
-    accessorKey: 'energyWithoutDietaryFibre',
+    accessorKey: 'caloriesWOFibre',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Energy w/o Fibre'
+        title='Calories w/o Fibre'
       />
     ),
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
           <span className='max-w-[100px] truncate font-medium'>
-            {row.getValue('energyWithoutDietaryFibre')}kJ
+            {row.getValue('caloriesWOFibre')}
           </span>
         </div>
       )

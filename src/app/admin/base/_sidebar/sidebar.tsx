@@ -70,12 +70,6 @@ const AdminBaseSidebar = ({ children }: Readonly<{ children: React.ReactNode }>)
   const [selectedVersion, setSelectedVersion] = React.useState(data.versions[0])
   const pathname = usePathname()
 
-  const ctx = api.useUtils()
-
-  ctx.ingredient.getAll.ensureData()
-  ctx.groceryStore.getAll.ensureData()
-  ctx.user.getAll.ensureData()
-
   return (
     <SidebarProvider>
       <Sidebar>

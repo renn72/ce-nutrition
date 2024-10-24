@@ -20,8 +20,8 @@ CREATE TABLE `ce-nu_ingredient` (
 	`public_food_key` text,
 	`classification` text,
 	`food_name` text,
-	`energy_with_dietary_fibre` text,
-	`energy_without_dietary_fibre` text,
+	`calories_w_fibre` text,
+	`calories_wo_fibre` text,
 	`protein` text,
 	`fat_total` text,
 	`total_dietary_fibre` text,
@@ -38,6 +38,8 @@ CREATE TABLE `ce-nu_ingredient_addition_one` (
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer,
 	`ingredient_id` integer,
+	`energy_with_dietary_fibre` text,
+	`energy_without_dietary_fibre` text,
 	`added_sugars` text,
 	`free_sugars` text,
 	`moisture` text,
@@ -272,6 +274,42 @@ CREATE TABLE `ce-nu_notification` (
 	FOREIGN KEY (`user_id`) REFERENCES `ce-nu_user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
+CREATE TABLE `ce-nu_recipe` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`updated_at` integer,
+	`name` text,
+	`description` text,
+	`image` text,
+	`notes` text,
+	`creator_id` text,
+	`recipe_category` text,
+	`favourite_at` integer,
+	`deleted_at` integer,
+	`hidden_at` integer,
+	FOREIGN KEY (`creator_id`) REFERENCES `ce-nu_user`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE TABLE `ce-nu_recipe_to_ingredient` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`recipe_id` integer,
+	`ingredient_id` integer,
+	`serve` text,
+	`serve_unit` text,
+	`is_protein` integer,
+	`is_carbohydrate` integer,
+	`is_fat` integer,
+	`note` text,
+	FOREIGN KEY (`recipe_id`) REFERENCES `ce-nu_recipe`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`ingredient_id`) REFERENCES `ce-nu_ingredient`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `ce-nu_settings` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`is_calories_with_fibre` integer
+);
+--> statement-breakpoint
 CREATE TABLE `ce-nu_account` (
 	`user_id` text(255) NOT NULL,
 	`type` text(255) NOT NULL,
@@ -322,10 +360,18 @@ CREATE TABLE `ce-nu_user` (
 	`password` text,
 	`image` text,
 	`is_fake` integer DEFAULT false,
+	`is_trainer` integer DEFAULT false,
 	`is_root` integer DEFAULT false,
 	`is_creator` integer DEFAULT false,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer
+);
+--> statement-breakpoint
+CREATE TABLE `ce-nu_user_to_trainer` (
+	`user_id` text NOT NULL,
+	`trainer_id` text NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `ce-nu_user`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`trainer_id`) REFERENCES `ce-nu_user`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `ce-nu_verification_token` (

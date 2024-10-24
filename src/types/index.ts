@@ -49,3 +49,6 @@ export type GetGroceryStoreById = RouterOutputs['groceryStore']['get']
 
 export type GetAllUsers = RouterOutputs['user']['getAll']
 export type GetUserById = RouterOutputs['user']['get']
+
+export type GetAllRecipes = RouterOutputs['recipe']['getAll']
+export type GetRecipeById = RouterOutputs['recipe']['get']

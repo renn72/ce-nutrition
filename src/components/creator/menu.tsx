@@ -23,7 +23,7 @@ export const CreatorMenu = () => {
       toast.success('Created')
     },
   })
-  const { mutate: deleteAllRecipe } = api.recipe.deleteAll.useMutation({
+  const { mutate: deleteAllRecipes } = api.recipe.deleteAll.useMutation({
     onSuccess: () => {
       ctx.invalidate()
       toast.success('Deleted')
@@ -81,19 +81,67 @@ export const CreatorMenu = () => {
   const { data: allIngredients } = api.ingredient.getAll.useQuery()
 
   const generateRecipes = () => {
+    if (!allIngredients) return
     createRecipe({
-      name: 'Test',
-      description: 'Test',
-      image: 'https://picsum.photos/id/10/200/300',
+      name: 'Chicken and Rice',
+      description: 'yum yum',
+      image: '',
       notes: 'Test',
-      recipeCategory: 'Test',
+      recipeCategory: 'lunch',
       ingredients: [
         {
-          ingredientId: 1,
-          isProtein: true,
+          ingredientId: allIngredients.find(i => i.publicFoodKey == 'F007682')?.id || 0,
+          isProtein: false,
           isCarbohydrate: true,
-          isFat: true,
+          isFat: false,
           note: 'Test',
+          serveSize: '90',
+          serveUnit: 'grams',
+        },
+        {
+          ingredientId: allIngredients.find(i => i.publicFoodKey == 'F002594')?.id || 0,
+          isProtein: true,
+          isCarbohydrate: false,
+          isFat: false,
+          note: 'Test',
+          serveSize: '140',
+          serveUnit: 'grams',
+        },
+      ],
+    })
+    createRecipe({
+      name: 'Ham breadroll',
+      description: 'yum yum',
+      image: '',
+      notes: 'Test',
+      recipeCategory: 'lunch',
+      ingredients: [
+        {
+          ingredientId: allIngredients.find(i => i.publicFoodKey == 'F001353')?.id || 0,
+          isProtein: false,
+          isCarbohydrate: true,
+          isFat: false,
+          note: 'Test',
+          serveSize: '90',
+          serveUnit: 'grams',
+        },
+        {
+          ingredientId: allIngredients.find(i => i.publicFoodKey == 'F004299')?.id || 0,
+          isProtein: true,
+          isCarbohydrate: false,
+          isFat: false,
+          note: 'Test',
+          serveSize: '55',
+          serveUnit: 'grams',
+        },
+        {
+          ingredientId: allIngredients.find(i => i.publicFoodKey == 'F003729')?.id || 0,
+          isProtein: true,
+          isCarbohydrate: false,
+          isFat: true,
+          note: '2 whole eggs',
+          serveSize: '110',
+          serveUnit: 'grams',
         },
       ],
     })
@@ -134,6 +182,8 @@ export const CreatorMenu = () => {
                 lastName: 'Warner',
                 birthDate: new Date(1980, 0, 1),
                 isCreator: true,
+                isRoot: true,
+                isTrainer: true,
               })
             }}
           >
@@ -194,6 +244,26 @@ export const CreatorMenu = () => {
             }}
           >
             deleteAllIngredients
+          </Button>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Button
+            variant='ghost'
+            onClick={() => {
+              generateRecipes()
+            }}
+          >
+            Gen Recipes
+          </Button>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Button
+            variant='ghost'
+            onClick={() => {
+              deleteAllRecipes()
+            }}
+          >
+            deleteAllRecipes
           </Button>
         </DropdownMenuItem>
       </DropdownMenuContent>

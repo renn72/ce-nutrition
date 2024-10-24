@@ -5,7 +5,16 @@ import { z } from 'zod'
 
 export const recipeRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
-    const res = await ctx.db.query.recipe.findMany()
+    const res = await ctx.db.query.recipe.findMany({
+      orderBy: [desc(recipe.createdAt)],
+      with: {
+        recipeToIngredient: {
+          with: {
+            ingredient: true,
+          },
+        },
+      },
+    })
     return res
   }),
   get: protectedProcedure
@@ -13,6 +22,13 @@ export const recipeRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       const res = await ctx.db.query.recipe.findFirst({
         where: (recipe, { eq }) => eq(recipe.id, input.id),
+        with: {
+          recipeToIngredient: {
+            with: {
+              ingredient: true,
+            },
+          },
+        },
       })
       return res
     }),
@@ -31,6 +47,8 @@ export const recipeRouter = createTRPCRouter({
             isCarbohydrate: z.boolean(),
             isFat: z.boolean(),
             note: z.string(),
+            serveSize: z.string(),
+            serveUnit: z.string(),
           }),
         ),
       }),
@@ -59,6 +77,8 @@ export const recipeRouter = createTRPCRouter({
             isCarbohydrate: ingredient.isCarbohydrate,
             isFat: ingredient.isFat,
             note: ingredient.note,
+            serveSize: ingredient.serveSize,
+            serveUnit: ingredient.serveUnit,
           })),
         )
         .returning({ id: recipeToIngredient.id })

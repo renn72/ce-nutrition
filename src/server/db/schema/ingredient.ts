@@ -2,11 +2,10 @@ import { relations, sql } from 'drizzle-orm'
 import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
 import { z } from 'zod'
 
-import { user } from './user'
 import { recipeToIngredient } from './recipe'
+import { user } from './user'
 
 export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
-
 
 export const ingredient = createTable(
   'ingredient',
@@ -29,8 +28,8 @@ export const ingredient = createTable(
     publicFoodKey: text('public_food_key'),
     classification: text('classification'),
     foodName: text('food_name'),
-    energyWithDietaryFibre: text('energy_with_dietary_fibre'),
-    energyWithoutDietaryFibre: text('energy_without_dietary_fibre'),
+    caloriesWFibre: text('calories_w_fibre'),
+    caloriesWOFibre: text('calories_wo_fibre'),
     protein: text('protein'),
     fatTotal: text('fat_total'),
     totalDietaryFibre: text('total_dietary_fibre'),
@@ -61,8 +60,10 @@ export const ingredientAdditionOne = createTable('ingredient_addition_one', {
   ingredientId: int('ingredient_id').references(() => ingredient.id, {
     onDelete: 'cascade',
   }),
-    addedSugars: text('added_sugars'),
-    freeSugars: text('free_sugars'),
+  energyWithDietaryFibre: text('energy_with_dietary_fibre'),
+  energyWithoutDietaryFibre: text('energy_without_dietary_fibre'),
+  addedSugars: text('added_sugars'),
+  freeSugars: text('free_sugars'),
   moisture: text('moisture'),
   nitrogen: text('nitrogen'),
   alcohol: text('alcohol'),
