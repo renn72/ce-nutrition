@@ -3,7 +3,7 @@ import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
-export const groceryStoreRouter = createTRPCRouter({
+export const recipeRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.recipe.findMany()
     return res
@@ -37,11 +37,32 @@ export const groceryStoreRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const userId = ctx.session.user.id
-      const res = await ctx.db.insert(recipe).values({
-        ...input,
-        creatorId: userId,
-      })
-      return res
+      const { ingredients, ...data } = input
+      const res = await ctx.db
+        .insert(recipe)
+        .values({
+          ...data,
+          creatorId: userId,
+        })
+        .returning({ id: recipe.id })
+
+      const resId = res?.[0]?.id
+      if (!resId) return res
+
+      const ingredientsRes = await ctx.db
+        .insert(recipeToIngredient)
+        .values(
+          ingredients.map((ingredient) => ({
+            recipeId: resId,
+            ingredientId: ingredient.ingredientId,
+            isProtein: ingredient.isProtein,
+            isCarbohydrate: ingredient.isCarbohydrate,
+            isFat: ingredient.isFat,
+            note: ingredient.note,
+          })),
+        )
+        .returning({ id: recipeToIngredient.id })
+      return { res, ingredientsRes }
     }),
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))
@@ -49,4 +70,8 @@ export const groceryStoreRouter = createTRPCRouter({
       const res = await ctx.db.delete(recipe).where(eq(recipe.id, input.id))
       return res
     }),
+  deleteAll: protectedProcedure.mutation(async ({ ctx }) => {
+    const res = await ctx.db.delete(recipe)
+    return res
+  }),
 })

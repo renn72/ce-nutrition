@@ -9,7 +9,6 @@ import { DataTableSkeleton } from '@/components/grocery-store/data-table-skeleto
 export default function Home() {
 
   const { data, isLoading } = api.groceryStore.getAll.useQuery()
-  console.log('store', data)
   return (
     <div className='flex min-h-screen flex-col items-center w-full'>
       {isLoading ? (

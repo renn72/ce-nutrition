@@ -17,6 +17,18 @@ import {
 
 export const CreatorMenu = () => {
   const ctx = api.useUtils()
+  const { mutate: createRecipe } = api.recipe.create.useMutation({
+    onSuccess: () => {
+      ctx.invalidate()
+      toast.success('Created')
+    },
+  })
+  const { mutate: deleteAllRecipe } = api.recipe.deleteAll.useMutation({
+    onSuccess: () => {
+      ctx.invalidate()
+      toast.success('Deleted')
+    },
+  })
   const { mutate: sync } = api.user.sync.useMutation({
     onSuccess: () => {
       ctx.invalidate()
@@ -65,6 +77,28 @@ export const CreatorMenu = () => {
       toast.success('Deleted')
     },
   })
+
+  const { data: allIngredients } = api.ingredient.getAll.useQuery()
+
+  const generateRecipes = () => {
+    createRecipe({
+      name: 'Test',
+      description: 'Test',
+      image: 'https://picsum.photos/id/10/200/300',
+      notes: 'Test',
+      recipeCategory: 'Test',
+      ingredients: [
+        {
+          ingredientId: 1,
+          isProtein: true,
+          isCarbohydrate: true,
+          isFat: true,
+          note: 'Test',
+        },
+      ],
+    })
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -107,12 +141,18 @@ export const CreatorMenu = () => {
           </Button>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Button variant='ghost' onClick={() => createFakeUsers()}>
+          <Button
+            variant='ghost'
+            onClick={() => createFakeUsers()}
+          >
             GenFake
           </Button>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Button variant='ghost' onClick={() => deleteFakeUsers()}>
+          <Button
+            variant='ghost'
+            onClick={() => deleteFakeUsers()}
+          >
             DeleteFake
           </Button>
         </DropdownMenuItem>
