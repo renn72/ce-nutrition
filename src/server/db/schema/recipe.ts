@@ -39,6 +39,8 @@ export const recipeToIngredient = createTable('recipe_to_ingredient', {
   ingredientId: int('ingredient_id').references(() => ingredient.id, {
     onDelete: 'cascade',
   }),
+  serveSize: text('serve'),
+  serveUnit: text('serve_unit'),
   isProtein: int('is_protein', { mode: 'boolean' }),
   isCarbohydrate: int('is_carbohydrate', { mode: 'boolean' }),
   isFat: int('is_fat', { mode: 'boolean' }),

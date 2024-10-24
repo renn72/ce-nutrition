@@ -55,8 +55,8 @@ export const user = createTable(
 )
 
 export const userToTrainer = createTable('user_to_trainer', {
-  userId: text('user_id').references(() => user.id),
-  trainerId: text('trainer_id').references(() => user.id),
+  userId: text('user_id').notNull().references(() => user.id),
+  trainerId: text('trainer_id').notNull().references(() => user.id),
 })
 
 export const role = createTable('role', {
@@ -145,8 +145,8 @@ export const userRelations = relations(user, ({ one, many }) => ({
   roles: many(role),
   notifications: many(notification),
   accounts: many(account),
-  trainers: many(userToTrainer),
-  clients: many(userToTrainer),
+  trainers: many(userToTrainer, { relationName: 'trainers' }),
+  clients: many(userToTrainer, { relationName: 'clients' }),
 }))
 
 export const userToTrainerRelations = relations(
@@ -155,10 +155,12 @@ export const userToTrainerRelations = relations(
     user: one(user, {
       fields: [userToTrainer.userId],
       references: [user.id],
+      relationName: 'clients',
     }),
     trainer: one(user, {
       fields: [userToTrainer.trainerId],
       references: [user.id],
+      relationName: 'trainers',
     }),
   }),
 )
