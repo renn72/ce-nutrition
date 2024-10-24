@@ -73,7 +73,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='w-[300px] truncate font-medium'>
+          <span className='w-[210px] truncate font-medium'>
             {row.getValue('name')}
           </span>
         </div>
@@ -91,7 +91,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='w-[200px] truncate font-medium'>
+          <span className='w-[100px] truncate font-medium'>
             {row.getValue('notes')}
           </span>
         </div>
@@ -109,7 +109,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='w-[200px] truncate font-medium'>
+          <span className='w-[100px] truncate font-medium'>
             {row.getValue('recipeCategory')}
           </span>
         </div>
@@ -177,6 +177,87 @@ export const columns: ColumnDef<GetRecipeById>[] = [
       const recipe = row.original as GetRecipeById
       const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
         const cal = Number(curr?.ingredient?.caloriesWOFibre)
+        const scale = Number(curr?.ingredient?.serveSize) / Number(curr?.serveSize)
+
+        console.log({ curr,  cal, scale })
+
+        return acc + cal * scale
+      }, 0)
+      return (
+        <div className='flex space-x-2'>
+          <span className='w-[100px] truncate font-medium'>
+            {size?.toFixed(2)}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'protien',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title='Protien'
+      />
+    ),
+    cell: ({ row }) => {
+      const recipe = row.original as GetRecipeById
+      const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
+        const cal = Number(curr?.ingredient?.protein)
+        const scale = Number(curr?.ingredient?.serveSize) / Number(curr?.serveSize)
+
+        console.log({ curr,  cal, scale })
+
+        return acc + cal * scale
+      }, 0)
+      return (
+        <div className='flex space-x-2'>
+          <span className='w-[100px] truncate font-medium'>
+            {size?.toFixed(2)}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'carbs',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title='Carbohydrates'
+      />
+    ),
+    cell: ({ row }) => {
+      const recipe = row.original as GetRecipeById
+      const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
+        const cal = Number(curr?.ingredient?.availableCarbohydrateWithoutSugarAlcohols)
+        const scale = Number(curr?.ingredient?.serveSize) / Number(curr?.serveSize)
+
+        console.log({ curr,  cal, scale })
+
+        return acc + cal * scale
+      }, 0)
+      return (
+        <div className='flex space-x-2'>
+          <span className='w-[100px] truncate font-medium'>
+            {size?.toFixed(2)}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'fat',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title='Fat'
+      />
+    ),
+    cell: ({ row }) => {
+      const recipe = row.original as GetRecipeById
+      const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
+        const cal = Number(curr?.ingredient?.fatTotal)
         const scale = Number(curr?.ingredient?.serveSize) / Number(curr?.serveSize)
 
         console.log({ curr,  cal, scale })

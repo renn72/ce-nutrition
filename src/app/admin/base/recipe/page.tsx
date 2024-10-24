@@ -14,13 +14,13 @@ export default function Home() {
     <div className='flex min-h-screen flex-col items-center w-full'>
       {isLoading ? (
         <DataTableSkeleton
-          className='max-w-screen-xl'
+          className='max-w-screen-2xl'
           columnCount={6}
           rowCount={20}
         />
       ) : null}
       {data ? (
-        <div className='max-w-screen-xl min-w-screen-xl py-6'>
+        <div className='max-w-screen-2xl min-w-screen-xl py-6'>
           <DataTable recipe={data} />
         </div>
       ) : null}
