@@ -1,14 +1,17 @@
+'use client'
+
 import { api } from '@/trpc/react'
 
 import { useState } from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusCircle } from 'lucide-react'
-import { useForm } from 'react-hook-form'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -27,9 +30,11 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 
+import { FormDialogIngredient } from './form-dialog-ingredient'
+
 export const dynamic = 'force-dynamic'
 
-const formSchema = z.object({
+export const formSchema = z.object({
   name: z.string().min(1),
   description: z.string(),
   image: z.string(),
@@ -37,7 +42,7 @@ const formSchema = z.object({
   recipeCategory: z.string(),
   ingredients: z.array(
     z.object({
-      ingredientId: z.number(),
+      ingredientId: z.number().nullable(),
       isProtein: z.boolean(),
       isCarbohydrate: z.boolean(),
       isFat: z.boolean(),
@@ -73,8 +78,12 @@ const FormDialog = () => {
       ingredients: [],
     },
   })
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: 'ingredients',
+  })
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    createRecipe(data)
+    console.log(data)
   }
 
   return (
@@ -85,7 +94,7 @@ const FormDialog = () => {
       <DialogTrigger asChild>
         <PlusCircle className='h-6 w-6 text-muted-foreground hover:text-foreground hover:scale-110 active:scale-125 transition-transform cursor-pointer' />
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className='max-w-xl w-full'>
         <DialogHeader>
           <DialogTitle>Create New Recipe</DialogTitle>
         </DialogHeader>
@@ -127,6 +136,33 @@ const FormDialog = () => {
                   </FormItem>
                 )}
               />
+              <div className='flex flex-col gap-4'>
+                <h2>Ingredients</h2>
+                {fields.map((ingredient, index) => (
+                  <FormDialogIngredient
+                    key={index}
+                    index={index}
+                    form={form}
+                  />
+                ))}
+                <PlusCircle
+                  size={24}
+                  className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-125 transition-transform cursor-pointer'
+                  onClick={() =>
+                    append({
+                      ingredientId: 0,
+                      isProtein: false,
+                      isCarbohydrate: false,
+                      isFat: false,
+                      serveSize: '',
+                      serveUnit: '',
+                      index: 0,
+                      isAlternate: false,
+                      note: '',
+                    })
+                  }
+                />
+              </div>
               <FormField
                 control={form.control}
                 name='notes'

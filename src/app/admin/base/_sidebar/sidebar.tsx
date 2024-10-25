@@ -1,11 +1,26 @@
 'use client'
+
 import { api } from '@/trpc/react'
 
-import { usePathname } from 'next/navigation'
 import * as React from 'react'
 
-import { Check, ChevronsUpDown, GalleryVerticalEnd, LayoutDashboard, Search } from 'lucide-react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
+import {
+  Check,
+  ChevronsUpDown,
+  GalleryVerticalEnd,
+  ChevronRight,
+  LayoutDashboard,
+  Search,
+} from 'lucide-react'
+
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,10 +38,11 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
   SidebarProvider,
   SidebarRail,
 } from '@/components/ui/sidebar'
-import Link from 'next/link'
 
 const data = {
   versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],
@@ -38,6 +54,12 @@ const data = {
         {
           title: 'Recipes',
           url: '/admin/base/recipe',
+          items: [
+            {
+              title: 'Create',
+              url: '/admin/base/recipe/create',
+            },
+          ],
         },
         {
           title: 'Ingredients',
@@ -66,7 +88,9 @@ const data = {
   ],
 }
 
-const AdminBaseSidebar = ({ children }: Readonly<{ children: React.ReactNode }>) => {
+const AdminBaseSidebar = ({
+  children,
+}: Readonly<{ children: React.ReactNode }>) => {
   const [selectedVersion, setSelectedVersion] = React.useState(data.versions[0])
   const pathname = usePathname()
 
@@ -77,10 +101,11 @@ const AdminBaseSidebar = ({ children }: Readonly<{ children: React.ReactNode }>)
           <SidebarMenu>
             <SidebarMenuItem>
               <div className='flex items-end space-x-2 w-full py-1'>
-                <LayoutDashboard size={26} className='mb-1'/>
-                <h2 className='text-xl font-bold'>
-                  Dashboard
-                </h2>
+                <LayoutDashboard
+                  size={26}
+                  className='mb-1'
+                />
+                <h2 className='text-xl font-bold'>Dashboard</h2>
               </div>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -93,14 +118,43 @@ const AdminBaseSidebar = ({ children }: Readonly<{ children: React.ReactNode }>)
               <SidebarGroupContent>
                 <SidebarMenu>
                   {item.items.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={pathname === item.url}
-                      >
-                        <Link href={item.url}>{item.title}</Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
+                    <>
+                      {item.items ? (
+                        <Collapsible
+                          key={item.title}
+                          className='group/collapsible'
+                        >
+                          <SidebarMenuItem>
+                            <CollapsibleTrigger asChild>
+                              <SidebarMenuButton
+                                isActive={pathname === item.url}
+                              >
+                                <Link href={item.url}>{item.title}</Link>
+                    <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                              </SidebarMenuButton>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent>
+                              <SidebarMenuSub>
+                                {item.items.map((item) => (
+                                  <SidebarMenuSubItem key={item.title}>
+                                    <Link href={item.url}>{item.title}</Link>
+                                  </SidebarMenuSubItem>
+                                ))}
+                              </SidebarMenuSub>
+                            </CollapsibleContent>
+                          </SidebarMenuItem>
+                        </Collapsible>
+                      ) : (
+                        <SidebarMenuItem key={item.title}>
+                          <SidebarMenuButton
+                            asChild
+                            isActive={pathname === item.url}
+                          >
+                            <a href={item.url}>{item.title}</a>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      )}
+                    </>
                   ))}
                 </SidebarMenu>
               </SidebarGroupContent>
@@ -109,11 +163,7 @@ const AdminBaseSidebar = ({ children }: Readonly<{ children: React.ReactNode }>)
         </SidebarContent>
         <SidebarRail />
       </Sidebar>
-      <SidebarInset
-        className='w-full'
-      >
-        {children}
-      </SidebarInset>
+      <SidebarInset className='w-full'>{children}</SidebarInset>
     </SidebarProvider>
   )
 }

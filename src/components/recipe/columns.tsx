@@ -151,9 +151,6 @@ export const columns: ColumnDef<GetRecipeById>[] = [
       const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
         const cal = Number(curr?.ingredient?.caloriesWFibre)
         const scale = Number(curr?.ingredient?.serveSize) / Number(curr?.serveSize)
-
-        console.log({ curr,  cal, scale })
-
         return acc + cal * scale
       }, 0)
       return (
@@ -178,9 +175,6 @@ export const columns: ColumnDef<GetRecipeById>[] = [
       const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
         const cal = Number(curr?.ingredient?.caloriesWOFibre)
         const scale = Number(curr?.ingredient?.serveSize) / Number(curr?.serveSize)
-
-        console.log({ curr,  cal, scale })
-
         return acc + cal * scale
       }, 0)
       return (
@@ -205,9 +199,6 @@ export const columns: ColumnDef<GetRecipeById>[] = [
       const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
         const cal = Number(curr?.ingredient?.protein)
         const scale = Number(curr?.ingredient?.serveSize) / Number(curr?.serveSize)
-
-        console.log({ curr,  cal, scale })
-
         return acc + cal * scale
       }, 0)
       return (
@@ -232,9 +223,6 @@ export const columns: ColumnDef<GetRecipeById>[] = [
       const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
         const cal = Number(curr?.ingredient?.availableCarbohydrateWithoutSugarAlcohols)
         const scale = Number(curr?.ingredient?.serveSize) / Number(curr?.serveSize)
-
-        console.log({ curr,  cal, scale })
-
         return acc + cal * scale
       }, 0)
       return (
@@ -259,9 +247,6 @@ export const columns: ColumnDef<GetRecipeById>[] = [
       const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
         const cal = Number(curr?.ingredient?.fatTotal)
         const scale = Number(curr?.ingredient?.serveSize) / Number(curr?.serveSize)
-
-        console.log({ curr,  cal, scale })
-
         return acc + cal * scale
       }, 0)
       return (
