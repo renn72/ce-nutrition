@@ -14,6 +14,7 @@ import {
   ComboboxOptions,
 } from '@headlessui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { CrossCircledIcon } from '@radix-ui/react-icons'
 import {
   Check,
   CheckIcon,
@@ -82,68 +83,90 @@ const FormRecipeIngredient = ({
   const filteredIngredients =
     query === ''
       ? allIngredients
-      : allIngredients
-          .filter((i) => {
-            return i.foodName?.toLowerCase().includes(query.toLowerCase())
-          })
+      : allIngredients.filter((i) => {
+          return i.foodName?.toLowerCase().includes(query.toLowerCase())
+        })
 
-  console.log('filteredPeople', filteredIngredients)
+  const id = form.watch(`ingredients.${index}.ingredientId`)
+  console.log('id', selected)
   return (
     <div
       key={index}
       className='flex flex-col gap-4'
     >
-      <FormField
-        control={form.control}
-        name={`ingredients.${index}.ingredientId`}
-        render={({ field }) => (
-          <FormItem className='flex flex-col'>
-            <FormLabel>Ingredient</FormLabel>
-            <Combobox
-              value={selected}
-              onChange={(value) => setSelected(value)}
-              onClose={() => setQuery('')}
-              virtual={{ options: filteredIngredients }}
-              immediate
-            >
-              <div className='relative'>
-                <ComboboxInput
-                  className={cn(
-                    'w-full rounded-lg border-none bg-background py-1.5 pr-8 pl-3 text-sm/6 cursor-pointer',
-                    'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25',
-                  )}
-                  displayValue={(i) => i?.foodName}
-                  onChange={(event) => setQuery(event.target.value)}
-                />
-                <ChevronDownIcon className='absolute inset-y-0 right-0 text-secondary-foreground group-data-[hover]:text-black' />
-              </div>
+      <div className='flex gap-2 items-end'>
+        <FormField
+          control={form.control}
+          name={`ingredients.${index}.ingredientId`}
+          render={({ field }) => (
+            <FormItem className='flex flex-col'>
+              <FormLabel>Ingredient</FormLabel>
+              <div className='flex gap-2 items-center'>
+                <Combobox
+                  value={selected}
+                  onChange={(value) => {
+                    field.onChange(value?.id)
+                    setSelected(value)
+                  }}
+                  onClose={() => setQuery('')}
+                  virtual={{ options: filteredIngredients }}
+                  immediate
+                >
+                  <div className='relative'>
+                    <ComboboxInput
+                      className={cn(
+                        'w-full rounded-lg border bg-background py-1.5 pr-8 pl-3 text-sm/6 cursor-pointer',
+                        'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25',
+                      )}
+                      displayValue={(i) => i?.foodName}
+                      onChange={(event) => setQuery(event.target.value)}
+                    />
+                    <ChevronDownIcon className='absolute top-1/2 -translate-y-1/2 right-2 text-secondary-foreground group-data-[hover]:text-black' />
+                  </div>
 
-              <ComboboxOptions
-                anchor='bottom'
-                transition
-                className={cn(
-                  'w-[var(--input-width)] rounded-xl border border-border bg-secondary p-1 [--anchor-gap:var(--spacing-1)] empty:invisible',
-                  'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0',
-                )}
-              >
-                {({ option: i }) => (
-                  <ComboboxOption
-                    key={i.id}
-                    value={i}
-                    className='group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-white/10'
+                  <ComboboxOptions
+                    anchor='bottom'
+                    transition
+                    className={cn(
+                      'w-[var(--input-width)] rounded-xl border border-border bg-secondary p-1 [--anchor-gap:var(--spacing-1)] empty:invisible',
+                      'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0',
+                    )}
                   >
-                    <CheckIcon className='invisible size-4 group-data-[selected]:visible' />
-                    <div className='text-sm/6 text-secondary-foreground'>
-                      {i.foodName}
-                    </div>
-                  </ComboboxOption>
-                )}
-              </ComboboxOptions>
-            </Combobox>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+                    {({ option: i }) => (
+                      <ComboboxOption
+                        key={i.id}
+                        value={i}
+                        className='group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-white/10'
+                      >
+                        <CheckIcon className='invisible size-4 group-data-[selected]:visible' />
+                        <div className='text-sm/6 text-secondary-foreground'>
+                          {i.foodName}
+                        </div>
+                      </ComboboxOption>
+                    )}
+                  </ComboboxOptions>
+                </Combobox>
+                <CrossCircledIcon
+                  className='h-6 w-6 text-secondary-foreground'
+                  onClick={() => {
+                    field.onChange('')
+                    setSelected(null)
+                  }}
+                />
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div>{selected && <div>{selected.caloriesWFibre}</div>}</div>
+        <div>{selected && <div>{selected.protein}</div>}</div>
+        <div>
+          {selected && (
+            <div>{selected.availableCarbohydrateWithSugarAlcohols}</div>
+          )}
+        </div>
+        <div>{selected && <div>{selected.fatTotal}</div>}</div>
+      </div>
       <div className='flex gap-2 justify-between'>
         <FormField
           control={form.control}
