@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 
-import { FormDialogIngredient } from './form-dialog-ingredient'
+import { FormRecipeIngredient } from './form-recipe-ingredient'
 
 export const dynamic = 'force-dynamic'
 
@@ -42,7 +42,7 @@ export const formSchema = z.object({
   recipeCategory: z.string(),
   ingredients: z.array(
     z.object({
-      ingredientId: z.number().nullable(),
+      ingredientId: z.string(),
       isProtein: z.boolean(),
       isCarbohydrate: z.boolean(),
       isFat: z.boolean(),
@@ -55,7 +55,7 @@ export const formSchema = z.object({
   ),
 })
 
-const FormDialog = () => {
+const FormRecipe = () => {
   const [isOpen, setIsOpen] = useState(false)
   const ctx = api.useUtils()
   const { data: allIngredients } = api.ingredient.getAll.useQuery()
@@ -87,18 +87,6 @@ const FormDialog = () => {
   }
 
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={setIsOpen}
-    >
-      <DialogTrigger asChild>
-        <PlusCircle className='h-6 w-6 text-muted-foreground hover:text-foreground hover:scale-110 active:scale-125 transition-transform cursor-pointer' />
-      </DialogTrigger>
-      <DialogContent className='max-w-xl w-full'>
-        <DialogHeader>
-          <DialogTitle>Create New Recipe</DialogTitle>
-        </DialogHeader>
-        <DialogDescription></DialogDescription>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className='flex flex-col gap-4'>
@@ -139,7 +127,7 @@ const FormDialog = () => {
               <div className='flex flex-col gap-4'>
                 <h2>Ingredients</h2>
                 {fields.map((ingredient, index) => (
-                  <FormDialogIngredient
+                  <FormRecipeIngredient
                     key={index}
                     index={index}
                     form={form}
@@ -150,7 +138,7 @@ const FormDialog = () => {
                   className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-125 transition-transform cursor-pointer'
                   onClick={() =>
                     append({
-                      ingredientId: 0,
+                      ingredientId: '',
                       isProtein: false,
                       isCarbohydrate: false,
                       isFat: false,
@@ -226,9 +214,7 @@ const FormDialog = () => {
             </div>
           </form>
         </Form>
-      </DialogContent>
-    </Dialog>
   )
 }
 
-export { FormDialog }
+export { FormRecipe }

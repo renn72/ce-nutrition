@@ -9,9 +9,9 @@ import { usePathname } from 'next/navigation'
 
 import {
   Check,
+  ChevronRight,
   ChevronsUpDown,
   GalleryVerticalEnd,
-  ChevronRight,
   LayoutDashboard,
   Search,
 } from 'lucide-react'
@@ -118,7 +118,7 @@ const AdminBaseSidebar = ({
               <SidebarGroupContent>
                 <SidebarMenu>
                   {item.items.map((item) => (
-                    <>
+                    <div key={item.title}>
                       {item.items ? (
                         <Collapsible
                           key={item.title}
@@ -130,7 +130,7 @@ const AdminBaseSidebar = ({
                                 isActive={pathname === item.url}
                               >
                                 <Link href={item.url}>{item.title}</Link>
-                    <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                                <ChevronRight className='ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90' />
                               </SidebarMenuButton>
                             </CollapsibleTrigger>
                             <CollapsibleContent>
@@ -154,7 +154,7 @@ const AdminBaseSidebar = ({
                           </SidebarMenuButton>
                         </SidebarMenuItem>
                       )}
-                    </>
+                    </div>
                   ))}
                 </SidebarMenu>
               </SidebarGroupContent>

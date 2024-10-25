@@ -8,12 +8,19 @@ import { cn } from '@/lib/utils'
 import type { GetIngredientById } from '@/types'
 import {
   Combobox,
+  ComboboxButton,
   ComboboxInput,
   ComboboxOption,
   ComboboxOptions,
 } from '@headlessui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Check, CheckIcon, ChevronsUpDown, PlusCircle } from 'lucide-react'
+import {
+  Check,
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronsUpDown,
+  PlusCircle,
+} from 'lucide-react'
 import { useForm, UseFormReturn } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -51,11 +58,10 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 
-import { formSchema } from './form-dialog'
+import { formSchema } from './form-recipe'
 
 export const dynamic = 'force-dynamic'
-
-const FormDialogIngredient = ({
+const FormRecipeIngredient = ({
   index,
   form,
 }: {
@@ -64,20 +70,24 @@ const FormDialogIngredient = ({
 }) => {
   const ctx = api.useUtils()
   const allIngredients = ctx.ingredient.getAll.getData()
-  console.log('allIngredients', allIngredients)
 
+  const [selectedPerson, setSelectedPerson] = useState()
   const [isOpen, setIsOpen] = useState(false)
-  const [value, setValue] = useState<GetIngredientById | null>()
+  const [value, setValue] = useState({ id: '', foodName: '' })
   const [query, setQuery] = useState('')
 
-  if (!allIngredients) return <div />
+  const [selected, setSelected] = useState<GetIngredientById | null>(null)
 
+  if (!allIngredients) return <div />
   const filteredIngredients =
     query === ''
       ? allIngredients
-      : allIngredients.filter((i) => {
-          return i.foodName?.toLowerCase().includes(query.toLowerCase())
-        })
+      : allIngredients
+          .filter((i) => {
+            return i.foodName?.toLowerCase().includes(query.toLowerCase())
+          })
+
+  console.log('filteredPeople', filteredIngredients)
   return (
     <div
       key={index}
@@ -90,27 +100,42 @@ const FormDialogIngredient = ({
           <FormItem className='flex flex-col'>
             <FormLabel>Ingredient</FormLabel>
             <Combobox
-              value={value}
-              onChange={setValue}
+              value={selected}
+              onChange={(value) => setSelected(value)}
               onClose={() => setQuery('')}
               virtual={{ options: filteredIngredients }}
+              immediate
             >
-              <ComboboxInput
-                aria-label='Search ingredients'
-                className='w-[200px] border rounded-md p-2 text-sm'
-                displayValue={(i) => i?.foodName || ''}
-                onChange={(event) => setQuery(event.target.value)}
-              />
+              <div className='relative'>
+                <ComboboxInput
+                  className={cn(
+                    'w-full rounded-lg border-none bg-background py-1.5 pr-8 pl-3 text-sm/6 cursor-pointer',
+                    'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25',
+                  )}
+                  displayValue={(i) => i?.foodName}
+                  onChange={(event) => setQuery(event.target.value)}
+                />
+                <ChevronDownIcon className='absolute inset-y-0 right-0 text-secondary-foreground group-data-[hover]:text-black' />
+              </div>
+
               <ComboboxOptions
                 anchor='bottom'
-                className='border'
+                transition
+                className={cn(
+                  'w-[var(--input-width)] rounded-xl border border-border bg-secondary p-1 [--anchor-gap:var(--spacing-1)] empty:invisible',
+                  'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0',
+                )}
               >
                 {({ option: i }) => (
                   <ComboboxOption
+                    key={i.id}
                     value={i}
-                    className='data-[focus]:bg-blue-100 z-99'
+                    className='group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-white/10'
                   >
-                    {i.foodName || ''}
+                    <CheckIcon className='invisible size-4 group-data-[selected]:visible' />
+                    <div className='text-sm/6 text-secondary-foreground'>
+                      {i.foodName}
+                    </div>
                   </ComboboxOption>
                 )}
               </ComboboxOptions>
@@ -179,4 +204,4 @@ const FormDialogIngredient = ({
   )
 }
 
-export { FormDialogIngredient }
+export { FormRecipeIngredient }
