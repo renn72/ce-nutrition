@@ -1,5 +1,8 @@
 import { createIngredientSchema } from '@/server/api/schema/ingredient'
-import { ingredient, ingredientToGroceryStore } from '@/server/db/schema/ingredient'
+import {
+  ingredient,
+  ingredientToGroceryStore,
+} from '@/server/db/schema/ingredient'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
@@ -19,7 +22,16 @@ export const ingredientRouter = createTRPCRouter({
           orderBy: [desc(ingredient.createdAt)],
         })
       }
-      const res = await ctx.db.query.ingredient.findMany()
+      const res = await ctx.db.query.ingredient.findMany({
+        with: {
+          ingredientToGroceryStore: {
+            with: {
+              groceryStore: true,
+            },
+          },
+        },
+        orderBy: [desc(ingredient.createdAt)],
+      })
       return res
     }),
   get: protectedProcedure
@@ -27,6 +39,13 @@ export const ingredientRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       const res = await ctx.db.query.ingredient.findFirst({
         where: (ingredient, { eq }) => eq(ingredient.id, input.id),
+        with: {
+          ingredientToGroceryStore: {
+            with: {
+              groceryStore: true,
+            },
+          },
+        },
       })
       return res
     }),
@@ -39,7 +58,7 @@ export const ingredientRouter = createTRPCRouter({
         ...rest,
         userId,
       })
-    console.log(res)
+      console.log(res)
       if (stores) {
         // await ctx.db
         //   .insert(ingredientToGroceryStore)

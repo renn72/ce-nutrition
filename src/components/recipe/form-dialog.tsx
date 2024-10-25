@@ -3,9 +3,7 @@ import { api } from '@/trpc/react'
 import { useState } from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  PlusCircle,
-} from 'lucide-react'
+import { PlusCircle } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -33,13 +31,30 @@ export const dynamic = 'force-dynamic'
 
 const formSchema = z.object({
   name: z.string().min(1),
-  location: z.string(),
+  description: z.string(),
+  image: z.string(),
+  notes: z.string(),
+  recipeCategory: z.string(),
+  ingredients: z.array(
+    z.object({
+      ingredientId: z.number(),
+      isProtein: z.boolean(),
+      isCarbohydrate: z.boolean(),
+      isFat: z.boolean(),
+      note: z.string(),
+      serveSize: z.string(),
+      serveUnit: z.string(),
+      index: z.number(),
+      isAlternate: z.boolean().optional(),
+    }),
+  ),
 })
 
 const FormDialog = () => {
   const [isOpen, setIsOpen] = useState(false)
   const ctx = api.useUtils()
-  const { mutate: createStore } = api.groceryStore.create.useMutation({
+  const { data: allIngredients } = api.ingredient.getAll.useQuery()
+  const { mutate: createRecipe } = api.recipe.create.useMutation({
     onSuccess: () => {
       setIsOpen(false)
       ctx.groceryStore.invalidate()
@@ -51,11 +66,15 @@ const FormDialog = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      location: '',
+      description: '',
+      image: '',
+      notes: '',
+      recipeCategory: '',
+      ingredients: [],
     },
   })
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    createStore(data)
+    createRecipe(data)
   }
 
   return (
@@ -68,51 +87,109 @@ const FormDialog = () => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Ingredient</DialogTitle>
+          <DialogTitle>Create New Recipe</DialogTitle>
         </DialogHeader>
         <DialogDescription></DialogDescription>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <div className='flex flex-col gap-4'>
-                <FormField
-                  control={form.control}
-                  name='name'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder='Name'
-                          {...field}
-                          type='text'
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name='location'
-                  render={({ field }) => (
-                    <FormItem className='w-full'>
-                      <FormLabel>Location</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder='Location'
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div>
-                  <Button type='submit'>Submit</Button>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className='flex flex-col gap-4'>
+              <FormField
+                control={form.control}
+                name='name'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Name'
+                        {...field}
+                        type='text'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='description'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Recipe Description</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Description'
+                        {...field}
+                        type='text'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='notes'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Notes</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Notes'
+                        {...field}
+                        type='text'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className='flex justify-between gap-4'>
+                <div className='w-full'>
+                  <FormField
+                    control={form.control}
+                    name='recipeCategory'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Recipe Category</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder='Category'
+                            {...field}
+                            type='text'
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className='w-full'>
+                  <FormField
+                    control={form.control}
+                    name='image'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Image TODO</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder='Image'
+                            {...field}
+                            type='text'
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
               </div>
-            </form>
-          </Form>
+              <div>
+                <Button type='submit'>Submit</Button>
+              </div>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   )

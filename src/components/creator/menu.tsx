@@ -97,6 +97,7 @@ export const CreatorMenu = () => {
           note: 'Test',
           serveSize: '90',
           serveUnit: 'grams',
+          index: 0,
         },
         {
           ingredientId: allIngredients.find(i => i.publicFoodKey == 'F002594')?.id || 0,
@@ -106,6 +107,7 @@ export const CreatorMenu = () => {
           note: 'Test',
           serveSize: '140',
           serveUnit: 'grams',
+          index: 1,
         },
       ],
     })
@@ -124,6 +126,7 @@ export const CreatorMenu = () => {
           note: 'Test',
           serveSize: '90',
           serveUnit: 'grams',
+          index: 0,
         },
         {
           ingredientId: allIngredients.find(i => i.publicFoodKey == 'F004299')?.id || 0,
@@ -133,6 +136,7 @@ export const CreatorMenu = () => {
           note: 'Test',
           serveSize: '55',
           serveUnit: 'grams',
+          index: 1,
         },
         {
           ingredientId: allIngredients.find(i => i.publicFoodKey == 'F003729')?.id || 0,
@@ -142,6 +146,7 @@ export const CreatorMenu = () => {
           note: '2 whole eggs',
           serveSize: '110',
           serveUnit: 'grams',
+          index: 2,
         },
       ],
     })

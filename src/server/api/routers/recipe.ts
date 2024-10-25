@@ -49,6 +49,8 @@ export const recipeRouter = createTRPCRouter({
             note: z.string(),
             serveSize: z.string(),
             serveUnit: z.string(),
+            index: z.number(),
+            isAlternate: z.boolean().optional(),
           }),
         ),
       }),
@@ -71,14 +73,8 @@ export const recipeRouter = createTRPCRouter({
         .insert(recipeToIngredient)
         .values(
           ingredients.map((ingredient) => ({
+            ...ingredient,
             recipeId: resId,
-            ingredientId: ingredient.ingredientId,
-            isProtein: ingredient.isProtein,
-            isCarbohydrate: ingredient.isCarbohydrate,
-            isFat: ingredient.isFat,
-            note: ingredient.note,
-            serveSize: ingredient.serveSize,
-            serveUnit: ingredient.serveUnit,
           })),
         )
         .returning({ id: recipeToIngredient.id })
