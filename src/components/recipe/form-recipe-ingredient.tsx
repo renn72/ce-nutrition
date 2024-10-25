@@ -88,6 +88,7 @@ const FormRecipeIngredient = ({
         })
 
   const id = form.watch(`ingredients.${index}.ingredientId`)
+  const serveSize = form.watch(`ingredients.${index}.serveSize`)
   console.log('id', selected)
   return (
     <div
@@ -106,6 +107,14 @@ const FormRecipeIngredient = ({
                   value={selected}
                   onChange={(value) => {
                     field.onChange(value?.id)
+                    form.setValue(
+                      `ingredients.${index}.serveSize`,
+                      value?.serveSize ?? '',
+                    )
+                    form.setValue(
+                      `ingredients.${index}.serveUnit`,
+                      value?.serveUnit ?? '',
+                    )
                     setSelected(value)
                   }}
                   onClose={() => setQuery('')}
@@ -158,14 +167,41 @@ const FormRecipeIngredient = ({
             </FormItem>
           )}
         />
-        <div>{selected && <div>{selected.caloriesWFibre}</div>}</div>
-        <div>{selected && <div>{selected.protein}</div>}</div>
-        <div>
-          {selected && (
+        {selected && (
+          <div className='flex gap-4 items-center'>
+            <FormField
+              control={form.control}
+              name={`ingredients.${index}.serveSize`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Serve Size</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='Serve Size'
+                      {...field}
+                      type='number'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div>{selected.serveUnit}</div>
+            <div>
+              <div>Calories</div>
+            <div>
+              {(Number(selected.caloriesWFibre) *
+                (Number(serveSize) / Number(selected.serveSize))).toFixed(1)}
+            </div>
+            </div>
+            <div>
+              <div>Protein</div>
+              <div>{selected.protein}</div>
+            </div>
             <div>{selected.availableCarbohydrateWithSugarAlcohols}</div>
-          )}
-        </div>
-        <div>{selected && <div>{selected.fatTotal}</div>}</div>
+            <div>{selected.fatTotal}</div>
+          </div>
+        )}
       </div>
       <div className='flex gap-2 justify-between'>
         <FormField
