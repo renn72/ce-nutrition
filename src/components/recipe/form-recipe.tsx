@@ -95,7 +95,6 @@ const FormRecipe = () => {
       const i = allIngredients?.find(
         (ai) => Number(ai.id) === Number(ingredient.ingredientId),
       )
-      console.log('i', i)
       if (i) {
         return (
           acc +
@@ -111,7 +110,6 @@ const FormRecipe = () => {
       const i = allIngredients?.find(
         (ai) => Number(ai.id) === Number(ingredient.ingredientId),
       )
-      console.log('i', i)
       if (i) {
         return (
           acc +
@@ -128,7 +126,6 @@ const FormRecipe = () => {
       const i = allIngredients?.find(
         (ai) => Number(ai.id) === Number(ingredient.ingredientId),
       )
-      console.log('i', i)
       if (i) {
         return (
           acc +
@@ -145,7 +142,6 @@ const FormRecipe = () => {
       const i = allIngredients?.find(
         (ai) => Number(ai.id) === Number(ingredient.ingredientId),
       )
-      console.log('i', i)
       if (i) {
         return (
           acc +
@@ -157,9 +153,29 @@ const FormRecipe = () => {
     }, 0)
     .toFixed(1)
 
-  console.log('ingredients', ingredients)
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data)
+    console.log('input',data)
+    createRecipe({
+      name: data.name,
+      description: data.description,
+      image: data.image,
+      notes: data.notes,
+      recipeCategory: data.recipeCategory,
+      ingredients: data.ingredients.map((i) => {
+        return {
+          index: i.index,
+          ingredientId: Number(i.ingredientId),
+          isProtein: i.isProtein,
+          isCarbohydrate: i.isCarbohydrate,
+          isFat: i.isFat,
+          note: i.note,
+          serveSize: i.serveSize,
+          serveUnit: i.serveUnit,
+          isAlternate: i.isAlternate,
+          alternateId: i.alternateId,
+        }
+      }),
+    })
   }
 
   return (

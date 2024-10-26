@@ -98,6 +98,7 @@ export const CreatorMenu = () => {
           serveSize: '90',
           serveUnit: 'grams',
           index: 0,
+          alternateId: '',
         },
         {
           ingredientId: allIngredients.find(i => i.publicFoodKey == 'F002594')?.id || 0,
@@ -108,6 +109,7 @@ export const CreatorMenu = () => {
           serveSize: '140',
           serveUnit: 'grams',
           index: 1,
+          alternateId: '',
         },
       ],
     })
@@ -127,6 +129,7 @@ export const CreatorMenu = () => {
           serveSize: '90',
           serveUnit: 'grams',
           index: 0,
+          alternateId: '',
         },
         {
           ingredientId: allIngredients.find(i => i.publicFoodKey == 'F004299')?.id || 0,
@@ -137,6 +140,7 @@ export const CreatorMenu = () => {
           serveSize: '55',
           serveUnit: 'grams',
           index: 1,
+          alternateId: '',
         },
         {
           ingredientId: allIngredients.find(i => i.publicFoodKey == 'F003729')?.id || 0,
@@ -147,6 +151,7 @@ export const CreatorMenu = () => {
           serveSize: '110',
           serveUnit: 'grams',
           index: 2,
+          alternateId: '',
         },
       ],
     })

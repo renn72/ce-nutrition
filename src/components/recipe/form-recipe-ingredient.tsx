@@ -97,7 +97,7 @@ const FormRecipeIngredient = ({
                 <Combobox
                   value={selected}
                   onChange={(value) => {
-                    field.onChange(value?.id)
+                    field.onChange(value?.id.toString())
                     form.setValue(
                       `ingredients.${index}.serveSize`,
                       value?.serveSize ?? '',
@@ -278,7 +278,7 @@ const FormRecipeIngredient = ({
                 <Combobox
                   value={selectedAlt}
                   onChange={(value) => {
-                    field.onChange(value?.id)
+                    field.onChange(value?.id.toString())
                     setSelectedAlt(value)
                   }}
                   onClose={() => setQueryAlt('')}

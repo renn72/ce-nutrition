@@ -43,6 +43,7 @@ export const recipeRouter = createTRPCRouter({
         ingredients: z.array(
           z.object({
             ingredientId: z.number(),
+            alternateId: z.string(),
             isProtein: z.boolean(),
             isCarbohydrate: z.boolean(),
             isFat: z.boolean(),
