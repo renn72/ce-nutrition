@@ -7,6 +7,7 @@ import * as notification from './schema/notification'
 import * as ingredient from './schema/ingredient'
 import * as settings from './schema/settings'
 import * as recipe from './schema/recipe'
+import * as plan from './schema/plan'
 
 const schema = {
   ...user,
@@ -14,6 +15,7 @@ const schema = {
   ...ingredient,
   ...settings,
   ...recipe,
+  ...plan,
 }
 
 /**

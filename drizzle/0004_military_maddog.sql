@@ -1,0 +1,1 @@
+ALTER TABLE `ce-nu_plan` ADD `number_of_meals` integer;

@@ -1,16 +1,17 @@
 import { recipe, recipeToIngredient } from '@/server/db/schema/recipe'
+import { plan, planToRecipe } from '@/server/db/schema/plan'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
-export const recipeRouter = createTRPCRouter({
+export const planRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
-    const res = await ctx.db.query.recipe.findMany({
-      orderBy: [desc(recipe.createdAt)],
+    const res = await ctx.db.query.plan.findMany({
+      orderBy: [desc(plan.createdAt)],
       with: {
-        recipeToIngredient: {
+        planToRecipe: {
           with: {
-            ingredient: true,
+            recipe: true,
           },
         },
       },
@@ -20,12 +21,12 @@ export const recipeRouter = createTRPCRouter({
   get: protectedProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input, ctx }) => {
-      const res = await ctx.db.query.recipe.findFirst({
-        where: (recipe, { eq }) => eq(recipe.id, input.id),
+      const res = await ctx.db.query.plan.findFirst({
+        where: (recipe, { eq }) => eq(plan.id, input.id),
         with: {
-          recipeToIngredient: {
+          planToRecipe: {
             with: {
-              ingredient: true,
+              recipe: true,
             },
           },
         },
@@ -74,15 +75,7 @@ export const recipeRouter = createTRPCRouter({
         .insert(recipeToIngredient)
         .values(
           ingredients.map((ingredient) => ({
-            index: ingredient.index,
-            isAlternate: ingredient.isAlternate,
-            alternateId: Number(ingredient.alternateId),
-            serveSize: ingredient.serveSize,
-            serveUnit: ingredient.serveUnit,
-            isProtein: ingredient.isProtein,
-            isCarbohydrate: ingredient.isCarbohydrate,
-            isFat: ingredient.isFat,
-            note: ingredient.note,
+            ...ingredient,
             recipeId: resId,
           })),
         )

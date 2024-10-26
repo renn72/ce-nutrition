@@ -52,6 +52,16 @@ const data = {
       url: '#',
       items: [
         {
+          title: 'Plans',
+          url: '/admin/base/plan',
+          items: [
+            {
+              title: 'Create',
+              url: '/admin/base/plan/create',
+            },
+          ],
+        },
+        {
           title: 'Recipes',
           url: '/admin/base/recipe',
           items: [

@@ -1,16 +1,15 @@
-
 import { relations, sql } from 'drizzle-orm'
 import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
 import { z } from 'zod'
 
 import { user } from './user'
 import { ingredient } from './ingredient'
-import { planToRecipe } from './plan'
+import { recipe } from './recipe'
 
 export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
 
-export const recipe = createTable('recipe', {
+export const plan = createTable('plan', {
     id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
     createdAt: int('created_at', { mode: 'timestamp' })
       .default(sql`(unixepoch())`)
@@ -22,52 +21,47 @@ export const recipe = createTable('recipe', {
     description: text('description'),
     image: text('image'),
     notes: text('notes'),
+    numberOfMeals: int('number_of_meals', { mode: 'number' }),
     creatorId: text('creator_id').references(() => user.id),
-    recipeCategory: text('recipe_category'),
+    planCategory: text('recipe_category'),
     favouriteAt: int('favourite_at', { mode: 'timestamp' }),
     deletedAt: int('deleted_at', { mode: 'timestamp' }),
     hiddenAt: int('hidden_at', { mode: 'timestamp' }),
 })
 
-export const recipeToIngredient = createTable('recipe_to_ingredient', {
+export const planToRecipe = createTable('plan_to_recipe', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
     .notNull(),
+  planId: int('plan_id').references(() => plan.id, {
+    onDelete: 'cascade',
+  }),
   recipeId: int('recipe_id').references(() => recipe.id, {
     onDelete: 'cascade',
   }),
-  ingredientId: int('ingredient_id').references(() => ingredient.id, {
-    onDelete: 'cascade',
-  }),
   index: int('index', { mode: 'number' }),
-  isAlternate: int('is_alternate', { mode: 'boolean' }).default(false),
-  alternateId: int('alternate_id'),
-  serveSize: text('serve'),
-  serveUnit: text('serve_unit'),
-  isProtein: int('is_protein', { mode: 'boolean' }),
-  isCarbohydrate: int('is_carbohydrate', { mode: 'boolean' }),
-  isFat: int('is_fat', { mode: 'boolean' }),
+  mealNumber: int('meal_number', { mode: 'number' }),
+  calories: int('calories', { mode: 'number' }),
   note: text('note'),
 })
 
-export const recipeToIngredientRelations = relations(
-  recipeToIngredient,
-  ({ one }) => ({
-    recipe: one(recipe, {
-      fields: [recipeToIngredient.recipeId],
-      references: [recipe.id],
-    }),
-    ingredient: one(ingredient, {
-      fields: [recipeToIngredient.ingredientId],
-      references: [ingredient.id],
-    }),
-  }),
-)
 
-export const recipeRelations = relations(recipe, ({ one, many }) => ({
-  creator: one(user, { fields: [recipe.creatorId], references: [user.id] }),
-  recipeToIngredient: many(recipeToIngredient),
+export const planRelations = relations(plan, ({ one, many }) => ({
+  creator: one(user, { fields: [plan.creatorId], references: [user.id] }),
   planToRecipe: many(planToRecipe),
 }))
 
+export const planToRecipeRelations = relations(
+  planToRecipe,
+  ({ one }) => ({
+    plan: one(plan, {
+      fields: [planToRecipe.planId],
+      references: [plan.id],
+    }),
+    recipe: one(recipe, {
+      fields: [planToRecipe.recipeId],
+      references: [recipe.id],
+    }),
+  }),
+)
