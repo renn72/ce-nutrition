@@ -26,7 +26,7 @@ const signInSchema = z.object({
   password: z.string().min(6),
 })
 
-const SignIn = ({}: {}) => {
+const SignIn = () => {
   const [loginError, setLoginError] = useState('')
   const ctx = api.useUtils()
   const form = useForm<z.infer<typeof signInSchema>>({
