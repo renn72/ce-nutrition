@@ -75,6 +75,7 @@ export const recipeRouter = createTRPCRouter({
         .values(
           ingredients.map((ingredient) => ({
             index: ingredient.index,
+            ingredientId: ingredient.ingredientId,
             isAlternate: ingredient.isAlternate,
             alternateId: Number(ingredient.alternateId),
             serveSize: ingredient.serveSize,

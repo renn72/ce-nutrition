@@ -150,13 +150,14 @@ export const columns: ColumnDef<GetRecipeById>[] = [
       const recipe = row.original as GetRecipeById
       const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
         const cal = Number(curr?.ingredient?.caloriesWFibre)
-        const scale = Number(curr?.ingredient?.serveSize) / Number(curr?.serveSize)
+        const scale = Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
         return acc + cal * scale
       }, 0)
+
       return (
         <div className='flex space-x-2'>
           <span className='w-[100px] truncate font-medium'>
-            {size?.toFixed(2)}
+            {size?.toFixed(1)}
           </span>
         </div>
       )
@@ -174,7 +175,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
       const recipe = row.original as GetRecipeById
       const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
         const cal = Number(curr?.ingredient?.caloriesWOFibre)
-        const scale = Number(curr?.ingredient?.serveSize) / Number(curr?.serveSize)
+        const scale = Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
         return acc + cal * scale
       }, 0)
       return (
@@ -198,7 +199,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
       const recipe = row.original as GetRecipeById
       const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
         const cal = Number(curr?.ingredient?.protein)
-        const scale = Number(curr?.ingredient?.serveSize) / Number(curr?.serveSize)
+        const scale = Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
         return acc + cal * scale
       }, 0)
       return (
@@ -222,7 +223,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
       const recipe = row.original as GetRecipeById
       const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
         const cal = Number(curr?.ingredient?.availableCarbohydrateWithoutSugarAlcohols)
-        const scale = Number(curr?.ingredient?.serveSize) / Number(curr?.serveSize)
+        const scale = Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
         return acc + cal * scale
       }, 0)
       return (
@@ -246,7 +247,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
       const recipe = row.original as GetRecipeById
       const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
         const cal = Number(curr?.ingredient?.fatTotal)
-        const scale = Number(curr?.ingredient?.serveSize) / Number(curr?.serveSize)
+        const scale = Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
         return acc + cal * scale
       }, 0)
       return (

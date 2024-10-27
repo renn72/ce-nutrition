@@ -100,6 +100,7 @@ export const CreatorMenu = () => {
   }
 
   const generateRecipes = () => {
+    console.log('ingredients', allIngredients)
     if (!allIngredients) return
     createRecipe({
       name: 'Chicken and Rice',
