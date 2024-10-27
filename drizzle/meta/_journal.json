@@ -36,6 +36,20 @@
       "when": 1729985096777,
       "tag": "0004_military_maddog",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1729988008955,
+      "tag": "0005_overconfident_vance_astro",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1729988020016,
+      "tag": "0006_powerful_tarantula",
+      "breakpoints": true
     }
   ]
 }

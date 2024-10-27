@@ -42,7 +42,7 @@ export const planToRecipe = createTable('plan_to_recipe', {
   }),
   index: int('index', { mode: 'number' }),
   mealNumber: int('meal_number', { mode: 'number' }),
-  calories: int('calories', { mode: 'number' }),
+  calories: text('calories'),
   note: text('note'),
 })
 

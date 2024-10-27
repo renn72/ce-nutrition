@@ -17,6 +17,19 @@ import {
 
 export const CreatorMenu = () => {
   const ctx = api.useUtils()
+
+  const { mutate: deleteAllPlans } = api.plan.deleteAll.useMutation({
+    onSuccess: () => {
+      ctx.invalidate()
+      toast.success('Deleted')
+    },
+  })
+  const { mutate: createPlan } = api.plan.create.useMutation({
+    onSuccess: () => {
+      ctx.invalidate()
+      toast.success('Created')
+    },
+  })
   const { mutate: createRecipe } = api.recipe.create.useMutation({
     onSuccess: () => {
       ctx.invalidate()
@@ -79,6 +92,12 @@ export const CreatorMenu = () => {
   })
 
   const { data: allIngredients } = api.ingredient.getAll.useQuery()
+  const { data: allRecipes } = api.recipe.getAll.useQuery()
+
+  const generatePlans = () => {
+    if (!allRecipes) return
+    console.log(allRecipes)
+  }
 
   const generateRecipes = () => {
     if (!allIngredients) return
@@ -149,6 +168,48 @@ export const CreatorMenu = () => {
           isFat: true,
           note: '2 whole eggs',
           serveSize: '110',
+          serveUnit: 'grams',
+          index: 2,
+          alternateId: '',
+        },
+      ],
+    })
+    createRecipe({
+      name: 'Beef and Potatoes',
+      description: 'yum yum',
+      image: '',
+      notes: 'Test',
+      recipeCategory: 'dinner',
+      ingredients: [
+        {
+          ingredientId: allIngredients.find(i => i.publicFoodKey == 'F000561')?.id || 0,
+          isProtein: true,
+          isCarbohydrate: false,
+          isFat: false,
+          note: 'Test',
+          serveSize: '120',
+          serveUnit: 'grams',
+          index: 0,
+          alternateId: '',
+        },
+        {
+          ingredientId: allIngredients.find(i => i.publicFoodKey == 'F007308')?.id || 0,
+          isProtein: false,
+          isCarbohydrate: true,
+          isFat: false,
+          note: 'Test',
+          serveSize: '420',
+          serveUnit: 'grams',
+          index: 1,
+          alternateId: '',
+        },
+        {
+          ingredientId: allIngredients.find(i => i.publicFoodKey == 'F001971')?.id || 0,
+          isProtein: false,
+          isCarbohydrate: false,
+          isFat: true,
+          note: '',
+          serveSize: '15',
           serveUnit: 'grams',
           index: 2,
           alternateId: '',
@@ -274,6 +335,26 @@ export const CreatorMenu = () => {
             }}
           >
             deleteAllRecipes
+          </Button>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Button
+            variant='ghost'
+            onClick={() => {
+              generatePlans()
+            }}
+          >
+            Gen Plans
+          </Button>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Button
+            variant='ghost'
+            onClick={() => {
+              deleteAllPlans()
+            }}
+          >
+            deleteAllPlans
           </Button>
         </DropdownMenuItem>
       </DropdownMenuContent>

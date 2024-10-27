@@ -40,28 +40,24 @@ export const planRouter = createTRPCRouter({
         description: z.string(),
         image: z.string(),
         notes: z.string(),
-        recipeCategory: z.string(),
-        ingredients: z.array(
+        planCategory: z.string(),
+        numberOfMeals: z.number(),
+        recipes: z.array(
           z.object({
-            ingredientId: z.number(),
-            alternateId: z.string(),
-            isProtein: z.boolean(),
-            isCarbohydrate: z.boolean(),
-            isFat: z.boolean(),
+            recipeId: z.number(),
             note: z.string(),
-            serveSize: z.string(),
-            serveUnit: z.string(),
             index: z.number(),
-            isAlternate: z.boolean().optional(),
+            mealNumber: z.number(),
+            calories: z.string(),
           }),
         ),
       }),
     )
     .mutation(async ({ input, ctx }) => {
       const userId = ctx.session.user.id
-      const { ingredients, ...data } = input
+      const { recipes, ...data } = input
       const res = await ctx.db
-        .insert(recipe)
+        .insert(plan)
         .values({
           ...data,
           creatorId: userId,
@@ -71,25 +67,25 @@ export const planRouter = createTRPCRouter({
       const resId = res?.[0]?.id
       if (!resId) return res
 
-      const ingredientsRes = await ctx.db
-        .insert(recipeToIngredient)
+      const recipeRes = await ctx.db
+        .insert(planToRecipe)
         .values(
-          ingredients.map((ingredient) => ({
-            ...ingredient,
+          recipes.map((recipe) => ({
+            ...recipe,
             recipeId: resId,
           })),
         )
-        .returning({ id: recipeToIngredient.id })
-      return { res, ingredientsRes }
+        .returning({ id: planToRecipe.id })
+      return { res, recipeRes }
     }),
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      const res = await ctx.db.delete(recipe).where(eq(recipe.id, input.id))
+      const res = await ctx.db.delete(plan).where(eq(plan.id, input.id))
       return res
     }),
   deleteAll: protectedProcedure.mutation(async ({ ctx }) => {
-    const res = await ctx.db.delete(recipe)
+    const res = await ctx.db.delete(plan)
     return res
   }),
 })
