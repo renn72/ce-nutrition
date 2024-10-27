@@ -3,6 +3,7 @@
 import { api } from '@/trpc/react'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { signIn } from 'next-auth/react'
@@ -37,6 +38,8 @@ const SignIn = () => {
     },
   })
 
+  const router = useRouter()
+
   return (
     <>
       <Form {...form}>
@@ -53,6 +56,8 @@ const SignIn = () => {
               if (res?.status === 200) {
                 toast.success('Logged in')
                 ctx.user.isUser.refetch()
+                router.push('/admin/base')
+
               }
               if (res?.error) throw new Error(res.error)
             } catch (err: any) {
