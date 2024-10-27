@@ -96,7 +96,83 @@ export const CreatorMenu = () => {
 
   const generatePlans = () => {
     if (!allRecipes) return
-    console.log(allRecipes)
+    const beef = allRecipes.find(i => i.name == 'Beef and Potatoes')?.id || 0
+    const ham = allRecipes.find(i => i.name == 'Ham breadroll')?.id || 0
+    const chicken = allRecipes.find(i => i.name == 'Chicken and Rice')?.id || 0
+    console.log({ beef, ham, chicken })
+    createPlan({
+      name: 'General Plan 1',
+      description: 'General',
+      image: '',
+      notes: 'General',
+      planCategory: 'General',
+      numberOfMeals: 4,
+      recipes: [
+        {
+          recipeId: beef,
+          note: 'Test',
+          index: 1,
+          mealNumber: 1,
+          calories: '500',
+        },
+        {
+          recipeId: ham,
+          note: 'Test',
+          index: 2,
+          mealNumber: 1,
+          calories: '500',
+        },
+        {
+          recipeId: chicken,
+          note: 'Test',
+          index: 3,
+          mealNumber: 1,
+          calories: '500',
+        },
+        {
+          recipeId: ham,
+          note: 'Test',
+          index: 1,
+          mealNumber: 2,
+          calories: '400',
+        },
+        {
+          recipeId: chicken,
+          note: 'Test',
+          index: 2,
+          mealNumber: 2,
+          calories: '400',
+        },
+        {
+          recipeId: beef,
+          note: 'Test',
+          index: 1,
+          mealNumber: 3,
+          calories: '600',
+        },
+        {
+          recipeId: ham,
+          note: 'Test',
+          index: 2,
+          mealNumber: 3,
+          calories: '600',
+        },
+        {
+          recipeId: beef,
+          note: 'Test',
+          index: 1,
+          mealNumber: 4,
+          calories: '600',
+        },
+        {
+          recipeId: chicken,
+          note: 'Test',
+          index: 2,
+          mealNumber: 4,
+          calories: '400',
+        },
+      ],
+    })
   }
 
   const generateRecipes = () => {

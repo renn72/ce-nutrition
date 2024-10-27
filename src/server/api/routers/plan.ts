@@ -72,7 +72,7 @@ export const planRouter = createTRPCRouter({
         .values(
           recipes.map((recipe) => ({
             ...recipe,
-            recipeId: resId,
+            planId: resId,
           })),
         )
         .returning({ id: planToRecipe.id })
