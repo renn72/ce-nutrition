@@ -70,7 +70,7 @@ export const planToVegeStack = createTable('plan_to_vege_stack', {
   vegeStackId: int('vege_stack_id').references(() => vegeStack.id, {
     onDelete: 'cascade',
   }),
-  index: int('index', { mode: 'number' }),
+  mealNumber: int('meal_number', { mode: 'number' }),
   calories: text('calories'),
   note: text('note'),
 })

@@ -9,7 +9,6 @@ import { DataTableSkeleton } from '@/components/plan/data-table-skeleton'
 export default function Home() {
 
   const { data, isLoading } = api.plan.getAll.useQuery()
-  console.log('recipe', data)
   return (
     <div className='flex min-h-screen flex-col items-center w-full'>
       {isLoading ? (

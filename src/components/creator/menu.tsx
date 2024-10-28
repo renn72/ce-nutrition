@@ -105,7 +105,8 @@ export const CreatorMenu = () => {
 
   const generateVegeStacks = () => {
     createVegeStack({
-      veges: 'Lettuce, Onion, Green Beans, Zucchini, Kale, Spinach, Broccoli, Cauliflower, Capsicum, Cucumber',
+      veges:
+        'Lettuce, Onion, Green Beans, Zucchini, Kale, Spinach, Broccoli, Cauliflower, Capsicum, Cucumber',
       notes: '2 Cups',
       calories: '50',
     })
@@ -113,13 +114,17 @@ export const CreatorMenu = () => {
 
   const { data: allIngredients } = api.ingredient.getAll.useQuery()
   const { data: allRecipes } = api.recipe.getAll.useQuery()
+  const { data: allVegeStacks } = api.vege.getAll.useQuery()
 
   const generatePlans = () => {
     if (!allRecipes) return
-    const beef = allRecipes.find(i => i.name == 'Beef and Potatoes')?.id || 0
-    const ham = allRecipes.find(i => i.name == 'Ham breadroll')?.id || 0
-    const chicken = allRecipes.find(i => i.name == 'Chicken and Rice')?.id || 0
-    console.log({ beef, ham, chicken })
+    if (!allVegeStacks) return
+    const beef = allRecipes.find((i) => i.name == 'Beef and Potatoes')?.id || 0
+    const ham = allRecipes.find((i) => i.name == 'Ham breadroll')?.id || 0
+    const chicken =
+      allRecipes.find((i) => i.name == 'Chicken and Rice')?.id || 0
+    const vegeStack = allVegeStacks[0]?.id || 0
+    console.log({ beef, ham, chicken, vegeStack })
     createPlan({
       name: 'General Plan 1',
       description: 'General',
@@ -127,6 +132,20 @@ export const CreatorMenu = () => {
       notes: 'General',
       planCategory: 'General',
       numberOfMeals: 4,
+      veges: [
+        {
+          vegeStackId: vegeStack,
+          note: '',
+          mealNumber: 2,
+          calories: '50',
+        },
+        {
+          vegeStackId: vegeStack,
+          note: '',
+          mealNumber: 4,
+          calories: '50',
+        },
+      ],
       recipes: [
         {
           recipeId: beef,
@@ -206,7 +225,8 @@ export const CreatorMenu = () => {
       recipeCategory: 'lunch',
       ingredients: [
         {
-          ingredientId: allIngredients.find(i => i.publicFoodKey == 'F007682')?.id || 0,
+          ingredientId:
+            allIngredients.find((i) => i.publicFoodKey == 'F007682')?.id || 0,
           isProtein: false,
           isCarbohydrate: true,
           isFat: false,
@@ -217,7 +237,8 @@ export const CreatorMenu = () => {
           alternateId: '',
         },
         {
-          ingredientId: allIngredients.find(i => i.publicFoodKey == 'F002594')?.id || 0,
+          ingredientId:
+            allIngredients.find((i) => i.publicFoodKey == 'F002594')?.id || 0,
           isProtein: true,
           isCarbohydrate: false,
           isFat: false,
@@ -237,7 +258,8 @@ export const CreatorMenu = () => {
       recipeCategory: 'lunch',
       ingredients: [
         {
-          ingredientId: allIngredients.find(i => i.publicFoodKey == 'F001353')?.id || 0,
+          ingredientId:
+            allIngredients.find((i) => i.publicFoodKey == 'F001353')?.id || 0,
           isProtein: false,
           isCarbohydrate: true,
           isFat: false,
@@ -248,7 +270,8 @@ export const CreatorMenu = () => {
           alternateId: '',
         },
         {
-          ingredientId: allIngredients.find(i => i.publicFoodKey == 'F004299')?.id || 0,
+          ingredientId:
+            allIngredients.find((i) => i.publicFoodKey == 'F004299')?.id || 0,
           isProtein: true,
           isCarbohydrate: false,
           isFat: false,
@@ -259,7 +282,8 @@ export const CreatorMenu = () => {
           alternateId: '',
         },
         {
-          ingredientId: allIngredients.find(i => i.publicFoodKey == 'F003729')?.id || 0,
+          ingredientId:
+            allIngredients.find((i) => i.publicFoodKey == 'F003729')?.id || 0,
           isProtein: true,
           isCarbohydrate: false,
           isFat: true,
@@ -279,7 +303,8 @@ export const CreatorMenu = () => {
       recipeCategory: 'dinner',
       ingredients: [
         {
-          ingredientId: allIngredients.find(i => i.publicFoodKey == 'F000561')?.id || 0,
+          ingredientId:
+            allIngredients.find((i) => i.publicFoodKey == 'F000561')?.id || 0,
           isProtein: true,
           isCarbohydrate: false,
           isFat: false,
@@ -290,7 +315,8 @@ export const CreatorMenu = () => {
           alternateId: '',
         },
         {
-          ingredientId: allIngredients.find(i => i.publicFoodKey == 'F007308')?.id || 0,
+          ingredientId:
+            allIngredients.find((i) => i.publicFoodKey == 'F007308')?.id || 0,
           isProtein: false,
           isCarbohydrate: true,
           isFat: false,
@@ -301,7 +327,8 @@ export const CreatorMenu = () => {
           alternateId: '',
         },
         {
-          ingredientId: allIngredients.find(i => i.publicFoodKey == 'F001971')?.id || 0,
+          ingredientId:
+            allIngredients.find((i) => i.publicFoodKey == 'F001971')?.id || 0,
           isProtein: false,
           isCarbohydrate: false,
           isFat: true,

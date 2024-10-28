@@ -1,5 +1,5 @@
+import { plan, planToRecipe, planToVegeStack } from '@/server/db/schema/plan'
 import { recipe, recipeToIngredient } from '@/server/db/schema/recipe'
-import { plan, planToRecipe } from '@/server/db/schema/plan'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
@@ -9,6 +9,11 @@ export const planRouter = createTRPCRouter({
     const res = await ctx.db.query.plan.findMany({
       orderBy: [desc(plan.createdAt)],
       with: {
+          planToVegeStack: {
+            with: {
+              vegeStack: true,
+            },
+          },
         planToRecipe: {
           with: {
             recipe: true,
@@ -24,6 +29,11 @@ export const planRouter = createTRPCRouter({
       const res = await ctx.db.query.plan.findFirst({
         where: (recipe, { eq }) => eq(plan.id, input.id),
         with: {
+          planToVegeStack: {
+            with: {
+              vegeStack: true,
+            },
+          },
           planToRecipe: {
             with: {
               recipe: true,
@@ -42,6 +52,14 @@ export const planRouter = createTRPCRouter({
         notes: z.string(),
         planCategory: z.string(),
         numberOfMeals: z.number(),
+        veges: z.array(
+          z.object({
+            vegeStackId: z.number(),
+            note: z.string(),
+            mealNumber: z.number(),
+            calories: z.string(),
+          }),
+        ),
         recipes: z.array(
           z.object({
             recipeId: z.number(),
@@ -55,7 +73,7 @@ export const planRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const userId = ctx.session.user.id
-      const { recipes, ...data } = input
+      const { veges, recipes, ...data } = input
       const res = await ctx.db
         .insert(plan)
         .values({
@@ -76,7 +94,18 @@ export const planRouter = createTRPCRouter({
           })),
         )
         .returning({ id: planToRecipe.id })
-      return { res, recipeRes }
+
+      const vegeStackRes = await ctx.db
+        .insert(planToVegeStack)
+        .values(
+          veges.map((vege) => ({
+            ...vege,
+            planId: resId,
+          })),
+        )
+        .returning({ id: planToVegeStack.id })
+
+      return { res, recipeRes, vegeStackRes }
     }),
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))

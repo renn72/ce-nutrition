@@ -6,8 +6,10 @@ import { ColumnDef, } from '@tanstack/react-table'
 
 import { Checkbox } from '@/components/ui/checkbox'
 
+
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
+import { PlanPreview } from './plan-preview'
 
 export const columns: ColumnDef<GetPlanById>[] = [
   {
@@ -61,6 +63,23 @@ export const columns: ColumnDef<GetPlanById>[] = [
         </div>
       )
     },
+  },
+  {
+    accessorKey: 'preview',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title=''
+      />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className='flex space-x-2'>
+          <PlanPreview plan={row.original as GetPlanById} />
+        </div>
+      )
+    },
+    enableSorting: false,
   },
   {
     accessorKey: 'name',
