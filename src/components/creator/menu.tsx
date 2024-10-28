@@ -18,6 +18,18 @@ import {
 export const CreatorMenu = () => {
   const ctx = api.useUtils()
 
+  const { mutate: createVegeStack } = api.vege.create.useMutation({
+    onSuccess: () => {
+      ctx.invalidate()
+      toast.success('Created')
+    },
+  })
+  const { mutate: deleteAllVegeStacks } = api.vege.deleteAll.useMutation({
+    onSuccess: () => {
+      ctx.invalidate()
+      toast.success('Deleted')
+    },
+  })
   const { mutate: deleteAllPlans } = api.plan.deleteAll.useMutation({
     onSuccess: () => {
       ctx.invalidate()
@@ -90,6 +102,14 @@ export const CreatorMenu = () => {
       toast.success('Deleted')
     },
   })
+
+  const generateVegeStacks = () => {
+    createVegeStack({
+      veges: 'Lettuce, Onion, Green Beans, Zucchini, Kale, Spinach, Broccoli, Cauliflower, Capsicum, Cucumber',
+      notes: '2 Cups',
+      calories: '50',
+    })
+  }
 
   const { data: allIngredients } = api.ingredient.getAll.useQuery()
   const { data: allRecipes } = api.recipe.getAll.useQuery()
@@ -432,6 +452,26 @@ export const CreatorMenu = () => {
             }}
           >
             deleteAllPlans
+          </Button>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Button
+            variant='ghost'
+            onClick={() => {
+              generateVegeStacks()
+            }}
+          >
+            Gen Vege Stacks
+          </Button>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Button
+            variant='ghost'
+            onClick={() => {
+              deleteAllVegeStacks()
+            }}
+          >
+            deleteAllVegeStacks
           </Button>
         </DropdownMenuItem>
       </DropdownMenuContent>

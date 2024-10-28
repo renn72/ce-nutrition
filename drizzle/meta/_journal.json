@@ -50,6 +50,34 @@
       "when": 1729988020016,
       "tag": "0006_powerful_tarantula",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1730077409610,
+      "tag": "0007_worthless_dreadnoughts",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1730077457017,
+      "tag": "0008_special_banshee",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1730078250232,
+      "tag": "0009_sleepy_millenium_guard",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1730078270987,
+      "tag": "0010_windy_kingpin",
+      "breakpoints": true
     }
   ]
 }

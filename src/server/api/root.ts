@@ -5,6 +5,7 @@ import { userRouter } from '@/server/api/routers/user'
 import { settingsRouter } from '@/server/api/routers/settings'
 import { recipeRouter } from '@/server/api/routers/recipe'
 import { planRouter } from '@/server/api/routers/plan'
+import { vegeRouter } from '@/server/api/routers/vege'
 import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc'
 
 /**
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
   settings: settingsRouter,
   recipe: recipeRouter,
   plan: planRouter,
+  vege: vegeRouter,
 })
 
 // export type definition of API

@@ -46,11 +46,59 @@ export const planToRecipe = createTable('plan_to_recipe', {
   note: text('note'),
 })
 
+export const vegeStack  = createTable('vege_stack', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  createdAt: int('created_at', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+    () => new Date(),
+  ),
+  veges: text('veges'),
+  notes: text('notes'),
+  calories: text('calories'),
+})
+
+export const planToVegeStack = createTable('plan_to_vege_stack', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  createdAt: int('created_at', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  planId: int('plan_id').references(() => plan.id, {
+    onDelete: 'cascade',
+  }),
+  vegeStackId: int('vege_stack_id').references(() => vegeStack.id, {
+    onDelete: 'cascade',
+  }),
+  index: int('index', { mode: 'number' }),
+  calories: text('calories'),
+  note: text('note'),
+})
+
 
 export const planRelations = relations(plan, ({ one, many }) => ({
   creator: one(user, { fields: [plan.creatorId], references: [user.id] }),
   planToRecipe: many(planToRecipe),
+  planToVegeStack: many(planToVegeStack),
 }))
+
+export const vegeStackRelations = relations(vegeStack, ({ one, many }) => ({
+  planToVegeStack: many(planToVegeStack),
+}))
+
+export const planToVegeStackRelations = relations(
+  planToVegeStack,
+  ({ one }) => ({
+    plan: one(plan, {
+      fields: [planToVegeStack.planId],
+      references: [plan.id],
+    }),
+    vegeStack: one(vegeStack, {
+      fields: [planToVegeStack.vegeStackId],
+      references: [vegeStack.id],
+    }),
+  }),
+)
 
 export const planToRecipeRelations = relations(
   planToRecipe,
