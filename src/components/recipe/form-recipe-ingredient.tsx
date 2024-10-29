@@ -71,13 +71,13 @@ const FormRecipeIngredient = ({
     query === ''
       ? allIngredients
       : allIngredients.filter((i) => {
-          return i.foodName?.toLowerCase().includes(query.toLowerCase())
+          return i.name?.toLowerCase().includes(query.toLowerCase())
         })
   const filteredIngredientsAlt =
     queryAlt === ''
       ? allIngredients
       : allIngredients.filter((i) => {
-          return i.foodName?.toLowerCase().includes(queryAlt.toLowerCase())
+          return i.name?.toLowerCase().includes(queryAlt.toLowerCase())
         })
 
   const id = form.watch(`ingredients.${index}.ingredientId`)
@@ -119,7 +119,7 @@ const FormRecipeIngredient = ({
                         'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25',
                       )}
                       // @ts-ignore
-                      displayValue={(i) => i?.foodName}
+                      displayValue={(i) => i?.name}
                       onChange={(event) => setQuery(event.target.value)}
                     />
                     <ChevronDownIcon className='absolute top-1/2 -translate-y-1/2 right-2 text-secondary-foreground group-data-[hover]:text-black' />
@@ -141,7 +141,7 @@ const FormRecipeIngredient = ({
                       >
                         <CheckIcon className='invisible size-4 group-data-[selected]:visible' />
                         <div className='text-sm text-secondary-foreground'>
-                          {i.foodName}
+                          {i.name}
                         </div>
                       </ComboboxOption>
                     )}
@@ -292,7 +292,7 @@ const FormRecipeIngredient = ({
                         'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25',
                       )}
                       // @ts-ignore
-                      displayValue={(i) => i?.foodName}
+                      displayValue={(i) => i?.name}
                       onChange={(event) => setQueryAlt(event.target.value)}
                     />
                     <ChevronDownIcon className='absolute top-1/2 -translate-y-1/2 right-2 text-secondary-foreground group-data-[hover]:text-black' />
@@ -314,7 +314,7 @@ const FormRecipeIngredient = ({
                       >
                         <CheckIcon className='invisible size-4 group-data-[selected]:visible' />
                         <div className='text-sm text-secondary-foreground'>
-                          {i.foodName}
+                          {i.name}
                         </div>
                       </ComboboxOption>
                     )}

@@ -9,20 +9,7 @@ import { z } from 'zod'
 
 export const ingredientRouter = createTRPCRouter({
   getAll: protectedProcedure
-    .input(z.number().optional())
-    .query(async ({ input, ctx }) => {
-      if (input) {
-        const res = await ctx.db.query.ingredient.findMany({
-          limit: input,
-          columns: {
-            id: true,
-            foodName: true,
-            createdAt: true,
-          },
-          orderBy: [desc(ingredient.createdAt)],
-        })
-        return res
-      }
+    .query(async ({ ctx }) => {
       const res = await ctx.db.query.ingredient.findMany({
         where: (ingredient, { isNull, and }) =>
           and(isNull(ingredient.hiddenAt), isNull(ingredient.deletedAt)),
