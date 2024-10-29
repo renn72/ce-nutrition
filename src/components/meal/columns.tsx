@@ -3,7 +3,7 @@
 import { api } from '@/trpc/react'
 
 import { formatDate } from '@/lib/utils'
-import type { GetIngredientById } from '@/types'
+import type { GetMealById } from '@/types'
 import { ColumnDef, SortingFn } from '@tanstack/react-table'
 import { Bookmark } from 'lucide-react'
 
@@ -18,15 +18,7 @@ import { DataTableColumnHeader } from '@/components/table/data-table-column-head
 
 import { DataTableRowActions } from './data-table-row-actions'
 
-const floatSortingFn: SortingFn<GetIngredientById> = (a, b, c) => {
-  // @ts-ignore
-  const aValue = parseFloat(a.getValue(c).replace(',', ''))
-  // @ts-ignore
-  const bValue = parseFloat(b.getValue(c).replace(',', ''))
-  return aValue - bValue
-}
-
-export const columns: ColumnDef<GetIngredientById>[] = [
+export const columns: ColumnDef<GetMealById>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -62,13 +54,13 @@ export const columns: ColumnDef<GetIngredientById>[] = [
     cell: ({ row }) => {
       const ctx = api.useUtils()
       const { mutate: updateFavourite } =
-        api.ingredient.updateFavourite.useMutation({
+        api.meal.updateFavourite.useMutation({
           onSettled: () => {
-            ctx.ingredient.invalidate()
+            ctx.meal.invalidate()
           },
           onMutate: async () => {
-            await ctx.ingredient.getAll.cancel()
-            const prev = ctx.ingredient.getAll.getData()
+            await ctx.meal.getAll.cancel()
+            const prev = ctx.meal.getAll.getData()
             if (!prev) return
             const update = prev.map((ingredient) => {
               if (ingredient.id === row.original?.id) {
@@ -77,24 +69,24 @@ export const columns: ColumnDef<GetIngredientById>[] = [
               }
               return ingredient
             })
-            ctx.ingredient.getAll.setData(undefined, [
+            ctx.meal.getAll.setData(undefined, [
               ...update,
             ])
             return { prev }
           },
           onError: (_e, _new, prev) => {
             if (!prev) return
-            ctx.ingredient.getAll.setData(undefined, { ...prev.prev })
+            ctx.meal.getAll.setData(undefined, { ...prev.prev })
           },
         })
       const { mutate: deleteFavourite } =
-        api.ingredient.deleteFavourite.useMutation({
+        api.meal.deleteFavourite.useMutation({
           onSettled: () => {
-            ctx.ingredient.invalidate()
+            ctx.meal.invalidate()
           },
           onMutate: async () => {
-            await ctx.ingredient.getAll.cancel()
-            const prev = ctx.ingredient.getAll.getData()
+            await ctx.meal.getAll.cancel()
+            const prev = ctx.meal.getAll.getData()
             if (!prev) return
             const update = prev.map((ingredient) => {
               if (ingredient.id === row.original?.id) {
@@ -103,14 +95,14 @@ export const columns: ColumnDef<GetIngredientById>[] = [
               }
               return ingredient
             })
-            ctx.ingredient.getAll.setData(undefined, [
+            ctx.meal.getAll.setData(undefined, [
               ...update,
             ])
             return { prev }
           },
           onError: (_e, _new, prev) => {
             if (!prev) return
-            ctx.ingredient.getAll.setData(undefined, { ...prev.prev })
+            ctx.meal.getAll.setData(undefined, { ...prev.prev })
           },
         })
       return (
@@ -143,18 +135,6 @@ export const columns: ColumnDef<GetIngredientById>[] = [
       />
     ),
     cell: ({ row }) => <div className='w-min'>{row.getValue('id')}</div>,
-  },
-  {
-    accessorKey: 'publicFoodKey',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Food Key'
-      />
-    ),
-    cell: ({ row }) => (
-      <div className='w-min'>{row.getValue('publicFoodKey')}</div>
-    ),
   },
   {
     accessorKey: 'createdAt',
@@ -197,152 +177,6 @@ export const columns: ColumnDef<GetIngredientById>[] = [
               </div>
             </HoverCardContent>
           </HoverCard>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'serveSize',
-    sortingFn: floatSortingFn,
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Serve Size'
-      />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className='flex space-x-2'>
-          <span className='max-w-[50px] truncate font-medium'>
-            {row.getValue('serveSize')}
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'serveUnit',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Serve Unit'
-      />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className='flex space-x-2'>
-          <span className='max-w-[100px] truncate font-medium'>
-            {row.getValue('serveUnit')}
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'caloriesWFibre',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Calories w Fibre'
-      />
-    ),
-    sortingFn: floatSortingFn,
-    cell: ({ row }) => {
-      return (
-        <div className='flex space-x-2'>
-          <span className='max-w-[100px] truncate font-medium'>
-            {row.getValue('caloriesWFibre')}
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'caloriesWOFibre',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Calories w/o Fibre'
-      />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className='flex space-x-2'>
-          <span className='max-w-[100px] truncate font-medium'>
-            {row.getValue('caloriesWOFibre')}
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'protein',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Protein'
-      />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className='flex space-x-2'>
-          <span className='max-w-[100px] truncate font-medium'>
-            {row.getValue('protein')}g
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'fatTotal',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Fat'
-      />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className='flex space-x-2'>
-          <span className='max-w-[100px] truncate font-medium'>
-            {row.getValue('fatTotal')}g
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'availableCarbohydrateWithoutSugarAlcohols',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Carbs w/o Alcohols'
-      />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className='flex space-x-2'>
-          <span className='max-w-[100px] truncate font-medium'>
-            {row.getValue('availableCarbohydrateWithoutSugarAlcohols')}g
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'availableCarbohydrateWithSugarAlcohols',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title='Carbs'
-      />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className='flex space-x-2'>
-          <span className='max-w-[100px] truncate font-medium'>
-            {row.getValue('availableCarbohydrateWithSugarAlcohols')}g
-          </span>
         </div>
       )
     },

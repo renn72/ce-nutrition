@@ -1,5 +1,5 @@
+import { meal, mealToRecipe, mealToVegeStack } from '@/server/db/schema/meal'
 import { plan, planToRecipe, planToVegeStack } from '@/server/db/schema/plan'
-import { meal, mealToRecipe, mealToVegeStack} from '@/server/db/schema/meal'
 import { recipe, recipeToIngredient } from '@/server/db/schema/recipe'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { desc, eq } from 'drizzle-orm'
@@ -10,11 +10,11 @@ export const mealRouter = createTRPCRouter({
     const res = await ctx.db.query.meal.findMany({
       orderBy: [desc(meal.createdAt)],
       with: {
-          mealToVegeStack: {
-            with: {
-              vegeStack: true,
-            },
+        mealToVegeStack: {
+          with: {
+            vegeStack: true,
           },
+        },
         mealToRecipe: {
           with: {
             recipe: true,
@@ -52,14 +52,13 @@ export const mealRouter = createTRPCRouter({
         image: z.string(),
         notes: z.string(),
         mealCategory: z.string(),
-        veges: z.array(
-          z.object({
+        veges: z
+          .object({
             vegeStackId: z.number(),
             note: z.string(),
-            mealNumber: z.number(),
             calories: z.string(),
-          }),
-        ),
+          })
+          .optional(),
         recipes: z.array(
           z.object({
             recipeId: z.number(),
@@ -93,17 +92,14 @@ export const mealRouter = createTRPCRouter({
         )
         .returning({ id: planToRecipe.id })
 
-      const vegeStackRes = await ctx.db
-        .insert(mealToVegeStack)
-        .values(
-          veges.map((vege) => ({
-            ...vege,
-            mealId: resId,
-          })),
-        )
-        .returning({ id: planToVegeStack.id })
+      if (veges) {
+        await ctx.db.insert(mealToVegeStack).values({
+          ...veges,
+          mealId: resId,
+        })
+      }
 
-      return { res, recipeRes, vegeStackRes }
+      return { res, recipeRes }
     }),
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))

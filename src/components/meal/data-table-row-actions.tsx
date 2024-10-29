@@ -2,8 +2,6 @@
 
 import { api } from '@/trpc/react'
 
-import type { GetIngredientById } from '@/types'
-
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { Row } from '@tanstack/react-table'
 import { toast } from 'sonner'
@@ -14,7 +12,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
@@ -26,29 +23,12 @@ export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
   const ctx = api.useUtils()
-  const { mutate: deleteIngredient } = api.ingredient.delete.useMutation({
+  const { mutate: deleteMeal } = api.ingredient.delete.useMutation({
     onSuccess: () => {
-      ctx.ingredient.invalidate()
-      toast.success('Ingredient deleted successfully')
+      ctx.meal.invalidate()
+      toast.success('Deleted successfully')
     },
   })
-  const { mutate: updateHiddenAt } = api.ingredient.updateHiddenAt.useMutation({
-    onSuccess: () => {
-      ctx.ingredient.invalidate()
-      toast.success('Ingredient hidden successfully')
-    },
-  })
-  const { mutate: deleteHiddenAt } =
-    api.ingredient.deleteHiddenAt.useMutation({
-      onSuccess: () => {
-        ctx.ingredient.invalidate()
-        toast.success('Ingredient unhidden successfully')
-      },
-    })
-
-  const data = row.original as GetIngredientById
-
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -65,25 +45,10 @@ export function DataTableRowActions<TData>({
         className='w-[160px]'
       >
         <DropdownMenuItem>Edit</DropdownMenuItem>
-        {
-          data?.hiddenAt ? (
-            <DropdownMenuItem
-              onSelect={() => deleteHiddenAt({ id: data?.id || 0 })}
-            >
-              Unhide
-            </DropdownMenuItem>
-          ) : (
-            <DropdownMenuItem
-              onSelect={() => updateHiddenAt({ id: data?.id || 0 })}
-            >
-              Hide
-            </DropdownMenuItem>
-          )
-        }
         <DropdownMenuSeparator />
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onSelect={() => deleteIngredient({ id: row.getValue('id') })}
+          onSelect={() => deleteMeal({ id: row.getValue('id') })}
         >
           Delete
         </DropdownMenuItem>

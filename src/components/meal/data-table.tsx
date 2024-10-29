@@ -40,8 +40,6 @@ const DataTable = ({ meals : data }: { meals: GetAllMeals }) => {
     React.useState<VisibilityState>({
       createdAt: false,
       id: false,
-      availableCarbohydrateWithoutSugarAlcohols: false,
-      publicFoodKey: false,
     })
 
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -73,10 +71,6 @@ const DataTable = ({ meals : data }: { meals: GetAllMeals }) => {
       columnFilters,
     },
     initialState: {
-      columnVisibility: {
-        createdAt: false,
-        id: false,
-      },
       pagination: {
         pageIndex: 0,
         pageSize: 20,

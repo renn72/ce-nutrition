@@ -138,89 +138,74 @@ export const CreatorMenu = () => {
     const vegeStack = allVegeStacks[0]?.id || 0
     console.log({ beef, ham, chicken, vegeStack })
     createMeal({
-      name: 'General Plan 1',
+      name: 'Snack 1',
       description: 'General',
       image: '',
       notes: 'General',
-      planCategory: 'Lunch',
-      numberOfMeals: 4,
-      veges: [
-        {
-          vegeStackId: vegeStack,
-          note: '',
-          mealNumber: 2,
-          calories: '50',
-        },
-        {
-          vegeStackId: vegeStack,
-          note: '',
-          mealNumber: 4,
-          calories: '50',
-        },
-      ],
+      mealCategory: 'snack',
       recipes: [
-        {
-          recipeId: beef,
-          note: 'Test',
-          index: 1,
-          mealNumber: 1,
-          calories: '500',
-        },
         {
           recipeId: ham,
           note: 'Test',
           index: 2,
-          mealNumber: 1,
-          calories: '500',
         },
         {
           recipeId: chicken,
           note: 'Test',
           index: 3,
-          mealNumber: 1,
-          calories: '500',
         },
-        {
-          recipeId: ham,
-          note: 'Test',
-          index: 1,
-          mealNumber: 2,
-          calories: '400',
+      ],
+    })
+    createMeal({
+      name: 'Lunch 1',
+      description: 'General',
+      image: '',
+      notes: 'General',
+      mealCategory: 'Lunch',
+      veges: {
+          vegeStackId: vegeStack,
+          note: '',
+          calories: '50',
         },
-        {
-          recipeId: chicken,
-          note: 'Test',
-          index: 2,
-          mealNumber: 2,
-          calories: '400',
-        },
+      recipes: [
         {
           recipeId: beef,
           note: 'Test',
           index: 1,
-          mealNumber: 3,
-          calories: '600',
         },
         {
           recipeId: ham,
           note: 'Test',
           index: 2,
-          mealNumber: 3,
-          calories: '600',
-        },
-        {
-          recipeId: beef,
-          note: 'Test',
-          index: 1,
-          mealNumber: 4,
-          calories: '600',
         },
         {
           recipeId: chicken,
           note: 'Test',
-          index: 2,
-          mealNumber: 4,
-          calories: '400',
+          index: 3,
+        },
+      ],
+    })
+    createMeal({
+      name: 'Dinner 1',
+      description: 'General',
+      image: '',
+      notes: 'General',
+      mealCategory: 'Dinner',
+      veges: {
+          vegeStackId: vegeStack,
+          note: '',
+          calories: '50',
+        },
+      recipes: [
+        {
+          recipeId: beef,
+          note: 'Test',
+          index: 1,
+        },
+        {
+          recipeId: chicken,
+          note: 'Test',
+          index: 3,
         },
       ],
     })
@@ -471,6 +456,26 @@ export const CreatorMenu = () => {
             }}
           >
             deleteAllRecipes
+          </Button>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Button
+            variant='ghost'
+            onClick={() => {
+              generateMeals()
+            }}
+          >
+            Gen Meals
+          </Button>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Button
+            variant='ghost'
+            onClick={() => {
+              deleteAllMeals()
+            }}
+          >
+            deleteAllPlans
           </Button>
         </DropdownMenuItem>
         <DropdownMenuItem>

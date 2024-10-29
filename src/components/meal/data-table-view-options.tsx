@@ -21,16 +21,6 @@ const columMap = {
   createdAt: 'Created',
   id: 'ID',
   name: 'Name',
-  publicFoodKey: 'Food Key',
-  serveSize: 'Serve Size',
-  serveUnit: 'Serve Unit',
-  caloriesWFibre: 'Calories w Fibre',
-  caloriesWOFibre: 'Calories w/o Fibre',
-  protein: 'Protein',
-  fatTotal: 'Fat',
-  availableCarbohydrateWithSugarAlcohols: 'Carbs',
-  availableCarbohydrateWithoutSugarAlcohols: 'Carbs w/o Alcohols',
-  hiddenAt: 'Hidden',
 }
 
 export function DataTableViewOptions<TData>({

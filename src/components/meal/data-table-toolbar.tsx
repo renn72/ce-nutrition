@@ -9,8 +9,6 @@ import { Input } from '@/components/ui/input'
 import { DataTableViewOptions } from './data-table-view-options'
 import { FormDialog } from './form-dialog'
 
-import { DataTableFacetedFilter } from './data-table-faceted-filter'
-
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
 }
@@ -19,8 +17,6 @@ export function DataTableToolbar<TData>({
   table,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0
-
-  console.log(table.getState())
 
   return (
     <div className='flex items-center justify-between'>
@@ -51,23 +47,3 @@ export function DataTableToolbar<TData>({
     </div>
   )
 }
-
-// {table.getColumn('tags') && (
-//   <div />
-//   // <DataTableFacetedFilter
-//   //   column={table.getColumn('tags')}
-//   //   title='Tags'
-//   //   options={tags?.map((tag) => tag.name ?? '')}
-//   // />
-// )}
-//
-
-      // {table.getColumn('hiddenAt') && (
-      //   <div>
-      //     <DataTableFacetedFilter
-      //       column={table.getColumn('hiddenAt')}
-      //       title='Hidden'
-      //       options={['Hidden']}
-      //     />
-      //   </div>
-      // )}

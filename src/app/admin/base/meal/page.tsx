@@ -21,7 +21,7 @@ export default function Home() {
       ) : null}
       {data ? (
         <div className='max-w-screen-2xl min-w-screen-xl py-6'>
-          <DataTable meal={data} />
+          <DataTable meals={data} />
         </div>
       ) : null}
     </div>
