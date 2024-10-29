@@ -1,4 +1,4 @@
-import { plan, planToRecipe, planToVegeStack } from '@/server/db/schema/plan'
+import { plan } from '@/server/db/schema/plan'
 import { recipe, recipeToIngredient } from '@/server/db/schema/recipe'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { desc, eq } from 'drizzle-orm'
@@ -8,18 +8,6 @@ export const planRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.plan.findMany({
       orderBy: [desc(plan.createdAt)],
-      with: {
-          planToVegeStack: {
-            with: {
-              vegeStack: true,
-            },
-          },
-        planToRecipe: {
-          with: {
-            recipe: true,
-          },
-        },
-      },
     })
     return res
   }),
@@ -28,18 +16,6 @@ export const planRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       const res = await ctx.db.query.plan.findFirst({
         where: (recipe, { eq }) => eq(plan.id, input.id),
-        with: {
-          planToVegeStack: {
-            with: {
-              vegeStack: true,
-            },
-          },
-          planToRecipe: {
-            with: {
-              recipe: true,
-            },
-          },
-        },
       })
       return res
     }),
@@ -85,27 +61,8 @@ export const planRouter = createTRPCRouter({
       const resId = res?.[0]?.id
       if (!resId) return res
 
-      const recipeRes = await ctx.db
-        .insert(planToRecipe)
-        .values(
-          recipes.map((recipe) => ({
-            ...recipe,
-            planId: resId,
-          })),
-        )
-        .returning({ id: planToRecipe.id })
+  return resId
 
-      const vegeStackRes = await ctx.db
-        .insert(planToVegeStack)
-        .values(
-          veges.map((vege) => ({
-            ...vege,
-            planId: resId,
-          })),
-        )
-        .returning({ id: planToVegeStack.id })
-
-      return { res, recipeRes, vegeStackRes }
     }),
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))

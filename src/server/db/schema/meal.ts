@@ -48,6 +48,7 @@ export const vegeStack = createTable('vege_stack', {
   updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
+  name: text('name'),
   veges: text('veges'),
   notes: text('notes'),
   calories: text('calories'),

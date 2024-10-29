@@ -127,6 +127,13 @@
       "when": 1730184051941,
       "tag": "0017_dashing_onslaught",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "6",
+      "when": 1730185542972,
+      "tag": "0018_lethal_jazinda",
+      "breakpoints": true
     }
   ]
 }

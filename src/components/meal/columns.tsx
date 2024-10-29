@@ -53,58 +53,52 @@ export const columns: ColumnDef<GetMealById>[] = [
     ),
     cell: ({ row }) => {
       const ctx = api.useUtils()
-      const { mutate: updateFavourite } =
-        api.meal.updateFavourite.useMutation({
-          onSettled: () => {
-            ctx.meal.invalidate()
-          },
-          onMutate: async () => {
-            await ctx.meal.getAll.cancel()
-            const prev = ctx.meal.getAll.getData()
-            if (!prev) return
-            const update = prev.map((ingredient) => {
-              if (ingredient.id === row.original?.id) {
+      const { mutate: updateFavourite } = api.meal.updateFavourite.useMutation({
+        onSettled: () => {
+          ctx.meal.invalidate()
+        },
+        onMutate: async () => {
+          await ctx.meal.getAll.cancel()
+          const prev = ctx.meal.getAll.getData()
+          if (!prev) return
+          const update = prev.map((ingredient) => {
+            if (ingredient.id === row.original?.id) {
               // @ts-ignore
-                ingredient.favouriteAt = new Date()
-              }
-              return ingredient
-            })
-            ctx.meal.getAll.setData(undefined, [
-              ...update,
-            ])
-            return { prev }
-          },
-          onError: (_e, _new, prev) => {
-            if (!prev) return
-            ctx.meal.getAll.setData(undefined, { ...prev.prev })
-          },
-        })
-      const { mutate: deleteFavourite } =
-        api.meal.deleteFavourite.useMutation({
-          onSettled: () => {
-            ctx.meal.invalidate()
-          },
-          onMutate: async () => {
-            await ctx.meal.getAll.cancel()
-            const prev = ctx.meal.getAll.getData()
-            if (!prev) return
-            const update = prev.map((ingredient) => {
-              if (ingredient.id === row.original?.id) {
+              ingredient.favouriteAt = new Date()
+            }
+            return ingredient
+          })
+          ctx.meal.getAll.setData(undefined, [...update])
+          return { prev }
+        },
+        onError: (_e, _new, prev) => {
+          if (!prev) return
+          ctx.meal.getAll.setData(undefined, { ...prev.prev })
+        },
+      })
+      const { mutate: deleteFavourite } = api.meal.deleteFavourite.useMutation({
+        onSettled: () => {
+          ctx.meal.invalidate()
+        },
+        onMutate: async () => {
+          await ctx.meal.getAll.cancel()
+          const prev = ctx.meal.getAll.getData()
+          if (!prev) return
+          const update = prev.map((ingredient) => {
+            if (ingredient.id === row.original?.id) {
               // @ts-ignore
-                ingredient.favouriteAt = null
-              }
-              return ingredient
-            })
-            ctx.meal.getAll.setData(undefined, [
-              ...update,
-            ])
-            return { prev }
-          },
-          onError: (_e, _new, prev) => {
-            if (!prev) return
-            ctx.meal.getAll.setData(undefined, { ...prev.prev })
-          },
-        })
+              ingredient.favouriteAt = null
+            }
+            return ingredient
+          })
+          ctx.meal.getAll.setData(undefined, [...update])
+          return { prev }
+        },
+        onError: (_e, _new, prev) => {
+          if (!prev) return
+          ctx.meal.getAll.setData(undefined, { ...prev.prev })
+        },
+      })
       return (
         <div className='w-full flex justify-center'>
           {row.original?.favouriteAt ? (
@@ -182,6 +176,35 @@ export const columns: ColumnDef<GetMealById>[] = [
     },
   },
   {
+    accessorKey: 'recipes',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title='Recipes'
+      />
+    ),
+    cell: ({ row }) => {
+      const recipes = row.original?.mealToRecipe
+        ?.map((r) => r.recipe?.name)
+        .join(' || ')
+      return (
+        <div className='flex space-x-2'>
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <span className='w-[300px] truncate font-medium'>{recipes}</span>
+            </HoverCardTrigger>
+            <HoverCardContent>
+              <div className='flex space-x-2'>
+                {recipes}
+                <span className='font-medium'></span>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+        </div>
+      )
+    },
+  },
+  {
     accessorKey: 'vege',
     header: ({ column }) => (
       <DataTableColumnHeader
@@ -193,9 +216,7 @@ export const columns: ColumnDef<GetMealById>[] = [
       const vege = row.original?.mealToVegeStack?.[0]?.vegeStack?.name
       return (
         <div className='flex space-x-2'>
-          <span className='max-w-[200px] truncate font-medium'>
-            {vege}
-          </span>
+          <span className='max-w-[200px] truncate font-medium'>{vege}</span>
         </div>
       )
     },
