@@ -1,11 +1,11 @@
 'use client'
 
+import { api } from '@/trpc/react'
+
 import { formatDate } from '@/lib/utils'
 import type { GetIngredientById } from '@/types'
-import { ColumnDef,
-  SortingFn,
-} from '@tanstack/react-table'
-
+import { ColumnDef, SortingFn } from '@tanstack/react-table'
+import { Bookmark } from 'lucide-react'
 
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -14,9 +14,9 @@ import {
   HoverCardTrigger,
 } from '@/components/ui/hover-card'
 
-import { DataTableColumnHeader } from './data-table-column-header'
-import { DataTableRowActions } from './data-table-row-actions'
+import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 
+import { DataTableRowActions } from './data-table-row-actions'
 
 const floatSortingFn: SortingFn<GetIngredientById> = (a, b, c) => {
   // @ts-ignore
@@ -25,7 +25,6 @@ const floatSortingFn: SortingFn<GetIngredientById> = (a, b, c) => {
   const bValue = parseFloat(b.getValue(c).replace(',', ''))
   return aValue - bValue
 }
-
 
 export const columns: ColumnDef<GetIngredientById>[] = [
   {
@@ -53,6 +52,86 @@ export const columns: ColumnDef<GetIngredientById>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: 'favourite',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title='Favourite'
+      />
+    ),
+    cell: ({ row }) => {
+      const ctx = api.useUtils()
+      const { mutate: updateFavourite } =
+        api.ingredient.updateFavourite.useMutation({
+          onSettled: () => {
+            ctx.ingredient.invalidate()
+          },
+          onMutate: async () => {
+            await ctx.ingredient.getAll.cancel()
+            const prev = ctx.ingredient.getAll.getData()
+            if (!prev) return
+            const update = prev.map((ingredient) => {
+              if (ingredient.id === row.original?.id) {
+                ingredient.favouriteAt = new Date()
+              }
+              return ingredient
+            })
+            ctx.ingredient.getAll.setData(undefined, [
+              ...update,
+            ])
+            return { prev }
+          },
+          onError: (_e, _new, prev) => {
+            if (!prev) return
+            ctx.ingredient.getAll.setData(undefined, { ...prev.prev })
+          },
+        })
+      const { mutate: deleteFavourite } =
+        api.ingredient.deleteFavourite.useMutation({
+          onSettled: () => {
+            ctx.ingredient.invalidate()
+          },
+          onMutate: async () => {
+            await ctx.ingredient.getAll.cancel()
+            const prev = ctx.ingredient.getAll.getData()
+            if (!prev) return
+            const update = prev.map((ingredient) => {
+              if (ingredient.id === row.original?.id) {
+                ingredient.favouriteAt = null
+              }
+              return ingredient
+            })
+            ctx.ingredient.getAll.setData(undefined, [
+              ...update,
+            ])
+            return { prev }
+          },
+          onError: (_e, _new, prev) => {
+            if (!prev) return
+            ctx.ingredient.getAll.setData(undefined, { ...prev.prev })
+          },
+        })
+      return (
+        <div className='w-full flex justify-center'>
+          {row.original?.favouriteAt ? (
+            <Bookmark
+              className='cursor-pointer active:scale-95'
+              onClick={() => deleteFavourite({ id: row.original?.id || 0 })}
+              fill='#FFB500'
+              size={16}
+            />
+          ) : (
+            <Bookmark
+              className='cursor-pointer active:scale-95'
+              onClick={() => updateFavourite({ id: row.original?.id || 0 })}
+              size={16}
+            />
+          )}
+        </div>
+      )
+    },
+  },
+  {
     accessorKey: 'id',
     header: ({ column }) => (
       <DataTableColumnHeader
@@ -70,7 +149,9 @@ export const columns: ColumnDef<GetIngredientById>[] = [
         title='Food Key'
       />
     ),
-    cell: ({ row }) => <div className='w-min'>{row.getValue('publicFoodKey')}</div>,
+    cell: ({ row }) => (
+      <div className='w-min'>{row.getValue('publicFoodKey')}</div>
+    ),
   },
   {
     accessorKey: 'createdAt',
@@ -91,7 +172,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
     },
   },
   {
-    accessorKey: 'foodName',
+    accessorKey: 'name',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
@@ -104,12 +185,12 @@ export const columns: ColumnDef<GetIngredientById>[] = [
           <HoverCard>
             <HoverCardTrigger asChild>
               <span className='w-[400px] truncate font-medium'>
-                {row.getValue('foodName')}
+                {row.getValue('name')}
               </span>
             </HoverCardTrigger>
             <HoverCardContent>
               <div className='flex space-x-2'>
-                <span className='font-medium'>{row.getValue('foodName')}</span>
+                <span className='font-medium'>{row.getValue('name')}</span>
               </div>
             </HoverCardContent>
           </HoverCard>
@@ -232,7 +313,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Carbs w Alcohols'
+        title='Carbs w/o Alcohols'
       />
     ),
     cell: ({ row }) => {
@@ -250,7 +331,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Carbs w/o Alcohols'
+        title='Carbs'
       />
     ),
     cell: ({ row }) => {

@@ -49,6 +49,28 @@ export const ingredientRouter = createTRPCRouter({
       })
       return res
     }),
+  updateFavourite: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.db
+        .update(ingredient)
+        .set({
+          favouriteAt: new Date(),
+        })
+        .where(eq(ingredient.id, input.id))
+      return res
+    }),
+  deleteFavourite: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.db
+        .update(ingredient)
+        .set({
+          favouriteAt: null,
+        })
+        .where(eq(ingredient.id, input.id))
+      return res
+    }),
   create: protectedProcedure
     .input(createIngredientSchema)
     .mutation(async ({ input, ctx }) => {

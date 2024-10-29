@@ -20,7 +20,7 @@ interface DataTableViewOptionsProps<TData> {
 const columMap = {
   createdAt: 'Created',
   id: 'ID',
-  foodName: 'Name',
+  name: 'Name',
   publicFoodKey: 'Food Key',
   serveSize: 'Serve Size',
   serveUnit: 'Serve Unit',
@@ -28,7 +28,7 @@ const columMap = {
   caloriesWOFibre: 'Calories w/o Fibre',
   protein: 'Protein',
   fatTotal: 'Fat',
-  availableCarbohydrateWithSugarAlcohols: 'Carbs w Alcohols',
+  availableCarbohydrateWithSugarAlcohols: 'Carbs',
   availableCarbohydrateWithoutSugarAlcohols: 'Carbs w/o Alcohols',
 }
 
