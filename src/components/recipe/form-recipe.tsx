@@ -12,15 +12,6 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -58,13 +49,11 @@ export const formSchema = z.object({
 })
 
 const FormRecipe = () => {
-  const [isOpen, setIsOpen] = useState(false)
   const ctx = api.useUtils()
   const { data: allIngredients } = api.ingredient.getAll.useQuery()
   const { mutate: createRecipe } = api.recipe.create.useMutation({
     onSuccess: () => {
-      setIsOpen(false)
-      ctx.groceryStore.invalidate()
+      ctx.recipe.invalidate()
       toast.success('Store added successfully')
     },
   })
