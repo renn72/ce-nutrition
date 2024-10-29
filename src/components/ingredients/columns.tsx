@@ -72,6 +72,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
             if (!prev) return
             const update = prev.map((ingredient) => {
               if (ingredient.id === row.original?.id) {
+              // @ts-ignore
                 ingredient.favouriteAt = new Date()
               }
               return ingredient
@@ -97,6 +98,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
             if (!prev) return
             const update = prev.map((ingredient) => {
               if (ingredient.id === row.original?.id) {
+              // @ts-ignore
                 ingredient.favouriteAt = null
               }
               return ingredient

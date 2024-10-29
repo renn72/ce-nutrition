@@ -9,6 +9,8 @@ import { Input } from '@/components/ui/input'
 import { DataTableViewOptions } from './data-table-view-options'
 import { FormDialog } from './form-dialog'
 
+import { DataTableFacetedFilter } from './data-table-faceted-filter'
+
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
 }
@@ -25,9 +27,7 @@ export function DataTableToolbar<TData>({
       <div className='flex flex-1 items-center space-x-2'>
         <Input
           placeholder='Filter questions...'
-          value={
-            (table.getColumn('name')?.getFilterValue() as string) ?? ''
-          }
+          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             table.getColumn('name')?.setFilterValue(event.target.value)
           }
@@ -52,14 +52,6 @@ export function DataTableToolbar<TData>({
   )
 }
 
-// {table.getColumn('topics') && (
-//   <div />
-//   // <DataTableFacetedFilter
-//   //   column={table.getColumn('topics')}
-//   //   title='Topics'
-//   //   options={topics?.map((topic) => topic.name ?? '')}
-//   // />
-// )}
 // {table.getColumn('tags') && (
 //   <div />
 //   // <DataTableFacetedFilter
@@ -68,3 +60,14 @@ export function DataTableToolbar<TData>({
 //   //   options={tags?.map((tag) => tag.name ?? '')}
 //   // />
 // )}
+//
+
+      // {table.getColumn('hiddenAt') && (
+      //   <div>
+      //     <DataTableFacetedFilter
+      //       column={table.getColumn('hiddenAt')}
+      //       title='Hidden'
+      //       options={['Hidden']}
+      //     />
+      //   </div>
+      // )}
