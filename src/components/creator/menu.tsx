@@ -117,6 +117,7 @@ export const CreatorMenu = () => {
 
   const generateVegeStacks = () => {
     createVegeStack({
+      name: 'Vege Stack 1',
       veges:
         'Lettuce, Onion, Green Beans, Zucchini, Kale, Spinach, Broccoli, Cauliflower, Capsicum, Cucumber',
       notes: '2 Cups',
@@ -475,7 +476,7 @@ export const CreatorMenu = () => {
               deleteAllMeals()
             }}
           >
-            deleteAllPlans
+            deleteAllMeals
           </Button>
         </DropdownMenuItem>
         <DropdownMenuItem>

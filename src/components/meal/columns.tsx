@@ -167,7 +167,7 @@ export const columns: ColumnDef<GetMealById>[] = [
         <div className='flex space-x-2'>
           <HoverCard>
             <HoverCardTrigger asChild>
-              <span className='w-[400px] truncate font-medium'>
+              <span className='w-[100px] truncate font-medium'>
                 {row.getValue('name')}
               </span>
             </HoverCardTrigger>
@@ -177,6 +177,25 @@ export const columns: ColumnDef<GetMealById>[] = [
               </div>
             </HoverCardContent>
           </HoverCard>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'vege',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title='Vegetables'
+      />
+    ),
+    cell: ({ row }) => {
+      const vege = row.original?.mealToVegeStack?.[0]?.vegeStack?.name
+      return (
+        <div className='flex space-x-2'>
+          <span className='max-w-[200px] truncate font-medium'>
+            {vege}
+          </span>
         </div>
       )
     },

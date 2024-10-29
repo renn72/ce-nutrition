@@ -5,7 +5,6 @@ import { z } from 'zod'
 
 import { user } from './user'
 import { ingredient } from './ingredient'
-import { planToRecipe } from './plan'
 
 export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
@@ -68,6 +67,5 @@ export const recipeToIngredientRelations = relations(
 export const recipeRelations = relations(recipe, ({ one, many }) => ({
   creator: one(user, { fields: [recipe.creatorId], references: [user.id] }),
   recipeToIngredient: many(recipeToIngredient),
-  planToRecipe: many(planToRecipe),
 }))
 

@@ -1,5 +1,4 @@
 import { meal, mealToRecipe, mealToVegeStack } from '@/server/db/schema/meal'
-import { plan, planToRecipe, planToVegeStack } from '@/server/db/schema/plan'
 import { recipe, recipeToIngredient } from '@/server/db/schema/recipe'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { desc, eq } from 'drizzle-orm'
@@ -77,7 +76,7 @@ export const mealRouter = createTRPCRouter({
           ...data,
           creatorId: userId,
         })
-        .returning({ id: recipe.id })
+        .returning({ id: meal.id })
 
       const resId = res?.[0]?.id
       if (!resId) return res
@@ -90,7 +89,7 @@ export const mealRouter = createTRPCRouter({
             mealId: resId,
           })),
         )
-        .returning({ id: planToRecipe.id })
+        .returning({ id: mealToRecipe.id })
 
       if (veges) {
         await ctx.db.insert(mealToVegeStack).values({
@@ -100,6 +99,28 @@ export const mealRouter = createTRPCRouter({
       }
 
       return { res, recipeRes }
+    }),
+  updateFavourite: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.db
+        .update(meal)
+        .set({
+          favouriteAt: new Date(),
+        })
+        .where(eq(meal.id, input.id))
+      return res
+    }),
+  deleteFavourite: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.db
+        .update(meal)
+        .set({
+          favouriteAt: null,
+        })
+        .where(eq(meal.id, input.id))
+      return res
     }),
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))

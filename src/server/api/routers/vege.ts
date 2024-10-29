@@ -1,4 +1,4 @@
-import { vegeStack } from '@/server/db/schema/plan'
+import { vegeStack } from '@/server/db/schema/meal'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
@@ -17,7 +17,7 @@ export const vegeRouter = createTRPCRouter({
       return res
     }),
   create: protectedProcedure
-    .input(z.object({ veges: z.string(), notes: z.string(), calories: z.string() }))
+    .input(z.object({ veges: z.string(), notes: z.string(), calories: z.string(), name: z.string() }))
     .mutation(async ({ input, ctx }) => {
       const res = await ctx.db.insert(vegeStack).values({
         ...input,

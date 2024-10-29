@@ -1,12 +1,5 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-replica.*
-/db
-replica.db
-replica.db-client_wal_index
-replica.db-wal
-replica.db-shm
-
 # dependencies
 /node_modules
 /.pnp
