@@ -28,6 +28,7 @@ export const ingredient = createTable(
     publicFoodKey: text('public_food_key'),
     classification: text('classification'),
     foodName: text('food_name'),
+    name: text('name'),
     caloriesWFibre: text('calories_w_fibre'),
     caloriesWOFibre: text('calories_wo_fibre'),
     protein: text('protein'),
