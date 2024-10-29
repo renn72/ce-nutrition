@@ -12,7 +12,7 @@ export default async function RootLayout({
   if (!session?.user.id)
     return (
       <>
-        <div className='flex w-full h-screen flex-col items-center justify-center gap-2'>
+        <div className='flex w-full h-screen h-screen flex-col items-center justify-center gap-2'>
         <SignIn />
         </div>
       </>

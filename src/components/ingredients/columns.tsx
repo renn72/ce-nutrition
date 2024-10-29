@@ -187,7 +187,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
         <div className='flex space-x-2'>
           <HoverCard>
             <HoverCardTrigger asChild>
-              <span className='w-[400px] truncate font-medium'>
+              <span className='w-[100px] lg:w-[400px] truncate font-medium'>
                 {row.getValue('name')}
               </span>
             </HoverCardTrigger>
