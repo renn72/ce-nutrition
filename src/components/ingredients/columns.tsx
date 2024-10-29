@@ -61,7 +61,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Favourite'
+        title='Fav'
       />
     ),
     cell: ({ row }) => {
