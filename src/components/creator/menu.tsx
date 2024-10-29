@@ -18,6 +18,18 @@ import {
 export const CreatorMenu = () => {
   const ctx = api.useUtils()
 
+  const { mutate: deleteAllMeals } = api.meal.deleteAll.useMutation({
+    onSuccess: () => {
+      ctx.invalidate()
+      toast.success('Deleted')
+    },
+  })
+  const { mutate: createMeal } = api.meal.create.useMutation({
+    onSuccess: () => {
+      ctx.invalidate()
+      toast.success('Created')
+    },
+  })
   const { mutate: createVegeStack } = api.vege.create.useMutation({
     onSuccess: () => {
       ctx.invalidate()
@@ -116,7 +128,7 @@ export const CreatorMenu = () => {
   const { data: allRecipes } = api.recipe.getAll.useQuery()
   const { data: allVegeStacks } = api.vege.getAll.useQuery()
 
-  const generatePlans = () => {
+  const generateMeals = () => {
     if (!allRecipes) return
     if (!allVegeStacks) return
     const beef = allRecipes.find((i) => i.name == 'Beef and Potatoes')?.id || 0
@@ -125,12 +137,12 @@ export const CreatorMenu = () => {
       allRecipes.find((i) => i.name == 'Chicken and Rice')?.id || 0
     const vegeStack = allVegeStacks[0]?.id || 0
     console.log({ beef, ham, chicken, vegeStack })
-    createPlan({
+    createMeal({
       name: 'General Plan 1',
       description: 'General',
       image: '',
       notes: 'General',
-      planCategory: 'General',
+      planCategory: 'Lunch',
       numberOfMeals: 4,
       veges: [
         {
@@ -465,7 +477,6 @@ export const CreatorMenu = () => {
           <Button
             variant='ghost'
             onClick={() => {
-              generatePlans()
             }}
           >
             Gen Plans

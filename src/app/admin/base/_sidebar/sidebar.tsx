@@ -62,6 +62,16 @@ const data = {
           ],
         },
         {
+          title: 'Meals',
+          url: '/admin/base/meal',
+          items: [
+            {
+              title: 'Create',
+              url: '/admin/base/meal/create',
+            },
+          ],
+        },
+        {
           title: 'Recipes',
           url: '/admin/base/recipe',
           items: [

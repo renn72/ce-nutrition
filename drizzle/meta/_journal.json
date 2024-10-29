@@ -106,6 +106,13 @@
       "when": 1730159225030,
       "tag": "0014_hard_swordsman",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "6",
+      "when": 1730177972156,
+      "tag": "0015_clumsy_ozymandias",
+      "breakpoints": true
     }
   ]
 }

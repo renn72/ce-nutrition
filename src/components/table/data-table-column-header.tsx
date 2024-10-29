@@ -66,9 +66,7 @@ export function DataTableColumnHeader<TData, TValue>({
             Hide
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
             <Input
-              autoFocus
               placeholder='search'
               onClick={(event) => {
                 event.preventDefault()
@@ -76,12 +74,10 @@ export function DataTableColumnHeader<TData, TValue>({
               }}
               value={(column.getFilterValue() as string) ?? ''}
               onChange={(event) => {
-                console.log(column)
                 column.setFilterValue(event.target.value)
               }}
               className='h-8 w-[150px] lg:w-[250px]'
             />
-          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
