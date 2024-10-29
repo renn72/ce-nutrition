@@ -4,7 +4,7 @@ import {
   ingredientToGroceryStore,
 } from '@/server/db/schema/ingredient'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
-import { desc, eq } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 export const ingredientRouter = createTRPCRouter({
@@ -21,8 +21,11 @@ export const ingredientRouter = createTRPCRouter({
           },
           orderBy: [desc(ingredient.createdAt)],
         })
+        return res
       }
       const res = await ctx.db.query.ingredient.findMany({
+        where: (ingredient, { isNull, and }) =>
+          and(isNull(ingredient.hiddenAt), isNull(ingredient.deletedAt)),
         with: {
           ingredientToGroceryStore: {
             with: {
@@ -47,6 +50,29 @@ export const ingredientRouter = createTRPCRouter({
           },
         },
       })
+      return res
+    }),
+  updateHiddenAt: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.db
+        .update(ingredient)
+        .set({
+          hiddenAt: new Date(),
+        })
+        .where(eq(ingredient.id, input.id))
+      console.log(res)
+      return res
+    }),
+  deleteHiddenAt: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.db
+        .update(ingredient)
+        .set({
+          hiddenAt: null,
+        })
+        .where(eq(ingredient.id, input.id))
       return res
     }),
   updateFavourite: protectedProcedure
@@ -76,18 +102,24 @@ export const ingredientRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const userId = ctx.session.user.id
       const { stores, ...rest } = input
-      const res = await ctx.db.insert(ingredient).values({
-        ...rest,
-        userId,
-      })
-      console.log(res)
-      if (stores) {
-        // await ctx.db
-        //   .insert(ingredientToGroceryStore)
-        //   .values({
-        //     ingredientId: res[0].id as number,
-        //     groceryStoreId: stores,
-        //   })
+      console.log({ stores, ...rest })
+      const res = await ctx.db
+        .insert(ingredient)
+        .values({
+          ...rest,
+          userId,
+        })
+        .returning({ id: ingredient.id })
+
+      const ingredientId = res[0]?.id as number
+
+      if (stores.length > 0 && ingredientId) {
+        await ctx.db.insert(ingredientToGroceryStore).values(
+          stores.map((store) => ({
+            ingredientId,
+            groceryStoreId: Number(store),
+          })),
+        )
       }
       return res
     }),

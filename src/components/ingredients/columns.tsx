@@ -52,7 +52,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'favourite',
+    accessorKey: 'favouriteAt',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
@@ -130,6 +130,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
         </div>
       )
     },
+    enableSorting: true,
   },
   {
     accessorKey: 'id',

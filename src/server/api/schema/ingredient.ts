@@ -1,11 +1,11 @@
 import { z } from 'zod'
 
 export const createIngredientSchema = z.object({
-  foodName: z.string().min(1),
-  servingSize: z.string(),
-  servingUnit: z.string().min(1),
-  energyWithDietaryFibre: z.string(),
-  energyWithoutDietaryFibre: z.string(),
+  name: z.string().min(1),
+  serveSize: z.string(),
+  serveUnit: z.string().min(1),
+  caloriesWFibre: z.string(),
+  caloriesWOFibre: z.string(),
   protein: z.string(),
   fatTotal: z.string(),
   totalDietaryFibre: z.string(),

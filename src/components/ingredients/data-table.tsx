@@ -1,10 +1,12 @@
 'use client'
 
 import * as React from 'react'
+import { useState } from 'react'
 
 import type { GetAllIngredients } from '@/types'
 import {
   ColumnFiltersState,
+  GlobalFilterTableState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -26,11 +28,13 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
-import { columns } from './columns'
 import { DataTablePagination } from '@/components/table/data-table-pagination'
+
+import { columns } from './columns'
 import { DataTableToolbar } from './data-table-toolbar'
 
-const DataTable = ({ ingredients: data }: { ingredients: GetAllIngredients }) => {
+const DataTable = ({ ingredients : data }: { ingredients: GetAllIngredients }) => {
+
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({
@@ -39,13 +43,23 @@ const DataTable = ({ ingredients: data }: { ingredients: GetAllIngredients }) =>
       availableCarbohydrateWithoutSugarAlcohols: false,
       publicFoodKey: false,
     })
+
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
+    [
+    ],
   )
   const [sorting, setSorting] = React.useState<SortingState>([
     {
+      id: 'favouriteAt',
+      desc: true,
+    },
+    {
       id: 'createdAt',
       desc: true,
+    },
+    {
+      id: 'name',
+      desc: false,
     },
   ])
 

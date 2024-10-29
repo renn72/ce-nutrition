@@ -39,11 +39,11 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 export const dynamic = 'force-dynamic'
 
 const formSchema = z.object({
-  foodName: z.string().min(1),
-  servingSize: z.number(),
-  servingUnit: z.string().min(1),
-  energyWithDietaryFibre: z.number(),
-  energyWithoutDietaryFibre: z.number(),
+  name: z.string().min(1),
+  serveSize: z.number(),
+  serveUnit: z.string().min(1),
+  caloriesWFibre: z.number(),
+  caloriesWOFibre: z.number(),
   protein: z.number(),
   fatTotal: z.number(),
   totalDietaryFibre: z.number(),
@@ -70,11 +70,11 @@ const FormDialog = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      foodName: '',
-      servingSize: 100,
-      servingUnit: 'grams',
-      energyWithDietaryFibre: 0,
-      energyWithoutDietaryFibre: 0,
+      name: '',
+      serveSize: 100,
+      serveUnit: 'grams',
+      caloriesWFibre: 0,
+      caloriesWOFibre: 0,
       protein: 0,
       fatTotal: 0,
       totalDietaryFibre: 0,
@@ -89,11 +89,11 @@ const FormDialog = () => {
   })
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     createIngredient({
-      foodName: data.foodName,
-      servingSize: data.servingSize.toString(),
-      servingUnit: data.servingUnit.toString(),
-      energyWithDietaryFibre: data.energyWithDietaryFibre.toString(),
-      energyWithoutDietaryFibre: data.energyWithoutDietaryFibre.toString(),
+      name: data.name,
+      serveSize: data.serveSize.toString(),
+      serveUnit: data.serveUnit.toString(),
+      caloriesWFibre: data.caloriesWFibre.toString(),
+      caloriesWOFibre: data.caloriesWOFibre.toString(),
       protein: data.protein.toString(),
       fatTotal: data.fatTotal.toString(),
       totalDietaryFibre: data.totalDietaryFibre.toString(),
@@ -129,13 +129,13 @@ const FormDialog = () => {
             <div className='flex flex-col gap-4'>
               <FormField
                 control={form.control}
-                name='foodName'
+                name='name'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Food Name</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder='food name'
+                        placeholder='Name'
                         {...field}
                         type='text'
                       />
@@ -147,7 +147,7 @@ const FormDialog = () => {
               <div className='flex gap-4 justify-between'>
                 <FormField
                   control={form.control}
-                  name='servingSize'
+                  name='serveSize'
                   render={({ field }) => (
                     <FormItem className='w-full'>
                       <div className='flex gap-2 items-baseline'>
@@ -171,7 +171,7 @@ const FormDialog = () => {
                 />
                 <FormField
                   control={form.control}
-                  name='servingUnit'
+                  name='serveUnit'
                   render={({ field }) => (
                     <FormItem className='w-full'>
                       <div className='flex gap-2 items-baseline'>
@@ -193,60 +193,59 @@ const FormDialog = () => {
               </div>
               <div className='flex gap-4 justify-between'>
                 <div className='w-full'>
-                <FormField
-                  control={form.control}
-                  name='energyWithoutDietaryFibre'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Calories w/0 fibre</FormLabel>
-                      <FormControl>
-                        <div className='relative w-full'>
-                          <Input
-                            placeholder='Calories'
-                            {...field}
-                            onChange={(e) =>
-                              field.onChange(Number(e.target.value))
-                            }
-                            type='number'
-                          />
-                          <div className='absolute right-8 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
-                            grams
+                  <FormField
+                    control={form.control}
+                    name='caloriesWOFibre'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Calories w/0 fibre</FormLabel>
+                        <FormControl>
+                          <div className='relative w-full'>
+                            <Input
+                              placeholder='Calories'
+                              {...field}
+                              onChange={(e) =>
+                                field.onChange(Number(e.target.value))
+                              }
+                              type='number'
+                            />
+                            <div className='absolute right-8 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
+                              grams
+                            </div>
                           </div>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
                 <div className='w-full'>
-                <FormField
-                  control={form.control}
-                  name='energyWithDietaryFibre'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Calories w fibre</FormLabel>
-                      <FormControl>
-                        <div className='relative w-full'>
-                          <Input
-                            placeholder='Calories'
-                            {...field}
-                            onChange={(e) =>
-                              field.onChange(Number(e.target.value))
-                            }
-                            type='number'
-                          />
-                          <div className='absolute right-8 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
-                            grams
+                  <FormField
+                    control={form.control}
+                    name='caloriesWFibre'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Calories w fibre</FormLabel>
+                        <FormControl>
+                          <div className='relative w-full'>
+                            <Input
+                              placeholder='Calories'
+                              {...field}
+                              onChange={(e) =>
+                                field.onChange(Number(e.target.value))
+                              }
+                              type='number'
+                            />
+                            <div className='absolute right-8 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
+                              grams
+                            </div>
                           </div>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-              </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
               <div className='flex gap-4 justify-between'>
                 <FormField
@@ -279,11 +278,11 @@ const FormDialog = () => {
                   name='fatTotal'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Fat Total</FormLabel>
+                      <FormLabel>Fat</FormLabel>
                       <FormControl>
                         <div className='relative w-full'>
                           <Input
-                            placeholder='Fat Total'
+                            placeholder='Fat'
                             {...field}
                             onChange={(e) =>
                               field.onChange(Number(e.target.value))

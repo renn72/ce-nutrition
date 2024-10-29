@@ -30,6 +30,7 @@ const columMap = {
   fatTotal: 'Fat',
   availableCarbohydrateWithSugarAlcohols: 'Carbs',
   availableCarbohydrateWithoutSugarAlcohols: 'Carbs w/o Alcohols',
+  hiddenAt: 'Hidden',
 }
 
 export function DataTableViewOptions<TData>({
