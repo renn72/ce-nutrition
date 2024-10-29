@@ -9,6 +9,11 @@ import { Bookmark } from 'lucide-react'
 
 import { Checkbox } from '@/components/ui/checkbox'
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
@@ -187,7 +192,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
         <div className='flex space-x-2'>
           <HoverCard>
             <HoverCardTrigger asChild>
-              <span className='w-[100px] lg:w-[400px] truncate font-medium'>
+              <span className='w-[200px] lg:w-[400px] truncate font-medium tracking-tighter'>
                 {row.getValue('name')}
               </span>
             </HoverCardTrigger>
