@@ -1,4 +1,5 @@
 'use client'
+import { useRouter } from 'next/navigation'
 
 import { api } from '@/trpc/react'
 
@@ -25,6 +26,7 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
+  const router = useRouter()
   const ctx = api.useUtils()
   const { mutate: deleteIngredient } = api.ingredient.delete.useMutation({
     onSuccess: () => {
@@ -64,7 +66,11 @@ export function DataTableRowActions<TData>({
         align='end'
         className='w-[160px]'
       >
-        <DropdownMenuItem>Edit</DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={() =>
+            router.push(`/admin/base/ingredient/edit?ingredient=${data?.id}`)
+          }
+        >Edit</DropdownMenuItem>
         {
           data?.hiddenAt ? (
             <DropdownMenuItem

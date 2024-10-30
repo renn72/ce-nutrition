@@ -84,6 +84,12 @@ const data = {
         {
           title: 'Ingredients',
           url: '/admin/base/ingredient',
+          items: [
+            {
+              title: 'Create',
+              url: '/admin/base/plan/create',
+            },
+          ],
         },
         {
           title: 'Store',
