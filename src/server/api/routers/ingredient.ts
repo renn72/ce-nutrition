@@ -7,7 +7,7 @@ import {
   ingredientToGroceryStore,
 } from '@/server/db/schema/ingredient'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
-import { and, desc, eq } from 'drizzle-orm'
+import { and, desc, eq, asc } from 'drizzle-orm'
 import { z } from 'zod'
 
 export const ingredientRouter = createTRPCRouter({
@@ -22,7 +22,22 @@ export const ingredientRouter = createTRPCRouter({
           },
         },
       },
-      orderBy: [desc(ingredient.createdAt)],
+      orderBy: [asc(ingredient.name)],
+    })
+    return res
+  }),
+  getAllFav: protectedProcedure.query(async ({ ctx }) => {
+    const res = await ctx.db.query.ingredient.findMany({
+      where: (ingredient, { isNull, and }) =>
+        and(isNull(ingredient.hiddenAt), isNull(ingredient.deletedAt)),
+      with: {
+        ingredientToGroceryStore: {
+          with: {
+            groceryStore: true,
+          },
+        },
+      },
+      orderBy: [asc(ingredient.favouriteAt)],
     })
     return res
   }),

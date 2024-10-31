@@ -207,7 +207,7 @@ const FormRecipe = () => {
           />
           <div className='flex flex-col gap-4'>
             <h2>Ingredients</h2>
-            <div className='flex flex-col divide-y divide-border border '>
+            <div className='flex flex-col divide-y divide-border border rounded-md '>
               <div
                 className={cn(
                   'grid grid-cols-15 w-full divide-x divide-border text-sm font-medium capitalize',

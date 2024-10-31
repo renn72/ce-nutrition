@@ -15,7 +15,7 @@ import {
 } from '@headlessui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CrossCircledIcon } from '@radix-ui/react-icons'
-import { CheckIcon, ChevronDownIcon, XCircle } from 'lucide-react'
+import { CheckIcon, ChevronDownIcon, Star, XCircle } from 'lucide-react'
 import { useForm, UseFormReturn } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -69,16 +69,49 @@ const FormRecipeIngredient = ({
   if (!allIngredients) return <div />
   const filteredIngredients =
     query === ''
-      ? allIngredients
-      : allIngredients.filter((i) => {
-          return i.name?.toLowerCase().includes(query.toLowerCase())
+      ? allIngredients.sort((a, b) => {
+          if (a?.favouriteAt && b?.favouriteAt) {
+            return Number(a?.favouriteAt) - Number(b?.favouriteAt)
+          }
+          if (a?.favouriteAt) return -1
+          if (b?.favouriteAt) return 1
+          return 0
         })
+      : allIngredients
+          .filter((i) => {
+            return i.name?.toLowerCase().includes(query.toLowerCase())
+          })
+          .sort((a, b) => {
+            if (a?.favouriteAt && b?.favouriteAt) {
+              return Number(a?.favouriteAt) - Number(b?.favouriteAt)
+            }
+            if (a?.favouriteAt) return -1
+            if (b?.favouriteAt) return 1
+            return 0
+          })
+
   const filteredIngredientsAlt =
     queryAlt === ''
-      ? allIngredients
-      : allIngredients.filter((i) => {
-          return i.name?.toLowerCase().includes(queryAlt.toLowerCase())
+      ? allIngredients.sort((a, b) => {
+          if (a?.favouriteAt && b?.favouriteAt) {
+            return Number(a?.favouriteAt) - Number(b?.favouriteAt)
+          }
+          if (a?.favouriteAt) return -1
+          if (b?.favouriteAt) return 1
+          return 0
         })
+      : allIngredients
+          .filter((i) => {
+            return i.name?.toLowerCase().includes(queryAlt.toLowerCase())
+          })
+          .sort((a, b) => {
+            if (a?.favouriteAt && b?.favouriteAt) {
+              return Number(a?.favouriteAt) - Number(b?.favouriteAt)
+            }
+            if (a?.favouriteAt) return -1
+            if (b?.favouriteAt) return 1
+            return 0
+          })
 
   const id = form.watch(`ingredients.${index}.ingredientId`)
   const serveSize = form.watch(`ingredients.${index}.serveSize`)
@@ -119,7 +152,7 @@ const FormRecipeIngredient = ({
                         'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25',
                       )}
                       // @ts-ignore
-                      displayValue={(i) => i?.name}
+                      displayValue={(i) => i?.name.slice(0, 33)}
                       onChange={(event) => setQuery(event.target.value)}
                     />
                     <ChevronDownIcon className='absolute top-1/2 -translate-y-1/2 right-2 text-secondary-foreground group-data-[hover]:text-black' />
@@ -129,7 +162,7 @@ const FormRecipeIngredient = ({
                     anchor='bottom'
                     transition
                     className={cn(
-                      'w-[calc(var(--input-width))] rounded-xl border border-border bg-secondary p-1 [--anchor-gap:var(--spacing-1)] empty:invisible',
+                      'w-[calc(var(--input-width)+100px)] rounded-xl border border-border bg-secondary p-1 [--anchor-gap:var(--spacing-1)] empty:invisible',
                       'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0',
                     )}
                   >
@@ -137,12 +170,19 @@ const FormRecipeIngredient = ({
                       <ComboboxOption
                         key={i.id}
                         value={i}
-                        className='group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none hover:bg-card hover:font-medium'
+                        className='group relative w-full flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none hover:bg-card hover:font-medium'
                       >
                         <CheckIcon className='invisible size-4 group-data-[selected]:visible' />
                         <div className='text-sm text-secondary-foreground'>
-                          {i.name}
+                          {i.name.slice(0, 60)}
                         </div>
+                        {i.favouriteAt && (
+                          <Star
+                            size={12}
+                            fill='#FFB500'
+                            className='absolute top-1/2 -translate-y-1/2 right-2 text-[#FFB500]'
+                          />
+                        )}
                       </ComboboxOption>
                     )}
                   </ComboboxOptions>
@@ -292,7 +332,7 @@ const FormRecipeIngredient = ({
                         'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25',
                       )}
                       // @ts-ignore
-                      displayValue={(i) => i?.name}
+                      displayValue={(i) => i?.name.slice(0, 22)}
                       onChange={(event) => setQueryAlt(event.target.value)}
                     />
                     <ChevronDownIcon className='absolute top-1/2 -translate-y-1/2 right-2 text-secondary-foreground group-data-[hover]:text-black' />
@@ -310,12 +350,19 @@ const FormRecipeIngredient = ({
                       <ComboboxOption
                         key={i.id}
                         value={i}
-                        className='group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none hover:bg-card hover:font-medium'
+                        className='group relative w-full flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none hover:bg-card hover:font-medium'
                       >
                         <CheckIcon className='invisible size-4 group-data-[selected]:visible' />
                         <div className='text-sm text-secondary-foreground'>
-                          {i.name}
+                          {i.name.slice(0, 60)}
                         </div>
+                        {i.favouriteAt && (
+                          <Star
+                            size={12}
+                            fill='#FFB500'
+                            className='absolute top-1/2 -translate-y-1/2 right-2 text-[#FFB500]'
+                          />
+                        )}
                       </ComboboxOption>
                     )}
                   </ComboboxOptions>
