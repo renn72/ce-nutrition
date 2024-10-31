@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 import { Cross2Icon } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
 
@@ -10,6 +12,7 @@ import { DataTableViewOptions } from './data-table-view-options'
 import { FormDialog } from './form-dialog'
 
 import { DataTableFacetedFilter } from './data-table-faceted-filter'
+import { CirclePlus } from 'lucide-react'
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -45,7 +48,9 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       <div className='flex items-center gap-2'>
-        <FormDialog />
+        <Link href='/admin/base/ingredient/create'>
+        <CirclePlus size={24} className='text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer' />
+        </Link>
         <DataTableViewOptions table={table} />
       </div>
     </div>

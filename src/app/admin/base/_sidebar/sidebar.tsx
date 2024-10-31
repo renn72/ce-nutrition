@@ -22,12 +22,6 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
@@ -87,7 +81,7 @@ const data = {
           items: [
             {
               title: 'Create',
-              url: '/admin/base/plan/create',
+              url: '/admin/base/ingredient/create',
             },
           ],
         },
