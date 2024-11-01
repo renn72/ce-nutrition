@@ -41,8 +41,7 @@ export const formSchema = z.object({
       vegeStackId: z.string(),
       note: z.string(),
       calories: z.string(),
-    })
-    .optional(),
+    }),
   recipes: z.array(
     z.object({
       recipeId: z.string(),
@@ -56,11 +55,10 @@ const FormMeal = () => {
   const [key, setKey] = useState(+new Date())
   const ctx = api.useUtils()
   const { data: veges, isLoading : vegesIsLoading } = api.vege.getAll.useQuery()
-  const { data: recipes } = api.recipe.getAll.useQuery()
-  const { mutate: createIngredient } = api.ingredient.create.useMutation({
+  const { mutate: createMeal } = api.meal.create.useMutation({
     onSuccess: () => {
-      ctx.ingredient.invalidate()
-      toast.success('Ingredient added successfully')
+      ctx.meal.invalidate()
+      toast.success('Added successfully')
     },
   })
   const form = useForm<z.infer<typeof formSchema>>({
@@ -86,7 +84,23 @@ const FormMeal = () => {
   })
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data)
+    createMeal({
+      name: data.name,
+      description: data.description,
+      image: data.image,
+      notes: data.notes,
+      mealCategory: data.mealCategory,
+      veges: {
+        vegeStackId: Number(data.veges.vegeStackId),
+        note: data.veges.note,
+        calories: data.veges.calories,
+      },
+      recipes: data.recipes.map((recipe) => ({
+        recipeId: Number(recipe.recipeId),
+        note: recipe.note,
+        index: Number(recipe.index),
+      })),
+    })
   }
 
   if (vegesIsLoading) return null
