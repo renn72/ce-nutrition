@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
 import { DataTableViewOptions } from './data-table-view-options'
-import { FormDialog } from './form-dialog'
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -41,7 +40,6 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       <div className='flex items-center gap-2'>
-        <FormDialog />
         <DataTableViewOptions table={table} />
       </div>
     </div>

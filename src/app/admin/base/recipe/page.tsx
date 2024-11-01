@@ -4,7 +4,7 @@
 import { api } from '@/trpc/react'
 
 import { DataTable } from '@/components/recipe/data-table'
-import { DataTableSkeleton } from '@/components/recipe/data-table-skeleton'
+import { DataTableSkeleton } from '@/components/table/data-table-skeleton'
 
 export default function Home() {
 
