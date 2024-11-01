@@ -1,5 +1,6 @@
 import { api } from '@/trpc/react'
 
+import { useState } from 'react'
 import { cn, getRecipeDetails } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ChevronDown, CirclePlus, CircleX, PlusCircle } from 'lucide-react'
@@ -52,6 +53,7 @@ export const formSchema = z.object({
 })
 
 const FormMeal = () => {
+  const [key, setKey] = useState(+new Date())
   const ctx = api.useUtils()
   const { data: veges, isLoading : vegesIsLoading } = api.vege.getAll.useQuery()
   const { data: recipes } = api.recipe.getAll.useQuery()
@@ -69,7 +71,11 @@ const FormMeal = () => {
       image: '',
       notes: '',
       mealCategory: '',
-      veges: undefined,
+      veges: {
+        vegeStackId: '',
+        note: '',
+        calories: '',
+      },
       recipes: [],
     },
   })
@@ -188,9 +194,10 @@ const FormMeal = () => {
                   name='veges.vegeStackId'
                   render={({ field }) => (
                     <FormItem className='w-full'>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel className=''>&#8192;</FormLabel>
                       <div className='flex gap-2 items-center'>
                         <Select
+                          key={key}
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
@@ -213,7 +220,12 @@ const FormMeal = () => {
                         <CircleX
                           size={20}
                           className='cursor-pointer text-primary/50 hover:text-primary active:scale-90'
-                          onClick={() => form.setValue('veges.vegeStackId', '')}
+                          onClick={() => {
+                            form.resetField('veges.vegeStackId')
+                            form.resetField('veges.note')
+                            form.resetField('veges.calories')
+                            setKey(+new Date())
+                          }}
                         />
                       </div>
                       <FormMessage />

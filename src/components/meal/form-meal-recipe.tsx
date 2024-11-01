@@ -36,12 +36,9 @@ const FormMealRecipe = ({
   remove: (index: number) => void
 }) => {
   const [id, setId] = useState('')
-  const ctx = api.useUtils()
   const { data: recipes } = api.recipe.getAll.useQuery()
 
   const recipe = recipes?.find((recipe) => recipe.id === Number(id))
-  form.watch('recipes')
-  console.log(recipe)
   const recipeDetails = getRecipeDetails(recipe)
 
   return (
