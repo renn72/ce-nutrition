@@ -1,6 +1,8 @@
 import { relations, sql } from 'drizzle-orm'
 import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
 
+import { planToMeal } from './plan'
+
 import { recipe } from './recipe'
 import { user } from './user'
 
@@ -73,6 +75,7 @@ export const mealRelations = relations(meal, ({ one, many }) => ({
   creator: one(user, { fields: [meal.creatorId], references: [user.id] }),
   mealToRecipe: many(mealToRecipe),
   mealToVegeStack: many(mealToVegeStack),
+  planToMeal: many(planToMeal),
 }))
 
 export const vegeStackRelations = relations(vegeStack, ({ one, many }) => ({

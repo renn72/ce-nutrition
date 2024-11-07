@@ -28,28 +28,21 @@ export const planRouter = createTRPCRouter({
         notes: z.string(),
         planCategory: z.string(),
         numberOfMeals: z.number(),
-        veges: z.array(
+        meals: z.array(
           z.object({
-            vegeStackId: z.number(),
-            note: z.string(),
-            mealNumber: z.number(),
+            mealId: z.number(),
+            mealIndex: z.number(),
+            mealTitle: z.string(),
             calories: z.string(),
-          }),
-        ),
-        recipes: z.array(
-          z.object({
-            recipeId: z.number(),
+            vegeCalories: z.string(),
             note: z.string(),
-            index: z.number(),
-            mealNumber: z.number(),
-            calories: z.string(),
           }),
         ),
       }),
     )
     .mutation(async ({ input, ctx }) => {
       const userId = ctx.session.user.id
-      const { veges, recipes, ...data } = input
+      const { meals, ...data } = input
       const res = await ctx.db
         .insert(plan)
         .values({
