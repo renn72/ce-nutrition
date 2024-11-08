@@ -47,20 +47,3 @@ export function DataTableToolbar<TData>({
     </div>
   )
 }
-
-// {table.getColumn('topics') && (
-//   <div />
-//   // <DataTableFacetedFilter
-//   //   column={table.getColumn('topics')}
-//   //   title='Topics'
-//   //   options={topics?.map((topic) => topic.name ?? '')}
-//   // />
-// )}
-// {table.getColumn('tags') && (
-//   <div />
-//   // <DataTableFacetedFilter
-//   //   column={table.getColumn('tags')}
-//   //   title='Tags'
-//   //   options={tags?.map((tag) => tag.name ?? '')}
-//   // />
-// )}

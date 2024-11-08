@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/table'
 
 import { columns } from './columns'
-import { DataTablePagination } from './data-table-pagination'
+import { DataTablePagination } from '@/components/table/data-table-pagination'
 import { DataTableToolbar } from './data-table-toolbar'
 
 const DataTable = ({ plan: data }: { plan: GetAllPlans }) => {
