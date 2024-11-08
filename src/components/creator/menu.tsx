@@ -115,6 +115,57 @@ export const CreatorMenu = () => {
     },
   })
 
+  const { data: allMeals } = api.meal.getAll.useQuery()
+
+  const generatePlans = () => {
+    if (!allMeals) return
+    const snack = allMeals.find((meal) => meal.name === 'Snack 1')
+    const lunch = allMeals.find((meal) => meal.name === 'Lunch 1')
+    const dinner = allMeals.find((meal) => meal.name === 'Dinner 1')
+    createPlan({
+      name: 'Plan 1',
+      description: 'General',
+      image: '',
+      notes: '',
+      planCategory: 'general',
+      numberOfMeals: 4,
+      meals: [
+        {
+          mealId: snack?.id || 0,
+          mealIndex: 1,
+          mealTitle: 'Snack 1',
+          calories: '400',
+          vegeCalories: '',
+          note: '',
+        },
+        {
+          mealId: lunch?.id || 0,
+          mealIndex: 2,
+          mealTitle: 'Lunch 1',
+          calories: '500',
+          vegeCalories: '50',
+          note: '',
+        },
+        {
+          mealId: snack?.id || 0,
+          mealIndex: 3,
+          mealTitle: 'Snack 2',
+          calories: '350',
+          vegeCalories: '',
+          note: '',
+        },
+        {
+          mealId: dinner?.id || 0,
+          mealIndex: 4,
+          mealTitle: 'Dinner 1',
+          calories: '600',
+          vegeCalories: '50',
+          note: '',
+        },
+      ],
+    })
+  }
+
   const generateVegeStacks = () => {
     createVegeStack({
       name: 'Vege Stack 1',
@@ -483,6 +534,7 @@ export const CreatorMenu = () => {
           <Button
             variant='ghost'
             onClick={() => {
+              generatePlans()
             }}
           >
             Gen Plans
