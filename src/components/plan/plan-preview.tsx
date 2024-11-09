@@ -31,6 +31,11 @@ const PlanPreview = ({ plan }: { plan: GetPlanById }) => {
           <div>{plan.notes}</div>
           <div>{plan.planCategory}</div>
           <div className='flex flex-col gap-2'>
+            {plan.planToMeal.map((meal) => (
+              <div key={meal.id}>
+                {meal.mealTitle}
+              </div>
+            ))}
           </div>
         </div>
       </PopoverContent>

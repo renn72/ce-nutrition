@@ -154,9 +154,10 @@ const AdminBaseSidebar = ({
                               </SidebarMenuButton>
                             </CollapsibleTrigger>
                             <CollapsibleContent>
-                              <SidebarMenuSub>
+                              <SidebarMenuSub className='border-0'>
                                 {item.items.map((item) => (
-                                  <SidebarMenuSubItem key={item.title}>
+                                  <SidebarMenuSubItem
+                                    key={item.title}>
                                     <Link href={item.url}>{item.title}</Link>
                                   </SidebarMenuSubItem>
                                 ))}

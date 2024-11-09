@@ -1,5 +1,4 @@
-import { plan } from '@/server/db/schema/plan'
-import { recipe, recipeToIngredient } from '@/server/db/schema/recipe'
+import { plan, planToMeal } from '@/server/db/schema/plan'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
@@ -8,6 +7,26 @@ export const planRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.plan.findMany({
       orderBy: [desc(plan.createdAt)],
+      with: {
+        planToMeal: {
+          with: {
+            meal: {
+              with: {
+                mealToRecipe: {
+                  with: {
+                    recipe: true,
+                  },
+                },
+                mealToVegeStack: {
+                  with: {
+                    vegeStack: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     })
     return res
   }),
@@ -15,7 +34,27 @@ export const planRouter = createTRPCRouter({
     .input(z.object({ id: z.number() }))
     .query(async ({ input, ctx }) => {
       const res = await ctx.db.query.plan.findFirst({
-        where: (recipe, { eq }) => eq(plan.id, input.id),
+        where: (plan, { eq }) => eq(plan.id, input.id),
+        with: {
+          planToMeal: {
+            with: {
+              meal: {
+                with: {
+                  mealToRecipe: {
+                    with: {
+                      recipe: true,
+                    },
+                  },
+                  mealToVegeStack: {
+                    with: {
+                      vegeStack: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       })
       return res
     }),
@@ -49,13 +88,21 @@ export const planRouter = createTRPCRouter({
           ...data,
           creatorId: userId,
         })
-        .returning({ id: recipe.id })
+        .returning({ id: plan.id })
 
       const resId = res?.[0]?.id
       if (!resId) return res
+      const mealRes = await ctx.db
+        .insert(planToMeal)
+        .values(
+          meals.map((meal) => ({
+            ...meal,
+            planId: resId,
+          })),
+        )
+        .returning({ id: planToMeal.id })
 
-  return resId
-
+      return { res, mealRes }
     }),
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))

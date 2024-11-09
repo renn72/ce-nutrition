@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 
-import { FormRecipeIngredient } from './form-recipe-ingredient'
+import { FormPlanMeal } from './form-plan-meal'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,37 +33,28 @@ export const formSchema = z.object({
   notes: z.string(),
   planCategory: z.string(),
   numberOfMeals: z.number(),
-  veges: z.array(
+  meals: z.array(
     z.object({
-      vegeStackId: z.number(),
-      note: z.string(),
-      mealNumber: z.number(),
+      mealId: z.string(),
+      mealIndex: z.number(),
+      mealTitle: z.string(),
       calories: z.string(),
-    }),
-  ),
-  recipes: z.array(
-    z.object({
-      recipeId: z.number(),
+      vegeCalories: z.string(),
       note: z.string(),
-      index: z.number(),
-      mealNumber: z.number(),
-      calories: z.string(),
     }),
   ),
 })
 
 const FormPlan = () => {
-  const [isOpen, setIsOpen] = useState(false)
   const ctx = api.useUtils()
-  const { data: allRecipes } = api.recipe.getAll.useQuery()
-  const { data: allVeges } = api.vege.getAll.useQuery()
 
   const { mutate: createPlan } = api.plan.create.useMutation({
     onSuccess: () => {
-      setIsOpen(false)
       toast.success('Store added successfully')
     },
   })
+
+  const { data: _allMeals, isLoading: isLoadingAllMeals } = api.meal.getAll.useQuery()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -73,28 +64,34 @@ const FormPlan = () => {
       image: '',
       notes: '',
       planCategory: '',
-      numberOfMeals: 0,
-      veges: [],
-      recipes: [],
+      numberOfMeals: 1,
+      meals: [
+        {
+          mealId: '',
+          mealIndex: 1,
+          mealTitle: '',
+          calories: '',
+          vegeCalories: '',
+          note: '',
+        },
+      ],
     },
   })
-  const recipesField  = useFieldArray({
+  const mealsField = useFieldArray({
     control: form.control,
-    name: 'recipes',
-  })
-  const vegesField  = useFieldArray({
-    control: form.control,
-    name: 'veges',
+    name: 'meals',
   })
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     console.log('input', data)
   }
 
+  if (isLoadingAllMeals) return null
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-4 mt-10'>
           <FormField
             control={form.control}
             name='name'
@@ -149,45 +146,53 @@ const FormPlan = () => {
               </FormItem>
             )}
           />
-          <div className='flex justify-between gap-4'>
-            <div className='w-full'>
-              <FormField
-                control={form.control}
-                name='planCategory'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Plan Category</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Category'
-                        {...field}
-                        type='text'
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+          <div className='w-full'>
+            <FormField
+              control={form.control}
+              name='planCategory'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Plan Category</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='Category'
+                      {...field}
+                      type='text'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className='w-full'>
+            <FormField
+              control={form.control}
+              name='image'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Image TODO</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='Image'
+                      {...field}
+                      type='text'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className='flex flex-col gap-4'>
+            {mealsField.fields.map((field, index) => (
+              <FormPlanMeal
+                key={field.mealId}
+                index={index}
+                form={form}
+                remove={mealsField.remove}
               />
-            </div>
-            <div className='w-full'>
-              <FormField
-                control={form.control}
-                name='image'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Image TODO</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Image'
-                        {...field}
-                        type='text'
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            ))}
           </div>
           <div>
             <Button type='submit'>Submit</Button>

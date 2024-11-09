@@ -100,6 +100,24 @@ export const columns: ColumnDef<GetPlanById>[] = [
     },
   },
   {
+    accessorKey: 'numberOfMeals',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title='Meals'
+      />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className='flex space-x-2'>
+          <span className='w-[110px] truncate font-medium'>
+            {row.getValue('numberOfMeals')}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
     accessorKey: 'notes',
     header: ({ column }) => (
       <DataTableColumnHeader
