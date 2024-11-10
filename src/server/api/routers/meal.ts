@@ -1,5 +1,4 @@
 import { meal, mealToRecipe, mealToVegeStack } from '@/server/db/schema/meal'
-import { recipe, recipeToIngredient } from '@/server/db/schema/recipe'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
@@ -16,7 +15,15 @@ export const mealRouter = createTRPCRouter({
         },
         mealToRecipe: {
           with: {
-            recipe: true,
+            recipe: {
+              with: {
+                recipeToIngredient: {
+                  with: {
+                    ingredient: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -36,7 +43,15 @@ export const mealRouter = createTRPCRouter({
           },
           mealToRecipe: {
             with: {
-              recipe: true,
+              recipe: {
+                with: {
+                  recipeToIngredient: {
+                    with: {
+                      ingredient: true,
+                    },
+                  },
+                },
+              },
             },
           },
         },

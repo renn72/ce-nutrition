@@ -36,7 +36,6 @@ export const formSchema = z.object({
   meals: z.array(
     z.object({
       mealId: z.string(),
-      mealIndex: z.number(),
       mealTitle: z.string(),
       calories: z.string(),
       vegeCalories: z.string(),
@@ -68,9 +67,8 @@ const FormPlan = () => {
       meals: [
         {
           mealId: '',
-          mealIndex: 1,
           mealTitle: '',
-          calories: '',
+          calories: '500',
           vegeCalories: '',
           note: '',
         },
