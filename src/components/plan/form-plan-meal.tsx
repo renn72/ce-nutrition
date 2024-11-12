@@ -138,7 +138,7 @@ const FormPlanMeal = ({
   return (
     <div
       key={index}
-      className='grid grid-cols-5 gap-2 w-full items-center'
+      className='grid grid-cols-5 gap-2 w-full items-center py-4'
     >
       <div className='flex flex-col gap-1'>
         <FormField

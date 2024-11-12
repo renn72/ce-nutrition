@@ -90,11 +90,14 @@ const FormPlan = () => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className='flex flex-col gap-4 mt-10'>
+          <div className='flex justify-between gap-8'>
           <FormField
             control={form.control}
             name='name'
             render={({ field }) => (
-              <FormItem>
+              <FormItem
+                  className='w-full'
+                >
                 <FormLabel>Name</FormLabel>
                 <FormControl>
                   <Input
@@ -107,6 +110,26 @@ const FormPlan = () => {
               </FormItem>
             )}
           />
+            <FormField
+              control={form.control}
+              name='planCategory'
+              render={({ field }) => (
+                <FormItem
+                    className='w-full'
+                >
+                  <FormLabel>Plan Category</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='Category'
+                      {...field}
+                      type='text'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             control={form.control}
             name='description'
@@ -142,23 +165,6 @@ const FormPlan = () => {
             )}
           />
           <div className='w-full'>
-            <FormField
-              control={form.control}
-              name='planCategory'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Plan Category</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder='Category'
-                      {...field}
-                      type='text'
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </div>
           <div className='w-full'>
             <FormField
@@ -181,6 +187,7 @@ const FormPlan = () => {
           </div>
           <div className='flex flex-col gap-4'>
             <h2 className='text-4xl font-bold'>Meals</h2>
+          <div className='flex flex-col gap-0 divide-1 divide-y divide-dashed divide-border'>
             {mealsField.fields.map((field, index) => (
               <FormPlanMeal
                 key={field.mealId}
@@ -189,6 +196,22 @@ const FormPlan = () => {
                 remove={mealsField.remove}
               />
             ))}
+            </div>
+            <div className='w-full flex justify-center mt-8'>
+            <PlusCircle
+              size={42}
+              className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
+              onClick={() =>
+                mealsField.append({
+                  mealId: '',
+                  mealTitle: (mealsField.fields.length + 1).toString(),
+                  calories: '500',
+                  vegeCalories: '',
+                  note: '',
+                })
+              }
+            />
+            </div>
           </div>
           <div>
             <Button type='submit'>Submit</Button>
