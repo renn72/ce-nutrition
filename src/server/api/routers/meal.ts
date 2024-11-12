@@ -19,7 +19,15 @@ export const mealRouter = createTRPCRouter({
               with: {
                 recipeToIngredient: {
                   with: {
-                    ingredient: true,
+                    ingredient: {
+                      with: {
+                        ingredientToGroceryStore: {
+                          with: {
+                            groceryStore: true,
+                          },
+                        },
+                      },
+                    },
                   },
                 },
               },
@@ -47,7 +55,15 @@ export const mealRouter = createTRPCRouter({
                 with: {
                   recipeToIngredient: {
                     with: {
-                      ingredient: true,
+                      ingredient: {
+                        with: {
+                          ingredientToGroceryStore: {
+                            with: {
+                              groceryStore: true,
+                            },
+                          },
+                        },
+                      },
                     },
                   },
                 },

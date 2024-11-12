@@ -4,23 +4,14 @@ import { api } from '@/trpc/react'
 
 import { ReactNode, useState } from 'react'
 
-import { cn } from '@/lib/utils'
+import { cn, getRecipeDetailsByCals } from '@/lib/utils'
 import type { GetIngredientById, GetRecipeById } from '@/types'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { CrossCircledIcon } from '@radix-ui/react-icons'
-import {
-  Check,
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronsUpDown,
-  XCircle,
-} from 'lucide-react'
+import { Check, ChevronsUpDown } from 'lucide-react'
 import { useForm, UseFormReturn } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   Command,
   CommandEmpty,
@@ -48,20 +39,69 @@ import { formSchema } from './form-plan'
 
 export const dynamic = 'force-dynamic'
 
-const Recipe = ({ recipe, calories, key }: { recipe: GetRecipeById | null, calories: string, key: number }) => {
-  if (!recipe) return null
+const Ingredient = ({
+  ingredient,
+  ratio : r,
+  size,
+}: {
+  ingredient: GetIngredientById | null
+  ratio: number
+  size: number
+}) => {
+
+  const ratio = (size * r) / Number(ingredient?.serveSize)
+
+  if (!ingredient) return null
   return (
-    <div
-      key={key}
-      className='flex flex-col gap-1'>
-      <div>{recipe.name}</div>
-      {
-        recipe.recipeToIngredient.map((ingredient) => (
-          <div className='flex gap-1'>
-            <div>{ingredient.ingredient?.name}</div>
-          </div>
-        ))
-      }
+    <div className='grid grid-cols-9 gap-1'>
+      <div />
+      <div
+        className='col-span-3'
+       >{ingredient.name}</div>
+      <div>{(Number(size) * ratio).toFixed(0)}</div>
+      <div>{(Number(ingredient.caloriesWFibre) * ratio).toFixed(1)}</div>
+      <div>{(Number(ingredient.protein) * ratio).toFixed(1)}</div>
+      <div>
+        {(
+          Number(ingredient.availableCarbohydrateWithSugarAlcohols) * ratio
+        ).toFixed(1)}
+      </div>
+      <div>{(Number(ingredient.fatTotal) * ratio).toFixed(1)}</div>
+    </div>
+  )
+}
+
+const Recipe = ({
+  recipe,
+  calories,
+}: {
+  recipe: GetRecipeById | null
+  calories: string
+}) => {
+  if (!recipe) return null
+  const recipeDetails = getRecipeDetailsByCals(recipe, Number(calories))
+  return (
+    <div className='flex flex-col gap-1'>
+      <div className='grid grid-cols-9 gap-1'>
+        <div
+          className='col-span-4'
+        >{recipe.name}</div>
+        <div>
+          {recipeDetails.size} {recipeDetails.unit}
+        </div>
+        <div>{recipeDetails.cals}</div>
+        <div>{recipeDetails.protein}</div>
+        <div>{recipeDetails.carbs}</div>
+        <div>{recipeDetails.fat} </div>
+      </div>
+      {recipe.recipeToIngredient.map((ingredient) => (
+        <Ingredient
+          key={ingredient.id}
+          ingredient={ingredient.ingredient}
+          size={Number(ingredient.serveSize)}
+          ratio={recipeDetails.ratio}
+        />
+      ))}
     </div>
   )
 }
@@ -91,6 +131,7 @@ const FormPlanMeal = ({
   const selectedMeal = allMeals?.find((meal) => meal.id === Number(mealId))
 
   console.log('selectedMeal', selectedMeal)
+  console.log('calories', calories)
 
   if (!allMeals) return <div />
 
@@ -100,6 +141,22 @@ const FormPlanMeal = ({
       className='grid grid-cols-5 gap-2 w-full items-center'
     >
       <div className='flex flex-col gap-1'>
+        <FormField
+          control={form.control}
+          name={`meals.${index}.mealTitle`}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Title</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder='Title'
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name={`meals.${index}.mealId`}
@@ -116,7 +173,7 @@ const FormPlanMeal = ({
                       variant='outline'
                       role='combobox'
                       className={cn(
-                        'w-[200px] justify-between',
+                        'w-full justify-between',
                         !field.value && 'text-muted-foreground',
                       )}
                     >
@@ -128,7 +185,7 @@ const FormPlanMeal = ({
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className='w-[200px] p-0'>
+                <PopoverContent className='w-[300px] p-0'>
                   <Command>
                     <CommandInput
                       placeholder='Search meals...'
@@ -220,9 +277,13 @@ const FormPlanMeal = ({
           )}
         />
       </div>
-      <div className='flex flex-col gap-1 col-span-4'>
+      <div className='flex flex-col gap-8 col-span-4'>
         {selectedMeal?.mealToRecipe.map((recipe) => (
-          <Recipe recipe={recipe.recipe} calories={calories} key={recipe.id} />
+          <Recipe
+            recipe={recipe.recipe}
+            calories={calories}
+            key={recipe.id}
+          />
         ))}
       </div>
     </div>

@@ -47,6 +47,59 @@ export function formatDate(
   }).format(new Date(date))
 }
 
+export function getRecipeDetailsByCals(recipe: GetRecipeById, calories: number) {
+  const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
+    return acc + Number(curr?.serveSize)
+  }, 0)
+
+  const unit = recipe?.recipeToIngredient[0]?.ingredient?.serveUnit
+
+  const cals = recipe?.recipeToIngredient.reduce((acc, curr) => {
+    const cal = Number(curr?.ingredient?.caloriesWFibre)
+    const scale = Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
+    return acc + cal * scale
+  }, 0)
+
+  const calsWOFibre = recipe?.recipeToIngredient.reduce((acc, curr) => {
+    const cal = Number(curr?.ingredient?.caloriesWOFibre)
+    const scale = Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
+    return acc + cal * scale
+  }, 0)
+
+  const protein = recipe?.recipeToIngredient.reduce((acc, curr) => {
+    const cal = Number(curr?.ingredient?.protein)
+    const scale = Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
+    return acc + cal * scale
+  }, 0)
+
+  const carbs = recipe?.recipeToIngredient.reduce((acc, curr) => {
+    const cal = Number(
+      curr?.ingredient?.availableCarbohydrateWithoutSugarAlcohols,
+    )
+    const scale = Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
+    return acc + cal * scale
+  }, 0)
+
+  const fat = recipe?.recipeToIngredient.reduce((acc, curr) => {
+    const cal = Number(curr?.ingredient?.fatTotal)
+    const scale = Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
+    return acc + cal * scale
+  }, 0)
+
+  const ratio = calories / Number(cals)
+
+  return {
+    size: (Number(size) * ratio).toFixed(0),
+    unit: unit,
+    cals: calories?.toFixed(1),
+    calsWOFibre: (Number(calsWOFibre) * ratio).toFixed(1),
+    protein: (Number(protein) * ratio).toFixed(1),
+    carbs: (Number(carbs) * ratio).toFixed(1),
+    fat: (Number(fat) * ratio).toFixed(1),
+    ratio: ratio,
+  }
+}
+
 export function getRecipeDetails(recipe: GetRecipeById) {
   const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
     return acc + Number(curr?.serveSize)

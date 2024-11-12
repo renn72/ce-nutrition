@@ -67,7 +67,7 @@ const FormPlan = () => {
       meals: [
         {
           mealId: '',
-          mealTitle: '',
+          mealTitle: '1',
           calories: '500',
           vegeCalories: '',
           note: '',
@@ -124,9 +124,6 @@ const FormPlan = () => {
               </FormItem>
             )}
           />
-          <div className='flex flex-col gap-4'>
-            <h2>Meals</h2>
-          </div>
           <FormField
             control={form.control}
             name='notes'
@@ -183,6 +180,7 @@ const FormPlan = () => {
             />
           </div>
           <div className='flex flex-col gap-4'>
+            <h2 className='text-4xl font-bold'>Meals</h2>
             {mealsField.fields.map((field, index) => (
               <FormPlanMeal
                 key={field.mealId}
