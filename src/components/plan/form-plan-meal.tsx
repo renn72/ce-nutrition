@@ -41,23 +41,20 @@ export const dynamic = 'force-dynamic'
 
 const Ingredient = ({
   ingredient,
-  ratio : r,
+  ratio: r,
   size,
 }: {
   ingredient: GetIngredientById | null
   ratio: number
   size: number
 }) => {
-
   const ratio = (size * r) / Number(ingredient?.serveSize)
 
   if (!ingredient) return null
   return (
-    <div className='grid grid-cols-9 gap-1'>
+    <div className='grid grid-cols-9 gap-1 text-muted-foreground'>
       <div />
-      <div
-        className='col-span-3'
-       >{ingredient.name}</div>
+      <div className='col-span-3'>{ingredient.name}</div>
       <div>{(Number(size) * ratio).toFixed(0)}</div>
       <div>{(Number(ingredient.caloriesWFibre) * ratio).toFixed(1)}</div>
       <div>{(Number(ingredient.protein) * ratio).toFixed(1)}</div>
@@ -82,10 +79,17 @@ const Recipe = ({
   const recipeDetails = getRecipeDetailsByCals(recipe, Number(calories))
   return (
     <div className='flex flex-col gap-1'>
-      <div className='grid grid-cols-9 gap-1'>
-        <div
-          className='col-span-4'
-        >{recipe.name}</div>
+      <div className='grid grid-cols-9 gap-1 capitalize'>
+        <div className='col-span-4 '/>
+        <div>size</div>
+        <div>cals</div>
+        <div>protein</div>
+        <div>carbs</div>
+        <div>fat</div>
+
+      </div>
+      <div className='grid grid-cols-9 gap-1 font-bold'>
+        <div className='col-span-4'>{recipe.name}</div>
         <div>
           {recipeDetails.size} {recipeDetails.unit}
         </div>
@@ -109,7 +113,6 @@ const Recipe = ({
 const FormPlanMeal = ({
   index,
   form,
-  remove,
 }: {
   index: number
   form: UseFormReturn<z.infer<typeof formSchema>>
@@ -129,9 +132,6 @@ const FormPlanMeal = ({
   const mealId = form.watch(`meals.${index}.mealId`)
   const calories = form.watch(`meals.${index}.calories`)
   const selectedMeal = allMeals?.find((meal) => meal.id === Number(mealId))
-
-  console.log('selectedMeal', selectedMeal)
-  console.log('calories', calories)
 
   if (!allMeals) return <div />
 

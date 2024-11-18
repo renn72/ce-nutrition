@@ -87,9 +87,10 @@ const FormPlan = () => {
   if (isLoadingAllMeals) return null
 
   return (
+    <div className='my-10'>
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className='flex flex-col gap-4 mt-10'>
+        <div className='flex flex-col gap-4 '>
           <div className='flex justify-between gap-8'>
           <FormField
             control={form.control}
@@ -219,6 +220,7 @@ const FormPlan = () => {
         </div>
       </form>
     </Form>
+    </div>
   )
 }
 
