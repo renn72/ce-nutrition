@@ -32,7 +32,6 @@ export const formSchema = z.object({
   image: z.string(),
   notes: z.string(),
   planCategory: z.string(),
-  numberOfMeals: z.number(),
   meals: z.array(
     z.object({
       mealId: z.string(),
@@ -63,7 +62,6 @@ const FormPlan = () => {
       image: '',
       notes: '',
       planCategory: '',
-      numberOfMeals: 1,
       meals: [
         {
           mealId: '',
@@ -81,7 +79,22 @@ const FormPlan = () => {
   })
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log('input', data)
+    createPlan({
+      name: data.name,
+      description: data.description,
+      image: data.image,
+      notes: data.notes,
+      planCategory: data.planCategory,
+      numberOfMeals: data.meals.length,
+      meals: data.meals.map((meal, i) => ({
+        mealId: Number(meal.mealId),
+        mealIndex: i + 1,
+        mealTitle: meal.mealTitle,
+        calories: meal.calories,
+        vegeCalories: meal.vegeCalories,
+        note: meal.note,
+      })),
+    })
   }
 
   if (isLoadingAllMeals) return null
