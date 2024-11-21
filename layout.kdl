@@ -5,10 +5,6 @@ layout {
     }
     pane {
     }
-    pane size=1 borderless=true {
-      plugin location="zellij:status-bar"
-    }
-
   }
 tab {
     pane size=1 borderless=true {
