@@ -8,6 +8,8 @@ import {
 } from 'drizzle-orm/sqlite-core'
 import { type AdapterAccount } from 'next-auth/adapters'
 
+import { userPlan } from './user-plan'
+
 import { notification } from './notification'
 
 export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
@@ -134,19 +136,21 @@ export const accountsRelations = relations(account, ({ one }) => ({
   user: one(user, { fields: [account.userId], references: [user.id] }),
 }))
 
-export const roleRelations = relations(role, ({ one, many }) => ({
+export const roleRelations = relations(role, ({ one, }) => ({
   user: one(user, {
     fields: [role.userId],
     references: [user.id],
   }),
 }))
 
-export const userRelations = relations(user, ({ one, many }) => ({
+export const userRelations = relations(user, ({ many }) => ({
   roles: many(role),
   notifications: many(notification),
   accounts: many(account),
   trainers: many(userToTrainer, { relationName: 'trainers' }),
   clients: many(userToTrainer, { relationName: 'clients' }),
+  userPlans: many(userPlan, { relationName: 'userPlans' }),
+  userPlansCreator: many(userPlan, { relationName: 'userPlansCreator' }),
 }))
 
 export const userToTrainerRelations = relations(
