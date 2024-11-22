@@ -9,6 +9,7 @@ import * as settings from './schema/settings'
 import * as recipe from './schema/recipe'
 import * as plan from './schema/plan'
 import * as meal from './schema/meal'
+import * as userPlan from './schema/user-plan'
 
 const schema = {
   ...user,
@@ -18,6 +19,7 @@ const schema = {
   ...recipe,
   ...plan,
   ...meal,
+  ...userPlan,
 }
 
 /**
