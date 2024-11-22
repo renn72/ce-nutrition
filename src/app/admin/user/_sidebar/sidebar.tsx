@@ -2,8 +2,10 @@
 
 import * as React from 'react'
 
+import { api } from '@/trpc/react'
+
 import Link from 'next/link'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 
 import { Check, ChevronsUpDown, GalleryVerticalEnd, Search } from 'lucide-react'
 
@@ -52,10 +54,13 @@ const data = {
 const AdminBaseSidebar = ({
   children,
 }: Readonly<{ children: React.ReactNode }>) => {
-  const [selectedVersion, setSelectedVersion] = React.useState(data.versions[0])
+  const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const user = searchParams.get('user')
+  const [selectedUser, setSelectedUser] = React.useState(user)
+  const { data: allUsers } = api.user.getAll.useQuery()
+  const userName = allUsers?.find((user) => user.id === selectedUser)?.name
 
   return (
     <SidebarProvider>
@@ -73,8 +78,8 @@ const AdminBaseSidebar = ({
                       <GalleryVerticalEnd className='size-4' />
                     </div>
                     <div className='flex flex-col gap-0.5 leading-none'>
-                      <span className='font-semibold'>Documentation</span>
-                      <span className=''>v{selectedVersion}</span>
+                      <span className='font-semibold'>User</span>
+                      <span className=''>{userName}</span>
                     </div>
                     <ChevronsUpDown className='ml-auto' />
                   </SidebarMenuButton>
@@ -83,13 +88,16 @@ const AdminBaseSidebar = ({
                   className='w-[--radix-dropdown-menu-trigger-width]'
                   align='start'
                 >
-                  {data.versions.map((version) => (
+                  {allUsers?.map((user) => (
                     <DropdownMenuItem
-                      key={version}
-                      onSelect={() => setSelectedVersion(version)}
+                      key={user.id}
+                      onSelect={() => {
+                        console.log(pathname)
+                        router.push(`${pathname}?user=${user.id}`)
+                        setSelectedUser(user.id)}}
                     >
-                      v{version}{' '}
-                      {version === selectedVersion && (
+                      {user.name}
+                      {user.id === selectedUser && (
                         <Check className='ml-auto' />
                       )}
                     </DropdownMenuItem>

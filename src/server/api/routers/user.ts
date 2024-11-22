@@ -207,6 +207,25 @@ export const userRouter = createTRPCRouter({
   get: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.user.findFirst({
       where: (user, { eq }) => eq(user.id, input),
+      with: {
+        userPlans: {
+          with: {
+            userMeals: {
+              with: {
+                userRecipes: {
+                  with: {
+                    userIngredients: {
+                      with: {
+                        ingredient: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     })
     return res
   }),

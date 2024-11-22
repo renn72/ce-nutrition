@@ -4,6 +4,12 @@ import { desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 export const planRouter = createTRPCRouter({
+  getAllSimple: protectedProcedure.query(async ({ ctx }) => {
+    const res = await ctx.db.query.plan.findMany({
+      orderBy: [desc(plan.createdAt)],
+    })
+    return res
+  }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.plan.findMany({
       orderBy: [desc(plan.createdAt)],
