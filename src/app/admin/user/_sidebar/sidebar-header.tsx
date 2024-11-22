@@ -6,8 +6,6 @@ import * as React from 'react'
 
 import { usePathname } from 'next/navigation'
 
-import { Check, ChevronsUpDown, GalleryVerticalEnd, Search } from 'lucide-react'
-
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,13 +14,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import {
   SidebarTrigger,
@@ -49,6 +40,10 @@ const SidebarHeader = () => {
                 height={20}
               />
             </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator className='hidden md:block' />
+          <BreadcrumbItem>
+            User
           </BreadcrumbItem>
           <BreadcrumbSeparator className='hidden md:block' />
           <BreadcrumbItem>

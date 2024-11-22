@@ -1,7 +1,9 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
 import * as React from 'react'
+
+import Link from 'next/link'
+import { usePathname, useSearchParams } from 'next/navigation'
 
 import { Check, ChevronsUpDown, GalleryVerticalEnd, Search } from 'lucide-react'
 
@@ -30,35 +32,30 @@ const data = {
   versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],
   navMain: [
     {
-      title: 'Building Blocks',
+      title: 'User',
       url: '#',
       items: [
         {
-          title: 'Ingredients',
-          url: '/admin/base/ingredient',
+          title: 'Info',
+          url: '/admin/user/info',
         },
+
         {
-          title: 'Store',
-          url: '/admin/base/store',
-        },
-      ],
-    },
-    {
-      title: 'Admin',
-      url: '#',
-      items: [
-        {
-          title: 'Settings',
-          url: '/admin/base/settings',
+          title: 'Program',
+          url: '/admin/user/program',
         },
       ],
     },
   ],
 }
 
-const AdminBaseSidebar = ({ children }: Readonly<{ children: React.ReactNode }>) => {
+const AdminBaseSidebar = ({
+  children,
+}: Readonly<{ children: React.ReactNode }>) => {
   const [selectedVersion, setSelectedVersion] = React.useState(data.versions[0])
   const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const user = searchParams.get('user')
 
   return (
     <SidebarProvider>
@@ -115,7 +112,9 @@ const AdminBaseSidebar = ({ children }: Readonly<{ children: React.ReactNode }>)
                         asChild
                         isActive={pathname === item.url}
                       >
-                        <a href={item.url}>{item.title}</a>
+                        <Link href={item.url + '?user=' + user}>
+                          {item.title}
+                        </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
@@ -126,11 +125,7 @@ const AdminBaseSidebar = ({ children }: Readonly<{ children: React.ReactNode }>)
         </SidebarContent>
         <SidebarRail />
       </Sidebar>
-      <SidebarInset
-        className='w-full'
-      >
-        {children}
-      </SidebarInset>
+      <SidebarInset className='w-full'>{children}</SidebarInset>
     </SidebarProvider>
   )
 }

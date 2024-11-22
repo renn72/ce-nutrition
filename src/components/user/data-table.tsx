@@ -117,7 +117,7 @@ const DataTable = ({ users: data }: { users: GetAllUsers }) => {
                   data-state={row.getIsSelected() && 'selected'}
                   className='cursor-pointer'
                   onClick={() => {
-                    router.push(`/admin/user?user=${row.getValue('id')}`)
+                    router.push(`/admin/user/info?user=${row.getValue('id')}`)
                   }}
                 >
                   {row.getVisibleCells().map((cell) => (
