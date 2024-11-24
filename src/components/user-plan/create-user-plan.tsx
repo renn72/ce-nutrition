@@ -159,6 +159,16 @@ const CreateUserPlan = () => {
     console.log('selectedPlan', selectedPlan)
     form.reset({
       name: selectedPlan?.name || '',
+      description: selectedPlan?.description || '',
+      image: selectedPlan?.image || '',
+      notes: selectedPlan?.notes || '',
+      meals: selectedPlan?.planToMeal.map((meal) => ({
+        mealId: meal.mealId?.toString(),
+        mealTitle: meal.mealTitle || '',
+        calories: meal.calories || '',
+        vegeCalories: meal.vegeCalories || '',
+        note: meal.note || '',
+      })) || [],
     })
   }
 
@@ -192,6 +202,52 @@ const CreateUserPlan = () => {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name='description'
+              render={({ field }) => (
+                <FormItem className='w-full'>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='Description'
+                      {...field}
+                      type='text'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='notes'
+              render={({ field }) => (
+                <FormItem className='w-full'>
+                  <FormLabel>Notes</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='Notes'
+                      {...field}
+                      type='text'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className='flex flex-col gap-4 '>
+            {
+              mealsField.fields.map((field, index) => (
+                <div
+                  key={field.id}
+                  className='flex flex-col gap-1 w-full'
+                  >
+                    {field.mealId}
+                  </div>
+              ))
+            }
+            </div>
           </form>
         </Form>
       )}
