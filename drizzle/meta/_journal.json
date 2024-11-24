@@ -148,6 +148,13 @@
       "when": 1732145067029,
       "tag": "0020_conscious_dazzler",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "6",
+      "when": 1732404758435,
+      "tag": "0021_exotic_lady_deathstrike",
+      "breakpoints": true
     }
   ]
 }

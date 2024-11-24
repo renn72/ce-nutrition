@@ -1,11 +1,11 @@
 'use client'
 
-import * as React from 'react'
-
 import { api } from '@/trpc/react'
 
+import * as React from 'react'
+
 import Link from 'next/link'
-import { usePathname, useSearchParams, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import { Check, ChevronsUpDown, GalleryVerticalEnd, Search } from 'lucide-react'
 
@@ -41,10 +41,13 @@ const data = {
           title: 'Info',
           url: '/admin/user/info',
         },
-
         {
           title: 'Program',
           url: '/admin/user/program',
+        },
+        {
+          title: 'Create',
+          url: '/admin/user/create',
         },
       ],
     },
@@ -94,7 +97,8 @@ const AdminBaseSidebar = ({
                       onSelect={() => {
                         console.log(pathname)
                         router.push(`${pathname}?user=${user.id}`)
-                        setSelectedUser(user.id)}}
+                        setSelectedUser(user.id)
+                      }}
                     >
                       {user.name}
                       {user.id === selectedUser && (

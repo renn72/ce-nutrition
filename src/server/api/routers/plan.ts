@@ -36,34 +36,32 @@ export const planRouter = createTRPCRouter({
     })
     return res
   }),
-  get: protectedProcedure
-    .input(z.object({ id: z.number() }))
-    .query(async ({ input, ctx }) => {
-      const res = await ctx.db.query.plan.findFirst({
-        where: (plan, { eq }) => eq(plan.id, input.id),
-        with: {
-          planToMeal: {
-            with: {
-              meal: {
-                with: {
-                  mealToRecipe: {
-                    with: {
-                      recipe: true,
-                    },
+  get: protectedProcedure.input(z.number()).query(async ({ input, ctx }) => {
+    const res = await ctx.db.query.plan.findFirst({
+      where: (plan, { eq }) => eq(plan.id, input),
+      with: {
+        planToMeal: {
+          with: {
+            meal: {
+              with: {
+                mealToRecipe: {
+                  with: {
+                    recipe: true,
                   },
-                  mealToVegeStack: {
-                    with: {
-                      vegeStack: true,
-                    },
+                },
+                mealToVegeStack: {
+                  with: {
+                    vegeStack: true,
                   },
                 },
               },
             },
           },
         },
-      })
-      return res
-    }),
+      },
+    })
+    return res || {}
+  }),
   create: protectedProcedure
     .input(
       z.object({

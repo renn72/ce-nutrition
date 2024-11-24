@@ -24,7 +24,6 @@ export const userPlan = createTable('user-plan', {
   numberOfMeals: int('number_of_meals', { mode: 'number' }),
   creatorId: text('creator_id').references(() => user.id),
   userId: text('user_id').references(() => user.id),
-  planCategory: text('recipe_category'),
   favouriteAt: int('favourite_at', { mode: 'timestamp' }),
   deletedAt: int('deleted_at', { mode: 'timestamp' }),
   hiddenAt: int('hidden_at', { mode: 'timestamp' }),
