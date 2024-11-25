@@ -123,12 +123,6 @@ const FormPlanMeal = ({
 
   const [isOpen, setIsOpen] = useState(false)
 
-  const [query, setQuery] = useState('')
-  const [queryAlt, setQueryAlt] = useState('')
-
-  const [selected, setSelected] = useState<GetIngredientById | null>(null)
-  const [selectedAlt, setSelectedAlt] = useState<GetIngredientById | null>(null)
-
   const mealId = form.watch(`meals.${index}.mealId`)
   const calories = form.watch(`meals.${index}.calories`)
   const selectedMeal = allMeals?.find((meal) => meal.id === Number(mealId))

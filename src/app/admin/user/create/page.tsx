@@ -18,7 +18,7 @@ export default function Home() {
   const { data: currentUser } = api.user.get.useQuery(user)
 
   return (
-    <div className='flex min-h-screen flex-col items-center'>
+    <div className='flex min-h-screen flex-col items-center '>
       <CreateUserPlan />
     </div>
   )

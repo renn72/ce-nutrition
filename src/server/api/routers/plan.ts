@@ -20,7 +20,15 @@ export const planRouter = createTRPCRouter({
               with: {
                 mealToRecipe: {
                   with: {
-                    recipe: true,
+                    recipe: {
+                      with: {
+                        recipeToIngredient: {
+                          with: {
+                            ingredient: true,
+                          },
+                        },
+                      },
+                    },
                   },
                 },
                 mealToVegeStack: {

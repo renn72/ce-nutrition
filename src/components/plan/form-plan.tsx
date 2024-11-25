@@ -103,7 +103,7 @@ const FormPlan = () => {
     <div className='my-10'>
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className='flex flex-col gap-4 '>
+        <div className='flex flex-col gap-2 '>
           <div className='flex justify-between gap-8'>
           <FormField
             control={form.control}
@@ -143,12 +143,34 @@ const FormPlan = () => {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name='image'
+              render={({ field }) => (
+                <FormItem
+                    className='w-full'
+                  >
+                  <FormLabel>Image TODO</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='Image'
+                      {...field}
+                      type='text'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
+          <div className='flex justify-between gap-8'>
           <FormField
             control={form.control}
             name='description'
             render={({ field }) => (
-              <FormItem>
+                <FormItem
+                    className='w-full'
+                  >
                 <FormLabel>Recipe Description</FormLabel>
                 <FormControl>
                   <Input
@@ -165,7 +187,9 @@ const FormPlan = () => {
             control={form.control}
             name='notes'
             render={({ field }) => (
-              <FormItem>
+                <FormItem
+                    className='w-full'
+                  >
                 <FormLabel>Notes</FormLabel>
                 <FormControl>
                   <Input
@@ -178,29 +202,9 @@ const FormPlan = () => {
               </FormItem>
             )}
           />
-          <div className='w-full'>
           </div>
-          <div className='w-full'>
-            <FormField
-              control={form.control}
-              name='image'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Image TODO</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder='Image'
-                      {...field}
-                      type='text'
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className='flex flex-col gap-4'>
-            <h2 className='text-4xl font-bold'>Meals</h2>
+          <div className='flex flex-col gap-2 mt-4'>
+            <h2 className='text-2xl font-bold'>Meals</h2>
           <div className='flex flex-col gap-0 divide-1 divide-y divide-dashed divide-border'>
             {mealsField.fields.map((field, index) => (
               <FormPlanMeal
@@ -213,7 +217,7 @@ const FormPlan = () => {
             </div>
             <div className='w-full flex justify-center mt-8'>
             <PlusCircle
-              size={42}
+              size={36}
               className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
               onClick={() =>
                 mealsField.append({
