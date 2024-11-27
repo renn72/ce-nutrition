@@ -38,7 +38,7 @@ export const mealToRecipe = createTable('meal_to_recipe', {
   recipeId: int('recipe_id').references(() => recipe.id, {
     onDelete: 'cascade',
   }),
-  index: int('index', { mode: 'number' }),
+  index: int('index', { mode: 'number' }).notNull(),
   note: text('note'),
 })
 

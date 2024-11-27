@@ -54,7 +54,23 @@ export const planRouter = createTRPCRouter({
               with: {
                 mealToRecipe: {
                   with: {
-                    recipe: true,
+                    recipe: {
+                      with: {
+                        recipeToIngredient: {
+                          with: {
+                            ingredient: {
+                              with: {
+                                ingredientToGroceryStore: {
+                                  with: {
+                                    groceryStore: true,
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
                   },
                 },
                 mealToVegeStack: {
@@ -68,7 +84,7 @@ export const planRouter = createTRPCRouter({
         },
       },
     })
-    return res || {}
+    return res
   }),
   create: protectedProcedure
     .input(

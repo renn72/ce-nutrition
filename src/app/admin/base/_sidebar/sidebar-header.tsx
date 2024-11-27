@@ -20,7 +20,6 @@ import { ModeToggle } from '@/components/layout/mode-toggle'
 
 const SidebarHeader = () => {
   const pathname = usePathname()
-  console.log('pathname', pathname)
   return (
     <header className='flex h-16 items-center gap-2 border-b px-4 justify-between'>
       <div className='flex shrink-0 items-center gap-2 '>
