@@ -7,7 +7,7 @@ import * as React from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
-import { Check, ChevronsUpDown, GalleryVerticalEnd, Search } from 'lucide-react'
+import { Check, ChevronsUpDown, GalleryVerticalEnd } from 'lucide-react'
 
 import {
   DropdownMenu,
