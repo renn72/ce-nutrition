@@ -150,6 +150,7 @@ const FormRecipe = () => {
       image: data.image,
       notes: data.notes,
       recipeCategory: data.recipeCategory,
+      calories: Number(calorieTotal),
       ingredients: data.ingredients.map((i) => {
         return {
           index: i.index,

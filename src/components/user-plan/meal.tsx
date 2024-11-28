@@ -51,13 +51,21 @@ const Meal = ({
   )
   const formCals = form.watch(`meals.${index}.calories`)
 
+  const resetMeal = () => {
+    form.resetField(`meals.${index}`)
+  }
+
   if (!field) return null
   if (!plan) return null
 
   return (
     <Card>
-      <CardHeader className='pb-0'>
+      <CardHeader className='pb-0 flex flex-row justify-between'>
         <CardTitle className='text-xl font-medium'>Meal {index + 1}</CardTitle>
+        <Button
+          variant='secondary'
+          onClick={resetMeal}
+        >Reset</Button>
       </CardHeader>
       <CardContent className='flex flex-col gap-2 w-full py-4'>
         <FormField
@@ -152,7 +160,7 @@ const Meal = ({
             </div>
           </div>
 
-          <div className='flex flex-col gap-8 col-span-4'>
+          <div className='flex flex-col gap-8 col-span-4 select-none'>
             {field.recipes.map((_recipe, recipeIndex) => (
               <Recipe
                 key={recipeIndex}

@@ -116,13 +116,17 @@ const CreateUserPlan = () => {
               index: recipe.index,
               ingredients:
                 recipe?.recipe?.recipeToIngredient.map(
-                  (ingredient, ingredientIndex) => ({
+                  (ingredient, ingredientIndex) => {
+                    console.log('ratio', (Number(recipe.recipe?.calories) / Number(meal.calories)))
+                    const serve = (Number(ingredient.serveSize) *  Number(meal.calories) / (Number(recipe.recipe?.calories))).toFixed(0)
+                    console.log('serve', serve)
+                  return {
                     ingredientId: ingredientIndex.toString(),
                     name: ingredient.ingredient?.name || '',
-                    serveSize: ingredient.serveSize,
+                    serveSize: serve,
                     serveUnit: ingredient.serveUnit,
                     note: ingredient.note || '',
-                  }),
+                  }},
                 ) || [],
             })) || [],
         })) || [],

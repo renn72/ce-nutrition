@@ -56,6 +56,7 @@ export const recipeRouter = createTRPCRouter({
         image: z.string(),
         notes: z.string(),
         recipeCategory: z.string(),
+        calories: z.number(),
         ingredients: z.array(
           z.object({
             ingredientId: z.number(),

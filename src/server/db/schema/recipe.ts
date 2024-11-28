@@ -21,6 +21,7 @@ export const recipe = createTable('recipe', {
     description: text('description').notNull(),
     image: text('image').notNull(),
     notes: text('notes').notNull(),
+    calories: int('calories', { mode: 'number' }).notNull(),
     creatorId: text('creator_id').references(() => user.id).notNull(),
     recipeCategory: text('recipe_category').notNull(),
     favouriteAt: int('favourite_at', { mode: 'timestamp' }),

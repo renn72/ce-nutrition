@@ -47,6 +47,62 @@ export function formatDate(
   }).format(new Date(date))
 }
 
+export function getRecipeDetailsForUserPlan(recipe: GetRecipeById, ingredientsSize: number[]) {
+  const size = ingredientsSize.reduce((acc, curr) => {
+    return acc + curr
+  }, 0)
+
+  const unit = recipe?.recipeToIngredient[0]?.ingredient?.serveUnit
+
+  const cals = recipe?.recipeToIngredient.reduce((acc, curr, i) => {
+    const cal = Number(curr?.ingredient?.caloriesWFibre)
+    const size = ingredientsSize[i] || 100
+    const scale = size / Number(curr?.ingredient?.serveSize)
+    return acc + cal * scale
+  }, 0)
+
+  const calsWOFibre = recipe?.recipeToIngredient.reduce((acc, curr, i) => {
+    const cal = Number(curr?.ingredient?.caloriesWOFibre)
+    const size = ingredientsSize[i] || 100
+    const scale = size / Number(curr?.ingredient?.serveSize)
+    return acc + cal * scale
+  }, 0)
+
+  const protein = recipe?.recipeToIngredient.reduce((acc, curr, i) => {
+    const cal = Number(curr?.ingredient?.protein)
+    const size = ingredientsSize[i] || 100
+    const scale = size / Number(curr?.ingredient?.serveSize)
+    return acc + cal * scale
+  }, 0)
+
+  const carbs = recipe?.recipeToIngredient.reduce((acc, curr, i) => {
+    const cal = Number(
+      curr?.ingredient?.availableCarbohydrateWithoutSugarAlcohols,
+    )
+    const size = ingredientsSize[i] || 100
+    const scale = size / Number(curr?.ingredient?.serveSize)
+    return acc + cal * scale
+  }, 0)
+
+  const fat = recipe?.recipeToIngredient.reduce((acc, curr, i) => {
+    const cal = Number(curr?.ingredient?.fatTotal)
+    const size = ingredientsSize[i] || 100
+    const scale = size / Number(curr?.ingredient?.serveSize)
+    return acc + cal * scale
+  }, 0)
+
+
+  return {
+    size: size.toFixed(0),
+    unit: unit,
+    cals: cals?.toFixed(1),
+    calsWOFibre: (Number(calsWOFibre)).toFixed(1),
+    protein: (Number(protein)).toFixed(1),
+    carbs: (Number(carbs)).toFixed(1),
+    fat: (Number(fat)).toFixed(1),
+  }
+}
+
 export function getRecipeDetailsByCals(recipe: GetRecipeById, calories: number) {
   const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
     return acc + Number(curr?.serveSize)
