@@ -157,7 +157,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
       return (
         <div className='flex space-x-2'>
           <span className='w-[100px] truncate font-medium'>
-            {size?.toFixed(1)}
+            {size?.toFixed(2)}
           </span>
         </div>
       )

@@ -1,5 +1,6 @@
 import type { GetRecipeById } from '@/types'
 import { clsx, type ClassValue } from 'clsx'
+import { inv, matrix, multiply } from 'mathjs'
 import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
@@ -47,7 +48,10 @@ export function formatDate(
   }).format(new Date(date))
 }
 
-export function getRecipeDetailsForUserPlan(recipe: GetRecipeById, ingredientsSize: number[]) {
+export function getRecipeDetailsForUserPlan(
+  recipe: GetRecipeById,
+  ingredientsSize: number[],
+) {
   const size = ingredientsSize.reduce((acc, curr) => {
     return acc + curr
   }, 0)
@@ -91,19 +95,21 @@ export function getRecipeDetailsForUserPlan(recipe: GetRecipeById, ingredientsSi
     return acc + cal * scale
   }, 0)
 
-
   return {
     size: size.toFixed(0),
     unit: unit,
     cals: cals?.toFixed(1),
-    calsWOFibre: (Number(calsWOFibre)).toFixed(1),
-    protein: (Number(protein)).toFixed(1),
-    carbs: (Number(carbs)).toFixed(1),
-    fat: (Number(fat)).toFixed(1),
+    calsWOFibre: Number(calsWOFibre).toFixed(1),
+    protein: Number(protein).toFixed(1),
+    carbs: Number(carbs).toFixed(1),
+    fat: Number(fat).toFixed(1),
   }
 }
 
-export function getRecipeDetailsByCals(recipe: GetRecipeById, calories: number) {
+export function getRecipeDetailsByCals(
+  recipe: GetRecipeById,
+  calories: number,
+) {
   const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
     return acc + Number(curr?.serveSize)
   }, 0)
@@ -202,5 +208,42 @@ export function getRecipeDetails(recipe: GetRecipeById) {
     protein: protein?.toFixed(1),
     carbs: carbs?.toFixed(1),
     fat: fat?.toFixed(1),
+  }
+}
+
+/**
+ * Solves for ingredient quantities to meet calorie and protein targets.
+ *
+ * @param proteinPerGram - Array of protein contribution per gram for each ingredient.
+ * @param caloriesPerGram - Array of calorie contribution per gram for each ingredient.
+ * @param targetProtein - Target protein in grams.
+ * @param targetCalories - Target calories.
+ * @returns Ingredient quantities in grams or an error message.
+ */
+export function balanceRecipe(
+  proteinPerGram: number[],
+  caloriesPerGram: number[],
+  targetProtein: number,
+  targetCalories: number,
+): number[] {
+  // Validate input lengths
+  if (proteinPerGram.length !== caloriesPerGram.length) {
+    throw new Error('Protein and calorie arrays must have the same length.')
+  }
+
+  const numIngredients = proteinPerGram.length
+
+  // Create the coefficient matrix
+  const coefficients = matrix([proteinPerGram, caloriesPerGram])
+
+  // Create the constants vector
+  const constants = matrix([targetProtein, targetCalories])
+
+  // Solve using the inverse of the coefficients matrix
+  try {
+    const solution = multiply(inv(coefficients), constants)
+    return solution.toArray() as number[]
+  } catch (error) {
+    throw new Error('Unable to solve the system. Ensure the inputs are valid.')
   }
 }

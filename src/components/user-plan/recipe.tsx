@@ -75,12 +75,12 @@ const Ingredient = ({
         render={({ field }) => (
           <FormItem className='w-full col-span-2'>
             <FormControl>
-              <div className='w-full flex justify-between items-center gap-2 px-4'>
+              <div className='w-full flex justify-between items-center gap-2 px-2'>
                 <CircleMinus
                   size={20}
                   className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0'
                   onClick={() => {
-                    field.onChange((Number(field.value) - 1).toString())
+                    field.onChange((Math.ceil(Number(field.value)) - 1).toString())
                   }}
                 />
                 <Input
@@ -95,7 +95,7 @@ const Ingredient = ({
                   size={20}
                   className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0'
                   onClick={() => {
-                    field.onChange((Number(field.value) + 1).toString())
+                    field.onChange((Math.floor(Number(field.value)) + 1).toString())
                   }}
                 />
               </div>
