@@ -1,5 +1,10 @@
 import { plan, planToMeal } from '@/server/db/schema/plan'
-import { userPlan, userMeal, userRecipe, userIngredient } from '@/server/db/schema/user-plan'
+import {
+  userIngredient,
+  userMeal,
+  userPlan,
+  userRecipe,
+} from '@/server/db/schema/user-plan'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
@@ -14,7 +19,7 @@ export const userPlanRouter = createTRPCRouter({
         notes: z.string(),
         meals: z.array(
           z.object({
-            mealId: z.string(),
+            mealIndex: z.number(),
             mealTitle: z.string(),
             calories: z.string(),
             protein: z.string().optional(),
@@ -26,14 +31,18 @@ export const userPlanRouter = createTRPCRouter({
             note: z.string(),
             recipes: z.array(
               z.object({
-                recipeId: z.string(),
+                recipeIndex: z.number(),
+                mealIndex: z.number(),
                 name: z.string(),
                 note: z.string(),
                 description: z.string(),
                 index: z.number(),
                 ingredients: z.array(
                   z.object({
-                    ingredientId: z.string(),
+                    ingredientId: z.number(),
+                    ingredientIndex: z.number(),
+                    recipeIndex: z.number(),
+                    mealIndex: z.number(),
                     name: z.string(),
                     serveSize: z.string(),
                     serveUnit: z.string(),
@@ -49,8 +58,11 @@ export const userPlanRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const userId = ctx.session.user.id
       const { meals, ...data } = input
+      const recipes = meals.map((meal) => meal.recipes).flat()
+      const ingredients = recipes.map((recipe) => recipe.ingredients).flat()
+
       const res = await ctx.db
-        .insert(plan)
+        .insert(userPlan)
         .values({
           ...data,
           creatorId: userId,
@@ -60,7 +72,7 @@ export const userPlanRouter = createTRPCRouter({
       const resId = res?.[0]?.id
       if (!resId) return res
       const mealRes = await ctx.db
-        .insert(planToMeal)
+        .insert(userMeal)
         .values(
           meals.map((meal) => ({
             ...meal,
@@ -68,7 +80,24 @@ export const userPlanRouter = createTRPCRouter({
           })),
         )
         .returning({ id: planToMeal.id })
-
-      return { res, mealRes }
+      const recipeRes = await ctx.db
+        .insert(userRecipe)
+        .values(
+          recipes.map((recipe) => ({
+            ...recipe,
+            userPlanId: resId,
+          })),
+        )
+        .returning({ id: userRecipe.id })
+      const ingredientRes = await ctx.db
+        .insert(userIngredient)
+        .values(
+          ingredients.map((ingredient) => ({
+            ...ingredient,
+            userPlanId: resId,
+          })),
+        )
+        .returning({ id: userIngredient.id })
+      return { res, mealRes, recipeRes, ingredientRes }
     }),
 })
