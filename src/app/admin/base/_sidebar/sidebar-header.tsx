@@ -17,6 +17,7 @@ import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 
 import { ModeToggle } from '@/components/layout/mode-toggle'
+import { User } from '@/components/auth/user'
 
 const SidebarHeader = () => {
   const pathname = usePathname()
@@ -50,7 +51,10 @@ const SidebarHeader = () => {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <ModeToggle />
+        <div className='flex items-center gap-2'>
+          <ModeToggle />
+          <User />
+        </div>
     </header>
   )
 }

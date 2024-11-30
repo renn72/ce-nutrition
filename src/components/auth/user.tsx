@@ -15,8 +15,9 @@ import { SignInUp } from '@/components/auth/sign-in-up'
 
 const User = () => {
   const ctx = api.useUtils()
-  const user = ctx.user.isUser.getData()
+  const { data: user, isLoading } = api.user.getCurrentUser.useQuery()
 
+  if (isLoading) return <div className='w-8' />
   if (!user) return <SignInUp />
   return (
     <Popover>
@@ -28,7 +29,7 @@ const User = () => {
             'hover:bg-secondary-foreground/70',
           )}
         >
-          {user.name.slice(0, 1).toUpperCase()}
+          {user.name?.slice(0, 1).toUpperCase()}
         </div>
       </PopoverTrigger>
       <PopoverContent asChild>

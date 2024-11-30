@@ -1,9 +1,9 @@
+import { TRPCReactProvider } from '@/trpc/react'
+
 import { type Metadata } from 'next'
 import { Epilogue } from 'next/font/google'
 
 import { getServerAuthSession } from '@/server/auth'
-
-import { TRPCReactProvider } from '@/trpc/react'
 
 import { Toaster } from '@/components/ui/sonner'
 
@@ -12,6 +12,7 @@ import { ThemeProvider } from '@/components/misc/theme-provider'
 import { Providers } from '@/components/provider'
 
 import '@/styles/globals.css'
+
 import { CreatorMenu } from '@/components/creator/menu'
 
 export const metadata: Metadata = {
@@ -29,27 +30,27 @@ export default async function RootLayout({
   const session = await getServerAuthSession()
   const isCreator = session?.user?.isCreator
   return (
-      <html
-        lang='en'
-        className={`${font.className} relative`}
-        suppressHydrationWarning
-      >
-        <body>
-          <ThemeProvider
-            attribute='class'
-            defaultTheme='light'
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Providers>
-              <TRPCReactProvider>
-                {children}
-              { isCreator ? <CreatorMenu /> : null }
-                <Toaster />
-              </TRPCReactProvider>
-            </Providers>
-          </ThemeProvider>
-        </body>
-      </html>
+    <html
+      lang='en'
+      className={`${font.className} relative`}
+      suppressHydrationWarning
+    >
+      <body>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='light'
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Providers>
+            <TRPCReactProvider>
+              {children}
+              {isCreator ? <CreatorMenu /> : null}
+              <Toaster />
+            </TRPCReactProvider>
+          </Providers>
+        </ThemeProvider>
+      </body>
+    </html>
   )
 }
