@@ -38,7 +38,11 @@ export const formSchema = z.object({
       mealTitle: z.string(),
       calories: z.string(),
       protein: z.string().optional(),
+      targetProtein: z.string(),
+      targetCalories: z.string(),
       vegeCalories: z.string(),
+      vege: z.string(),
+      vegeNotes: z.string(),
       note: z.string(),
       recipes: z.array(
         z.object({
@@ -104,8 +108,12 @@ const CreateUserPlan = () => {
           mealId: mealIndex.toString(),
           mealTitle: meal.mealTitle || '',
           calories: meal.calories || '',
+          targetCalories: meal.calories || '',
+          targetProtein: '40',
           vegeCalories: meal.vegeCalories || '',
-          protein: '',
+          vege: meal.meal?.mealToVegeStack[0]?.vegeStack?.veges || '',
+          vegeNotes: meal.meal?.mealToVegeStack[0]?.vegeStack?.notes || '',
+          protein: '40',
           note: meal.note || '',
           recipes:
             meal?.meal?.mealToRecipe.map((recipe, recipeIndex) => ({

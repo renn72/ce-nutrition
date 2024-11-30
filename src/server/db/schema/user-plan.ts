@@ -1,10 +1,7 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
-import { z } from 'zod'
+import { int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
 
 import { ingredient } from './ingredient'
-import { meal } from './meal'
-import { recipe } from './recipe'
 import { user } from './user'
 
 export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
@@ -42,7 +39,11 @@ export const userMeal = createTable('user-meal', {
   mealTitle: text('meal_title'),
   calories: text('calories'),
   protein: text('protein'),
+  targetProtein: text('target_protein'),
+  targetCalories: text('target_calories'),
   vegeCalories: text('vege_calories'),
+  veges: text('veges'),
+  vegeNotes: text('vege_notes'),
   note: text('note'),
 })
 

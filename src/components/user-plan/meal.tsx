@@ -86,7 +86,6 @@ const Meal = ({
     if (Number(formProtien) == 0) return
 
     for (const [recipeIndex, recipe] of meal.mealToRecipe.entries()) {
-      console.log('recipe', recipe)
       const calsPerGram = recipe.recipe?.recipeToIngredient.map(
         (ingredient) =>
           Number(ingredient.ingredient.caloriesWFibre) /
@@ -102,8 +101,6 @@ const Meal = ({
           Number(ingredient.ingredient.availableCarbohydrateWithSugarAlcohols) /
           Number(ingredient.ingredient.serveSize),
       )
-      console.log('calsPerGram', calsPerGram)
-      console.log('proteinPerGram', proteinPerGram)
       if (!calsPerGram || !proteinPerGram || !carbsPerGram) return
       if (calsPerGram.length == 2 && proteinPerGram.length == 2) {
         try {
@@ -113,7 +110,6 @@ const Meal = ({
             Number(formProtien),
             Number(formCals),
           )
-          console.log('serve', serve)
           if (!serve) return
           if (serve.length != 2) return
           const value1 = Number(serve[0]).toFixed(2)
@@ -144,7 +140,6 @@ const Meal = ({
         const indexs = calsPerGram
           .map((_, i) => i)
           .filter((i) => !(i == indexCals || i == indexProtein))
-        console.log('indexs', indexs)
 
         const calsToRemove = calsPerGram.reduce((acc, curr, i) => {
           if (indexs.includes(i)) {
@@ -175,8 +170,6 @@ const Meal = ({
           return acc
         }, 0)
 
-        console.log('indexCals', indexCals)
-        console.log('indexProtein', indexProtein)
         if (indexCals == -1 || indexProtein == -1) return
         if (indexCals === indexProtein) return
         try {
@@ -188,7 +181,6 @@ const Meal = ({
             Number(formProtien) - proteinToRemove,
             Number(formCals) - calsToRemove,
           )
-          console.log('serve', serve)
           if (!serve) return
           if (serve.length != 2) return
           const value1 = Number(serve[0]).toFixed(2)
@@ -196,7 +188,6 @@ const Meal = ({
           const i = calsPerGram.map((_, i) => i).filter(
             (i) => i == indexCals || i == indexProtein,
           )
-          console.log('i', i)
           const index1 = i[0] as number
           const index2 = i[1] as number
           form.setValue(
@@ -230,7 +221,8 @@ const Meal = ({
           Reset
         </Button>
       </CardHeader>
-      <CardContent className='flex flex-col gap-2 w-full py-4'>
+      <CardContent className='flex flex-col gap-8 w-full py-4'>
+        <div className='flex gap-2 items-center'>
         <FormField
           control={form.control}
           name={`meals.${index}.mealTitle`}
@@ -247,10 +239,61 @@ const Meal = ({
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name={`meals.${index}.targetCalories`}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Target Calories</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder='Calories'
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name={`meals.${index}.targetProtein`}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Target Protein</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder='Protein'
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+          <FormField
+            control={form.control}
+            name={`meals.${index}.note`}
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel>Note</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder='Notes'
+                    {...field}
+                    type='text'
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <div className='grid grid-cols-5 gap-2 w-full items-center '>
           <div className='flex flex-col gap-2'>
             <div className='flex flex-col gap-2 px-2 py-4 rounded-md border border-border'>
-              <div>
+              <div className='flex gap-1 flex-col items-center'>
+                <Label>Calories</Label>
                 <div className='w-full flex justify-between items-center gap-4'>
                   <CircleMinus
                     size={24}
@@ -289,7 +332,8 @@ const Meal = ({
                 control={form.control}
                 name={`meals.${index}.protein`}
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className='flex flex-col items-center'>
+                    <FormLabel className=''>Protein</FormLabel>
                     <FormControl>
                       <div className='w-full flex justify-between items-center gap-4'>
                         <CircleMinus
@@ -351,12 +395,29 @@ const Meal = ({
             ))}
           </div>
         </div>
+        <div className='flex flex-col gap-2 items-center'>
+          <FormField
+            control={form.control}
+            name={`meals.${index}.vege`}
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel>Veg</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder='Veg Calories'
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         <div className='flex gap-4 justify-between'>
           <FormField
             control={form.control}
             name={`meals.${index}.vegeCalories`}
             render={({ field }) => (
-              <FormItem className='w-full'>
+              <FormItem className=''>
                 <FormLabel>Veg Calories</FormLabel>
                 <FormControl>
                   <Input
@@ -370,21 +431,21 @@ const Meal = ({
           />
           <FormField
             control={form.control}
-            name={`meals.${index}.note`}
+            name={`meals.${index}.vegeNotes`}
             render={({ field }) => (
-              <FormItem className='w-full'>
-                <FormLabel>Note</FormLabel>
+              <FormItem className=''>
+                <FormLabel>Veg Notes</FormLabel>
                 <FormControl>
                   <Input
                     placeholder='Notes'
                     {...field}
-                    type='text'
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+        </div>
         </div>
       </CardContent>
     </Card>
