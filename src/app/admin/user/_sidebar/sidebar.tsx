@@ -7,7 +7,7 @@ import * as React from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
-import { Check, ChevronsUpDown, GalleryVerticalEnd } from 'lucide-react'
+import { Check, ChevronsUpDown, GalleryVerticalEnd, User } from 'lucide-react'
 
 import {
   DropdownMenu,
@@ -29,9 +29,9 @@ import {
   SidebarProvider,
   SidebarRail,
 } from '@/components/ui/sidebar'
+import { atom, useAtom } from 'jotai'
 
 const data = {
-  versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],
   navMain: [
     {
       title: 'User',
@@ -54,6 +54,8 @@ const data = {
   ],
 }
 
+export const userAtom = atom<string>('')
+
 const AdminBaseSidebar = ({
   children,
 }: Readonly<{ children: React.ReactNode }>) => {
@@ -61,9 +63,15 @@ const AdminBaseSidebar = ({
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const user = searchParams.get('user')
-  const [selectedUser, setSelectedUser] = React.useState(user)
+  const [selectedUser, setSelectedUser] = useAtom(userAtom)
   const { data: allUsers } = api.user.getAll.useQuery()
   const userName = allUsers?.find((user) => user.id === selectedUser)?.name
+
+  React.useEffect(() => {
+    if (user) {
+      setSelectedUser(user)
+    }
+  }, [user])
 
   return (
     <SidebarProvider>
@@ -78,7 +86,7 @@ const AdminBaseSidebar = ({
                     className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
                   >
                     <div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
-                      <GalleryVerticalEnd className='size-4' />
+                      <User className='size-4' />
                     </div>
                     <div className='flex flex-col gap-0.5 leading-none'>
                       <span className='font-semibold'>User</span>

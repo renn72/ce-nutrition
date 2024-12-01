@@ -517,6 +517,26 @@ export const CreatorMenu = () => {
           <Button
             variant='ghost'
             onClick={() => {
+              generateVegeStacks()
+            }}
+          >
+            Gen Vege Stacks
+          </Button>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Button
+            variant='ghost'
+            onClick={() => {
+              deleteAllVegeStacks()
+            }}
+          >
+            deleteAllVegeStacks
+          </Button>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Button
+            variant='ghost'
+            onClick={() => {
               generateMeals()
             }}
           >
@@ -551,26 +571,6 @@ export const CreatorMenu = () => {
             }}
           >
             deleteAllPlans
-          </Button>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => {
-              generateVegeStacks()
-            }}
-          >
-            Gen Vege Stacks
-          </Button>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => {
-              deleteAllVegeStacks()
-            }}
-          >
-            deleteAllVegeStacks
           </Button>
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -15,8 +15,9 @@ export const userPlanRouter = createTRPCRouter({
       z.object({
         name: z.string().min(1),
         description: z.string(),
-        image: z.string().optional(),
+        image: z.string(),
         notes: z.string(),
+        userId: z.string(),
         meals: z.array(
           z.object({
             mealIndex: z.number(),
@@ -71,33 +72,36 @@ export const userPlanRouter = createTRPCRouter({
 
       const resId = res?.[0]?.id
       if (!resId) return res
-      const mealRes = await ctx.db
-        .insert(userMeal)
-        .values(
-          meals.map((meal) => ({
-            ...meal,
-            planId: resId,
-          })),
-        )
-        .returning({ id: planToMeal.id })
-      const recipeRes = await ctx.db
-        .insert(userRecipe)
-        .values(
-          recipes.map((recipe) => ({
-            ...recipe,
-            userPlanId: resId,
-          })),
-        )
-        .returning({ id: userRecipe.id })
-      const ingredientRes = await ctx.db
-        .insert(userIngredient)
-        .values(
-          ingredients.map((ingredient) => ({
-            ...ingredient,
-            userPlanId: resId,
-          })),
-        )
-        .returning({ id: userIngredient.id })
-      return { res, mealRes, recipeRes, ingredientRes }
+
+      const batchRes = await ctx.db.batch([
+        ctx.db
+          .insert(userMeal)
+          .values(
+            meals.map((meal) => ({
+              ...meal,
+              userPlanId: resId,
+            })),
+          )
+          .returning({ id: planToMeal.id }),
+        ctx.db
+          .insert(userRecipe)
+          .values(
+            recipes.map((recipe) => ({
+              ...recipe,
+              userPlanId: resId,
+            })),
+          )
+          .returning({ id: userRecipe.id }),
+        ctx.db
+          .insert(userIngredient)
+          .values(
+            ingredients.map((ingredient) => ({
+              ...ingredient,
+              userPlanId: resId,
+            })),
+          )
+          .returning({ id: userIngredient.id }),
+      ])
+      return { res, batchRes }
     }),
 })

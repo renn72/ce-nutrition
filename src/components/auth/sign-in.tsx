@@ -116,7 +116,7 @@ const SignIn = () => {
             <div className='text-sm text-destructive w-full text-center h-4 leading-none'>
               {loginError}
             </div>
-            <div className='text-sm text-muted-foreground w-full text-center'>
+            <div className='text-sm text-muted-foreground w-full text-center hidden'>
               Don't have an account?{' '}
               <span
                 className='cursor-pointer text-primary p-2'

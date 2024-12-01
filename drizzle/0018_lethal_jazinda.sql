@@ -1,1 +1,0 @@
-ALTER TABLE `ce-nu_vege_stack` ADD `name` text;

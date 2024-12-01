@@ -14,13 +14,13 @@ export const userPlan = createTable('user-plan', {
   updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
-  name: text('name'),
-  description: text('description'),
-  image: text('image'),
-  notes: text('notes'),
+  name: text('name').notNull(),
+  description: text('description').notNull(),
+  image: text('image').notNull(),
+  notes: text('notes').notNull(),
   numberOfMeals: int('number_of_meals', { mode: 'number' }),
-  creatorId: text('creator_id').references(() => user.id),
-  userId: text('user_id').references(() => user.id),
+  creatorId: text('creator_id').references(() => user.id).notNull(),
+  userId: text('user_id').references(() => user.id).notNull(),
   favouriteAt: int('favourite_at', { mode: 'timestamp' }),
   deletedAt: int('deleted_at', { mode: 'timestamp' }),
   hiddenAt: int('hidden_at', { mode: 'timestamp' }),
@@ -34,7 +34,9 @@ export const userMeal = createTable('user-meal', {
   updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
-  userPlanId: int('user_plan_id').references(() => userPlan.id),
+  userPlanId: int('user_plan_id').references(() => userPlan.id, {
+    onDelete: 'cascade',
+  }).notNull(),
   mealIndex: int('index', { mode: 'number' }),
   mealTitle: text('meal_title'),
   calories: text('calories'),
@@ -57,7 +59,9 @@ export const userRecipe = createTable('user-recipe', {
   ),
   mealIndex: int('meal_index', { mode: 'number' }),
   recipeIndex: int('recipe_index', { mode: 'number' }),
-  userPlanId: int('user_plan_id').references(() => userPlan.id),
+  userPlanId: int('user_plan_id').references(() => userPlan.id, {
+    onDelete: 'cascade',
+  }).notNull(),
   index: int('index', { mode: 'number' }),
   serve: text('serve'),
   serveUnit: text('serve_unit'),
@@ -75,7 +79,9 @@ export const userIngredient = createTable('user-ingredient', {
   ingredientId: int('ingredient_id').references(() => ingredient.id, {
     onDelete: 'cascade',
   }),
-  userPlanId: int('user_plan_id').references(() => userPlan.id),
+  userPlanId: int('user_plan_id').references(() => userPlan.id, {
+    onDelete: 'cascade',
+  }).notNull(),
   mealIndex: int('meal_index', { mode: 'number' }),
   recipeIndex: int('recipe_index', { mode: 'number' }),
   isAlternate: int('is_alternate', { mode: 'boolean' }),
@@ -85,7 +91,8 @@ export const userIngredient = createTable('user-ingredient', {
 })
 
 export const userPlanRelations = relations(userPlan, ({ one, many }) => ({
-  user: one(user, { fields: [userPlan.userId], references: [user.id] }),
+  user: one(user, { fields: [userPlan.userId], references: [user.id], relationName: 'user' }),
+  creator: one(user, { fields: [userPlan.creatorId], references: [user.id], relationName: 'creator' }),
   userMeals: many(userMeal),
   userRecipes: many(userRecipe),
   userIngredients: many(userIngredient),

@@ -37,6 +37,7 @@ export const user = createTable(
       mode: 'timestamp',
     }),
     password: text('password'),
+    curretPlanId: int('current_plan_id'),
     image: text('image'),
     isFake: int('is_fake', { mode: 'boolean' }).default(false),
     isTrainer: int('is_trainer', { mode: 'boolean' }).default(false),
@@ -149,7 +150,8 @@ export const userRelations = relations(user, ({ many }) => ({
   accounts: many(account),
   trainers: many(userToTrainer, { relationName: 'trainers' }),
   clients: many(userToTrainer, { relationName: 'clients' }),
-  userPlans: many(userPlan),
+  userPlans: many(userPlan, { relationName: 'user' }),
+  userPlansCreator: many(userPlan, { relationName: 'creator' }),
 }))
 
 export const userToTrainerRelations = relations(

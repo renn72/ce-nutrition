@@ -6,9 +6,12 @@ import { useState } from 'react'
 
 import { useSearchParams } from 'next/navigation'
 
+import { userAtom } from '@/app/admin/user/_sidebar/sidebar'
 import type { GetPlanById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useFieldArray, useForm, } from 'react-hook-form'
+import { useAtom } from 'jotai'
+import { useFieldArray, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
@@ -22,8 +25,8 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 
-import { PlanSelect } from '@/components/user-plan/plan-select'
 import { Meal } from '@/components/user-plan/meal'
+import { PlanSelect } from '@/components/user-plan/plan-select'
 
 export const dynamic = 'force-dynamic'
 
@@ -73,8 +76,16 @@ const CreateUserPlan = () => {
   const [selectedPlanId, setSelectedPlanId] = useState('')
   const [selectedPlan, setSelectedPlan] = useState<GetPlanById | null>(null)
 
+  const [userId] = useAtom(userAtom)
+
   const { data: allPlans } = api.plan.getAll.useQuery()
   const { data: currentUser } = api.user.get.useQuery(user)
+
+  const { mutate: createPlan } = api.userPlan.create.useMutation({
+    onSuccess: () => {
+      toast.success('Created')
+    },
+  })
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -83,8 +94,7 @@ const CreateUserPlan = () => {
       description: '',
       image: '',
       notes: '',
-      meals: [
-      ],
+      meals: [],
     },
   })
   const mealsField = useFieldArray({
@@ -125,14 +135,18 @@ const CreateUserPlan = () => {
               ingredients:
                 recipe?.recipe?.recipeToIngredient.map(
                   (ingredient, ingredientIndex) => {
-                    const serve = (Number(ingredient.serveSize) *  Number(meal.calories) / (Number(recipe.recipe?.calories))).toFixed(2)
-                  return {
-                    ingredientId: ingredientIndex.toString(),
-                    name: ingredient.ingredient?.name || '',
-                    serveSize: serve,
-                    serveUnit: ingredient.serveUnit,
-                    note: ingredient.note || '',
-                  }},
+                    const serve = (
+                      (Number(ingredient.serveSize) * Number(meal.calories)) /
+                      Number(recipe.recipe?.calories)
+                    ).toFixed(2)
+                    return {
+                      ingredientId: ingredient.ingredient?.id.toString(),
+                      name: ingredient.ingredient?.name || '',
+                      serveSize: serve,
+                      serveUnit: ingredient.serveUnit,
+                      note: ingredient.note || '',
+                    }
+                  },
                 ) || [],
             })) || [],
         })) || [],
@@ -140,7 +154,45 @@ const CreateUserPlan = () => {
   }
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log('input', data)
+    createPlan({
+      name: data.name,
+      description: data.description,
+      image: '',
+      notes: data.notes,
+      meals: data.meals.map((meal, mealIndex) => ({
+        mealIndex: mealIndex,
+        mealTitle: meal.mealTitle,
+        calories: meal.calories,
+        targetCalories: meal.targetCalories,
+        targetProtein: meal.targetProtein,
+        vegeCalories: meal.vegeCalories,
+        vege: meal.vege,
+        vegeNotes: meal.vegeNotes,
+        protein: meal.protein?.toString(),
+        note: meal.note || '',
+        recipes: meal?.recipes.map((recipe, recipeIndex) => ({
+          recipeIndex: recipeIndex,
+          mealIndex: mealIndex,
+          name: recipe.name || '',
+          note: recipe.note || '',
+          description: recipe.description || '',
+          index: recipe.index,
+          ingredients: recipe?.ingredients.map(
+            (ingredient, ingredientIndex) => ({
+              ingredientId: Number(ingredient.ingredientId),
+              ingredientIndex: ingredientIndex,
+              recipeIndex: recipeIndex,
+              mealIndex: mealIndex,
+              name: ingredient.name || '',
+              serveSize: ingredient.serveSize,
+              serveUnit: ingredient.serveUnit,
+              note: ingredient.note || '',
+            }),
+          ),
+        })),
+      })),
+      userId: userId,
+    })
   }
 
   return (
@@ -221,8 +273,10 @@ const CreateUserPlan = () => {
               </div>
               <div>
                 <Button
-                  onClick={() => console.log('data', form.getValues())}
-                  type='submit'>Submit</Button>
+                  type='submit'
+                >
+                  Submit
+                </Button>
               </div>
             </div>
           </form>

@@ -3,7 +3,7 @@
 import { formatDate } from '@/lib/utils'
 import type { GetUserById } from '@/types'
 import { ColumnDef } from '@tanstack/react-table'
-import { Star } from 'lucide-react'
+import { CircleCheck, Star } from 'lucide-react'
 
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -81,7 +81,7 @@ export const columns: ColumnDef<GetUserById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='w-[100px] truncate font-medium'>
+          <span className='w-[200px] truncate font-medium'>
             {row.getValue('name')}
           </span>
         </div>
@@ -164,9 +164,8 @@ export const columns: ColumnDef<GetUserById>[] = [
         <div className='flex space-x-2'>
           <span className='w-[50px] truncate font-medium flex items-center justify-center'>
             {row.getValue('isTrainer') ? (
-              <Star
+              <CircleCheck
                 size={18}
-                fill='text-primary'
               />
             ) : (
               ''
