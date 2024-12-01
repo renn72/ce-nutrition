@@ -37,7 +37,7 @@ export const user = createTable(
       mode: 'timestamp',
     }),
     password: text('password'),
-    curretPlanId: int('current_plan_id'),
+    currentPlanId: int('current_plan_id'),
     image: text('image'),
     isFake: int('is_fake', { mode: 'boolean' }).default(false),
     isTrainer: int('is_trainer', { mode: 'boolean' }).default(false),

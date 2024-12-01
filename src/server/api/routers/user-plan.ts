@@ -1,4 +1,5 @@
 import { plan, planToMeal } from '@/server/db/schema/plan'
+import { user } from '@/server/db/schema/user'
 import {
   userIngredient,
   userMeal,
@@ -74,6 +75,7 @@ export const userPlanRouter = createTRPCRouter({
       if (!resId) return res
 
       const batchRes = await ctx.db.batch([
+        ctx.db.update(user).set({ currentPlanId: resId }).where(eq(user.id, userId)),
         ctx.db
           .insert(userMeal)
           .values(

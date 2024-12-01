@@ -64,7 +64,9 @@ const AdminBaseSidebar = ({
   const searchParams = useSearchParams()
   const user = searchParams.get('user')
   const [selectedUser, setSelectedUser] = useAtom(userAtom)
-  const { data: allUsers } = api.user.getAll.useQuery()
+  const { data: _allUsers } = api.user.getAll.useQuery()
+  const { data: isRoot } = api.user.isRoot.useQuery()
+  const allUsers = _allUsers?.filter((user) => !user.isRoot || isRoot)
   const userName = allUsers?.find((user) => user.id === selectedUser)?.name
 
   React.useEffect(() => {

@@ -19,7 +19,14 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
 import { User } from '@/components/auth/user'
 import { ModeToggle } from '@/components/layout/mode-toggle'
 
+import { useAtom } from 'jotai'
+import { api } from '@/trpc/react'
+import { userAtom } from '@/app/admin/user/_sidebar/sidebar'
+
 const SidebarHeader = () => {
+  const [selectedUser,] = useAtom(userAtom)
+  const { data: users } = api.user.getAll.useQuery()
+  const user = users?.find((user) => user.id === selectedUser)
   const pathname = usePathname()
   return (
     <header className='flex h-16 items-center gap-2 border-b px-4 justify-between'>
@@ -47,6 +54,12 @@ const SidebarHeader = () => {
             <BreadcrumbItem>
               <BreadcrumbPage className='capitalize'>
                 {pathname.split('/')[3]}
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className='hidden md:block' />
+            <BreadcrumbItem>
+              <BreadcrumbPage className='capitalize'>
+                {user?.name}
               </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
