@@ -4,13 +4,12 @@ import Link from 'next/link'
 
 import { Cross2Icon } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
+import { CirclePlus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
 import { DataTableViewOptions } from './data-table-view-options'
-
-import { CirclePlus } from 'lucide-react'
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -47,7 +46,10 @@ export function DataTableToolbar<TData>({
       </div>
       <div className='flex items-center gap-2'>
         <Link href='/admin/base/ingredient/create'>
-        <CirclePlus size={24} className='text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer' />
+          <CirclePlus
+            size={24}
+            className='text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer'
+          />
         </Link>
         <DataTableViewOptions table={table} />
       </div>
@@ -65,12 +67,12 @@ export function DataTableToolbar<TData>({
 // )}
 //
 
-      // {table.getColumn('hiddenAt') && (
-      //   <div>
-      //     <DataTableFacetedFilter
-      //       column={table.getColumn('hiddenAt')}
-      //       title='Hidden'
-      //       options={['Hidden']}
-      //     />
-      //   </div>
-      // )}
+// {table.getColumn('hiddenAt') && (
+//   <div>
+//     <DataTableFacetedFilter
+//       column={table.getColumn('hiddenAt')}
+//       title='Hidden'
+//       options={['Hidden']}
+//     />
+//   </div>
+// )}
