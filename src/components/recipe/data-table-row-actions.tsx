@@ -45,11 +45,6 @@ export function DataTableRowActions<TData>({
         align='end'
         className='w-[160px]'
       >
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Make a copy</DropdownMenuItem>
-        <DropdownMenuItem>Favorite</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuSeparator />
         <DropdownMenuItem
           onSelect={() => deleteRecipe({ id: row.getValue('id') })}
         >

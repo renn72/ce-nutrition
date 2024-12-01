@@ -171,7 +171,7 @@ const FormRecipe = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-4 mt-10'>
           <FormField
             control={form.control}
             name='name'

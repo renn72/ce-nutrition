@@ -1,11 +1,14 @@
+'use client'
+
 import { api } from '@/trpc/react'
 
 import { useState } from 'react'
+
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
-import type { GetIngredientById } from '@/types'
-
 import { cn } from '@/lib/utils'
+import type { GetIngredientById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ChevronDown, PlusCircle } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -80,9 +83,14 @@ const FormEdit = ({ ingredient }: { ingredient: GetIngredientById }) => {
       totalSugars: Number(ingredient?.totalSugars) || 0,
       starch: Number(ingredient?.starch) || 0,
       resistantStarch: Number(ingredient?.resistantStarch) || 0,
-      availableCarbohydrateWithoutSugarAlcohols: Number(ingredient?.availableCarbohydrateWithoutSugarAlcohols) || 0,
-      availableCarbohydrateWithSugarAlcohols: Number(ingredient?.availableCarbohydrateWithSugarAlcohols) || 0,
-      stores: ingredient?.ingredientToGroceryStore?.map((store) => store.groceryStoreId?.toString() || '') || [],
+      availableCarbohydrateWithoutSugarAlcohols:
+        Number(ingredient?.availableCarbohydrateWithoutSugarAlcohols) || 0,
+      availableCarbohydrateWithSugarAlcohols:
+        Number(ingredient?.availableCarbohydrateWithSugarAlcohols) || 0,
+      stores:
+        ingredient?.ingredientToGroceryStore?.map(
+          (store) => store.groceryStoreId?.toString() || '',
+        ) || [],
       isAllStores: ingredient?.isAllStores || true,
     },
   })
@@ -115,6 +123,9 @@ const FormEdit = ({ ingredient }: { ingredient: GetIngredientById }) => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className='flex flex-col gap-4'>
+          <Link href='/admin/base/ingredient/'>
+            <Button variant='outline'>Back</Button>
+          </Link>
           <FormField
             control={form.control}
             name='name'

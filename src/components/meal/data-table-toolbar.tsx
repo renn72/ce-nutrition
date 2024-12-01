@@ -1,4 +1,6 @@
 'use client'
+import Link from 'next/link'
+import { CirclePlus } from 'lucide-react'
 
 import { Cross2Icon } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
@@ -40,6 +42,12 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       <div className='flex items-center gap-2'>
+        <Link href='/admin/base/meal/create'>
+          <CirclePlus
+            size={24}
+            className='text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer'
+          />
+        </Link>
         <DataTableViewOptions table={table} />
       </div>
     </div>

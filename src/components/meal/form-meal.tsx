@@ -108,7 +108,7 @@ const FormMeal = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-4 mt-10'>
           <div className='flex gap-4 justify-between'>
             <FormField
               control={form.control}

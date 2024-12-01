@@ -1,7 +1,10 @@
 'use client'
 
+import Link from 'next/link'
+
 import { Cross2Icon } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
+import { CirclePlus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -22,9 +25,7 @@ export function DataTableToolbar<TData>({
       <div className='flex flex-1 items-center space-x-2'>
         <Input
           placeholder='Filter...'
-          value={
-            (table.getColumn('name')?.getFilterValue() as string) ?? ''
-          }
+          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             table.getColumn('name')?.setFilterValue(event.target.value)
           }
@@ -42,6 +43,12 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       <div className='flex items-center gap-2'>
+        <Link href='/admin/base/recipe/create'>
+          <CirclePlus
+            size={24}
+            className='text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer'
+          />
+        </Link>
         <DataTableViewOptions table={table} />
       </div>
     </div>
