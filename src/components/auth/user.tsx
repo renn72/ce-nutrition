@@ -2,6 +2,8 @@
 
 import { api } from '@/trpc/react'
 
+import { Button } from '@/components/ui/button'
+
 import { cn } from '@/lib/utils'
 
 import {
@@ -12,6 +14,7 @@ import {
 
 import { Logout } from '@/components/auth/logout'
 import { SignInUp } from '@/components/auth/sign-in-up'
+import Link from 'next/link'
 
 const User = () => {
   const ctx = api.useUtils()
@@ -35,7 +38,10 @@ const User = () => {
       <PopoverContent asChild>
         <div className='flex flex-col gap-1 w-max'>
           <div>{user.name}</div>
-          <div>settings</div>
+          <Link href='/'>
+            <Button variant='outline'>Home</Button>
+          </Link>
+
           <div className='flex items-center gap-2'>
             <Logout />
           </div>

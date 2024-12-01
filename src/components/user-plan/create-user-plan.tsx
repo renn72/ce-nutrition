@@ -196,7 +196,7 @@ const CreateUserPlan = () => {
   }
 
   return (
-    <div className='flex min-h-screen flex-col max-w-screen-lg w-full my-12'>
+    <div className='flex flex-col max-w-screen-lg w-full my-12'>
       <PlanSelect
         selectedPlan={selectedPlanId}
         onSetPlan={onSetPlan}
