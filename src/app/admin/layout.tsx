@@ -7,8 +7,6 @@ export default async function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const session = await getServerAuthSession()
 
-  console.log(session?.user.id)
-
   if (!session?.user.id)
     return (
       <>
