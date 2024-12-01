@@ -48,42 +48,18 @@ const data = {
         {
           title: 'Plans',
           url: '/admin/base/plan',
-          items: [
-            {
-              title: 'Create',
-              url: '/admin/base/plan/create',
-            },
-          ],
         },
         {
           title: 'Meals',
           url: '/admin/base/meal',
-          items: [
-            {
-              title: 'Create',
-              url: '/admin/base/meal/create',
-            },
-          ],
         },
         {
           title: 'Recipes',
           url: '/admin/base/recipe',
-          items: [
-            {
-              title: 'Create',
-              url: '/admin/base/recipe/create',
-            },
-          ],
         },
         {
           title: 'Ingredients',
           url: '/admin/base/ingredient',
-          items: [
-            {
-              title: 'Create',
-              url: '/admin/base/ingredient/create',
-            },
-          ],
         },
         {
           title: 'Store',
@@ -139,42 +115,14 @@ const AdminBaseSidebar = ({
                 <SidebarMenu>
                   {item.items.map((item) => (
                     <div key={item.title}>
-                      {item.items ? (
-                        <Collapsible
-                          key={item.title}
-                          className='group/collapsible'
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname === item.url}
                         >
-                          <SidebarMenuItem>
-                            <CollapsibleTrigger asChild>
-                              <SidebarMenuButton
-                                isActive={pathname === item.url}
-                              >
-                                <Link href={item.url}>{item.title}</Link>
-                                <ChevronRight className='ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90' />
-                              </SidebarMenuButton>
-                            </CollapsibleTrigger>
-                            <CollapsibleContent>
-                              <SidebarMenuSub className='border-0'>
-                                {item.items.map((item) => (
-                                  <SidebarMenuSubItem
-                                    key={item.title}>
-                                    <Link href={item.url}>{item.title}</Link>
-                                  </SidebarMenuSubItem>
-                                ))}
-                              </SidebarMenuSub>
-                            </CollapsibleContent>
-                          </SidebarMenuItem>
-                        </Collapsible>
-                      ) : (
-                        <SidebarMenuItem key={item.title}>
-                          <SidebarMenuButton
-                            asChild
-                            isActive={pathname === item.url}
-                          >
-                            <a href={item.url}>{item.title}</a>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      )}
+                          <a href={item.url}>{item.title}</a>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
                     </div>
                   ))}
                 </SidebarMenu>
