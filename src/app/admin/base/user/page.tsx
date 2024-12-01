@@ -10,7 +10,7 @@ export default function Home() {
   const { data: isRoot, isLoading: isLoadingRoot } = api.user.isRoot.useQuery()
   const { data, isLoading } = api.user.getAll.useQuery()
   if (isLoadingRoot) return null
-  const users = data?.filter((user) => !user.isRoot || isRoot)
+  const users = data?.filter((user) => !user.isRoot || isRoot?.isRoot)
   return (
     <div className='flex flex-col items-center w-full'>
       {isLoading ? (
