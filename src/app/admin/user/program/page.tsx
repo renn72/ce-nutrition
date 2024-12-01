@@ -7,7 +7,9 @@ import { useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
 
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -22,7 +24,14 @@ export default function Home() {
   const user = searchParams.get('user') ?? ''
 
   const [selectedPlan, setSelectedPlan] = useState('')
+  const ctx = api.useUtils()
 
+  const { mutate: deletePlan } = api.userPlan.delete.useMutation({
+    onSuccess: () => {
+      toast.success('Deleted')
+      ctx.invalidate()
+    },
+  })
   const { data: currentUser } = api.user.get.useQuery(user)
   const plan = currentUser?.userPlans.find(
     (plan) => plan.id == currentUser?.currentPlanId,
@@ -97,6 +106,22 @@ export default function Home() {
                         )
                       })}
                     </div>
+                    {meal.veges !== '' && (
+                      <div className='flex gap-1 items-center'>
+                        <div className='text-sm text-muted-foreground'>
+                          Vege
+                        </div>
+                        <div className='text-sm text-muted-foreground'>
+                          {meal.veges}
+                        </div>
+                        <div className='text-sm text-muted-foreground'>
+                          Notes
+                        </div>
+                        <div className='text-sm text-muted-foreground'>
+                          {meal.vegeNotes}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )
               })}
@@ -104,6 +129,16 @@ export default function Home() {
           </Card>
         </CardContent>
       </Card>
+      <div className='w-full flex justify-center mt-8'>
+        <Button
+          variant='destructive'
+          onClick={() => {
+            deletePlan(plan.id)
+          }}
+        >
+          Delete Plan
+        </Button>
+      </div>
     </div>
   )
 }

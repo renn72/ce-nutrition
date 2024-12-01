@@ -169,7 +169,7 @@ const CreateUserPlan = () => {
         targetCalories: meal.targetCalories,
         targetProtein: meal.targetProtein,
         vegeCalories: meal.vegeCalories,
-        vege: meal.vege,
+        veges: meal.vege,
         vegeNotes: meal.vegeNotes,
         protein: meal.protein?.toString(),
         note: meal.note || '',

@@ -11,6 +11,12 @@ import { desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 export const userPlanRouter = createTRPCRouter({
+  delete: protectedProcedure
+    .input(z.number())
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.db.delete(userPlan).where(eq(userPlan.id, input))
+      return res
+    }),
   create: protectedProcedure
     .input(
       z.object({
@@ -28,7 +34,7 @@ export const userPlanRouter = createTRPCRouter({
             targetProtein: z.string(),
             targetCalories: z.string(),
             vegeCalories: z.string(),
-            vege: z.string(),
+            veges: z.string(),
             vegeNotes: z.string(),
             note: z.string(),
             recipes: z.array(
@@ -75,7 +81,10 @@ export const userPlanRouter = createTRPCRouter({
       if (!resId) return res
 
       const batchRes = await ctx.db.batch([
-        ctx.db.update(user).set({ currentPlanId: resId }).where(eq(user.id, userId)),
+        ctx.db
+          .update(user)
+          .set({ currentPlanId: resId })
+          .where(eq(user.id, userId)),
         ctx.db
           .insert(userMeal)
           .values(
