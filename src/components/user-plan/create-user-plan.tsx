@@ -81,9 +81,12 @@ const CreateUserPlan = () => {
   const { data: allPlans } = api.plan.getAll.useQuery()
   const { data: currentUser } = api.user.get.useQuery(user)
 
+  const ctx = api.useUtils()
+
   const { mutate: createPlan } = api.userPlan.create.useMutation({
     onSuccess: () => {
       toast.success('Created')
+      ctx.invalidate()
     },
   })
 
