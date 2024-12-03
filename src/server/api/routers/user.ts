@@ -202,7 +202,6 @@ export const userRouter = createTRPCRouter({
       const res = await ctx.db
         .delete(user)
         .where(eq(user.id, input))
-        .returning({ clerkId: user.clerkId })
       return res
     }),
   getFakeUsers: rootProtectedProcedure.query(async () => {

@@ -23,7 +23,7 @@ export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
   const ctx = api.useUtils()
-  const { mutate: deleteMeal } = api.ingredient.delete.useMutation({
+  const { mutate: deleteMeal } = api.meal.delete.useMutation({
     onSuccess: () => {
       ctx.meal.invalidate()
       toast.success('Deleted successfully')

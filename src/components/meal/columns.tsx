@@ -191,7 +191,7 @@ export const columns: ColumnDef<GetMealById>[] = [
         <div className='flex space-x-2'>
           <HoverCard>
             <HoverCardTrigger asChild>
-              <span className='w-[300px] truncate font-medium'>{recipes}</span>
+              <span className='w-[500px] truncate font-medium'>{recipes}</span>
             </HoverCardTrigger>
             <HoverCardContent>
               <div className='flex space-x-2'>
@@ -216,7 +216,7 @@ export const columns: ColumnDef<GetMealById>[] = [
       const vege = row.original?.mealToVegeStack?.[0]?.vegeStack?.name
       return (
         <div className='flex space-x-2'>
-          <span className='max-w-[200px] truncate font-medium'>{vege}</span>
+          <span className='w-[200px] truncate font-medium'>{vege}</span>
         </div>
       )
     },
