@@ -8,19 +8,14 @@ import { cn } from '@/lib/utils'
 import type { GetIngredientById } from '@/types'
 import {
   Combobox,
-  ComboboxButton,
   ComboboxInput,
   ComboboxOption,
   ComboboxOptions,
 } from '@headlessui/react'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { CrossCircledIcon } from '@radix-ui/react-icons'
 import { CheckIcon, ChevronDownIcon, Star, XCircle } from 'lucide-react'
 import { useForm, UseFormReturn } from 'react-hook-form'
-import { toast } from 'sonner'
 import { z } from 'zod'
 
-import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Form,

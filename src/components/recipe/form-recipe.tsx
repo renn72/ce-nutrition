@@ -23,6 +23,7 @@ import {
 import { Input } from '@/components/ui/input'
 
 import { FormRecipeIngredient } from './form-recipe-ingredient'
+import { GetRecipeById } from '@/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -36,9 +37,6 @@ export const formSchema = z.object({
     z.object({
       index: z.number(),
       ingredientId: z.string(),
-      isProtein: z.boolean(),
-      isCarbohydrate: z.boolean(),
-      isFat: z.boolean(),
       note: z.string(),
       serveSize: z.string(),
       serveUnit: z.string(),
@@ -48,8 +46,14 @@ export const formSchema = z.object({
   ),
 })
 
-const FormRecipe = () => {
+const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
   const ctx = api.useUtils()
+  const [ recipeId, ] = useState<number | null>(() => {
+    if (recipe) {
+      return recipe.id
+    }
+    return null
+  })
   const { data: allIngredients } = api.ingredient.getAll.useQuery()
   const { mutate: createRecipe } = api.recipe.create.useMutation({
     onSuccess: () => {
@@ -61,12 +65,20 @@ const FormRecipe = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      description: '',
-      image: '',
-      notes: '',
-      recipeCategory: '',
-      ingredients: [],
+      name: recipe?.name || '',
+      description: recipe?.description || '',
+      image: recipe?.image || '',
+      notes: recipe?.notes || '',
+      recipeCategory: recipe?.recipeCategory || '',
+      ingredients: recipe?.recipeToIngredient.map((ingredient) => ({
+        index: ingredient.index,
+        ingredientId: ingredient.ingredient.id.toString(),
+        note: ingredient.note || '',
+        serveSize: ingredient.serveSize,
+        serveUnit: ingredient.serveUnit,
+        isAlternate: ingredient.isAlternate,
+        alternateId: ingredient.alternateId.toString(),
+      })) || [],
     },
   })
   const { fields, append, remove } = useFieldArray({

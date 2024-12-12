@@ -15,8 +15,6 @@ export default function Home() {
 
   if (isLoading) return null
 
-  console.log(ingredient)
-
   return (
     <div className='flex flex-col max-w-screen-lg w-full mx-auto mt-10'>
       <FormEdit ingredient={ingredient} />
