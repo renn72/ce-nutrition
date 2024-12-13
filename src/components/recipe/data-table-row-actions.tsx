@@ -2,6 +2,9 @@
 
 import { api } from '@/trpc/react'
 
+import { useRouter } from 'next/navigation'
+
+import { GetRecipeById } from '@/types'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { Row } from '@tanstack/react-table'
 import { toast } from 'sonner'
@@ -23,6 +26,7 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
+  const router = useRouter()
   const ctx = api.useUtils()
   const { mutate: deleteRecipe } = api.recipe.delete.useMutation({
     onSuccess: () => {
@@ -30,6 +34,7 @@ export function DataTableRowActions<TData>({
       toast.success('Deleted successfully')
     },
   })
+  const data = row.original as GetRecipeById
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -45,6 +50,13 @@ export function DataTableRowActions<TData>({
         align='end'
         className='w-[160px]'
       >
+        <DropdownMenuItem
+          onSelect={() =>
+            router.push(`/admin/base/recipe/edit?recipe=${data?.id}`)
+          }
+        >
+          Edit
+        </DropdownMenuItem>
         <DropdownMenuItem
           onSelect={() => deleteRecipe({ id: row.getValue('id') })}
         >

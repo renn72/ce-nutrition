@@ -58,8 +58,21 @@ const FormRecipeIngredient = ({
   const [query, setQuery] = useState('')
   const [queryAlt, setQueryAlt] = useState('')
 
-  const [selected, setSelected] = useState<GetIngredientById | null>(null)
-  const [selectedAlt, setSelectedAlt] = useState<GetIngredientById | null>(null)
+  const ingredientId = form.watch(`ingredients.${index}.ingredientId`)
+  const alternateId = form.watch(`ingredients.${index}.alternateId`)
+
+  const [selected, setSelected] = useState<GetIngredientById | null>(() => {
+    if (ingredientId) {
+      return allIngredients?.find((i) => i.id === Number(ingredientId))
+    }
+    return null
+  })
+  const [selectedAlt, setSelectedAlt] = useState<GetIngredientById | null>(() => {
+    if (alternateId) {
+      return allIngredients?.find((i) => i.id === Number(alternateId))
+    }
+    return null
+  })
 
   if (!allIngredients) return <div />
   const filteredIngredients =

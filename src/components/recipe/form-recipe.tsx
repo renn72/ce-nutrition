@@ -5,6 +5,7 @@ import { api } from '@/trpc/react'
 import { useState } from 'react'
 
 import { cn } from '@/lib/utils'
+import { GetRecipeById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusCircle } from 'lucide-react'
 import { useFieldArray, useForm } from 'react-hook-form'
@@ -23,7 +24,6 @@ import {
 import { Input } from '@/components/ui/input'
 
 import { FormRecipeIngredient } from './form-recipe-ingredient'
-import { GetRecipeById } from '@/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -48,7 +48,7 @@ export const formSchema = z.object({
 
 const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
   const ctx = api.useUtils()
-  const [ recipeId, ] = useState<number | null>(() => {
+  const [recipeId] = useState<number | null>(() => {
     if (recipe) {
       return recipe.id
     }
@@ -61,6 +61,12 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
       toast.success('Store added successfully')
     },
   })
+  const { mutate: updateRecipe } = api.recipe.update.useMutation({
+    onSuccess: () => {
+      ctx.recipe.invalidate()
+      toast.success('Store updated successfully')
+    },
+  })
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -70,15 +76,16 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
       image: recipe?.image || '',
       notes: recipe?.notes || '',
       recipeCategory: recipe?.recipeCategory || '',
-      ingredients: recipe?.recipeToIngredient.map((ingredient) => ({
-        index: ingredient.index,
-        ingredientId: ingredient.ingredient.id.toString(),
-        note: ingredient.note || '',
-        serveSize: ingredient.serveSize,
-        serveUnit: ingredient.serveUnit,
-        isAlternate: ingredient.isAlternate,
-        alternateId: ingredient.alternateId.toString(),
-      })) || [],
+      ingredients:
+        recipe?.recipeToIngredient.map((ingredient) => ({
+          index: ingredient.index,
+          ingredientId: ingredient.ingredient.id.toString(),
+          note: ingredient.note || '',
+          serveSize: ingredient.serveSize,
+          serveUnit: ingredient.serveUnit,
+          isAlternate: ingredient.isAlternate,
+          alternateId: ingredient.alternateId.toString(),
+        })) || [],
     },
   })
   const { fields, append, remove } = useFieldArray({
@@ -155,29 +162,49 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
     .toFixed(1)
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log('input',data)
-    createRecipe({
-      name: data.name,
-      description: data.description,
-      image: data.image,
-      notes: data.notes,
-      recipeCategory: data.recipeCategory,
-      calories: Number(calorieTotal),
-      ingredients: data.ingredients.map((i) => {
-        return {
-          index: i.index,
-          ingredientId: Number(i.ingredientId),
-          isProtein: i.isProtein,
-          isCarbohydrate: i.isCarbohydrate,
-          isFat: i.isFat,
-          note: i.note,
-          serveSize: i.serveSize,
-          serveUnit: i.serveUnit,
-          isAlternate: i.isAlternate,
-          alternateId: i.alternateId,
-        }
-      }),
-    })
+    console.log('input', data)
+    if (recipe) {
+      updateRecipe({
+        id: recipe.id,
+        name: data.name,
+        description: data.description,
+        image: data.image,
+        notes: data.notes,
+        recipeCategory: data.recipeCategory,
+        calories: Number(calorieTotal),
+        ingredients: data.ingredients.map((i) => {
+          return {
+            index: i.index,
+            ingredientId: Number(i.ingredientId),
+            note: i.note,
+            serveSize: i.serveSize,
+            serveUnit: i.serveUnit,
+            isAlternate: i.isAlternate,
+            alternateId: i.alternateId,
+          }
+        }),
+      })
+    } else {
+      createRecipe({
+        name: data.name,
+        description: data.description,
+        image: data.image,
+        notes: data.notes,
+        recipeCategory: data.recipeCategory,
+        calories: Number(calorieTotal),
+        ingredients: data.ingredients.map((i) => {
+          return {
+            index: i.index,
+            ingredientId: Number(i.ingredientId),
+            note: i.note,
+            serveSize: i.serveSize,
+            serveUnit: i.serveUnit,
+            isAlternate: i.isAlternate,
+            alternateId: i.alternateId,
+          }
+        }),
+      })
+    }
   }
 
   return (
@@ -234,7 +261,9 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
                 <div className='pl-2 py-2'>protein</div>
                 <div className='pl-2 py-2'>carb</div>
                 <div className='pl-2 py-2'>fat</div>
-                <div className='pl-2 py-2 col-span-3 hidden'>core attributes</div>
+                <div className='pl-2 py-2 col-span-3 hidden'>
+                  core attributes
+                </div>
                 <div className='pl-2 py-2 col-span-3'>Alternate</div>
                 <div className='pl-2 py-2'>delete</div>
               </div>
@@ -280,9 +309,6 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
               onClick={() =>
                 append({
                   ingredientId: '',
-                  isProtein: false,
-                  isCarbohydrate: false,
-                  isFat: false,
                   serveSize: '',
                   serveUnit: '',
                   index: fields.length + 1,

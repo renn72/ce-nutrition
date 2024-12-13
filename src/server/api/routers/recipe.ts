@@ -48,6 +48,62 @@ export const recipeRouter = createTRPCRouter({
       })
       return res
     }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        name: z.string(),
+        description: z.string(),
+        image: z.string(),
+        notes: z.string(),
+        recipeCategory: z.string(),
+        calories: z.number(),
+        ingredients: z.array(
+          z.object({
+            ingredientId: z.number(),
+            alternateId: z.string(),
+            note: z.string(),
+            serveSize: z.string(),
+            serveUnit: z.string(),
+            index: z.number(),
+            isAlternate: z.boolean().optional(),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const userId = ctx.session.user.id
+      const { ingredients, ...data } = input
+      const res = await ctx.db
+        .update(recipe)
+        .set(data)
+        .where(eq(recipe.id, input.id))
+        .returning({ id: recipe.id })
+
+      const resId = res?.[0]?.id
+      if (!resId) return res
+
+      await ctx.db
+        .delete(recipeToIngredient)
+        .where(eq(recipeToIngredient.recipeId, resId))
+
+      const ingredientsRes = await ctx.db
+        .insert(recipeToIngredient)
+        .values(
+          ingredients.map((ingredient) => ({
+            index: ingredient.index,
+            ingredientId: ingredient.ingredientId,
+            isAlternate: ingredient.isAlternate,
+            alternateId: Number(ingredient.alternateId),
+            serveSize: ingredient.serveSize,
+            serveUnit: ingredient.serveUnit,
+            note: ingredient.note,
+            recipeId: resId,
+          })),
+        )
+        .returning({ id: recipeToIngredient.id })
+      return { res, ingredientsRes }
+    }),
   create: protectedProcedure
     .input(
       z.object({
@@ -61,9 +117,6 @@ export const recipeRouter = createTRPCRouter({
           z.object({
             ingredientId: z.number(),
             alternateId: z.string(),
-            isProtein: z.boolean(),
-            isCarbohydrate: z.boolean(),
-            isFat: z.boolean(),
             note: z.string(),
             serveSize: z.string(),
             serveUnit: z.string(),
@@ -97,9 +150,6 @@ export const recipeRouter = createTRPCRouter({
             alternateId: Number(ingredient.alternateId),
             serveSize: ingredient.serveSize,
             serveUnit: ingredient.serveUnit,
-            isProtein: ingredient.isProtein,
-            isCarbohydrate: ingredient.isCarbohydrate,
-            isFat: ingredient.isFat,
             note: ingredient.note,
             recipeId: resId,
           })),
