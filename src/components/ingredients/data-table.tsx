@@ -1,12 +1,12 @@
 'use client'
 
 import * as React from 'react'
-import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
 
 import type { GetAllIngredients } from '@/types'
 import {
   ColumnFiltersState,
-  GlobalFilterTableState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -34,6 +34,7 @@ import { columns } from './columns'
 import { DataTableToolbar } from './data-table-toolbar'
 
 const DataTable = ({ ingredients : data }: { ingredients: GetAllIngredients }) => {
+  const router = useRouter()
 
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -97,6 +98,7 @@ const DataTable = ({ ingredients : data }: { ingredients: GetAllIngredients }) =
 
   return (
     <div className='space-y-4'>
+
       <DataTableToolbar table={table} />
       <div className='rounded-md border'>
         <Table>
