@@ -131,6 +131,64 @@ export const mealRouter = createTRPCRouter({
 
       return { res, recipeRes }
     }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        name: z.string(),
+        description: z.string(),
+        image: z.string(),
+        notes: z.string(),
+        mealCategory: z.string(),
+        veges: z
+          .object({
+            vegeStackId: z.number(),
+            note: z.string(),
+            calories: z.string(),
+          })
+          .optional(),
+        recipes: z.array(
+          z.object({
+            recipeId: z.number(),
+            note: z.string(),
+            index: z.number(),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { veges, recipes, id, ...data } = input
+      const res = await ctx.db
+        .update(meal)
+        .set({
+          ...data,
+        })
+        .where(eq(meal.id, input.id))
+
+      await ctx.db.delete(mealToRecipe).where(eq(mealToRecipe.mealId, input.id))
+
+      const recipeRes = await ctx.db
+        .insert(mealToRecipe)
+        .values(
+          recipes.map((recipe) => ({
+            ...recipe,
+            mealId: input.id,
+          })),
+        )
+        .returning({ id: mealToRecipe.id })
+
+      if (veges && veges.vegeStackId) {
+      await ctx.db
+        .delete(mealToVegeStack)
+        .where(eq(mealToVegeStack.mealId, input.id))
+        await ctx.db.insert(mealToVegeStack).values({
+          ...veges,
+          mealId: input.id,
+        })
+      }
+
+      return { res, recipeRes }
+    }),
   updateFavourite: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input, ctx }) => {

@@ -64,6 +64,12 @@ const FormMeal = ({ meal }: { meal: GetMealById | null }) => {
       toast.success('Added successfully')
     },
   })
+  const { mutate: updateMeal } = api.meal.update.useMutation({
+    onSuccess: () => {
+      ctx.meal.invalidate()
+      toast.success('Updated successfully')
+    },
+  })
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -92,23 +98,44 @@ const FormMeal = ({ meal }: { meal: GetMealById | null }) => {
   })
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    createMeal({
-      name: data.name,
-      description: data.description,
-      image: data.image,
-      notes: data.notes,
-      mealCategory: data.mealCategory,
-      veges: {
-        vegeStackId: Number(data.veges.vegeStackId),
-        note: data.veges.note,
-        calories: data.veges.calories,
-      },
-      recipes: data.recipes.map((recipe) => ({
-        recipeId: Number(recipe.recipeId),
-        note: recipe.note,
-        index: Number(recipe.index),
-      })),
-    })
+    if (meal) {
+      updateMeal({
+        id: meal.id,
+        name: data.name,
+        description: data.description,
+        image: data.image,
+        notes: data.notes,
+        mealCategory: data.mealCategory,
+        veges: {
+          vegeStackId: Number(data.veges.vegeStackId),
+          note: data.veges.note,
+          calories: data.veges.calories,
+        },
+        recipes: data.recipes.map((recipe) => ({
+          recipeId: Number(recipe.recipeId),
+          note: recipe.note,
+          index: Number(recipe.index),
+        })),
+      })
+    } else {
+      createMeal({
+        name: data.name,
+        description: data.description,
+        image: data.image,
+        notes: data.notes,
+        mealCategory: data.mealCategory,
+        veges: {
+          vegeStackId: Number(data.veges.vegeStackId),
+          note: data.veges.note,
+          calories: data.veges.calories,
+        },
+        recipes: data.recipes.map((recipe) => ({
+          recipeId: Number(recipe.recipeId),
+          note: recipe.note,
+          index: Number(recipe.index),
+        })),
+      })
+    }
   }
 
   if (vegesIsLoading) return null
@@ -267,7 +294,7 @@ const FormMeal = ({ meal }: { meal: GetMealById | null }) => {
                             placeholder='Calories'
                             {...field}
                             onChange={(e) =>
-                              field.onChange(Number(e.target.value))
+                              field.onChange(e.target.value)
                             }
                             type='number'
                           />
