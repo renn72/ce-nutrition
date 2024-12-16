@@ -35,7 +35,8 @@ const FormMealRecipe = ({
   form: UseFormReturn<z.infer<typeof formSchema>>
   remove: (index: number) => void
 }) => {
-  const [id, setId] = useState('')
+  const recipeId = form.watch(`recipes.${index}.recipeId`)
+  const [id, setId] = useState(() => recipeId || '')
   const { data: recipes } = api.recipe.getAll.useQuery()
 
   const recipe = recipes?.find((recipe) => recipe.id === Number(id))

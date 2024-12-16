@@ -6,6 +6,7 @@ import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { Row } from '@tanstack/react-table'
 import { toast } from 'sonner'
 
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -14,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { GetMealById } from '@/types'
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
@@ -22,6 +24,7 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
+  const router = useRouter()
   const ctx = api.useUtils()
   const { mutate: deleteMeal } = api.meal.delete.useMutation({
     onSuccess: () => {
@@ -29,6 +32,7 @@ export function DataTableRowActions<TData>({
       toast.success('Deleted successfully')
     },
   })
+  const data = row.original as GetMealById
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -44,7 +48,13 @@ export function DataTableRowActions<TData>({
         align='end'
         className='w-[160px]'
       >
-        <DropdownMenuItem>Edit</DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={() =>
+            router.push(`/admin/base/meal/edit?meal=${data?.id}`)
+          }
+        >
+          Edit
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuSeparator />
         <DropdownMenuItem
