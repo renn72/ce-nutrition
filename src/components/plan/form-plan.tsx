@@ -2,9 +2,7 @@
 
 import { api } from '@/trpc/react'
 
-import { useState } from 'react'
-
-import { cn } from '@/lib/utils'
+import { GetPlanById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusCircle } from 'lucide-react'
 import { useFieldArray, useForm } from 'react-hook-form'
@@ -22,6 +20,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 
+import { BackButton } from '../back-button'
 import { FormPlanMeal } from './form-plan-meal'
 
 export const dynamic = 'force-dynamic'
@@ -43,7 +42,7 @@ export const formSchema = z.object({
   ),
 })
 
-const FormPlan = () => {
+const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
   const ctx = api.useUtils()
 
   const { mutate: createPlan } = api.plan.create.useMutation({
@@ -52,17 +51,27 @@ const FormPlan = () => {
     },
   })
 
-  const { data: _allMeals, isLoading: isLoadingAllMeals } = api.meal.getAll.useQuery()
+  const { data: _allMeals, isLoading: isLoadingAllMeals } =
+    api.meal.getAll.useQuery()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      description: '',
-      image: '',
-      notes: '',
-      planCategory: '',
-      meals: [
+      name: plan?.name || '',
+      description: plan?.description || '',
+      image: plan?.image || '',
+      notes: plan?.notes || '',
+      planCategory: plan?.planCategory || '',
+      meals: plan?.planToMeal?.map((planToMeal) => ({
+        mealId: planToMeal.meal?.id.toString(),
+        mealTitle: planToMeal.meal?.name || '',
+        calories:
+          planToMeal.meal?.mealToRecipe?.[0]?.recipe?.calories.toString() || '',
+        vegeCalories:
+          planToMeal.meal?.mealToVegeStack?.[0]?.vegeStack?.calories || '',
+        note: planToMeal.meal?.mealToRecipe?.[0]?.note || '',
+        mealIndex: planToMeal.mealIndex,
+      })) || [
         {
           mealId: '',
           mealTitle: '1',
@@ -100,143 +109,134 @@ const FormPlan = () => {
   if (isLoadingAllMeals) return null
 
   return (
-    <div className='my-10'>
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className='flex flex-col gap-2 '>
-          <div className='flex justify-between gap-8'>
-          <FormField
-            control={form.control}
-            name='name'
-            render={({ field }) => (
-              <FormItem
-                  className='w-full'
-                >
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder='Name'
-                    {...field}
-                    type='text'
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-            <FormField
-              control={form.control}
-              name='planCategory'
-              render={({ field }) => (
-                <FormItem
-                    className='w-full'
-                >
-                  <FormLabel>Plan Category</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder='Category'
-                      {...field}
-                      type='text'
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='image'
-              render={({ field }) => (
-                <FormItem
-                    className='w-full'
-                  >
-                  <FormLabel>Image TODO</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder='Image'
-                      {...field}
-                      type='text'
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className='flex justify-between gap-8'>
-          <FormField
-            control={form.control}
-            name='description'
-            render={({ field }) => (
-                <FormItem
-                    className='w-full'
-                  >
-                <FormLabel>Recipe Description</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder='Description'
-                    {...field}
-                    type='text'
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name='notes'
-            render={({ field }) => (
-                <FormItem
-                    className='w-full'
-                  >
-                <FormLabel>Notes</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder='Notes'
-                    {...field}
-                    type='text'
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          </div>
-          <div className='flex flex-col gap-2 mt-4'>
-            <h2 className='text-2xl font-bold'>Meals</h2>
-          <div className='flex flex-col gap-0 divide-1 divide-y divide-dashed divide-border'>
-            {mealsField.fields.map((field, index) => (
-              <FormPlanMeal
-                key={field.mealId}
-                index={index}
-                form={form}
-                remove={mealsField.remove}
+    <div className='my-10 flex flex-col gap-4'>
+      <BackButton />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className='flex flex-col gap-2 '>
+            <div className='flex justify-between gap-8'>
+              <FormField
+                control={form.control}
+                name='name'
+                render={({ field }) => (
+                  <FormItem className='w-full'>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Name'
+                        {...field}
+                        type='text'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            ))}
+              <FormField
+                control={form.control}
+                name='planCategory'
+                render={({ field }) => (
+                  <FormItem className='w-full'>
+                    <FormLabel>Plan Category</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Category'
+                        {...field}
+                        type='text'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='image'
+                render={({ field }) => (
+                  <FormItem className='w-full'>
+                    <FormLabel>Image TODO</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Image'
+                        {...field}
+                        type='text'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-            <div className='w-full flex justify-center mt-8'>
-            <PlusCircle
-              size={36}
-              className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
-              onClick={() =>
-                mealsField.append({
-                  mealId: '',
-                  mealTitle: (mealsField.fields.length + 1).toString(),
-                  calories: '500',
-                  vegeCalories: '',
-                  note: '',
-                })
-              }
-            />
+            <div className='flex justify-between gap-8'>
+              <FormField
+                control={form.control}
+                name='description'
+                render={({ field }) => (
+                  <FormItem className='w-full'>
+                    <FormLabel>Recipe Description</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Description'
+                        {...field}
+                        type='text'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='notes'
+                render={({ field }) => (
+                  <FormItem className='w-full'>
+                    <FormLabel>Notes</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Notes'
+                        {...field}
+                        type='text'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className='flex flex-col gap-2 mt-4'>
+              <h2 className='text-3xl font-bold text-center'>Meals</h2>
+              <div className='flex flex-col gap-4'>
+                {mealsField.fields.map((field, index) => (
+                  <FormPlanMeal
+                    key={field.mealId}
+                    index={index}
+                    form={form}
+                    remove={mealsField.remove}
+                  />
+                ))}
+              </div>
+              <div className='w-full flex justify-center mt-8'>
+                <PlusCircle
+                  size={36}
+                  className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
+                  onClick={() =>
+                    mealsField.append({
+                      mealId: '',
+                      mealTitle: (mealsField.fields.length + 1).toString(),
+                      calories: '500',
+                      vegeCalories: '',
+                      note: '',
+                    })
+                  }
+                />
+              </div>
+            </div>
+            <div>
+              <Button type='submit'>Submit</Button>
             </div>
           </div>
-          <div>
-            <Button type='submit'>Submit</Button>
-          </div>
-        </div>
-      </form>
-    </Form>
+        </form>
+      </Form>
     </div>
   )
 }

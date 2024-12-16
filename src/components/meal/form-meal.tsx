@@ -2,10 +2,9 @@ import { api } from '@/trpc/react'
 
 import { useState } from 'react'
 
-import { cn, getRecipeDetails } from '@/lib/utils'
 import { GetMealById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ChevronDown, CirclePlus, CircleX, PlusCircle } from 'lucide-react'
+import { CirclePlus, CircleX, } from 'lucide-react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'

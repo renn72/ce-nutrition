@@ -17,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   FormControl,
   FormField,
@@ -51,6 +52,9 @@ const Meal = ({
   )
   const formCals = form.watch(`meals.${index}.calories`)
   const formProtien = form.watch(`meals.${index}.protein`)
+  const formVege = form.watch(`meals.${index}.vege`)
+
+  const [isVege, setIsVege] = useState(() => formVege !== '')
 
   const resetMeal = () => {
     form.resetField(`meals.${index}`)
@@ -185,9 +189,9 @@ const Meal = ({
           if (serve.length != 2) return
           const value1 = Number(serve[0]).toFixed(2)
           const value2 = Number(serve[1]).toFixed(2)
-          const i = calsPerGram.map((_, i) => i).filter(
-            (i) => i == indexCals || i == indexProtein,
-          )
+          const i = calsPerGram
+            .map((_, i) => i)
+            .filter((i) => i == indexCals || i == indexProtein)
           const index1 = i[0] as number
           const index2 = i[1] as number
           form.setValue(
@@ -221,56 +225,56 @@ const Meal = ({
           Reset
         </Button>
       </CardHeader>
-      <CardContent className='flex flex-col gap-8 w-full py-4'>
+      <CardContent className='flex flex-col gap-2 w-full py-4'>
         <div className='flex gap-2 items-center'>
-        <FormField
-          control={form.control}
-          name={`meals.${index}.mealTitle`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Title</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder='Title'
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name={`meals.${index}.targetCalories`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Target Calories</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder='Calories'
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name={`meals.${index}.targetProtein`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Target Protein</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder='Protein'
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name={`meals.${index}.mealTitle`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Title</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder='Title'
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name={`meals.${index}.targetCalories`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Target Calories</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder='Calories'
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name={`meals.${index}.targetProtein`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Target Protein</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder='Protein'
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name={`meals.${index}.note`}
@@ -288,6 +292,67 @@ const Meal = ({
               </FormItem>
             )}
           />
+        </div>
+        <div className='flex gap-4 items-center w-full tracking-tighter'>
+          <div className='flex gap-2 flex-col items-center'>
+          <Label>Veg</Label>
+          <Checkbox
+            checked={isVege}
+            onCheckedChange={(e) => {
+              setIsVege(e === true)
+            }}
+          />
+          </div>
+          <div className={cn('flex gap-2 items-center w-full', !isVege && 'hidden')}>
+            <FormField
+              control={form.control}
+              name={`meals.${index}.vege`}
+              render={({ field }) => (
+                <FormItem className='w-full'>
+                  <FormLabel>Veg</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='Veg'
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={`meals.${index}.vegeCalories`}
+              render={({ field }) => (
+                <FormItem className=''>
+                  <FormLabel>Veg Calories</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='Veg Calories'
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={`meals.${index}.vegeNotes`}
+              render={({ field }) => (
+                <FormItem className=''>
+                  <FormLabel>Veg Notes</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='Notes'
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
         <div className='grid grid-cols-5 gap-2 w-full items-center '>
           <div className='flex flex-col gap-2'>
@@ -394,58 +459,6 @@ const Meal = ({
               />
             ))}
           </div>
-        </div>
-        <div className='flex flex-col gap-2 items-center'>
-          <FormField
-            control={form.control}
-            name={`meals.${index}.vege`}
-            render={({ field }) => (
-              <FormItem className='w-full'>
-                <FormLabel>Veg</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder='Veg Calories'
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        <div className='flex gap-4 justify-between'>
-          <FormField
-            control={form.control}
-            name={`meals.${index}.vegeCalories`}
-            render={({ field }) => (
-              <FormItem className=''>
-                <FormLabel>Veg Calories</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder='Veg Calories'
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name={`meals.${index}.vegeNotes`}
-            render={({ field }) => (
-              <FormItem className=''>
-                <FormLabel>Veg Notes</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder='Notes'
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
         </div>
       </CardContent>
     </Card>

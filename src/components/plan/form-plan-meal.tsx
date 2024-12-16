@@ -7,11 +7,11 @@ import { ReactNode, useState } from 'react'
 import { cn, getRecipeDetailsByCals } from '@/lib/utils'
 import type { GetIngredientById, GetRecipeById } from '@/types'
 import { Check, ChevronsUpDown } from 'lucide-react'
-import { useForm, UseFormReturn } from 'react-hook-form'
-import { toast } from 'sonner'
+import { UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Command,
   CommandEmpty,
@@ -21,7 +21,6 @@ import {
   CommandList,
 } from '@/components/ui/command'
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
@@ -80,13 +79,12 @@ const Recipe = ({
   return (
     <div className='flex flex-col gap-1'>
       <div className='grid grid-cols-9 gap-1 capitalize'>
-        <div className='col-span-4 '/>
+        <div className='col-span-4 ' />
         <div>size</div>
         <div>cals</div>
         <div>protein</div>
         <div>carbs</div>
         <div>fat</div>
-
       </div>
       <div className='grid grid-cols-9 gap-1 font-bold'>
         <div className='col-span-4'>{recipe.name}</div>
@@ -124,17 +122,20 @@ const FormPlanMeal = ({
   const [isOpen, setIsOpen] = useState(false)
 
   const mealId = form.watch(`meals.${index}.mealId`)
-  const calories = form.watch(`meals.${index}.calories`)
+  const calories = Number(form.watch(`meals.${index}.calories`)) - Number(form.watch(`meals.${index}.vegeCalories`))
   const selectedMeal = allMeals?.find((meal) => meal.id === Number(mealId))
 
   if (!allMeals) return <div />
 
   return (
-    <div
+    <Card
       key={index}
-      className='grid grid-cols-5 gap-2 w-full items-center py-4'
+      className='w-full'
     >
-      <div className='flex flex-col gap-1'>
+      <CardHeader>
+        <CardTitle className='text-2xl'>Meal {index + 1}</CardTitle>
+      </CardHeader>
+      <CardContent className=''>
         <FormField
           control={form.control}
           name={`meals.${index}.mealTitle`}
@@ -151,114 +152,131 @@ const FormPlanMeal = ({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name={`meals.${index}.mealId`}
-          render={({ field }) => (
-            <FormItem className='flex flex-col'>
-              <FormLabel>Meal</FormLabel>
-              <Popover
-                open={isOpen}
-                onOpenChange={setIsOpen}
-              >
-                <PopoverTrigger asChild>
+        <div
+          key={index}
+          className='grid grid-cols-5 gap-2 w-full items-center py-4'
+        >
+          <div className='flex flex-col gap-1'>
+            <FormField
+              control={form.control}
+              name={`meals.${index}.mealId`}
+              render={({ field }) => (
+                <FormItem className='flex flex-col'>
+                  <FormLabel>Meal</FormLabel>
+                  <Popover
+                    open={isOpen}
+                    onOpenChange={setIsOpen}
+                  >
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant='outline'
+                          role='combobox'
+                          className={cn(
+                            'w-full justify-between',
+                            !field.value && 'text-muted-foreground',
+                          )}
+                        >
+                          {field.value
+                            ? allMeals?.find(
+                                (m) => m.id.toString() === field.value,
+                              )?.name
+                            : 'Select meal'}
+                          <ChevronsUpDown className='opacity-50' />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className='w-[300px] p-0'>
+                      <Command>
+                        <CommandInput
+                          placeholder='Search meals...'
+                          className='h-9'
+                        />
+                        <CommandList>
+                          <CommandEmpty>No meal found.</CommandEmpty>
+                          <CommandGroup>
+                            {allMeals.map((meal) => (
+                              <CommandItem
+                                value={meal.id.toString()}
+                                key={meal.id}
+                                onSelect={() => {
+                                  form.setValue(
+                                    `meals.${index}.mealId`,
+                                    meal.id.toString(),
+                                  )
+                                  setIsOpen(false)
+                                }}
+                              >
+                                {meal.name}
+                                <Check
+                                  className={cn(
+                                    'ml-auto',
+                                    meal.id.toString() === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0',
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={`meals.${index}.calories`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Calories</FormLabel>
                   <FormControl>
-                    <Button
-                      variant='outline'
-                      role='combobox'
-                      className={cn(
-                        'w-full justify-between',
-                        !field.value && 'text-muted-foreground',
-                      )}
-                    >
-                      {field.value
-                        ? allMeals?.find((m) => m.id.toString() === field.value)
-                            ?.name
-                        : 'Select meal'}
-                      <ChevronsUpDown className='opacity-50' />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className='w-[300px] p-0'>
-                  <Command>
-                    <CommandInput
-                      placeholder='Search meals...'
-                      className='h-9'
+                    <Input
+                      placeholder='Calories'
+                      {...field}
+                      type='number'
                     />
-                    <CommandList>
-                      <CommandEmpty>No meal found.</CommandEmpty>
-                      <CommandGroup>
-                        {allMeals.map((meal) => (
-                          <CommandItem
-                            value={meal.id.toString()}
-                            key={meal.id}
-                            onSelect={() => {
-                              form.setValue(
-                                `meals.${index}.mealId`,
-                                meal.id.toString(),
-                              )
-                              setIsOpen(false)
-                            }}
-                          >
-                            {meal.name}
-                            <Check
-                              className={cn(
-                                'ml-auto',
-                                meal.id.toString() === field.value
-                                  ? 'opacity-100'
-                                  : 'opacity-0',
-                              )}
-                            />
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name={`meals.${index}.calories`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Calories</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder='Calories'
-                  {...field}
-                  type='number'
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name={`meals.${index}.vegeCalories`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Calories</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder='Veg Calories'
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={`meals.${index}.vegeCalories`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Calories</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='Veg Calories'
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className='flex flex-col gap-8 col-span-4'>
+            {selectedMeal?.mealToRecipe.map((recipe) => (
+              <Recipe
+                recipe={recipe.recipe}
+                calories={calories}
+                key={recipe.id}
+              />
+            ))}
+          </div>
+        </div>
         <FormField
           control={form.control}
           name={`meals.${index}.note`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Note</FormLabel>
+              <FormLabel>Notes</FormLabel>
               <FormControl>
                 <Input
                   placeholder='Notes'
@@ -270,17 +288,8 @@ const FormPlanMeal = ({
             </FormItem>
           )}
         />
-      </div>
-      <div className='flex flex-col gap-8 col-span-4'>
-        {selectedMeal?.mealToRecipe.map((recipe) => (
-          <Recipe
-            recipe={recipe.recipe}
-            calories={calories}
-            key={recipe.id}
-          />
-        ))}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }
 

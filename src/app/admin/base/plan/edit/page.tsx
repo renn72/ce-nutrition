@@ -4,20 +4,20 @@ import { api } from '@/trpc/react'
 
 import { useSearchParams } from 'next/navigation'
 
-import { FormMeal } from '@/components/meal/form-meal'
+import { FormPlan } from '@/components/plan/form-plan'
 
 export default function Home() {
-  const { data, isLoading } = api.meal.getAll.useQuery()
+  const { data, isLoading } = api.plan.getAll.useQuery()
   const searchParams = useSearchParams()
-  const i = searchParams.get('meal')
+  const i = searchParams.get('plan')
 
-  const meal = data?.find((meal) => meal.id === Number(i))
+  const plan = data?.find((plan) => plan.id === Number(i))
 
   if (isLoading) return null
 
   return (
     <div className='flex flex-col max-w-screen-lg w-full mx-auto mt-10'>
-      <FormMeal meal={meal} />
+      <FormPlan plan={plan} />
     </div>
   )
 }

@@ -86,6 +86,48 @@ export const planRouter = createTRPCRouter({
     })
     return res
   }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        name: z.string(),
+        description: z.string(),
+        image: z.string(),
+        notes: z.string(),
+        planCategory: z.string(),
+        numberOfMeals: z.number(),
+        meals: z.array(
+          z.object({
+            mealId: z.number(),
+            mealIndex: z.number(),
+            mealTitle: z.string(),
+            calories: z.string(),
+            vegeCalories: z.string(),
+            note: z.string(),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { meals, ...data } = input
+      const res = await ctx.db
+        .update(plan)
+        .set(data)
+        .where(eq(plan.id, input.id))
+
+      await ctx.db.delete(planToMeal).where(eq(planToMeal.planId, input.id))
+      const mealRes = await ctx.db
+        .insert(planToMeal)
+        .values(
+          meals.map((meal) => ({
+            ...meal,
+            planId: input.id,
+          })),
+        )
+        .returning({ id: planToMeal.id })
+
+      return { res, mealRes }
+    }),
   create: protectedProcedure
     .input(
       z.object({
