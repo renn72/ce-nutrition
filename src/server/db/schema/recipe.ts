@@ -41,13 +41,9 @@ export const recipeToIngredient = createTable('recipe_to_ingredient', {
     onDelete: 'cascade',
   }).notNull(),
   index: int('index', { mode: 'number' }).notNull(),
-  isAlternate: int('is_alternate', { mode: 'boolean' }).default(false).notNull(),
   alternateId: int('alternate_id').notNull(),
   serveSize: text('serve').notNull(),
   serveUnit: text('serve_unit').notNull(),
-  isProtein: int('is_protein', { mode: 'boolean' }),
-  isCarbohydrate: int('is_carbohydrate', { mode: 'boolean' }),
-  isFat: int('is_fat', { mode: 'boolean' }),
   note: text('note'),
 })
 

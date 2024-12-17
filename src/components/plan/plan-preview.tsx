@@ -42,7 +42,9 @@ const PlanPreview = ({ plan }: { plan: GetPlanById }) => {
                 <div>{meal.mealTitle}</div>
                 <div>
                   {meal.meal?.mealToRecipe.map((recipe) => (
-                    <div>{recipe.recipe?.name}</div>
+                    <div
+                      key={recipe.id}
+                    >{recipe.recipe?.name}</div>
                   ))}
                 </div>
               </div>

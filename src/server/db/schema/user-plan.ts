@@ -2,7 +2,7 @@ import { relations, sql } from 'drizzle-orm'
 import { int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
 
 import { ingredient } from './ingredient'
-import { user } from './user'
+import { user, userToPlan, dailyMeal } from './user'
 
 export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
@@ -61,7 +61,8 @@ export const userRecipe = createTable('user-recipe', {
   recipeIndex: int('recipe_index', { mode: 'number' }),
   userPlanId: int('user_plan_id').references(() => userPlan.id, {
     onDelete: 'cascade',
-  }).notNull(),
+  }),
+  dailyMealId: int('daily_meal_id').references(() => dailyMeal.id),
   name: text('name'),
   index: int('index', { mode: 'number' }),
   serve: text('serve'),
@@ -82,7 +83,10 @@ export const userIngredient = createTable('user-ingredient', {
   }),
   userPlanId: int('user_plan_id').references(() => userPlan.id, {
     onDelete: 'cascade',
-  }).notNull(),
+  }),
+  dailyMealId: int('daily_meal_id').references(() => dailyMeal.id, {
+    onDelete: 'cascade',
+  }),
   name: text('name'),
   mealIndex: int('meal_index', { mode: 'number' }),
   recipeIndex: int('recipe_index', { mode: 'number' }),
@@ -112,6 +116,10 @@ export const userRecipeRelations = relations(userRecipe, ({ one }) => ({
     fields: [userRecipe.userPlanId],
     references: [userPlan.id],
   }),
+  dailyMeal: one(dailyMeal, {
+    fields: [userRecipe.dailyMealId],
+    references: [dailyMeal.id],
+  }),
 }))
 
 export const userIngredientRelations = relations(userIngredient, ({ one }) => ({
@@ -122,5 +130,9 @@ export const userIngredientRelations = relations(userIngredient, ({ one }) => ({
   userPlan: one(userPlan, {
     fields: [userIngredient.userPlanId],
     references: [userPlan.id],
+  }),
+  dailyMeal: one(dailyMeal, {
+    fields: [userIngredient.dailyMealId],
+    references: [dailyMeal.id],
   }),
 }))

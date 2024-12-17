@@ -8,9 +8,8 @@ import {
 } from 'drizzle-orm/sqlite-core'
 import { type AdapterAccount } from 'next-auth/adapters'
 
-import { userPlan } from './user-plan'
-
 import { notification } from './notification'
+import { userPlan, userRecipe, userIngredient } from './user-plan'
 
 export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
@@ -57,9 +56,79 @@ export const user = createTable(
   }),
 )
 
+export const dailyLog = createTable('daily_log', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  createdAt: int('created_at', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+    () => new Date(),
+  ),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id),
+  date: int('date', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  morningWeight: text('morning_weight'),
+  notes: text('notes'),
+  fastedBloodGlucose: text('fasted_blood_glucose'),
+  water: text('water'),
+  bowelMovements: text('bowel_movements'),
+  sleep: text('sleep'),
+  nap: text('nap'),
+})
+
+export const dailyLogRelations = relations(dailyLog, ({ one, many }) => ({
+  user: one(user, { fields: [dailyLog.userId], references: [user.id] }),
+  dailyMeals: many(dailyMeal),
+}))
+
+export const dailyMeal = createTable('daily_meal', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  createdAt: int('created_at', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  dailyLogId: text('daily_log_id')
+    .notNull()
+    .references(() => dailyLog.id),
+  vegeCalories: text('vege_calories'),
+  veges: text('veges'),
+})
+
+export const dailyMealRelations = relations(dailyMeal, ({ one, many }) => ({
+  dailyLog: one(dailyLog, { fields: [dailyMeal.dailyLogId], references: [dailyLog.id] }),
+  recipe: many(userRecipe),
+  ingredients: many(userIngredient),
+}))
+
+export const userToPlan = createTable('user_to_plan', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  createdAt: int('created_at', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  finalisedAt: int('finalised_at', { mode: 'timestamp' }),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id),
+  planId: int('plan_id'),
+  isActive: int('is_active', { mode: 'boolean' }).default(true),
+})
+
+export const userToPlanRelations = relations(userToPlan, ({ one }) => ({
+  user: one(user, {
+    fields: [userToPlan.userId],
+    references: [user.id],
+  }),
+}))
+
 export const userToTrainer = createTable('user_to_trainer', {
-  userId: text('user_id').notNull().references(() => user.id),
-  trainerId: text('trainer_id').notNull().references(() => user.id),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id),
+  trainerId: text('trainer_id')
+    .notNull()
+    .references(() => user.id),
 })
 
 export const role = createTable('role', {
@@ -137,7 +206,7 @@ export const accountsRelations = relations(account, ({ one }) => ({
   user: one(user, { fields: [account.userId], references: [user.id] }),
 }))
 
-export const roleRelations = relations(role, ({ one, }) => ({
+export const roleRelations = relations(role, ({ one }) => ({
   user: one(user, {
     fields: [role.userId],
     references: [user.id],
@@ -152,7 +221,9 @@ export const userRelations = relations(user, ({ many }) => ({
   clients: many(userToTrainer, { relationName: 'clients' }),
   userPlans: many(userPlan, { relationName: 'user' }),
   userPlansCreator: many(userPlan, { relationName: 'creator' }),
+  userToPlans: many(userToPlan),
 }))
+
 
 export const userToTrainerRelations = relations(
   userToTrainer,
