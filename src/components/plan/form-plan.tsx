@@ -173,7 +173,7 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
                 name='description'
                 render={({ field }) => (
                   <FormItem className='w-full'>
-                    <FormLabel>Recipe Description</FormLabel>
+                    <FormLabel>Description</FormLabel>
                     <FormControl>
                       <Input
                         placeholder='Description'

@@ -61,7 +61,6 @@ export function DataTableRowActions<TData>({
           onSelect={() => deletePlan({ id: row.getValue('id') })}
         >
           Delete
-          <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
