@@ -44,8 +44,8 @@ const FormDialog = () => {
   const { mutate: createUser } = api.user.createUser.useMutation({
     onSuccess: () => {
       setIsOpen(false)
-      ctx.groceryStore.invalidate()
-      toast.success('Store added successfully')
+      ctx.user.invalidate()
+      toast.success('User added successfully')
     },
   })
 

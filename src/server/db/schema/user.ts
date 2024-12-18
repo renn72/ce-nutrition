@@ -102,26 +102,6 @@ export const dailyMealRelations = relations(dailyMeal, ({ one, many }) => ({
   ingredients: many(userIngredient),
 }))
 
-export const userToPlan = createTable('user_to_plan', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
-    .default(sql`(unixepoch())`)
-    .notNull(),
-  finalisedAt: int('finalised_at', { mode: 'timestamp' }),
-  userId: text('user_id')
-    .notNull()
-    .references(() => user.id),
-  planId: int('plan_id'),
-  isActive: int('is_active', { mode: 'boolean' }).default(true),
-})
-
-export const userToPlanRelations = relations(userToPlan, ({ one }) => ({
-  user: one(user, {
-    fields: [userToPlan.userId],
-    references: [user.id],
-  }),
-}))
-
 export const userToTrainer = createTable('user_to_trainer', {
   userId: text('user_id')
     .notNull()
@@ -221,7 +201,6 @@ export const userRelations = relations(user, ({ many }) => ({
   clients: many(userToTrainer, { relationName: 'clients' }),
   userPlans: many(userPlan, { relationName: 'user' }),
   userPlansCreator: many(userPlan, { relationName: 'creator' }),
-  userToPlans: many(userToPlan),
 }))
 
 

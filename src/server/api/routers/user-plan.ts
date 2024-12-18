@@ -64,7 +64,7 @@ export const userPlanRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const userId = ctx.session.user.id
+      const creatorId = ctx.session.user.id
       const { meals, ...data } = input
       const recipes = meals.map((meal) => meal.recipes).flat()
       const ingredients = recipes.map((recipe) => recipe.ingredients).flat()
@@ -73,7 +73,8 @@ export const userPlanRouter = createTRPCRouter({
         .insert(userPlan)
         .values({
           ...data,
-          creatorId: userId,
+          isActive: true,
+          creatorId: creatorId,
         })
         .returning({ id: plan.id })
 
@@ -84,7 +85,7 @@ export const userPlanRouter = createTRPCRouter({
         ctx.db
           .update(user)
           .set({ currentPlanId: resId })
-          .where(eq(user.id, userId)),
+          .where(eq(user.id, input.userId)),
         ctx.db
           .insert(userMeal)
           .values(

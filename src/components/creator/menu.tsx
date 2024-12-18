@@ -277,9 +277,6 @@ export const CreatorMenu = () => {
         {
           ingredientId:
             allIngredients.find((i) => i.publicFoodKey == 'F007682')?.id || 0,
-          isProtein: false,
-          isCarbohydrate: true,
-          isFat: false,
           note: 'Test',
           serveSize: '90',
           serveUnit: 'grams',
@@ -289,9 +286,6 @@ export const CreatorMenu = () => {
         {
           ingredientId:
             allIngredients.find((i) => i.publicFoodKey == 'F002594')?.id || 0,
-          isProtein: true,
-          isCarbohydrate: false,
-          isFat: false,
           note: 'Test',
           serveSize: '140',
           serveUnit: 'grams',
@@ -311,9 +305,6 @@ export const CreatorMenu = () => {
         {
           ingredientId:
             allIngredients.find((i) => i.publicFoodKey == 'F001353')?.id || 0,
-          isProtein: false,
-          isCarbohydrate: true,
-          isFat: false,
           note: 'Test',
           serveSize: '90',
           serveUnit: 'grams',
@@ -323,9 +314,6 @@ export const CreatorMenu = () => {
         {
           ingredientId:
             allIngredients.find((i) => i.publicFoodKey == 'F004299')?.id || 0,
-          isProtein: true,
-          isCarbohydrate: false,
-          isFat: false,
           note: 'Test',
           serveSize: '55',
           serveUnit: 'grams',
@@ -335,9 +323,6 @@ export const CreatorMenu = () => {
         {
           ingredientId:
             allIngredients.find((i) => i.publicFoodKey == 'F003729')?.id || 0,
-          isProtein: true,
-          isCarbohydrate: false,
-          isFat: true,
           note: '2 whole eggs',
           serveSize: '110',
           serveUnit: 'grams',
@@ -357,9 +342,6 @@ export const CreatorMenu = () => {
         {
           ingredientId:
             allIngredients.find((i) => i.publicFoodKey == 'F000561')?.id || 0,
-          isProtein: true,
-          isCarbohydrate: false,
-          isFat: false,
           note: 'Test',
           serveSize: '120',
           serveUnit: 'grams',
@@ -369,9 +351,6 @@ export const CreatorMenu = () => {
         {
           ingredientId:
             allIngredients.find((i) => i.publicFoodKey == 'F007308')?.id || 0,
-          isProtein: false,
-          isCarbohydrate: true,
-          isFat: false,
           note: 'Test',
           serveSize: '420',
           serveUnit: 'grams',
@@ -381,9 +360,6 @@ export const CreatorMenu = () => {
         {
           ingredientId:
             allIngredients.find((i) => i.publicFoodKey == 'F001971')?.id || 0,
-          isProtein: false,
-          isCarbohydrate: false,
-          isFat: true,
           note: '',
           serveSize: '15',
           serveUnit: 'grams',
@@ -402,9 +378,10 @@ export const CreatorMenu = () => {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        sideOffset={8}
+        sideOffset={12}
         align='end'
         side='top'
+        className='max-h-[70vh] overflow-y-auto z-99'
       >
         <DropdownMenuLabel>ADMIN</DropdownMenuLabel>
         <DropdownMenuSeparator />

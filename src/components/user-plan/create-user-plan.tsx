@@ -121,7 +121,9 @@ const CreateUserPlan = () => {
           mealId: mealIndex.toString(),
           mealTitle: meal.mealTitle || '',
           calories: meal.calories || '',
-          targetCalories: meal.calories || '',
+          targetCalories:
+            (Number(meal.calories) + Number(meal.vegeCalories)).toString() ||
+            '',
           targetProtein: '40',
           vegeCalories: meal.vegeCalories || '',
           vege: meal.meal?.mealToVegeStack[0]?.vegeStack?.veges || '',
@@ -275,11 +277,7 @@ const CreateUserPlan = () => {
                 </div>
               </div>
               <div>
-                <Button
-                  type='submit'
-                >
-                  Submit
-                </Button>
+                <Button type='submit'>Create</Button>
               </div>
             </div>
           </form>

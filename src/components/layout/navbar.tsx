@@ -16,7 +16,8 @@ import { ModeToggle } from '@/components/layout/mode-toggle'
 export const Navbar = () => {
   const ctx = api.useUtils()
   const { data: isUser, isLoading: isLoadingUser } = api.user.isUser.useQuery()
-  const { data: isTrainer, isLoading: isLoadingTrainer } = api.user.isTrainer.useQuery()
+  const { data: isTrainer, isLoading: isLoadingTrainer } =
+    api.user.isTrainer.useQuery()
   const { mutate: sync } = api.user.unprotectedSync.useMutation({
     onSuccess: () => {
       ctx.invalidate()
@@ -25,7 +26,7 @@ export const Navbar = () => {
   })
 
   return (
-    <div className='h-18 flex items-center justify-between px-2'>
+    <div className='h-18 flex items-center justify-between px-4'>
       <div className='flex items-center gap-4'>
         <Link
           className='hover:opacity-100 opacity-80 transition-all py-2'
@@ -53,17 +54,7 @@ export const Navbar = () => {
           <Database className='h-8 w-8 text-secondary' />
         </Button>
       </div>
-      {isLoadingUser || isLoadingTrainer ? null : (
-        <div className='flex items-center gap-4'>
-          {isTrainer ? (
-            <Link href='/admin/base'>
-              <Button variant='outline'>Admin</Button>
-            </Link>
-          ) : null}
-          <ModeToggle />
-          <User />
-        </div>
-      )}
+      <User />
     </div>
   )
 }

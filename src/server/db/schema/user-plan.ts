@@ -2,7 +2,7 @@ import { relations, sql } from 'drizzle-orm'
 import { int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
 
 import { ingredient } from './ingredient'
-import { user, userToPlan, dailyMeal } from './user'
+import { user, dailyMeal } from './user'
 
 export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
@@ -14,6 +14,8 @@ export const userPlan = createTable('user-plan', {
   updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
+  finishedAt: int('finished_at', { mode: 'timestamp' }),
+  isActive: int('is_active', { mode: 'boolean' }),
   name: text('name').notNull(),
   description: text('description').notNull(),
   image: text('image').notNull(),

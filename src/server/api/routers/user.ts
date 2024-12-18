@@ -47,6 +47,29 @@ export const userRouter = createTRPCRouter({
     await client.sync()
     return true
   }),
+  get: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
+    if (input === '') throw new TRPCError({ code: 'BAD_REQUEST' })
+    const res = await ctx.db.query.user.findFirst({
+      where: (user, { eq }) => eq(user.id, input),
+      columns: {
+        password: false,
+      },
+      with: {
+        userPlans: {
+          with: {
+            userMeals: true,
+            userRecipes: true,
+            userIngredients: {
+              with: {
+                ingredient: true,
+              },
+            },
+          },
+        },
+      },
+    })
+    return res
+  }),
   getCurrentUser: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session?.user.id
 
@@ -175,6 +198,7 @@ export const userRouter = createTRPCRouter({
       },
     ]
     const hashedPassword = await hash('hklasd', 10)
+      const hashedJamie = await hash('jamiedash', 10)
     const res = await ctx.db.insert(user).values(
       users.map((user) => ({
         firstName: user.firstName,
@@ -189,6 +213,15 @@ export const userRouter = createTRPCRouter({
         isTrainer: user.isTrainer || false,
       })),
     )
+    await ctx.db.insert(user).values({
+        firstName: 'Jamie',
+        lastName: 'Dash',
+        name: 'Jamie Dash',
+        email:
+          'jamie@comp-edge.com.au',
+        password: hashedJamie,
+        isTrainer: false,
+    } )
 
     return res
   }),
@@ -199,9 +232,7 @@ export const userRouter = createTRPCRouter({
   deleteUser: rootProtectedProcedure
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
-      const res = await ctx.db
-        .delete(user)
-        .where(eq(user.id, input))
+      const res = await ctx.db.delete(user).where(eq(user.id, input))
       return res
     }),
   getFakeUsers: rootProtectedProcedure.query(async () => {
@@ -212,28 +243,6 @@ export const userRouter = createTRPCRouter({
   }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.user.findMany()
-    return res
-  }),
-  get: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
-    const res = await ctx.db.query.user.findFirst({
-      where: (user, { eq }) => eq(user.id, input),
-      columns: {
-        password: false,
-      },
-      with: {
-        userPlans: {
-          with: {
-            userMeals: true,
-            userRecipes: true,
-            userIngredients: {
-              with: {
-                ingredient: true,
-              },
-            },
-          },
-        },
-      },
-    })
     return res
   }),
 })
