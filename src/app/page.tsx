@@ -179,9 +179,15 @@ const Mobile = ({ userId }: { userId: string }) => {
         className='w-full'
       >
         <TabsList className='flex gap-2 items-center justify-center w-full bg-background '>
-          <TabsTrigger value='bw'>Body Weight</TabsTrigger>
-          <TabsTrigger value='lm'>Lean Mass</TabsTrigger>
-          <TabsTrigger value='bf'>Body Fat</TabsTrigger>
+          <TabsTrigger
+            className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
+            value='bw'>Body Weight</TabsTrigger>
+          <TabsTrigger
+            className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
+            value='lm'>Lean Mass</TabsTrigger>
+          <TabsTrigger
+            className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
+            value='bf'>Body Fat</TabsTrigger>
         </TabsList>
         <TabsContent
           className='bg-secondary p-2'
