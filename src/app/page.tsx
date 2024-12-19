@@ -15,9 +15,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { Plan } from './_components/plan'
 
-const Mobile = () => {
-  const { data: _currentUser } = api.user.getCurrentUser.useQuery()
-  const { data: currentUser } = api.user.get.useQuery(_currentUser?.id ?? '')
+const BodyWeightChart = () => {
+  const { data: bodyWeight } = api.user.get.useQuery('bodyWeight')
+  const { data: leanMass } = api.user.get.useQuery('leanMass')
+
+  return (
+    <div className='flex flex-col gap-2 w-full'>
+    </div>
+  )
+  }
+
+const Mobile = ({userId}: {userId: string}) => {
+  const { data: currentUser } = api.user.get.useQuery(userId)
   const isTrainer = currentUser?.isTrainer
   const plan = currentUser?.userPlans.find(
     (plan) => plan.id == currentUser?.currentPlanId,
@@ -79,24 +88,27 @@ const Mobile = () => {
   )
 }
 
-const Desktop = () => {
+const Desktop = ({userId}: {userId: string}) => {
   return (
     <div className='flex flex-col items-center gap-2'>
       <div className='my-8'>TODO: desktop</div>
       <div>Mobile</div>
 
       <ScrollArea className='w-[390px] h-[844px] border border-border shadow-md'>
-        <Mobile />
+        <Mobile userId={userId} />
       </ScrollArea>
     </div>
   )
 }
 
 export default function Home() {
+  const { data: currentUser } = api.user.getCurrentUser.useQuery()
   const isMobile = useClientMediaQuery('(max-width: 600px)')
+
+  if (!currentUser) return null
   return (
     <div className='flex min-h-screen flex-col'>
-      {isMobile ? <Mobile /> : <Desktop />}
+      {isMobile ? <Mobile userId={currentUser.id} /> : <Desktop userId={currentUser.id}/>}
     </div>
   )
 }
