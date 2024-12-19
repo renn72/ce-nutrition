@@ -53,7 +53,7 @@ const User = () => {
       <DropdownMenuTrigger asChild>
         <div
           className={cn(
-            'flex items-center justify-center rounded-full ',
+            'flex items-center justify-center rounded-full cursor-pointer ',
             'bg-secondary-foreground/40 h-8 w-8 pt-1 text-sm font-bold',
           )}
         >

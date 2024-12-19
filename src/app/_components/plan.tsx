@@ -90,3 +90,5 @@ const Plan = ({ plan }: { plan: UserPlan }) => {
     </Card>
   )
 }
+
+export { Plan }

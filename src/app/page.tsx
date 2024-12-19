@@ -1,143 +1,102 @@
 'use client'
 
 import { api } from '@/trpc/react'
+import { User } from '@/components/auth/user'
 
+import Image from 'next/image'
 import Link from 'next/link'
 
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { useClientMediaQuery } from '@/hooks/use-client-media-query'
+import { Bell, NotebookText } from 'lucide-react'
 
-import { Navbar } from '@/components/layout/navbar'
+import { Label } from '@/components/ui/label'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-export default function Home() {
+import { Plan } from './_components/plan'
+
+const Mobile = () => {
   const { data: _currentUser } = api.user.getCurrentUser.useQuery()
   const { data: currentUser } = api.user.get.useQuery(_currentUser?.id ?? '')
   const isTrainer = currentUser?.isTrainer
-  console.log('currentUser', currentUser)
   const plan = currentUser?.userPlans.find(
     (plan) => plan.id == currentUser?.currentPlanId,
   )
   return (
-    <div className='flex min-h-screen flex-col'>
-      <Navbar />
-      <main className='flex-1'>
-        <div className='flex flex-col gap-2 w-full py-4'>
-          {plan ? (
-            <Card className='w-full max-w-screen-xl'>
-              <CardHeader className='pb-0 flex justify-between'>
-                <CardTitle className='text-xl font-medium'>Program</CardTitle>
-                <div>current program: {plan.name}</div>
-                <div>
-                  daily calories:{' '}
-                  {plan.userMeals.reduce(
-                    (acc, meal) => acc + Number(meal.calories),
-                    0,
-                  )}
-                </div>
-                <div>
-                  daily protein:{' '}
-                  {plan.userMeals.reduce(
-                    (acc, meal) => acc + Number(meal.protein),
-                    0,
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className='flex flex-col gap-2 w-full py-4'>
-                <Card>
-                  <CardHeader className=''>
-                    <CardTitle className='text-xl font-medium'>Meals</CardTitle>
-                  </CardHeader>
-                  <CardContent className='flex flex-col gap-2 w-full py-4'>
-                    {plan.userMeals.map((meal, mealIndex) => {
-                      const recipes = plan.userRecipes.filter(
-                        (recipe) => recipe.mealIndex == mealIndex,
-                      )
-                      return (
-                        <div
-                          className='flex flex-col gap-1 w-full'
-                          key={meal.id}
-                        >
-                          <div className='flex gap-1 items-center'>
-                            <div>{meal.mealTitle}</div>
-                            <div className='flex gap-1 items-center'>
-                              <div className='text-sm text-muted-foreground'>
-                                Calories
-                              </div>
-                              <div className='text-sm text-muted-foreground'>
-                                {meal.targetCalories}
-                              </div>
-                              <div className='text-sm text-muted-foreground'>
-                                Protein
-                              </div>
-                              <div className='text-sm text-muted-foreground'>
-                                {meal.targetProtein}
-                              </div>
-                            </div>
-                          </div>
-                          <div className='flex flex-col gap-1 w-full ml-4'>
-                            {recipes.map((recipe, _recipeIndex) => {
-                              return (
-                                <div
-                                  className='flex flex-col gap-1 w-full'
-                                  key={recipe.id}
-                                >
-                                  <div>{recipe.name}</div>
-                                </div>
-                              )
-                            })}
-                          </div>
-                          {meal.veges !== '' && (
-                            <div className='flex gap-1 items-center'>
-                              <div className='text-sm text-muted-foreground'>
-                                Vege
-                              </div>
-                              <div className='text-sm text-muted-foreground'>
-                                {meal.veges}
-                              </div>
-                              <div className='text-sm text-muted-foreground'>
-                                Notes
-                              </div>
-                              <div className='text-sm text-muted-foreground'>
-                                {meal.vegeNotes}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )
-                    })}
-                  </CardContent>
-                </Card>
-              </CardContent>
-            </Card>
-          ) : null}
+    <div className='flex flex-col gap-2 w-full p-2 min-h-screen'>
+      <div className='flex gap-2 items-center justify-around w-full'>
+        <div className='flex flex-col gap-0 items-center justify-center'>
+          <NotebookText
+            size={40}
+            className='bg-accentt cursor-pointer rounded-full p-1'
+          />
+          <Label className='text-xs text-muted-foreground'>Program</Label>
         </div>
-      </main>
-      <footer className='flex w-full shrink-0 flex-col items-center gap-2 border-t px-2 py-2 md:py-6 sm:flex-row md:px-6'>
-        <p className='text-xs text-gray-500 dark:text-gray-400'>
-          © 2024 CE Nutrition. All rights reserved.
-        </p>
-        <nav className='flex gap-4 sm:ml-auto sm:gap-6'>
-          <Link
-            className='text-xs underline-offset-4 hover:underline'
-            href='#'
-          >
-            Terms of Service
-          </Link>
-          <Link
-            className='text-xs underline-offset-4 hover:underline'
-            href='#'
-          >
-            Privacy
-          </Link>
-        </nav>
-      </footer>
+        <Link
+          className='hover:opacity-100 opacity-80 transition-all py-2'
+          href='/'
+        >
+          <Image
+            src='/logo/ce.png'
+            alt='logo'
+            width={40}
+            height={40}
+            priority
+            style={{
+              width: '100%',
+              height: 'auto',
+            }}
+          />
+        </Link>
+        <div className='flex flex-col gap-0 items-center justify-center'>
+          <Bell
+            size={40}
+            className='bg-accentt cursor-pointer rounded-full p-1'
+          />
+          <Label className='text-xs text-muted-foreground'>Notifications</Label>
+        </div>
+      </div>
+
+      <Tabs
+        defaultValue='bw'
+        className='w-full'
+      >
+        <TabsList className='flex gap-2 items-center justify-center w-full bg-background '>
+          <TabsTrigger value='bw'>Body Weight</TabsTrigger>
+          <TabsTrigger value='lm'>Lean Mass</TabsTrigger>
+          <TabsTrigger value='bf'>Body Fat</TabsTrigger>
+        </TabsList>
+        <TabsContent value='bw'>weight</TabsContent>
+        <TabsContent value='lm'>lean mass</TabsContent>
+        <TabsContent value='bf'>body fat</TabsContent>
+      </Tabs>
+      <div className='flex flex-col gap-2 w-full p-2 grow'>
+      </div>
+      <div className='flex gap-2 w-full p-2 justify-center'>
+        <User />
+      </div>
+    </div>
+  )
+}
+
+const Desktop = () => {
+  return (
+    <div className='flex flex-col items-center gap-2'>
+      <div className='my-8'>TODO: desktop</div>
+      <div>Mobile</div>
+
+      <ScrollArea className='w-[390px] h-[844px] border border-border shadow-md'>
+        <Mobile />
+      </ScrollArea>
+    </div>
+  )
+}
+
+export default function Home() {
+  const isMobile = useClientMediaQuery('(max-width: 600px)')
+  return (
+    <div className='flex min-h-screen flex-col'>
+      {isMobile ? <Mobile /> : <Desktop />}
     </div>
   )
 }

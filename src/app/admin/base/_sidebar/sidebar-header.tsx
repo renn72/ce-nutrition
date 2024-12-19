@@ -52,7 +52,6 @@ const SidebarHeader = () => {
         </Breadcrumb>
       </div>
         <div className='flex items-center gap-2'>
-          <ModeToggle />
           <User />
         </div>
     </header>

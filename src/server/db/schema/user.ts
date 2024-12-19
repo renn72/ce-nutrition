@@ -9,7 +9,7 @@ import {
 import { type AdapterAccount } from 'next-auth/adapters'
 
 import { notification } from './notification'
-import { userPlan, userRecipe, userIngredient } from './user-plan'
+import { userIngredient, userPlan, userRecipe } from './user-plan'
 
 export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
@@ -79,11 +79,6 @@ export const dailyLog = createTable('daily_log', {
   nap: text('nap'),
 })
 
-export const dailyLogRelations = relations(dailyLog, ({ one, many }) => ({
-  user: one(user, { fields: [dailyLog.userId], references: [user.id] }),
-  dailyMeals: many(dailyMeal),
-}))
-
 export const dailyMeal = createTable('daily_meal', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
@@ -96,10 +91,29 @@ export const dailyMeal = createTable('daily_meal', {
   veges: text('veges'),
 })
 
-export const dailyMealRelations = relations(dailyMeal, ({ one, many }) => ({
-  dailyLog: one(dailyLog, { fields: [dailyMeal.dailyLogId], references: [dailyLog.id] }),
-  recipe: many(userRecipe),
-  ingredients: many(userIngredient),
+export const weighIn = createTable('weigh_in', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  createdAt: int('created_at', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id),
+  trainerId: text('trainer_id')
+    .notNull()
+    .references(() => user.id),
+  date: int('date', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  bodyWeight: text('body_weight'),
+  leanMass: text('lean_mass'),
+  bodyFat: text('body_fat'),
+  notes: text('notes'),
+})
+
+export const weighInRelations = relations(weighIn, ({ one }) => ({
+  user: one(user, { fields: [weighIn.userId], references: [user.id] }),
+  trainer: one(user, { fields: [weighIn.trainerId], references: [user.id] }),
 }))
 
 export const userToTrainer = createTable('user_to_trainer', {
@@ -201,8 +215,10 @@ export const userRelations = relations(user, ({ many }) => ({
   clients: many(userToTrainer, { relationName: 'clients' }),
   userPlans: many(userPlan, { relationName: 'user' }),
   userPlansCreator: many(userPlan, { relationName: 'creator' }),
+  dailyLogs: many(dailyLog, { relationName: 'user' }),
+  weighIns: many(weighIn, { relationName: 'user' }),
+  weighInsTrainer: many(weighIn, { relationName: 'trainer' }),
 }))
-
 
 export const userToTrainerRelations = relations(
   userToTrainer,
@@ -219,3 +235,17 @@ export const userToTrainerRelations = relations(
     }),
   }),
 )
+
+export const dailyLogRelations = relations(dailyLog, ({ one, many }) => ({
+  user: one(user, { fields: [dailyLog.userId], references: [user.id] }),
+  dailyMeals: many(dailyMeal),
+}))
+
+export const dailyMealRelations = relations(dailyMeal, ({ one, many }) => ({
+  dailyLog: one(dailyLog, {
+    fields: [dailyMeal.dailyLogId],
+    references: [dailyLog.id],
+  }),
+  recipe: many(userRecipe),
+  ingredients: many(userIngredient),
+}))
