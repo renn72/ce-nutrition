@@ -28,6 +28,51 @@ export default function Home() {
       toast.success('Daily Log Deleted')
     },
   })
+  const { mutate: addWeighIn } = api.weighIn.create.useMutation({
+    onSuccess: () => {
+      ctx.dailyLog.invalidate()
+      toast.success('Weight Added')
+    },
+  })
+  const { mutate: deleteAllWeighIn } = api.weighIn.deleteAll.useMutation({
+    onSuccess: () => {
+      ctx.dailyLog.invalidate()
+      toast.success('Weight Deleted')
+    },
+  })
+
+  const onGenerateWeighIn = () => {
+    if (!userId) return
+
+    const today = new Date()
+
+    let previousWeight = '95'
+    let weight = '95'
+
+
+    let previousLM = '12'
+    let lM = '12'
+
+    let previousfat = '20'
+    let fat = '20'
+
+    for (let i = 0; i < 5; i++) {
+      const day = new Date(new Date().setDate(today.getDate() - (30 - i)))
+      weight = (Math.random() * 0.3 - 0.2 + Number(previousWeight)).toFixed(2)
+      previousWeight = weight
+      const sleep = (Math.random() * 3 + 6).toFixed(1)
+      const bowelMovements = (Math.random() * 2 + 1).toFixed(0)
+      console.log('weight', weight)
+      addDailyLog({
+        date: day,
+        morningWeight: weight,
+        notes: 'test notes',
+        sleep: sleep,
+        bowelMovements: bowelMovements,
+        userId: userId,
+      })
+    }
+  }
 
   const onGenerateDailyLog = () => {
     if (!userId) return
@@ -35,13 +80,15 @@ export default function Home() {
     const today = new Date()
 
     let previousWeight = '95'
+    let weight = '95'
 
     for (let i = 0; i < 30; i++) {
       const day = new Date(new Date().setDate(today.getDate() - (30 - i)))
-      const weight = ((Math.random() * 1 - 0.50) + Number(previousWeight)).toFixed(2)
+      weight = (Math.random() * 0.3 - 0.2 + Number(previousWeight)).toFixed(2)
       previousWeight = weight
       const sleep = (Math.random() * 3 + 6).toFixed(1)
       const bowelMovements = (Math.random() * 2 + 1).toFixed(0)
+      console.log('weight', weight)
       addDailyLog({
         date: day,
         morningWeight: weight,
@@ -71,7 +118,6 @@ export default function Home() {
           variant='destructive'
           onClick={() => deleteDailyLog(userId || '')}
         >
-
           Delete Daily Log
         </Button>
       </div>
