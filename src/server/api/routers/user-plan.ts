@@ -17,6 +17,17 @@ export const userPlanRouter = createTRPCRouter({
       const res = await ctx.db.delete(userPlan).where(eq(userPlan.id, input))
       return res
     }),
+  get: protectedProcedure.input(z.number()).query(async ({ input, ctx }) => {
+    const res = await ctx.db.query.userPlan.findFirst({
+      where: eq(userPlan.id, input),
+      with: {
+        userMeals: true,
+        userRecipes: true,
+        userIngredients: true,
+      },
+    })
+    return res
+  }),
   create: protectedProcedure
     .input(
       z.object({

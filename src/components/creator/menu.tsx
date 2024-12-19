@@ -11,7 +11,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
+  DropdownMenuSubContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
@@ -215,10 +217,10 @@ export const CreatorMenu = () => {
       notes: 'General',
       mealCategory: 'Lunch',
       veges: {
-          vegeStackId: vegeStack,
-          note: '',
-          calories: '50',
-        },
+        vegeStackId: vegeStack,
+        note: '',
+        calories: '50',
+      },
       recipes: [
         {
           recipeId: beef,
@@ -244,10 +246,10 @@ export const CreatorMenu = () => {
       notes: 'General',
       mealCategory: 'Dinner',
       veges: {
-          vegeStackId: vegeStack,
-          note: '',
-          calories: '50',
-        },
+        vegeStackId: vegeStack,
+        note: '',
+        calories: '50',
+      },
       recipes: [
         {
           recipeId: beef,
@@ -371,17 +373,12 @@ export const CreatorMenu = () => {
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <div className='fixed bottom-4 right-4 z-50 flex flex-col gap-2 p-2 bg-secondary rounded-full shadow-lg'>
-          <HamburgerMenuIcon className='h-4 w-4' />
-        </div>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        sideOffset={12}
-        align='end'
-        side='top'
-        className='max-h-[70vh] overflow-y-auto z-99'
+    <DropdownMenuPortal>
+      <DropdownMenuSubContent
+        sideOffset={2}
+        alignOffset={-650}
+        avoidCollisions={false}
+        className='max-h-[700px] overflow-y-auto z-99'
       >
         <DropdownMenuLabel>ADMIN</DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -550,7 +547,7 @@ export const CreatorMenu = () => {
             deleteAllPlans
           </Button>
         </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </DropdownMenuSubContent>
+    </DropdownMenuPortal>
   )
 }

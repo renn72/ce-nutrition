@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 import { cn } from '@/lib/utils'
 import { MoonIcon, SunIcon } from '@radix-ui/react-icons'
-import { House, LogOutIcon, Settings, UserRoundCog } from 'lucide-react'
+import { House, LogOutIcon, Settings, UserRoundCog, VenetianMask } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import { toast } from 'sonner'
@@ -18,6 +18,8 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
@@ -29,6 +31,7 @@ import { Separator } from '@/components/ui/separator'
 
 import { Logout } from '@/components/auth/logout'
 import { SignInUp } from '@/components/auth/sign-in-up'
+import { CreatorMenu } from '../creator/menu'
 
 const User = () => {
   const ctx = api.useUtils()
@@ -36,6 +39,7 @@ const User = () => {
 
   const { theme, setTheme } = useTheme()
   const isTrainer = user?.isTrainer
+  const isCreator = user?.isCreator
   const onLogout = async () => {
     try {
       await signOut()
@@ -114,9 +118,19 @@ const User = () => {
           <span className=''>Toggle theme</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
+        {isCreator ? (
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
+              <VenetianMask size={20} />
+              Super
+            </DropdownMenuSubTrigger>
+            <CreatorMenu />
+          </DropdownMenuSub>
+        ) : null}
         <DropdownMenuItem
           onClick={() => onLogout()}
-          className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
+          className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'
+        >
           <LogOutIcon size={20} />
           <span className=''>Logout</span>
         </DropdownMenuItem>

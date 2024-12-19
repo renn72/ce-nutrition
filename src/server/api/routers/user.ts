@@ -198,7 +198,7 @@ export const userRouter = createTRPCRouter({
       },
     ]
     const hashedPassword = await hash('hklasd', 10)
-      const hashedJamie = await hash('jamiedash', 10)
+    const hashedJamie = await hash('jamiedash', 10)
     const res = await ctx.db.insert(user).values(
       users.map((user) => ({
         firstName: user.firstName,
@@ -214,14 +214,13 @@ export const userRouter = createTRPCRouter({
       })),
     )
     await ctx.db.insert(user).values({
-        firstName: 'Jamie',
-        lastName: 'Dash',
-        name: 'Jamie Dash',
-        email:
-          'jamie@comp-edge.com.au',
-        password: hashedJamie,
-        isTrainer: false,
-    } )
+      firstName: 'Jamie',
+      lastName: 'Dash',
+      name: 'Jamie Dash',
+      email: 'jamie@comp-edge.com.au',
+      password: hashedJamie,
+      isTrainer: false,
+    })
 
     return res
   }),
