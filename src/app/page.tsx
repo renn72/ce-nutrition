@@ -2,12 +2,15 @@
 
 import { api } from '@/trpc/react'
 
+import { ReactNode, useState } from 'react'
+
 import Image from 'next/image'
 import Link from 'next/link'
 
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
+import { cn } from '@/lib/utils'
 import { GetAllDailyLogs, GetAllWeighIns, GetUserById } from '@/types'
-import { Bell, NotebookText } from 'lucide-react'
+import { Bell, BellDot, NotebookText } from 'lucide-react'
 import {
   Area,
   AreaChart,
@@ -26,6 +29,14 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from '@/components/ui/chart'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -60,17 +71,17 @@ const PlanPreview = ({ user }: { user: GetUserById }) => {
             </div>
           </div>
           <div className='flex gap-0 flex-col pl-4'>
-          {
-            plan.userRecipes.filter((recipe) => recipe.mealIndex == mealIndex).map((recipe, recipeIndex) => (
-              <div
-                className='flex gap-2 items-center'
-                key={recipe.id}
-              >
-                <div className='text-muted-foreground'>{recipe.name}</div>
-              </div>
-            ))
-          }
-        </div>
+            {plan.userRecipes
+              .filter((recipe) => recipe.mealIndex == mealIndex)
+              .map((recipe, recipeIndex) => (
+                <div
+                  className='flex gap-2 items-center'
+                  key={recipe.id}
+                >
+                  <div className='text-muted-foreground'>{recipe.name}</div>
+                </div>
+              ))}
+          </div>
         </div>
       ))}
     </div>
@@ -241,21 +252,115 @@ const BodyWeightChart = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
     </ChartContainer>
   )
 }
+interface Notification {
+  id: number
+  state: string
+  message: string
+}
+const Notifications = ({
+  notifications,
+  setNotifications,
+}: {
+  notifications: Notification[]
+  setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>
+}) => {
+  const isNotifications = notifications.reduce(
+    (acc, idx) => (acc ? true : idx.state === 'unread' ? true : false),
+    false,
+  )
+  console.log(isNotifications)
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        {isNotifications ? (
+          <div className='relative'>
+            <BellDot
+              size={40}
+              className='bg-accentt cursor-pointer rounded-full p-1'
+            />
+            <div className='absolute top-[8px] right-[6px] w-3 h-3 bg-red-600 rounded-full'></div>
+          </div>
+        ) : (
+          <Bell
+            size={40}
+            className='bg-accentt cursor-pointer rounded-full p-1'
+          />
+        )}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        alignOffset={-28}
+        align='end'
+        sideOffset={8}
+      >
+        <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {notifications.map((notification) => (
+          <div key={notification.id}>
+            <DropdownMenuItem
+              onSelect={(e) => {
+                e.preventDefault()
+                setNotifications(
+                  notifications.map((n) => {
+                    if (n.id == notification.id) {
+                      return {
+                        ...n,
+                        state: 'read',
+                      }
+                    }
+                    return n
+                  }),
+                )
+              }}
+              key={notification.id}
+            >
+              <div
+                className={cn(
+                  'flex gap-2 items-center',
+                  notification.state === 'unread'
+                    ? 'text-foreground font-medium'
+                    : 'text-muted-foreground',
+                )}
+              >
+                <div className=''>{notification.message}</div>
+                <div className='text-sm text-muted-foreground'>
+                  {notification.state === 'unread' ? (
+                    <div className='h-2 w-2 rounded-full bg-red-600' />
+                  ) : (
+                    <div className='w-2' />
+                  )}
+                </div>
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </div>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
 
-const Mobile = ({ userId }: { userId: string }) => {
+const Mobile = ({
+  userId,
+  isDesktop = false,
+}: {
+  userId: string
+  isDesktop?: boolean
+}) => {
   const { data: currentUser } = api.user.get.useQuery(userId)
   const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId)
   const { data: weighIns } = api.weighIn.getAllUser.useQuery(userId)
 
-  console.log(currentUser)
-
+  const [notifications, setNotifications] = useState(() => [
+    { id: 1, state: 'unread', message: 'New body weight record' },
+    { id: 2, state: 'unread', message: 'Update to your diet plan' },
+  ])
   const isTrainer = currentUser?.isTrainer
   const plan = currentUser?.userPlans.find(
     (plan) => plan.id == currentUser?.currentPlanId,
   )
   return (
-    <div className='flex flex-col gap-2 w-full min-h-screen'>
-      <div className='flex gap-2 items-center justify-around w-full'>
+    <div className='flex flex-col gap-2 w-full min-h-screen mt-16 '>
+      <div className='flex gap-2 items-center justify-around w-full fixed top-0 z-10 bg-background'>
         <div className='flex flex-col gap-0 items-center justify-center'>
           <NotebookText
             size={40}
@@ -280,9 +385,9 @@ const Mobile = ({ userId }: { userId: string }) => {
           />
         </Link>
         <div className='flex flex-col gap-0 items-center justify-center'>
-          <Bell
-            size={40}
-            className='bg-accentt cursor-pointer rounded-full p-1'
+          <Notifications
+            notifications={notifications}
+            setNotifications={setNotifications}
           />
           <Label className='text-xs text-muted-foreground'>Notifications</Label>
         </div>
@@ -295,37 +400,40 @@ const Mobile = ({ userId }: { userId: string }) => {
         <TabsList className='flex gap-2 items-center justify-center w-full bg-background '>
           <TabsTrigger
             className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
-            value='bw'>Body Weight</TabsTrigger>
+            value='bw'
+          >
+            Body Weight
+          </TabsTrigger>
           <TabsTrigger
             className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
-            value='lm'>Lean Mass</TabsTrigger>
+            value='lm'
+          >
+            Lean Mass
+          </TabsTrigger>
           <TabsTrigger
             className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
-            value='bf'>Body Fat</TabsTrigger>
+            value='bf'
+          >
+            Body Fat
+          </TabsTrigger>
         </TabsList>
         <TabsContent
           className='bg-secondary p-2'
           value='bw'
         >
-          {dailyLogs ? (
-            <BodyWeightChart dailyLogs={dailyLogs} />
-          ) : null}
+          {dailyLogs ? <BodyWeightChart dailyLogs={dailyLogs} /> : null}
         </TabsContent>
         <TabsContent
           value='lm'
           className='bg-secondary p-2'
         >
-          {weighIns  ? (
-            <LeanMassChart weighIns={weighIns} />
-          ) : null}
+          {weighIns ? <LeanMassChart weighIns={weighIns} /> : null}
         </TabsContent>
         <TabsContent
           value='bf'
           className='bg-secondary p-2'
         >
-          {weighIns  ? (
-            <BodyFatChart weighIns={weighIns} />
-          ) : null}
+          {weighIns ? <BodyFatChart weighIns={weighIns} /> : null}
         </TabsContent>
       </Tabs>
       <div className='flex gap-2 w-full justify-center my-6'>
@@ -338,8 +446,14 @@ const Mobile = ({ userId }: { userId: string }) => {
       </div>
       <PlanPreview user={currentUser} />
       <div className='flex flex-col gap-2 w-full p-2 h-96 bg-secondary'></div>
+      <div className='flex flex-col gap-2 w-full p-2 h-96 bg-secondary'></div>
       <div className='flex flex-col gap-2 w-full p-2 grow'></div>
-      <div className='flex gap-2 w-full p-2 justify-center fixed bottom-0 border-t border-border bg-background'>
+      <div
+        className={cn(
+          'flex gap-2 w-full p-2 justify-center fixed border-t border-border bg-background w-full',
+          !isDesktop ? 'bottom-0 w-full' : 'top-[924px] w-[389px]',
+        )}
+      >
         <User />
       </div>
     </div>
@@ -348,12 +462,15 @@ const Mobile = ({ userId }: { userId: string }) => {
 
 const Desktop = ({ userId }: { userId: string }) => {
   return (
-    <div className='flex flex-col items-center gap-2'>
+    <div className='flex flex-col items-center gap-2 '>
       <div className='my-8'>TODO: desktop</div>
       <div>Mobile</div>
 
-      <ScrollArea className='w-[390px] h-[844px] border border-border shadow-md'>
-        <Mobile userId={userId} />
+      <ScrollArea className='w-[390px] h-[844px] border border-border shadow-md relative '>
+        <Mobile
+          userId={userId}
+          isDesktop={true}
+        />
       </ScrollArea>
     </div>
   )

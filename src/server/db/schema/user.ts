@@ -56,6 +56,19 @@ export const user = createTable(
   }),
 )
 
+export const userRelations = relations(user, ({ many }) => ({
+  roles: many(role),
+  notifications: many(notification),
+  accounts: many(account),
+  trainers: many(userToTrainer, { relationName: 'trainers' }),
+  clients: many(userToTrainer, { relationName: 'clients' }),
+  userPlans: many(userPlan, { relationName: 'user' }),
+  userPlansCreator: many(userPlan, { relationName: 'creator' }),
+  dailyLogs: many(dailyLog, { relationName: 'user' }),
+  weighIns: many(weighIn, { relationName: 'user' }),
+  weighInsTrainer: many(weighIn, { relationName: 'trainer' }),
+}))
+
 export const dailyLog = createTable('daily_log', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
@@ -78,6 +91,11 @@ export const dailyLog = createTable('daily_log', {
   sleep: text('sleep'),
   nap: text('nap'),
 })
+
+export const dailyLogRelations = relations(dailyLog, ({ one, many }) => ({
+  user: one(user, { fields: [dailyLog.userId], references: [user.id] }),
+  dailyMeals: many(dailyMeal),
+}))
 
 export const dailyMeal = createTable('daily_meal', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
@@ -207,18 +225,6 @@ export const roleRelations = relations(role, ({ one }) => ({
   }),
 }))
 
-export const userRelations = relations(user, ({ many }) => ({
-  roles: many(role),
-  notifications: many(notification),
-  accounts: many(account),
-  trainers: many(userToTrainer, { relationName: 'trainers' }),
-  clients: many(userToTrainer, { relationName: 'clients' }),
-  userPlans: many(userPlan, { relationName: 'user' }),
-  userPlansCreator: many(userPlan, { relationName: 'creator' }),
-  dailyLogs: many(dailyLog, { relationName: 'user' }),
-  weighIns: many(weighIn, { relationName: 'user' }),
-  weighInsTrainer: many(weighIn, { relationName: 'trainer' }),
-}))
 
 export const userToTrainerRelations = relations(
   userToTrainer,
@@ -235,11 +241,6 @@ export const userToTrainerRelations = relations(
     }),
   }),
 )
-
-export const dailyLogRelations = relations(dailyLog, ({ one, many }) => ({
-  user: one(user, { fields: [dailyLog.userId], references: [user.id] }),
-  dailyMeals: many(dailyMeal),
-}))
 
 export const dailyMealRelations = relations(dailyMeal, ({ one, many }) => ({
   dailyLog: one(dailyLog, {
