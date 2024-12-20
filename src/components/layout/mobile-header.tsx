@@ -85,8 +85,8 @@ const Notifications = ({
                 className={cn(
                   'flex gap-2 items-center',
                   notification.state === 'unread'
-                    ? 'text-foreground font-medium'
-                    : 'text-muted-foreground',
+                    ? 'text-foreground font-semibold'
+                    : '',
                 )}
               >
                 <div className=''>{notification.message}</div>
