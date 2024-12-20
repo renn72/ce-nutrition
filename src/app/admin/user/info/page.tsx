@@ -15,7 +15,9 @@ export default function Home() {
   const userId = searchParams.get('user')
 
   const { data: user } = api.user.get.useQuery(userId || '')
+  const { data: trainer } = api.user.getByEmail.useQuery('renn@warner.systems')
   const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId || '')
+  const { data: weighIns } = api.weighIn.getAllUser.useQuery(userId || '')
   const { mutate: addDailyLog } = api.dailyLog.create.useMutation({
     onSuccess: () => {
       ctx.dailyLog.invalidate()
@@ -30,13 +32,13 @@ export default function Home() {
   })
   const { mutate: addWeighIn } = api.weighIn.create.useMutation({
     onSuccess: () => {
-      ctx.dailyLog.invalidate()
+      ctx.weighIn.invalidate()
       toast.success('Weight Added')
     },
   })
   const { mutate: deleteAllWeighIn } = api.weighIn.deleteAll.useMutation({
     onSuccess: () => {
-      ctx.dailyLog.invalidate()
+      ctx.weighIn.invalidate()
       toast.success('Weight Deleted')
     },
   })
@@ -49,27 +51,33 @@ export default function Home() {
     let previousWeight = '95'
     let weight = '95'
 
-
-    let previousLM = '12'
-    let lM = '12'
+    let previousLeanMass = '20'
+    let leanMass = '20'
 
     let previousfat = '20'
     let fat = '20'
 
-    for (let i = 0; i < 5; i++) {
-      const day = new Date(new Date().setDate(today.getDate() - (30 - i)))
+    for (let i = 0; i < 10; i++) {
+      const day = new Date(new Date().setDate(today.getDate() - (75 - i * 7)))
+
       weight = (Math.random() * 0.3 - 0.2 + Number(previousWeight)).toFixed(2)
       previousWeight = weight
-      const sleep = (Math.random() * 3 + 6).toFixed(1)
-      const bowelMovements = (Math.random() * 2 + 1).toFixed(0)
-      console.log('weight', weight)
-      addDailyLog({
+
+      fat = (Math.random() * 0.3 - 0.2 + Number(previousfat)).toFixed(2)
+      previousfat = fat
+
+      leanMass = (Math.random() * 0.3 - 0.2 + Number(previousLeanMass)).toFixed(
+        2,
+      )
+      previousLeanMass = leanMass
+
+      addWeighIn({
         date: day,
-        morningWeight: weight,
-        notes: 'test notes',
-        sleep: sleep,
-        bowelMovements: bowelMovements,
+        bodyWeight: weight,
+        bodyFat: fat,
+        leanMass: leanMass,
         userId: userId,
+        trainerId: trainer?.id || userId,
       })
     }
   }
@@ -106,7 +114,20 @@ export default function Home() {
   return (
     <div className='flex flex-col gap-4 items-center mt-10 '>
       current program: {plan.name}
-      <Button>Generate Weigh In's</Button>
+      <div className='flex gap-4 items-center'>
+        <Button
+          onClick={onGenerateWeighIn}
+          variant='secondary'
+        >
+          Generate Weigh In's
+        </Button>
+        <Button
+          onClick={() => deleteAllWeighIn(userId || '')}
+          variant='destructive'
+        >
+          Delete Weigh In's
+        </Button>
+      </div>
       <div className='flex gap-4 items-center'>
         <Button
           variant='secondary'
@@ -121,20 +142,43 @@ export default function Home() {
           Delete Daily Log
         </Button>
       </div>
-      <div className='flex flex-col gap-1 items-center'>
-        {dailyLogs?.map((dailyLog) => (
-          <div
-            className='flex gap-6 items-center'
-            key={dailyLog.id}
-          >
-            <div className='text-sm text-muted-foreground'>
-              {getFormattedDate(dailyLog.date)}
+      <div className='flex gap-8'>
+        <div className='flex flex-col gap-1 items-center'>
+          {dailyLogs?.map((dailyLog) => (
+            <div
+              className='flex gap-6 items-center'
+              key={dailyLog.id}
+            >
+              <div className='text-sm text-muted-foreground'>
+                {getFormattedDate(dailyLog.date)}
+              </div>
+              <div className='text-sm text-muted-foreground'>
+                {dailyLog.morningWeight}kg
+              </div>
             </div>
-            <div className='text-sm text-muted-foreground'>
-              {dailyLog.morningWeight}kg
+          ))}
+        </div>
+        <div className='flex flex-col gap-1 items-center'>
+          {weighIns?.map((weighIn) => (
+            <div
+              className='flex gap-6 items-center'
+              key={weighIn.id}
+            >
+              <div className='text-sm text-muted-foreground'>
+                {getFormattedDate(weighIn.date)}
+              </div>
+              <div className='text-sm text-muted-foreground'>
+                {weighIn.bodyWeight}kg
+              </div>
+              <div className='text-sm text-muted-foreground'>
+                {weighIn.leanMass}kg
+              </div>
+              <div className='text-sm text-muted-foreground'>
+                {weighIn.bodyFat}kg
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   )

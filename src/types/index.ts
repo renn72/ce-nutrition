@@ -63,3 +63,5 @@ export type UserPlan = RouterOutputs['userPlan']['get']
 
 export type GetAllDailyLogs = RouterOutputs['dailyLog']['getAllUser']
 export type GetDailyLogById = RouterOutputs['dailyLog']['get']
+
+export type GetAllWeighIns = RouterOutputs['weighIn']['getAllUser']

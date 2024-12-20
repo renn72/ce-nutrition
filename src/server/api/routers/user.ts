@@ -47,6 +47,16 @@ export const userRouter = createTRPCRouter({
     await client.sync()
     return true
   }),
+  getByEmail: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
+    if (input === '') throw new TRPCError({ code: 'BAD_REQUEST' })
+    const res = await ctx.db.query.user.findFirst({
+      where: (user, { eq }) => eq(user.email, input),
+      columns: {
+        password: false,
+      },
+    })
+    return res
+  }),
   get: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
     if (input === '') throw new TRPCError({ code: 'BAD_REQUEST' })
     const res = await ctx.db.query.user.findFirst({

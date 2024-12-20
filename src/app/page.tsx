@@ -6,7 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
-import { GetAllDailyLogs, GetUserById } from '@/types'
+import { GetAllDailyLogs, GetAllWeighIns, GetUserById } from '@/types'
 import { Bell, NotebookText } from 'lucide-react'
 import {
   Area,
@@ -77,11 +77,124 @@ const PlanPreview = ({ user }: { user: GetUserById }) => {
   )
 }
 
+const BodyFatChart = ({ weighIns }: { weighIns: GetAllWeighIns }) => {
+  const data = weighIns
+    .slice(0, 15)
+    .map((weighIn) => ({
+      date: weighIn.date.toLocaleDateString(undefined, {
+        month: 'numeric',
+        day: 'numeric',
+      }),
+      weight: weighIn.bodyFat,
+    }))
+    .reverse()
+
+  const dataMin = Math.floor(Math.min(...data.map((d) => Number(d.weight))))
+  const dataMax = Math.ceil(Math.max(...data.map((d) => Number(d.weight))))
+
+  return (
+    <ChartContainer
+      config={chartConfig}
+      className='w-full min-h-[200px]'
+    >
+      <AreaChart data={data}>
+        <CartesianGrid vertical={false} />
+        <XAxis
+          dataKey='date'
+          tickLine={false}
+          tickMargin={10}
+          axisLine={true}
+        />
+        <YAxis
+          orientation='right'
+          width={20}
+          allowDecimals={false}
+          padding={{ top: 0, bottom: 0 }}
+          interval='preserveStartEnd'
+          dataKey='weight'
+          tickLine={false}
+          tickCount={10}
+          tickMargin={0}
+          axisLine={false}
+          type='number'
+          allowDataOverflow={true}
+          domain={[dataMin, dataMax]}
+        />
+        <Area
+          dataKey='weight'
+          dot={false}
+          strokeWidth={2}
+          type='monotone'
+          isAnimationActive={true}
+        />
+      </AreaChart>
+    </ChartContainer>
+  )
+}
+
+const LeanMassChart = ({ weighIns }: { weighIns: GetAllWeighIns }) => {
+  const data = weighIns
+    .slice(0, 15)
+    .map((weighIn) => ({
+      date: weighIn.date.toLocaleDateString(undefined, {
+        month: 'numeric',
+        day: 'numeric',
+      }),
+      weight: weighIn.leanMass,
+    }))
+    .reverse()
+
+  const dataMin = Math.floor(Math.min(...data.map((d) => Number(d.weight))))
+  const dataMax = Math.ceil(Math.max(...data.map((d) => Number(d.weight))))
+
+  return (
+    <ChartContainer
+      config={chartConfig}
+      className='w-full min-h-[200px]'
+    >
+      <AreaChart data={data}>
+        <CartesianGrid vertical={false} />
+        <XAxis
+          dataKey='date'
+          tickLine={false}
+          tickMargin={10}
+          axisLine={true}
+        />
+        <YAxis
+          orientation='right'
+          width={20}
+          allowDecimals={false}
+          padding={{ top: 0, bottom: 0 }}
+          interval='preserveStartEnd'
+          dataKey='weight'
+          tickLine={false}
+          tickCount={10}
+          tickMargin={0}
+          axisLine={false}
+          type='number'
+          allowDataOverflow={true}
+          domain={[dataMin, dataMax]}
+        />
+        <Area
+          dataKey='weight'
+          dot={false}
+          strokeWidth={2}
+          type='monotone'
+          isAnimationActive={true}
+        />
+      </AreaChart>
+    </ChartContainer>
+  )
+}
+
 const BodyWeightChart = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
   const data = dailyLogs
     .slice(0, 15)
     .map((dailyLog) => ({
-      date: dailyLog.date.getDate(),
+      date: dailyLog.date.toLocaleDateString(undefined, {
+        month: 'numeric',
+        day: 'numeric',
+      }),
       weight: dailyLog.morningWeight,
     }))
     .reverse()
@@ -132,6 +245,7 @@ const BodyWeightChart = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
 const Mobile = ({ userId }: { userId: string }) => {
   const { data: currentUser } = api.user.get.useQuery(userId)
   const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId)
+  const { data: weighIns } = api.weighIn.getAllUser.useQuery(userId)
 
   console.log(currentUser)
 
@@ -193,7 +307,7 @@ const Mobile = ({ userId }: { userId: string }) => {
           className='bg-secondary p-2'
           value='bw'
         >
-          {dailyLogs && dailyLogs.length > 0 ? (
+          {dailyLogs ? (
             <BodyWeightChart dailyLogs={dailyLogs} />
           ) : null}
         </TabsContent>
@@ -201,16 +315,16 @@ const Mobile = ({ userId }: { userId: string }) => {
           value='lm'
           className='bg-secondary p-2'
         >
-          {dailyLogs && dailyLogs.length > 0 ? (
-            <BodyWeightChart dailyLogs={dailyLogs} />
+          {weighIns  ? (
+            <LeanMassChart weighIns={weighIns} />
           ) : null}
         </TabsContent>
         <TabsContent
           value='bf'
           className='bg-secondary p-2'
         >
-          {dailyLogs && dailyLogs.length > 0 ? (
-            <BodyWeightChart dailyLogs={dailyLogs} />
+          {weighIns  ? (
+            <BodyFatChart weighIns={weighIns} />
           ) : null}
         </TabsContent>
       </Tabs>
