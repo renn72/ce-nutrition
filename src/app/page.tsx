@@ -330,8 +330,8 @@ const Mobile = ({ userId }: { userId: string }) => {
       </Tabs>
       <div className='flex gap-2 w-full justify-center my-6'>
         <Button
-          variant='secondary'
-          className='w-full'
+          variant='accent'
+          className='w-full mx-4 text-slate-900/70'
         >
           Daily Log
         </Button>
