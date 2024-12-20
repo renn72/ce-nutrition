@@ -42,6 +42,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { User } from '@/components/auth/user'
+import MobileHeader from '@/components/layout/mobile-header'
 
 import { Plan } from './_components/plan'
 
@@ -252,92 +253,6 @@ const BodyWeightChart = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
     </ChartContainer>
   )
 }
-interface Notification {
-  id: number
-  state: string
-  message: string
-}
-const Notifications = ({
-  notifications,
-  setNotifications,
-}: {
-  notifications: Notification[]
-  setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>
-}) => {
-  const isNotifications = notifications.reduce(
-    (acc, idx) => (acc ? true : idx.state === 'unread' ? true : false),
-    false,
-  )
-  console.log(isNotifications)
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        {isNotifications ? (
-          <div className='relative'>
-            <BellDot
-              size={40}
-              className='bg-accentt cursor-pointer rounded-full p-1'
-            />
-            <div className='absolute top-[8px] right-[6px] w-3 h-3 bg-red-600 rounded-full'></div>
-          </div>
-        ) : (
-          <Bell
-            size={40}
-            className='bg-accentt cursor-pointer rounded-full p-1'
-          />
-        )}
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        alignOffset={-28}
-        align='end'
-        sideOffset={8}
-      >
-        <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {notifications.map((notification) => (
-          <div key={notification.id}>
-            <DropdownMenuItem
-              onSelect={(e) => {
-                e.preventDefault()
-                setNotifications(
-                  notifications.map((n) => {
-                    if (n.id == notification.id) {
-                      return {
-                        ...n,
-                        state: 'read',
-                      }
-                    }
-                    return n
-                  }),
-                )
-              }}
-              key={notification.id}
-            >
-              <div
-                className={cn(
-                  'flex gap-2 items-center',
-                  notification.state === 'unread'
-                    ? 'text-foreground font-medium'
-                    : 'text-muted-foreground',
-                )}
-              >
-                <div className=''>{notification.message}</div>
-                <div className='text-sm text-muted-foreground'>
-                  {notification.state === 'unread' ? (
-                    <div className='h-2 w-2 rounded-full bg-red-600' />
-                  ) : (
-                    <div className='w-2' />
-                  )}
-                </div>
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-          </div>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
-}
 
 const Mobile = ({
   userId,
@@ -350,48 +265,13 @@ const Mobile = ({
   const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId)
   const { data: weighIns } = api.weighIn.getAllUser.useQuery(userId)
 
-  const [notifications, setNotifications] = useState(() => [
-    { id: 1, state: 'unread', message: 'New body weight record' },
-    { id: 2, state: 'unread', message: 'Update to your diet plan' },
-  ])
   const isTrainer = currentUser?.isTrainer
   const plan = currentUser?.userPlans.find(
     (plan) => plan.id == currentUser?.currentPlanId,
   )
   return (
     <div className='flex flex-col gap-2 w-full min-h-screen mt-16 '>
-      <div className='flex gap-2 items-center justify-around w-full fixed top-0 z-10 bg-background'>
-        <div className='flex flex-col gap-0 items-center justify-center'>
-          <NotebookText
-            size={40}
-            className='bg-accentt cursor-pointer rounded-full p-1'
-          />
-          <Label className='text-xs text-muted-foreground'>Program</Label>
-        </div>
-        <Link
-          className='hover:opacity-100 opacity-80 transition-all py-2'
-          href='/'
-        >
-          <Image
-            src='/logo/ce.png'
-            alt='logo'
-            width={40}
-            height={40}
-            priority
-            style={{
-              width: '100%',
-              height: 'auto',
-            }}
-          />
-        </Link>
-        <div className='flex flex-col gap-0 items-center justify-center'>
-          <Notifications
-            notifications={notifications}
-            setNotifications={setNotifications}
-          />
-          <Label className='text-xs text-muted-foreground'>Notifications</Label>
-        </div>
-      </div>
+      <MobileHeader />
 
       <Tabs
         defaultValue='bw'
@@ -437,12 +317,16 @@ const Mobile = ({
         </TabsContent>
       </Tabs>
       <div className='flex gap-2 w-full justify-center my-6'>
-        <Button
-          variant='accent'
-          className='w-full mx-4 text-slate-900/70'
-        >
-          Daily Log
-        </Button>
+        <Link
+          className='w-full mx-4'
+          href='/user/log'>
+          <Button
+            variant='accent'
+            className='w-full'
+          >
+            Daily Log
+          </Button>
+        </Link>
       </div>
       <PlanPreview user={currentUser} />
       <div className='flex flex-col gap-2 w-full p-2 h-96 bg-secondary'></div>
