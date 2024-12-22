@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 
 import Webcam from 'react-webcam'
@@ -27,19 +26,15 @@ export default function Page() {
   //   navigator.mediaDevices.enumerateDevices().then(handleDevices)
   // }, [handleDevices])
 
-  const [videoConstraints, setVideoConstraints] = useState<VideoConstraints>({
-    facingMode: { exact: 'environment' },
-  })
+  const videoConstraints: VideoConstraints = {
+    facingMode: { exact: 'user' },
+  }
 
   const handleClick = () => {
     if (videoConstraints.facingMode === 'user') {
-      setVideoConstraints({
-        facingMode: { exact: 'environment' },
-      })
+      videoConstraints.facingMode = { exact: 'environment' }
     } else {
-      setVideoConstraints({
-        facingMode: 'user',
-      })
+      videoConstraints.facingMode = 'user'
     }
   }
 
@@ -50,9 +45,6 @@ export default function Page() {
         videoConstraints={videoConstraints}
       />
       <Button onClick={handleClick}>Change</Button>
-      <Link href='/user/cam2'>
-        <Button>Back</Button>
-      </Link>
     </div>
   )
 }
