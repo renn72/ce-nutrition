@@ -6,6 +6,10 @@ import Webcam from 'react-webcam'
 
 import { Button } from '@/components/ui/button'
 
+interface VideoConstraints {
+  facingMode: string | { exact: string }
+}
+
 export default function Page() {
   const [deviceId, setDeviceId] = useState({})
   const [devices, setDevices] = useState([])
@@ -22,13 +26,13 @@ export default function Page() {
   //   navigator.mediaDevices.enumerateDevices().then(handleDevices)
   // }, [handleDevices])
 
-  const videoConstraints = {
-    facingMode: 'user',
+  const videoConstraints: VideoConstraints = {
+    facingMode: { exact: 'environment' },
   }
 
   const handleClick = () => {
     if (videoConstraints.facingMode === 'user') {
-      videoConstraints.facingMode = 'environment'
+      videoConstraints.facingMode = { exact: 'environment' }
     } else {
       videoConstraints.facingMode = 'user'
     }
