@@ -36,7 +36,6 @@ const Notifications = ({
     (acc, idx) => (acc ? true : idx.state === 'unread' ? true : false),
     false,
   )
-  console.log(isNotifications)
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

@@ -11,6 +11,10 @@ import { SignIn } from '@/components/auth/sign-in'
 import { ThemeProvider } from '@/components/misc/theme-provider'
 import { Providers } from '@/components/provider'
 
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+import { ourFileRouter } from "~/app/api/uploadthing/core";
+
 import '@/styles/globals.css'
 
 export const metadata: Metadata = {
@@ -40,6 +44,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <Providers>
+            <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
             <TRPCReactProvider>
               {!session?.user?.id ? (
                 <div className='flex min-h-screen flex-col items-center justify-center'>
