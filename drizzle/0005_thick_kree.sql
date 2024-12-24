@@ -1,0 +1,1 @@
+ALTER TABLE `ce-nu_weigh_in` ADD `image` text;

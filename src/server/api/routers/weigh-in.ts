@@ -15,6 +15,7 @@ export const weighInRouter = createTRPCRouter({
         leanMass: z.string(),
         userId: z.string(),
         trainerId: z.string(),
+        image: z.string().optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {

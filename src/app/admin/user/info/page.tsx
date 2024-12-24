@@ -109,6 +109,7 @@ export default function Home() {
         isLift: Math.random() > 0.3,
         bowelMovements: bowelMovements,
         userId: userId,
+        image: 'https://utfs.io/f/fnZ11GC5JP7TQYL3jL86fSlZ2KgctYiQ5PGL3nHRhJIMW0CE',
       })
     }
   }

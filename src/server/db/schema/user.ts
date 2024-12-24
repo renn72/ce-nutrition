@@ -131,6 +131,7 @@ export const weighIn = createTable('weigh_in', {
   bodyWeight: text('body_weight'),
   leanMass: text('lean_mass'),
   bodyFat: text('body_fat'),
+  image: text('image'),
   notes: text('notes'),
 })
 
