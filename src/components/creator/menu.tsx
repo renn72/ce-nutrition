@@ -375,10 +375,8 @@ export const CreatorMenu = () => {
   return (
     <DropdownMenuPortal>
       <DropdownMenuSubContent
-        sideOffset={2}
-        alignOffset={-650}
-        avoidCollisions={false}
-        className='max-h-[700px] overflow-y-auto z-99'
+        alignOffset={-550}
+        className='max-h-[600px] lg:max-h-[900px] overflow-y-auto z-99 tracking-tighter lg:w-full w-[160px]'
       >
         <DropdownMenuLabel>ADMIN</DropdownMenuLabel>
         <DropdownMenuSeparator />

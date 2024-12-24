@@ -95,6 +95,7 @@ export default function Home() {
       weight = (Math.random() * 0.3 - 0.2 + Number(previousWeight)).toFixed(2)
       previousWeight = weight
       const sleep = (Math.random() * 3 + 6).toFixed(1)
+      const sleepQuality = (Math.random() * 3 + 6).toFixed(0)
       const bowelMovements = (Math.random() * 2 + 1).toFixed(0)
       console.log('weight', weight)
       addDailyLog({
@@ -102,6 +103,10 @@ export default function Home() {
         morningWeight: weight,
         notes: 'test notes',
         sleep: sleep,
+        sleepQuality: sleepQuality,
+        isHiit: Math.random() > 0.3,
+        isCardio: Math.random() > 0.3,
+        isLift: Math.random() > 0.3,
         bowelMovements: bowelMovements,
         userId: userId,
       })
@@ -142,7 +147,7 @@ export default function Home() {
           Delete Daily Log
         </Button>
       </div>
-      <div className='flex gap-8'>
+      <div className='flex gap-8 lg:flex-row flex-col'>
         <div className='flex flex-col gap-1 items-center'>
           {dailyLogs?.map((dailyLog) => (
             <div

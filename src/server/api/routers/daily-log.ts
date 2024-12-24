@@ -14,11 +14,17 @@ export const dailyLogRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        date: z.date().optional(),
+        date: z.date(),
         morningWeight: z.string(),
         notes: z.string(),
         sleep: z.string(),
+        sleepQuality: z.string().optional(),
+        nap: z.string().optional(),
+        isHiit: z.boolean().optional(),
+        isCardio: z.boolean().optional(),
+        isLift: z.boolean().optional(),
         bowelMovements: z.string(),
+        image: z.string().optional(),
         userId: z.string(),
       }),
     )

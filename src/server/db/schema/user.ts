@@ -89,6 +89,11 @@ export const dailyLog = createTable('daily_log', {
   water: text('water'),
   bowelMovements: text('bowel_movements'),
   sleep: text('sleep'),
+  sleepQuality: text('sleep_quality'),
+  isHiit: int('is_hiit', { mode: 'boolean' }),
+  isCardio: int('is_cardio', { mode: 'boolean' }),
+  isLift: int('is_lift', { mode: 'boolean' }),
+  image: text('image'),
   nap: text('nap'),
 })
 
