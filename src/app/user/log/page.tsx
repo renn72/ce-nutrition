@@ -1,11 +1,10 @@
 'use client'
 
-import { Switch } from "@/components/ui/switch"
-import { Textarea } from "@/components/ui/textarea"
 import { api } from '@/trpc/react'
 
 import { useState } from 'react'
 
+import { UploadButton } from '@/lib/uploadthing'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ChevronDown, PlusCircle } from 'lucide-react'
@@ -38,8 +37,9 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
+import { Textarea } from '@/components/ui/textarea'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { UploadButton } from "@/lib/uploadthing"
 
 export const dynamic = 'force-dynamic'
 
@@ -72,11 +72,15 @@ export default function Home() {
       isCardio: false,
       isLift: false,
       bowelMovements: '',
+      image: '',
     },
   })
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     console.log('input', data)
   }
+
+  const imageUrl = form.watch('image')
+  console.log('imageUrl', imageUrl)
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -149,61 +153,61 @@ export default function Home() {
               </FormItem>
             )}
           />
-          <div className='flex gap-4 justify-between'>
-          <FormField
-            control={form.control}
-            name='isHiit'
-            render={({ field }) => (
-              <FormItem className='flex items-center gap-2'>
-                <FormLabel className='mt-[8px]'>Hiit</FormLabel>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={(value) => {
-                      field.onChange(value)
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name='isCardio'
-            render={({ field }) => (
-              <FormItem className='flex items-center gap-2'>
-                <FormLabel className='mt-[8px]'>Cardio</FormLabel>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={(value) => {
-                      field.onChange(value)
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name='isLift'
-            render={({ field }) => (
-              <FormItem className='flex items-center gap-2'>
-                <FormLabel className='mt-[8px]'>Lift</FormLabel>
-                <FormControl>
-                 <Switch
-                    checked={field.value}
-                    onCheckedChange={(value) => {
-                      field.onChange(value)
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className='flex gap-4 justify-between px-4'>
+            <FormField
+              control={form.control}
+              name='isHiit'
+              render={({ field }) => (
+                <FormItem className='flex items-center gap-2'>
+                  <FormLabel className='mt-[8px]'>Hiit</FormLabel>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={(value) => {
+                        field.onChange(value)
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='isCardio'
+              render={({ field }) => (
+                <FormItem className='flex items-center gap-2'>
+                  <FormLabel className='mt-[8px]'>Cardio</FormLabel>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={(value) => {
+                        field.onChange(value)
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='isLift'
+              render={({ field }) => (
+                <FormItem className='flex items-center gap-2'>
+                  <FormLabel className='mt-[8px]'>Lift</FormLabel>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={(value) => {
+                        field.onChange(value)
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <FormField
             control={form.control}
@@ -221,14 +225,34 @@ export default function Home() {
               </FormItem>
             )}
           />
-          <UploadButton
-            endpoint="imageUploader"
-            onClientUploadComplete={(res) => {
-              console.log('onClientUploadComplete', res)
-              const url = res?.[0]?.url
-              form.setValue('image', url)
-            }}
-          />
+          {imageUrl === '' ? (
+            <UploadButton
+              endpoint='imageUploader'
+              onClientUploadComplete={(res) => {
+                console.log('onClientUploadComplete', res)
+                const url = res?.[0]?.url
+                form.setValue('image', url)
+              }}
+            />
+          ) : (
+            <div className='flex gap-4 flex-col justify-between'>
+              <div className='flex gap-2 items-center'>
+                <img
+                  src={imageUrl}
+                  alt='img'
+                  className='w-full h-full'
+                />
+              </div>
+              <Button
+                variant='secondary'
+                onClick={() => {
+                  form.setValue('image', '')
+                }}
+              >
+                Clear
+              </Button>
+            </div>
+          )}
           <div>
             <Button type='submit'>Save</Button>
           </div>
