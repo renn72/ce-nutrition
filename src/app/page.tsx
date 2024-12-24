@@ -21,12 +21,14 @@ import {
   LineChart,
   XAxis,
   YAxis,
+  Legend,
 } from 'recharts'
 
 import { Button } from '@/components/ui/button'
 import {
   ChartContainer,
   ChartTooltipContent,
+  ChartTooltip,
   type ChartConfig,
 } from '@/components/ui/chart'
 import {
@@ -199,6 +201,73 @@ const LeanMassChart = ({ weighIns }: { weighIns: GetAllWeighIns }) => {
   )
 }
 
+const SleepChart = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
+  const data = dailyLogs
+    .slice(0, 14)
+    .map((dailyLog) => ({
+      date: dailyLog.date.toLocaleDateString(undefined, {
+        month: 'numeric',
+        day: 'numeric',
+      }),
+      sleep: dailyLog.sleep,
+      sleepQuality: dailyLog.sleepQuality,
+    }))
+    .reverse()
+
+  const dataMin = Math.floor(Math.min(...data.map((d) => Number(d.sleep))))
+  const dataMax = Math.ceil(Math.max(...data.map((d) => Number(d.sleep))))
+
+  return (
+    <ChartContainer
+      config={chartConfig}
+      className='w-full min-h-[200px]'
+    >
+      <LineChart data={data}>
+        <CartesianGrid vertical={false} />
+        <XAxis
+          dataKey='date'
+          tickLine={false}
+          tickMargin={10}
+          axisLine={true}
+        />
+        <YAxis
+          orientation='right'
+          width={20}
+          allowDecimals={false}
+          padding={{ top: 0, bottom: 0 }}
+          interval='preserveStartEnd'
+          dataKey='sleep'
+          tickLine={false}
+          tickCount={10}
+          tickMargin={0}
+          axisLine={false}
+          type='number'
+          allowDataOverflow={true}
+          domain={[dataMin, dataMax]}
+        />
+        <Line
+          dataKey='sleep'
+          dot={false}
+          strokeWidth={2}
+          type='monotone'
+          isAnimationActive={true}
+        />
+        <Line
+          dataKey='sleepQuality'
+          label='Sleep Quality'
+          stroke='#FFB50050'
+          dot={false}
+          strokeWidth={1}
+          type='monotone'
+          isAnimationActive={true}
+        />
+        <ChartTooltip content={<ChartTooltipContent />} />
+        <Legend />
+      </LineChart>
+    </ChartContainer>
+  )
+}
+
 const BodyWeightChart = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
   const data = dailyLogs
     .slice(0, 15)
@@ -296,6 +365,12 @@ const Mobile = ({
           >
             Body Fat
           </TabsTrigger>
+          <TabsTrigger
+            className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
+            value='sleep'
+          >
+            Sleep
+          </TabsTrigger>
         </TabsList>
         <TabsContent
           className='bg-secondary p-2'
@@ -314,6 +389,12 @@ const Mobile = ({
           className='bg-secondary p-2'
         >
           {weighIns ? <BodyFatChart weighIns={weighIns} /> : null}
+        </TabsContent>
+        <TabsContent
+          value='sleep'
+          className='bg-secondary p-2'
+        >
+          {dailyLogs ? <SleepChart dailyLogs={dailyLogs} /> : null}
         </TabsContent>
       </Tabs>
       <div className='flex gap-2 w-full justify-center my-6'>

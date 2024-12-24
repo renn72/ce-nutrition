@@ -38,6 +38,44 @@ export const dailyLogRouter = createTRPCRouter({
 
       return { res }
     }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        date: z.date(),
+        morningWeight: z.string(),
+        notes: z.string(),
+        sleep: z.string(),
+        sleepQuality: z.string().optional(),
+        isHiit: z.boolean().optional(),
+        isCardio: z.boolean().optional(),
+        isLift: z.boolean().optional(),
+        bowelMovements: z.string(),
+        image: z.string().optional(),
+        userId: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { id, date, morningWeight, notes, sleep, sleepQuality, isHiit, isCardio, isLift, bowelMovements, image, userId } = input
+      const res = await ctx.db
+        .update(dailyLog)
+        .set({
+          date,
+          morningWeight,
+          notes,
+          sleep,
+          sleepQuality,
+          isHiit,
+          isCardio,
+          isLift,
+          bowelMovements,
+          image,
+          userId,
+        })
+        .where(eq(dailyLog.id, id))
+
+      return { res }
+    }),
   getAllUser: protectedProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {
@@ -48,6 +86,13 @@ export const dailyLogRouter = createTRPCRouter({
       })
       return res
     }),
+  getAllCurrentUser: protectedProcedure.query(async ({ ctx }) => {
+    const res = await ctx.db.query.dailyLog.findMany({
+      where: eq(dailyLog.userId, ctx.session.user.id),
+      orderBy: (data, { desc }) => desc(data.date),
+    })
+    return res
+  }),
   delete: protectedProcedure
     .input(z.number())
     .mutation(async ({ input, ctx }) => {
@@ -58,17 +103,14 @@ export const dailyLogRouter = createTRPCRouter({
     .input(z.string())
     .mutation(async ({ input, ctx }) => {
       if (input === '') throw new TRPCError({ code: 'NOT_FOUND' })
-      const res = await ctx.db.delete(dailyLog).where(eq(dailyLog.userId, input))
+      const res = await ctx.db
+        .delete(dailyLog)
+        .where(eq(dailyLog.userId, input))
       return res
     }),
   get: protectedProcedure.input(z.number()).query(async ({ input, ctx }) => {
-    const res = await ctx.db.query.userPlan.findFirst({
-      where: eq(userPlan.id, input),
-      with: {
-        userMeals: true,
-        userRecipes: true,
-        userIngredients: true,
-      },
+    const res = await ctx.db.query.dailyLog.findFirst({
+      where: eq(dailyLog.id, input),
     })
     return res
   }),

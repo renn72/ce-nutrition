@@ -6,6 +6,7 @@ import { useState } from 'react'
 
 import { UploadButton } from '@/lib/uploadthing'
 import { cn } from '@/lib/utils'
+import { GetDailyLogById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ChevronDown, PlusCircle } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -56,27 +57,70 @@ const formSchema = z.object({
   image: z.string().optional(),
 })
 
-export default function Home() {
+const DailyLogForm = ({ todaysLog }: { todaysLog: GetDailyLogById | null }) => {
   const ctx = api.useUtils()
   const { data: currentUser } = api.user.getCurrentUser.useQuery()
-
+  const { mutate: createDailyLog } = api.dailyLog.create.useMutation({
+    onSuccess: () => {
+      toast.success('Updated successfully')
+      ctx.dailyLog.invalidate()
+    },
+  })
+  const { mutate: updateDailyLog } = api.dailyLog.update.useMutation({
+    onSuccess: () => {
+      toast.success('Updated successfully')
+      ctx.dailyLog.invalidate()
+    },
+  })
+  console.log('todaysLog', todaysLog)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      date: new Date(),
-      morningWeight: '',
-      notes: '',
-      sleep: '',
-      sleepQuality: '',
-      isHiit: false,
-      isCardio: false,
-      isLift: false,
-      bowelMovements: '',
-      image: '',
+      date: todaysLog?.date || new Date(),
+      morningWeight: todaysLog?.morningWeight || '',
+      notes: todaysLog?.notes || '',
+      sleep: todaysLog?.sleep || '',
+      sleepQuality: todaysLog?.sleepQuality || '',
+      isHiit: todaysLog?.isHiit || false,
+      isCardio: todaysLog?.isCardio || false,
+      isLift: todaysLog?.isLift || false,
+      bowelMovements: todaysLog?.bowelMovements || '',
+      image: todaysLog?.image || '',
     },
   })
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     console.log('input', data)
+    if (!currentUser) return
+    if (todaysLog) {
+      updateDailyLog({
+        id: todaysLog.id,
+        date: data.date,
+        morningWeight: data.morningWeight,
+        notes: data.notes,
+        sleep: data.sleep,
+        sleepQuality: data.sleepQuality,
+        isHiit: data.isHiit,
+        isCardio: data.isCardio,
+        isLift: data.isLift,
+        bowelMovements: data.bowelMovements,
+        image: data.image,
+        userId: currentUser.id,
+      })
+    } else {
+      createDailyLog({
+        date: new Date(),
+        morningWeight: data.morningWeight,
+        notes: data.notes,
+        sleep: data.sleep,
+        sleepQuality: data.sleepQuality,
+        isHiit: data.isHiit,
+        isCardio: data.isCardio,
+        isLift: data.isLift,
+        bowelMovements: data.bowelMovements,
+        image: data.image,
+        userId: currentUser.id,
+      })
+    }
   }
 
   const imageUrl = form.watch('image')
@@ -84,7 +128,8 @@ export default function Home() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className='flex flex-col gap-4 mt-10 px-2'>
+        <div className='flex flex-col gap-4 mt-10 px-2 mb-16'>
+          <h2 className='text-2xl font-bold'>Today</h2>
           <FormField
             control={form.control}
             name='morningWeight'
@@ -254,10 +299,37 @@ export default function Home() {
             </div>
           )}
           <div>
-            <Button type='submit'>Save</Button>
+            <Button
+              className='w-full'
+              type='submit'
+            >
+              Save
+            </Button>
           </div>
         </div>
       </form>
     </Form>
   )
+}
+
+export default function Home() {
+  const ctx = api.useUtils()
+  const { data: currentUser } = api.user.getCurrentUser.useQuery()
+  const { mutate: createDailyLog } = api.dailyLog.create.useMutation({
+    onSuccess: () => {
+      toast.success('Updated successfully')
+    },
+  })
+  const { data: currentUserDailyLogs, isLoading: isLoadingDailyLogs } =
+    api.dailyLog.getAllCurrentUser.useQuery()
+
+  if (isLoadingDailyLogs) return null
+
+  const todaysDate = new Date()
+
+  const todaysDailyLog = currentUserDailyLogs?.find(
+    (dailyLog) => dailyLog.date.toDateString() === todaysDate.toDateString(),
+  )
+
+  return <DailyLogForm todaysLog={todaysDailyLog} />
 }

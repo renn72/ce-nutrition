@@ -14,11 +14,10 @@ const Mobile = ({
   isDesktop?: boolean
 }) => {
   return (
-    <div className='flex flex-col gap-2 w-full min-h-screen mt-16 '>
+    <div className='flex flex-col gap-2 w-full min-h-screen'>
+      <div className='mt-14' />
       <MobileHeader />
       {children}
-
-      <div className='flex flex-col gap-2 w-full p-2 grow'></div>
       <div
         className={cn(
           'flex gap-2 w-full p-2 justify-center fixed border-t border-border bg-background w-full',
