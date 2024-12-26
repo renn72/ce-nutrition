@@ -1,11 +1,10 @@
-import { getServerAuthSession } from '@/server/auth'
-
+import { auth } from '@/server/auth'
 import { SignIn } from '@/components/auth/sign-in'
 
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const session = await getServerAuthSession()
+  const session = await auth()
 
   if (!session?.user.id)
     return (

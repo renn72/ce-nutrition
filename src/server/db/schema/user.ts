@@ -64,7 +64,7 @@ export const userRelations = relations(user, ({ many }) => ({
   clients: many(userToTrainer, { relationName: 'clients' }),
   userPlans: many(userPlan, { relationName: 'user' }),
   userPlansCreator: many(userPlan, { relationName: 'creator' }),
-  dailyLogs: many(dailyLog, { relationName: 'user' }),
+  dailyLogs: many(dailyLog),
   weighIns: many(weighIn, { relationName: 'user' }),
   weighInsTrainer: many(weighIn, { relationName: 'trainer' }),
 }))
