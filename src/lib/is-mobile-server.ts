@@ -9,7 +9,7 @@ export const isMobileDevice = async () => {
     throw new Error('[Server method] you are importing a server-only module outside of server')
   }
 
-  const { get } = headers()
+  const { get } = await headers()
   const ua = get('user-agent')
 
   const device = new UAParser(ua || '').getDevice()
