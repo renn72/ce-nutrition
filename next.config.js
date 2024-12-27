@@ -22,7 +22,7 @@ const config = {
         protocol: 'https',
         hostname: 'utfs.io',
         port: '',
-        pathname: '',
+        pathname: '/',
         search: '',
       },
     ],
