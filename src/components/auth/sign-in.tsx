@@ -56,7 +56,7 @@ const SignIn = () => {
               if (res?.status === 200) {
                 toast.success('Logged in')
                 ctx.user.isUser.refetch()
-                router.push('/admin/base')
+                router.push('/')
                 router.refresh()
 
               }

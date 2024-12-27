@@ -16,6 +16,17 @@ const config = {
     // your project has TypeScript errors.
     ignoreBuildErrors: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'utfs.io',
+        port: '',
+        pathname: '',
+        search: '',
+      },
+    ],
+  },
 }
 
 export default config
