@@ -1,4 +1,3 @@
-import { getServerAuthSession } from '@/server/auth'
 import { TRPCError } from '@trpc/server'
 import { generateFullName, generateName } from '~/lib/names'
 import {
@@ -12,6 +11,7 @@ import { user } from '~/server/db/schema/user'
 import { hash } from 'bcryptjs'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
+import { auth } from '@/server/auth'
 
 function isTuple<T>(array: T[]): array is [T, ...T[]] {
   return array.length > 0
@@ -95,7 +95,7 @@ export const userRouter = createTRPCRouter({
   }),
   isUser: publicProcedure.query(async () => {
     console.log('isUser')
-    const session = await getServerAuthSession()
+    const session = await auth()
     console.log('session')
     if (!session?.user) return null
     if (!session?.user?.id) return null
