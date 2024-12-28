@@ -33,6 +33,7 @@ export const formSchema = z.object({
   notes: z.string(),
   sleep: z.string(),
   sleepQuality: z.string().optional(),
+  nap: z.string().optional(),
   isHiit: z.boolean().optional(),
   isCardio: z.boolean().optional(),
   isLift: z.boolean().optional(),
@@ -62,6 +63,7 @@ const DailyLogForm = ({ todaysLog }: { todaysLog: GetDailyLogById | null }) => {
       date: todaysLog?.date || new Date(),
       morningWeight: todaysLog?.morningWeight || '',
       notes: todaysLog?.notes || '',
+      nap: todaysLog?.nap || '',
       sleep: todaysLog?.sleep || '',
       sleepQuality: todaysLog?.sleepQuality || '',
       isHiit: todaysLog?.isHiit || false,
@@ -80,6 +82,7 @@ const DailyLogForm = ({ todaysLog }: { todaysLog: GetDailyLogById | null }) => {
         date: data.date,
         morningWeight: data.morningWeight,
         notes: data.notes,
+        nap: data.nap,
         sleep: data.sleep,
         sleepQuality: data.sleepQuality,
         isHiit: data.isHiit,
@@ -96,6 +99,7 @@ const DailyLogForm = ({ todaysLog }: { todaysLog: GetDailyLogById | null }) => {
         notes: data.notes,
         sleep: data.sleep,
         sleepQuality: data.sleepQuality,
+        nap: data.nap,
         isHiit: data.isHiit,
         isCardio: data.isCardio,
         isLift: data.isLift,
@@ -160,6 +164,23 @@ const DailyLogForm = ({ todaysLog }: { todaysLog: GetDailyLogById | null }) => {
                 <FormControl>
                   <Input
                     placeholder='Sleep Quality'
+                    {...field}
+                    type='number'
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='nap'
+            render={({ field }) => (
+              <FormItem className='flex flex-col'>
+                <FormLabel>Nap</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder='Nap'
                     {...field}
                     type='number'
                   />

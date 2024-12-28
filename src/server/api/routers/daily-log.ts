@@ -47,6 +47,7 @@ export const dailyLogRouter = createTRPCRouter({
         notes: z.string(),
         sleep: z.string(),
         sleepQuality: z.string().optional(),
+        nap: z.string().optional(),
         isHiit: z.boolean().optional(),
         isCardio: z.boolean().optional(),
         isLift: z.boolean().optional(),

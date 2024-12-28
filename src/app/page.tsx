@@ -7,32 +7,33 @@ import Link from 'next/link'
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
 import { GetAllDailyLogs, GetAllWeighIns, GetUserById } from '@/types'
+import { SquareCheck, SquareX } from 'lucide-react'
 import {
   Area,
   AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
+  Legend,
   Line,
   LineChart,
   XAxis,
   YAxis,
-  Legend,
 } from 'recharts'
 
 import { Button } from '@/components/ui/button'
 import {
   ChartContainer,
-  ChartTooltipContent,
   ChartTooltip,
+  ChartTooltipContent,
   type ChartConfig,
 } from '@/components/ui/chart'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { User } from '@/components/auth/user'
-import MobileHeader from '@/components/layout/mobile-header'
 import { BodyFat } from '@/components/charts/mobile/body-fat'
+import MobileHeader from '@/components/layout/mobile-header'
 
 export const dynamic = 'force-dynamic'
 
@@ -43,6 +44,121 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
+const DailyLog = ({
+  dailyLogs,
+}: {
+  dailyLogs: GetAllDailyLogs | null | undefined
+}) => {
+  const today = new Date()
+  const todaysDailyLog = dailyLogs?.find(
+    (dailyLog) => dailyLog.date.toDateString() === today.toDateString(),
+  )
+  console.log('todaysDailyLog', todaysDailyLog)
+  if (!dailyLogs) return null
+  return (
+    <div className='flex flex-col gap-2 w-full px-2 py-4 bg-secondary text-sm'>
+      <div className='text-muted-foreground text-center w-full font-semibold'>
+        Today
+      </div>
+      <div className='grid grid-cols-2'>
+        <div className='flex gap-2 items-center'>
+          <div className='text-muted-foreground'>Weight</div>
+          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.morningWeight ? 'text-muted-foreground' : 'text-muted-foreground/70')}>
+            {todaysDailyLog && todaysDailyLog?.morningWeight
+              ? todaysDailyLog?.morningWeight + 'kg'
+              : '......'}
+          </div>
+        </div>
+        <div className='flex gap-2 items-center'>
+          <div className='text-muted-foreground'>Bowel Movements</div>
+          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.bowelMovements ? 'text-muted-foreground' : 'text-muted-foreground/50')}>
+            {todaysDailyLog && todaysDailyLog?.bowelMovements
+              ? todaysDailyLog?.bowelMovements
+              : '......'}
+          </div>
+        </div>
+      </div>
+      <div className='grid grid-cols-3'>
+        <div className='flex gap-2 items-center'>
+          <div className='text-muted-foreground'>Sleep</div>
+          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.sleep ? 'text-muted-foreground' : 'text-muted-foreground/50')}>
+            {todaysDailyLog && todaysDailyLog?.sleep
+              ? todaysDailyLog?.sleep
+              : '......'}
+          </div>
+        </div>
+        <div className='flex gap-2 items-center'>
+          <div className='text-muted-foreground'>Nap</div>
+          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.nap ? 'text-muted-foreground' : 'text-muted-foreground/50')}>
+            {todaysDailyLog && todaysDailyLog?.nap
+              ? todaysDailyLog?.nap
+              : '......'}
+          </div>
+        </div>
+        <div className='flex gap-2 items-center'>
+          <div className='text-muted-foreground'>Sleep Score</div>
+          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.sleepQuality ? 'text-muted-foreground' : 'text-muted-foreground/50')}>
+            {todaysDailyLog && todaysDailyLog?.sleepQuality
+              ? todaysDailyLog?.sleepQuality
+              : '......'}
+          </div>
+        </div>
+      </div>
+      <div className='grid grid-cols-2'>
+        <div className='flex gap-2 items-center'>
+          <div className='text-muted-foreground'>Notes</div>
+          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.bowelMovements ? 'text-muted-foreground' : 'text-muted-foreground/50')}>
+            {todaysDailyLog && todaysDailyLog?.bowelMovements
+              ? todaysDailyLog?.bowelMovements
+              : '......'}
+          </div>
+        </div>
+        <div className='flex gap-2 items-center'>
+          <div className='text-muted-foreground'>Picture</div>
+          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.image ? 'text-muted-foreground' : 'text-muted-foreground/50')}>
+            {todaysDailyLog && todaysDailyLog?.image ? (
+              <SquareCheck size={16} />
+            ) : (
+              <SquareX size={16} />
+            )}
+          </div>
+        </div>
+      </div>
+      <div className='grid grid-cols-3' >
+        <div className='flex gap-2 items-center'>
+          <div className='text-muted-foreground'>Hiit</div>
+          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.isHiit ? 'text-muted-foreground' : 'text-muted-foreground/50')}>
+            {todaysDailyLog && todaysDailyLog?.isHiit ? (
+              <SquareCheck size={16} />
+            ) : (
+              <SquareX size={16} />
+            )}
+          </div>
+        </div>
+        <div className='flex gap-2 items-center'>
+          <div className='text-muted-foreground'>Cardio</div>
+          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.isCardio ? 'text-muted-foreground' : 'text-muted-foreground/50')}>
+            {todaysDailyLog && todaysDailyLog?.isCardio ? (
+              <SquareCheck size={16} />
+            ) : (
+              <SquareX size={16} />
+            )}
+          </div>
+        </div>
+        <div className='flex gap-2 items-center'>
+          <div className='text-muted-foreground'>Lift</div>
+          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.isLift ? 'text-muted-foreground' : 'text-muted-foreground/50')}>
+            {todaysDailyLog && todaysDailyLog?.isLift ? (
+              <SquareCheck size={16} />
+            ) : (
+              <SquareX size={16} />
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 const PlanPreview = ({ user }: { user: GetUserById }) => {
   const plan = user?.userPlans.find((plan) => plan.id == user?.currentPlanId)
 
@@ -332,14 +448,10 @@ const Mobile = ({
       </Tabs>
       <div className='flex gap-2 w-full justify-center my-6'>
         <Link
-          className='w-full mx-4'
-          href='/user/log'>
-          <Button
-            variant='accent'
-            className='w-full'
-          >
-            Daily Log
-          </Button>
+          className='w-full'
+          href='/user/log'
+        >
+          <DailyLog dailyLogs={dailyLogs} />
         </Link>
       </div>
       <PlanPreview user={currentUser} />
