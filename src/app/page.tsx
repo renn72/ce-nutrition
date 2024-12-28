@@ -2,15 +2,11 @@
 
 import { api } from '@/trpc/react'
 
-import { ReactNode, useState } from 'react'
-
-import Image from 'next/image'
 import Link from 'next/link'
 
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
 import { GetAllDailyLogs, GetAllWeighIns, GetUserById } from '@/types'
-import { Bell, BellDot, NotebookText } from 'lucide-react'
 import {
   Area,
   AreaChart,
@@ -31,22 +27,14 @@ import {
   ChartTooltip,
   type ChartConfig,
 } from '@/components/ui/chart'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { User } from '@/components/auth/user'
 import MobileHeader from '@/components/layout/mobile-header'
+import { BodyFat } from '@/components/charts/mobile/body-fat'
 
-import { Plan } from './_components/plan'
+export const dynamic = 'force-dynamic'
 
 const chartConfig = {
   weight: {
@@ -88,61 +76,6 @@ const PlanPreview = ({ user }: { user: GetUserById }) => {
         </div>
       ))}
     </div>
-  )
-}
-
-const BodyFatChart = ({ weighIns }: { weighIns: GetAllWeighIns }) => {
-  const data = weighIns
-    .slice(0, 15)
-    .map((weighIn) => ({
-      date: weighIn.date.toLocaleDateString(undefined, {
-        month: 'numeric',
-        day: 'numeric',
-      }),
-      weight: weighIn.bodyFat,
-    }))
-    .reverse()
-
-  const dataMin = Math.floor(Math.min(...data.map((d) => Number(d.weight))))
-  const dataMax = Math.ceil(Math.max(...data.map((d) => Number(d.weight))))
-
-  return (
-    <ChartContainer
-      config={chartConfig}
-      className='w-full min-h-[200px]'
-    >
-      <AreaChart data={data}>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          dataKey='date'
-          tickLine={false}
-          tickMargin={10}
-          axisLine={true}
-        />
-        <YAxis
-          orientation='right'
-          width={20}
-          allowDecimals={false}
-          padding={{ top: 0, bottom: 0 }}
-          interval='preserveStartEnd'
-          dataKey='weight'
-          tickLine={false}
-          tickCount={10}
-          tickMargin={0}
-          axisLine={false}
-          type='number'
-          allowDataOverflow={true}
-          domain={[dataMin, dataMax]}
-        />
-        <Area
-          dataKey='weight'
-          dot={false}
-          strokeWidth={2}
-          type='monotone'
-          isAnimationActive={true}
-        />
-      </AreaChart>
-    </ChartContainer>
   )
 }
 
@@ -388,7 +321,7 @@ const Mobile = ({
           value='bf'
           className='bg-secondary p-2'
         >
-          {weighIns ? <BodyFatChart weighIns={weighIns} /> : null}
+          {weighIns ? <BodyFat weighIns={weighIns} /> : null}
         </TabsContent>
         <TabsContent
           value='sleep'
