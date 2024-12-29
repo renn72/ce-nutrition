@@ -36,7 +36,7 @@ const Icon = ({
   text: string | undefined | null | boolean
 }) => {
   return (
-    <div className={cn('flex gap-4', text ? 'items-end' : 'items-center')}>
+    <div className={cn('flex gap-1', text ? 'items-end' : 'items-center')}>
       <div className='text-muted-foreground'>{title}</div>
       <div
         className={cn(
@@ -52,19 +52,26 @@ const Icon = ({
 const DailyLog = ({
   dailyLogs,
   day = new Date(),
+  isLog = false,
 }: {
   dailyLogs: GetAllDailyLogs | null | undefined
   day?: Date
+  isLog?: boolean
 }) => {
   const todaysDailyLog = dailyLogs?.find(
     (dailyLog) => dailyLog.date.toDateString() === day.toDateString(),
   )
   if (!dailyLogs) return null
+
+  if (isLog && !todaysDailyLog) {
+    return (
+      <div className='flex flex-col gap-2 w-full px-2 py-4 bg-secondary text-sm items-center'>
+        <div> --- </div>
+      </div>
+    )
+  }
   return (
     <div className='flex flex-col gap-2 w-full px-2 py-4 bg-secondary text-sm'>
-      <div className='text-muted-foreground text-center w-full font-semibold'>
-        Today
-      </div>
       <div className='grid grid-cols-2'>
         <Text
           title='Weight'
@@ -95,12 +102,8 @@ const DailyLog = ({
           title='Notes'
           text={todaysDailyLog?.notes}
         />
-        <Icon
-          title='Picture'
-          text={todaysDailyLog?.image}
-        />
       </div>
-      <div className='grid grid-cols-3'>
+      <div className='grid grid-cols-4'>
         <Icon
           title='Hiit'
           text={todaysDailyLog?.isHiit}
@@ -112,6 +115,10 @@ const DailyLog = ({
         <Icon
           title='Lift'
           text={todaysDailyLog?.isLift}
+        />
+        <Icon
+          title='Picture'
+          text={todaysDailyLog?.image}
         />
       </div>
     </div>

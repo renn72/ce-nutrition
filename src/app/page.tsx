@@ -6,44 +6,20 @@ import Link from 'next/link'
 
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
-import { GetAllDailyLogs, GetAllWeighIns, GetUserById } from '@/types'
-import { Logs, SquareCheck, SquareX } from 'lucide-react'
-import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
-  XAxis,
-  YAxis,
-} from 'recharts'
-
-import { Button } from '@/components/ui/button'
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig,
-} from '@/components/ui/chart'
+import { GetUserById } from '@/types'
+import { Logs, } from 'lucide-react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { User } from '@/components/auth/user'
 import { BodyFat } from '@/components/charts/mobile/body-fat'
+import { LeanMass } from '@/components/charts/mobile/lean-mass'
+import { Sleep } from '@/components/charts/mobile/sleep'
 import { DailyLog } from '@/components/daily-log/daily-log'
+import { BodyWeight } from '@/components/charts/mobile/body-weight'
 import MobileHeader from '@/components/layout/mobile-header'
 
 export const dynamic = 'force-dynamic'
-
-const chartConfig = {
-  weight: {
-    label: 'Weight',
-    color: '#2563eb',
-  },
-} satisfies ChartConfig
 
 const PlanPreview = ({ user }: { user: GetUserById }) => {
   const plan = user?.userPlans.find((plan) => plan.id == user?.currentPlanId)
@@ -81,182 +57,7 @@ const PlanPreview = ({ user }: { user: GetUserById }) => {
   )
 }
 
-const LeanMassChart = ({ weighIns }: { weighIns: GetAllWeighIns }) => {
-  const data = weighIns
-    .slice(0, 15)
-    .map((weighIn) => ({
-      date: weighIn.date.toLocaleDateString(undefined, {
-        month: 'numeric',
-        day: 'numeric',
-      }),
-      weight: weighIn.leanMass,
-    }))
-    .reverse()
 
-  const dataMin = Math.floor(Math.min(...data.map((d) => Number(d.weight))))
-  const dataMax = Math.ceil(Math.max(...data.map((d) => Number(d.weight))))
-
-  return (
-    <ChartContainer
-      config={chartConfig}
-      className='w-full min-h-[200px]'
-    >
-      <AreaChart data={data}>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          dataKey='date'
-          tickLine={false}
-          tickMargin={10}
-          axisLine={true}
-        />
-        <YAxis
-          orientation='right'
-          width={20}
-          allowDecimals={false}
-          padding={{ top: 0, bottom: 0 }}
-          interval='preserveStartEnd'
-          dataKey='weight'
-          tickLine={false}
-          tickCount={10}
-          tickMargin={0}
-          axisLine={false}
-          type='number'
-          allowDataOverflow={true}
-          domain={[dataMin, dataMax]}
-        />
-        <Area
-          dataKey='weight'
-          dot={false}
-          strokeWidth={2}
-          type='monotone'
-          isAnimationActive={true}
-        />
-      </AreaChart>
-    </ChartContainer>
-  )
-}
-
-const SleepChart = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
-  const data = dailyLogs
-    .slice(0, 14)
-    .map((dailyLog) => ({
-      date: dailyLog.date.toLocaleDateString(undefined, {
-        month: 'numeric',
-        day: 'numeric',
-      }),
-      sleep: dailyLog.sleep,
-      sleepQuality: dailyLog.sleepQuality,
-    }))
-    .reverse()
-
-  const dataMin = Math.floor(Math.min(...data.map((d) => Number(d.sleep))))
-  const dataMax = Math.ceil(Math.max(...data.map((d) => Number(d.sleep))))
-
-  return (
-    <ChartContainer
-      config={chartConfig}
-      className='w-full min-h-[200px]'
-    >
-      <LineChart data={data}>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          dataKey='date'
-          tickLine={false}
-          tickMargin={10}
-          axisLine={true}
-        />
-        <YAxis
-          orientation='right'
-          width={20}
-          allowDecimals={false}
-          padding={{ top: 0, bottom: 0 }}
-          interval='preserveStartEnd'
-          dataKey='sleep'
-          tickLine={false}
-          tickCount={10}
-          tickMargin={0}
-          axisLine={false}
-          type='number'
-          allowDataOverflow={true}
-          domain={[dataMin, dataMax]}
-        />
-        <Line
-          dataKey='sleep'
-          dot={false}
-          strokeWidth={2}
-          type='monotone'
-          isAnimationActive={true}
-        />
-        <Line
-          dataKey='sleepQuality'
-          label='Sleep Quality'
-          stroke='#FFB50050'
-          dot={false}
-          strokeWidth={1}
-          type='monotone'
-          isAnimationActive={true}
-        />
-        <ChartTooltip content={<ChartTooltipContent />} />
-        <Legend />
-      </LineChart>
-    </ChartContainer>
-  )
-}
-
-const BodyWeightChart = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
-  const data = dailyLogs
-    .slice(0, 15)
-    .map((dailyLog) => ({
-      date: dailyLog.date.toLocaleDateString(undefined, {
-        month: 'numeric',
-        day: 'numeric',
-      }),
-      weight: dailyLog.morningWeight,
-    }))
-    .reverse()
-
-  const dataMin = Math.floor(Math.min(...data.map((d) => Number(d.weight))))
-  const dataMax = Math.ceil(Math.max(...data.map((d) => Number(d.weight))))
-
-  return (
-    <ChartContainer
-      config={chartConfig}
-      className='w-full min-h-[200px]'
-    >
-      <AreaChart data={data}>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          dataKey='date'
-          tickLine={false}
-          tickMargin={10}
-          axisLine={true}
-        />
-        <YAxis
-          orientation='right'
-          width={20}
-          allowDecimals={false}
-          padding={{ top: 0, bottom: 0 }}
-          interval='preserveStartEnd'
-          dataKey='weight'
-          tickLine={false}
-          tickCount={10}
-          tickMargin={0}
-          axisLine={false}
-          type='number'
-          allowDataOverflow={true}
-          domain={[dataMin, dataMax]}
-        />
-        <Area
-          dataKey='weight'
-          dot={false}
-          strokeWidth={2}
-          type='monotone'
-          isAnimationActive={true}
-        />
-      </AreaChart>
-    </ChartContainer>
-  )
-}
 
 const Mobile = ({
   userId,
@@ -273,6 +74,7 @@ const Mobile = ({
   const plan = currentUser?.userPlans.find(
     (plan) => plan.id == currentUser?.currentPlanId,
   )
+
   return (
     <div className={cn('flex flex-col gap-2 w-full min-h-screen mt-16 ', isDesktop && 'relative')}>
       <MobileHeader isDesktop={isDesktop} />
@@ -311,13 +113,13 @@ const Mobile = ({
           className='bg-secondary p-2'
           value='bw'
         >
-          {dailyLogs ? <BodyWeightChart dailyLogs={dailyLogs} /> : null}
+          {dailyLogs ? <BodyWeight dailyLogs={dailyLogs} /> : null}
         </TabsContent>
         <TabsContent
           value='lm'
           className='bg-secondary p-2'
         >
-          {weighIns ? <LeanMassChart weighIns={weighIns} /> : null}
+          {weighIns ? <LeanMass weighIns={weighIns} /> : null}
         </TabsContent>
         <TabsContent
           value='bf'
@@ -329,10 +131,11 @@ const Mobile = ({
           value='sleep'
           className='bg-secondary p-2'
         >
-          {dailyLogs ? <SleepChart dailyLogs={dailyLogs} /> : null}
+          {dailyLogs ? <Sleep dailyLogs={dailyLogs} /> : null}
         </TabsContent>
       </Tabs>
-      <div className='flex gap-2 w-full justify-center my-6'>
+      <div className='flex gap-0 w-full justify-center items-center my-6 flex-col bg-secondary pt-2'>
+        <h2 className=' font-bold'>Today</h2>
         <Link
           className='w-full'
           href='/user/log/create'

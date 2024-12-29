@@ -3,21 +3,21 @@
 import { api } from '@/trpc/react'
 
 import { cn, getFormattedDate } from '@/lib/utils'
-import { toast } from 'sonner'
 
 import { DailyLog } from '@/components/daily-log/daily-log'
 
 export default function Home() {
-  const ctx = api.useUtils()
-  const { data: currentUser } = api.user.getCurrentUser.useQuery()
-  const { data: currentUserDailyLogs, isLoading: isLoadingDailyLogs } =
+  const { data: currentUserDailyLogs, isLoading: _isLoadingDailyLogs } =
     api.dailyLog.getAllCurrentUser.useQuery()
 
   const today = new Date()
 
+  if (!currentUserDailyLogs) return null
+  const length = currentUserDailyLogs?.length > 30 ? 30 : currentUserDailyLogs?.length
+
   return (
     <div className='flex flex-col gap-2 w-full min-h-screen mt-16 '>
-      {Array.from({ length: 7 }).map((_, i) => {
+      {Array.from({ length: length }).map((_, i) => {
         const date = new Date(today.getTime() - i * 86400000)
         return (
           <div
@@ -30,6 +30,7 @@ export default function Home() {
             <DailyLog
               dailyLogs={currentUserDailyLogs}
               day={date}
+              isLog={true}
             />
           </div>
         )
