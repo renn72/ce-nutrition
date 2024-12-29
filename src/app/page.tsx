@@ -63,7 +63,14 @@ const DailyLog = ({
       <div className='grid grid-cols-2'>
         <div className='flex gap-2 items-center'>
           <div className='text-muted-foreground'>Weight</div>
-          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.morningWeight ? 'text-muted-foreground' : 'text-muted-foreground/70')}>
+          <div
+            className={cn(
+              'text-sm',
+              todaysDailyLog && todaysDailyLog?.morningWeight
+                ? 'text-muted-foreground'
+                : 'text-muted-foreground/70',
+            )}
+          >
             {todaysDailyLog && todaysDailyLog?.morningWeight
               ? todaysDailyLog?.morningWeight + 'kg'
               : '......'}
@@ -71,7 +78,14 @@ const DailyLog = ({
         </div>
         <div className='flex gap-2 items-center'>
           <div className='text-muted-foreground'>Bowel Movements</div>
-          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.bowelMovements ? 'text-muted-foreground' : 'text-muted-foreground/50')}>
+          <div
+            className={cn(
+              'text-sm',
+              todaysDailyLog && todaysDailyLog?.bowelMovements
+                ? 'text-muted-foreground'
+                : 'text-muted-foreground/50',
+            )}
+          >
             {todaysDailyLog && todaysDailyLog?.bowelMovements
               ? todaysDailyLog?.bowelMovements
               : '......'}
@@ -81,7 +95,14 @@ const DailyLog = ({
       <div className='grid grid-cols-3'>
         <div className='flex gap-2 items-center'>
           <div className='text-muted-foreground'>Sleep</div>
-          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.sleep ? 'text-muted-foreground' : 'text-muted-foreground/50')}>
+          <div
+            className={cn(
+              'text-sm',
+              todaysDailyLog && todaysDailyLog?.sleep
+                ? 'text-muted-foreground'
+                : 'text-muted-foreground/50',
+            )}
+          >
             {todaysDailyLog && todaysDailyLog?.sleep
               ? todaysDailyLog?.sleep
               : '......'}
@@ -89,7 +110,14 @@ const DailyLog = ({
         </div>
         <div className='flex gap-2 items-center'>
           <div className='text-muted-foreground'>Nap</div>
-          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.nap ? 'text-muted-foreground' : 'text-muted-foreground/50')}>
+          <div
+            className={cn(
+              'text-sm',
+              todaysDailyLog && todaysDailyLog?.nap
+                ? 'text-muted-foreground'
+                : 'text-muted-foreground/50',
+            )}
+          >
             {todaysDailyLog && todaysDailyLog?.nap
               ? todaysDailyLog?.nap
               : '......'}
@@ -97,7 +125,14 @@ const DailyLog = ({
         </div>
         <div className='flex gap-2 items-center'>
           <div className='text-muted-foreground'>Sleep Score</div>
-          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.sleepQuality ? 'text-muted-foreground' : 'text-muted-foreground/50')}>
+          <div
+            className={cn(
+              'text-sm',
+              todaysDailyLog && todaysDailyLog?.sleepQuality
+                ? 'text-muted-foreground'
+                : 'text-muted-foreground/50',
+            )}
+          >
             {todaysDailyLog && todaysDailyLog?.sleepQuality
               ? todaysDailyLog?.sleepQuality
               : '......'}
@@ -107,7 +142,14 @@ const DailyLog = ({
       <div className='grid grid-cols-2'>
         <div className='flex gap-2 items-center'>
           <div className='text-muted-foreground'>Notes</div>
-          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.bowelMovements ? 'text-muted-foreground' : 'text-muted-foreground/50')}>
+          <div
+            className={cn(
+              'text-sm',
+              todaysDailyLog && todaysDailyLog?.bowelMovements
+                ? 'text-muted-foreground'
+                : 'text-muted-foreground/50',
+            )}
+          >
             {todaysDailyLog && todaysDailyLog?.bowelMovements
               ? todaysDailyLog?.bowelMovements
               : '......'}
@@ -115,7 +157,14 @@ const DailyLog = ({
         </div>
         <div className='flex gap-2 items-center'>
           <div className='text-muted-foreground'>Picture</div>
-          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.image ? 'text-muted-foreground' : 'text-muted-foreground/50')}>
+          <div
+            className={cn(
+              'text-sm',
+              todaysDailyLog && todaysDailyLog?.image
+                ? 'text-muted-foreground'
+                : 'text-muted-foreground/50',
+            )}
+          >
             {todaysDailyLog && todaysDailyLog?.image ? (
               <SquareCheck size={16} />
             ) : (
@@ -124,10 +173,17 @@ const DailyLog = ({
           </div>
         </div>
       </div>
-      <div className='grid grid-cols-3' >
+      <div className='grid grid-cols-3'>
         <div className='flex gap-2 items-center'>
           <div className='text-muted-foreground'>Hiit</div>
-          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.isHiit ? 'text-muted-foreground' : 'text-muted-foreground/50')}>
+          <div
+            className={cn(
+              'text-sm',
+              todaysDailyLog && todaysDailyLog?.isHiit
+                ? 'text-muted-foreground'
+                : 'text-muted-foreground/50',
+            )}
+          >
             {todaysDailyLog && todaysDailyLog?.isHiit ? (
               <SquareCheck size={16} />
             ) : (
@@ -137,7 +193,14 @@ const DailyLog = ({
         </div>
         <div className='flex gap-2 items-center'>
           <div className='text-muted-foreground'>Cardio</div>
-          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.isCardio ? 'text-muted-foreground' : 'text-muted-foreground/50')}>
+          <div
+            className={cn(
+              'text-sm',
+              todaysDailyLog && todaysDailyLog?.isCardio
+                ? 'text-muted-foreground'
+                : 'text-muted-foreground/50',
+            )}
+          >
             {todaysDailyLog && todaysDailyLog?.isCardio ? (
               <SquareCheck size={16} />
             ) : (
@@ -147,7 +210,14 @@ const DailyLog = ({
         </div>
         <div className='flex gap-2 items-center'>
           <div className='text-muted-foreground'>Lift</div>
-          <div className={cn('text-sm', todaysDailyLog && todaysDailyLog?.isLift ? 'text-muted-foreground' : 'text-muted-foreground/50')}>
+          <div
+            className={cn(
+              'text-sm',
+              todaysDailyLog && todaysDailyLog?.isLift
+                ? 'text-muted-foreground'
+                : 'text-muted-foreground/50',
+            )}
+          >
             {todaysDailyLog && todaysDailyLog?.isLift ? (
               <SquareCheck size={16} />
             ) : (
@@ -388,8 +458,8 @@ const Mobile = ({
     (plan) => plan.id == currentUser?.currentPlanId,
   )
   return (
-    <div className='flex flex-col gap-2 w-full min-h-screen mt-16 '>
-      <MobileHeader />
+    <div className={cn('flex flex-col gap-2 w-full min-h-screen mt-16 ', isDesktop && 'relative')}>
+      <MobileHeader isDesktop={isDesktop} />
 
       <Tabs
         defaultValue='bw'
@@ -461,7 +531,7 @@ const Mobile = ({
       <div
         className={cn(
           'flex gap-2 w-full p-2 justify-center fixed border-t border-border bg-background w-full',
-          !isDesktop ? 'bottom-0 w-full' : 'top-[924px] w-[389px]',
+          !isDesktop ? 'bottom-0 w-full' : 'top-[922px] w-[388px]',
         )}
       >
         <User />

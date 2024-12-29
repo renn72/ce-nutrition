@@ -105,13 +105,15 @@ const Notifications = ({
     </DropdownMenu>
   )
 }
-const MobileHeader = () => {
+const MobileHeader = ({ isDesktop = false }: { isDesktop?: boolean }) => {
   const [notifications, setNotifications] = useState(() => [
     { id: 1, state: 'unread', message: 'New body weight record' },
     { id: 2, state: 'unread', message: 'Update to your diet plan' },
   ])
   return (
-    <div className='flex gap-2 items-center justify-around w-full fixed top-0 z-10 bg-background'>
+    <div className={cn('flex gap-2 items-center justify-around fixed z-10 bg-background',
+      isDesktop ? 'top-[129px] w-[388px]' : 'top-0 w-full '
+    )}>
       <div className='flex flex-col gap-0 items-center justify-center'>
         <NotebookText
           size={40}

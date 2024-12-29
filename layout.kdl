@@ -4,6 +4,8 @@ layout {
       plugin location="zellij:compact-bar"
     }
     pane {
+      command "nvim"
+      args "src/app/page.tsx"
     }
   }
 tab {
