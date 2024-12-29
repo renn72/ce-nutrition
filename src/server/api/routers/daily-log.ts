@@ -57,7 +57,7 @@ export const dailyLogRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const { id, date, morningWeight, notes, sleep, sleepQuality, isHiit, isCardio, isLift, bowelMovements, image, userId } = input
+      const { id, date, morningWeight, notes, sleep, sleepQuality, isHiit, isCardio, isLift, bowelMovements, image, userId, nap } = input
       const res = await ctx.db
         .update(dailyLog)
         .set({
@@ -66,6 +66,7 @@ export const dailyLogRouter = createTRPCRouter({
           notes,
           sleep,
           sleepQuality,
+          nap,
           isHiit,
           isCardio,
           isLift,

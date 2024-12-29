@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
 import { GetAllDailyLogs, GetAllWeighIns, GetUserById } from '@/types'
-import { SquareCheck, SquareX } from 'lucide-react'
+import { Logs, SquareCheck, SquareX } from 'lucide-react'
 import {
   Area,
   AreaChart,
@@ -33,6 +33,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { User } from '@/components/auth/user'
 import { BodyFat } from '@/components/charts/mobile/body-fat'
+import { DailyLog } from '@/components/daily-log/daily-log'
 import MobileHeader from '@/components/layout/mobile-header'
 
 export const dynamic = 'force-dynamic'
@@ -44,191 +45,6 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-const DailyLog = ({
-  dailyLogs,
-}: {
-  dailyLogs: GetAllDailyLogs | null | undefined
-}) => {
-  const today = new Date()
-  const todaysDailyLog = dailyLogs?.find(
-    (dailyLog) => dailyLog.date.toDateString() === today.toDateString(),
-  )
-  console.log('todaysDailyLog', todaysDailyLog)
-  if (!dailyLogs) return null
-  return (
-    <div className='flex flex-col gap-2 w-full px-2 py-4 bg-secondary text-sm'>
-      <div className='text-muted-foreground text-center w-full font-semibold'>
-        Today
-      </div>
-      <div className='grid grid-cols-2'>
-        <div className='flex gap-2 items-center'>
-          <div className='text-muted-foreground'>Weight</div>
-          <div
-            className={cn(
-              'text-sm',
-              todaysDailyLog && todaysDailyLog?.morningWeight
-                ? 'text-muted-foreground'
-                : 'text-muted-foreground/70',
-            )}
-          >
-            {todaysDailyLog && todaysDailyLog?.morningWeight
-              ? todaysDailyLog?.morningWeight + 'kg'
-              : '......'}
-          </div>
-        </div>
-        <div className='flex gap-2 items-center'>
-          <div className='text-muted-foreground'>Bowel Movements</div>
-          <div
-            className={cn(
-              'text-sm',
-              todaysDailyLog && todaysDailyLog?.bowelMovements
-                ? 'text-muted-foreground'
-                : 'text-muted-foreground/50',
-            )}
-          >
-            {todaysDailyLog && todaysDailyLog?.bowelMovements
-              ? todaysDailyLog?.bowelMovements
-              : '......'}
-          </div>
-        </div>
-      </div>
-      <div className='grid grid-cols-3'>
-        <div className='flex gap-2 items-center'>
-          <div className='text-muted-foreground'>Sleep</div>
-          <div
-            className={cn(
-              'text-sm',
-              todaysDailyLog && todaysDailyLog?.sleep
-                ? 'text-muted-foreground'
-                : 'text-muted-foreground/50',
-            )}
-          >
-            {todaysDailyLog && todaysDailyLog?.sleep
-              ? todaysDailyLog?.sleep
-              : '......'}
-          </div>
-        </div>
-        <div className='flex gap-2 items-center'>
-          <div className='text-muted-foreground'>Nap</div>
-          <div
-            className={cn(
-              'text-sm',
-              todaysDailyLog && todaysDailyLog?.nap
-                ? 'text-muted-foreground'
-                : 'text-muted-foreground/50',
-            )}
-          >
-            {todaysDailyLog && todaysDailyLog?.nap
-              ? todaysDailyLog?.nap
-              : '......'}
-          </div>
-        </div>
-        <div className='flex gap-2 items-center'>
-          <div className='text-muted-foreground'>Sleep Score</div>
-          <div
-            className={cn(
-              'text-sm',
-              todaysDailyLog && todaysDailyLog?.sleepQuality
-                ? 'text-muted-foreground'
-                : 'text-muted-foreground/50',
-            )}
-          >
-            {todaysDailyLog && todaysDailyLog?.sleepQuality
-              ? todaysDailyLog?.sleepQuality
-              : '......'}
-          </div>
-        </div>
-      </div>
-      <div className='grid grid-cols-2'>
-        <div className='flex gap-2 items-center'>
-          <div className='text-muted-foreground'>Notes</div>
-          <div
-            className={cn(
-              'text-sm',
-              todaysDailyLog && todaysDailyLog?.bowelMovements
-                ? 'text-muted-foreground'
-                : 'text-muted-foreground/50',
-            )}
-          >
-            {todaysDailyLog && todaysDailyLog?.bowelMovements
-              ? todaysDailyLog?.bowelMovements
-              : '......'}
-          </div>
-        </div>
-        <div className='flex gap-2 items-center'>
-          <div className='text-muted-foreground'>Picture</div>
-          <div
-            className={cn(
-              'text-sm',
-              todaysDailyLog && todaysDailyLog?.image
-                ? 'text-muted-foreground'
-                : 'text-muted-foreground/50',
-            )}
-          >
-            {todaysDailyLog && todaysDailyLog?.image ? (
-              <SquareCheck size={16} />
-            ) : (
-              <SquareX size={16} />
-            )}
-          </div>
-        </div>
-      </div>
-      <div className='grid grid-cols-3'>
-        <div className='flex gap-2 items-center'>
-          <div className='text-muted-foreground'>Hiit</div>
-          <div
-            className={cn(
-              'text-sm',
-              todaysDailyLog && todaysDailyLog?.isHiit
-                ? 'text-muted-foreground'
-                : 'text-muted-foreground/50',
-            )}
-          >
-            {todaysDailyLog && todaysDailyLog?.isHiit ? (
-              <SquareCheck size={16} />
-            ) : (
-              <SquareX size={16} />
-            )}
-          </div>
-        </div>
-        <div className='flex gap-2 items-center'>
-          <div className='text-muted-foreground'>Cardio</div>
-          <div
-            className={cn(
-              'text-sm',
-              todaysDailyLog && todaysDailyLog?.isCardio
-                ? 'text-muted-foreground'
-                : 'text-muted-foreground/50',
-            )}
-          >
-            {todaysDailyLog && todaysDailyLog?.isCardio ? (
-              <SquareCheck size={16} />
-            ) : (
-              <SquareX size={16} />
-            )}
-          </div>
-        </div>
-        <div className='flex gap-2 items-center'>
-          <div className='text-muted-foreground'>Lift</div>
-          <div
-            className={cn(
-              'text-sm',
-              todaysDailyLog && todaysDailyLog?.isLift
-                ? 'text-muted-foreground'
-                : 'text-muted-foreground/50',
-            )}
-          >
-            {todaysDailyLog && todaysDailyLog?.isLift ? (
-              <SquareCheck size={16} />
-            ) : (
-              <SquareX size={16} />
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
 const PlanPreview = ({ user }: { user: GetUserById }) => {
   const plan = user?.userPlans.find((plan) => plan.id == user?.currentPlanId)
 
@@ -519,7 +335,7 @@ const Mobile = ({
       <div className='flex gap-2 w-full justify-center my-6'>
         <Link
           className='w-full'
-          href='/user/log'
+          href='/user/log/create'
         >
           <DailyLog dailyLogs={dailyLogs} />
         </Link>
@@ -530,11 +346,18 @@ const Mobile = ({
       <div className='flex flex-col gap-2 w-full p-2 grow'></div>
       <div
         className={cn(
-          'flex gap-2 w-full p-2 justify-center fixed border-t border-border bg-background w-full',
+          'grid grid-cols-3 place-items-center p-2 fixed border-t border-border bg-background w-full',
           !isDesktop ? 'bottom-0 w-full' : 'top-[922px] w-[388px]',
         )}
       >
+        <Link href='/user/log'>
+        <div className='flex gap-2 items-end'>
+          <span className='text-muted-foreground text-base font-semibold leading-4 '>Logs</span>
+          <Logs size={20} />
+        </div>
+        </Link>
         <User />
+        <div />
       </div>
     </div>
   )
