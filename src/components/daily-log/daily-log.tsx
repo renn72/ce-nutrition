@@ -59,7 +59,6 @@ const DailyLog = ({
   const todaysDailyLog = dailyLogs?.find(
     (dailyLog) => dailyLog.date.toDateString() === day.toDateString(),
   )
-  console.log('todaysDailyLog', todaysDailyLog)
   if (!dailyLogs) return null
   return (
     <div className='flex flex-col gap-2 w-full px-2 py-4 bg-secondary text-sm'>
