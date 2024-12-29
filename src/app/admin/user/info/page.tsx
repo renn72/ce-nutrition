@@ -91,7 +91,7 @@ export default function Home() {
     let weight = '95'
 
     for (let i = 0; i < 30; i++) {
-      const day = new Date(new Date().setDate(today.getDate() - (30 - i)))
+      const day = new Date(new Date().setDate(today.getDate() - (29 - i)))
       weight = (Math.random() * 0.3 - 0.2 + Number(previousWeight)).toFixed(2)
       previousWeight = weight
       const sleep = (Math.random() * 3 + 6).toFixed(1)

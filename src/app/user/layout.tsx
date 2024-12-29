@@ -1,5 +1,8 @@
+import Link from 'next/link'
+
 import { isMobileDevice } from '@/lib/is-mobile-server'
 import { cn } from '@/lib/utils'
+import { Logs } from 'lucide-react'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
 
@@ -15,16 +18,24 @@ const Mobile = ({
 }) => {
   return (
     <div className='flex flex-col gap-2 w-full min-h-screen'>
-      <div className='mt-14' />
-      <MobileHeader />
+      <MobileHeader isDesktop={isDesktop} />
       {children}
       <div
         className={cn(
-          'flex gap-2 w-full p-2 justify-center fixed border-t border-border bg-background w-full',
-          !isDesktop ? 'bottom-0 w-full' : 'top-[924px] w-[389px]',
+          'grid grid-cols-3 place-items-center p-2 fixed border-t border-border bg-background w-full',
+          !isDesktop ? 'bottom-0 w-full' : 'top-[922px] w-[388px]',
         )}
       >
+        <Link href='/user/log'>
+          <div className='flex gap-2 items-end'>
+            <span className='text-muted-foreground text-base font-semibold leading-4 '>
+              Logs
+            </span>
+            <Logs size={20} />
+          </div>
+        </Link>
         <User />
+        <div />
       </div>
     </div>
   )
