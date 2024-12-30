@@ -42,6 +42,10 @@ const data = {
           url: '/admin/user/info',
         },
         {
+          title: 'Check-in',
+          url: '/admin/user/check-in',
+        },
+        {
           title: 'Program',
           url: '/admin/user/program',
         },

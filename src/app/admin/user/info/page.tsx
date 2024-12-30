@@ -9,6 +9,8 @@ import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 
+import { DailyLog } from '@/components/daily-log/daily-log'
+
 export default function Home() {
   const ctx = api.useUtils()
   const searchParams = useSearchParams()
@@ -109,7 +111,8 @@ export default function Home() {
         isLift: Math.random() > 0.3,
         bowelMovements: bowelMovements,
         userId: userId,
-        image: 'https://utfs.io/f/fnZ11GC5JP7TQYL3jL86fSlZ2KgctYiQ5PGL3nHRhJIMW0CE',
+        image:
+          'https://utfs.io/f/fnZ11GC5JP7TQYL3jL86fSlZ2KgctYiQ5PGL3nHRhJIMW0CE',
       })
     }
   }
@@ -117,6 +120,9 @@ export default function Home() {
   if (!user) return null
   const plan = user?.userPlans.find((plan) => plan.id == user?.currentPlanId)
   if (!plan) return null
+  const length = dailyLogs ? (dailyLogs?.length > 30 ? 30 : dailyLogs?.length) : 0
+  const today = new Date()
+
   return (
     <div className='flex flex-col gap-4 items-center mt-10 '>
       current program: {plan.name}
@@ -148,21 +154,26 @@ export default function Home() {
           Delete Daily Log
         </Button>
       </div>
-      <div className='flex gap-8 lg:flex-row flex-col'>
+      <div className='flex gap-8 flex-col'>
         <div className='flex flex-col gap-1 items-center'>
-          {dailyLogs?.map((dailyLog) => (
-            <div
-              className='flex gap-6 items-center'
-              key={dailyLog.id}
-            >
-              <div className='text-sm text-muted-foreground'>
-                {getFormattedDate(dailyLog.date)}
+          {Array.from({ length: length }).map((_, i) => {
+            const date = new Date(today.getTime() - i * 86400000)
+            return (
+              <div
+                key={i}
+                className='flex gap-2 flex-col'
+              >
+                <div className='text-sm text-muted-foreground font-semibold text-center'>
+                  {getFormattedDate(date)}
+                </div>
+                <DailyLog
+                  dailyLogs={dailyLogs}
+                  day={date}
+                  isLog={true}
+                />
               </div>
-              <div className='text-sm text-muted-foreground'>
-                {dailyLog.morningWeight}kg
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
         <div className='flex flex-col gap-1 items-center'>
           {weighIns?.map((weighIn) => (
