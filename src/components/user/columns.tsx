@@ -49,7 +49,7 @@ export const columns: ColumnDef<GetUserById>[] = [
         title='id'
       />
     ),
-    cell: ({ row }) => <div className='w-min'>{row.getValue('id')}</div>,
+    cell: ({ row }) => <div className='w-max'>{row.getValue('id')}</div>,
   },
   {
     accessorKey: 'createdAt',
