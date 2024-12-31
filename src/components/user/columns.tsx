@@ -1,7 +1,7 @@
 'use client'
 
 import { formatDate } from '@/lib/utils'
-import type { GetUserById } from '@/types'
+import type { GetUserById, GetAllUsers } from '@/types'
 import { ColumnDef } from '@tanstack/react-table'
 import { CircleCheck, Star } from 'lucide-react'
 
@@ -40,7 +40,6 @@ export const columns: ColumnDef<GetUserById>[] = [
       </div>
     ),
     enableSorting: false,
-    enableHiding: false,
   },
   {
     accessorKey: 'id',
@@ -81,7 +80,7 @@ export const columns: ColumnDef<GetUserById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='w-[200px] truncate font-medium'>
+          <span className='lg:w-[200px] truncate font-medium'>
             {row.getValue('name')}
           </span>
         </div>
@@ -137,7 +136,7 @@ export const columns: ColumnDef<GetUserById>[] = [
         <HoverCard>
           <HoverCardTrigger>
             <div className='flex space-x-2'>
-              <span className='w-[300px] truncate font-medium'>
+              <span className='lg:w-[300px] truncate font-medium'>
                 {row.getValue('email')}
               </span>
             </div>

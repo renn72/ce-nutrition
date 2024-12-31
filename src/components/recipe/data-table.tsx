@@ -36,6 +36,7 @@ const DataTable = ({ recipe: data }: { recipe: GetAllRecipes }) => {
     React.useState<VisibilityState>({
       createdAt: false,
       id: false,
+      select: false,
     })
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -57,10 +58,6 @@ const DataTable = ({ recipe: data }: { recipe: GetAllRecipes }) => {
       columnFilters,
     },
     initialState: {
-      columnVisibility: {
-        createdAt: false,
-        id: false,
-      },
       pagination: {
         pageIndex: 0,
         pageSize: 20,

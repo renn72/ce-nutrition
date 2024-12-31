@@ -12,7 +12,7 @@ export default function Home() {
   if (isLoadingRoot) return null
   const users = data?.filter((user) => !user.isRoot || isRoot?.isRoot)
   return (
-    <div className='flex flex-col items-center w-full'>
+    <div className='flex flex-col items-center w-full px-2'>
       {isLoading ? (
         <DataTableSkeleton
           className='max-w-screen-xl'

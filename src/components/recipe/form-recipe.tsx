@@ -84,7 +84,6 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
           note: ingredient.note || '',
           serveSize: ingredient.serveSize,
           serveUnit: ingredient.serveUnit,
-          isAlternate: ingredient.isAlternate,
           alternateId: ingredient.alternateId.toString(),
         })) || [],
     },

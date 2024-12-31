@@ -42,6 +42,7 @@ const DataTable = ({ users: data }: { users: GetAllUsers }) => {
       id: false,
       firstName: false,
       lastName: false,
+      select: false,
     })
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],

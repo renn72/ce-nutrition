@@ -132,7 +132,7 @@ const AdminBaseSidebar = ({
         </SidebarContent>
         <SidebarRail />
       </Sidebar>
-      <SidebarInset className='w-full'>{children}</SidebarInset>
+      <SidebarInset className=''>{children}</SidebarInset>
     </SidebarProvider>
   )
 }

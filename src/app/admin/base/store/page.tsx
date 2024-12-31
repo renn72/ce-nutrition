@@ -10,7 +10,7 @@ export default function Home() {
 
   const { data, isLoading } = api.groceryStore.getAll.useQuery()
   return (
-    <div className='flex min-h-screen flex-col items-center w-full'>
+    <div className='flex min-h-screen flex-col items-center w-full px-2'>
       {isLoading ? (
         <DataTableSkeleton
           className='max-w-screen-xl'

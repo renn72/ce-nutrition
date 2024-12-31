@@ -11,7 +11,7 @@ export default function Home() {
   const { data, isLoading } = api.recipe.getAll.useQuery()
   console.log('recipe', data)
   return (
-    <div className='flex min-h-screen flex-col items-center w-full'>
+    <div className='flex min-h-screen flex-col items-center w-full px-2'>
       {isLoading ? (
         <DataTableSkeleton
           className='max-w-screen-2xl'
