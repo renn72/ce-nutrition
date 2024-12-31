@@ -36,6 +36,7 @@ const DataTable = ({ plan: data }: { plan: GetAllPlans }) => {
     React.useState<VisibilityState>({
       createdAt: false,
       id: false,
+      select: false,
     })
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],

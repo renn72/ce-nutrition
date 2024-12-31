@@ -6,7 +6,6 @@ import { useState } from 'react'
 import type { GetAllMeals } from '@/types'
 import {
   ColumnFiltersState,
-  GlobalFilterTableState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -14,6 +13,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  GlobalFilterTableState,
   SortingState,
   useReactTable,
   VisibilityState,
@@ -33,18 +33,17 @@ import { DataTablePagination } from '@/components/table/data-table-pagination'
 import { columns } from './columns'
 import { DataTableToolbar } from './data-table-toolbar'
 
-const DataTable = ({ meals : data }: { meals: GetAllMeals }) => {
-
+const DataTable = ({ meals: data }: { meals: GetAllMeals }) => {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({
       createdAt: false,
       id: false,
+      select: false,
     })
 
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [
-    ],
+    [],
   )
   const [sorting, setSorting] = React.useState<SortingState>([
     {

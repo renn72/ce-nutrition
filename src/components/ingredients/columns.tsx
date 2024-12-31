@@ -2,6 +2,7 @@
 
 import { api } from '@/trpc/react'
 
+import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { formatDate } from '@/lib/utils'
 import type { GetIngredientById } from '@/types'
 import { ColumnDef, SortingFn } from '@tanstack/react-table'
@@ -9,15 +10,15 @@ import { Bookmark } from 'lucide-react'
 
 import { Checkbox } from '@/components/ui/checkbox'
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from '@/components/ui/hover-card'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 
@@ -54,7 +55,6 @@ export const columns: ColumnDef<GetIngredientById>[] = [
       />
     ),
     enableSorting: false,
-    enableHiding: false,
   },
   {
     accessorKey: 'favouriteAt',
@@ -77,14 +77,12 @@ export const columns: ColumnDef<GetIngredientById>[] = [
             if (!prev) return
             const update = prev.map((ingredient) => {
               if (ingredient.id === row.original?.id) {
-              // @ts-ignore
+                // @ts-ignore
                 ingredient.favouriteAt = new Date()
               }
               return ingredient
             })
-            ctx.ingredient.getAll.setData(undefined, [
-              ...update,
-            ])
+            ctx.ingredient.getAll.setData(undefined, [...update])
             return { prev }
           },
           onError: (_e, _new, prev) => {
@@ -103,14 +101,12 @@ export const columns: ColumnDef<GetIngredientById>[] = [
             if (!prev) return
             const update = prev.map((ingredient) => {
               if (ingredient.id === row.original?.id) {
-              // @ts-ignore
+                // @ts-ignore
                 ingredient.favouriteAt = null
               }
               return ingredient
             })
-            ctx.ingredient.getAll.setData(undefined, [
-              ...update,
-            ])
+            ctx.ingredient.getAll.setData(undefined, [...update])
             return { prev }
           },
           onError: (_e, _new, prev) => {
@@ -147,7 +143,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
         title='id'
       />
     ),
-    cell: ({ row }) => <div className='w-min'>{row.getValue('id')}</div>,
+    cell: ({ row }) => <div className=''>{row.getValue('id')}</div>,
   },
   {
     accessorKey: 'publicFoodKey',
@@ -157,9 +153,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
         title='Food Key'
       />
     ),
-    cell: ({ row }) => (
-      <div className='w-min'>{row.getValue('publicFoodKey')}</div>
-    ),
+    cell: ({ row }) => <div className=''>{row.getValue('publicFoodKey')}</div>,
   },
   {
     accessorKey: 'createdAt',
@@ -172,7 +166,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='max-w-[500px] truncate font-medium'>
+          <span className='lg:max-w-[500px] truncate font-medium'>
             {formatDate(row.getValue('createdAt'))}
           </span>
         </div>
@@ -188,20 +182,36 @@ export const columns: ColumnDef<GetIngredientById>[] = [
       />
     ),
     cell: ({ row }) => {
+      const isMobile = useClientMediaQuery('(max-width: 600px)')
       return (
         <div className='flex space-x-2'>
-          <HoverCard>
-            <HoverCardTrigger asChild>
-              <span className='w-[200px] lg:w-[400px] truncate font-medium lg:tracking-tighter'>
-                {row.getValue('name')}
-              </span>
-            </HoverCardTrigger>
-            <HoverCardContent>
-              <div className='flex space-x-2'>
-                <span className='font-medium'>{row.getValue('name')}</span>
-              </div>
-            </HoverCardContent>
-          </HoverCard>
+          {isMobile ? (
+            <Popover>
+              <PopoverTrigger asChild>
+                <span className='w-[200px] lg:w-[400px] truncate font-medium lg:tracking-tighter'>
+                  {row.getValue('name')}
+                </span>
+              </PopoverTrigger>
+              <PopoverContent className='w-[280px] p-4 text-xs'>
+                <div className='flex space-x-2'>
+                  <span className='font-medium'>{row.getValue('name')}</span>
+                </div>
+              </PopoverContent>
+            </Popover>
+          ) : (
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <span className='w-[200px] lg:w-[400px] truncate font-medium lg:tracking-tighter'>
+                  {row.getValue('name')}
+                </span>
+              </HoverCardTrigger>
+              <HoverCardContent>
+                <div className='flex space-x-2'>
+                  <span className='font-medium'>{row.getValue('name')}</span>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+          )}
         </div>
       )
     },
@@ -248,7 +258,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Calories w Fibre'
+        title='Calories'
       />
     ),
     sortingFn: floatSortingFn,

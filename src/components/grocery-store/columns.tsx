@@ -32,7 +32,6 @@ export const columns: ColumnDef<GetGroceryStoreById>[] = [
       />
     ),
     enableSorting: false,
-    enableHiding: false,
   },
   {
     accessorKey: 'id',
@@ -42,7 +41,7 @@ export const columns: ColumnDef<GetGroceryStoreById>[] = [
         title='id'
       />
     ),
-    cell: ({ row }) => <div className='w-min'>{row.getValue('id')}</div>,
+    cell: ({ row }) => <div className=''>{row.getValue('id')}</div>,
   },
   {
     accessorKey: 'createdAt',
@@ -73,7 +72,7 @@ export const columns: ColumnDef<GetGroceryStoreById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='w-[300px] truncate font-medium'>
+          <span className='lg:w-[300px] truncate font-medium'>
             {row.getValue('name')}
           </span>
         </div>
@@ -91,7 +90,7 @@ export const columns: ColumnDef<GetGroceryStoreById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='w-[300px] truncate font-medium'>
+          <span className='lg:w-[300px] truncate font-medium'>
             {row.getValue('location')}
           </span>
         </div>

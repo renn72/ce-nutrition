@@ -43,6 +43,8 @@ const DataTable = ({ ingredients : data }: { ingredients: GetAllIngredients }) =
       id: false,
       availableCarbohydrateWithoutSugarAlcohols: false,
       publicFoodKey: false,
+      select: false,
+      caloriesWOFibre: false,
     })
 
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(

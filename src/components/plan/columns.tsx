@@ -34,7 +34,6 @@ export const columns: ColumnDef<GetPlanById>[] = [
       />
     ),
     enableSorting: false,
-    enableHiding: false,
   },
   {
     accessorKey: 'id',
@@ -44,7 +43,7 @@ export const columns: ColumnDef<GetPlanById>[] = [
         title='id'
       />
     ),
-    cell: ({ row }) => <div className='w-min'>{row.getValue('id')}</div>,
+    cell: ({ row }) => <div className=''>{row.getValue('id')}</div>,
   },
   {
     accessorKey: 'createdAt',
@@ -92,7 +91,7 @@ export const columns: ColumnDef<GetPlanById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='w-[210px] truncate font-medium'>
+          <span className='lg:w-[210px] truncate font-medium'>
             {row.getValue('name')}
           </span>
         </div>
@@ -110,7 +109,7 @@ export const columns: ColumnDef<GetPlanById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='w-[110px] truncate font-medium'>
+          <span className='lg:w-[110px] truncate font-medium'>
             {row.getValue('numberOfMeals')}
           </span>
         </div>
@@ -128,7 +127,7 @@ export const columns: ColumnDef<GetPlanById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='w-[100px] truncate font-medium'>
+          <span className='max-w-[100px] truncate font-medium'>
             {row.getValue('notes')}
           </span>
         </div>
@@ -146,7 +145,7 @@ export const columns: ColumnDef<GetPlanById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='w-[100px] truncate font-medium'>
+          <span className='lg:w-[100px] truncate font-medium'>
             {row.getValue('recipeCategory')}
           </span>
         </div>

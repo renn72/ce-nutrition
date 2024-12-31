@@ -41,14 +41,13 @@ export const columns: ColumnDef<GetMealById>[] = [
       />
     ),
     enableSorting: false,
-    enableHiding: false,
   },
   {
     accessorKey: 'favouriteAt',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Favourite'
+        title='Fav'
       />
     ),
     cell: ({ row }) => {
@@ -128,7 +127,7 @@ export const columns: ColumnDef<GetMealById>[] = [
         title='id'
       />
     ),
-    cell: ({ row }) => <div className='w-min'>{row.getValue('id')}</div>,
+    cell: ({ row }) => <div className=''>{row.getValue('id')}</div>,
   },
   {
     accessorKey: 'createdAt',
@@ -161,7 +160,7 @@ export const columns: ColumnDef<GetMealById>[] = [
         <div className='flex space-x-2'>
           <HoverCard>
             <HoverCardTrigger asChild>
-              <span className='w-[100px] truncate font-medium'>
+              <span className='lg:w-[100px] truncate font-medium'>
                 {row.getValue('name')}
               </span>
             </HoverCardTrigger>
@@ -186,12 +185,12 @@ export const columns: ColumnDef<GetMealById>[] = [
     cell: ({ row }) => {
       const recipes = row.original?.mealToRecipe
         ?.map((r) => r.recipe?.name)
-        .join(' || ')
+        .join(' - ')
       return (
         <div className='flex space-x-2'>
           <HoverCard>
             <HoverCardTrigger asChild>
-              <span className='w-[500px] truncate font-medium'>{recipes}</span>
+              <span className='lg:w-[500px] truncate font-medium'>{recipes}</span>
             </HoverCardTrigger>
             <HoverCardContent>
               <div className='flex space-x-2'>
@@ -216,7 +215,7 @@ export const columns: ColumnDef<GetMealById>[] = [
       const vege = row.original?.mealToVegeStack?.[0]?.vegeStack?.name
       return (
         <div className='flex space-x-2'>
-          <span className='w-[200px] truncate font-medium'>{vege}</span>
+          <span className='lg:w-[200px] truncate font-medium'>{vege}</span>
         </div>
       )
     },
