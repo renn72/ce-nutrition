@@ -12,7 +12,7 @@ import {
   HoverCardTrigger,
 } from '@/components/ui/hover-card'
 
-import { DataTableColumnHeader } from './data-table-column-header'
+import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
 
 export const columns: ColumnDef<GetUserById>[] = [
