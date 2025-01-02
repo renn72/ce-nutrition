@@ -1,8 +1,13 @@
+'use client'
+
 import { api } from '@/trpc/react'
 
 import { useState } from 'react'
 
+import { useRouter } from 'next/navigation'
+
 import { cn } from '@/lib/utils'
+import type { GetIngredientById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ChevronDown, PlusCircle } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -17,14 +22,6 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import {
   Form,
   FormControl,
   FormDescription,
@@ -34,7 +31,15 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+
 import { BackButton } from '../back-button'
 
 export const dynamic = 'force-dynamic'
@@ -57,7 +62,12 @@ const formSchema = z.object({
   isAllStores: z.boolean(),
 })
 
-const FormIngredient = () => {
+const FormIngredient = ({
+  ingredient = null,
+}: {
+  ingredient?: GetIngredientById | null
+}) => {
+  const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const ctx = api.useUtils()
   const { data: stores } = api.groceryStore.getAll.useQuery()
@@ -68,46 +78,84 @@ const FormIngredient = () => {
       toast.success('Ingredient added successfully')
     },
   })
+  const { mutate: updateIngredient } = api.ingredient.update.useMutation({
+    onSuccess: () => {
+      setIsOpen(false)
+      ctx.ingredient.invalidate()
+      toast.success('Ingredient added successfully')
+      setTimeout(() => {
+        router.push('/admin/base/ingredient')
+      }, 1000)
+    },
+  })
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      serveSize: 100,
-      serveUnit: 'grams',
-      caloriesWFibre: 0,
-      caloriesWOFibre: 0,
-      protein: 0,
-      fatTotal: 0,
-      totalDietaryFibre: 0,
-      totalSugars: 0,
-      starch: 0,
-      resistantStarch: 0,
-      availableCarbohydrateWithoutSugarAlcohols: 0,
-      availableCarbohydrateWithSugarAlcohols: 0,
-      stores: [],
-      isAllStores: true,
+      name: ingredient?.name || '',
+      serveSize: Number(ingredient?.serveSize) || 100,
+      serveUnit: ingredient?.serveUnit || 'grams',
+      caloriesWFibre: Number(ingredient?.caloriesWFibre) || 0,
+      caloriesWOFibre: Number(ingredient?.caloriesWOFibre) || 0,
+      protein: Number(ingredient?.protein) || 0,
+      fatTotal: Number(ingredient?.fatTotal) || 0,
+      totalDietaryFibre: Number(ingredient?.totalDietaryFibre) || 0,
+      totalSugars: Number(ingredient?.totalSugars) || 0,
+      starch: Number(ingredient?.starch) || 0,
+      resistantStarch: Number(ingredient?.resistantStarch) || 0,
+      availableCarbohydrateWithoutSugarAlcohols:
+        Number(ingredient?.availableCarbohydrateWithoutSugarAlcohols) || 0,
+      availableCarbohydrateWithSugarAlcohols:
+        Number(ingredient?.availableCarbohydrateWithSugarAlcohols) || 0,
+      stores:
+        ingredient?.ingredientToGroceryStore?.map(
+          (store) => store.groceryStoreId?.toString() || '',
+        ) || [],
+      isAllStores: ingredient?.isAllStores || true,
     },
   })
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    createIngredient({
-      name: data.name,
-      serveSize: data.serveSize.toString(),
-      serveUnit: data.serveUnit.toString(),
-      caloriesWFibre: data.caloriesWFibre.toString(),
-      caloriesWOFibre: data.caloriesWOFibre.toString(),
-      protein: data.protein.toString(),
-      fatTotal: data.fatTotal.toString(),
-      totalDietaryFibre: data.totalDietaryFibre.toString(),
-      totalSugars: data.totalSugars.toString(),
-      starch: data.starch.toString(),
-      resistantStarch: data.resistantStarch.toString(),
-      availableCarbohydrateWithoutSugarAlcohols:
-        data.availableCarbohydrateWithoutSugarAlcohols.toString(),
-      availableCarbohydrateWithSugarAlcohols:
-        data.availableCarbohydrateWithSugarAlcohols.toString(),
-      isAllStores: data.isAllStores,
-      stores: data.stores,
-    })
+    if (ingredient) {
+      updateIngredient({
+        id: ingredient.id,
+        name: data.name,
+        serveSize: data.serveSize.toString(),
+        serveUnit: data.serveUnit.toString(),
+        caloriesWFibre: data.caloriesWFibre.toString(),
+        caloriesWOFibre: data.caloriesWOFibre.toString(),
+        protein: data.protein.toString(),
+        fatTotal: data.fatTotal.toString(),
+        totalDietaryFibre: data.totalDietaryFibre.toString(),
+        totalSugars: data.totalSugars.toString(),
+        starch: data.starch.toString(),
+        resistantStarch: data.resistantStarch.toString(),
+        availableCarbohydrateWithoutSugarAlcohols:
+          data.availableCarbohydrateWithoutSugarAlcohols.toString(),
+        availableCarbohydrateWithSugarAlcohols:
+          data.availableCarbohydrateWithSugarAlcohols.toString(),
+        isAllStores: data.isAllStores,
+        stores: data.stores,
+      })
+    } else {
+      createIngredient({
+        name: data.name,
+        serveSize: data.serveSize.toString(),
+        serveUnit: data.serveUnit.toString(),
+        caloriesWFibre: data.caloriesWFibre.toString(),
+        caloriesWOFibre: data.caloriesWOFibre.toString(),
+        protein: data.protein.toString(),
+        fatTotal: data.fatTotal.toString(),
+        totalDietaryFibre: data.totalDietaryFibre.toString(),
+        totalSugars: data.totalSugars.toString(),
+        starch: data.starch.toString(),
+        resistantStarch: data.resistantStarch.toString(),
+        availableCarbohydrateWithoutSugarAlcohols:
+          data.availableCarbohydrateWithoutSugarAlcohols.toString(),
+        availableCarbohydrateWithSugarAlcohols:
+          data.availableCarbohydrateWithSugarAlcohols.toString(),
+        isAllStores: data.isAllStores,
+        stores: data.stores,
+      })
+    }
   }
 
   const isAllStores = form.watch('isAllStores')
@@ -141,10 +189,7 @@ const FormIngredient = () => {
                 name='serveSize'
                 render={({ field }) => (
                   <FormItem className='w-full'>
-                    <div className='flex gap-2 items-baseline'>
                       <FormLabel>Serving Size</FormLabel>
-                      <FormDescription>.</FormDescription>
-                    </div>
                     <FormControl>
                       <Input
                         placeholder='serving size'
@@ -163,25 +208,35 @@ const FormIngredient = () => {
                 name='serveUnit'
                 render={({ field }) => (
                   <FormItem className='w-full'>
-                    <div className='flex gap-2 items-baseline'>
-                      <FormLabel>Serving Unit</FormLabel>
-                      <FormDescription>grams/mls/each</FormDescription>
-                    </div>
-                    <FormControl>
-                      <Input
-                        placeholder='serving unit'
-                        {...field}
-                        type='text'
-                        className='w-full'
-                      />
-                    </FormControl>
+                    <FormLabel>Serving Unit</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder='' />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {['grams', 'mls', 'each'].map((option) => (
+                          <SelectItem
+                            key={option}
+                            value={option}
+                          >
+                            {option}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription></FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            <div className='flex gap-4 justify-between'>
-              <div className='w-full'>
+            <div className='flex gap-4 justify-between hidden'>
+              <div className='w-full hidden'>
                 <FormField
                   control={form.control}
                   name='caloriesWOFibre'
@@ -208,35 +263,33 @@ const FormIngredient = () => {
                   )}
                 />
               </div>
-              <div className='w-full'>
-                <FormField
-                  control={form.control}
-                  name='caloriesWFibre'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Calories w fibre</FormLabel>
-                      <FormControl>
-                        <div className='relative w-full'>
-                          <Input
-                            placeholder='Calories'
-                            {...field}
-                            onChange={(e) =>
-                              field.onChange(Number(e.target.value))
-                            }
-                            type='number'
-                          />
-                          <div className='absolute right-8 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
-                            grams
-                          </div>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
             </div>
-            <div className='flex gap-4 justify-between'>
+            <div className='grid grid-cols-2 md:grid-cols-4 gap-4  justify-between'>
+              <FormField
+                control={form.control}
+                name='caloriesWFibre'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Calories</FormLabel>
+                    <FormControl>
+                      <div className='relative w-full'>
+                        <Input
+                          placeholder='Calories'
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
+                          type='number'
+                        />
+                        <div className='absolute right-8 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
+                          grams
+                        </div>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name='protein'
@@ -385,7 +438,7 @@ const FormIngredient = () => {
                 )}
               />
             </div>
-            <Collapsible>
+            <Collapsible className='hidden'>
               <CollapsibleTrigger asChild>
                 <Button
                   variant='outline'

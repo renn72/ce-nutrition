@@ -143,7 +143,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Calories w Fibre'
+        title='Calories'
       />
     ),
     cell: ({ row }) => {
@@ -216,7 +216,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Carbohydrates'
+        title="Carb's"
       />
     ),
     cell: ({ row }) => {

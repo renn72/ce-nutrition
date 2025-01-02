@@ -1,9 +1,10 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 
 import { api } from '@/trpc/react'
-import { FormEdit } from '@/components/ingredients/form-edit'
+import { FormIngredient } from '@/components/ingredients/form-ingredient'
+
 
 export default function Home() {
 
@@ -16,8 +17,8 @@ export default function Home() {
   if (isLoading) return null
 
   return (
-    <div className='flex flex-col max-w-screen-lg w-full mx-auto mt-10'>
-      <FormEdit ingredient={ingredient} />
+    <div className='flex flex-col max-w-screen-lg mx-auto mt-10 px-2'>
+      <FormIngredient ingredient={ingredient} />
     </div>
   )
 }
