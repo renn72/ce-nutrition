@@ -5,7 +5,7 @@ import { useCallback, useRef, useState } from 'react'
 import { formSchema } from '@/app/user/log/form'
 import { useUploadThing } from '@/lib/uploadthing'
 import { cn } from '@/lib/utils'
-import { CameraIcon, RefreshCw, SwitchCamera } from 'lucide-react'
+import { CameraIcon, Loader, RefreshCw, SwitchCamera } from 'lucide-react'
 import { UseFormReturn } from 'react-hook-form'
 import Webcam from 'react-webcam'
 import { z } from 'zod'
@@ -32,6 +32,7 @@ const Camera = ({ onUpload }: { onUpload: (url: string) => void }) => {
   const [videoConstraints, setVideoConstraints] = useState<VideoConstraints>({
     facingMode: 'user',
   })
+  const [isLoading, setIsLoading] = useState(false)
 
   const { startUpload, routeConfig } = useUploadThing('imageUploader', {
     onClientUploadComplete: (e) => {
@@ -40,11 +41,14 @@ const Camera = ({ onUpload }: { onUpload: (url: string) => void }) => {
       // @ts-ignore
       onUpload(url)
       setIsOpen(false)
+      setIsLoading(false)
     },
     onUploadError: () => {
+      setIsLoading(false)
       alert('error occurred while uploading')
     },
     onUploadBegin: () => {
+      setIsLoading(true)
       console.log('upload has begun for')
     },
   })
@@ -114,30 +118,57 @@ const Camera = ({ onUpload }: { onUpload: (url: string) => void }) => {
           <span className=''>Use Camera</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className='w-screen h-screen p-0 flex flex-col items-center justify-center'>
-        <DialogTitle className='sr-only'>Use Camera</DialogTitle>
-        <Webcam
-          ref={cameraRef}
-          screenshotFormat='image/jpeg'
-          audio={false}
-          videoConstraints={videoConstraints}
-        />
-        <div className='grid grid-cols-3 gap-4 w-full place-items-center'>
-          <div />
-          <div
-            className='border-2 border-foreground rounded-full p-2'
-          onClick={capture}>
+      <DialogContent className='w-screen h-screen p-0'>
+        <div className='flex flex-col items-center justify-center relative gap-4 w-screen h-screen'>
+          <DialogTitle className='sr-only'>Use Camera</DialogTitle>
+          {imgSrc ? (
+            <img
+              src={imgSrc}
+              alt='img'
+              className=''
+            />
+          ) : (
+            <Webcam
+              ref={cameraRef}
+              screenshotFormat='image/jpeg'
+              audio={false}
+              videoConstraints={videoConstraints}
+            />
+          )}
+          <div className='grid grid-cols-3 gap-4 w-full place-items-center'>
+            <div />
             <div
-            className='h-12 w-12 border-2 border-foreground bg-foreground rounded-full' />
-
+              className='border-2 border-foreground rounded-full p-2'
+              onClick={() => {
+                setIsLoading(true)
+                capture()
+              }}
+            >
+              <div className='h-12 w-12 border-2 border-foreground bg-foreground rounded-full' />
+            </div>
+            <div
+              className='border-2 border-foreground rounded-full p-2'
+              onClick={handleClick}
+            >
+              <RefreshCw size={32} />
+            </div>
           </div>
+          <DialogDescription></DialogDescription>
           <div
-            className='border-2 border-foreground rounded-full p-2'
-            onClick={handleClick}>
-            <RefreshCw size={32} />
+            className={cn(
+              'absolute top-0 right-0 bottom-0 left-0 bg-black/50 z-[999] ',
+              isLoading ? '' : 'hidden',
+            )}
+          >
+            <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
+              <Loader
+                className='animate-spin '
+                size={32}
+                color='white'
+              />
+            </div>
           </div>
         </div>
-        <DialogDescription></DialogDescription>
       </DialogContent>
     </Dialog>
   )
