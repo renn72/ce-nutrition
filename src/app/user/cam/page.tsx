@@ -2,8 +2,8 @@
 
 import fs from 'fs'
 
-import '@tensorflow/tfjs-backend-webgl';
-import '@tensorflow/tfjs-backend-webgpu';
+import '@tensorflow/tfjs-backend-webgl'
+import '@tensorflow/tfjs-backend-webgpu'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -15,6 +15,7 @@ import * as tf from '@tensorflow/tfjs-core'
 import Webcam from 'react-webcam'
 
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 interface VideoConstraints {
   facingMode: string | { exact: string }
@@ -25,6 +26,7 @@ export default function Page() {
   const canvasRef = useRef(null)
 
   const [caputured, setCaptured] = useState(false)
+  const [updateInterval, setUpdateInterval] = useState(100)
 
   const [imgSrc, setImgSrc] = useState(null)
   const [videoConstraints, setVideoConstraints] = useState<VideoConstraints>({
@@ -109,7 +111,7 @@ export default function Page() {
     )
     setInterval(() => {
       detect(detector)
-    }, 10)
+    }, updateInterval)
   }
 
   // @ts-ignore
@@ -180,7 +182,7 @@ export default function Page() {
           textAlign: 'center',
           zIndex: 9,
           width: 300,
-          height:500,
+          height: 500,
         }}
       />
       <canvas
@@ -197,9 +199,26 @@ export default function Page() {
           height: 500,
         }}
       />
-      <Button
-        className='absolute bottom-4'
-        onClick={() => runMovenet()}>Run</Button>
+      <div
+        className='flex gap-2 items-center
+        absolute bottom-4
+        '
+      >
+        <Button
+          className=''
+          onClick={() => runMovenet()}
+        >
+          Run
+        </Button>
+        <Input
+          placeholder='Update Interval'
+          type='number'
+          value={updateInterval}
+          onChange={(e) => {
+            setUpdateInterval(Number(e.target.value))
+          }}
+        />
+      </div>
     </div>
   )
 }
