@@ -136,8 +136,8 @@ export const weighIn = createTable('weigh_in', {
 })
 
 export const weighInRelations = relations(weighIn, ({ one }) => ({
-  user: one(user, { fields: [weighIn.userId], references: [user.id] }),
-  trainer: one(user, { fields: [weighIn.trainerId], references: [user.id] }),
+  user: one(user, { fields: [weighIn.userId], references: [user.id], relationName: 'user' }),
+  trainer: one(user, { fields: [weighIn.trainerId], references: [user.id], relationName: 'trainer' }),
 }))
 
 export const userToTrainer = createTable('user_to_trainer', {
