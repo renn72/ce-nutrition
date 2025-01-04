@@ -3,6 +3,7 @@
 import { cn } from '@/lib/utils'
 import { GetAllDailyLogs, GetAllWeighIns, GetUserById } from '@/types'
 import { Logs, SquareCheckBig, SquareX } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 
 const Text = ({
   title,
@@ -35,19 +36,8 @@ const Icon = ({
   title: string
   text: string | undefined | null | boolean
 }) => {
-  return (
-    <div className={cn('flex gap-1', text ? 'items-end' : 'items-center')}>
-      <div className='text-muted-foreground'>{title}</div>
-      <div
-        className={cn(
-          'text-sm font-semibold',
-          text ? 'text-secondary-foreground' : 'text-muted-foreground/20',
-        )}
-      >
-        {text ? <SquareCheckBig size={24} /> : <SquareX size={16} />}
-      </div>
-    </div>
-  )
+  if (!text) return null
+  return <Badge variant='default' className=''>{title}</Badge>
 }
 const DailyLog = ({
   dailyLogs,
@@ -103,7 +93,7 @@ const DailyLog = ({
           text={todaysDailyLog?.notes}
         />
       </div>
-      <div className='grid grid-cols-4'>
+      <div className='flex gap-2 justify-center'>
         <Icon
           title='Hiit'
           text={todaysDailyLog?.isHiit}

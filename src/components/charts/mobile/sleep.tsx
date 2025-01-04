@@ -50,7 +50,7 @@ const Sleep = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
     .reverse()
 
   const dataMin = 0 //Math.floor(Math.min(...data.map((d) => Number(d.sleep)))) - 1
-  const dataMax = 10 //Math.ceil(Math.max(...data.map((d) => Number(d.sleep)))) + 1
+  const dataMax = Math.ceil(Math.max(...data.map((d) => Number(d.sleep)))) < 10 ? 10 : Math.ceil(Math.max(...data.map((d) => Number(d.sleep)))) + 1
 
   return (
     <ChartContainer
@@ -131,7 +131,7 @@ const Sleep = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
         <Line
           dataKey='sleepQuality'
           label='Sleep Quality'
-          stroke='#D2042D4A'
+          stroke='#D2042D6A'
           dot={false}
           strokeWidth={2}
           type='monotone'

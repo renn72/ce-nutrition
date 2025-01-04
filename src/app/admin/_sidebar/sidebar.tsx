@@ -67,27 +67,27 @@ const data = {
       items: [
         {
           title: 'Plans',
-          url: '/admin/base/plan',
+          url: '/admin/plan',
         },
         {
           title: 'Meals',
-          url: '/admin/base/meal',
+          url: '/admin/meal',
         },
         {
           title: 'Recipes',
-          url: '/admin/base/recipe',
+          url: '/admin/recipe',
         },
         {
           title: 'Ingredients',
-          url: '/admin/base/ingredient',
+          url: '/admin/ingredient',
         },
         {
           title: 'Store',
-          url: '/admin/base/store',
+          url: '/admin/store',
         },
         {
           title: 'Users',
-          url: '/admin/base/user',
+          url: '/admin/users',
         },
       ],
     },
@@ -97,7 +97,7 @@ const data = {
       items: [
         {
           title: 'Settings',
-          url: '/admin/base/settings',
+          url: '/admin/settings',
         },
       ],
     },
