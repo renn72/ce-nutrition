@@ -10,11 +10,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { atom, useAtom } from 'jotai'
 import {
   Check,
-  ChevronRight,
   ChevronsUpDown,
-  GalleryVerticalEnd,
-  LayoutDashboard,
-  Search,
   User,
 } from 'lucide-react'
 
@@ -24,11 +20,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
 import {
   Sidebar,
   SidebarContent,
@@ -40,8 +31,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
   SidebarProvider,
   SidebarRail,
 } from '@/components/ui/sidebar'
@@ -56,19 +45,19 @@ const data = {
       items: [
         {
           title: 'Info',
-          url: '/admin/user/info',
+          url: '/admin/user-info',
         },
         {
           title: 'Check-in',
-          url: '/admin/user/check-in',
+          url: '/admin/user-check-in',
         },
         {
           title: 'Program',
-          url: '/admin/user/program',
+          url: '/admin/user-program',
         },
         {
           title: 'Create',
-          url: '/admin/user/create',
+          url: '/admin/user-create-plan',
         },
       ],
     },
@@ -125,7 +114,7 @@ const AdminSidebar = ({
   const [selectedUser, setSelectedUser] = useAtom(userAtom)
   const { data: _allUsers } = api.user.getAll.useQuery()
   const { data: isRoot } = api.user.isRoot.useQuery()
-  const allUsers = _allUsers?.filter((user) => !user.isRoot || isRoot?.isRoot)
+  const allUsers = _allUsers?.filter((user) => true) //!user.isRoot || isRoot?.isRoot)
   const userName = allUsers?.find((user) => user.id === selectedUser)?.name
 
   React.useEffect(() => {

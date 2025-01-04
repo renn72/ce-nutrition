@@ -16,7 +16,6 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 
-import { ModeToggle } from '@/components/layout/mode-toggle'
 import { User } from '@/components/auth/user'
 
 const SidebarHeader = () => {

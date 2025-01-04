@@ -19,9 +19,8 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 
-export default function Home() {
+const UserInfo = ({ userId }: { userId: string }) => {
   const searchParams = useSearchParams()
-  const user = searchParams.get('user') ?? ''
 
   const [selectedPlan, setSelectedPlan] = useState('')
   const ctx = api.useUtils()
@@ -32,7 +31,7 @@ export default function Home() {
       ctx.invalidate()
     },
   })
-  const { data: currentUser } = api.user.get.useQuery(user)
+  const { data: currentUser } = api.user.get.useQuery(userId)
   const plan = currentUser?.userPlans.find(
     (plan) => plan.id == currentUser?.currentPlanId,
   )
@@ -141,4 +140,19 @@ export default function Home() {
       </div>
     </div>
   )
+}
+
+export default function Home() {
+  const searchParams = useSearchParams()
+  const userId = searchParams.get('user')
+
+  if (
+    userId === '' ||
+    userId === undefined ||
+    userId === null ||
+    userId === 'null'
+  )
+    return <div>Select a user</div>
+
+  return <UserInfo userId={userId} />
 }

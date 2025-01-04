@@ -11,10 +11,8 @@ import { Button } from '@/components/ui/button'
 
 import { DailyLog } from '@/components/daily-log/daily-log'
 
-export default function Home() {
+const UserInfo = ({ userId }: { userId: string }) => {
   const ctx = api.useUtils()
-  const searchParams = useSearchParams()
-  const userId = searchParams.get('user')
 
   const { data: user } = api.user.get.useQuery(userId || '')
   const { data: trainer } = api.user.getByEmail.useQuery('renn@warner.systems')
@@ -120,7 +118,11 @@ export default function Home() {
   if (!user) return null
   const plan = user?.userPlans.find((plan) => plan.id == user?.currentPlanId)
   if (!plan) return null
-  const length = dailyLogs ? (dailyLogs?.length > 30 ? 30 : dailyLogs?.length) : 0
+  const length = dailyLogs
+    ? dailyLogs?.length > 30
+      ? 30
+      : dailyLogs?.length
+    : 0
   const today = new Date()
 
   return (
@@ -199,4 +201,19 @@ export default function Home() {
       </div>
     </div>
   )
+}
+
+export default function Home() {
+  const searchParams = useSearchParams()
+  const userId = searchParams.get('user')
+
+  if (
+    userId === '' ||
+    userId === undefined ||
+    userId === null ||
+    userId === 'null'
+  )
+    return <div>Select a user</div>
+
+  return <UserInfo userId={userId} />
 }

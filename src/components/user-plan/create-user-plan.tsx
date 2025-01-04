@@ -6,7 +6,7 @@ import { useState } from 'react'
 
 import { useSearchParams } from 'next/navigation'
 
-import { userAtom } from '@/app/admin/user/_sidebar/sidebar'
+import { userAtom } from '@/app/admin/_sidebar/sidebar'
 import type { GetPlanById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAtom } from 'jotai'
