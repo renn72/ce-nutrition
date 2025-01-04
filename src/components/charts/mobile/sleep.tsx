@@ -1,7 +1,17 @@
 'use client'
 
 import { GetAllDailyLogs, GetAllWeighIns, GetUserById } from '@/types'
-import { Legend, Line, LineChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import {
+  Area,
+  Bar,
+  CartesianGrid,
+  ComposedChart,
+  Legend,
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
+} from 'recharts'
 
 import {
   ChartContainer,
@@ -21,27 +31,72 @@ const chartConfig = {
 
 const Sleep = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
   const data = dailyLogs
-    .slice(0, 14)
-    .map((dailyLog) => ({
+    .slice(0, 21)
+    .map((dailyLog, i, arr) => ({
       date: dailyLog.date.toLocaleDateString(undefined, {
         month: 'numeric',
         day: 'numeric',
       }),
-      sleep: dailyLog.sleep,
-      sleepQuality: dailyLog.sleepQuality,
+      sleep: dailyLog.sleep === '' ? arr[i - 1]?.sleep : dailyLog.sleep,
+      sleepQuality:
+        dailyLog.sleepQuality === ''
+          ? arr[i - 1]?.sleepQuality
+          : dailyLog.sleepQuality,
+      bowelMovements:
+        dailyLog.bowelMovements === ''
+          ? arr[i - 1]?.bowelMovements
+          : dailyLog.bowelMovements,
     }))
     .reverse()
 
-  const dataMin = Math.floor(Math.min(...data.map((d) => Number(d.sleep))))
-  const dataMax = Math.ceil(Math.max(...data.map((d) => Number(d.sleep))))
+  const dataMin = 0 //Math.floor(Math.min(...data.map((d) => Number(d.sleep)))) - 1
+  const dataMax = 10 //Math.ceil(Math.max(...data.map((d) => Number(d.sleep)))) + 1
 
   return (
     <ChartContainer
       config={chartConfig}
       className='w-full min-h-[200px]'
     >
-      <LineChart data={data}>
-        <CartesianGrid vertical={false} />
+      <ComposedChart data={data}>
+        <defs>
+          <linearGradient
+            id='colorUv'
+            x1='0'
+            y1='0'
+            x2='0'
+            y2='1'
+          >
+            <stop
+              offset='5%'
+              stopColor='#8884d8'
+              stopOpacity={0.8}
+            />
+            <stop
+              offset='95%'
+              stopColor='#8884d8'
+              stopOpacity={0}
+            />
+          </linearGradient>
+          <linearGradient
+            id='colorPv'
+            x1='0'
+            y1='0'
+            x2='0'
+            y2='1'
+          >
+            <stop
+              offset='5%'
+              stopColor='#82ca9d'
+              stopOpacity={0.8}
+            />
+            <stop
+              offset='95%'
+              stopColor='#82ca9d'
+              stopOpacity={0}
+            />
+          </linearGradient>
+        </defs>
+        <CartesianGrid vertical={true} strokeDasharray='3 3' />
         <XAxis
           dataKey='date'
           tickLine={false}
@@ -63,8 +118,11 @@ const Sleep = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
           allowDataOverflow={true}
           domain={[dataMin, dataMax]}
         />
-        <Line
+        <Area
           dataKey='sleep'
+          fill='url(#colorPv)'
+          fillOpacity={1}
+          stroke='#82ca9d'
           dot={false}
           strokeWidth={2}
           type='monotone'
@@ -73,15 +131,21 @@ const Sleep = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
         <Line
           dataKey='sleepQuality'
           label='Sleep Quality'
-          stroke='#FFB50050'
+          stroke='#D2042D4A'
           dot={false}
-          strokeWidth={1}
+          strokeWidth={2}
           type='monotone'
+          isAnimationActive={true}
+        />
+        <Bar
+          dataKey='bowelMovements'
+          label='Bowel Movements'
+          fill='#8B451390'
           isAnimationActive={true}
         />
         <ChartTooltip content={<ChartTooltipContent />} />
         <Legend />
-      </LineChart>
+      </ComposedChart>
     </ChartContainer>
   )
 }
