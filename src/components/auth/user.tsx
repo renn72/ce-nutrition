@@ -96,7 +96,7 @@ const User = () => {
             <DropdownMenuItem className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
               <UserRoundCog size={20} />
 
-              <Link href='/admin/base'>Admin</Link>
+              <Link href='/admin'>Admin</Link>
             </DropdownMenuItem>
           </>
         )}

@@ -1,6 +1,10 @@
 import { auth } from '@/server/auth'
 import { SignIn } from '@/components/auth/sign-in'
 
+import { AdminSidebar } from './_sidebar/sidebar'
+import { SidebarHeader } from './_sidebar/sidebar-header'
+
+
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -15,5 +19,12 @@ export default async function RootLayout({
       </>
     )
 
-  return <>{children}</>
+  return (
+      <>
+        <AdminSidebar>
+          <SidebarHeader />
+          {children}
+        </AdminSidebar>
+      </>
+  )
 }

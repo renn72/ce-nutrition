@@ -7,7 +7,16 @@ import * as React from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
-import { Check, ChevronsUpDown, GalleryVerticalEnd, User } from 'lucide-react'
+import { atom, useAtom } from 'jotai'
+import {
+  Check,
+  ChevronRight,
+  ChevronsUpDown,
+  GalleryVerticalEnd,
+  LayoutDashboard,
+  Search,
+  User,
+} from 'lucide-react'
 
 import {
   DropdownMenu,
@@ -15,6 +24,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import {
   Sidebar,
   SidebarContent,
@@ -26,10 +40,13 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
   SidebarProvider,
   SidebarRail,
 } from '@/components/ui/sidebar'
-import { atom, useAtom } from 'jotai'
+
+export const userAtom = atom<string>('')
 
 const data = {
   navMain: [
@@ -55,12 +72,50 @@ const data = {
         },
       ],
     },
+    {
+      title: 'Building Blocks',
+      url: '#',
+      items: [
+        {
+          title: 'Plans',
+          url: '/admin/base/plan',
+        },
+        {
+          title: 'Meals',
+          url: '/admin/base/meal',
+        },
+        {
+          title: 'Recipes',
+          url: '/admin/base/recipe',
+        },
+        {
+          title: 'Ingredients',
+          url: '/admin/base/ingredient',
+        },
+        {
+          title: 'Store',
+          url: '/admin/base/store',
+        },
+        {
+          title: 'Users',
+          url: '/admin/base/user',
+        },
+      ],
+    },
+    {
+      title: 'Admin',
+      url: '#',
+      items: [
+        {
+          title: 'Settings',
+          url: '/admin/base/settings',
+        },
+      ],
+    },
   ],
 }
 
-export const userAtom = atom<string>('')
-
-const AdminBaseSidebar = ({
+const AdminSidebar = ({
   children,
 }: Readonly<{ children: React.ReactNode }>) => {
   const router = useRouter()
@@ -133,16 +188,18 @@ const AdminBaseSidebar = ({
               <SidebarGroupContent>
                 <SidebarMenu>
                   {item.items.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={pathname === item.url}
-                      >
-                        <Link href={item.url + '?user=' + user}>
-                          {item.title}
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
+                    <div key={item.title}>
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname === item.url}
+                        >
+                          <Link href={item.url + '?user=' + user}>
+                            {item.title}
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    </div>
                   ))}
                 </SidebarMenu>
               </SidebarGroupContent>
@@ -151,9 +208,9 @@ const AdminBaseSidebar = ({
         </SidebarContent>
         <SidebarRail />
       </Sidebar>
-      <SidebarInset className='w-full'>{children}</SidebarInset>
+      <SidebarInset className=''>{children}</SidebarInset>
     </SidebarProvider>
   )
 }
 
-export { AdminBaseSidebar }
+export { AdminSidebar }
