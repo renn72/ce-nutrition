@@ -373,179 +373,155 @@ export const CreatorMenu = () => {
   }
 
   return (
-    <DropdownMenuPortal>
-      <DropdownMenuSubContent
-        alignOffset={-550}
-        className='max-h-[600px] lg:max-h-[900px] overflow-y-auto z-99 tracking-tighter lg:w-full w-[160px]'
+    <div className='flex flex-col gap-6 items-center max-w-screen-lg w-full mx-auto mt-10'>
+      <Button
+        variant='secondary'
+        size='lg'
+        onClick={() => {
+          sync()
+        }}
       >
-        <DropdownMenuLabel>ADMIN</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => {
-              sync()
-            }}
-          >
-            Sync DB
-          </Button>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => {
-              createUser({
-                email: 'renn@warner.systems',
-                password: 'hklasd',
-                firstName: 'David',
-                lastName: 'Warner',
-                birthDate: new Date(1980, 0, 1),
-                isCreator: true,
-                isRoot: true,
-                isTrainer: true,
-              })
-            }}
-          >
-            GenMe
-          </Button>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => createFakeUsers()}
-          >
-            GenFake
-          </Button>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => deleteFakeUsers()}
-          >
-            DeleteFake
-          </Button>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => {
-              createStores()
-            }}
-          >
-            GenStore
-          </Button>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => {
-              importAFCDSolid()
-            }}
-          >
-            ImportAFCDSolid
-          </Button>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => {
-              importAFCDLiquid()
-            }}
-          >
-            importAFCDLiquid
-          </Button>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => {
-              deleteAll()
-            }}
-          >
-            deleteAllIngredients
-          </Button>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => {
-              generateRecipes()
-            }}
-          >
-            Gen Recipes
-          </Button>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => {
-              deleteAllRecipes()
-            }}
-          >
-            deleteAllRecipes
-          </Button>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => {
-              generateVegeStacks()
-            }}
-          >
-            Gen Vege Stacks
-          </Button>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => {
-              deleteAllVegeStacks()
-            }}
-          >
-            deleteAllVegeStacks
-          </Button>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => {
-              generateMeals()
-            }}
-          >
-            Gen Meals
-          </Button>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => {
-              deleteAllMeals()
-            }}
-          >
-            deleteAllMeals
-          </Button>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => {
-              generatePlans()
-            }}
-          >
-            Gen Plans
-          </Button>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Button
-            variant='ghost'
-            onClick={() => {
-              deleteAllPlans()
-            }}
-          >
-            deleteAllPlans
-          </Button>
-        </DropdownMenuItem>
-      </DropdownMenuSubContent>
-    </DropdownMenuPortal>
+        Sync DB
+      </Button>
+      <Button
+        variant='secondary'
+        onClick={() => {
+          createUser({
+            email: 'renn@warner.systems',
+            password: 'hklasd',
+            firstName: 'David',
+            lastName: 'Warner',
+            birthDate: new Date(1980, 0, 1),
+            isCreator: true,
+            isRoot: true,
+            isTrainer: true,
+          })
+        }}
+      >
+        GenMe
+      </Button>
+      <Button
+        variant='secondary'
+        size='lg'
+        onClick={() => createFakeUsers()}
+      >
+        GenFake
+      </Button>
+      <Button
+        variant='secondary'
+        size='lg'
+        onClick={() => deleteFakeUsers()}
+      >
+        DeleteFake
+      </Button>
+      <Button
+        variant='secondary'
+        size='lg'
+        onClick={() => {
+          createStores()
+        }}
+      >
+        GenStore
+      </Button>
+      <Button
+        variant='secondary'
+        size='lg'
+        onClick={() => {
+          importAFCDSolid()
+        }}
+      >
+        ImportAFCDSolid
+      </Button>
+      <Button
+        variant='secondary'
+        size='lg'
+        onClick={() => {
+          importAFCDLiquid()
+        }}
+      >
+        importAFCDLiquid
+      </Button>
+      <Button
+        variant='secondary'
+        size='lg'
+        onClick={() => {
+          deleteAll()
+        }}
+      >
+        deleteAllIngredients
+      </Button>
+      <Button
+        variant='secondary'
+        size='lg'
+        onClick={() => {
+          generateRecipes()
+        }}
+      >
+        Gen Recipes
+      </Button>
+      <Button
+        variant='secondary'
+        size='lg'
+        onClick={() => {
+          deleteAllRecipes()
+        }}
+      >
+        deleteAllRecipes
+      </Button>
+      <Button
+        variant='secondary'
+        size='lg'
+        onClick={() => {
+          generateVegeStacks()
+        }}
+      >
+        Gen Vege Stacks
+      </Button>
+      <Button
+        variant='secondary'
+        size='lg'
+        onClick={() => {
+          deleteAllVegeStacks()
+        }}
+      >
+        deleteAllVegeStacks
+      </Button>
+      <Button
+        variant='secondary'
+        size='lg'
+        onClick={() => {
+          generateMeals()
+        }}
+      >
+        Gen Meals
+      </Button>
+      <Button
+        variant='secondary'
+        size='lg'
+        onClick={() => {
+          deleteAllMeals()
+        }}
+      >
+        deleteAllMeals
+      </Button>
+      <Button
+        variant='secondary'
+        size='lg'
+        onClick={() => {
+          generatePlans()
+        }}
+      >
+        Gen Plans
+      </Button>
+      <Button
+        variant='secondary'
+        size='lg'
+        onClick={() => {
+          deleteAllPlans()
+        }}
+      >
+        deleteAllPlans
+      </Button>
+    </div>
   )
 }

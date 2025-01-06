@@ -24,6 +24,7 @@ declare module 'next-auth' {
       id: string
       name: string
       email: string
+      isTrainer: boolean
       isCreator: boolean
       // ...other properties
       // role: UserRole;
@@ -53,6 +54,7 @@ export const authConfig = {
           where: (user, { eq }) => eq(user.id, token.uid),
           columns: {
             id: true,
+            isTrainer: true,
             isCreator: true,
           },
         })
@@ -60,6 +62,7 @@ export const authConfig = {
           session.user = {
             ...session.user,
             id: dbUser.id,
+            isTrainer: dbUser.isTrainer || false,
             isCreator: dbUser.isCreator || false,
           }
         }

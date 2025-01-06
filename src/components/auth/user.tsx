@@ -118,15 +118,6 @@ const User = () => {
           <span className=''>Toggle theme</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        {isCreator ? (
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
-              <VenetianMask size={20} />
-              Super
-            </DropdownMenuSubTrigger>
-            <CreatorMenu />
-          </DropdownMenuSub>
-        ) : null}
         <DropdownMenuItem
           onClick={() => onLogout()}
           className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'

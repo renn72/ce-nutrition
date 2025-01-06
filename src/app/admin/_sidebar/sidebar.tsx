@@ -8,11 +8,7 @@ import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import { atom, useAtom } from 'jotai'
-import {
-  Check,
-  ChevronsUpDown,
-  User,
-} from 'lucide-react'
+import { Check, ChevronsUpDown, User } from 'lucide-react'
 
 import {
   DropdownMenu,
@@ -99,6 +95,10 @@ const data = {
           title: 'Settings',
           url: '/admin/settings',
         },
+        {
+          title: 'Super',
+          url: '/admin/super',
+        },
       ],
     },
   ],
@@ -176,20 +176,22 @@ const AdminSidebar = ({
               <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {item.items.map((item) => (
-                    <div key={item.title}>
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton
-                          asChild
-                          isActive={pathname === item.url}
-                        >
-                          <Link href={item.url + '?user=' + user}>
-                            {item.title}
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    </div>
-                  ))}
+                  {item.items
+                    .filter((item) => item.title !== 'Super' || isRoot?.isRoot)
+                    .map((item) => (
+                      <div key={item.title}>
+                        <SidebarMenuItem key={item.title}>
+                          <SidebarMenuButton
+                            asChild
+                            isActive={pathname === item.url}
+                          >
+                            <Link href={item.url + '?user=' + user}>
+                              {item.title}
+                            </Link>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      </div>
+                    ))}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
