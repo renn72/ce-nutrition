@@ -21,8 +21,30 @@ interface VideoConstraints {
 type CustomVideoRef = {
   video: HTMLVideoElement | null;
 };
+const useWindowDimensions = () => {
+  const [windowDimensions, setWindowDimensions] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
 
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup listener on unmount
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowDimensions;
+};
 export default function Page() {
+  const { width, height } = useWindowDimensions();
   const cameraRef = useRef<Webcam | null>(null)
   const canvasRef = useRef(null)
 
@@ -168,12 +190,17 @@ export default function Page() {
   }
 
   const screenWidth = window.innerWidth
+  const screenHeight = window.innerHeight
+  console.log('screenWidth', screenWidth)
+  console.log('screenHeight', screenHeight)
   const canvasHeight = cameraRef.current?.video?.videoHeight
   console.log('screenWidth', canvasHeight)
+
+  if (!screenWidth || !screenHeight) return null
   // runMovenet()
 
   return (
-    <div className='p-4 flex flex-col gap-4 mt-16 min-h-[550px] w-screen relative overflow-x-hidden'>
+    <div className='p-4 flex flex-col gap-4 mt-16 w-screen h-full relative'>
       <Webcam
         ref={cameraRef}
         screenshotFormat='image/jpeg'
@@ -189,8 +216,8 @@ export default function Page() {
           right: 0,
           textAlign: 'center',
           zIndex: 9,
-          width: screenWidth,
-          // height: 500,
+          width: width,
+          // height: 'auto',
         }}
       />
       <canvas
