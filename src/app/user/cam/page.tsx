@@ -184,6 +184,7 @@ export default function Page() {
           position: 'absolute',
           marginLeft: 'auto',
           marginRight: 'auto',
+          top: 36,
           left: 0,
           right: 0,
           textAlign: 'center',
@@ -198,6 +199,7 @@ export default function Page() {
           position: 'absolute',
           marginLeft: 'auto',
           marginRight: 'auto',
+          top: 28,
           left: 0,
           right: 0,
           textAlign: 'center',
@@ -208,17 +210,19 @@ export default function Page() {
       />
       <div
         className='flex gap-2 items-center
-        absolute bottom-4
+        absolute top-0
         '
       >
         <Button
-          className=''
+          className='py-1 h-6'
+          size='sm'
           onClick={() => runMovenet()}
         >
           Run
         </Button>
         <Input
           placeholder='Update Interval'
+          className='h-6'
           type='number'
           value={updateInterval}
           onChange={(e) => {
