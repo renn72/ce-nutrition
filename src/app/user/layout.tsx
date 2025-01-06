@@ -18,12 +18,12 @@ const Mobile = ({
 }) => {
   return (
     <div className='flex flex-col gap-2 w-full min-h-screen'>
-      <MobileHeader isDesktop={isDesktop} />
+      <MobileHeader isDesktop={false} />
       {children}
       <div
         className={cn(
           'grid grid-cols-3 place-items-center p-2 fixed border-t border-border bg-background w-full',
-          !isDesktop ? 'bottom-0 w-full' : 'top-[922px] w-[388px]',
+          !isDesktop || true ? 'bottom-0 w-full' : 'top-[922px] w-[388px]',
         )}
       >
         <Link href='/user/log'>
@@ -51,12 +51,7 @@ export default async function RootLayout({
 
   return (
     <div className='flex flex-col items-center gap-2 '>
-      <div className='my-8'>TODO: desktop</div>
-      <div>Mobile</div>
-
-      <ScrollArea className='w-[390px] h-[844px] border border-border shadow-md relative '>
         <Mobile isDesktop={true}>{children}</Mobile>
-      </ScrollArea>
     </div>
   )
 }
