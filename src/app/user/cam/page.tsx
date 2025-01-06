@@ -181,7 +181,7 @@ export default function Page() {
           right: 0,
           textAlign: 'center',
           zIndex: 9,
-          width: 300,
+          // width: 300,
           height: 500,
         }}
       />
@@ -195,8 +195,8 @@ export default function Page() {
           right: 0,
           textAlign: 'center',
           zIndex: 9,
-          width: 300,
-          height: 500,
+          // width: 300,
+          // height: 700,
         }}
       />
       <div
