@@ -1,7 +1,5 @@
 'use client'
 
-import fs from 'fs'
-
 import '@tensorflow/tfjs-backend-webgl'
 import '@tensorflow/tfjs-backend-webgpu'
 
@@ -20,9 +18,12 @@ import { Input } from '@/components/ui/input'
 interface VideoConstraints {
   facingMode: string | { exact: string }
 }
+type CustomVideoRef = {
+  video: HTMLVideoElement | null;
+};
 
 export default function Page() {
-  const cameraRef = useRef(null)
+  const cameraRef = useRef<Webcam | null>(null)
   const canvasRef = useRef(null)
 
   const [caputured, setCaptured] = useState(false)
@@ -105,7 +106,8 @@ export default function Page() {
       poseDetection.SupportedModels.MoveNet,
       {
         modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
-        inputResolution: { width: 640, height: 480 },
+        // @ts-ignore
+        // inputResolution: { width: 640, height: 480 },
         scale: 0.8,
       },
     )
@@ -116,20 +118,22 @@ export default function Page() {
 
   // @ts-ignore
   const detect = async (detector) => {
-    console.log('detect')
     if (
       typeof cameraRef.current !== 'undefined' &&
       cameraRef.current !== null &&
-      cameraRef.current.video.readyState === 4
+      cameraRef.current.video?.readyState === 4
     ) {
       // Get Video Properties
       const video = cameraRef.current.video
       const videoWidth = cameraRef.current.video.videoWidth
       const videoHeight = cameraRef.current.video.videoHeight
 
+      console.log('videoWidth', videoWidth)
+      console.log('videoHeight', videoHeight)
+
       // Set video width
-      cameraRef.current.video.width = videoWidth
-      cameraRef.current.video.height = videoHeight
+      // cameraRef.current.video.width = videoWidth
+      // cameraRef.current.video.height = videoHeight
 
       // Make Detections
 
@@ -163,10 +167,13 @@ export default function Page() {
     }
   }
 
+  const screenWidth = window.innerWidth
+  const canvasHeight = cameraRef.current?.video?.videoHeight
+  console.log('screenWidth', canvasHeight)
   // runMovenet()
 
   return (
-    <div className='p-4 flex flex-col gap-4 mt-10 min-h-[600px] relative'>
+    <div className='p-4 flex flex-col gap-4 mt-16 min-h-[550px] w-screen relative overflow-x-hidden'>
       <Webcam
         ref={cameraRef}
         screenshotFormat='image/jpeg'
@@ -181,8 +188,8 @@ export default function Page() {
           right: 0,
           textAlign: 'center',
           zIndex: 9,
-          // width: 300,
-          height: 500,
+          width: screenWidth,
+          // height: 500,
         }}
       />
       <canvas
@@ -195,8 +202,8 @@ export default function Page() {
           right: 0,
           textAlign: 'center',
           zIndex: 9,
-          // width: 300,
-          // height: 700,
+          width: screenWidth,
+          // height: 500,
         }}
       />
       <div
