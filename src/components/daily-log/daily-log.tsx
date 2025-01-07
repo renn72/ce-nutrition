@@ -1,8 +1,11 @@
 'use client'
 
+import Image from 'next/image'
+
 import { cn } from '@/lib/utils'
 import { GetAllDailyLogs, GetAllWeighIns, GetUserById } from '@/types'
 import { Logs, SquareCheckBig, SquareX } from 'lucide-react'
+
 import { Badge } from '@/components/ui/badge'
 
 const Text = ({
@@ -37,7 +40,14 @@ const Icon = ({
   text: string | undefined | null | boolean
 }) => {
   if (!text) return null
-  return <Badge variant='default' className=''>{title}</Badge>
+  return (
+    <Badge
+      variant='default'
+      className=''
+    >
+      {title}
+    </Badge>
+  )
 }
 const DailyLog = ({
   dailyLogs,
@@ -57,6 +67,64 @@ const DailyLog = ({
     return (
       <div className='flex flex-col gap-2 w-full px-2 py-4 bg-secondary text-sm items-center'>
         <div> --- </div>
+      </div>
+    )
+  }
+  if (todaysDailyLog?.image && todaysDailyLog?.image !== '') {
+    return (
+      <div className='grid grid-cols-3 w-full px-4 py-2 bg-secondary text-sm'>
+        <div className='flex flex-col gap-1 items-start col-span-2'>
+          <Text
+            title='Weight'
+            text={todaysDailyLog?.morningWeight}
+            suffix='kg'
+          />
+          <Text
+            title='Bowel Movements'
+            text={todaysDailyLog?.bowelMovements}
+          />
+          <Text
+            title='Sleep'
+            text={todaysDailyLog?.sleep}
+          />
+          <Text
+            title='Nap'
+            text={todaysDailyLog?.nap}
+          />
+          <Text
+            title='Sleep Score'
+            text={todaysDailyLog?.sleepQuality}
+          />
+          <Text
+            title='Notes'
+            text={todaysDailyLog?.notes}
+          />
+        <div className='flex gap-2 justify-center'>
+          <Icon
+            title='Hiit'
+            text={todaysDailyLog?.isHiit}
+          />
+          <Icon
+            title='Cardio'
+            text={todaysDailyLog?.isCardio}
+          />
+          <Icon
+            title='Lift'
+            text={todaysDailyLog?.isLift}
+          />
+        </div>
+        </div>
+        <Image
+          src={todaysDailyLog.image}
+          alt='img'
+          width={400}
+          height={500}
+          style={{
+            width: '100%',
+            height: 'auto',
+          }}
+          className=''
+        />
       </div>
     )
   }
@@ -105,10 +173,6 @@ const DailyLog = ({
         <Icon
           title='Lift'
           text={todaysDailyLog?.isLift}
-        />
-        <Icon
-          title='Picture'
-          text={todaysDailyLog?.image}
         />
       </div>
     </div>

@@ -110,7 +110,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
         bowelMovements: bowelMovements,
         userId: userId,
         image:
-          'https://utfs.io/f/fnZ11GC5JP7TQYL3jL86fSlZ2KgctYiQ5PGL3nHRhJIMW0CE',
+          'https://utfs.io/f/fnZ11GC5JP7TujgXDjr1YfPNCcKl7sMt9A0TvRGSHi8B5QqE',
       })
     }
   }
@@ -157,7 +157,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
         </Button>
       </div>
       <div className='flex gap-8 flex-col'>
-        <div className='flex flex-col gap-1 items-center'>
+        <div className='flex flex-col gap-1 items-center max-w-lg'>
           {Array.from({ length: length }).map((_, i) => {
             const date = new Date(today.getTime() - i * 86400000)
             return (

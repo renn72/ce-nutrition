@@ -17,6 +17,7 @@ const config = {
     ignoreBuildErrors: true,
   },
   images: {
+    domains: ['utfs.io'],
     remotePatterns: [
       {
         protocol: 'https',

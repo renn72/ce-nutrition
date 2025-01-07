@@ -16,7 +16,7 @@ const chartConfig = {
 
 const BodyWeight = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
   const data = dailyLogs
-    .slice(0, 15)
+    .slice(0, 22)
     .map((dailyLog) => ({
       date: dailyLog.date.toLocaleDateString(undefined, {
         month: 'numeric',
@@ -26,8 +26,8 @@ const BodyWeight = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
     }))
     .reverse()
 
-  const dataMin = Math.floor(Math.min(...data.map((d) => Number(d.weight))))
-  const dataMax = Math.ceil(Math.max(...data.map((d) => Number(d.weight))))
+  const dataMin = Math.floor(Math.min(...data.map((d) => Number(d.weight)))) - 1
+  const dataMax = Math.ceil(Math.max(...data.map((d) => Number(d.weight)))) + 1
 
   return (
     <ChartContainer
