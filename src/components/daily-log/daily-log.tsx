@@ -3,8 +3,7 @@
 import Image from 'next/image'
 
 import { cn } from '@/lib/utils'
-import { GetAllDailyLogs, GetAllWeighIns, GetUserById } from '@/types'
-import { Logs, SquareCheckBig, SquareX } from 'lucide-react'
+import { GetAllDailyLogs,  } from '@/types'
 
 import { Badge } from '@/components/ui/badge'
 
