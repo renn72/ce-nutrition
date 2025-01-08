@@ -38,17 +38,14 @@ const formSchema = z.object({
   notes: z.string(),
 })
 
-const WeighInForm = () => {
+const WeighInForm = ({ userId }: { userId: string }) => {
   const router = useRouter()
   const ctx = api.useUtils()
-  const { data: currentUser } = api.user.getCurrentUser.useQuery()
-  const { mutate: createDailyLog } = api.dailyLog.create.useMutation({
+  const { data: trainer } = api.user.getCurrentUser.useQuery()
+  const { mutate: createWeighIn } = api.weighIn.create.useMutation({
     onSuccess: () => {
       toast.success('Updated successfully')
-      ctx.dailyLog.invalidate()
-      setTimeout(() => {
-        router.push('/')
-      }, 1000)
+      ctx.weighIn.invalidate()
     },
   })
   const form = useForm<z.infer<typeof formSchema>>({
@@ -64,7 +61,18 @@ const WeighInForm = () => {
     },
   })
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    if (!currentUser) return
+    if (!trainer) return
+    createWeighIn({
+      date: data.date,
+      bodyWeight: data.bodyWeight,
+      leanMass: data.leanMass,
+      bloodPressure: data.bloodPressure,
+      bodyFat: data.bodyFat,
+      image: data.image,
+      notes: data.notes,
+      userId: userId,
+      trainerId: trainer.id,
+    })
   }
 
   const updateImage = (url: string) => {
@@ -222,7 +230,7 @@ export default function Home() {
     <div
       className='max-w-xl w-full mx-auto mt-10'
     >
-      <WeighInForm />
+      <WeighInForm userId={userId} />
     </div>
   )
 }

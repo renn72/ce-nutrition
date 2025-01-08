@@ -16,7 +16,8 @@ export default function Home() {
   const length = currentUserDailyLogs?.length > 30 ? 30 : currentUserDailyLogs?.length
 
   return (
-    <div className='flex flex-col gap-2 w-full min-h-screen mt-16 '>
+    <div className='w-full mt-16 flex flex-col items-center'>
+    <div className='flex flex-col gap-2 w-full max-w-xl'>
       {Array.from({ length: length }).map((_, i) => {
         const date = new Date(today.getTime() - i * 86400000)
         return (
@@ -36,6 +37,7 @@ export default function Home() {
         )
       })}
       blah
+    </div>
     </div>
   )
 }

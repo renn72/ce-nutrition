@@ -1,4 +1,3 @@
-
 import { weighIn } from '@/server/db/schema/user'
 import { TRPCError } from '@trpc/server'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
@@ -13,8 +12,10 @@ export const weighInRouter = createTRPCRouter({
         bodyWeight: z.string(),
         bodyFat: z.string(),
         leanMass: z.string(),
+        bloodPressure: z.string(),
         userId: z.string(),
         trainerId: z.string(),
+        notes: z.string().optional(),
         image: z.string().optional(),
       }),
     )
@@ -35,6 +36,12 @@ export const weighInRouter = createTRPCRouter({
       const res = await ctx.db.query.weighIn.findMany({
         where: eq(weighIn.userId, input),
         orderBy: (data, { desc }) => desc(data.date),
+      })
+      return res
+    }),
+  get: protectedProcedure.input(z.number()).query(async ({ ctx, input }) => {
+      const res = await ctx.db.query.weighIn.findFirst({
+        where: eq(weighIn.id, input),
       })
       return res
     }),

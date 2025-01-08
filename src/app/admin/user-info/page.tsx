@@ -9,6 +9,7 @@ import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 
+import { CheckIn } from '@/components/check-in/check-in'
 import { DailyLog } from '@/components/daily-log/daily-log'
 
 const UserInfo = ({ userId }: { userId: string }) => {
@@ -17,7 +18,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
   const { data: user } = api.user.get.useQuery(userId || '')
   const { data: trainer } = api.user.getByEmail.useQuery('renn@warner.systems')
   const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId || '')
-  const { data: weighIns } = api.weighIn.getAllUser.useQuery(userId || '')
+  const { data: checkIns } = api.weighIn.getAllUser.useQuery(userId || '')
   const { mutate: addDailyLog } = api.dailyLog.create.useMutation({
     onSuccess: () => {
       ctx.dailyLog.invalidate()
@@ -76,6 +77,10 @@ const UserInfo = ({ userId }: { userId: string }) => {
         bodyWeight: weight,
         bodyFat: fat,
         leanMass: leanMass,
+        bloodPressure: '',
+        image:
+          'https://utfs.io/f/fnZ11GC5JP7TJuAZLWzQlUhGn0Yg5u4jVDdi6AkWxtIPEN8b',
+        notes: '',
         userId: userId,
         trainerId: trainer?.id || userId,
       })
@@ -118,11 +123,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
   if (!user) return null
   const plan = user?.userPlans.find((plan) => plan.id == user?.currentPlanId)
   if (!plan) return null
-  const length = dailyLogs
-    ? dailyLogs?.length > 30
-      ? 30
-      : dailyLogs?.length
-    : 0
+  const length = dailyLogs ? (dailyLogs?.length > 7 ? 7 : dailyLogs?.length) : 0
   const today = new Date()
 
   return (
@@ -156,8 +157,8 @@ const UserInfo = ({ userId }: { userId: string }) => {
           Delete Daily Log
         </Button>
       </div>
-      <div className='flex gap-8 flex-col'>
-        <div className='flex flex-col gap-1 items-center max-w-lg'>
+      <div className='flex gap-8'>
+        <div className='flex flex-col gap-1 items-center max-w-md'>
           {Array.from({ length: length }).map((_, i) => {
             const date = new Date(today.getTime() - i * 86400000)
             return (
@@ -177,24 +178,16 @@ const UserInfo = ({ userId }: { userId: string }) => {
             )
           })}
         </div>
-        <div className='flex flex-col gap-1 items-center'>
-          {weighIns?.map((weighIn) => (
+        <div className='flex flex-col gap-1 items-center max-w-md'>
+          {checkIns?.slice(0, 7).map((checkIn) => (
             <div
-              className='flex gap-6 items-center'
-              key={weighIn.id}
+              key={checkIn.id}
+              className='flex gap-2 flex-col'
             >
-              <div className='text-sm text-muted-foreground'>
-                {getFormattedDate(weighIn.date)}
+              <div className='text-sm text-muted-foreground font-semibold text-center'>
+                {getFormattedDate(checkIn.date)}
               </div>
-              <div className='text-sm text-muted-foreground'>
-                {weighIn.bodyWeight}kg
-              </div>
-              <div className='text-sm text-muted-foreground'>
-                {weighIn.leanMass}kg
-              </div>
-              <div className='text-sm text-muted-foreground'>
-                {weighIn.bodyFat}kg
-              </div>
+              <CheckIn weighIn={checkIn} />
             </div>
           ))}
         </div>
