@@ -115,10 +115,14 @@ const MobileHeader = ({ isDesktop = false }: { isDesktop?: boolean }) => {
       isDesktop ? 'top-[129px] w-[388px]' : 'top-0 w-full '
     )}>
       <div className='flex flex-col gap-0 items-center justify-center'>
+        <Link
+          href='/user/program'
+          >
         <NotebookText
           size={40}
           className='bg-accentt cursor-pointer rounded-full p-1'
         />
+        </Link>
         <Label className='text-xs text-muted-foreground'>Program</Label>
       </div>
       <Link
