@@ -75,6 +75,8 @@ const Mobile = ({
     (plan) => plan.id == currentUser?.currentPlanId,
   )
 
+  const dailyLog = dailyLogs?.find((dailyLog) => dailyLog.date.toDateString() === new Date().toDateString())
+
   return (
     <div className={cn('flex flex-col gap-2 w-full min-h-screen mt-16 ', isDesktop && 'relative')}>
       <MobileHeader isDesktop={isDesktop} />
@@ -136,12 +138,7 @@ const Mobile = ({
       </Tabs>
       <div className='flex gap-0 w-full justify-center items-center my-6 flex-col bg-secondary pt-2'>
         <h2 className=' font-bold'>Today</h2>
-        <Link
-          className='w-full'
-          href='/user/log/create'
-        >
-          <DailyLog dailyLogs={dailyLogs} />
-        </Link>
+          <DailyLog dailyLog={dailyLog} />
       </div>
       <PlanPreview user={currentUser} />
       <div className='flex flex-col gap-2 w-full p-2 h-96 bg-secondary'></div>
