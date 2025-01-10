@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 
 import { cn } from '@/lib/utils'
 import { GetDailyLogById } from '@/types'
@@ -48,20 +49,75 @@ const Icon = ({
     </Badge>
   )
 }
-const DailyLog = ({ dailyLog }: { dailyLog: GetDailyLogById }) => {
+const DailyLog = ({ dailyLog, date }: { dailyLog: GetDailyLogById | undefined, date: Date }) => {
   const todaysDailyLog = dailyLog
 
-  if (!todaysDailyLog && false) {
-    return (
-      <div className='flex flex-col gap-2 w-full px-2 py-4 bg-secondary text-sm items-center'>
-        <div> --- </div>
-      </div>
-    )
-  }
+  const id = dailyLog?.id || ''
+
   if (todaysDailyLog?.image && todaysDailyLog?.image !== '') {
     return (
-      <div className='grid grid-cols-3 w-full px-4 py-2 bg-secondary text-sm'>
-        <div className='flex flex-col gap-1 items-start col-span-2'>
+      <Link href={`/user/log/create?id=${id}&date=${date.getTime()}`}>
+        <div className='grid grid-cols-3 w-full px-4 py-2 bg-secondary text-sm'>
+          <div className='flex flex-col gap-1 items-start col-span-2'>
+            <Text
+              title='Weight'
+              text={todaysDailyLog?.morningWeight}
+              suffix='kg'
+            />
+            <Text
+              title='Bowel Movements'
+              text={todaysDailyLog?.bowelMovements}
+            />
+            <Text
+              title='Sleep'
+              text={todaysDailyLog?.sleep}
+            />
+            <Text
+              title='Nap'
+              text={todaysDailyLog?.nap}
+            />
+            <Text
+              title='Sleep Score'
+              text={todaysDailyLog?.sleepQuality}
+            />
+            <Text
+              title='Notes'
+              text={todaysDailyLog?.notes}
+            />
+            <div className='flex gap-2 justify-center'>
+              <Icon
+                title='Hiit'
+                text={todaysDailyLog?.isHiit}
+              />
+              <Icon
+                title='Cardio'
+                text={todaysDailyLog?.isCardio}
+              />
+              <Icon
+                title='Lift'
+                text={todaysDailyLog?.isLift}
+              />
+            </div>
+          </div>
+          <Image
+            src={todaysDailyLog.image}
+            alt='img'
+            width={400}
+            height={500}
+            style={{
+              width: '100%',
+              height: 'auto',
+            }}
+            className=''
+          />
+        </div>
+      </Link>
+    )
+  }
+  return (
+      <Link href={`/user/log/create?id=${id}&date=${date.getTime()}`}>
+      <div className='flex flex-col gap-2 w-full px-2 py-4 bg-secondary text-sm'>
+        <div className='grid grid-cols-2'>
           <Text
             title='Weight'
             text={todaysDailyLog?.morningWeight}
@@ -71,6 +127,8 @@ const DailyLog = ({ dailyLog }: { dailyLog: GetDailyLogById }) => {
             title='Bowel Movements'
             text={todaysDailyLog?.bowelMovements}
           />
+        </div>
+        <div className='grid grid-cols-3'>
           <Text
             title='Sleep'
             text={todaysDailyLog?.sleep}
@@ -83,87 +141,29 @@ const DailyLog = ({ dailyLog }: { dailyLog: GetDailyLogById }) => {
             title='Sleep Score'
             text={todaysDailyLog?.sleepQuality}
           />
+        </div>
+        <div className='grid grid-cols-2'>
           <Text
             title='Notes'
             text={todaysDailyLog?.notes}
           />
-          <div className='flex gap-2 justify-center'>
-            <Icon
-              title='Hiit'
-              text={todaysDailyLog?.isHiit}
-            />
-            <Icon
-              title='Cardio'
-              text={todaysDailyLog?.isCardio}
-            />
-            <Icon
-              title='Lift'
-              text={todaysDailyLog?.isLift}
-            />
-          </div>
         </div>
-        <Image
-          src={todaysDailyLog.image}
-          alt='img'
-          width={400}
-          height={500}
-          style={{
-            width: '100%',
-            height: 'auto',
-          }}
-          className=''
-        />
+        <div className='flex gap-2 justify-center'>
+          <Icon
+            title='Hiit'
+            text={todaysDailyLog?.isHiit}
+          />
+          <Icon
+            title='Cardio'
+            text={todaysDailyLog?.isCardio}
+          />
+          <Icon
+            title='Lift'
+            text={todaysDailyLog?.isLift}
+          />
+        </div>
       </div>
-    )
-  }
-  return (
-    <div className='flex flex-col gap-2 w-full px-2 py-4 bg-secondary text-sm'>
-      <div className='grid grid-cols-2'>
-        <Text
-          title='Weight'
-          text={todaysDailyLog?.morningWeight}
-          suffix='kg'
-        />
-        <Text
-          title='Bowel Movements'
-          text={todaysDailyLog?.bowelMovements}
-        />
-      </div>
-      <div className='grid grid-cols-3'>
-        <Text
-          title='Sleep'
-          text={todaysDailyLog?.sleep}
-        />
-        <Text
-          title='Nap'
-          text={todaysDailyLog?.nap}
-        />
-        <Text
-          title='Sleep Score'
-          text={todaysDailyLog?.sleepQuality}
-        />
-      </div>
-      <div className='grid grid-cols-2'>
-        <Text
-          title='Notes'
-          text={todaysDailyLog?.notes}
-        />
-      </div>
-      <div className='flex gap-2 justify-center'>
-        <Icon
-          title='Hiit'
-          text={todaysDailyLog?.isHiit}
-        />
-        <Icon
-          title='Cardio'
-          text={todaysDailyLog?.isCardio}
-        />
-        <Icon
-          title='Lift'
-          text={todaysDailyLog?.isLift}
-        />
-      </div>
-    </div>
+    </Link>
   )
 }
 

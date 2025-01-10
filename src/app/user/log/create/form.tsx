@@ -1,6 +1,7 @@
 'use client'
 
 import { api } from '@/trpc/react'
+
 import { useRouter } from 'next/navigation'
 
 import { UploadButton } from '@/lib/uploadthing'
@@ -41,7 +42,13 @@ export const formSchema = z.object({
   image: z.string().optional(),
 })
 
-const DailyLogForm = ({ todaysLog }: { todaysLog: GetDailyLogById | null }) => {
+const DailyLogForm = ({
+  todaysLog,
+  date,
+}: {
+  todaysLog: GetDailyLogById | null
+  date?: Date | null
+}) => {
   const router = useRouter()
   const ctx = api.useUtils()
   const { data: currentUser } = api.user.getCurrentUser.useQuery()
@@ -63,7 +70,6 @@ const DailyLogForm = ({ todaysLog }: { todaysLog: GetDailyLogById | null }) => {
       }, 1000)
     },
   })
-  console.log('todaysLog', todaysLog)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -101,7 +107,7 @@ const DailyLogForm = ({ todaysLog }: { todaysLog: GetDailyLogById | null }) => {
       })
     } else {
       createDailyLog({
-        date: new Date(),
+        date: date || new Date(),
         morningWeight: data.morningWeight,
         notes: data.notes,
         sleep: data.sleep,
@@ -121,111 +127,34 @@ const DailyLogForm = ({ todaysLog }: { todaysLog: GetDailyLogById | null }) => {
     form.setValue('image', url)
   }
 
+  const formDate = form.watch('date')
+
   const imageUrl = form.watch('image')
   console.log('imageUrl', imageUrl)
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className='flex flex-col gap-4 mt-10 px-2 mb-16'>
-          <h2 className='text-2xl font-bold'>Today</h2>
-          <FormField
-            control={form.control}
-            name='morningWeight'
-            render={({ field }) => (
-              <FormItem className='flex flex-col'>
-                <FormLabel>Morning Weight</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder='Morning Weight'
-                    {...field}
-                    type='number'
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name='sleep'
-            render={({ field }) => (
-              <FormItem className='flex flex-col'>
-                <FormLabel>Sleep</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder='Sleep'
-                    {...field}
-                    type='number'
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name='sleepQuality'
-            render={({ field }) => (
-              <FormItem className='flex flex-col'>
-                <FormLabel>Sleep Quality</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder='Sleep Quality'
-                    {...field}
-                    type='number'
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name='nap'
-            render={({ field }) => (
-              <FormItem className='flex flex-col'>
-                <FormLabel>Nap</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder='Nap'
-                    {...field}
-                    type='number'
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name='bowelMovements'
-            render={({ field }) => (
-              <FormItem className='flex flex-col'>
-                <FormLabel>Bowel Movements</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="poop's"
-                    {...field}
-                    type='number'
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className='flex gap-4 justify-between px-4'>
+    <div className='mt-10'>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className='flex flex-col gap-4 mt-10 px-2 mb-16'>
+            <h2 className='text-xl font-bold text-muted-foreground'>
+              {formDate.toLocaleDateString('en-AU', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long',
+              })}
+            </h2>
             <FormField
               control={form.control}
-              name='isHiit'
+              name='morningWeight'
               render={({ field }) => (
-                <FormItem className='flex items-center gap-2'>
-                  <FormLabel className='mt-[8px]'>Hiit</FormLabel>
+                <FormItem className='flex flex-col'>
+                  <FormLabel>Morning Weight</FormLabel>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={(value) => {
-                        field.onChange(value)
-                      }}
+                    <Input
+                      placeholder='Morning Weight'
+                      {...field}
+                      type='number'
                     />
                   </FormControl>
                   <FormMessage />
@@ -234,16 +163,15 @@ const DailyLogForm = ({ todaysLog }: { todaysLog: GetDailyLogById | null }) => {
             />
             <FormField
               control={form.control}
-              name='isCardio'
+              name='sleep'
               render={({ field }) => (
-                <FormItem className='flex items-center gap-2'>
-                  <FormLabel className='mt-[8px]'>Cardio</FormLabel>
+                <FormItem className='flex flex-col'>
+                  <FormLabel>Sleep</FormLabel>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={(value) => {
-                        field.onChange(value)
-                      }}
+                    <Input
+                      placeholder='Sleep'
+                      {...field}
+                      type='number'
                     />
                   </FormControl>
                   <FormMessage />
@@ -252,81 +180,170 @@ const DailyLogForm = ({ todaysLog }: { todaysLog: GetDailyLogById | null }) => {
             />
             <FormField
               control={form.control}
-              name='isLift'
+              name='sleepQuality'
               render={({ field }) => (
-                <FormItem className='flex items-center gap-2'>
-                  <FormLabel className='mt-[8px]'>Lift</FormLabel>
+                <FormItem className='flex flex-col'>
+                  <FormLabel>Sleep Quality</FormLabel>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={(value) => {
-                        field.onChange(value)
-                      }}
+                    <Input
+                      placeholder='Sleep Quality'
+                      {...field}
+                      type='number'
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          </div>
-          <FormField
-            control={form.control}
-            name='notes'
-            render={({ field }) => (
-              <FormItem className='flex flex-col'>
-                <FormLabel>Notes</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder='Notes'
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {imageUrl === '' ? (
-            <div className='flex gap-4 justify-around w-full'>
-              <UploadButton
-                endpoint='imageUploader'
-                onClientUploadComplete={(res) => {
-                  console.log('onClientUploadComplete', res)
-                  const url = res?.[0]?.url
-                  form.setValue('image', url)
-                }}
+            <FormField
+              control={form.control}
+              name='nap'
+              render={({ field }) => (
+                <FormItem className='flex flex-col'>
+                  <FormLabel>Nap</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='Nap'
+                      {...field}
+                      type='number'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='bowelMovements'
+              render={({ field }) => (
+                <FormItem className='flex flex-col'>
+                  <FormLabel>Bowel Movements</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="poop's"
+                      {...field}
+                      type='number'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className='flex gap-4 justify-between px-4'>
+              <FormField
+                control={form.control}
+                name='isHiit'
+                render={({ field }) => (
+                  <FormItem className='flex items-center gap-2'>
+                    <FormLabel className='mt-[8px]'>Hiit</FormLabel>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={(value) => {
+                          field.onChange(value)
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              <Camera onUpload={updateImage} />
+              <FormField
+                control={form.control}
+                name='isCardio'
+                render={({ field }) => (
+                  <FormItem className='flex items-center gap-2'>
+                    <FormLabel className='mt-[8px]'>Cardio</FormLabel>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={(value) => {
+                          field.onChange(value)
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='isLift'
+                render={({ field }) => (
+                  <FormItem className='flex items-center gap-2'>
+                    <FormLabel className='mt-[8px]'>Lift</FormLabel>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={(value) => {
+                          field.onChange(value)
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-          ) : (
-            <div className='flex gap-4 flex-col '>
-              <div className='flex gap-2 items-center justify-around w-full'>
-                <img
-                  src={imageUrl}
-                  alt='img'
-                  className='w-full h-full'
+            <FormField
+              control={form.control}
+              name='notes'
+              render={({ field }) => (
+                <FormItem className='flex flex-col'>
+                  <FormLabel>Notes</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder='Notes'
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {imageUrl === '' ? (
+              <div className='flex gap-4 justify-around w-full'>
+                <UploadButton
+                  endpoint='imageUploader'
+                  onClientUploadComplete={(res) => {
+                    console.log('onClientUploadComplete', res)
+                    const url = res?.[0]?.url
+                    form.setValue('image', url)
+                  }}
                 />
+                <Camera onUpload={updateImage} />
               </div>
+            ) : (
+              <div className='flex gap-4 flex-col '>
+                <div className='flex gap-2 items-center justify-around w-full'>
+                  <img
+                    src={imageUrl}
+                    alt='img'
+                    className='w-full h-full'
+                  />
+                </div>
+                <Button
+                  variant='secondary'
+                  onClick={() => {
+                    form.setValue('image', '')
+                  }}
+                >
+                  Clear
+                </Button>
+              </div>
+            )}
+            <div>
               <Button
-                variant='secondary'
-                onClick={() => {
-                  form.setValue('image', '')
-                }}
+                className='w-full'
+                type='submit'
               >
-                Clear
+                Save
               </Button>
             </div>
-          )}
-          <div>
-            <Button
-              className='w-full'
-              type='submit'
-            >
-              Save
-            </Button>
           </div>
-        </div>
-      </form>
-    </Form>
+        </form>
+      </Form>
+    </div>
   )
 }
 export { DailyLogForm }

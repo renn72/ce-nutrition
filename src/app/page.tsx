@@ -7,16 +7,17 @@ import Link from 'next/link'
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
 import { GetUserById } from '@/types'
-import { Logs, } from 'lucide-react'
+import { Logs } from 'lucide-react'
+
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { User } from '@/components/auth/user'
 import { BodyFat } from '@/components/charts/mobile/body-fat'
+import { BodyWeight } from '@/components/charts/mobile/body-weight'
 import { LeanMass } from '@/components/charts/mobile/lean-mass'
 import { Sleep } from '@/components/charts/mobile/sleep'
 import { DailyLog } from '@/components/daily-log/daily-log'
-import { BodyWeight } from '@/components/charts/mobile/body-weight'
 import MobileHeader from '@/components/layout/mobile-header'
 
 export const dynamic = 'force-dynamic'
@@ -57,8 +58,6 @@ const PlanPreview = ({ user }: { user: GetUserById }) => {
   )
 }
 
-
-
 const Mobile = ({
   userId,
   isDesktop = false,
@@ -75,10 +74,17 @@ const Mobile = ({
     (plan) => plan.id == currentUser?.currentPlanId,
   )
 
-  const dailyLog = dailyLogs?.find((dailyLog) => dailyLog.date.toDateString() === new Date().toDateString())
+  const dailyLog = dailyLogs?.find(
+    (dailyLog) => dailyLog.date.toDateString() === new Date().toDateString(),
+  )
 
   return (
-    <div className={cn('flex flex-col gap-2 w-full min-h-screen mt-16 ', isDesktop && 'relative')}>
+    <div
+      className={cn(
+        'flex flex-col gap-2 w-full min-h-screen mt-16 ',
+        isDesktop && 'relative',
+      )}
+    >
       <MobileHeader isDesktop={isDesktop} />
 
       <Tabs
@@ -138,7 +144,7 @@ const Mobile = ({
       </Tabs>
       <div className='flex gap-0 w-full justify-center items-center my-6 flex-col bg-secondary pt-2'>
         <h2 className=' font-bold'>Today</h2>
-          <DailyLog dailyLog={dailyLog} />
+        <DailyLog dailyLog={dailyLog} date={new Date()} />
       </div>
       <PlanPreview user={currentUser} />
       <div className='flex flex-col gap-2 w-full p-2 h-96 bg-secondary'></div>
@@ -151,10 +157,12 @@ const Mobile = ({
         )}
       >
         <Link href='/user/log'>
-        <div className='flex gap-2 items-end'>
-          <span className='text-muted-foreground text-base font-semibold leading-4 '>Logs</span>
-          <Logs size={20} />
-        </div>
+          <div className='flex gap-2 items-end'>
+            <span className='text-muted-foreground text-base font-semibold leading-4 '>
+              Logs
+            </span>
+            <Logs size={20} />
+          </div>
         </Link>
         <User />
         <div />

@@ -33,7 +33,7 @@ export default function Home() {
               <div className='text-sm text-muted-foreground font-semibold text-center'>
                 {getFormattedDate(date)}
               </div>
-              <DailyLog dailyLog={dailyLog} />
+              <DailyLog dailyLog={dailyLog} date={date} />
             </div>
           )
         })}
