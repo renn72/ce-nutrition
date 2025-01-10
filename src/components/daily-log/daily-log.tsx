@@ -115,9 +115,10 @@ const DailyLog = ({ dailyLog, date }: { dailyLog: GetDailyLogById | undefined, d
     )
   }
   return (
+
       <Link href={`/user/log/create?id=${id}&date=${date.getTime()}`}>
       <div className='flex flex-col gap-2 w-full px-2 py-4 bg-secondary text-sm'>
-        <div className='grid grid-cols-2'>
+        <div className='grid grid-cols-2 grow'>
           <Text
             title='Weight'
             text={todaysDailyLog?.morningWeight}
@@ -142,7 +143,7 @@ const DailyLog = ({ dailyLog, date }: { dailyLog: GetDailyLogById | undefined, d
             text={todaysDailyLog?.sleepQuality}
           />
         </div>
-        <div className='grid grid-cols-2'>
+        <div className='w-full'>
           <Text
             title='Notes'
             text={todaysDailyLog?.notes}

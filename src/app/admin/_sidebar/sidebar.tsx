@@ -55,6 +55,10 @@ const data = {
           title: 'Create',
           url: '/admin/user-create-plan',
         },
+        {
+          title: 'User Super',
+          url: '/admin/user-super',
+        },
       ],
     },
     {
@@ -178,6 +182,7 @@ const AdminSidebar = ({
                 <SidebarMenu>
                   {item.items
                     .filter((item) => item.title !== 'Super' || isRoot?.isRoot)
+                    .filter((item) => item.title !== 'User Super' || isRoot?.isRoot)
                     .map((item) => (
                       <div key={item.title}>
                         <SidebarMenuItem key={item.title}>
