@@ -152,4 +152,4 @@ const MobileHeader = ({ isDesktop = false }: { isDesktop?: boolean }) => {
   )
 }
 
-export default MobileHeader
+export {MobileHeader}

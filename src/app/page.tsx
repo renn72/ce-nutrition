@@ -18,7 +18,8 @@ import { BodyWeight } from '@/components/charts/mobile/body-weight'
 import { LeanMass } from '@/components/charts/mobile/lean-mass'
 import { Sleep } from '@/components/charts/mobile/sleep'
 import { DailyLog } from '@/components/daily-log/daily-log'
-import MobileHeader from '@/components/layout/mobile-header'
+import { MobileHeader } from '@/components/layout/mobile-header'
+import { UserPlanView } from '@/components/user-plan/user-plan-view'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,35 +28,7 @@ const PlanPreview = ({ user }: { user: GetUserById }) => {
 
   if (!plan) return null
 
-  return (
-    <div className='flex flex-col gap-2 w-full p-2 bg-secondary min-h-[200px] text-xs'>
-      {plan.userMeals.map((meal, mealIndex) => (
-        <div
-          className='flex gap-0 flex-col'
-          key={meal.id}
-        >
-          <div className='flex gap-2 items-center'>
-            <div className='text-muted-foreground'>{meal.mealTitle}</div>
-            <div className='text-sm text-muted-foreground'>
-              {meal.targetCalories}cals
-            </div>
-          </div>
-          <div className='flex gap-0 flex-col pl-4'>
-            {plan.userRecipes
-              .filter((recipe) => recipe.mealIndex == mealIndex)
-              .map((recipe, recipeIndex) => (
-                <div
-                  className='flex gap-2 items-center'
-                  key={recipe.id}
-                >
-                  <div className='text-muted-foreground'>{recipe.name}</div>
-                </div>
-              ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  )
+  return <UserPlanView userPlan={plan} />
 }
 
 const Mobile = ({
@@ -81,7 +54,7 @@ const Mobile = ({
   return (
     <div
       className={cn(
-        'flex flex-col gap-2 w-full min-h-screen mt-16 ',
+        'flex flex-col gap-2 w-full min-h-screen my-16 ',
         isDesktop && 'relative',
       )}
     >
@@ -144,12 +117,12 @@ const Mobile = ({
       </Tabs>
       <div className='flex gap-0 w-full justify-center items-center my-6 flex-col bg-secondary pt-2'>
         <h2 className=' font-bold'>Today</h2>
-        <DailyLog dailyLog={dailyLog} date={new Date()} />
+        <DailyLog
+          dailyLog={dailyLog}
+          date={new Date()}
+        />
       </div>
       <PlanPreview user={currentUser} />
-      <div className='flex flex-col gap-2 w-full p-2 h-96 bg-secondary'></div>
-      <div className='flex flex-col gap-2 w-full p-2 h-96 bg-secondary'></div>
-      <div className='flex flex-col gap-2 w-full p-2 grow'></div>
       <div
         className={cn(
           'grid grid-cols-3 place-items-center p-2 fixed border-t border-border bg-background w-full',

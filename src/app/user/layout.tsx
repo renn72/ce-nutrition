@@ -4,10 +4,8 @@ import { isMobileDevice } from '@/lib/is-mobile-server'
 import { cn } from '@/lib/utils'
 import { Logs } from 'lucide-react'
 
-import { ScrollArea } from '@/components/ui/scroll-area'
-
 import { User } from '@/components/auth/user'
-import MobileHeader from '@/components/layout/mobile-header'
+import { MobileHeader } from '@/components/layout/mobile-header'
 
 const Mobile = ({
   children,
@@ -51,7 +49,7 @@ export default async function RootLayout({
 
   return (
     <div className='flex flex-col items-center gap-2 '>
-        <Mobile isDesktop={true}>{children}</Mobile>
+      <Mobile isDesktop={true}>{children}</Mobile>
     </div>
   )
 }
