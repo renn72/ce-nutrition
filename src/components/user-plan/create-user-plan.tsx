@@ -4,7 +4,7 @@ import { api } from '@/trpc/react'
 
 import { useState } from 'react'
 
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 
 import { userAtom } from '@/app/admin/_sidebar/sidebar'
 import type { GetPlanById } from '@/types'
@@ -72,6 +72,7 @@ export const formSchema = z.object({
 const CreateUserPlan = () => {
   const searchParams = useSearchParams()
   const user = searchParams.get('user') ?? ''
+  const router = useRouter()
 
   const [selectedPlanId, setSelectedPlanId] = useState('')
   const [selectedPlan, setSelectedPlan] = useState<GetPlanById | null>(null)
@@ -87,6 +88,9 @@ const CreateUserPlan = () => {
     onSuccess: () => {
       toast.success('Created')
       ctx.invalidate()
+      setTimeout(() => {
+        router.push(`/admin/user-program?user=${user}`)
+      }, 400)
     },
   })
 
@@ -189,7 +193,7 @@ const CreateUserPlan = () => {
               recipeIndex: recipeIndex,
               mealIndex: mealIndex,
               name: ingredient.name || '',
-              serveSize: ingredient.serveSize,
+              serve: ingredient.serveSize,
               serveUnit: ingredient.serveUnit,
               note: ingredient.note || '',
             }),
