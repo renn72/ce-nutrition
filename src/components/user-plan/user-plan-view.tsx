@@ -110,7 +110,6 @@ const UserPlanRecipe = ({
 }
 
 const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
-  console.log('userPlan', userPlan)
   return (
     <div className='flex flex-col gap-4 w-full px-2 py-4 bg-secondary text-xs'>
       <h2 className='text-lg font-bold'>Program</h2>

@@ -90,6 +90,19 @@ export const userRouter = createTRPCRouter({
       columns: {
         password: false,
       },
+      with: {
+        userPlans: {
+          with: {
+            userMeals: true,
+            userRecipes: true,
+            userIngredients: {
+              with: {
+                ingredient: true,
+              },
+            },
+          },
+        },
+      },
     })
     return res
   }),

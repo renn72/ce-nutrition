@@ -39,6 +39,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
   if (!plan) return null
 
   console.log('plan', plan)
+  console.log('currentUser', currentUser)
 
   return (
     <div className='flex flex-col items-center mt-10 capitalize'>

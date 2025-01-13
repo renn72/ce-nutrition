@@ -3,7 +3,7 @@
 import Link from 'next/link'
 
 import { cn } from '@/lib/utils'
-import { Logs } from 'lucide-react'
+import { CalendarDays, Logs } from 'lucide-react'
 
 import { User } from '@/components/auth/user'
 
@@ -24,7 +24,14 @@ const MobileFooter = () => {
         </div>
       </Link>
       <User />
-      <div />
+      <Link href='/user/meal-planner'>
+        <div className='flex gap-2 items-end'>
+          <span className='text-muted-foreground text-base font-semibold leading-4 '>
+            Planner
+          </span>
+          <CalendarDays size={20} />
+        </div>
+      </Link>
     </div>
   )
 }
