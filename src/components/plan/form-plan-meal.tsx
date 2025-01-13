@@ -265,7 +265,7 @@ const FormPlanMeal = ({
             {selectedMeal?.mealToRecipe.map((recipe) => (
               <Recipe
                 recipe={recipe.recipe}
-                calories={calories}
+                calories={calories.toFixed(2)}
                 key={recipe.id}
               />
             ))}

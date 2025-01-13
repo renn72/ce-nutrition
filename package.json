@@ -72,7 +72,7 @@
     "jotai": "^2.10.1",
     "lucide-react": "^0.439.0",
     "mathjs": "^14.0.0",
-    "next": "^15.0.1",
+    "next": "^15.1.4",
     "next-auth": "5.0.0-beta.25",
     "next-themes": "^0.3.0",
     "papaparse": "^5.4.1",

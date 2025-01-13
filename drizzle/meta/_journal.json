@@ -50,6 +50,13 @@
       "when": 1735957702907,
       "tag": "0006_exotic_carlie_cooper",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1736737265091,
+      "tag": "0007_first_mandarin",
+      "breakpoints": true
     }
   ]
 }

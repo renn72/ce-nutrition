@@ -2,22 +2,19 @@
 
 import { api } from '@/trpc/react'
 
-import Link from 'next/link'
-
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
 import { GetUserById } from '@/types'
-import { Logs } from 'lucide-react'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-import { User } from '@/components/auth/user'
 import { BodyFat } from '@/components/charts/mobile/body-fat'
 import { BodyWeight } from '@/components/charts/mobile/body-weight'
 import { LeanMass } from '@/components/charts/mobile/lean-mass'
 import { Sleep } from '@/components/charts/mobile/sleep'
 import { DailyLog } from '@/components/daily-log/daily-log'
+import { MobileFooter } from '@/components/layout/mobile-footer'
 import { MobileHeader } from '@/components/layout/mobile-header'
 import { UserPlanView } from '@/components/user-plan/user-plan-view'
 
@@ -52,14 +49,10 @@ const Mobile = ({
   )
 
   return (
-    <div
-      className={cn(
-        'flex flex-col gap-2 w-full min-h-screen my-16 ',
-        isDesktop && 'relative',
-      )}
-    >
-      <MobileHeader isDesktop={isDesktop} />
+    <div className={cn('flex flex-col gap-2 w-full min-h-screen my-16 items-center ')}>
+      <MobileHeader isDesktop={false} />
 
+    <div className={cn('flex flex-col gap-2 w-full max-w-screen-xl')}>
       <Tabs
         defaultValue='bw'
         className='w-full'
@@ -123,23 +116,8 @@ const Mobile = ({
         />
       </div>
       <PlanPreview user={currentUser} />
-      <div
-        className={cn(
-          'grid grid-cols-3 place-items-center p-2 fixed border-t border-border bg-background w-full',
-          !isDesktop ? 'bottom-0 w-full' : 'top-[922px] w-[388px]',
-        )}
-      >
-        <Link href='/user/log'>
-          <div className='flex gap-2 items-end'>
-            <span className='text-muted-foreground text-base font-semibold leading-4 '>
-              Logs
-            </span>
-            <Logs size={20} />
-          </div>
-        </Link>
-        <User />
-        <div />
-      </div>
+    </div>
+      <MobileFooter />
     </div>
   )
 }
@@ -147,15 +125,10 @@ const Mobile = ({
 const Desktop = ({ userId }: { userId: string }) => {
   return (
     <div className='flex flex-col items-center gap-2 '>
-      <div className='my-8'>TODO: desktop</div>
-      <div>Mobile</div>
-
-      <ScrollArea className='w-[390px] h-[844px] border border-border shadow-md relative '>
-        <Mobile
-          userId={userId}
-          isDesktop={true}
-        />
-      </ScrollArea>
+      <Mobile
+        userId={userId}
+        isDesktop={true}
+      />
     </div>
   )
 }

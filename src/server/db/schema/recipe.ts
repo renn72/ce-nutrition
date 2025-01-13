@@ -45,7 +45,7 @@ export const recipeToIngredient = createTable('recipe_to_ingredient', {
     })
     .notNull(),
   index: int('index', { mode: 'number' }).notNull(),
-  alternateId: int('alternate_id').notNull(),
+  alternateId: int('alternate_id'),
   serveSize: text('serve').notNull(),
   serveUnit: text('serve_unit').notNull(),
   note: text('note'),

@@ -62,6 +62,7 @@ export const userPlanRouter = createTRPCRouter({
                     ingredientIndex: z.number(),
                     recipeIndex: z.number(),
                     mealIndex: z.number(),
+                    alternateId: z.number().nullable(),
                     name: z.string(),
                     serve: z.string(),
                     serveUnit: z.string(),

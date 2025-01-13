@@ -92,7 +92,7 @@ export const userIngredient = createTable('user-ingredient', {
   name: text('name'),
   mealIndex: int('meal_index', { mode: 'number' }),
   recipeIndex: int('recipe_index', { mode: 'number' }),
-  isAlternate: int('is_alternate', { mode: 'boolean' }),
+  alternateId: int('alternate_id', { mode: 'number' }),
   serve: text('serve'),
   serveUnit: text('serve_unit'),
   note: text('note'),

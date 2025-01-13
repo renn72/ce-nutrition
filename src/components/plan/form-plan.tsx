@@ -208,7 +208,7 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
               <div className='flex flex-col gap-4'>
                 {mealsField.fields.map((field, index) => (
                   <FormPlanMeal
-                    key={field.mealId}
+                    key={index}
                     index={index}
                     form={form}
                     remove={mealsField.remove}

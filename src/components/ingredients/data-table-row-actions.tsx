@@ -68,7 +68,7 @@ export function DataTableRowActions<TData>({
       >
         <DropdownMenuItem
           onSelect={() =>
-            router.push(`/admin/base/ingredient/edit?ingredient=${data?.id}`)
+            router.push(`/admin/ingredient/edit?ingredient=${data?.id}`)
           }
         >Edit</DropdownMenuItem>
         {

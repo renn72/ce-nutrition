@@ -2,10 +2,10 @@
 
 import { api } from '@/trpc/react'
 
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 
 import { cn } from '@/lib/utils'
-import type { GetIngredientById } from '@/types'
+import type { GetIngredientById, GetAllIngredients } from '@/types'
 import {
   Combobox,
   ComboboxInput,
@@ -16,13 +16,11 @@ import { CheckIcon, ChevronDownIcon, Star, XCircle } from 'lucide-react'
 import { useForm, UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
 
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -47,13 +45,14 @@ const FormRecipeIngredient = ({
   index,
   form,
   remove,
+  allIngredients,
 }: {
   index: number
   form: UseFormReturn<z.infer<typeof formSchema>>
   remove: (index: number) => void
+  allIngredients: GetAllIngredients | null | undefined
 }) => {
   const ctx = api.useUtils()
-  const allIngredients = ctx.ingredient.getAll.getData()
 
   const [query, setQuery] = useState('')
   const [queryAlt, setQueryAlt] = useState('')
@@ -63,18 +62,35 @@ const FormRecipeIngredient = ({
 
   const [selected, setSelected] = useState<GetIngredientById | null>(() => {
     if (ingredientId) {
-      return allIngredients?.find((i) => i.id === Number(ingredientId))
-    }
-    return null
-  })
-  const [selectedAlt, setSelectedAlt] = useState<GetIngredientById | null>(() => {
-    if (alternateId) {
-      return allIngredients?.find((i) => i.id === Number(alternateId))
+      return allIngredients?.find((i) => i?.id === Number(ingredientId))
     }
     return null
   })
 
+  console.log('selected', ingredientId, alternateId)
+
+  const [selectedAlt, setSelectedAlt] = useState<GetIngredientById | null>(
+    () => {
+      if (alternateId) {
+        return allIngredients?.find((i) => i?.id === Number(alternateId))
+      }
+      return null
+    },
+  )
+
+  if (!allIngredients) return null
+
+  // useEffect(() => {
+  //   if (ingredientId) {
+  //     setSelected(allIngredients?.find((i) => i.id === Number(ingredientId)))
+  //   }
+  //   if (alternateId) {
+  //     setSelectedAlt(allIngredients?.find((i) => i.id === Number(alternateId)))
+  //   }
+  // }, [ingredientId, alternateId, allIngredients])
+
   if (!allIngredients) return <div />
+
   const filteredIngredients =
     query === ''
       ? allIngredients.sort((a, b) => {
@@ -87,7 +103,7 @@ const FormRecipeIngredient = ({
         })
       : allIngredients
           .filter((i) => {
-            return i.name?.toLowerCase().includes(query.toLowerCase())
+            return i?.name?.toLowerCase().includes(query.toLowerCase())
           })
           .sort((a, b) => {
             if (a?.favouriteAt && b?.favouriteAt) {
@@ -110,7 +126,7 @@ const FormRecipeIngredient = ({
         })
       : allIngredients
           .filter((i) => {
-            return i.name?.toLowerCase().includes(queryAlt.toLowerCase())
+            return i?.name?.toLowerCase().includes(queryAlt.toLowerCase())
           })
           .sort((a, b) => {
             if (a?.favouriteAt && b?.favouriteAt) {
@@ -121,7 +137,6 @@ const FormRecipeIngredient = ({
             return 0
           })
 
-  const id = form.watch(`ingredients.${index}.ingredientId`)
   const serveSize = form.watch(`ingredients.${index}.serveSize`)
   return (
     <div
@@ -138,6 +153,7 @@ const FormRecipeIngredient = ({
                 <Combobox
                   value={selected}
                   onChange={(value) => {
+                    return
                     field.onChange(value?.id.toString())
                     form.setValue(
                       `ingredients.${index}.serveSize`,
@@ -256,66 +272,6 @@ const FormRecipeIngredient = ({
             (Number(serveSize) / Number(selected.serveSize))
           ).toFixed(1)}
       </GridWrapper>
-      <GridWrapper className='hidden'>
-        <FormField
-          control={form.control}
-          name={`ingredients.${index}.isProtein`}
-          render={({ field }) => (
-            <FormItem className='flex flex-row items-center justify-center space-x-2 space-y-0'>
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={(value) => {
-                    field.onChange(value)
-                  }}
-                />
-              </FormControl>
-              <FormLabel>Is Protein</FormLabel>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </GridWrapper>
-      <GridWrapper className='hidden'>
-        <FormField
-          control={form.control}
-          name={`ingredients.${index}.isCarbohydrate`}
-          render={({ field }) => (
-            <FormItem className='flex flex-row items-center justify-center space-x-2 space-y-0'>
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={(value) => {
-                    field.onChange(value)
-                  }}
-                />
-              </FormControl>
-              <FormLabel>Is Carb</FormLabel>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </GridWrapper>
-      <GridWrapper className='hidden'>
-        <FormField
-          control={form.control}
-          name={`ingredients.${index}.isFat`}
-          render={({ field }) => (
-            <FormItem className='flex flex-row items-center justify-center space-x-2 space-y-0'>
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={(value) => {
-                    field.onChange(value)
-                  }}
-                />
-              </FormControl>
-              <FormLabel>Is Fat</FormLabel>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </GridWrapper>
       <GridWrapper className='col-span-3 px-1'>
         <FormField
           control={form.control}
@@ -326,6 +282,7 @@ const FormRecipeIngredient = ({
                 <Combobox
                   value={selectedAlt}
                   onChange={(value) => {
+                    return
                     field.onChange(value?.id.toString())
                     setSelectedAlt(value)
                   }}

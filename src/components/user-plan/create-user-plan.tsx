@@ -57,6 +57,7 @@ export const formSchema = z.object({
           ingredients: z.array(
             z.object({
               ingredientId: z.string(),
+              alternateId: z.string(),
               name: z.string(),
               serveSize: z.string(),
               serveUnit: z.string(),
@@ -143,13 +144,14 @@ const CreateUserPlan = () => {
               index: recipe.index,
               ingredients:
                 recipe?.recipe?.recipeToIngredient.map(
-                  (ingredient, ingredientIndex) => {
+                  (ingredient, _ingredientIndex) => {
                     const serve = (
                       (Number(ingredient.serveSize) * Number(meal.calories)) /
                       Number(recipe.recipe?.calories)
                     ).toFixed(2)
                     return {
                       ingredientId: ingredient.ingredient?.id.toString(),
+                      alternateId: ingredient.alternateId?.toString(),
                       name: ingredient.ingredient?.name || '',
                       serveSize: serve,
                       serveUnit: ingredient.serveUnit,
@@ -195,6 +197,7 @@ const CreateUserPlan = () => {
               name: ingredient.name || '',
               serve: ingredient.serveSize,
               serveUnit: ingredient.serveUnit,
+              alternateId: ingredient.alternateId === '' || ingredient.alternateId === '0' ? null : Number(ingredient.alternateId),
               note: ingredient.note || '',
             }),
           ),

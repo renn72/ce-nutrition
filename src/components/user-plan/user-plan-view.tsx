@@ -4,6 +4,7 @@ import { useState } from 'react'
 
 import { cn } from '@/lib/utils'
 import type { UserPlan } from '@/types'
+import { RotateCcw } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import {
@@ -17,7 +18,6 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
-import { RotateCcw } from 'lucide-react'
 
 const UserPlanRecipe = ({
   userPlan,
@@ -55,39 +55,37 @@ const UserPlanRecipe = ({
         <DialogHeader>
           <DialogTitle>{recipe.name}</DialogTitle>
         </DialogHeader>
-        <DialogDescription
-          className='grid grid-cols-4 gap-2 place-items-center'>
-            <Label
-            >Serves</Label>
-            <div className='flex gap-3 items-center w-full col-span-3'>
-              <Input
-                placeholder='Scale'
-                className='max-w-[50px]'
-                type='number'
-                value={scale}
-                onChange={(e) => {
-                  setScale(Number(e.target.value))
-                }}
-              />
-              <Slider
-                min={0}
-                max={10}
-                step={0.25}
-                value={[scale]}
-                onValueChange={(newValue) => {
-                  if (!newValue[0]) return
-                  setScale(newValue[0])
-                }}
-              />
-              <RotateCcw
-                size={32}
-                className='text-muted-foreground'
-                onClick={() => {
-                  setScale(1)
-                }}
-              />
+        <div className='grid grid-cols-4 gap-2 place-items-center'>
+          <Label>Serves</Label>
+          <div className='flex gap-3 items-center w-full col-span-3'>
+            <Input
+              placeholder='Scale'
+              className='max-w-[52px]'
+              type='number'
+              value={scale}
+              onChange={(e) => {
+                setScale(Number(e.target.value))
+              }}
+            />
+            <Slider
+              min={0}
+              max={10}
+              step={0.25}
+              value={[scale]}
+              onValueChange={(newValue) => {
+                if (!newValue[0]) return
+                setScale(newValue[0])
+              }}
+            />
+            <RotateCcw
+              size={32}
+              className='text-muted-foreground'
+              onClick={() => {
+                setScale(1)
+              }}
+            />
           </div>
-        </DialogDescription>
+        </div>
         {userPlan.userIngredients
           .filter(
             (ingredient) =>
@@ -103,9 +101,7 @@ const UserPlanRecipe = ({
               <div className='justify-self-end  mr-1 self-center '>
                 {(scale * Number(ingredient.serve)).toFixed(0)}
               </div>
-              <div
-                className='self-center '
-              >{ingredient.serveUnit}</div>
+              <div className='self-center '>{ingredient.serveUnit}</div>
             </div>
           ))}
       </DialogContent>
@@ -116,7 +112,8 @@ const UserPlanRecipe = ({
 const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
   console.log('userPlan', userPlan)
   return (
-    <div className='flex flex-col gap-2 w-full px-2 py-4 bg-secondary min-h-[200px] text-xs'>
+    <div className='flex flex-col gap-4 w-full px-2 py-4 bg-secondary text-xs'>
+      <h2 className='text-lg font-bold'>Program</h2>
       {userPlan?.userMeals.map((meal) => (
         <div
           className='flex gap-2 flex-col'
@@ -124,8 +121,8 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
         >
           <div className='flex gap-2 items-center justify-between'>
             <Label className=''>{meal.mealTitle}</Label>
-            <div className='text-xs text-muted-foreground'>
-              {meal.targetCalories}cals
+            <div className='text-xs text-muted-foreground tracking-tighter'>
+              {meal.targetCalories}cals - {meal.targetProtein}g Protein
             </div>
           </div>
           <div className='flex gap-2 flex-row pl-0 flex-wrap'>

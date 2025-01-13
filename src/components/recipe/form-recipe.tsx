@@ -41,7 +41,6 @@ export const formSchema = z.object({
       note: z.string(),
       serveSize: z.string(),
       serveUnit: z.string(),
-      isAlternate: z.boolean().optional(),
       alternateId: z.string(),
     }),
   ),
@@ -55,7 +54,8 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
     }
     return null
   })
-  const { data: allIngredients } = api.ingredient.getAll.useQuery()
+  const { data: allIngredients, isLoading: isLoadingAllIngredients } =
+    api.ingredient.getAll.useQuery()
   const { mutate: createRecipe } = api.recipe.create.useMutation({
     onSuccess: () => {
       ctx.recipe.invalidate()
@@ -65,7 +65,7 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
   const { mutate: updateRecipe } = api.recipe.update.useMutation({
     onSuccess: () => {
       ctx.recipe.invalidate()
-      toast.success('Store updated successfully')
+      toast.success('Recipe updated successfully')
     },
   })
 
@@ -80,11 +80,11 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
       ingredients:
         recipe?.recipeToIngredient.map((ingredient) => ({
           index: ingredient.index,
-          ingredientId: ingredient.ingredient.id.toString(),
+          ingredientId: ingredient.ingredient.id.toString() || '',
           note: ingredient.note || '',
-          serveSize: ingredient.serveSize,
-          serveUnit: ingredient.serveUnit,
-          alternateId: ingredient.alternateId.toString(),
+          serveSize: ingredient.serveSize || '',
+          serveUnit: ingredient.serveUnit || '',
+          alternateId: ingredient.alternateId.toString() || '',
         })) || [],
     },
   })
@@ -179,7 +179,6 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
             note: i.note,
             serveSize: i.serveSize,
             serveUnit: i.serveUnit,
-            isAlternate: i.isAlternate,
             alternateId: i.alternateId,
           }
         }),
@@ -199,13 +198,14 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
             note: i.note,
             serveSize: i.serveSize,
             serveUnit: i.serveUnit,
-            isAlternate: i.isAlternate,
             alternateId: i.alternateId,
           }
         }),
       })
     }
   }
+
+  if (isLoadingAllIngredients) return null
 
   return (
     <div className='flex flex-col gap-4'>
@@ -277,6 +277,7 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
                     index={index}
                     form={form}
                     remove={remove}
+                    allIngredients={allIngredients}
                   />
                 ))}
                 {fields.length > 0 ? (
