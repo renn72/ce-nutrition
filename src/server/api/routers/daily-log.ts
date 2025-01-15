@@ -38,6 +38,17 @@ export const dailyLogRouter = createTRPCRouter({
 
       return { res }
     }),
+  addMeal: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        planId: z.number(),
+        mealIndex: z.number(),
+        recipeIndex: z.number(),
+        ingredientIndex: z.number(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {}),
   update: protectedProcedure
     .input(
       z.object({
@@ -57,7 +68,21 @@ export const dailyLogRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const { id, date, morningWeight, notes, sleep, sleepQuality, isHiit, isCardio, isLift, bowelMovements, image, userId, nap } = input
+      const {
+        id,
+        date,
+        morningWeight,
+        notes,
+        sleep,
+        sleepQuality,
+        isHiit,
+        isCardio,
+        isLift,
+        bowelMovements,
+        image,
+        userId,
+        nap,
+      } = input
       const res = await ctx.db
         .update(dailyLog)
         .set({
@@ -84,6 +109,13 @@ export const dailyLogRouter = createTRPCRouter({
       if (input === '') throw new TRPCError({ code: 'NOT_FOUND' })
       const res = await ctx.db.query.dailyLog.findMany({
         where: eq(dailyLog.userId, input),
+        with: {
+          dailyMeals: {
+            with: {
+              recipe: true,
+            },
+          },
+        },
         orderBy: (data, { desc }) => desc(data.date),
       })
       return res

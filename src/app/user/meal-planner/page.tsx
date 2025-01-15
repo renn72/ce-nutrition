@@ -30,11 +30,10 @@ const Day = ({
   index: number
 }) => {
   const ctx = api.useUtils()
-  const { mutate: createDailyLog } = api.dailyLog.create.useMutation({
-    onSuccess: () => {
-      // ctx.dailyLog.getAllUser.refetch()
+  const { mutate: addMeal } = api.dailyLog.addMeal.useMutation({
+    onSettled: () => {
+      ctx.dailyLog.getAllUser.refetch()
     },
-    onSettled: () => {},
   })
   const log = dailyLogs?.find(
     (dailyLog) => dailyLog.date.toDateString() === date.toDateString(),
@@ -62,7 +61,11 @@ const Day = ({
                 {meal.mealTitle}
               </div>
 
-              <Select>
+              <Select
+                value={meal.id.toString()}
+                onValueChange={(value) => {
+                }}
+              >
                 <SelectTrigger className='w-[180px] h-7 bg-background'>
                   <SelectValue placeholder='Meal' />
                 </SelectTrigger>
