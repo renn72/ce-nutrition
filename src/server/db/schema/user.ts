@@ -107,12 +107,25 @@ export const dailyMeal = createTable('daily_meal', {
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
     .notNull(),
-  dailyLogId: text('daily_log_id')
+  dailyLogId: int('daily_log_id')
     .notNull()
     .references(() => dailyLog.id),
+  recipeId: int('recipe_id'),
   vegeCalories: text('vege_calories'),
   veges: text('veges'),
 })
+
+export const dailyMealRelations = relations(dailyMeal, ({ one, many }) => ({
+  dailyLog: one(dailyLog, {
+    fields: [dailyMeal.dailyLogId],
+    references: [dailyLog.id],
+  }),
+  recipe: one(userRecipe, {
+    fields: [dailyMeal.recipeId],
+    references: [userRecipe.id],
+  }),
+  ingredients: many(userIngredient),
+}))
 
 export const weighIn = createTable('weigh_in', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
@@ -249,11 +262,3 @@ export const userToTrainerRelations = relations(
   }),
 )
 
-export const dailyMealRelations = relations(dailyMeal, ({ one, many }) => ({
-  dailyLog: one(dailyLog, {
-    fields: [dailyMeal.dailyLogId],
-    references: [dailyLog.id],
-  }),
-  recipe: many(userRecipe),
-  ingredients: many(userIngredient),
-}))

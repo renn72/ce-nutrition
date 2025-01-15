@@ -4,11 +4,10 @@ import { env } from "@/env";
 
 export default {
   schema: "./src/server/db/schema/*",
-  dialect: "sqlite",
-  driver: "turso",
+  dialect: "turso",
   dbCredentials: {
-    url: env.DATABASE_SYNC_URL,
-    authToken: env.DATABASE_AUTH_TOKEN,
+    url: env.DATABASE_SYNC_URL ?? '',
+    authToken: env.DATABASE_AUTH_TOKEN ?? '',
   },
   tablesFilter: ["ce-nu_*"],
 } satisfies Config;

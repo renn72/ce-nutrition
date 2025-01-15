@@ -70,6 +70,7 @@ export const userRecipe = createTable('user-recipe', {
   serve: text('serve'),
   serveUnit: text('serve_unit'),
   note: text('note'),
+  ingredientBlob: text('ingredient_blob', { mode: 'json' }),
 })
 
 export const userIngredient = createTable('user-ingredient', {

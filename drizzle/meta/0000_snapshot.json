@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "802d3625-0d43-4e50-874f-15f22edbf20f",
+  "id": "9d69f482-7c82-4649-b511-9499ef113dbb",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "ce-nu_grocery_store": {
@@ -40,7 +40,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_ingredient": {
       "name": "ce-nu_ingredient",
@@ -255,7 +256,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_ingredient_addition_one": {
       "name": "ce-nu_ingredient_addition_one",
@@ -510,7 +512,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_ingredient_addition_three": {
       "name": "ce-nu_ingredient_addition_three",
@@ -1213,7 +1216,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_ingredient_addition_two": {
       "name": "ce-nu_ingredient_addition_two",
@@ -1776,7 +1780,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_ingredient_to_grocery_store": {
       "name": "ce-nu_ingredient_to_grocery_store",
@@ -1841,7 +1846,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_meal": {
       "name": "ce-nu_meal",
@@ -1949,7 +1955,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_meal_to_recipe": {
       "name": "ce-nu_meal_to_recipe",
@@ -2028,7 +2035,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_meal_to_vege_stack": {
       "name": "ce-nu_meal_to_vege_stack",
@@ -2107,7 +2115,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_vege_stack": {
       "name": "ce-nu_vege_stack",
@@ -2166,7 +2175,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_notification": {
       "name": "ce-nu_notification",
@@ -2261,7 +2271,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_plan": {
       "name": "ce-nu_plan",
@@ -2376,7 +2387,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_plan_to_meal": {
       "name": "ce-nu_plan_to_meal",
@@ -2476,7 +2488,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_recipe": {
       "name": "ce-nu_recipe",
@@ -2591,7 +2604,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_recipe_to_ingredient": {
       "name": "ce-nu_recipe_to_ingredient",
@@ -2636,7 +2650,7 @@
           "name": "alternate_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "serve": {
@@ -2691,7 +2705,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_settings": {
       "name": "ce-nu_settings",
@@ -2714,7 +2729,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_user-ingredient": {
       "name": "ce-nu_user-ingredient",
@@ -2783,8 +2799,8 @@
           "notNull": false,
           "autoincrement": false
         },
-        "is_alternate": {
-          "name": "is_alternate",
+        "alternate_id": {
+          "name": "alternate_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -2855,7 +2871,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_user-meal": {
       "name": "ce-nu_user-meal",
@@ -2977,7 +2994,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_user-plan": {
       "name": "ce-nu_user-plan",
@@ -2999,6 +3017,20 @@
         },
         "updated_at": {
           "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "finished_at": {
+          "name": "finished_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "is_active": {
+          "name": "is_active",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -3105,7 +3137,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_user-recipe": {
       "name": "ce-nu_user-recipe",
@@ -3226,7 +3259,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_account": {
       "name": "ce-nu_account",
@@ -3342,7 +3376,8 @@
           "name": "ce-nu_account_provider_provider_account_id_pk"
         }
       },
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_daily_log": {
       "name": "ce-nu_daily_log",
@@ -3426,6 +3461,41 @@
           "notNull": false,
           "autoincrement": false
         },
+        "sleep_quality": {
+          "name": "sleep_quality",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "is_hiit": {
+          "name": "is_hiit",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "is_cardio": {
+          "name": "is_cardio",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "is_lift": {
+          "name": "is_lift",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "nap": {
           "name": "nap",
           "type": "text",
@@ -3451,7 +3521,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_daily_meal": {
       "name": "ce-nu_daily_meal",
@@ -3473,9 +3544,16 @@
         },
         "daily_log_id": {
           "name": "daily_log_id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "recipe_id": {
+          "name": "recipe_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "vege_calories": {
@@ -3510,7 +3588,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_role": {
       "name": "ce-nu_role",
@@ -3569,7 +3648,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_session": {
       "name": "ce-nu_session",
@@ -3621,7 +3701,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_user": {
       "name": "ce-nu_user",
@@ -3825,74 +3906,8 @@
       },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "ce-nu_user_to_plan": {
-      "name": "ce-nu_user_to_plan",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(unixepoch())"
-        },
-        "finalised_at": {
-          "name": "finalised_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "plan_id": {
-          "name": "plan_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "is_active": {
-          "name": "is_active",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "ce-nu_user_to_plan_user_id_ce-nu_user_id_fk": {
-          "name": "ce-nu_user_to_plan_user_id_ce-nu_user_id_fk",
-          "tableFrom": "ce-nu_user_to_plan",
-          "tableTo": "ce-nu_user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_user_to_trainer": {
       "name": "ce-nu_user_to_trainer",
@@ -3942,7 +3957,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "ce-nu_verification_token": {
       "name": "ce-nu_verification_token",
@@ -3980,9 +3996,127 @@
           "name": "ce-nu_verification_token_identifier_token_pk"
         }
       },
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "ce-nu_weigh_in": {
+      "name": "ce-nu_weigh_in",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "trainer_id": {
+          "name": "trainer_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "date": {
+          "name": "date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        },
+        "body_weight": {
+          "name": "body_weight",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "lean_mass": {
+          "name": "lean_mass",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "body_fat": {
+          "name": "body_fat",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "blood_pressure": {
+          "name": "blood_pressure",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "ce-nu_weigh_in_user_id_ce-nu_user_id_fk": {
+          "name": "ce-nu_weigh_in_user_id_ce-nu_user_id_fk",
+          "tableFrom": "ce-nu_weigh_in",
+          "tableTo": "ce-nu_user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "ce-nu_weigh_in_trainer_id_ce-nu_user_id_fk": {
+          "name": "ce-nu_weigh_in_trainer_id_ce-nu_user_id_fk",
+          "tableFrom": "ce-nu_weigh_in",
+          "tableTo": "ce-nu_user",
+          "columnsFrom": [
+            "trainer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     }
   },
+  "views": {},
   "enums": {},
   "_meta": {
     "schemas": {},
