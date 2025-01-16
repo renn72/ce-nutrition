@@ -1,4 +1,4 @@
-import { dailyLog, user } from '@/server/db/schema/user'
+import { dailyLog, dailyMeal, user } from '@/server/db/schema/user'
 import {
   userIngredient,
   userMeal,
@@ -7,7 +7,7 @@ import {
 } from '@/server/db/schema/user-plan'
 import { TRPCError } from '@trpc/server'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
-import { desc, eq } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 export const dailyLogRouter = createTRPCRouter({
@@ -38,17 +38,216 @@ export const dailyLogRouter = createTRPCRouter({
 
       return { res }
     }),
+  deleteMeal: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        planId: z.number(),
+        mealIndex: z.number().nullable(),
+        recipeId: z.number().nullable().optional(),
+        date: z.date(),
+        logId: z.number().nullable(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+        await ctx.db
+          .delete(userIngredient)
+          .where(
+            and(
+              eq(userIngredient.dailyLogId, input.logId ?? -1),
+              eq(userIngredient.mealIndex, input.mealIndex ?? -1),
+            ),
+          )
+
+        await ctx.db
+          .delete(userRecipe)
+          .where(
+            and(
+              eq(userRecipe.dailyLogId, input.logId ?? -1),
+              eq(userRecipe.mealIndex, input.mealIndex ?? -1),
+            ),
+          )
+
+        await ctx.db
+          .delete(dailyMeal)
+          .where(
+            and(
+              eq(dailyMeal.dailyLogId, input.logId ?? -1),
+              eq(dailyMeal.mealIndex, input.mealIndex ?? -1),
+            ),
+          )
+      return true
+    }),
   addMeal: protectedProcedure
     .input(
       z.object({
         userId: z.string(),
         planId: z.number(),
-        mealIndex: z.number(),
-        recipeIndex: z.number(),
-        ingredientIndex: z.number(),
+        mealIndex: z.number().nullable(),
+        recipeIndex: z.number().nullable().optional(),
+        recipeId: z.number().nullable().optional(),
+        date: z.date(),
+        logId: z.number().nullable(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {}),
+    .mutation(async ({ input, ctx }) => {
+      console.log('input', input)
+
+      const plan = await ctx.db.query.userPlan.findFirst({
+        where: eq(userPlan.id, input.planId),
+        with: {
+          userMeals: true,
+          userRecipes: true,
+          userIngredients: true,
+        },
+      })
+
+      if (!plan) return
+
+      const meal = plan.userMeals.find(
+        (meal) => meal.mealIndex == input.mealIndex,
+      )
+      if (!meal) return
+
+      const recipe = plan.userRecipes.find(
+        (recipe) =>
+          recipe.recipeIndex == input.recipeIndex &&
+          recipe.mealIndex == input.mealIndex,
+      )
+      if (!recipe) return
+
+      const ingredients = plan.userIngredients.filter(
+        (ingredient) =>
+          ingredient.recipeIndex == input.recipeIndex &&
+          ingredient.mealIndex == input.mealIndex,
+      )
+      if (!ingredients) return
+
+      // console.log('meal', meal)
+      // console.log('recipe', recipe)
+      // console.log('ingredient', ingredient)
+
+      if (!input.logId) {
+        const log = await ctx.db
+          .insert(dailyLog)
+          .values({
+            date: input.date,
+            morningWeight: '',
+            notes: '',
+            sleep: '',
+            sleepQuality: '',
+            isHiit: false,
+            isCardio: false,
+            isLift: false,
+            bowelMovements: '',
+            image: '',
+            userId: input.userId,
+          })
+          .returning({ id: dailyLog.id })
+
+        const logId = log?.[0]?.id
+        if (!logId) return
+
+        const meal = await ctx.db
+          .insert(dailyMeal)
+          .values({
+            dailyLogId: logId,
+            mealIndex: input.mealIndex,
+            recipeId: input.recipeId,
+            vegeCalories: '',
+            veges: '',
+          })
+          .returning({ id: dailyMeal.id })
+
+        const dailyMealId = meal?.[0]?.id
+        if (!dailyMealId) return
+
+        const recipeInsert = await ctx.db
+          .insert(userRecipe)
+          .values({
+            ...recipe,
+            dailyMealId: dailyMealId,
+            isLog: true,
+          })
+          .returning({ id: userRecipe.id })
+
+        return { meal }
+      } else {
+        await ctx.db
+          .delete(userIngredient)
+          .where(
+            and(
+              eq(userIngredient.dailyLogId, input.logId ?? -1),
+              eq(userIngredient.mealIndex, input.mealIndex ?? -1),
+            ),
+          )
+
+        await ctx.db
+          .delete(userRecipe)
+          .where(
+            and(
+              eq(userRecipe.dailyLogId, input.logId ?? -1),
+              eq(userRecipe.mealIndex, input.mealIndex ?? -1),
+            ),
+          )
+
+        await ctx.db
+          .delete(dailyMeal)
+          .where(
+            and(
+              eq(dailyMeal.dailyLogId, input.logId ?? -1),
+              eq(dailyMeal.mealIndex, input.mealIndex ?? -1),
+            ),
+          )
+
+        const meal = await ctx.db
+          .insert(dailyMeal)
+          .values({
+            dailyLogId: input.logId,
+            mealIndex: input.mealIndex,
+            recipeId: input.recipeId,
+            vegeCalories: '',
+            veges: '',
+          })
+          .returning({ id: dailyMeal.id })
+        const dailyMealId = meal?.[0]?.id
+        console.log('create 1')
+        if (!dailyMealId) return
+
+        const { id, createdAt, updatedAt, userPlanId, ...recipeInput } = recipe
+        const recipeInsert = await ctx.db
+          .insert(userRecipe)
+          .values({
+            ...recipeInput,
+            dailyMealId: dailyMealId,
+            dailyLogId: input.logId,
+            isLog: true,
+          })
+          .returning({ id: userRecipe.id })
+
+        const ingredientInsert = await ctx.db
+          .insert(userIngredient)
+          .values(
+            ingredients.map((ingredient) => {
+              return {
+                ingredientId: ingredient.ingredientId,
+                recipeId: recipeInsert?.[0]?.id,
+                mealIndex: ingredient.mealIndex,
+                recipeIndex: ingredient.recipeIndex,
+                alternateId: ingredient.alternateId,
+                dailyMealId: dailyMealId,
+                dailyLogId: input.logId,
+                isLog: true,
+                serve: ingredient.serve,
+                serveUnit: ingredient.serveUnit,
+              }
+            }),
+          )
+          .returning({ id: userIngredient.id })
+
+        return { meal, recipe: recipeInsert, ingredient: ingredientInsert }
+      }
+    }),
   update: protectedProcedure
     .input(
       z.object({
@@ -113,6 +312,7 @@ export const dailyLogRouter = createTRPCRouter({
           dailyMeals: {
             with: {
               recipe: true,
+              ingredients: true,
             },
           },
         },

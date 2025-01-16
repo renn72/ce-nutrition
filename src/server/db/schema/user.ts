@@ -110,6 +110,8 @@ export const dailyMeal = createTable('daily_meal', {
   dailyLogId: int('daily_log_id')
     .notNull()
     .references(() => dailyLog.id),
+  mealIndex: int('meal_index', { mode: 'number' }),
+  date: int('date', { mode: 'timestamp' }),
   recipeId: int('recipe_id'),
   vegeCalories: text('vege_calories'),
   veges: text('veges'),
@@ -120,10 +122,7 @@ export const dailyMealRelations = relations(dailyMeal, ({ one, many }) => ({
     fields: [dailyMeal.dailyLogId],
     references: [dailyLog.id],
   }),
-  recipe: one(userRecipe, {
-    fields: [dailyMeal.recipeId],
-    references: [userRecipe.id],
-  }),
+  recipe: many(userRecipe),
   ingredients: many(userIngredient),
 }))
 

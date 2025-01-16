@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 import { cn } from '@/lib/utils'
 import { MoonIcon, SunIcon } from '@radix-ui/react-icons'
-import { House, LogOutIcon, Settings, UserRoundCog, VenetianMask } from 'lucide-react'
+import { Database, House, LogOutIcon, RefreshCcw, Settings, UserRoundCog, VenetianMask } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import { toast } from 'sonner'
@@ -37,6 +37,12 @@ const User = () => {
   const ctx = api.useUtils()
   const { data: user, isLoading } = api.user.getCurrentUser.useQuery()
 
+  const { mutate: sync } = api.user.sync.useMutation({
+    onSuccess: () => {
+      ctx.invalidate()
+      toast.success('Synced')
+    },
+  })
   const { theme, setTheme } = useTheme()
   const isTrainer = user?.isTrainer
   const isCreator = user?.isCreator
@@ -100,6 +106,19 @@ const User = () => {
             </DropdownMenuItem>
           </>
         )}
+        {
+          isCreator && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => sync()}
+                className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
+                <Database size={20} />
+                Sync DB
+              </DropdownMenuItem>
+            </>
+          )
+        }
         <DropdownMenuSeparator />
         <DropdownMenuItem className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
           <Settings size={20} />

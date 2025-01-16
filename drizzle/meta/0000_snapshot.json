@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "9d69f482-7c82-4649-b511-9499ef113dbb",
+  "id": "7c006505-cd35-45b0-a824-9e7f1b6f66f9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "ce-nu_grocery_store": {
@@ -2826,6 +2826,13 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "daily_log_id": {
+          "name": "daily_log_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},
@@ -2867,6 +2874,19 @@
             "id"
           ],
           "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "ce-nu_user-ingredient_daily_log_id_ce-nu_daily_log_id_fk": {
+          "name": "ce-nu_user-ingredient_daily_log_id_ce-nu_daily_log_id_fk",
+          "tableFrom": "ce-nu_user-ingredient",
+          "tableTo": "ce-nu_daily_log",
+          "columnsFrom": [
+            "daily_log_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
@@ -3227,6 +3247,27 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "ingredient_blob": {
+          "name": "ingredient_blob",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "is_log": {
+          "name": "is_log",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "daily_log_id": {
+          "name": "daily_log_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},
@@ -3241,7 +3282,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
+          "onDelete": "no action",
           "onUpdate": "no action"
         },
         "ce-nu_user-recipe_daily_meal_id_ce-nu_daily_meal_id_fk": {
@@ -3250,6 +3291,19 @@
           "tableTo": "ce-nu_daily_meal",
           "columnsFrom": [
             "daily_meal_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "ce-nu_user-recipe_daily_log_id_ce-nu_daily_log_id_fk": {
+          "name": "ce-nu_user-recipe_daily_log_id_ce-nu_daily_log_id_fk",
+          "tableFrom": "ce-nu_user-recipe",
+          "tableTo": "ce-nu_daily_log",
+          "columnsFrom": [
+            "daily_log_id"
           ],
           "columnsTo": [
             "id"
@@ -3547,6 +3601,20 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "meal_index": {
+          "name": "meal_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "date": {
+          "name": "date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "recipe_id": {

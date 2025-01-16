@@ -407,9 +407,11 @@ CREATE TABLE `ce-nu_user-ingredient` (
 	`serve` text,
 	`serve_unit` text,
 	`note` text,
+	`daily_log_id` integer,
 	FOREIGN KEY (`ingredient_id`) REFERENCES `ce-nu_ingredient`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`user_plan_id`) REFERENCES `ce-nu_user-plan`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`daily_meal_id`) REFERENCES `ce-nu_daily_meal`(`id`) ON UPDATE no action ON DELETE cascade
+	FOREIGN KEY (`daily_meal_id`) REFERENCES `ce-nu_daily_meal`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`daily_log_id`) REFERENCES `ce-nu_daily_log`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `ce-nu_user-meal` (
@@ -463,8 +465,12 @@ CREATE TABLE `ce-nu_user-recipe` (
 	`serve` text,
 	`serve_unit` text,
 	`note` text,
-	FOREIGN KEY (`user_plan_id`) REFERENCES `ce-nu_user-plan`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`daily_meal_id`) REFERENCES `ce-nu_daily_meal`(`id`) ON UPDATE no action ON DELETE no action
+	`ingredient_blob` text,
+	`is_log` integer,
+	`daily_log_id` integer,
+	FOREIGN KEY (`user_plan_id`) REFERENCES `ce-nu_user-plan`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`daily_meal_id`) REFERENCES `ce-nu_daily_meal`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`daily_log_id`) REFERENCES `ce-nu_daily_log`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `ce-nu_account` (
@@ -509,6 +515,8 @@ CREATE TABLE `ce-nu_daily_meal` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`daily_log_id` integer NOT NULL,
+	`meal_index` integer,
+	`date` integer,
 	`recipe_id` integer,
 	`vege_calories` text,
 	`veges` text,

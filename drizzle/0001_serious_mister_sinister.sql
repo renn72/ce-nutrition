@@ -1,1 +1,0 @@
-ALTER TABLE `ce-nu_user-recipe` ADD `ingredient_blob` text;

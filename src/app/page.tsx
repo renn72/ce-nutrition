@@ -6,7 +6,6 @@ import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
 import { GetUserById } from '@/types'
 
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { BodyFat } from '@/components/charts/mobile/body-fat'
