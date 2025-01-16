@@ -64,10 +64,10 @@ const CheckIns = ({ userId }: { userId: string }) => {
 const UserLogs = ({ userId }: { userId: string }) => {
   const isMobile = useClientMediaQuery('(max-width: 600px)')
   const { data: user } = api.user.get.useQuery(userId || '')
+  console.log('user', user)
 
   if (!user) return null
   const plan = user?.userPlans.find((plan) => plan.id == user?.currentPlanId)
-  if (!plan) return null
 
   if (isMobile) {
     return (
