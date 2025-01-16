@@ -5,7 +5,7 @@ import { api } from '@/trpc/react'
 import { useEffect, useState } from 'react'
 
 import { GetAllDailyLogs, GetUserById, UserMeal, UserPlan } from '@/types'
-import { ChevronLeft, ChevronRight, CircleX } from 'lucide-react'
+import { ChevronLeft, ChevronRight, CircleX, Loader } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -157,12 +157,14 @@ const Day = ({
   dailyLogs,
   userId,
   index,
+  setIsLoading
 }: {
   date: Date
   dailyLogs: GetAllDailyLogs | null | undefined
   plan: UserPlan
   userId: string
   index: number
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const todaysLog = dailyLogs?.find(
     (dailyLog) => dailyLog.date.toDateString() === date.toDateString(),
@@ -205,6 +207,10 @@ const Day = ({
             variant='ghost'
             size='sm'
             className='text-xs'
+            onClick={() => {
+              alert('not implemented')
+              // setIsLoading(true)
+            }}
           >
             Apply to all week
           </Button>
@@ -218,10 +224,12 @@ const DayList = ({
   userId,
   weekStart,
   currentUser,
+  setIsLoading
 }: {
   userId: string
   weekStart: Date
   currentUser: GetUserById
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const { data: dailyLogs, isLoading: isLoadingDailyLogs } =
     api.dailyLog.getAllUser.useQuery(userId)
@@ -246,6 +254,7 @@ const DayList = ({
             dailyLogs={dailyLogs}
             plan={currentUserPlan}
             userId={userId}
+        setIsLoading={setIsLoading}
           />
         )
       })}
@@ -254,6 +263,7 @@ const DayList = ({
 }
 
 export default function Home() {
+  const [ isLoading, setIsLoading ] = useState(false)
   const [weekStart, setWeekStart] = useState(() => {
     const today = new Date()
     return today.getDay() === 0
@@ -270,6 +280,17 @@ export default function Home() {
 
   return (
     <div className='flex flex-col gap-2 w-full text-sm my-16'>
+      {
+        isLoading && (
+          <div className='absolute top-0 h-screen w-screen bg-primary/50 z-[999] flex justify-center items-center'>
+            <Loader
+              className='animate-spin '
+              size={32}
+              color='white'
+            />
+          </div>
+        )
+      }
       <div className='flex gap-2 justify-between px-6 bg-secondary w-full py-2 items-end text-base font-semibold text-muted-foreground '>
         <ChevronLeft
           onClick={() =>
@@ -289,6 +310,7 @@ export default function Home() {
         />
       </div>
       <DayList
+        setIsLoading={setIsLoading}
         userId={currentUser.id}
         weekStart={weekStart}
         currentUser={currentUser}
