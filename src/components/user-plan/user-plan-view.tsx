@@ -19,6 +19,43 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 
+const UserPlanVege = ({
+  userPlan,
+  mealIndex,
+}: {
+  userPlan: UserPlan
+  mealIndex: number | null
+}) => {
+  if (!userPlan) return null
+  const meal = userPlan.userMeals.find((meal) => meal.mealIndex == mealIndex)
+
+  if (!meal) return null
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Badge className='cursor-pointer'>Vege</Badge>
+      </DialogTrigger>
+      <DialogContent
+        className='py-14'
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+        }}
+      >
+        <DialogHeader>
+          <DialogTitle>Vege</DialogTitle>
+          <DialogDescription></DialogDescription>
+        </DialogHeader>
+        <div className='flex gap-4 items-center flex-col'>
+          <div>
+            {meal.veges}
+
+          </div>
+            <div>{meal.vegeNotes}</div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
 const UserPlanRecipe = ({
   userPlan,
   mealIndex,
@@ -140,7 +177,10 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
           {meal.veges !== '' && (
             <div className='grid grid-cols-1 place-items-center w-[50px]'>
               <div className='w-min'>&</div>
-              <Badge className='w-min'>Vege</Badge>
+              <UserPlanVege
+                userPlan={userPlan}
+                mealIndex={meal.mealIndex}
+              />
             </div>
           )}
         </div>
