@@ -54,6 +54,7 @@ const UserPlanRecipe = ({
       >
         <DialogHeader>
           <DialogTitle>{recipe.name}</DialogTitle>
+          <DialogDescription></DialogDescription>
         </DialogHeader>
         <div className='grid grid-cols-4 gap-2 place-items-center'>
           <Label>Serves</Label>
