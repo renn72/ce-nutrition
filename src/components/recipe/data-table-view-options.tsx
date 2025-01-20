@@ -25,7 +25,7 @@ const columMap = {
   recipeCategory: 'Category',
   size: 'Size',
   caloriesWFibre: 'Calories w Fibre',
-  caloriesWOFibre: 'Calories w/o Fibre',
+  caloriesWOFibre: 'Calories',
   protein: 'Protein',
   fat: 'Fat',
   carbs: 'Carbs',
