@@ -15,6 +15,13 @@
       "when": 1737067360958,
       "tag": "0001_volatile_nehzno",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1737350187874,
+      "tag": "0002_quick_sebastian_shaw",
+      "breakpoints": true
     }
   ]
 }

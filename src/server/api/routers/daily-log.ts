@@ -1,3 +1,4 @@
+import { db } from '@/server/db'
 import { dailyLog, dailyMeal, user } from '@/server/db/schema/user'
 import {
   userIngredient,
@@ -5,10 +6,51 @@ import {
   userPlan,
   userRecipe,
 } from '@/server/db/schema/user-plan'
+import type { GetDailyLogById as DailyLog, GetAllDailyLogs } from '@/types'
 import { TRPCError } from '@trpc/server'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { and, desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
+
+const createBlankLogs = async (
+  userId: string,
+  startDate: Date,
+): Promise<DailyLog[]> => {
+  const logs: DailyLog[] = []
+  for (let i = 1; i < 7; i++) {
+    const date = new Date(startDate.toDateString())
+    date.setDate(startDate.getDate() + i)
+    const existingLog = await db
+      .select()
+      .from(dailyLog)
+      .where(and(eq(dailyLog.userId, userId), eq(dailyLog.date, date)))
+      .then((res) => res[0])
+    if (!existingLog) {
+      const log = await db
+        .insert(dailyLog)
+        .values({
+          date: new Date(date.toDateString()),
+          morningWeight: '',
+          notes: date.toDateString(),
+          sleep: '',
+          sleepQuality: '',
+          isHiit: false,
+          isCardio: false,
+          isLift: false,
+          bowelMovements: '',
+          image: '',
+          userId: userId,
+        })
+        .returning()
+        .then((res) => res[0])
+      logs.push(log)
+    } else {
+      await db.delete(dailyMeal).where(eq(dailyMeal.dailyLogId, existingLog.id))
+      logs.push(existingLog)
+    }
+  }
+  return logs
+}
 
 export const dailyLogRouter = createTRPCRouter({
   create: protectedProcedure
@@ -33,6 +75,7 @@ export const dailyLogRouter = createTRPCRouter({
         .insert(dailyLog)
         .values({
           ...input,
+          date: new Date(input.date.toDateString()),
         })
         .returning({ id: dailyLog.id })
 
@@ -50,32 +93,103 @@ export const dailyLogRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-        await ctx.db
-          .delete(userIngredient)
-          .where(
-            and(
-              eq(userIngredient.dailyLogId, input.logId ?? -1),
-              eq(userIngredient.mealIndex, input.mealIndex ?? -1),
-            ),
-          )
+      await ctx.db
+        .delete(userIngredient)
+        .where(
+          and(
+            eq(userIngredient.dailyLogId, input.logId ?? -1),
+            eq(userIngredient.mealIndex, input.mealIndex ?? -1),
+          ),
+        )
 
-        await ctx.db
-          .delete(userRecipe)
-          .where(
-            and(
-              eq(userRecipe.dailyLogId, input.logId ?? -1),
-              eq(userRecipe.mealIndex, input.mealIndex ?? -1),
-            ),
-          )
+      await ctx.db
+        .delete(userRecipe)
+        .where(
+          and(
+            eq(userRecipe.dailyLogId, input.logId ?? -1),
+            eq(userRecipe.mealIndex, input.mealIndex ?? -1),
+          ),
+        )
 
-        await ctx.db
-          .delete(dailyMeal)
-          .where(
-            and(
-              eq(dailyMeal.dailyLogId, input.logId ?? -1),
-              eq(dailyMeal.mealIndex, input.mealIndex ?? -1),
-            ),
-          )
+      await ctx.db
+        .delete(dailyMeal)
+        .where(
+          and(
+            eq(dailyMeal.dailyLogId, input.logId ?? -1),
+            eq(dailyMeal.mealIndex, input.mealIndex ?? -1),
+          ),
+        )
+      return true
+    }),
+  copyWeek: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        planId: z.number(),
+        logId: z.number(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const referenceLog = await ctx.db
+        .select()
+        .from(dailyLog)
+        .where(eq(dailyLog.id, input.logId))
+        .then((res) => res[0])
+      if (!referenceLog) {
+        throw new Error('Reference log not found.')
+      }
+      const startDate = new Date(referenceLog.date)
+      console.log('startDate1', startDate.toDateString())
+      const logs = await createBlankLogs(input.userId, startDate)
+      await Promise.all(
+        logs.map(async (log) => {
+          if (log) {
+            const meals = await ctx.db.query.dailyMeal.findMany({
+              where: eq(dailyMeal.dailyLogId, input.logId),
+            })
+            meals.forEach(async (meal) => {
+              if (meal) {
+                const recipes = await db
+                  .select()
+                  .from(userRecipe)
+                  .where(eq(userRecipe.dailyMealId, meal.id))
+                const ingredients = await db
+                  .select()
+                  .from(userIngredient)
+                  .where(eq(userIngredient.dailyMealId, meal.id))
+
+                const newMeal = await db
+                  .insert(dailyMeal)
+                  .values({
+                    ...meal,
+                    id: undefined,
+                    dailyLogId: log.id,
+                  })
+                  .returning({ id: dailyMeal.id })
+
+                await Promise.all(
+                  recipes.map(async (recipe) => {
+                    await db.insert(userRecipe).values({
+                      ...recipe,
+                      id: undefined,
+                      dailyMealId: newMeal[0]?.id,
+                    })
+                  }),
+                )
+                await Promise.all(
+                  ingredients.map(async (ingredient) => {
+                    await db.insert(userIngredient).values({
+                      ...ingredient,
+                      id: undefined,
+                      dailyMealId: newMeal[0]?.id,
+                    })
+                  }),
+                )
+              }
+            })
+          }
+        }),
+      )
       return true
     }),
   addMeal: protectedProcedure
@@ -123,17 +237,17 @@ export const dailyLogRouter = createTRPCRouter({
       )
       if (!ingredients) return
 
-      // console.log('meal', meal)
-      // console.log('recipe', recipe)
-      // console.log('ingredient', ingredient)
+      console.log('meal', meal)
+      console.log('recipe', recipe)
+      console.log('ingredient', ingredients)
 
       if (!input.logId) {
         const log = await ctx.db
           .insert(dailyLog)
           .values({
-            date: input.date,
+            date: new Date(input.date.toDateString()),
             morningWeight: '',
-            notes: '',
+            notes: input.date.toDateString(),
             sleep: '',
             sleepQuality: '',
             isHiit: false,

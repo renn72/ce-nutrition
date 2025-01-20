@@ -110,7 +110,9 @@ export const dailyMeal = createTable('daily_meal', {
     .notNull(),
   dailyLogId: int('daily_log_id')
     .notNull()
-    .references(() => dailyLog.id),
+    .references(() => dailyLog.id, {
+      onDelete: 'cascade',
+    }),
   mealIndex: int('meal_index', { mode: 'number' }),
   date: int('date', { mode: 'timestamp' }),
   recipeId: int('recipe_id'),

@@ -1,6 +1,7 @@
 'use client'
 
 import { api } from '@/trpc/react'
+import { toast } from 'sonner'
 
 import { useEffect, useState } from 'react'
 
@@ -85,14 +86,35 @@ const Meal = ({
   return (
     <div
       key={meal.id}
-      className='flex gap-2 flex flex-col items-center'
+      className='flex gap-2 flex flex-col items-start w-full'
     >
       <div className='text-sm text-muted-foreground font-medium truncate w-24'>
         {meal.mealTitle}
       </div>
 
-      <h2>keto</h2>
-        <ToggleGroup type='single'>
+        <ToggleGroup type='single'
+          className='w-full justify-start'
+          value={selectValue}
+          onValueChange={(value) => {
+            setSelectValue(value)
+            console.log('value', value)
+            console.log('mealIndex', meal.mealIndex)
+            const recipe = plan.userRecipes.find(
+              (recipe) => recipe.id == Number(value),
+            )
+            console.log('addmeal')
+            addMeal({
+              userId: userId,
+              planId: plan.id,
+              mealIndex: meal.mealIndex,
+              recipeIndex: recipe?.recipeIndex,
+              recipeId: Number(value),
+              date: date,
+              logId: log?.id || null,
+            })
+          }}
+        >
+
           {recipes.map((recipe) => (
             <ToggleGroupItem
               key={recipe.id}
@@ -104,18 +126,6 @@ const Meal = ({
           ))}
         </ToggleGroup>
 
-      <h2>3500cals</h2>
-        <ToggleGroup type='single'>
-          {recipes.map((recipe) => (
-            <ToggleGroupItem
-              key={recipe.id}
-              value={recipe.id.toString()}
-              className='text-xs py-1 px-1'
-            >
-              {recipe.name}
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
       <CircleX
         size={20}
         className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform active:text-red-500 hidden'
@@ -149,6 +159,16 @@ const Day = ({
   index: number
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
+  const ctx = api.useUtils()
+  const { mutate: copyWeek } = api.dailyLog.copyWeek.useMutation({
+    onSettled:  () => {
+      setIsLoading(false)
+    },
+    onSuccess: async () => {
+      await ctx.dailyLog.invalidate()
+      toast.success('Copied week')
+    },
+  })
   const todaysLog = dailyLogs?.find(
     (dailyLog) => dailyLog.date.toDateString() === date.toDateString(),
   )
@@ -191,8 +211,15 @@ const Day = ({
             size='sm'
             className='text-xs'
             onClick={() => {
-              alert('not implemented')
-              // setIsLoading(true)
+              const logId = todaysLog?.id
+              const planId = plan?.id
+              if (!logId || !planId) return
+              copyWeek({
+                userId: userId,
+                planId: planId,
+                logId: logId,
+              })
+              setIsLoading(true)
             }}
           >
             Apply to all week
@@ -220,8 +247,6 @@ const DayList = ({
   const currentUserPlan = currentUser?.userPlans.find(
     (plan) => plan.id == currentUser?.currentPlanId,
   )
-
-  console.log('currentUserPlan', currentUserPlan)
 
   if (isLoadingDailyLogs) return null
   if (!currentUserPlan) return <div>No Program Found</div>
