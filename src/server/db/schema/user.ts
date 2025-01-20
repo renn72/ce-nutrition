@@ -93,6 +93,7 @@ export const dailyLog = createTable('daily_log', {
   isHiit: int('is_hiit', { mode: 'boolean' }),
   isCardio: int('is_cardio', { mode: 'boolean' }),
   isLift: int('is_lift', { mode: 'boolean' }),
+  isLiss: int('is_liss', { mode: 'boolean' }),
   image: text('image'),
   nap: text('nap'),
 })

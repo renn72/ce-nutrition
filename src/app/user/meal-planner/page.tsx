@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 const dynamic = 'force-dynamic'
 
@@ -40,7 +41,7 @@ const Meal = ({
   )
 
   useEffect(() => {
-      setSelectValue(recipeId?.toString() ?? '')
+    setSelectValue(recipeId?.toString() ?? '')
   }, [recipeId])
 
   const ctx = api.useUtils()
@@ -84,59 +85,42 @@ const Meal = ({
   return (
     <div
       key={meal.id}
-      className='flex gap-6 flex items-center'
+      className='flex gap-2 flex flex-col items-center'
     >
       <div className='text-sm text-muted-foreground font-medium truncate w-24'>
         {meal.mealTitle}
       </div>
 
-      <Select
-        value={selectValue}
-        onValueChange={(value) => {
-          setSelectValue(value)
-          console.log('value', value)
-          console.log('mealIndex', meal.mealIndex)
-
-          const recipe = plan.userRecipes.find(
-            (recipe) => recipe.id == Number(value),
-          )
-
-          console.log('addmeal')
-          addMeal({
-            userId: userId,
-            planId: plan.id,
-            mealIndex: meal.mealIndex,
-            recipeIndex: recipe?.recipeIndex,
-            recipeId: Number(value),
-            date: date,
-            logId: log?.id || null,
-          })
-        }}
-      >
-        <SelectTrigger className='w-[180px] h-7 bg-background'>
-          <SelectValue
-            placeholder=''
-            className=''
-          />
-        </SelectTrigger>
-        <SelectContent>
+      <h2>keto</h2>
+        <ToggleGroup type='single'>
           {recipes.map((recipe) => (
-            <SelectItem
+            <ToggleGroupItem
               key={recipe.id}
               value={recipe.id.toString()}
               className='text-xs py-1 px-1'
             >
               {recipe.name}
-            </SelectItem>
+            </ToggleGroupItem>
           ))}
-        </SelectContent>
-      </Select>
+        </ToggleGroup>
 
+      <h2>3500cals</h2>
+        <ToggleGroup type='single'>
+          {recipes.map((recipe) => (
+            <ToggleGroupItem
+              key={recipe.id}
+              value={recipe.id.toString()}
+              className='text-xs py-1 px-1'
+            >
+              {recipe.name}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       <CircleX
         size={20}
-        className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform active:text-red-500'
+        className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform active:text-red-500 hidden'
         onClick={() => {
-           // setSelectValue('')
+          // setSelectValue('')
           deleteMeal({
             userId: userId,
             planId: plan.id,
@@ -146,7 +130,6 @@ const Meal = ({
           })
         }}
       />
-
     </div>
   )
 }
@@ -157,14 +140,14 @@ const Day = ({
   dailyLogs,
   userId,
   index,
-  setIsLoading
+  setIsLoading,
 }: {
   date: Date
   dailyLogs: GetAllDailyLogs | null | undefined
   plan: UserPlan
   userId: string
   index: number
-    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const todaysLog = dailyLogs?.find(
     (dailyLog) => dailyLog.date.toDateString() === date.toDateString(),
@@ -224,12 +207,12 @@ const DayList = ({
   userId,
   weekStart,
   currentUser,
-  setIsLoading
+  setIsLoading,
 }: {
   userId: string
   weekStart: Date
   currentUser: GetUserById
-    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const { data: dailyLogs, isLoading: isLoadingDailyLogs } =
     api.dailyLog.getAllUser.useQuery(userId)
@@ -254,7 +237,7 @@ const DayList = ({
             dailyLogs={dailyLogs}
             plan={currentUserPlan}
             userId={userId}
-        setIsLoading={setIsLoading}
+            setIsLoading={setIsLoading}
           />
         )
       })}
@@ -263,7 +246,7 @@ const DayList = ({
 }
 
 export default function Home() {
-  const [ isLoading, setIsLoading ] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [weekStart, setWeekStart] = useState(() => {
     const today = new Date()
     return today.getDay() === 0
@@ -280,17 +263,15 @@ export default function Home() {
 
   return (
     <div className='flex flex-col gap-2 w-full text-sm my-16'>
-      {
-        isLoading && (
-          <div className='absolute top-0 h-screen w-screen bg-primary/50 z-[999] flex justify-center items-center'>
-            <Loader
-              className='animate-spin '
-              size={32}
-              color='white'
-            />
-          </div>
-        )
-      }
+      {isLoading && (
+        <div className='absolute top-0 h-screen w-screen bg-primary/50 z-[999] flex justify-center items-center'>
+          <Loader
+            className='animate-spin '
+            size={32}
+            color='white'
+          />
+        </div>
+      )}
       <div className='flex gap-2 justify-between px-6 bg-secondary w-full py-2 items-end text-base font-semibold text-muted-foreground '>
         <ChevronLeft
           onClick={() =>

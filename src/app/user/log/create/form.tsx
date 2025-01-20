@@ -38,6 +38,7 @@ export const formSchema = z.object({
   isHiit: z.boolean().optional(),
   isCardio: z.boolean().optional(),
   isLift: z.boolean().optional(),
+  isLiss: z.boolean().optional(),
   bowelMovements: z.string(),
   image: z.string().optional(),
 })
@@ -82,6 +83,7 @@ const DailyLogForm = ({
       isHiit: todaysLog?.isHiit || false,
       isCardio: todaysLog?.isCardio || false,
       isLift: todaysLog?.isLift || false,
+      isLiss: todaysLog?.isLiss || false,
       bowelMovements: todaysLog?.bowelMovements || '',
       image: todaysLog?.image || '',
     },
@@ -101,6 +103,7 @@ const DailyLogForm = ({
         isHiit: data.isHiit,
         isCardio: data.isCardio,
         isLift: data.isLift,
+        isLiss: data.isLiss,
         bowelMovements: data.bowelMovements,
         image: data.image,
         userId: currentUser.id,
@@ -116,6 +119,7 @@ const DailyLogForm = ({
         isHiit: data.isHiit,
         isCardio: data.isCardio,
         isLift: data.isLift,
+        isLiss: data.isLiss,
         bowelMovements: data.bowelMovements,
         image: data.image,
         userId: currentUser.id,
@@ -272,6 +276,24 @@ const DailyLogForm = ({
                 render={({ field }) => (
                   <FormItem className='flex items-center gap-2'>
                     <FormLabel className='mt-[8px]'>Lift</FormLabel>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={(value) => {
+                          field.onChange(value)
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='isLiss'
+                render={({ field }) => (
+                  <FormItem className='flex items-center gap-2'>
+                    <FormLabel className='mt-[8px]'>LISS</FormLabel>
                     <FormControl>
                       <Switch
                         checked={field.value}

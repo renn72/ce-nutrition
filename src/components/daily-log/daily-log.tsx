@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { GetDailyLogById } from '@/types'
 
 import { Badge } from '@/components/ui/badge'
+import { CirclePlus } from 'lucide-react'
 
 const Text = ({
   title,
@@ -49,7 +50,13 @@ const Icon = ({
     </Badge>
   )
 }
-const DailyLog = ({ dailyLog, date }: { dailyLog: GetDailyLogById | undefined, date: Date }) => {
+const DailyLog = ({
+  dailyLog,
+  date,
+}: {
+  dailyLog: GetDailyLogById | undefined
+  date: Date
+}) => {
   const todaysDailyLog = dailyLog
 
   const id = dailyLog?.id || ''
@@ -57,17 +64,19 @@ const DailyLog = ({ dailyLog, date }: { dailyLog: GetDailyLogById | undefined, d
   if (todaysDailyLog?.image && todaysDailyLog?.image !== '') {
     return (
       <Link href={`/user/log/create?id=${id}&date=${date.getTime()}`}>
-        <div className='grid grid-cols-3 w-full px-4 py-2 bg-secondary text-sm'>
-          <div className='flex flex-col gap-1 items-start col-span-2'>
+        <div className='grid grid-cols-3 w-full px-4 py-2 bg-secondary text-sm w-full'>
+          <div className='flex flex-col gap-1 items-start col-span-2 w-full'>
             <Text
               title='Weight'
               text={todaysDailyLog?.morningWeight}
               suffix='kg'
             />
-            <Text
-              title='Bowel Movements'
-              text={todaysDailyLog?.bowelMovements}
-            />
+            <div className='flex gap-2 justify-between w-full pr-4 relative'>
+              <Text
+                title='Bowel Movements'
+                text={todaysDailyLog?.bowelMovements}
+              />
+            </div>
             <Text
               title='Sleep'
               text={todaysDailyLog?.sleep}
@@ -115,8 +124,7 @@ const DailyLog = ({ dailyLog, date }: { dailyLog: GetDailyLogById | undefined, d
     )
   }
   return (
-
-      <Link href={`/user/log/create?id=${id}&date=${date.getTime()}`}>
+    <Link href={`/user/log/create?id=${id}&date=${date.getTime()}`}>
       <div className='flex flex-col gap-2 w-full px-2 py-4 bg-secondary text-sm'>
         <div className='grid grid-cols-2 grow'>
           <Text
