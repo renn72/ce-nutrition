@@ -235,8 +235,7 @@ const FormIngredient = ({
                 )}
               />
             </div>
-            <div className='flex gap-4 justify-between hidden'>
-              <div className='w-full hidden'>
+            <div className='grid grid-cols-2 md:grid-cols-4 gap-4  justify-between'>
                 <FormField
                   control={form.control}
                   name='caloriesWOFibre'
@@ -262,14 +261,13 @@ const FormIngredient = ({
                     </FormItem>
                   )}
                 />
-              </div>
-            </div>
-            <div className='grid grid-cols-2 md:grid-cols-4 gap-4  justify-between'>
               <FormField
                 control={form.control}
                 name='caloriesWFibre'
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem
+                    className='hidden'
+                  >
                     <FormLabel>Calories</FormLabel>
                     <FormControl>
                       <div className='relative w-full'>
@@ -370,7 +368,7 @@ const FormIngredient = ({
               control={form.control}
               name='isAllStores'
               render={({ field }) => (
-                <FormItem className='flex flex-row items-end space-x-6 space-y-0 rounded-md border p-4 shadow'>
+                <FormItem className='flex flex-row items-end space-x-6 space-y-0 rounded-md border p-4 shadow hidden'>
                   <FormControl>
                     <Checkbox
                       checked={field.value}

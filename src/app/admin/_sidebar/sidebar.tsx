@@ -81,10 +81,10 @@ const data = {
           title: 'Ingredients',
           url: '/admin/ingredient',
         },
-        {
-          title: 'Store',
-          url: '/admin/store',
-        },
+        // {
+        //   title: 'Store',
+        //   url: '/admin/store',
+        // },
         {
           title: 'Users',
           url: '/admin/users',

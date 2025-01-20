@@ -84,7 +84,7 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
           note: ingredient.note || '',
           serveSize: ingredient.serveSize || '',
           serveUnit: ingredient.serveUnit || '',
-          alternateId: ingredient.alternateId.toString() || '',
+          alternateId: ingredient.alternateId?.toString() || '',
         })) || [],
     },
   })
@@ -106,7 +106,7 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
       if (i) {
         return (
           acc +
-          Number(i.caloriesWFibre) *
+          Number(i.caloriesWOFibre) *
             (Number(ingredient.serveSize) / Number(i.serveSize))
         )
       }
@@ -317,7 +317,6 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
                     serveSize: '',
                     serveUnit: '',
                     index: fields.length + 1,
-                    isAlternate: false,
                     note: '',
                     alternateId: '',
                   })

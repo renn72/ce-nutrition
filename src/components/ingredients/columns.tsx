@@ -258,7 +258,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Calories'
+        title='Calories w Fibre'
       />
     ),
     sortingFn: floatSortingFn,
@@ -277,7 +277,7 @@ export const columns: ColumnDef<GetIngredientById>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Calories w/o Fibre'
+        title='Calories'
       />
     ),
     cell: ({ row }) => {

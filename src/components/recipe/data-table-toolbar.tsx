@@ -43,7 +43,7 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       <div className='flex items-center gap-2'>
-        <Link href='/admin/base/recipe/create'>
+        <Link href='/admin/recipe/create'>
           <CirclePlus
             size={24}
             className='text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer'

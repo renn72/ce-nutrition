@@ -143,7 +143,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Calories'
+        title='Calories w Fibre'
       />
     ),
     cell: ({ row }) => {
@@ -168,7 +168,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Calories wo Fibre'
+        title='Calories'
       />
     ),
     cell: ({ row }) => {
@@ -188,11 +188,11 @@ export const columns: ColumnDef<GetRecipeById>[] = [
     },
   },
   {
-    accessorKey: 'protien',
+    accessorKey: 'protein',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Protien'
+        title='Protein'
       />
     ),
     cell: ({ row }) => {

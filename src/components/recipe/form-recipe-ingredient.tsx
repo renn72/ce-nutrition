@@ -149,11 +149,10 @@ const FormRecipeIngredient = ({
           name={`ingredients.${index}.ingredientId`}
           render={({ field }) => (
             <FormItem className='flex flex-col w-full'>
-              <div className='flex gap-2 items-center w-full'>
+              <div className='flex gap-2 items-center w-content'>
                 <Combobox
                   value={selected}
                   onChange={(value) => {
-                    return
                     field.onChange(value?.id.toString())
                     form.setValue(
                       `ingredients.${index}.serveSize`,
@@ -169,7 +168,7 @@ const FormRecipeIngredient = ({
                   virtual={{ options: filteredIngredients }}
                   immediate
                 >
-                  <div className='relative w-full'>
+                  <div className='relative w-content'>
                     <ComboboxInput
                       className={cn(
                         'w-full rounded-lg text-sm font-semibold border bg-background py-1.5 pr-6 pl-3 cursor-pointer',
@@ -186,7 +185,7 @@ const FormRecipeIngredient = ({
                     anchor='bottom'
                     transition
                     className={cn(
-                      'w-[calc(var(--input-width)+100px)] rounded-xl border border-border bg-secondary p-1 [--anchor-gap:var(--spacing-1)] empty:invisible',
+                      'w-[calc(var(--input-width)+200px)] max-h-[300px] rounded-xl border border-border bg-secondary p-1 [--anchor-gap:var(--spacing-1)] empty:invisible',
                       'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0',
                     )}
                   >
@@ -307,7 +306,7 @@ const FormRecipeIngredient = ({
                     anchor='bottom'
                     transition
                     className={cn(
-                      'w-[calc(var(--input-width)+200px)] rounded-xl border border-border bg-secondary p-1 [--anchor-gap:var(--spacing-1)] empty:invisible',
+                      'w-[calc(var(--input-width)+200px)]  max-h-[300px] rounded-xl border border-border bg-secondary p-1 [--anchor-gap:var(--spacing-1)] empty:invisible',
                       'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0',
                     )}
                   >
