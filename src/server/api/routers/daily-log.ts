@@ -192,6 +192,18 @@ export const dailyLogRouter = createTRPCRouter({
       )
       return true
     }),
+  clearDay: protectedProcedure
+    .input(
+      z.object({
+        logId: z.number(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+
+      const dailyMeals = await ctx.db.delete(dailyMeal).where(eq(dailyMeal.dailyLogId, input.logId))
+
+      return dailyMeals
+    }),
   addMeal: protectedProcedure
     .input(
       z.object({
@@ -237,11 +249,8 @@ export const dailyLogRouter = createTRPCRouter({
       )
       if (!ingredients) return
 
-      console.log('meal', meal)
-      console.log('recipe', recipe)
-      console.log('ingredient', ingredients)
 
-      if (!input.logId) {
+      if (input.logId === null || input.logId === undefined) {
         const log = await ctx.db
           .insert(dailyLog)
           .values({
@@ -260,7 +269,8 @@ export const dailyLogRouter = createTRPCRouter({
           .returning({ id: dailyLog.id })
 
         const logId = log?.[0]?.id
-        if (!logId) return
+        console.log('logId', logId)
+        if (!logId) throw new Error('Log not found')
 
         const meal = await ctx.db
           .insert(dailyMeal)
@@ -274,17 +284,42 @@ export const dailyLogRouter = createTRPCRouter({
           .returning({ id: dailyMeal.id })
 
         const dailyMealId = meal?.[0]?.id
-        if (!dailyMealId) return
+        console.log('dailyMealId', dailyMealId)
+        if (!dailyMealId) throw new Error('Daily meal not found')
 
+        const { id, createdAt, updatedAt, userPlanId, ...recipeInput } = recipe
         const recipeInsert = await ctx.db
           .insert(userRecipe)
           .values({
-            ...recipe,
+            ...recipeInput,
             dailyMealId: dailyMealId,
+            dailyLogId: logId,
             isLog: true,
           })
           .returning({ id: userRecipe.id })
 
+        console.log('recipeInsert', recipeInsert?.[0]?.id)
+
+        const ingredientInsert = await ctx.db
+          .insert(userIngredient)
+          .values(
+            ingredients.map((ingredient) => {
+              return {
+            id: undefined,
+                ingredientId: ingredient.ingredientId,
+                recipeId: recipeInsert?.[0]?.id,
+                mealIndex: ingredient.mealIndex,
+                recipeIndex: ingredient.recipeIndex,
+                alternateId: ingredient.alternateId,
+                dailyMealId: dailyMealId,
+                dailyLogId: logId,
+                isLog: true,
+                serve: ingredient.serve,
+                serveUnit: ingredient.serveUnit,
+              }
+            }),
+          )
+          .returning({ id: userIngredient.id })
         return { meal }
       } else {
         await ctx.db

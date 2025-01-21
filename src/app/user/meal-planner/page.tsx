@@ -97,12 +97,9 @@ const Meal = ({
           value={selectValue}
           onValueChange={(value) => {
             setSelectValue(value)
-            console.log('value', value)
-            console.log('mealIndex', meal.mealIndex)
             const recipe = plan.userRecipes.find(
               (recipe) => recipe.id == Number(value),
             )
-            console.log('addmeal')
             addMeal({
               userId: userId,
               planId: plan.id,
@@ -169,16 +166,40 @@ const Day = ({
       toast.success('Copied week')
     },
   })
+  const { mutate: clearDay } = api.dailyLog.clearDay.useMutation({
+    onSuccess: async () => {
+      await ctx.dailyLog.invalidate()
+      toast.success('Cleared day')
+    },
+  })
   const todaysLog = dailyLogs?.find(
     (dailyLog) => dailyLog.date.toDateString() === date.toDateString(),
   )
+
   return (
     <div className='flex gap-2 flex-col w-full bg-secondary min-h-[70px] px-4 py-1'>
+      <div className='w-full flex justify-between items-center'>
       <div className='text-sm text-muted-foreground font-medium'>
         {date.toLocaleDateString('en-AU', {
           weekday: 'long',
           day: 'numeric',
         })}
+      </div>
+        <Button
+          variant='outline'
+          size='sm'
+          className='bg-background/10'
+          onClick={() => {
+            const logId = todaysLog?.id
+            const planId = plan?.id
+            if (!logId || !planId) return
+            clearDay({
+              logId: logId,
+            })
+          }}
+        >
+        Clear
+        </Button>
       </div>
       <div className='flex gap-2 flex-col'>
         {plan?.userMeals.map((meal) => {

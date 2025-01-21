@@ -102,7 +102,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
       addDailyLog({
         date: day,
         morningWeight: weight,
-        notes: 'test notes',
+        notes: day.toDateString(),
         sleep: sleep,
         sleepQuality: sleepQuality,
         isHiit: Math.random() > 0.3,
