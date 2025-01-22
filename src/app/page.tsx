@@ -38,11 +38,6 @@ const Mobile = ({
   const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId)
   const { data: weighIns } = api.weighIn.getAllUser.useQuery(userId)
 
-  const isTrainer = currentUser?.isTrainer
-  const plan = currentUser?.userPlans.find(
-    (plan) => plan.id == currentUser?.currentPlanId,
-  )
-
   const dailyLog = dailyLogs?.find(
     (dailyLog) => dailyLog.date.toDateString() === new Date().toDateString(),
   )

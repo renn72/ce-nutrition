@@ -208,7 +208,7 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
   if (isLoadingAllIngredients) return null
 
   return (
-    <div className='flex flex-col gap-4'>
+    <div className='flex flex-col gap-4 p-2'>
       <BackButton />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>

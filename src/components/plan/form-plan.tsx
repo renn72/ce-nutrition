@@ -109,7 +109,7 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
   if (isLoadingAllMeals) return null
 
   return (
-    <div className='my-10 flex flex-col gap-4'>
+    <div className='my-1 flex flex-col gap-4 p-2'>
       <BackButton />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>

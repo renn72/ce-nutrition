@@ -98,8 +98,8 @@ export function getRecipeDetailsForUserPlan(
   return {
     size: size.toFixed(0),
     unit: unit,
-    cals: cals?.toFixed(1),
-    calsWOFibre: Number(calsWOFibre).toFixed(1),
+    calsWFibre: cals?.toFixed(1),
+    cals: Number(calsWOFibre).toFixed(1),
     protein: Number(protein).toFixed(1),
     carbs: Number(carbs).toFixed(1),
     fat: Number(fat).toFixed(1),
@@ -153,8 +153,8 @@ export function getRecipeDetailsByCals(
   return {
     size: (Number(size) * ratio).toFixed(0),
     unit: unit,
-    cals: calories?.toFixed(1),
-    calsWOFibre: (Number(calsWOFibre) * ratio).toFixed(1),
+    calsWFibre: calories?.toFixed(1),
+    cals: (Number(calsWOFibre) * ratio).toFixed(1),
     protein: (Number(protein) * ratio).toFixed(1),
     carbs: (Number(carbs) * ratio).toFixed(1),
     fat: (Number(fat) * ratio).toFixed(1),
@@ -203,8 +203,8 @@ export function getRecipeDetails(recipe: GetRecipeById) {
   return {
     size: size,
     unit: unit,
-    cals: cals?.toFixed(1),
-    calsWOFibre: calsWOFibre?.toFixed(1),
+    calsWFibre: cals?.toFixed(1),
+    cals: calsWOFibre?.toFixed(1),
     protein: protein?.toFixed(1),
     carbs: carbs?.toFixed(1),
     fat: fat?.toFixed(1),

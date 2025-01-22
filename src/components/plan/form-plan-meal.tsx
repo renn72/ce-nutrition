@@ -55,7 +55,7 @@ const Ingredient = ({
       <div />
       <div className='col-span-3'>{ingredient.name}</div>
       <div>{(Number(size) * ratio).toFixed(0)}</div>
-      <div>{(Number(ingredient.caloriesWFibre) * ratio).toFixed(1)}</div>
+      <div>{(Number(ingredient.caloriesWOFibre) * ratio).toFixed(1)}</div>
       <div>{(Number(ingredient.protein) * ratio).toFixed(1)}</div>
       <div>
         {(

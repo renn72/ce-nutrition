@@ -140,7 +140,7 @@ const FormMeal = ({ meal }: { meal: GetMealById | null }) => {
   if (vegesIsLoading) return null
 
   return (
-    <div className='flex flex-col gap-4'>
+    <div className='flex flex-col gap-4 p-2'>
       <BackButton />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
