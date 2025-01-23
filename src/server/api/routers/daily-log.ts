@@ -1,5 +1,5 @@
 import { db } from '@/server/db'
-import { dailyLog, dailyMeal, user } from '@/server/db/schema/user'
+import { dailyLog, dailyMeal, user, waterLog, poopLog } from '@/server/db/schema/user'
 import {
   userIngredient,
   userMeal,
@@ -37,7 +37,6 @@ const createBlankLogs = async (
           isHiit: false,
           isCardio: false,
           isLift: false,
-          bowelMovements: '',
           image: '',
           userId: userId,
         })
@@ -199,10 +198,91 @@ export const dailyLogRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-
-      const dailyMeals = await ctx.db.delete(dailyMeal).where(eq(dailyMeal.dailyLogId, input.logId))
+      const dailyMeals = await ctx.db
+        .delete(dailyMeal)
+        .where(eq(dailyMeal.dailyLogId, input.logId))
 
       return dailyMeals
+    }),
+  addWaterLog: protectedProcedure
+    .input(
+      z.object({
+        logId: z.number().optional(),
+        amount: z.number(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      let logId = input.logId
+
+      if (input.logId === null || input.logId === undefined) {
+        const log = await ctx.db
+          .insert(dailyLog)
+          .values({
+            date: new Date(),
+            morningWeight: '',
+            notes: '',
+            sleep: '',
+            sleepQuality: '',
+            isHiit: false,
+            isCardio: false,
+            isLift: false,
+            image: '',
+            userId: ctx.session.user.id,
+          })
+          .returning({ id: dailyLog.id })
+
+        logId = log?.[0]?.id
+      }
+      if (!logId) throw new Error('Log not found')
+
+      const water = await ctx.db
+        .insert(waterLog)
+        .values({
+          amount: input.amount.toString(),
+          dailyLogId: logId,
+        })
+        .returning({ id: waterLog.id })
+
+      return water
+    }),
+  addPoopLog: protectedProcedure
+    .input(
+      z.object({
+        logId: z.number().optional(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      let logId = input.logId
+
+      if (input.logId === null || input.logId === undefined) {
+        const log = await ctx.db
+          .insert(dailyLog)
+          .values({
+            date: new Date(),
+            morningWeight: '',
+            notes: '',
+            sleep: '',
+            sleepQuality: '',
+            isHiit: false,
+            isCardio: false,
+            isLift: false,
+            image: '',
+            userId: ctx.session.user.id,
+          })
+          .returning({ id: dailyLog.id })
+
+        logId = log?.[0]?.id
+      }
+      if (!logId) throw new Error('Log not found')
+
+      const poop = await ctx.db
+        .insert(poopLog)
+        .values({
+          dailyLogId: logId,
+        })
+        .returning({ id: poopLog.id })
+
+      return poop
     }),
   addMeal: protectedProcedure
     .input(
@@ -249,7 +329,6 @@ export const dailyLogRouter = createTRPCRouter({
       )
       if (!ingredients) return
 
-
       if (input.logId === null || input.logId === undefined) {
         const log = await ctx.db
           .insert(dailyLog)
@@ -262,7 +341,6 @@ export const dailyLogRouter = createTRPCRouter({
             isHiit: false,
             isCardio: false,
             isLift: false,
-            bowelMovements: '',
             image: '',
             userId: input.userId,
           })
@@ -305,7 +383,7 @@ export const dailyLogRouter = createTRPCRouter({
           .values(
             ingredients.map((ingredient) => {
               return {
-            id: undefined,
+                id: undefined,
                 ingredientId: ingredient.ingredientId,
                 recipeId: recipeInsert?.[0]?.id,
                 mealIndex: ingredient.mealIndex,
@@ -443,7 +521,6 @@ export const dailyLogRouter = createTRPCRouter({
           isHiit,
           isCardio,
           isLift,
-          bowelMovements,
           image,
           userId,
         })
@@ -458,6 +535,8 @@ export const dailyLogRouter = createTRPCRouter({
       const res = await ctx.db.query.dailyLog.findMany({
         where: eq(dailyLog.userId, input),
         with: {
+          waterLogs: true,
+          poopLogs: true,
           dailyMeals: {
             with: {
               recipe: true,

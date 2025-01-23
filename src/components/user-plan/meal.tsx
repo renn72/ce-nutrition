@@ -92,7 +92,7 @@ const Meal = ({
     for (const [recipeIndex, recipe] of meal.mealToRecipe.entries()) {
       const calsPerGram = recipe.recipe?.recipeToIngredient.map(
         (ingredient) =>
-          Number(ingredient.ingredient.caloriesWFibre) /
+          Number(ingredient.ingredient.caloriesWOFibre) /
           Number(ingredient.ingredient.serveSize),
       )
       const proteinPerGram = recipe.recipe?.recipeToIngredient.map(

@@ -2,6 +2,7 @@
 
 import { api } from '@/trpc/react'
 
+
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
 import { GetUserById } from '@/types'
@@ -16,6 +17,9 @@ import { DailyLog } from '@/components/daily-log/daily-log'
 import { MobileFooter } from '@/components/layout/mobile-footer'
 import { MobileHeader } from '@/components/layout/mobile-header'
 import { UserPlanView } from '@/components/user-plan/user-plan-view'
+
+import { WaterLog } from '@/components/water-log/water-log'
+import { PoopLog } from '@/components/poop-log/poop-log'
 
 export const dynamic = 'force-dynamic'
 
@@ -102,6 +106,10 @@ const Mobile = ({
           {dailyLogs ? <Sleep dailyLogs={dailyLogs} /> : null}
         </TabsContent>
       </Tabs>
+        <div className='grid grid-cols-2 w-full bg-secondary p-2'>
+          <WaterLog dailyLogs={dailyLogs} />
+          <PoopLog dailyLogs={dailyLogs} />
+        </div>
       <div className='flex gap-0 w-full justify-center items-center my-6 flex-col bg-secondary pt-2'>
         <h2 className=' font-bold'>Today</h2>
         <DailyLog

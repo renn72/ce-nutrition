@@ -17,12 +17,30 @@ export const userPlanRouter = createTRPCRouter({
       const res = await ctx.db.delete(userPlan).where(eq(userPlan.id, input))
       return res
     }),
-  getMeal: protectedProcedure.input(z.number()).query(async ({ input, ctx }) => {
-    const res = await ctx.db.query.userMeal.findFirst({
-      where: eq(userMeal.id, input),
-    })
-    return res
-  }),
+  getMeal: protectedProcedure
+    .input(z.number())
+    .query(async ({ input, ctx }) => {
+      const res = await ctx.db.query.userMeal.findFirst({
+        where: eq(userMeal.id, input),
+      })
+      return res
+    }),
+  getRecipe: protectedProcedure
+    .input(z.number())
+    .query(async ({ input, ctx }) => {
+      const res = await ctx.db.query.userRecipe.findFirst({
+        where: eq(userRecipe.id, input),
+      })
+      return res
+    }),
+  getIngredient: protectedProcedure
+    .input(z.number())
+    .query(async ({ input, ctx }) => {
+      const res = await ctx.db.query.userIngredient.findFirst({
+        where: eq(userIngredient.id, input),
+      })
+      return res
+    }),
   get: protectedProcedure.input(z.number()).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.userPlan.findFirst({
       where: eq(userPlan.id, input),
@@ -42,6 +60,7 @@ export const userPlanRouter = createTRPCRouter({
         image: z.string(),
         notes: z.string(),
         userId: z.string(),
+        isMultiPlan: z.boolean(),
         meals: z.array(
           z.object({
             mealIndex: z.number(),
@@ -86,6 +105,15 @@ export const userPlanRouter = createTRPCRouter({
       const { meals, ...data } = input
       const recipes = meals.map((meal) => meal.recipes).flat()
       const ingredients = recipes.map((recipe) => recipe.ingredients).flat()
+
+      if (data.isMultiPlan === false) {
+        await ctx.db
+          .update(userPlan)
+          .set({
+            isActive: false,
+          })
+          .where(eq(userPlan.userId, input.userId))
+      }
 
       const res = await ctx.db
         .insert(userPlan)

@@ -4,7 +4,7 @@ import { api } from '@/trpc/react'
 
 import { useState } from 'react'
 
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import { userAtom } from '@/app/admin/_sidebar/sidebar'
 import type { GetPlanById } from '@/types'
@@ -24,6 +24,8 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 
 import { Meal } from '@/components/user-plan/meal'
 import { PlanSelect } from '@/components/user-plan/plan-select'
@@ -77,6 +79,7 @@ const CreateUserPlan = () => {
 
   const [selectedPlanId, setSelectedPlanId] = useState('')
   const [selectedPlan, setSelectedPlan] = useState<GetPlanById | null>(null)
+  const [isMultiPlan, setIsMultiPlan] = useState(false)
 
   const [userId] = useAtom(userAtom)
 
@@ -170,6 +173,7 @@ const CreateUserPlan = () => {
       description: data.description,
       image: '',
       notes: data.notes,
+      isMultiPlan: isMultiPlan,
       meals: data.meals.map((meal, mealIndex) => ({
         mealIndex: mealIndex,
         mealTitle: meal.mealTitle,
@@ -197,7 +201,10 @@ const CreateUserPlan = () => {
               name: ingredient.name || '',
               serve: ingredient.serveSize,
               serveUnit: ingredient.serveUnit,
-              alternateId: ingredient.alternateId === '' || ingredient.alternateId === '0' ? null : Number(ingredient.alternateId),
+              alternateId:
+                ingredient.alternateId === '' || ingredient.alternateId === '0'
+                  ? null
+                  : Number(ingredient.alternateId),
               note: ingredient.note || '',
             }),
           ),
@@ -207,12 +214,25 @@ const CreateUserPlan = () => {
     })
   }
 
+  console.log('isMultiPlan', isMultiPlan)
+
   return (
     <div className='flex flex-col max-w-screen-lg w-full my-12'>
-      <PlanSelect
-        selectedPlan={selectedPlanId}
-        onSetPlan={onSetPlan}
-      />
+      <div className='flex gap-8 items-center'>
+        <PlanSelect
+          selectedPlan={selectedPlanId}
+          onSetPlan={onSetPlan}
+        />
+        <div className='flex flex-col gap-2'>
+          <Label>Multi Plan</Label>
+          <Switch
+            checked={isMultiPlan}
+            onCheckedChange={(e) => {
+              setIsMultiPlan(e === true)
+            }}
+          />
+        </div>
+      </div>
       {selectedPlanId === '' ? null : (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -284,12 +304,14 @@ const CreateUserPlan = () => {
                 </div>
               </div>
               <div>
-                <Button type='submit'
+                <Button
+                  type='submit'
                   onClick={() => {
                     console.log('form', form.getValues())
                   }}
-                >Create</Button>
-
+                >
+                  Create
+                </Button>
               </div>
             </div>
           </form>

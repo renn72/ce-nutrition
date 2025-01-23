@@ -56,7 +56,7 @@ export const user = createTable(
   }),
 )
 
-export const userRelations = relations(user, ({ many }) => ({
+export const userRelations = relations(user, ({ one, many }) => ({
   roles: many(role),
   notifications: many(notification),
   accounts: many(account),
@@ -67,6 +67,29 @@ export const userRelations = relations(user, ({ many }) => ({
   dailyLogs: many(dailyLog),
   weighIns: many(weighIn, { relationName: 'user' }),
   weighInsTrainer: many(weighIn, { relationName: 'trainer' }),
+  settings: one(userSettings, {
+    fields: [user.id],
+    references: [userSettings.userId],
+  }),
+}))
+
+export const userSettings = createTable('user_settings', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  createdAt: int('created_at', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+    () => new Date(),
+  ),
+  userId: text('user_id').notNull().references(() => user.id),
+  defaultWater: text('default_water'),
+})
+
+export const userSettingsRelations = relations(userSettings, ({ one,  }) => ({
+  user: one(user, {
+    fields: [userSettings.userId],
+    references: [user.id],
+  }),
 }))
 
 export const dailyLog = createTable('daily_log', {
@@ -86,8 +109,6 @@ export const dailyLog = createTable('daily_log', {
   morningWeight: text('morning_weight'),
   notes: text('notes'),
   fastedBloodGlucose: text('fasted_blood_glucose'),
-  water: text('water'),
-  bowelMovements: text('bowel_movements'),
   sleep: text('sleep'),
   sleepQuality: text('sleep_quality'),
   isHiit: int('is_hiit', { mode: 'boolean' }),
@@ -101,6 +122,47 @@ export const dailyLog = createTable('daily_log', {
 export const dailyLogRelations = relations(dailyLog, ({ one, many }) => ({
   user: one(user, { fields: [dailyLog.userId], references: [user.id] }),
   dailyMeals: many(dailyMeal),
+  waterLogs: many(waterLog),
+  poopLogs: many(poopLog),
+}))
+
+export const poopLog = createTable('poop_log', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  createdAt: int('created_at', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  dailyLogId: int('daily_log_id')
+    .notNull()
+    .references(() => dailyLog.id, {
+      onDelete: 'cascade',
+    }),
+})
+
+export const poopLogRelations = relations(poopLog, ({ one, many }) => ({
+  dailyLog: one(dailyLog, {
+    fields: [poopLog.dailyLogId],
+    references: [dailyLog.id],
+  }),
+}))
+
+export const waterLog = createTable('water_log', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  createdAt: int('created_at', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  dailyLogId: int('daily_log_id')
+    .notNull()
+    .references(() => dailyLog.id, {
+      onDelete: 'cascade',
+    }),
+  amount: text('water'),
+})
+
+export const waterLogRelations = relations(waterLog, ({ one, many }) => ({
+  dailyLog: one(dailyLog, {
+    fields: [waterLog.dailyLogId],
+    references: [dailyLog.id],
+  }),
 }))
 
 export const dailyMeal = createTable('daily_meal', {

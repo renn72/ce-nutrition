@@ -105,7 +105,7 @@ const Ingredient = ({
         )}
       />
       <div>
-        {(Number(ingredient.ingredient.caloriesWFibre) * ratio).toFixed(1)}
+        {(Number(ingredient.ingredient.caloriesWOFibre) * ratio).toFixed(1)}
       </div>
       <div>{(Number(ingredient.ingredient.protein) * ratio).toFixed(1)}</div>
       <div>
