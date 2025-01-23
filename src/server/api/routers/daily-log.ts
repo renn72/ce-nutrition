@@ -573,6 +573,10 @@ export const dailyLogRouter = createTRPCRouter({
   get: protectedProcedure.input(z.number()).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.dailyLog.findFirst({
       where: eq(dailyLog.id, input),
+      with: {
+        poopLogs: true,
+        waterLogs: true,
+      },
     })
     return res
   }),

@@ -74,7 +74,10 @@ const DailyLog = ({
             <div className='flex gap-2 justify-between w-full pr-4 relative'>
               <Text
                 title='Bowel Movements'
-                text={todaysDailyLog?.bowelMovements}
+                text={todaysDailyLog?.poopLogs.reduce(
+                  (acc, curr) => acc + 1,
+                  0,
+                ).toString()}
               />
             </div>
             <Text
@@ -134,7 +137,10 @@ const DailyLog = ({
           />
           <Text
             title='Bowel Movements'
-            text={todaysDailyLog?.bowelMovements}
+                text={todaysDailyLog?.poopLogs.reduce(
+                  (acc, curr) => acc + 1,
+                  0,
+                ).toString()}
           />
         </div>
         <div className='grid grid-cols-3'>
