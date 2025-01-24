@@ -7,7 +7,7 @@ import {
   rootProtectedProcedure,
 } from '~/server/api/trpc'
 import { client, db } from '~/server/db'
-import { user } from '~/server/db/schema/user'
+import { user, userSettings } from '~/server/db/schema/user'
 import { hash } from 'bcryptjs'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
@@ -171,6 +171,11 @@ export const userRouter = createTRPCRouter({
         ...input,
         name: input.firstName + ' ' + input.lastName,
         password: hashedPassword,
+      }).returning({ id: user.id })
+
+      await ctx.db.insert(userSettings).values({
+        userId: res[0]?.id || '00',
+        defaultWater: '600',
       })
 
       return { user: input.email, password: input.password }
@@ -236,13 +241,18 @@ export const userRouter = createTRPCRouter({
         isTrainer: user.isTrainer || false,
       })),
     )
-    await ctx.db.insert(user).values({
+    const jamie = await ctx.db.insert(user).values({
       firstName: 'Jamie',
       lastName: 'Dash',
       name: 'Jamie Dash',
       email: 'jamie@comp-edge.com.au',
       password: hashedJamie,
       isTrainer: false,
+    }).returning({ id: user.id })
+
+    await ctx.db.insert(userSettings).values({
+      userId: jamie[0]?.id || '00',
+      defaultWater: '600',
     })
 
     return res

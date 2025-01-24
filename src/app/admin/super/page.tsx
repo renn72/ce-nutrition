@@ -1,3 +1,4 @@
+'use client'
 import { CreatorMenu } from '@/components/creator/menu'
 
 export default function Home() {

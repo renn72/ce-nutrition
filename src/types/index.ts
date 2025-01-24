@@ -65,6 +65,7 @@ export type UserMeal = RouterOutputs['userPlan']['getMeal']
 export type UserRecipe = RouterOutputs['userPlan']['getRecipe']
 export type UserIngredient = RouterOutputs['userPlan']['getIngredient']
 
+export type GetSimpleDailyLogById = RouterOutputs['dailyLog']['getSimple']
 export type GetAllDailyLogs = RouterOutputs['dailyLog']['getAllUser']
 export type GetDailyLogById = RouterOutputs['dailyLog']['get']
 

@@ -122,7 +122,7 @@ export const mealRouter = createTRPCRouter({
         )
         .returning({ id: mealToRecipe.id })
 
-      if (veges) {
+      if (veges &&  veges?.vegeStackId !== 0) {
         await ctx.db.insert(mealToVegeStack).values({
           ...veges,
           mealId: resId,
@@ -177,10 +177,10 @@ export const mealRouter = createTRPCRouter({
         )
         .returning({ id: mealToRecipe.id })
 
-      if (veges && veges.vegeStackId) {
       await ctx.db
         .delete(mealToVegeStack)
         .where(eq(mealToVegeStack.mealId, input.id))
+      if (veges && veges.vegeStackId != 0) {
         await ctx.db.insert(mealToVegeStack).values({
           ...veges,
           mealId: input.id,

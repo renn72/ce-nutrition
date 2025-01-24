@@ -16,6 +16,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Jamie } from './jamie'
 
 export const CreatorMenu = () => {
   const ctx = api.useUtils()
@@ -373,7 +374,9 @@ export const CreatorMenu = () => {
   }
 
   return (
-    <div className='flex flex-col gap-6 items-center max-w-screen-lg w-full mx-auto mt-10'>
+    <div className='grid grid-cols-2'>
+      <Jamie/>
+    <div className='flex flex-col gap-6 items-center max-w-screen-lg w-full mx-auto mt-10 tracking-tighter'>
       <Button
         variant='secondary'
         size='lg'
@@ -522,6 +525,7 @@ export const CreatorMenu = () => {
       >
         deleteAllPlans
       </Button>
+    </div>
     </div>
   )
 }

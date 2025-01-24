@@ -109,11 +109,11 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
   if (isLoadingAllMeals) return null
 
   return (
-    <div className='my-1 flex flex-col gap-4 p-2'>
+    <div className='my-1 flex flex-col gap-2 p-2'>
       <BackButton />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className='flex flex-col gap-2 '>
+          <div className='flex flex-col gap-1 '>
             <div className='flex justify-between gap-8'>
               <FormField
                 control={form.control}
@@ -203,9 +203,9 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
                 )}
               />
             </div>
-            <div className='flex flex-col gap-2 mt-4'>
+            <div className='flex flex-col gap-1 mt-4'>
               <h2 className='text-3xl font-bold text-center'>Meals</h2>
-              <div className='flex flex-col gap-4'>
+              <div className='flex flex-col gap-1'>
                 {mealsField.fields.map((field, index) => (
                   <FormPlanMeal
                     key={index}

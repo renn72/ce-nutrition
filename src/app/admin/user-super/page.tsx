@@ -100,7 +100,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
       const bowelMovements = (Math.random() * 2 + 1).toFixed(0)
       console.log('weight', weight)
       addDailyLog({
-        date: day,
+        date: day.toDateString(),
         morningWeight: weight,
         notes: day.toDateString(),
         sleep: sleep,

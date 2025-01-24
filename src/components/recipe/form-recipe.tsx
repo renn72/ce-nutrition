@@ -43,7 +43,7 @@ export const formSchema = z.object({
       serveUnit: z.string(),
       alternateId: z.string(),
     }),
-  ),
+  ).nonempty(),
 })
 
 const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
@@ -59,7 +59,7 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
   const { mutate: createRecipe } = api.recipe.create.useMutation({
     onSuccess: () => {
       ctx.recipe.invalidate()
-      toast.success('Store added successfully')
+      toast.success('Recipe created')
     },
   })
   const { mutate: updateRecipe } = api.recipe.update.useMutation({

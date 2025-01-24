@@ -271,9 +271,9 @@ const FormMeal = ({ meal }: { meal: GetMealById | null }) => {
                             size={20}
                             className='cursor-pointer text-primary/50 hover:text-primary active:scale-90'
                             onClick={() => {
-                              form.resetField('veges.vegeStackId')
-                              form.resetField('veges.note')
-                              form.resetField('veges.calories')
+                              form.setValue('veges.vegeStackId', '')
+                              form.setValue('veges.note', '')
+                              form.setValue('veges.calories', '')
                               setKey(+new Date())
                             }}
                           />
