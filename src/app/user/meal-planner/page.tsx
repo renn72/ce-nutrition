@@ -67,7 +67,7 @@ const Meal = ({
     },
   })
   const log = dailyLogs?.find(
-    (dailyLog) => dailyLog.date.toDateString() === date.toDateString(),
+    (dailyLog) => dailyLog.date === date.toDateString(),
   )
 
   const recipes = plan?.userRecipes.filter(
@@ -75,7 +75,7 @@ const Meal = ({
   )
 
   const logMeal = dailyLogs
-    ?.find((dailyLog) => dailyLog.date.toDateString() === date.toDateString())
+    ?.find((dailyLog) => dailyLog.date === date.toDateString())
     ?.dailyMeals.find((dailyMeal) => dailyMeal.mealIndex == meal?.mealIndex)
 
   if (!plan) return null
@@ -173,7 +173,7 @@ const Day = ({
     },
   })
   const todaysLog = dailyLogs?.find(
-    (dailyLog) => dailyLog.date.toDateString() === date.toDateString(),
+    (dailyLog) => dailyLog.date === date.toDateString(),
   )
 
   return (
@@ -206,7 +206,7 @@ const Day = ({
           const logMeal = dailyLogs
             ?.find(
               (dailyLog) =>
-                dailyLog.date.toDateString() === date.toDateString(),
+                dailyLog.date === date.toDateString(),
             )
             ?.dailyMeals.find(
               (dailyMeal) => dailyMeal.mealIndex == meal?.mealIndex,

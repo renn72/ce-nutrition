@@ -20,7 +20,7 @@ const DailyLogs = ({ userId }: { userId: string }) => {
       {Array.from({ length: 7 }).map((_, i) => {
         const date = new Date(today.getTime() - i * 86400000)
         const dailyLog = dailyLogs?.find(
-          (dailyLog) => dailyLog.date.toDateString() === date.toDateString(),
+          (dailyLog) => dailyLog.date === date.toDateString(),
         )
         return (
           <div

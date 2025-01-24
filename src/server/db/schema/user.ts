@@ -103,9 +103,7 @@ export const dailyLog = createTable('daily_log', {
   userId: text('user_id')
     .notNull()
     .references(() => user.id),
-  date: int('date', { mode: 'timestamp' })
-    .default(sql`(unixepoch())`)
-    .notNull(),
+  date: text('date').notNull(),
   morningWeight: text('morning_weight'),
   notes: text('notes'),
   fastedBloodGlucose: text('fasted_blood_glucose'),

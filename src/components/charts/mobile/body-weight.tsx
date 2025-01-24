@@ -16,15 +16,19 @@ const chartConfig = {
 
 const BodyWeight = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
   const data = dailyLogs
-    .slice(0, 22)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .filter((dailyLog) => new Date(dailyLog.date).getTime() < new Date().getTime())
+    .slice(0, 21)
+    .sort((b, a) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .map((dailyLog) => ({
-      date: dailyLog.date.toLocaleDateString(undefined, {
+      date: new Date(dailyLog.date || '').toLocaleDateString(undefined, {
         month: 'numeric',
         day: 'numeric',
       }),
       weight: dailyLog.morningWeight,
     }))
-    .reverse()
+    .filter((dailyLog) => dailyLog.weight !== '')
+
 
   const dataMin = Math.floor(Math.min(...data.map((d) => Number(d.weight)))) - 1
   const dataMax = Math.ceil(Math.max(...data.map((d) => Number(d.weight)))) + 1

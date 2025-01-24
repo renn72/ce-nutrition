@@ -26,7 +26,7 @@ const PoopLog = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs | null | undefined 
   const today = new Date()
 
   const todaysDailyLog = dailyLogs?.find(
-    (dailyLog) => dailyLog.date.toDateString() === today.toDateString(),
+    (dailyLog) => dailyLog.date === today.toDateString(),
   )
 
 
@@ -34,7 +34,6 @@ const PoopLog = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs | null | undefined 
     return acc + 1
   }, 0)
 
-  console.log('todaysDailyLog', todaysDailyLog)
   if (!todaysDailyLog) return null
 
   return (

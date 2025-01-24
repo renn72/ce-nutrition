@@ -6,7 +6,7 @@ import {
   userPlan,
   userRecipe,
 } from '@/server/db/schema/user-plan'
-import type { GetDailyLogById as DailyLog, GetAllDailyLogs } from '@/types'
+import type { GetSimpleDailyLogById as DailyLog,  } from '@/types'
 import { TRPCError } from '@trpc/server'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { and, desc, eq } from 'drizzle-orm'
@@ -23,13 +23,13 @@ const createBlankLogs = async (
     const existingLog = await db
       .select()
       .from(dailyLog)
-      .where(and(eq(dailyLog.userId, userId), eq(dailyLog.date, date)))
+      .where(and(eq(dailyLog.userId, userId), eq(dailyLog.date, date.toDateString())))
       .then((res) => res[0])
     if (!existingLog) {
       const log = await db
         .insert(dailyLog)
         .values({
-          date: new Date(date.toDateString()),
+          date: date.toDateString(),
           morningWeight: '',
           notes: date.toDateString(),
           sleep: '',
@@ -74,7 +74,7 @@ export const dailyLogRouter = createTRPCRouter({
         .insert(dailyLog)
         .values({
           ...input,
-          date: new Date(input.date.toDateString()),
+          date: input.date.toDateString(),
         })
         .returning({ id: dailyLog.id })
 
@@ -134,7 +134,7 @@ export const dailyLogRouter = createTRPCRouter({
         .from(dailyLog)
         .where(eq(dailyLog.id, input.logId))
         .then((res) => res[0])
-      if (!referenceLog) {
+      if (!referenceLog || referenceLog.date === null) {
         throw new Error('Reference log not found.')
       }
       const startDate = new Date(referenceLog.date)
@@ -218,7 +218,7 @@ export const dailyLogRouter = createTRPCRouter({
         const log = await ctx.db
           .insert(dailyLog)
           .values({
-            date: new Date(),
+            date: new Date().toDateString(),
             morningWeight: '',
             notes: '',
             sleep: '',
@@ -258,7 +258,7 @@ export const dailyLogRouter = createTRPCRouter({
         const log = await ctx.db
           .insert(dailyLog)
           .values({
-            date: new Date(),
+            date: new Date().toDateString(),
             morningWeight: '',
             notes: '',
             sleep: '',
@@ -333,7 +333,7 @@ export const dailyLogRouter = createTRPCRouter({
         const log = await ctx.db
           .insert(dailyLog)
           .values({
-            date: new Date(input.date.toDateString()),
+            date: input.date.toDateString(),
             morningWeight: '',
             notes: input.date.toDateString(),
             sleep: '',
@@ -512,7 +512,7 @@ export const dailyLogRouter = createTRPCRouter({
       const res = await ctx.db
         .update(dailyLog)
         .set({
-          date,
+          date : date.toDateString(),
           morningWeight,
           notes,
           sleep,
@@ -551,6 +551,10 @@ export const dailyLogRouter = createTRPCRouter({
   getAllCurrentUser: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.dailyLog.findMany({
       where: eq(dailyLog.userId, ctx.session.user.id),
+      with: {
+        poopLogs: true,
+        waterLogs: true,
+      },
       orderBy: (data, { desc }) => desc(data.date),
     })
     return res
@@ -570,6 +574,12 @@ export const dailyLogRouter = createTRPCRouter({
         .where(eq(dailyLog.userId, input))
       return res
     }),
+  getSimple: protectedProcedure.input(z.number()).query(async ({ input, ctx }) => {
+    const res = await ctx.db.query.dailyLog.findFirst({
+      where: eq(dailyLog.id, input),
+    })
+    return res
+  }),
   get: protectedProcedure.input(z.number()).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.dailyLog.findFirst({
       where: eq(dailyLog.id, input),

@@ -27,14 +27,13 @@ const WaterLog = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs | null | undefined
   const today = new Date()
 
   const todaysDailyLog = dailyLogs?.find(
-    (dailyLog) => dailyLog.date.toDateString() === today.toDateString(),
+    (dailyLog) => dailyLog.date === today.toDateString(),
   )
 
   const totalWater = todaysDailyLog?.waterLogs.reduce((acc, curr) => {
     return acc + Number(curr.amount)
   }, 0)
 
-  console.log('todaysDailyLog', todaysDailyLog)
   if (!todaysDailyLog) return null
 
   return (

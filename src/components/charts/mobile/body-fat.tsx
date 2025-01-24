@@ -25,7 +25,10 @@ const chartConfig = {
 
 const BodyFat = ({ weighIns }: { weighIns: GetAllWeighIns }) => {
   const data = weighIns
-    .slice(0, 15)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .filter((dailyLog) => new Date(dailyLog.date).getTime() < new Date().getTime())
+    .slice(0, 21)
+    .sort((b, a) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .map((weighIn) => ({
       date: weighIn.date.toLocaleDateString(undefined, {
         month: 'numeric',

@@ -31,9 +31,12 @@ const chartConfig = {
 
 const Sleep = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
   const data = dailyLogs
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .filter((dailyLog) => new Date(dailyLog.date).getTime() < new Date().getTime())
     .slice(0, 21)
+    .sort((b, a) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .map((dailyLog, i, arr) => ({
-      date: dailyLog.date.toLocaleDateString(undefined, {
+      date: new Date(dailyLog.date).toLocaleDateString(undefined, {
         month: 'numeric',
         day: 'numeric',
       }),
@@ -43,11 +46,11 @@ const Sleep = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
           ? arr[i - 1]?.sleepQuality
           : dailyLog.sleepQuality,
       bowelMovements:
-        dailyLog.bowelMovements === ''
-          ? arr[i - 1]?.bowelMovements
-          : dailyLog.bowelMovements,
+        dailyLog.poopLogs.length
     }))
-    .reverse()
+
+  console.log('data', data)
+
 
   const dataMin = 0 //Math.floor(Math.min(...data.map((d) => Number(d.sleep)))) - 1
   const dataMax = Math.ceil(Math.max(...data.map((d) => Number(d.sleep)))) < 10 ? 10 : Math.ceil(Math.max(...data.map((d) => Number(d.sleep)))) + 1
