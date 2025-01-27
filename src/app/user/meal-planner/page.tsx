@@ -4,6 +4,7 @@ import { api } from '@/trpc/react'
 
 import { useEffect, useState } from 'react'
 
+import { cn } from '@/lib/utils'
 import { GetAllDailyLogs, GetUserById, UserPlan, UserRecipe } from '@/types'
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
@@ -30,6 +31,7 @@ const Meal = ({
   plans: {
     id: number
     name: string
+    mealCals: string
     recipes: UserRecipe[] | undefined
   }[]
   userId: string
@@ -75,6 +77,8 @@ const Meal = ({
 
   const recipes = plans.map((plan) => plan.recipes).flat()
 
+  console.log(plans)
+
   return (
     <div className='flex gap-0 flex flex-col items-start w-full'>
       <div className='text-sm text-muted-foreground font-medium'>
@@ -105,7 +109,7 @@ const Meal = ({
           })
         }}
       >
-        <div className='flex flex-col ml-4'>
+        <div className='flex flex-col ml-2'>
           {plans?.map((plan) => {
             if (plan.recipes?.length === 0) return null
             return (
@@ -113,13 +117,16 @@ const Meal = ({
                 key={plan.id}
                 className='flex flex-col'
               >
+                <div className='flex gap-4 items-center'>
                 <h3>{plan.name}</h3>
-                <div className='flex gap-1 items-center'>
+                  <div className='text-[0.7rem] text-muted-foreground'>{plan.mealCals}cals</div>
+                </div>
+                <div className='flex gap-1 items-center flex-wrap'>
                   {plan.recipes?.map((recipe) => (
                     <ToggleGroupItem
                       key={recipe?.id}
                       value={recipe?.id.toString() ?? ''}
-                      className='text-xs py-1 px-1 data-[state=on]:bg-blue-900/70 data-[state=on]:text-slate-100 data-[state=on]:shadow-none h-7'
+                      className='text-xs py-1 px-2 data-[state=on]:bg-blue-900/70 data-[state=on]:text-slate-100 data-[state=on]:shadow-none h-6'
                     >
                       {recipe?.name}
                     </ToggleGroupItem>
@@ -193,7 +200,7 @@ const Day = ({
     }, 0)
 
   return (
-    <div className='flex gap-2 flex-col w-full bg-secondary min-h-[70px] px-4 py-1'>
+    <div className='flex gap-2 flex-col w-full bg-secondary min-h-[70px] px-2 py-1'>
       <div className='w-full flex justify-between items-center'>
         <div className='text-sm text-muted-foreground font-medium'>
           {date.toLocaleDateString('en-AU', {
@@ -226,6 +233,8 @@ const Day = ({
               return {
                 id: plan?.id ?? 0,
                 name: plan?.name ?? '',
+                mealCals: plan?.userMeals.find((meal) => meal.mealIndex == i)
+                  ?.calories ?? '',
                 recipes: plan?.userRecipes.filter(
                   (recipe) => recipe.mealIndex == i,
                 ),
@@ -324,7 +333,7 @@ const DayList = ({
             <ToggleGroupItem
               key={plan.id}
               value={plan.id.toString()}
-              className='text-xs py-1 px-1 hover:bg-background hover:text-foreground'
+              className='text-xs py-1 px-1 hover:bg-background hover:text-foreground data-[state=on]:bg-foreground data-[state=on]:text-background'
             >
               {plan.name}
             </ToggleGroupItem>
@@ -378,11 +387,22 @@ export default function Home() {
           />
         </div>
       )}
-      <div className='flex gap-2 justify-between px-6 bg-secondary w-full py-2 items-end text-base font-semibold text-muted-foreground '>
+      <div className='flex gap-2 justify-between px-2 bg-secondary w-full py-2 items-end text-base font-semibold text-muted-foreground '>
         <ChevronLeft
-          onClick={() =>
+          className={cn(
+            new Date(weekStart.getTime() - 86400000 * 7).toString() <
+              weekStart.toString()
+              ? 'text-muted-foreground/20'
+              : '',
+          )}
+          onClick={() => {
+            if (
+              new Date(weekStart.getTime() - 86400000 * 7).toString() <
+              weekStart.toString()
+            )
+              return
             setWeekStart(new Date(weekStart.getTime() - 86400000 * 7))
-          }
+          }}
           size={26}
         />
         {weekStart.toLocaleDateString('en-AU', {
