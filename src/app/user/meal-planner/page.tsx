@@ -4,25 +4,16 @@ import { api } from '@/trpc/react'
 
 import { useEffect, useState } from 'react'
 
-import {
-  GetAllDailyLogs,
-  GetUserById,
-  UserMeal,
-  UserPlan,
-  UserRecipe,
-} from '@/types'
+import { GetAllDailyLogs, GetUserById, UserPlan, UserRecipe } from '@/types'
+import { useAtom } from 'jotai'
+import { atomWithStorage } from 'jotai/utils'
 import { ChevronLeft, ChevronRight, CircleX, Loader } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+
+const selectedPlansIdAtom = atomWithStorage<string[]>('selectedPlansId', [])
 
 const dynamic = 'force-dynamic'
 
@@ -99,7 +90,9 @@ const Meal = ({
         onValueChange={(value) => {
           setSelectValue(value)
           const recipe = recipes.find((recipe) => recipe?.id == Number(value))
-          const plan = plans.find((plan) => plan.recipes?.find((recipe) => recipe?.id == Number(value)))
+          const plan = plans.find((plan) =>
+            plan.recipes?.find((recipe) => recipe?.id == Number(value)),
+          )
           if (!recipe || !plan) return
           addMeal({
             userId: userId,
@@ -113,25 +106,28 @@ const Meal = ({
         }}
       >
         <div className='flex flex-col ml-4'>
-          {plans?.map((plan) => (
-            <div
-              key={plan.id}
-              className='flex flex-col'
-            >
-              <h3>{plan.name}</h3>
-              <div className='flex gap-1 items-center'>
-                {plan.recipes?.map((recipe) => (
-                  <ToggleGroupItem
-                    key={recipe?.id}
-                    value={recipe?.id.toString() ?? ''}
-                    className='text-xs py-1 px-1 data-[state=on]:bg-blue-900/70 data-[state=on]:text-slate-100 data-[state=on]:shadow-none'
-                  >
-                    {recipe?.name}
-                  </ToggleGroupItem>
-                ))}
+          {plans?.map((plan) => {
+            if (plan.recipes?.length === 0) return null
+            return (
+              <div
+                key={plan.id}
+                className='flex flex-col'
+              >
+                <h3>{plan.name}</h3>
+                <div className='flex gap-1 items-center'>
+                  {plan.recipes?.map((recipe) => (
+                    <ToggleGroupItem
+                      key={recipe?.id}
+                      value={recipe?.id.toString() ?? ''}
+                      className='text-xs py-1 px-1 data-[state=on]:bg-blue-900/70 data-[state=on]:text-slate-100 data-[state=on]:shadow-none h-7'
+                    >
+                      {recipe?.name}
+                    </ToggleGroupItem>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </ToggleGroup>
 
@@ -140,11 +136,9 @@ const Meal = ({
         className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform active:text-red-500 hidden'
         onClick={() => {
           // setSelectValue('')
-          return
           deleteMeal({
             userId: userId,
-            planId: plan.id,
-            mealIndex: meal.mealIndex,
+            mealIndex: index,
             date: date,
             logId: log?.id || null,
           })
@@ -170,6 +164,7 @@ const Day = ({
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const ctx = api.useUtils()
+  const [selectedPlansId] = useAtom(selectedPlansIdAtom)
   const { mutate: copyWeek } = api.dailyLog.copyWeek.useMutation({
     onSettled: () => {
       setIsLoading(false)
@@ -189,11 +184,13 @@ const Day = ({
     (dailyLog) => dailyLog.date === date.toDateString(),
   )
 
-  const numMeals = plans.reduce((acc, curr) => {
-    return acc > (curr?.userMeals.length ?? 0)
-      ? acc
-      : Number(curr?.userMeals.length)
-  }, 0)
+  const numMeals = plans
+    .filter((plan) => selectedPlansId.includes(plan?.id.toString() ?? ''))
+    .reduce((acc, curr) => {
+      return acc > (curr?.userMeals.length ?? 0)
+        ? acc
+        : Number(curr?.userMeals.length)
+    }, 0)
 
   return (
     <div className='flex gap-2 flex-col w-full bg-secondary min-h-[70px] px-4 py-1'>
@@ -224,15 +221,17 @@ const Day = ({
           const logMeal = dailyLogs
             ?.find((dailyLog) => dailyLog.date === date.toDateString())
             ?.dailyMeals.find((dailyMeal) => dailyMeal.mealIndex == i)
-          const recipePlans = plans.map((plan) => {
-            return {
-              id: plan?.id ?? 0,
-              name: plan?.name ?? '',
-              recipes: plan?.userRecipes.filter(
-                (recipe) => recipe.mealIndex == i,
-              ),
-            }
-          })
+          const recipePlans = plans
+            .map((plan) => {
+              return {
+                id: plan?.id ?? 0,
+                name: plan?.name ?? '',
+                recipes: plan?.userRecipes.filter(
+                  (recipe) => recipe.mealIndex == i,
+                ),
+              }
+            })
+            .filter((plan) => selectedPlansId.includes(plan.id.toString()))
           return (
             <Meal
               key={i}
@@ -284,6 +283,22 @@ const DayList = ({
   const { data: dailyLogs, isLoading: isLoadingDailyLogs } =
     api.dailyLog.getAllUser.useQuery(userId)
 
+  const [selectedPlansId, setSelectedPlansId] = useAtom(selectedPlansIdAtom)
+  const [toggle, setToggle] = useState(false)
+
+  console.log('selectedPlansId', selectedPlansId)
+
+  useEffect(() => {
+    const id = currentUser?.userPlans?.[0]?.id.toString()
+    if (id && selectedPlansId.length === 0) {
+      setSelectedPlansId([id])
+    }
+  }, [])
+
+  useEffect(() => {
+    console.log('selectedPlansId', selectedPlansId)
+  }, [selectedPlansId])
+
   const currentUserPlans = currentUser?.userPlans.filter(
     (plan) => plan.isActive,
   )
@@ -292,6 +307,30 @@ const DayList = ({
   if (!currentUserPlans || currentUserPlans.length === 0) return null
   return (
     <div className='flex flex-col gap-2 w-full'>
+      <div className='px-2 py-1 bg-secondary text-sm'>
+        <ToggleGroup
+          size='sm'
+          variant='outline'
+          type='multiple'
+          className='w-full justify-center'
+          value={selectedPlansId}
+          onValueChange={(value) => {
+            console.log('value', value)
+            setToggle(!toggle)
+            setSelectedPlansId(value)
+          }}
+        >
+          {currentUserPlans.map((plan) => (
+            <ToggleGroupItem
+              key={plan.id}
+              value={plan.id.toString()}
+              className='text-xs py-1 px-1 hover:bg-background hover:text-foreground'
+            >
+              {plan.name}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      </div>
       {Array.from({ length: 7 }).map((_, i) => {
         const date = new Date(weekStart.getTime() + i * 86400000)
         return (
@@ -312,6 +351,7 @@ const DayList = ({
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false)
+  const [_selectedPlansId] = useAtom(selectedPlansIdAtom)
   const [weekStart, setWeekStart] = useState(() => {
     const today = new Date()
     return today.getDay() === 0

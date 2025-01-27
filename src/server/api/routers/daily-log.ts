@@ -97,7 +97,6 @@ export const dailyLogRouter = createTRPCRouter({
     .input(
       z.object({
         userId: z.string(),
-        planId: z.number(),
         mealIndex: z.number().nullable(),
         recipeId: z.number().nullable().optional(),
         date: z.date(),
