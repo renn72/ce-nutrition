@@ -137,7 +137,6 @@ export const dailyLogRouter = createTRPCRouter({
     .input(
       z.object({
         userId: z.string(),
-        planId: z.number(),
         logId: z.number(),
       }),
     )
@@ -416,32 +415,32 @@ export const dailyLogRouter = createTRPCRouter({
           .returning({ id: userIngredient.id })
         return { meal }
       } else {
-        await ctx.db
-          .delete(userIngredient)
-          .where(
-            and(
-              eq(userIngredient.dailyLogId, input.logId ?? -1),
-              eq(userIngredient.mealIndex, input.mealIndex ?? -1),
+        await ctx.db.batch([
+          ctx.db
+            .delete(userIngredient)
+            .where(
+              and(
+                eq(userIngredient.dailyLogId, input.logId ?? -1),
+                eq(userIngredient.mealIndex, input.mealIndex ?? -1),
+              ),
             ),
-          )
-
-        await ctx.db
-          .delete(userRecipe)
-          .where(
-            and(
-              eq(userRecipe.dailyLogId, input.logId ?? -1),
-              eq(userRecipe.mealIndex, input.mealIndex ?? -1),
+          ctx.db
+            .delete(userRecipe)
+            .where(
+              and(
+                eq(userRecipe.dailyLogId, input.logId ?? -1),
+                eq(userRecipe.mealIndex, input.mealIndex ?? -1),
+              ),
             ),
-          )
-
-        await ctx.db
-          .delete(dailyMeal)
-          .where(
-            and(
-              eq(dailyMeal.dailyLogId, input.logId ?? -1),
-              eq(dailyMeal.mealIndex, input.mealIndex ?? -1),
+          ctx.db
+            .delete(dailyMeal)
+            .where(
+              and(
+                eq(dailyMeal.dailyLogId, input.logId ?? -1),
+                eq(dailyMeal.mealIndex, input.mealIndex ?? -1),
+              ),
             ),
-          )
+        ])
 
         const meal = await ctx.db
           .insert(dailyMeal)

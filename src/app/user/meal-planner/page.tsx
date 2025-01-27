@@ -99,11 +99,12 @@ const Meal = ({
         onValueChange={(value) => {
           setSelectValue(value)
           const recipe = recipes.find((recipe) => recipe?.id == Number(value))
-          return
+          const plan = plans.find((plan) => plan.recipes?.find((recipe) => recipe?.id == Number(value)))
+          if (!recipe || !plan) return
           addMeal({
             userId: userId,
             planId: plan.id,
-            mealIndex: meal.mealIndex,
+            mealIndex: index,
             recipeIndex: recipe?.recipeIndex,
             recipeId: Number(value),
             date: date,
