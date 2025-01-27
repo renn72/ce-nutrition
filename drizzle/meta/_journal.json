@@ -36,6 +36,13 @@
       "when": 1737677761267,
       "tag": "0004_low_kree",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1737940515593,
+      "tag": "0005_glorious_chamber",
+      "breakpoints": true
     }
   ]
 }

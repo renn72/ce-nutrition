@@ -76,7 +76,6 @@ export const userRecipe = createTable('user-recipe', {
   serve: text('serve'),
   serveUnit: text('serve_unit'),
   note: text('note'),
-  ingredientBlob: text('ingredient_blob', { mode: 'json' }),
   isLog: int('is_log', { mode: 'boolean' }),
   dailyLogId: int('daily_log_id').references(() => dailyLog.id),
 })

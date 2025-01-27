@@ -1,17 +1,17 @@
-
 'use client'
 
 import { api } from '@/trpc/react'
 
-import { useState } from 'react'
-
-import { cn } from '@/lib/utils'
-
 import { GetAllDailyLogs } from '@/types'
-import { CirclePlus, Toilet } from 'lucide-react'
+import { Toilet } from 'lucide-react'
+import { CirclePlus, } from 'lucide-react'
 import { toast } from 'sonner'
 
-const PoopLog = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs | null | undefined }) => {
+const PoopLog = ({
+  dailyLogs,
+}: {
+  dailyLogs: GetAllDailyLogs | null | undefined
+}) => {
   const ctx = api.useUtils()
 
   const { mutate: addPoopLog } = api.dailyLog.addPoopLog.useMutation({
@@ -29,7 +29,6 @@ const PoopLog = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs | null | undefined 
     (dailyLog) => dailyLog.date === today.toDateString(),
   )
 
-
   const totalPoop = todaysDailyLog?.poopLogs.reduce((acc, curr) => {
     return acc + 1
   }, 0)
@@ -38,16 +37,12 @@ const PoopLog = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs | null | undefined 
 
   return (
     <div className='flex flex-col gap-0 w-full'>
-      <div className='w-full text-center'>
-        {totalPoop}
-      </div>
+      <div className='w-full text-center'>{totalPoop}</div>
       <div className='grid grid-cols-4 place-items-center gap-2 h-12'>
         <div />
-      <Toilet
-        size={28}
-      />
-      <CirclePlus
-        size={28}
+        <Toilet size={28} />
+        <CirclePlus
+          size={28}
           onClick={() => {
             addPoopLog({
               logId: todaysDailyLog?.id,
@@ -55,19 +50,17 @@ const PoopLog = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs | null | undefined 
           }}
         />
         <div />
-    </div>
-      {
-        todaysDailyLog?.poopLogs.map((poopLog) => (
-          <div
-            key={poopLog.id}
-            className='flex gap-2 text-xs justify-center w-full'
-          >
-            <div className='text-muted-foreground font-normal'>
-              {poopLog.createdAt.toLocaleTimeString('en-AU')}
-            </div>
+      </div>
+      {todaysDailyLog?.poopLogs.map((poopLog) => (
+        <div
+          key={poopLog.id}
+          className='flex gap-2 text-xs justify-center w-full'
+        >
+          <div className='text-muted-foreground font-normal'>
+            {poopLog.createdAt.toLocaleTimeString('en-AU')}
           </div>
-        ))
-      }
+        </div>
+      ))}
     </div>
   )
 }

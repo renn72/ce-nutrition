@@ -23,7 +23,7 @@ export default function Home() {
     )
 
   return (
-    <div className='mt-16'>
+    <div className='my-16'>
       <Tabs defaultValue='all'>
         <div className='w-full flex justify-center'>
           <TabsList className='px-6'>

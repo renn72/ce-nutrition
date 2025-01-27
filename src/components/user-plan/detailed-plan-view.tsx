@@ -163,7 +163,6 @@ const Meal = ({
 const PlanView = ({ plan }: { plan: UserPlan }) => {
   if (!plan) return null
 
-  console.log('plan', plan)
 
   return (
     <div className='flex flex-col gap-4 px-1 py-2'>

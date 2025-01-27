@@ -1,12 +1,18 @@
 'use client'
 
 import { api } from '@/trpc/react'
-import { toast } from 'sonner'
 
 import { useEffect, useState } from 'react'
 
-import { GetAllDailyLogs, GetUserById, UserMeal, UserPlan } from '@/types'
+import {
+  GetAllDailyLogs,
+  GetUserById,
+  UserMeal,
+  UserPlan,
+  UserRecipe,
+} from '@/types'
 import { ChevronLeft, ChevronRight, CircleX, Loader } from 'lucide-react'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -22,19 +28,21 @@ const dynamic = 'force-dynamic'
 
 const Meal = ({
   date,
-  plan,
+  plans,
   dailyLogs,
   userId,
   index,
-  meal,
   recipeId,
 }: {
   date: Date
   dailyLogs: GetAllDailyLogs | null | undefined
-  plan: UserPlan
+  plans: {
+    id: number
+    name: string
+    recipes: UserRecipe[] | undefined
+  }[]
   userId: string
   index: number
-  meal: UserMeal
   recipeId: number | null
 }) => {
   const [selectValue, setSelectValue] = useState<string>(
@@ -70,64 +78,68 @@ const Meal = ({
     (dailyLog) => dailyLog.date === date.toDateString(),
   )
 
-  const recipes = plan?.userRecipes.filter(
-    (recipe) => recipe.mealIndex == meal?.mealIndex,
-  )
-
   const logMeal = dailyLogs
     ?.find((dailyLog) => dailyLog.date === date.toDateString())
-    ?.dailyMeals.find((dailyMeal) => dailyMeal.mealIndex == meal?.mealIndex)
+    ?.dailyMeals.find((dailyMeal) => dailyMeal.mealIndex == index)
 
-  if (!plan) return null
-  if (!meal) return null
-
-  if (!recipes) return null
+  const recipes = plans.map((plan) => plan.recipes).flat()
 
   return (
-    <div
-      key={meal.id}
-      className='flex gap-2 flex flex-col items-start w-full'
-    >
-      <div className='text-sm text-muted-foreground font-medium truncate w-24'>
-        {meal.mealTitle}
+    <div className='flex gap-0 flex flex-col items-start w-full'>
+      <div className='text-sm text-muted-foreground font-medium'>
+        Meal {Number(index) + 1}
       </div>
 
-        <ToggleGroup type='single'
-          className='w-full justify-start'
-          value={selectValue}
-          onValueChange={(value) => {
-            setSelectValue(value)
-            const recipe = plan.userRecipes.find(
-              (recipe) => recipe.id == Number(value),
-            )
-            addMeal({
-              userId: userId,
-              planId: plan.id,
-              mealIndex: meal.mealIndex,
-              recipeIndex: recipe?.recipeIndex,
-              recipeId: Number(value),
-              date: date,
-              logId: log?.id || null,
-            })
-          }}
-        >
-
-          {recipes.map((recipe) => (
-            <ToggleGroupItem
-              key={recipe.id}
-              value={recipe.id.toString()}
-              className='text-xs py-1 px-1'
+      <ToggleGroup
+        size='sm'
+        variant='outline'
+        type='single'
+        className='w-full justify-start'
+        value={selectValue}
+        onValueChange={(value) => {
+          setSelectValue(value)
+          const recipe = recipes.find((recipe) => recipe?.id == Number(value))
+          return
+          addMeal({
+            userId: userId,
+            planId: plan.id,
+            mealIndex: meal.mealIndex,
+            recipeIndex: recipe?.recipeIndex,
+            recipeId: Number(value),
+            date: date,
+            logId: log?.id || null,
+          })
+        }}
+      >
+        <div className='flex flex-col ml-4'>
+          {plans?.map((plan) => (
+            <div
+              key={plan.id}
+              className='flex flex-col'
             >
-              {recipe.name}
-            </ToggleGroupItem>
+              <h3>{plan.name}</h3>
+              <div className='flex gap-1 items-center'>
+                {plan.recipes?.map((recipe) => (
+                  <ToggleGroupItem
+                    key={recipe?.id}
+                    value={recipe?.id.toString() ?? ''}
+                    className='text-xs py-1 px-1 data-[state=on]:bg-blue-900/70 data-[state=on]:text-slate-100 data-[state=on]:shadow-none'
+                  >
+                    {recipe?.name}
+                  </ToggleGroupItem>
+                ))}
+              </div>
+            </div>
           ))}
-        </ToggleGroup>
+        </div>
+      </ToggleGroup>
 
       <CircleX
         size={20}
         className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform active:text-red-500 hidden'
         onClick={() => {
           // setSelectValue('')
+          return
           deleteMeal({
             userId: userId,
             planId: plan.id,
@@ -143,7 +155,7 @@ const Meal = ({
 
 const Day = ({
   date,
-  plan,
+  plans,
   dailyLogs,
   userId,
   index,
@@ -151,14 +163,14 @@ const Day = ({
 }: {
   date: Date
   dailyLogs: GetAllDailyLogs | null | undefined
-  plan: UserPlan
+  plans: UserPlan[]
   userId: string
   index: number
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const ctx = api.useUtils()
   const { mutate: copyWeek } = api.dailyLog.copyWeek.useMutation({
-    onSettled:  () => {
+    onSettled: () => {
       setIsLoading(false)
     },
     onSuccess: async () => {
@@ -176,50 +188,58 @@ const Day = ({
     (dailyLog) => dailyLog.date === date.toDateString(),
   )
 
+  const numMeals = plans.reduce((acc, curr) => {
+    return acc > (curr?.userMeals.length ?? 0)
+      ? acc
+      : Number(curr?.userMeals.length)
+  }, 0)
+
   return (
     <div className='flex gap-2 flex-col w-full bg-secondary min-h-[70px] px-4 py-1'>
       <div className='w-full flex justify-between items-center'>
-      <div className='text-sm text-muted-foreground font-medium'>
-        {date.toLocaleDateString('en-AU', {
-          weekday: 'long',
-          day: 'numeric',
-        })}
-      </div>
+        <div className='text-sm text-muted-foreground font-medium'>
+          {date.toLocaleDateString('en-AU', {
+            weekday: 'long',
+            day: 'numeric',
+          })}
+        </div>
         <Button
           variant='outline'
           size='sm'
           className='bg-background/10'
           onClick={() => {
             const logId = todaysLog?.id
-            const planId = plan?.id
-            if (!logId || !planId) return
+            if (!logId) return
             clearDay({
               logId: logId,
             })
           }}
         >
-        Clear
+          Clear
         </Button>
       </div>
       <div className='flex gap-2 flex-col'>
-        {plan?.userMeals.map((meal) => {
+        {Array.from({ length: numMeals }).map((_, i) => {
           const logMeal = dailyLogs
-            ?.find(
-              (dailyLog) =>
-                dailyLog.date === date.toDateString(),
-            )
-            ?.dailyMeals.find(
-              (dailyMeal) => dailyMeal.mealIndex == meal?.mealIndex,
-            )
+            ?.find((dailyLog) => dailyLog.date === date.toDateString())
+            ?.dailyMeals.find((dailyMeal) => dailyMeal.mealIndex == i)
+          const recipePlans = plans.map((plan) => {
+            return {
+              id: plan?.id ?? 0,
+              name: plan?.name ?? '',
+              recipes: plan?.userRecipes.filter(
+                (recipe) => recipe.mealIndex == i,
+              ),
+            }
+          })
           return (
             <Meal
-              key={meal.id}
+              key={i}
               date={date}
               dailyLogs={dailyLogs}
-              plan={plan}
+              plans={recipePlans}
               userId={userId}
-              index={index}
-              meal={meal}
+              index={i}
               recipeId={logMeal?.recipeId || null}
             />
           )
@@ -233,11 +253,9 @@ const Day = ({
             className='text-xs'
             onClick={() => {
               const logId = todaysLog?.id
-              const planId = plan?.id
-              if (!logId || !planId) return
+              if (!logId) return
               copyWeek({
                 userId: userId,
-                planId: planId,
                 logId: logId,
               })
               setIsLoading(true)
@@ -265,12 +283,12 @@ const DayList = ({
   const { data: dailyLogs, isLoading: isLoadingDailyLogs } =
     api.dailyLog.getAllUser.useQuery(userId)
 
-  const currentUserPlan = currentUser?.userPlans.find(
-    (plan) => plan.id == currentUser?.currentPlanId,
+  const currentUserPlans = currentUser?.userPlans.filter(
+    (plan) => plan.isActive,
   )
 
   if (isLoadingDailyLogs) return null
-  if (!currentUserPlan) return <div>No Program Found</div>
+  if (!currentUserPlans || currentUserPlans.length === 0) return null
   return (
     <div className='flex flex-col gap-2 w-full'>
       {Array.from({ length: 7 }).map((_, i) => {
@@ -281,7 +299,7 @@ const DayList = ({
             index={i}
             date={date}
             dailyLogs={dailyLogs}
-            plan={currentUserPlan}
+            plans={currentUserPlans}
             userId={userId}
             setIsLoading={setIsLoading}
           />
@@ -302,6 +320,7 @@ export default function Home() {
         : new Date(today.setDate(today.getDate() - today.getDay() + 1))
   })
   const { data: currentUser } = api.user.getCurrentUser.useQuery()
+  console.log('currentUser', currentUser)
 
   // console.log(weekStart)
 
