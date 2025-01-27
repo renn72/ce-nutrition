@@ -1,5 +1,5 @@
 'use client'
-import { FormPlan } from '@/components/plan/form-plan'
+import { FormPlan } from '@/components/plan-form/form-plan'
 
 export default function Page() {
   return (

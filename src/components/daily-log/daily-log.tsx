@@ -71,15 +71,6 @@ const DailyLog = ({
               text={todaysDailyLog?.morningWeight}
               suffix='kg'
             />
-            <div className='flex gap-2 justify-between w-full pr-4 relative'>
-              <Text
-                title='Bowel Movements'
-                text={todaysDailyLog?.poopLogs.reduce(
-                  (acc, curr) => acc + 1,
-                  0,
-                ).toString()}
-              />
-            </div>
             <Text
               title='Sleep'
               text={todaysDailyLog?.sleep}
@@ -108,6 +99,10 @@ const DailyLog = ({
               <Icon
                 title='Lift'
                 text={todaysDailyLog?.isLift}
+              />
+              <Icon
+                title='LISS'
+                text={todaysDailyLog?.isLiss}
               />
             </div>
           </div>

@@ -1,12 +1,18 @@
 import { db } from '@/server/db'
-import { dailyLog, dailyMeal, user, waterLog, poopLog } from '@/server/db/schema/user'
+import {
+  dailyLog,
+  dailyMeal,
+  poopLog,
+  user,
+  waterLog,
+} from '@/server/db/schema/user'
 import {
   userIngredient,
   userMeal,
   userPlan,
   userRecipe,
 } from '@/server/db/schema/user-plan'
-import type { GetSimpleDailyLogById as DailyLog,  } from '@/types'
+import type { GetSimpleDailyLogById as DailyLog } from '@/types'
 import { TRPCError } from '@trpc/server'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { and, desc, eq } from 'drizzle-orm'
@@ -23,7 +29,12 @@ const createBlankLogs = async (
     const existingLog = await db
       .select()
       .from(dailyLog)
-      .where(and(eq(dailyLog.userId, userId), eq(dailyLog.date, date.toDateString())))
+      .where(
+        and(
+          eq(dailyLog.userId, userId),
+          eq(dailyLog.date, date.toDateString()),
+        ),
+      )
       .then((res) => res[0])
     if (!existingLog) {
       const log = await db
@@ -37,6 +48,7 @@ const createBlankLogs = async (
           isHiit: false,
           isCardio: false,
           isLift: false,
+          isLiss: false,
           image: '',
           userId: userId,
         })
@@ -55,7 +67,7 @@ export const dailyLogRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        date: z.date(),
+        date: z.string(),
         morningWeight: z.string(),
         notes: z.string(),
         sleep: z.string(),
@@ -64,6 +76,7 @@ export const dailyLogRouter = createTRPCRouter({
         isHiit: z.boolean().optional(),
         isCardio: z.boolean().optional(),
         isLift: z.boolean().optional(),
+        isLiss: z.boolean().optional(),
         bowelMovements: z.string(),
         image: z.string().optional(),
         userId: z.string(),
@@ -74,7 +87,7 @@ export const dailyLogRouter = createTRPCRouter({
         .insert(dailyLog)
         .values({
           ...input,
-          date: input.date.toDateString(),
+          date: input.date,
         })
         .returning({ id: dailyLog.id })
 
@@ -226,6 +239,7 @@ export const dailyLogRouter = createTRPCRouter({
             isHiit: false,
             isCardio: false,
             isLift: false,
+            isLiss: false,
             image: '',
             userId: ctx.session.user.id,
           })
@@ -266,6 +280,7 @@ export const dailyLogRouter = createTRPCRouter({
             isHiit: false,
             isCardio: false,
             isLift: false,
+            isLiss: false,
             image: '',
             userId: ctx.session.user.id,
           })
@@ -341,6 +356,7 @@ export const dailyLogRouter = createTRPCRouter({
             isHiit: false,
             isCardio: false,
             isLift: false,
+            isLiss: false,
             image: '',
             userId: input.userId,
           })
@@ -479,7 +495,7 @@ export const dailyLogRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.number(),
-        date: z.date(),
+        date: z.string(),
         morningWeight: z.string(),
         notes: z.string(),
         sleep: z.string(),
@@ -488,6 +504,7 @@ export const dailyLogRouter = createTRPCRouter({
         isHiit: z.boolean().optional(),
         isCardio: z.boolean().optional(),
         isLift: z.boolean().optional(),
+        isLiss: z.boolean().optional(),
         bowelMovements: z.string(),
         image: z.string().optional(),
         userId: z.string(),
@@ -504,7 +521,7 @@ export const dailyLogRouter = createTRPCRouter({
         isHiit,
         isCardio,
         isLift,
-        bowelMovements,
+        isLiss,
         image,
         userId,
         nap,
@@ -512,7 +529,7 @@ export const dailyLogRouter = createTRPCRouter({
       const res = await ctx.db
         .update(dailyLog)
         .set({
-          date : date.toDateString(),
+          date: date,
           morningWeight,
           notes,
           sleep,
@@ -521,6 +538,7 @@ export const dailyLogRouter = createTRPCRouter({
           isHiit,
           isCardio,
           isLift,
+          isLiss,
           image,
           userId,
         })
@@ -574,12 +592,14 @@ export const dailyLogRouter = createTRPCRouter({
         .where(eq(dailyLog.userId, input))
       return res
     }),
-  getSimple: protectedProcedure.input(z.number()).query(async ({ input, ctx }) => {
-    const res = await ctx.db.query.dailyLog.findFirst({
-      where: eq(dailyLog.id, input),
-    })
-    return res
-  }),
+  getSimple: protectedProcedure
+    .input(z.number())
+    .query(async ({ input, ctx }) => {
+      const res = await ctx.db.query.dailyLog.findFirst({
+        where: eq(dailyLog.id, input),
+      })
+      return res
+    }),
   get: protectedProcedure.input(z.number()).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.dailyLog.findFirst({
       where: eq(dailyLog.id, input),

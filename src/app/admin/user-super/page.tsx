@@ -108,6 +108,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
         isHiit: Math.random() > 0.3,
         isCardio: Math.random() > 0.3,
         isLift: Math.random() > 0.3,
+        isLiss: Math.random() > 0.2,
         bowelMovements: bowelMovements,
         userId: userId,
         image:

@@ -29,7 +29,7 @@ import { Camera } from '@/components/camera/camera'
 export const dynamic = 'force-dynamic'
 
 export const formSchema = z.object({
-  date: z.date(),
+  date: z.string(),
   morningWeight: z.string(),
   notes: z.string(),
   sleep: z.string(),
@@ -48,7 +48,7 @@ const DailyLogForm = ({
   date,
 }: {
   todaysLog: GetDailyLogById | null
-  date?: Date | null
+  date?: string | null
 }) => {
   const router = useRouter()
   const ctx = api.useUtils()
@@ -74,7 +74,7 @@ const DailyLogForm = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      date: todaysLog?.date || new Date(),
+      date: todaysLog?.date || new Date().toDateString(),
       morningWeight: todaysLog?.morningWeight || '',
       notes: todaysLog?.notes || '',
       nap: todaysLog?.nap || '',
@@ -84,12 +84,12 @@ const DailyLogForm = ({
       isCardio: todaysLog?.isCardio || false,
       isLift: todaysLog?.isLift || false,
       isLiss: todaysLog?.isLiss || false,
-      bowelMovements: todaysLog?.bowelMovements || '',
       image: todaysLog?.image || '',
     },
   })
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     console.log('input', data)
+    const today = new Date()
     if (!currentUser) return
     if (todaysLog) {
       updateDailyLog({
@@ -110,7 +110,7 @@ const DailyLogForm = ({
       })
     } else {
       createDailyLog({
-        date: date || new Date(),
+        date: date || today.toDateString(),
         morningWeight: data.morningWeight,
         notes: data.notes,
         sleep: data.sleep,

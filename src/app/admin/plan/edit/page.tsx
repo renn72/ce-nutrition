@@ -4,7 +4,7 @@ import { api } from '@/trpc/react'
 
 import { useSearchParams } from 'next/navigation'
 
-import { FormPlan } from '@/components/plan/form-plan'
+import { FormPlan } from '@/components/plan-form/form-plan'
 
 export default function Home() {
   const { data, isLoading } = api.plan.getAll.useQuery()
