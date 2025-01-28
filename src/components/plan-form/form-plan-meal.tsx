@@ -208,10 +208,10 @@ const FormPlanMeal = ({
                                     meal.id.toString(),
                                   )
 
-                                  setVege(
-                                    meal.mealToVegeStack[0]?.vegeStack?.veges ||
-                                      '',
-                                  )
+                                  const _vege =
+                                    meal.mealToVegeStack[0]?.vegeStack?.veges
+                                  setVege(_vege || '')
+                                  if (_vege !== '') form.setValue(`meals.${index}.vegeCalories`, '50')
                                   setIsOpen(false)
                                 }}
                               >
