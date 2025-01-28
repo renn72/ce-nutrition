@@ -24,11 +24,20 @@ import { PoopLog } from '@/components/poop-log/poop-log'
 export const dynamic = 'force-dynamic'
 
 const PlanPreview = ({ user }: { user: GetUserById }) => {
-  const plan = user?.userPlans.find((plan) => plan.id == user?.currentPlanId)
+  const plans = user?.userPlans.filter((plan) => plan.isActive)
 
-  if (!plan) return null
+  if (!plans) return null
 
-  return <UserPlanView userPlan={plan} />
+  return (
+    <div className='flex flex-col gap-2 w-full '>
+      {plans?.map((plan) => (
+        <UserPlanView
+          key={plan.id}
+          userPlan={plan}
+        />
+      ))}
+    </div>
+  )
 }
 
 const Mobile = ({

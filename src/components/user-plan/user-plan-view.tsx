@@ -150,7 +150,7 @@ const UserPlanRecipe = ({
 const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
   return (
     <div className='flex flex-col gap-4 w-full px-2 py-4 bg-secondary text-xs'>
-      <h2 className='text-lg font-bold'>Program</h2>
+      <h2 className='text-lg font-bold'>{userPlan?.name}</h2>
       {userPlan?.userMeals.map((meal) => (
         <div
           className='flex gap-2 flex-col'
