@@ -119,10 +119,13 @@ const FormPlanMeal = ({
   const ctx = api.useUtils()
   const allMeals = ctx.meal.getAll.getData()
 
+  const [vege, setVege] = useState('')
   const [isOpen, setIsOpen] = useState(false)
 
   const mealId = form.watch(`meals.${index}.mealId`)
-  const calories = Number(form.watch(`meals.${index}.calories`)) - Number(form.watch(`meals.${index}.vegeCalories`))
+  const calories =
+    Number(form.watch(`meals.${index}.calories`)) -
+    Number(form.watch(`meals.${index}.vegeCalories`))
   const selectedMeal = allMeals?.find((meal) => meal.id === Number(mealId))
 
   if (!allMeals) return <div />
@@ -204,6 +207,11 @@ const FormPlanMeal = ({
                                     `meals.${index}.mealId`,
                                     meal.id.toString(),
                                   )
+
+                                  setVege(
+                                    meal.mealToVegeStack[0]?.vegeStack?.veges ||
+                                      '',
+                                  )
                                   setIsOpen(false)
                                 }}
                               >
@@ -244,22 +252,27 @@ const FormPlanMeal = ({
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name={`meals.${index}.vegeCalories`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Calories</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder='Veg Calories'
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {vege !== '' ? (
+              <div className='flex gap-4 flex-col'>
+              <FormField
+                control={form.control}
+                name={`meals.${index}.vegeCalories`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Vege Calories</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Veg Calories'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+                <div className='text-xs text-muted-foreground'>{vege}</div>
+              </div>
+            ) : null}
           </div>
           <div className='flex flex-col gap-8 col-span-4'>
             {selectedMeal?.mealToRecipe.map((recipe) => (

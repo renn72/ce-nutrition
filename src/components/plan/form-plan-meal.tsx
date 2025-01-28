@@ -119,10 +119,14 @@ const FormPlanMeal = ({
   const ctx = api.useUtils()
   const allMeals = ctx.meal.getAll.getData()
 
+  const [vege, setVege] = useState('')
+
   const [isOpen, setIsOpen] = useState(false)
 
   const mealId = form.watch(`meals.${index}.mealId`)
-  const calories = Number(form.watch(`meals.${index}.calories`)) - Number(form.watch(`meals.${index}.vegeCalories`))
+  const calories =
+    Number(form.watch(`meals.${index}.calories`)) -
+    Number(form.watch(`meals.${index}.vegeCalories`))
   const selectedMeal = allMeals?.find((meal) => meal.id === Number(mealId))
 
   if (!allMeals) return <div />
@@ -204,6 +208,11 @@ const FormPlanMeal = ({
                                     `meals.${index}.mealId`,
                                     meal.id.toString(),
                                   )
+                                  console.log(meal)
+                                  setVege(
+                                    meal.mealToVegeStack[0]?.vegeStack?.veges ||
+                                      '',
+                                  )
                                   setIsOpen(false)
                                 }}
                               >
@@ -244,12 +253,13 @@ const FormPlanMeal = ({
                 </FormItem>
               )}
             />
+            {vege}
             <FormField
               control={form.control}
               name={`meals.${index}.vegeCalories`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Calories</FormLabel>
+                  <FormLabel>Veg Calories</FormLabel>
                   <FormControl>
                     <Input
                       placeholder='Veg Calories'
