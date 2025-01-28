@@ -47,7 +47,7 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
 
   const { mutate: createPlan } = api.plan.create.useMutation({
     onSuccess: () => {
-      toast.success('Store added successfully')
+      toast.success('Plan added successfully')
     },
   })
 
