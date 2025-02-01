@@ -281,7 +281,6 @@ const FormRecipeIngredient = ({
                 <Combobox
                   value={selectedAlt}
                   onChange={(value) => {
-                    return
                     field.onChange(value?.id.toString())
                     setSelectedAlt(value)
                   }}
