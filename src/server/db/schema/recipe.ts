@@ -45,7 +45,7 @@ export const recipeToIngredient = createTable('recipe_to_ingredient', {
     })
     .notNull(),
   index: int('index', { mode: 'number' }).notNull(),
-  alternateId: int('alternate_id'),
+  alternateId: int('alternate_id').references(() => ingredient.id),
   serveSize: text('serve').notNull(),
   serveUnit: text('serve_unit').notNull(),
   note: text('note'),
@@ -61,7 +61,13 @@ export const recipeToIngredientRelations = relations(
     ingredient: one(ingredient, {
       fields: [recipeToIngredient.ingredientId],
       references: [ingredient.id],
+      relationName: 'ingredient',
     }),
+    alternateIngredient: one(ingredient, {
+      fields: [recipeToIngredient.alternateId],
+      references: [ingredient.id],
+      relationName: 'alternateIngredient',
+    })
   }),
 )
 

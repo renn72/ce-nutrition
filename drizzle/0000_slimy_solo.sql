@@ -385,7 +385,8 @@ CREATE TABLE `ce-nu_recipe_to_ingredient` (
 	`serve_unit` text NOT NULL,
 	`note` text,
 	FOREIGN KEY (`recipe_id`) REFERENCES `ce-nu_recipe`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`ingredient_id`) REFERENCES `ce-nu_ingredient`(`id`) ON UPDATE no action ON DELETE cascade
+	FOREIGN KEY (`ingredient_id`) REFERENCES `ce-nu_ingredient`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`alternate_id`) REFERENCES `ce-nu_ingredient`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `ce-nu_settings` (
@@ -411,6 +412,7 @@ CREATE TABLE `ce-nu_user-ingredient` (
 	FOREIGN KEY (`ingredient_id`) REFERENCES `ce-nu_ingredient`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`user_plan_id`) REFERENCES `ce-nu_user-plan`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`daily_meal_id`) REFERENCES `ce-nu_daily_meal`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`alternate_id`) REFERENCES `ce-nu_ingredient`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`daily_log_id`) REFERENCES `ce-nu_daily_log`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
@@ -437,6 +439,7 @@ CREATE TABLE `ce-nu_user-plan` (
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer,
 	`finished_at` integer,
+	`start_at` integer,
 	`is_active` integer,
 	`name` text NOT NULL,
 	`description` text NOT NULL,
@@ -465,11 +468,10 @@ CREATE TABLE `ce-nu_user-recipe` (
 	`serve` text,
 	`serve_unit` text,
 	`note` text,
-	`ingredient_blob` text,
 	`is_log` integer,
 	`daily_log_id` integer,
 	FOREIGN KEY (`user_plan_id`) REFERENCES `ce-nu_user-plan`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`daily_meal_id`) REFERENCES `ce-nu_daily_meal`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`daily_meal_id`) REFERENCES `ce-nu_daily_meal`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`daily_log_id`) REFERENCES `ce-nu_daily_log`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
@@ -495,17 +497,16 @@ CREATE TABLE `ce-nu_daily_log` (
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer,
 	`user_id` text NOT NULL,
-	`date` integer DEFAULT (unixepoch()) NOT NULL,
+	`date` text NOT NULL,
 	`morning_weight` text,
 	`notes` text,
 	`fasted_blood_glucose` text,
-	`water` text,
-	`bowel_movements` text,
 	`sleep` text,
 	`sleep_quality` text,
 	`is_hiit` integer,
 	`is_cardio` integer,
 	`is_lift` integer,
+	`is_liss` integer,
 	`image` text,
 	`nap` text,
 	FOREIGN KEY (`user_id`) REFERENCES `ce-nu_user`(`id`) ON UPDATE no action ON DELETE no action
@@ -520,7 +521,14 @@ CREATE TABLE `ce-nu_daily_meal` (
 	`recipe_id` integer,
 	`vege_calories` text,
 	`veges` text,
-	FOREIGN KEY (`daily_log_id`) REFERENCES `ce-nu_daily_log`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`daily_log_id`) REFERENCES `ce-nu_daily_log`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `ce-nu_poop_log` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`daily_log_id` integer NOT NULL,
+	FOREIGN KEY (`daily_log_id`) REFERENCES `ce-nu_daily_log`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `ce-nu_role` (
@@ -570,6 +578,15 @@ CREATE UNIQUE INDEX `ce-nu_user_email_unique` ON `ce-nu_user` (`email`);--> stat
 CREATE INDEX `name_idx` ON `ce-nu_user` (`name`);--> statement-breakpoint
 CREATE INDEX `clerk_id_idx` ON `ce-nu_user` (`clerk_id`);--> statement-breakpoint
 CREATE INDEX `email_idx` ON `ce-nu_user` (`email`);--> statement-breakpoint
+CREATE TABLE `ce-nu_user_settings` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`updated_at` integer,
+	`user_id` text NOT NULL,
+	`default_water` text,
+	FOREIGN KEY (`user_id`) REFERENCES `ce-nu_user`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
 CREATE TABLE `ce-nu_user_to_trainer` (
 	`user_id` text NOT NULL,
 	`trainer_id` text NOT NULL,
@@ -582,6 +599,14 @@ CREATE TABLE `ce-nu_verification_token` (
 	`token` text(255) NOT NULL,
 	`expires` integer NOT NULL,
 	PRIMARY KEY(`identifier`, `token`)
+);
+--> statement-breakpoint
+CREATE TABLE `ce-nu_water_log` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`daily_log_id` integer NOT NULL,
+	`water` text,
+	FOREIGN KEY (`daily_log_id`) REFERENCES `ce-nu_daily_log`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `ce-nu_weigh_in` (

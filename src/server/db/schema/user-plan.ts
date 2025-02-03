@@ -15,6 +15,7 @@ export const userPlan = createTable('user-plan', {
     () => new Date(),
   ),
   finishedAt: int('finished_at', { mode: 'timestamp' }),
+  startAt: int('start_at', { mode: 'timestamp' }),
   isActive: int('is_active', { mode: 'boolean' }),
   name: text('name').notNull(),
   description: text('description').notNull(),
@@ -100,7 +101,7 @@ export const userIngredient = createTable('user-ingredient', {
   name: text('name'),
   mealIndex: int('meal_index', { mode: 'number' }),
   recipeIndex: int('recipe_index', { mode: 'number' }),
-  alternateId: int('alternate_id', { mode: 'number' }),
+  alternateId: int('alternate_id').references(() => ingredient.id),
   serve: text('serve'),
   serveUnit: text('serve_unit'),
   note: text('note'),
@@ -145,6 +146,12 @@ export const userIngredientRelations = relations(userIngredient, ({ one }) => ({
   ingredient: one(ingredient, {
     fields: [userIngredient.ingredientId],
     references: [ingredient.id],
+    relationName: 'ingredient',
+  }),
+  alternateIngredient: one(ingredient, {
+    fields: [userIngredient.ingredientId],
+    references: [ingredient.id],
+    relationName: 'alternateIngredient',
   }),
   userPlan: one(userPlan, {
     fields: [userIngredient.userPlanId],

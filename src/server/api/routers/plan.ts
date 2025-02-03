@@ -25,6 +25,7 @@ export const planRouter = createTRPCRouter({
                         recipeToIngredient: {
                           with: {
                             ingredient: true,
+                            alternateIngredient: true,
                           },
                         },
                       },
@@ -58,6 +59,7 @@ export const planRouter = createTRPCRouter({
                       with: {
                         recipeToIngredient: {
                           with: {
+                            alternateIngredient: true,
                             ingredient: {
                               with: {
                                 ingredientToGroceryStore: {

@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "7c006505-cd35-45b0-a824-9e7f1b6f66f9",
+  "id": "b4b75bc9-2b06-4c07-86f4-50b4bb9d5603",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "ce-nu_grocery_store": {
@@ -2702,6 +2702,19 @@
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "ce-nu_recipe_to_ingredient_alternate_id_ce-nu_ingredient_id_fk": {
+          "name": "ce-nu_recipe_to_ingredient_alternate_id_ce-nu_ingredient_id_fk",
+          "tableFrom": "ce-nu_recipe_to_ingredient",
+          "tableTo": "ce-nu_ingredient",
+          "columnsFrom": [
+            "alternate_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -2876,6 +2889,19 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
+        "ce-nu_user-ingredient_alternate_id_ce-nu_ingredient_id_fk": {
+          "name": "ce-nu_user-ingredient_alternate_id_ce-nu_ingredient_id_fk",
+          "tableFrom": "ce-nu_user-ingredient",
+          "tableTo": "ce-nu_ingredient",
+          "columnsFrom": [
+            "alternate_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
         "ce-nu_user-ingredient_daily_log_id_ce-nu_daily_log_id_fk": {
           "name": "ce-nu_user-ingredient_daily_log_id_ce-nu_daily_log_id_fk",
           "tableFrom": "ce-nu_user-ingredient",
@@ -3044,6 +3070,13 @@
         },
         "finished_at": {
           "name": "finished_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "start_at": {
+          "name": "start_at",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -3248,13 +3281,6 @@
           "notNull": false,
           "autoincrement": false
         },
-        "ingredient_blob": {
-          "name": "ingredient_blob",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
         "is_log": {
           "name": "is_log",
           "type": "integer",
@@ -3295,7 +3321,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "ce-nu_user-recipe_daily_log_id_ce-nu_daily_log_id_fk": {
@@ -3467,11 +3493,10 @@
         },
         "date": {
           "name": "date",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "(unixepoch())"
+          "autoincrement": false
         },
         "morning_weight": {
           "name": "morning_weight",
@@ -3489,20 +3514,6 @@
         },
         "fasted_blood_glucose": {
           "name": "fasted_blood_glucose",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "water": {
-          "name": "water",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "bowel_movements": {
-          "name": "bowel_movements",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -3538,6 +3549,13 @@
         },
         "is_lift": {
           "name": "is_lift",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "is_liss": {
+          "name": "is_liss",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -3651,7 +3669,53 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "ce-nu_poop_log": {
+      "name": "ce-nu_poop_log",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        },
+        "daily_log_id": {
+          "name": "daily_log_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "ce-nu_poop_log_daily_log_id_ce-nu_daily_log_id_fk": {
+          "name": "ce-nu_poop_log_daily_log_id_ce-nu_daily_log_id_fk",
+          "tableFrom": "ce-nu_poop_log",
+          "tableTo": "ce-nu_daily_log",
+          "columnsFrom": [
+            "daily_log_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -3977,6 +4041,66 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
+    "ce-nu_user_settings": {
+      "name": "ce-nu_user_settings",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "default_water": {
+          "name": "default_water",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "ce-nu_user_settings_user_id_ce-nu_user_id_fk": {
+          "name": "ce-nu_user_settings_user_id_ce-nu_user_id_fk",
+          "tableFrom": "ce-nu_user_settings",
+          "tableTo": "ce-nu_user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
     "ce-nu_user_to_trainer": {
       "name": "ce-nu_user_to_trainer",
       "columns": {
@@ -4064,6 +4188,59 @@
           "name": "ce-nu_verification_token_identifier_token_pk"
         }
       },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "ce-nu_water_log": {
+      "name": "ce-nu_water_log",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        },
+        "daily_log_id": {
+          "name": "daily_log_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "water": {
+          "name": "water",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "ce-nu_water_log_daily_log_id_ce-nu_daily_log_id_fk": {
+          "name": "ce-nu_water_log_daily_log_id_ce-nu_daily_log_id_fk",
+          "tableFrom": "ce-nu_water_log",
+          "tableTo": "ce-nu_daily_log",
+          "columnsFrom": [
+            "daily_log_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
     },

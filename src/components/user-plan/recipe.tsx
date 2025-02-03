@@ -63,58 +63,80 @@ const Ingredient = ({
       ?.recipeToIngredient[ingredientIndex]
   if (!ingredient) return null
 
+  console.log('ingredient', ingredient)
   const ratio = Number(size) / Number(ingredient?.ingredient?.serveSize)
 
   return (
-    <div className='grid grid-cols-10 gap-1 text-muted-foreground items-center'>
-      <div />
-      <div className='col-span-3'>{ingredient.ingredient.name}</div>
-      <FormField
-        control={form.control}
-        name={`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.serveSize`}
-        render={({ field }) => (
-          <FormItem className='w-full col-span-2'>
-            <FormControl>
-              <div className='w-full flex justify-between items-center gap-2 px-2'>
-                <CircleMinus
-                  size={20}
-                  className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0'
-                  onClick={() => {
-                    field.onChange((Math.ceil(Number(field.value)) - 1).toString())
-                  }}
-                />
-                <Input
-                  placeholder=''
-                  type='number'
-                  {...field}
-                  onChange={(e) => {
-                    field.onChange(e)
-                  }}
-                />
-                <CirclePlus
-                  size={20}
-                  className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0'
-                  onClick={() => {
-                    field.onChange((Math.floor(Number(field.value)) + 1).toString())
-                  }}
-                />
-              </div>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <div>
-        {(Number(ingredient.ingredient.caloriesWOFibre) * ratio).toFixed(1)}
+    <div className='flex flex-col gap-1'>
+      <div className='grid grid-cols-10 gap-1 text-muted-foreground items-center'>
+        <div className='col-span-4 ml-2'>{ingredient.ingredient.name}</div>
+        <FormField
+          control={form.control}
+          name={`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.serveSize`}
+          render={({ field }) => (
+            <FormItem className='w-full col-span-2'>
+              <FormControl>
+                <div className='w-full flex justify-between items-center gap-2 px-2'>
+                  <CircleMinus
+                    size={20}
+                    className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0'
+                    onClick={() => {
+                      field.onChange(
+                        (Math.ceil(Number(field.value)) - 1).toString(),
+                      )
+                    }}
+                  />
+                  <Input
+                    placeholder=''
+                    type='number'
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e)
+                    }}
+                  />
+                  <CirclePlus
+                    size={20}
+                    className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0'
+                    onClick={() => {
+                      field.onChange(
+                        (Math.floor(Number(field.value)) + 1).toString(),
+                      )
+                    }}
+                  />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div>
+          {(Number(ingredient.ingredient.caloriesWOFibre) * ratio).toFixed(1)}
+        </div>
+        <div>{(Number(ingredient.ingredient.protein) * ratio).toFixed(1)}</div>
+        <div>
+          {(
+            Number(
+              ingredient.ingredient.availableCarbohydrateWithSugarAlcohols,
+            ) * ratio
+          ).toFixed(1)}
+        </div>
+        <div>{(Number(ingredient.ingredient.fatTotal) * ratio).toFixed(1)}</div>
       </div>
-      <div>{(Number(ingredient.ingredient.protein) * ratio).toFixed(1)}</div>
-      <div>
-        {(
-          Number(ingredient.ingredient.availableCarbohydrateWithSugarAlcohols) *
-          ratio
-        ).toFixed(1)}
-      </div>
-      <div>{(Number(ingredient.ingredient.fatTotal) * ratio).toFixed(1)}</div>
+      {ingredient.alternateId ? (
+        <div className='grid grid-cols-10 gap-1 text-muted-foreground items-center text-sm'>
+          <div className='col-span-4 truncate ml-4'>
+            or {ingredient.alternateIngredient?.name}
+          </div>
+          <div className='place-self-center col-span-2'>
+            {(
+              ((Number(ingredient.ingredient.caloriesWOFibre) * ratio) /
+                Number(ingredient.alternateIngredient?.caloriesWOFibre)) *
+              Number(ingredient.alternateIngredient?.serveSize)
+            ).toFixed(1)}
+            g
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }
@@ -143,8 +165,13 @@ const Recipe = ({
 
   const recipe =
     plan.planToMeal[mealIndex]?.meal?.mealToRecipe[recipeIndex]?.recipe
+  console.log('recipe', recipe)
   if (!recipe) return null
-  const [ingredientsSize, setIngredientsSize] = useState<number[]>(() => recipe?.recipeToIngredient.map((ingredient) => Number(ingredient?.serveSize)))
+  const [ingredientsSize, setIngredientsSize] = useState<number[]>(() =>
+    recipe?.recipeToIngredient.map((ingredient) =>
+      Number(ingredient?.serveSize),
+    ),
+  )
   const recipeDetails = getRecipeDetailsForUserPlan(recipe, ingredientsSize)
 
   return (
