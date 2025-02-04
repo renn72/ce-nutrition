@@ -68,7 +68,9 @@ export const userRecipe = createTable('user-recipe', {
   ),
   mealIndex: int('meal_index', { mode: 'number' }),
   recipeIndex: int('recipe_index', { mode: 'number' }),
-  userPlanId: int('user_plan_id').references(() => userPlan.id),
+  userPlanId: int('user_plan_id').references(() => userPlan.id, {
+    onDelete: 'cascade',
+  }),
   dailyMealId: int('daily_meal_id').references(() => dailyMeal.id, {
     onDelete: 'cascade',
   }),

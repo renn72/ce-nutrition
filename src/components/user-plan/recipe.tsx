@@ -63,7 +63,6 @@ const Ingredient = ({
       ?.recipeToIngredient[ingredientIndex]
   if (!ingredient) return null
 
-  console.log('ingredient', ingredient)
   const ratio = Number(size) / Number(ingredient?.ingredient?.serveSize)
 
   return (
@@ -165,7 +164,6 @@ const Recipe = ({
 
   const recipe =
     plan.planToMeal[mealIndex]?.meal?.mealToRecipe[recipeIndex]?.recipe
-  console.log('recipe', recipe)
   if (!recipe) return null
   const [ingredientsSize, setIngredientsSize] = useState<number[]>(() =>
     recipe?.recipeToIngredient.map((ingredient) =>

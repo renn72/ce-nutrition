@@ -257,6 +257,14 @@ export const dailyLogRouter = createTRPCRouter({
 
       return water
     }),
+  deleteWaterLog: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.db
+        .delete(waterLog)
+        .where(eq(waterLog.id, input.id))
+      return res
+    }),
   addPoopLog: protectedProcedure
     .input(
       z.object({
@@ -296,6 +304,14 @@ export const dailyLogRouter = createTRPCRouter({
         .returning({ id: poopLog.id })
 
       return poop
+    }),
+  deletePoopLog: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.db
+        .delete(poopLog)
+        .where(eq(poopLog.id, input.id))
+      return res
     }),
   addMeal: protectedProcedure
     .input(

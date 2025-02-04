@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { cn } from '@/lib/utils'
 
 import { GetAllDailyLogs } from '@/types'
-import { CirclePlus, GlassWater } from 'lucide-react'
+import { CirclePlus, CircleX, GlassWater } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
 
@@ -17,7 +17,15 @@ const WaterLog = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs | null | undefined
 
   const { mutate: addWaterLog } = api.dailyLog.addWaterLog.useMutation({
     onSuccess: () => {
-      toast.success('Added water log')
+      toast.success('Added water')
+    },
+    onSettled: () => {
+      ctx.dailyLog.invalidate()
+    },
+  })
+  const { mutate: deleteWaterLog } = api.dailyLog.deleteWaterLog.useMutation({
+    onSuccess: () => {
+      toast.success('Deleted water')
     },
     onSettled: () => {
       ctx.dailyLog.invalidate()
@@ -33,8 +41,6 @@ const WaterLog = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs | null | undefined
   const totalWater = todaysDailyLog?.waterLogs.reduce((acc, curr) => {
     return acc + Number(curr.amount)
   }, 0)
-
-  if (!todaysDailyLog) return null
 
   return (
     <div className='flex flex-col gap-0 w-full'>
@@ -68,7 +74,7 @@ const WaterLog = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs | null | undefined
         todaysDailyLog?.waterLogs.map((waterLog) => (
           <div
             key={waterLog.id}
-            className='flex gap-2 text-xs justify-center w-full'
+            className='flex gap-2 text-xs justify-center w-full items-end'
           >
               <div className='text-muted-foreground font-medium'>
                 {waterLog.amount}ml
@@ -76,6 +82,15 @@ const WaterLog = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs | null | undefined
             <div className='text-muted-foreground font-normal'>
               {waterLog.createdAt.toLocaleTimeString('en-AU')}
             </div>
+          <CircleX
+            size={18}
+            className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer ml-4 mb-[1px]'
+            onClick={() => {
+              deleteWaterLog({
+                id: waterLog.id,
+              })
+            }}
+          />
           </div>
         ))
       }

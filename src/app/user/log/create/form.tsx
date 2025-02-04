@@ -141,7 +141,7 @@ const DailyLogForm = ({
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className='flex flex-col gap-4 mt-10 px-2 mb-16'>
             <h2 className='text-xl font-bold text-muted-foreground'>
-              {formDate.toLocaleDateString('en-AU', {
+              {new Date(formDate).toLocaleDateString('en-AU', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',

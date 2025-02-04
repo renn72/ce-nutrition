@@ -3,7 +3,7 @@ import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
 import { z } from 'zod'
 
 import { recipeToIngredient } from './recipe'
-import { userRecipe } from './user-plan'
+import { userIngredient } from './user-plan'
 import { user } from './user'
 
 export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
@@ -342,8 +342,8 @@ export const ingredientRelations = relations(ingredient, ({ one, many }) => ({
   user: one(user, { fields: [ingredient.userId], references: [user.id] }),
   recipeToIngredient: many(recipeToIngredient, { relationName: 'ingredient' }),
   recipeToIngredientAlternate: many(recipeToIngredient, { relationName: 'alternateIngredient' }),
-  userRecipe: many(userRecipe, { relationName: 'ingredient' }),
-  userRecipeAlternate: many(userRecipe, { relationName: 'alternateIngredient' }),
+  userIngredient: many(userIngredient, { relationName: 'ingredient' }),
+  userInhgredientAlternate: many(userIngredient, { relationName: 'alternateIngredient' }),
   ingredientAdditionOne: one(ingredientAdditionOne, {
     fields: [ingredient.id],
     references: [ingredientAdditionOne.ingredientId],

@@ -3,7 +3,7 @@
 import { api } from '@/trpc/react'
 
 import { GetAllDailyLogs } from '@/types'
-import { Toilet } from 'lucide-react'
+import { CircleX, Toilet } from 'lucide-react'
 import { CirclePlus, } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -16,7 +16,15 @@ const PoopLog = ({
 
   const { mutate: addPoopLog } = api.dailyLog.addPoopLog.useMutation({
     onSuccess: () => {
-      toast.success('Added poop log')
+      toast.success('Added poo')
+    },
+    onSettled: () => {
+      ctx.dailyLog.invalidate()
+    },
+  })
+  const { mutate: deletePoopLog } = api.dailyLog.deletePoopLog.useMutation({
+    onSuccess: () => {
+      toast.success('Deleted poo')
     },
     onSettled: () => {
       ctx.dailyLog.invalidate()
@@ -32,8 +40,6 @@ const PoopLog = ({
   const totalPoop = todaysDailyLog?.poopLogs.reduce((acc, curr) => {
     return acc + 1
   }, 0)
-
-  if (!todaysDailyLog) return null
 
   return (
     <div className='flex flex-col gap-0 w-full'>
@@ -54,11 +60,20 @@ const PoopLog = ({
       {todaysDailyLog?.poopLogs.map((poopLog) => (
         <div
           key={poopLog.id}
-          className='flex gap-2 text-xs justify-center w-full'
+          className='flex gap-2 text-xs justify-center w-full items-end'
         >
           <div className='text-muted-foreground font-normal'>
             {poopLog.createdAt.toLocaleTimeString('en-AU')}
           </div>
+          <CircleX
+            size={18}
+            className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer ml-4 mb-[1px]'
+            onClick={() => {
+              deletePoopLog({
+                id: poopLog.id,
+              })
+            }}
+          />
         </div>
       ))}
     </div>

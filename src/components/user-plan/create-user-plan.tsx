@@ -117,7 +117,6 @@ const CreateUserPlan = () => {
     setSelectedPlanId(planId)
     const _selectedPlan = allPlans?.find((plan) => plan.id === Number(planId))
     if (!_selectedPlan) return
-    console.log('selectedPlan', _selectedPlan)
     setSelectedPlan(_selectedPlan)
     form.reset({
       name: _selectedPlan?.name || '',
@@ -214,7 +213,6 @@ const CreateUserPlan = () => {
     })
   }
 
-  console.log('isMultiPlan', isMultiPlan)
 
   return (
     <div className='flex flex-col max-w-screen-lg w-full my-12'>

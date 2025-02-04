@@ -129,10 +129,6 @@ export const userPlanRouter = createTRPCRouter({
 
       const batchRes = await ctx.db.batch([
         ctx.db
-          .update(user)
-          .set({ currentPlanId: resId })
-          .where(eq(user.id, input.userId)),
-        ctx.db
           .insert(userMeal)
           .values(
             meals.map((meal) => ({
@@ -155,6 +151,7 @@ export const userPlanRouter = createTRPCRouter({
           .values(
             ingredients.map((ingredient) => ({
               ...ingredient,
+              alternateId: ingredient.alternateId === 0 ? null : Number(ingredient.alternateId),
               userPlanId: resId,
             })),
           )
