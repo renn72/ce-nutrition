@@ -6,8 +6,8 @@ import { ReactNode, useState } from 'react'
 
 import { cn, getRecipeDetailsByCals } from '@/lib/utils'
 import type { GetIngredientById, GetRecipeById } from '@/types'
-import { Check, ChevronsUpDown } from 'lucide-react'
-import { UseFormReturn } from 'react-hook-form'
+import { Check, ChevronsUpDown, CirclePlus } from 'lucide-react'
+import { UseFormReturn, useFieldArray } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
@@ -68,13 +68,14 @@ const Ingredient = ({
 }
 
 const Recipe = ({
-  recipe,
+  recipeId,
   calories,
 }: {
-  recipe: GetRecipeById | null
+  recipeId: string
   calories: string
 }) => {
-  if (!recipe) return null
+  const { data: recipes } = api.recipe.getAll.useQuery()
+  const recipe = recipes?.find((recipe) => recipe.id === Number(recipeId))
   const recipeDetails = getRecipeDetailsByCals(recipe, Number(calories))
   return (
     <div className='flex flex-col gap-1'>
@@ -87,7 +88,7 @@ const Recipe = ({
         <div>fat</div>
       </div>
       <div className='grid grid-cols-9 gap-1 font-bold'>
-        <div className='col-span-4'>{recipe.name}</div>
+        <div className='col-span-4'>{recipe?.name}</div>
         <div>
           {recipeDetails.size} {recipeDetails.unit}
         </div>
@@ -96,14 +97,6 @@ const Recipe = ({
         <div>{recipeDetails.carbs}</div>
         <div>{recipeDetails.fat} </div>
       </div>
-      {recipe.recipeToIngredient.map((ingredient) => (
-        <Ingredient
-          key={ingredient.id}
-          ingredient={ingredient.ingredient}
-          size={Number(ingredient.serveSize)}
-          ratio={recipeDetails.ratio}
-        />
-      ))}
     </div>
   )
 }
@@ -122,11 +115,15 @@ const FormPlanMeal = ({
   const [vege, setVege] = useState('')
   const [isOpen, setIsOpen] = useState(false)
 
-  const mealId = form.watch(`meals.${index}.mealId`)
   const calories =
     Number(form.watch(`meals.${index}.calories`)) -
     Number(form.watch(`meals.${index}.vegeCalories`))
-  const selectedMeal = allMeals?.find((meal) => meal.id === Number(mealId))
+  const selectedMeal = allMeals?.find((meal) => meal.id === Number(0))
+
+  const recipesField = useFieldArray({
+    control: form.control,
+    name: `meals.${index}.recipes`,
+  })
 
   if (!allMeals) return <div />
 
@@ -160,81 +157,6 @@ const FormPlanMeal = ({
           className='grid grid-cols-5 gap-1 w-full items-center py-2'
         >
           <div className='flex flex-col gap-1'>
-            <FormField
-              control={form.control}
-              name={`meals.${index}.mealId`}
-              render={({ field }) => (
-                <FormItem className='flex flex-col'>
-                  <FormLabel>Meal</FormLabel>
-                  <Popover
-                    open={isOpen}
-                    onOpenChange={setIsOpen}
-                  >
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant='outline'
-                          role='combobox'
-                          className={cn(
-                            'w-full justify-between',
-                            !field.value && 'text-muted-foreground',
-                          )}
-                        >
-                          {field.value
-                            ? allMeals?.find(
-                                (m) => m.id.toString() === field.value,
-                              )?.name
-                            : 'Select meal'}
-                          <ChevronsUpDown className='opacity-50' />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className='w-[300px] p-0'>
-                      <Command>
-                        <CommandInput
-                          placeholder='Search meals...'
-                          className='h-9'
-                        />
-                        <CommandList>
-                          <CommandEmpty>No meal found.</CommandEmpty>
-                          <CommandGroup>
-                            {allMeals.map((meal) => (
-                              <CommandItem
-                                value={meal.id.toString()}
-                                key={meal.id}
-                                onSelect={() => {
-                                  form.setValue(
-                                    `meals.${index}.mealId`,
-                                    meal.id.toString(),
-                                  )
-
-                                  const _vege =
-                                    meal.mealToVegeStack[0]?.vegeStack?.veges
-                                  setVege(_vege || '')
-                                  if (_vege !== '') form.setValue(`meals.${index}.vegeCalories`, '50')
-                                  setIsOpen(false)
-                                }}
-                              >
-                                {meal.name}
-                                <Check
-                                  className={cn(
-                                    'ml-auto',
-                                    meal.id.toString() === field.value
-                                      ? 'opacity-100'
-                                      : 'opacity-0',
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name={`meals.${index}.calories`}
@@ -275,13 +197,25 @@ const FormPlanMeal = ({
             ) : null}
           </div>
           <div className='flex flex-col gap-8 col-span-4'>
-            {selectedMeal?.mealToRecipe.map((recipe) => (
-              <Recipe
-                recipe={recipe.recipe}
-                calories={calories.toFixed(2)}
-                key={recipe.id}
-              />
-            ))}
+            {
+              recipesField.fields.map((field, index) => (
+                <Recipe
+                  recipeId={field.recipeId}
+                  calories={calories.toFixed(2)}
+                  key={index}
+                />
+              ))
+            }
+            <CirclePlus
+              size={36}
+              className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
+              onClick={() =>
+                recipesField.append({
+                  recipeId: '',
+                  note: '',
+                })
+              }
+            />
           </div>
         </div>
         <FormField

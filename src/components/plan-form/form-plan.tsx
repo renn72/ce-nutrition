@@ -33,11 +33,16 @@ export const formSchema = z.object({
   planCategory: z.string(),
   meals: z.array(
     z.object({
-      mealId: z.string(),
       mealTitle: z.string(),
       calories: z.string(),
       vegeCalories: z.string(),
       note: z.string(),
+      recipes: z.array(
+        z.object({
+          recipeId: z.string(),
+          note: z.string(),
+        }),
+      ),
     }),
   ),
 })
@@ -73,11 +78,16 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
         mealIndex: planToMeal.mealIndex,
       })) || [
         {
-          mealId: '',
           mealTitle: '1',
           calories: '500',
           vegeCalories: '',
           note: '',
+          recipes: [
+            {
+              recipeId: '',
+              note: '',
+            },
+          ],
         },
       ],
     },
@@ -96,7 +106,6 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
       planCategory: data.planCategory,
       numberOfMeals: data.meals.length,
       meals: data.meals.map((meal, i) => ({
-        mealId: Number(meal.mealId),
         mealIndex: i + 1,
         mealTitle: meal.mealTitle,
         calories: meal.calories,
@@ -221,11 +230,16 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
                   className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
                   onClick={() =>
                     mealsField.append({
-                      mealId: '',
                       mealTitle: (mealsField.fields.length + 1).toString(),
                       calories: '500',
                       vegeCalories: '',
                       note: '',
+                      recipes: [
+                        {
+                          recipeId: '',
+                          note: '',
+                        },
+                      ],
                     })
                   }
                 />
