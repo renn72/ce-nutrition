@@ -38,6 +38,10 @@ export const userPlanRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       const res = await ctx.db.query.userIngredient.findFirst({
         where: eq(userIngredient.id, input),
+        with: {
+          ingredient: true,
+          alternateIngredient: true,
+        },
       })
       return res
     }),

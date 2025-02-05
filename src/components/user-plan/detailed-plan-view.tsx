@@ -17,7 +17,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, CircleChevronDown } from 'lucide-react'
 
 import {
   Accordion,
@@ -36,10 +36,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 const Ingredient = ({ userIngredient }: { userIngredient: UserIngredient }) => {
   if (!userIngredient) return null
   return (
+    <div className='flex gap-0 flex-col'>
       <div className='grid grid-cols-5 w-full px-2 py-2 text-xs'>
         <div className='col-span-3'>{userIngredient.name}</div>
-        <div className='justify-self-end  mr-1 self-center '>{userIngredient.serve}g</div>
+        <div className='justify-self-end  mr-1 self-center '>
+          {userIngredient.serve}g
+        </div>
       </div>
+      {userIngredient.alternateIngredient ? (
+        <div className='grid grid-cols-5 w-full ml-2 pl-2 pr-3 py-1 bg-secondary text-[0.7rem]'>
+          <div className='col-span-3'>
+            {userIngredient.alternateIngredient.name}
+          </div>
+          <div className='justify-self-end  mr-1 self-center '>
+          {userIngredient.serve}g
+          </div>
+        </div>
+      ) : null}
+    </div>
   )
 }
 
@@ -64,7 +78,8 @@ const Recipe = ({
 
   const ingredients = plan.userIngredients.filter(
     (ingredient) =>
-      ingredient.recipeIndex == recipeIndex && ingredient.mealIndex == mealIndex,
+      ingredient.recipeIndex == recipeIndex &&
+      ingredient.mealIndex == mealIndex,
   )
 
   if (!recipe) return null
@@ -73,8 +88,9 @@ const Recipe = ({
     <Collapsible className=''>
       <div className='flex gap-6 items-center'>
         <CollapsibleTrigger className='flex items-center justify-center w-10 h-8 data-[state=open]:rotate-180 transition-transform '>
-          <ChevronDown
-            size={20}
+          <CircleChevronDown
+            size={28}
+            strokeWidth={1.5}
             className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer '
           />
         </CollapsibleTrigger>
@@ -163,7 +179,6 @@ const Meal = ({
 const PlanView = ({ plan }: { plan: UserPlan }) => {
   if (!plan) return null
 
-
   return (
     <div className='flex flex-col gap-4 px-1 py-2'>
       {plan.name}
@@ -174,12 +189,8 @@ const PlanView = ({ plan }: { plan: UserPlan }) => {
             key={meal.id}
             value={meal.id.toString()}
           >
-            <AccordionTrigger
-              className='flex items-center gap-2 w-full'
-            >
-              <div>
-              {meal.mealTitle}
-              </div>
+            <AccordionTrigger className='flex items-center gap-2 w-full'>
+              <div>{meal.mealTitle}</div>
               <div className='text-sm text-muted-foreground'>
                 {meal.targetCalories}cals - {meal.targetProtein}g Protein
               </div>
@@ -189,14 +200,12 @@ const PlanView = ({ plan }: { plan: UserPlan }) => {
                 mealIndex={meal.mealIndex}
                 plan={plan}
               />
-              {
-                meal.veges !== '' && (
-                  <div className='flex flex-col w-full'>
-                    <div className=''>{meal.vegeNotes}</div>
-                    <div className=''>{meal.veges}</div>
-                  </div>
-                )
-              }
+              {meal.veges !== '' && (
+                <div className='flex flex-col w-full'>
+                  <div className=''>{meal.vegeNotes}</div>
+                  <div className=''>{meal.veges}</div>
+                </div>
+              )}
             </AccordionContent>
           </AccordionItem>
         ))}
