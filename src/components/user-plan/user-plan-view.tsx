@@ -82,7 +82,7 @@ const UserPlanRecipe = ({
         </Badge>
       </DialogTrigger>
       <DialogContent
-        className='py-14'
+        className='py-14 px-2'
         onOpenAutoFocus={(e) => {
           e.preventDefault()
         }}
@@ -130,27 +130,37 @@ const UserPlanRecipe = ({
           )
           .map((ingredient) => {
             console.log('ingredient', ingredient)
+            const serve = scale * Number(ingredient.serve)
+            const calories =
+              (Number(serve) / Number(ingredient.ingredient?.serveSize)) *
+              Number(ingredient.ingredient?.caloriesWOFibre)
+            const altSize =
+              (calories /
+                Number(ingredient.alternateIngredient?.caloriesWOFibre)) *
+              Number(ingredient.alternateIngredient?.serveSize)
             return (
-              <div key={ingredient.id} className='flex gap-0 flex-col'>
-                <div className='grid grid-cols-5 w-full px-2 py-2 bg-secondary text-sm'>
-                  <div className='col-span-3'>{ingredient.name}</div>
+              <div
+                key={ingredient.id}
+                className='flex gap-0 flex-col'
+              >
+                <div className='grid grid-cols-6 w-full px-2 py-2 bg-secondary text-sm'>
+                  <div className='col-span-4'>{ingredient.name}</div>
                   <div className='justify-self-end  mr-1 self-center '>
-                    {(scale * Number(ingredient.serve)).toFixed(0)}
+                    {serve.toFixed(0)}
                   </div>
                   <div className='self-center '>{ingredient.serveUnit}</div>
                 </div>
-                {
-                  ingredient.alternateIngredient ? (
-                <div className='grid grid-cols-5 w-full pl-4 pr-3 pb-1 bg-secondary text-xs'>
-                  <div className='col-span-3'>{ingredient.alternateIngredient.name}</div>
-                  <div className='justify-self-end  mr-1 self-center '>
-                    {(scale * Number(ingredient.serve)).toFixed(0)}
+                {ingredient.alternateIngredient ? (
+                  <div className='grid grid-cols-6 w-full pl-4 pr-3 pb-1 bg-secondary text-[0.7rem] tracking-tighter'>
+                    <div className='col-span-4 truncate'>
+                      or {ingredient.alternateIngredient.name}
+                    </div>
+                    <div className='justify-self-end  mr-1 self-center '>
+                      {altSize.toFixed(0)}
+                    </div>
+                    <div className='self-center '>{ingredient.serveUnit}</div>
                   </div>
-                  <div className='self-center '>{ingredient.serveUnit}</div>
-                </div>
-
-                  ) : null
-                }
+                ) : null}
               </div>
             )
           })}

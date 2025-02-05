@@ -35,21 +35,26 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const Ingredient = ({ userIngredient }: { userIngredient: UserIngredient }) => {
   if (!userIngredient) return null
+  console.log('userIngredient', userIngredient)
+  const calories = Number(userIngredient.serve) / Number(userIngredient.ingredient?.serveSize) * Number(userIngredient.ingredient?.caloriesWOFibre)
+  const altSize = calories /  Number(userIngredient.alternateIngredient?.caloriesWOFibre) * Number(userIngredient.alternateIngredient?.serveSize)
+  console.log('value', calories)
+  console.log('altSize', altSize)
   return (
     <div className='flex gap-0 flex-col'>
-      <div className='grid grid-cols-5 w-full px-2 py-2 text-xs'>
-        <div className='col-span-3'>{userIngredient.name}</div>
+      <div className='grid grid-cols-5 w-full px-2 py-1 text-xs'>
+        <div className='col-span-4'>{userIngredient.name}</div>
         <div className='justify-self-end  mr-1 self-center '>
           {userIngredient.serve}g
         </div>
       </div>
       {userIngredient.alternateIngredient ? (
-        <div className='grid grid-cols-5 w-full ml-2 pl-2 pr-3 py-1 bg-secondary text-[0.7rem]'>
-          <div className='col-span-3'>
-            {userIngredient.alternateIngredient.name}
+        <div className='grid grid-cols-5 w-full pl-2 pr-3 py-1 bg-secondary text-[0.7rem] rounded-full'>
+          <div className='col-span-4 truncate tracking-tighter'>
+            or  {userIngredient.alternateIngredient.name}
           </div>
           <div className='justify-self-end  mr-1 self-center '>
-          {userIngredient.serve}g
+          {altSize.toFixed(1)}g
           </div>
         </div>
       ) : null}
