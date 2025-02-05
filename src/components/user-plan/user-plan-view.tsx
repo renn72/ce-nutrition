@@ -46,11 +46,8 @@ const UserPlanVege = ({
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <div className='flex gap-4 items-center flex-col'>
-          <div>
-            {meal.veges}
-
-          </div>
-            <div>{meal.vegeNotes}</div>
+          <div>{meal.veges}</div>
+          <div>{meal.vegeNotes}</div>
         </div>
       </DialogContent>
     </Dialog>
@@ -73,6 +70,7 @@ const UserPlanRecipe = ({
       recipe.mealIndex == mealIndex && recipe.recipeIndex == recipeIndex,
   )
   if (!recipe) return null
+
   return (
     <Dialog key={recipe.id}>
       <DialogTrigger asChild>
@@ -130,18 +128,32 @@ const UserPlanRecipe = ({
               ingredient.mealIndex == mealIndex &&
               ingredient.recipeIndex == recipeIndex,
           )
-          .map((ingredient) => (
-            <div
-              key={ingredient.id}
-              className='grid grid-cols-5 w-full px-2 py-2 bg-secondary text-sm'
-            >
-              <div className='col-span-3'>{ingredient.name}</div>
-              <div className='justify-self-end  mr-1 self-center '>
-                {(scale * Number(ingredient.serve)).toFixed(0)}
+          .map((ingredient) => {
+            console.log('ingredient', ingredient)
+            return (
+              <div key={ingredient.id} className='flex gap-0 flex-col'>
+                <div className='grid grid-cols-5 w-full px-2 py-2 bg-secondary text-sm'>
+                  <div className='col-span-3'>{ingredient.name}</div>
+                  <div className='justify-self-end  mr-1 self-center '>
+                    {(scale * Number(ingredient.serve)).toFixed(0)}
+                  </div>
+                  <div className='self-center '>{ingredient.serveUnit}</div>
+                </div>
+                {
+                  ingredient.alternateIngredient ? (
+                <div className='grid grid-cols-5 w-full pl-4 pr-3 pb-1 bg-secondary text-xs'>
+                  <div className='col-span-3'>{ingredient.alternateIngredient.name}</div>
+                  <div className='justify-self-end  mr-1 self-center '>
+                    {(scale * Number(ingredient.serve)).toFixed(0)}
+                  </div>
+                  <div className='self-center '>{ingredient.serveUnit}</div>
+                </div>
+
+                  ) : null
+                }
               </div>
-              <div className='self-center '>{ingredient.serveUnit}</div>
-            </div>
-          ))}
+            )
+          })}
       </DialogContent>
     </Dialog>
   )

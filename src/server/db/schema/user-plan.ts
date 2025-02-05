@@ -151,7 +151,7 @@ export const userIngredientRelations = relations(userIngredient, ({ one }) => ({
     relationName: 'ingredient',
   }),
   alternateIngredient: one(ingredient, {
-    fields: [userIngredient.ingredientId],
+    fields: [userIngredient.alternateId],
     references: [ingredient.id],
     relationName: 'alternateIngredient',
   }),

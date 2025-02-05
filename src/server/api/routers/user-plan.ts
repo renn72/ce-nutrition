@@ -47,7 +47,12 @@ export const userPlanRouter = createTRPCRouter({
       with: {
         userMeals: true,
         userRecipes: true,
-        userIngredients: true,
+        userIngredients: {
+          with: {
+            ingredient: true,
+            alternateIngredient: true,
+          },
+        },
       },
     })
     return res

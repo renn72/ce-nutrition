@@ -72,6 +72,7 @@ export const userRouter = createTRPCRouter({
             userIngredients: {
               with: {
                 ingredient: true,
+                alternateIngredient: true,
               },
             },
           },
@@ -98,6 +99,7 @@ export const userRouter = createTRPCRouter({
             userIngredients: {
               with: {
                 ingredient: true,
+                alternateIngredient: true,
               },
             },
           },
