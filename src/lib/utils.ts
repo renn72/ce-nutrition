@@ -148,7 +148,7 @@ export function getRecipeDetailsByCals(
     return acc + cal * scale
   }, 0)
 
-  const ratio = calories / Number(cals)
+  const ratio = calories / Number(calsWOFibre)
 
   return {
     size: (Number(size) * ratio).toFixed(0),

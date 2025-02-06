@@ -7,19 +7,12 @@ import { ReactNode, useState } from 'react'
 import { cn, getRecipeDetailsByCals } from '@/lib/utils'
 import type { GetIngredientById, GetRecipeById } from '@/types'
 import { Check, ChevronsUpDown, CirclePlus } from 'lucide-react'
-import { UseFormReturn, useFieldArray } from 'react-hook-form'
+import { useFieldArray, UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   FormControl,
   FormField,
@@ -29,12 +22,16 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
+import { Label } from '@/components/ui/label'
 import { formSchema } from './form-plan'
+import { Textarea } from '@/components/ui/textarea'
 
 export const dynamic = 'force-dynamic'
 
@@ -68,35 +65,68 @@ const Ingredient = ({
 }
 
 const Recipe = ({
-  recipeId,
   calories,
+  form,
+  mealIndex,
+  recipeIndex,
 }: {
-  recipeId: string
   calories: string
+  form: UseFormReturn<z.infer<typeof formSchema>>
+  mealIndex: number
+  recipeIndex: number
 }) => {
   const { data: recipes } = api.recipe.getAll.useQuery()
+  const recipeId = form.watch(
+    `meals.${mealIndex}.recipes.${recipeIndex}.recipeId`,
+  )
   const recipe = recipes?.find((recipe) => recipe.id === Number(recipeId))
   const recipeDetails = getRecipeDetailsByCals(recipe, Number(calories))
   return (
-    <div className='flex flex-col gap-1'>
-      <div className='grid grid-cols-9 gap-1 capitalize'>
-        <div className='col-span-4 ' />
-        <div>size</div>
-        <div>cals</div>
-        <div>protein</div>
-        <div>carbs</div>
-        <div>fat</div>
-      </div>
-      <div className='grid grid-cols-9 gap-1 font-bold'>
-        <div className='col-span-4'>{recipe?.name}</div>
-        <div>
-          {recipeDetails.size} {recipeDetails.unit}
-        </div>
-        <div>{recipeDetails.cals}</div>
-        <div>{recipeDetails.protein}</div>
-        <div>{recipeDetails.carbs}</div>
-        <div>{recipeDetails.fat} </div>
-      </div>
+    <div className='grid grid-cols-9 gap-1 py-1 items-center'>
+      <FormField
+        control={form.control}
+        name={`meals.${mealIndex}.recipes.${recipeIndex}.recipeId`}
+        render={({ field }) => (
+          <FormItem className='w-full col-span-4'>
+            <div className='flex gap-2 items-center max-w-sm'>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value)
+                }}
+                defaultValue={field.value}
+              >
+                <FormControl>
+                  <SelectTrigger className='border-none shadow-none focus:ring-0 bg-transparent'>
+                    <SelectValue placeholder='Pick a recipe' />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {recipes?.map((recipe) => (
+                    <SelectItem
+                      key={recipe.id}
+                      value={recipe.id.toString()}
+                    >
+                      {recipe.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      {recipe?.name && (
+        <>
+          <div>
+            {recipeDetails.size} {recipeDetails.unit}
+          </div>
+          <div>{recipeDetails.cals}</div>
+          <div>{recipeDetails.protein}</div>
+          <div>{recipeDetails.carbs}</div>
+          <div>{recipeDetails.fat} </div>
+        </>
+      )}
     </div>
   )
 }
@@ -112,8 +142,7 @@ const FormPlanMeal = ({
   const ctx = api.useUtils()
   const allMeals = ctx.meal.getAll.getData()
 
-  const [vege, setVege] = useState('')
-  const [isOpen, setIsOpen] = useState(false)
+  const [isVege, setIsVege] = useState(false)
 
   const calories =
     Number(form.watch(`meals.${index}.calories`)) -
@@ -124,6 +153,8 @@ const FormPlanMeal = ({
     control: form.control,
     name: `meals.${index}.recipes`,
   })
+
+
 
   if (!allMeals) return <div />
 
@@ -136,27 +167,27 @@ const FormPlanMeal = ({
         <CardTitle className='text-2xl'>Meal {index + 1}</CardTitle>
       </CardHeader>
       <CardContent className=''>
-        <FormField
-          control={form.control}
-          name={`meals.${index}.mealTitle`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Title</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder='Title'
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <div
           key={index}
-          className='grid grid-cols-5 gap-1 w-full items-center py-2'
+          className='grid grid-cols-5 gap-1 w-full py-2'
         >
-          <div className='flex flex-col gap-1'>
+          <div className='flex flex-col gap-2'>
+            <FormField
+              control={form.control}
+              name={`meals.${index}.mealTitle`}
+              render={({ field }) => (
+                <FormItem className=''>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='Title'
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name={`meals.${index}.calories`}
@@ -174,67 +205,128 @@ const FormPlanMeal = ({
                 </FormItem>
               )}
             />
-            {vege !== '' ? (
-              <div className='flex gap-4 flex-col'>
-              <FormField
-                control={form.control}
-                name={`meals.${index}.vegeCalories`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Vege Calories</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Veg Calories'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-                <div className='text-xs text-muted-foreground'>{vege}</div>
-              </div>
-            ) : null}
-          </div>
-          <div className='flex flex-col gap-8 col-span-4'>
-            {
-              recipesField.fields.map((field, index) => (
-                <Recipe
-                  recipeId={field.recipeId}
-                  calories={calories.toFixed(2)}
-                  key={index}
-                />
-              ))
-            }
-            <CirclePlus
-              size={36}
-              className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
-              onClick={() =>
-                recipesField.append({
-                  recipeId: '',
-                  note: '',
-                })
-              }
+            <FormField
+              control={form.control}
+              name={`meals.${index}.note`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Notes</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='Notes'
+                      {...field}
+                      type='text'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
+            <div className='flex gap-2 items-center'>
+              <Label>Vege</Label>
+              <Checkbox
+                checked={isVege}
+                onCheckedChange={(e) => {
+                  setIsVege(e === true)
+                  if (e === true) {
+                    form.setValue(`meals.${index}.vege`, 'Lettuce, Onion, Green Beans, Zucchini, Kale, Spinach, Broccoli, Cauliflower, Capsicum, Cucumber')
+                    form.setValue(`meals.${index}.vegeCalories`, '50')
+                    form.setValue(`meals.${index}.vegeNotes`, '2 Cups')
+                  } else {
+                    form.setValue(`meals.${index}.vegeCalories`, '')
+                    form.setValue(`meals.${index}.vege`, '')
+                    form.setValue(`meals.${index}.vegeNotes`, '')
+                  }
+                }}
+              />
+            </div>
+            {isVege && (
+              <>
+                <FormField
+                  control={form.control}
+                  name={`meals.${index}.vegeCalories`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Veg Calories</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='Veg Calories'
+                          type='number'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`meals.${index}.vege`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Veg</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder='Veg'
+                          rows={3}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`meals.${index}.vegeNotes`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Veg Notes</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='Veg Notes'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+          </div>
+          <div className='flex flex-col gap-0 col-span-4 ml-12 divide-y divide-border'>
+            <div className='grid grid-cols-9 gap-1 capitalize py-1'>
+              <div className='col-span-4 ' />
+              <div>size</div>
+              <div>cals</div>
+              <div>protein</div>
+              <div>carbs</div>
+              <div>fat</div>
+            </div>
+            {recipesField.fields.map((field, recipeIndex) => (
+              <Recipe
+                mealIndex={index}
+                recipeIndex={recipeIndex}
+                form={form}
+                calories={calories.toFixed(2)}
+                key={recipeIndex}
+              />
+            ))}
+            <div className='flex justify-center w-full pt-4'>
+              <CirclePlus
+                size={20}
+                className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
+                onClick={() =>
+                  recipesField.append({
+                    recipeId: '',
+                    note: '',
+                  })
+                }
+              />
+            </div>
           </div>
         </div>
-        <FormField
-          control={form.control}
-          name={`meals.${index}.note`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Notes</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder='Notes'
-                  {...field}
-                  type='text'
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
       </CardContent>
     </Card>
   )
