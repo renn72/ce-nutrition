@@ -268,6 +268,7 @@ CREATE TABLE `ce-nu_meal` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer,
+	`plan_id` integer,
 	`name` text,
 	`description` text,
 	`image` text,
@@ -277,6 +278,12 @@ CREATE TABLE `ce-nu_meal` (
 	`favourite_at` integer,
 	`deleted_at` integer,
 	`hidden_at` integer,
+	`vege_notes` text,
+	`vege` text,
+	`vege_calories` text,
+	`index` integer,
+	`calories` text,
+	FOREIGN KEY (`plan_id`) REFERENCES `ce-nu_plan`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`creator_id`) REFERENCES `ce-nu_user`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
@@ -470,7 +477,7 @@ CREATE TABLE `ce-nu_user-recipe` (
 	`note` text,
 	`is_log` integer,
 	`daily_log_id` integer,
-	FOREIGN KEY (`user_plan_id`) REFERENCES `ce-nu_user-plan`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`user_plan_id`) REFERENCES `ce-nu_user-plan`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`daily_meal_id`) REFERENCES `ce-nu_daily_meal`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`daily_log_id`) REFERENCES `ce-nu_daily_log`(`id`) ON UPDATE no action ON DELETE no action
 );

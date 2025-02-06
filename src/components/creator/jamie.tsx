@@ -37,7 +37,7 @@ const Jamie = () => {
       toast.success('Created')
     },
   })
-  return <div>jamie</div>
+  return <div></div>
 }
 
 export { Jamie }

@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "b4b75bc9-2b06-4c07-86f4-50b4bb9d5603",
+  "id": "697a2b49-ef12-4626-8ea3-1d3b4577cb48",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "ce-nu_grocery_store": {
@@ -1874,6 +1874,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "plan_id": {
+          "name": "plan_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "name": {
           "name": "name",
           "type": "text",
@@ -1936,10 +1943,58 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "vege_notes": {
+          "name": "vege_notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "vege": {
+          "name": "vege",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "vege_calories": {
+          "name": "vege_calories",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "index": {
+          "name": "index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "calories": {
+          "name": "calories",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},
       "foreignKeys": {
+        "ce-nu_meal_plan_id_ce-nu_plan_id_fk": {
+          "name": "ce-nu_meal_plan_id_ce-nu_plan_id_fk",
+          "tableFrom": "ce-nu_meal",
+          "tableTo": "ce-nu_plan",
+          "columnsFrom": [
+            "plan_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
         "ce-nu_meal_creator_id_ce-nu_user_id_fk": {
           "name": "ce-nu_meal_creator_id_ce-nu_user_id_fk",
           "tableFrom": "ce-nu_meal",
@@ -3308,7 +3363,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "ce-nu_user-recipe_daily_meal_id_ce-nu_daily_meal_id_fk": {

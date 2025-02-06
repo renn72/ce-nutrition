@@ -48,6 +48,7 @@ export const planToMeal = createTable('plan_to_meal', {
 export const planRelations = relations(plan, ({ one, many }) => ({
   creator: one(user, { fields: [plan.creatorId], references: [user.id] }),
   planToMeal: many(planToMeal),
+  meals: many(meal),
 }))
 
 export const planToMealRelations = relations(planToMeal, ({ one }) => ({

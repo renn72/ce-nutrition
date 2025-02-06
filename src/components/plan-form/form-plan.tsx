@@ -35,7 +35,9 @@ export const formSchema = z.object({
     z.object({
       mealTitle: z.string(),
       calories: z.string(),
-      vegeCalories: z.string(),
+      vegeCalories: z.string().optional(),
+      vegeNotes: z.string().optional(),
+      vege: z.string().optional(),
       note: z.string(),
       recipes: z.array(
         z.object({
@@ -98,6 +100,7 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
   })
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
+    console.log('data', data)
     createPlan({
       name: data.name,
       description: data.description,
@@ -109,8 +112,14 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
         mealIndex: i + 1,
         mealTitle: meal.mealTitle,
         calories: meal.calories,
-        vegeCalories: meal.vegeCalories,
+        vegeCalories: meal.vegeCalories || '',
+        vegeNotes: meal.vegeNotes || '',
+        vege: meal.vege || '',
         note: meal.note,
+        recipes: meal.recipes.map((recipe) => ({
+          recipeId: Number(recipe.recipeId),
+          note: recipe.note,
+        })),
       })),
     })
   }

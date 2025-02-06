@@ -1,4 +1,5 @@
 import { plan, planToMeal } from '@/server/db/schema/plan'
+import { meal, mealToRecipe } from '@/server/db/schema/meal'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
@@ -141,12 +142,19 @@ export const planRouter = createTRPCRouter({
         numberOfMeals: z.number(),
         meals: z.array(
           z.object({
-            mealId: z.number(),
             mealIndex: z.number(),
             mealTitle: z.string(),
             calories: z.string(),
             vegeCalories: z.string(),
+            vegeNotes: z.string(),
+            vege: z.string(),
             note: z.string(),
+            recipes: z.array(
+              z.object({
+                recipeId: z.number(),
+                note: z.string(),
+              }),
+            ),
           }),
         ),
       }),
@@ -164,17 +172,41 @@ export const planRouter = createTRPCRouter({
 
       const resId = res?.[0]?.id
       if (!resId) return res
-      const mealRes = await ctx.db
-        .insert(planToMeal)
+
+      for (const _m of meals) {
+        const { recipes, ...m } = _m
+        const mealRes = await ctx.db
+        .insert(meal)
+        .values({
+          name: m.mealTitle,
+          notes: m.note,
+          vegeNotes: m.vegeNotes,
+          vege: m.vege,
+          vegeCalories: m.vegeCalories,
+          planId: resId,
+          mealIndex: m.mealIndex,
+          calories: m.calories,
+          creatorId: userId,
+        })
+        .returning({ id: meal.id })
+
+      const mealId = mealRes?.[0]?.id || 0
+
+      const recipeRes = await ctx.db
+        .insert(mealToRecipe)
         .values(
-          meals.map((meal) => ({
-            ...meal,
-            planId: resId,
+          recipes.map((recipe, i) => ({
+            recipeId: recipe.recipeId,
+            index: i,
+            note: recipe.note,
+            mealId: mealId,
           })),
         )
-        .returning({ id: planToMeal.id })
+        .returning({ id: mealToRecipe.id })
 
-      return { res, mealRes }
+      }
+
+      return { res, }
     }),
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))

@@ -1,7 +1,7 @@
 import { relations, sql } from 'drizzle-orm'
 import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
 
-import { planToMeal } from './plan'
+import { planToMeal, plan } from './plan'
 
 import { recipe } from './recipe'
 import { user } from './user'
@@ -16,6 +16,9 @@ export const meal = createTable('meal', {
   updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
+  planId: int('plan_id').references(() => plan.id, {
+    onDelete: 'cascade',
+  }),
   name: text('name'),
   description: text('description'),
   image: text('image'),
@@ -25,6 +28,11 @@ export const meal = createTable('meal', {
   favouriteAt: int('favourite_at', { mode: 'timestamp' }),
   deletedAt: int('deleted_at', { mode: 'timestamp' }),
   hiddenAt: int('hidden_at', { mode: 'timestamp' }),
+  vegeNotes: text('vege_notes'),
+  vege: text('vege'),
+  vegeCalories: text('vege_calories'),
+  mealIndex: int('index', { mode: 'number' }),
+  calories: text('calories'),
 })
 
 export const mealToRecipe = createTable('meal_to_recipe', {
@@ -76,6 +84,10 @@ export const mealRelations = relations(meal, ({ one, many }) => ({
   mealToRecipe: many(mealToRecipe),
   mealToVegeStack: many(mealToVegeStack),
   planToMeal: many(planToMeal),
+  plan: one(plan, {
+    fields: [meal.planId],
+    references: [plan.id],
+  }),
 }))
 
 export const vegeStackRelations = relations(vegeStack, ({ one, many }) => ({
