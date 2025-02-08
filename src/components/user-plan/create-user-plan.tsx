@@ -118,27 +118,28 @@ const CreateUserPlan = () => {
     const _selectedPlan = allPlans?.find((plan) => plan.id === Number(planId))
     if (!_selectedPlan) return
     setSelectedPlan(_selectedPlan)
+    console.log('selectedPlan', _selectedPlan)
     form.reset({
       name: _selectedPlan?.name || '',
       description: _selectedPlan?.description || '',
       image: _selectedPlan?.image || '',
       notes: _selectedPlan?.notes || '',
       meals:
-        _selectedPlan?.planToMeal.map((meal, mealIndex) => ({
+        _selectedPlan?.meals?.map((meal, mealIndex) => ({
           mealId: mealIndex.toString(),
-          mealTitle: meal.mealTitle || '',
+          mealTitle: meal.name || '',
           calories: meal.calories || '',
           targetCalories:
             (Number(meal.calories) + Number(meal.vegeCalories)).toString() ||
             '',
           targetProtein: '40',
           vegeCalories: meal.vegeCalories || '',
-          vege: meal.meal?.mealToVegeStack[0]?.vegeStack?.veges || '',
-          vegeNotes: meal.meal?.mealToVegeStack[0]?.vegeStack?.notes || '',
+          vege: meal.vege || '',
+          vegeNotes: meal.vegeNotes || '',
           protein: '40',
-          note: meal.note || '',
+          note: '',
           recipes:
-            meal?.meal?.mealToRecipe.map((recipe, recipeIndex) => ({
+            meal?.mealToRecipe.map((recipe, recipeIndex) => ({
               recipeId: recipeIndex.toString(),
               name: recipe.recipe?.name || '',
               note: recipe.note || '',

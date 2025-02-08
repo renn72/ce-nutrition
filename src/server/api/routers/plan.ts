@@ -1,5 +1,5 @@
-import { plan, planToMeal } from '@/server/db/schema/plan'
 import { meal, mealToRecipe } from '@/server/db/schema/meal'
+import { plan, planToMeal } from '@/server/db/schema/plan'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
@@ -15,29 +15,25 @@ export const planRouter = createTRPCRouter({
     const res = await ctx.db.query.plan.findMany({
       orderBy: [desc(plan.createdAt)],
       with: {
-        planToMeal: {
+        meals: {
           with: {
-            meal: {
+            mealToRecipe: {
               with: {
-                mealToRecipe: {
+                recipe: {
                   with: {
-                    recipe: {
+                    recipeToIngredient: {
                       with: {
-                        recipeToIngredient: {
-                          with: {
-                            ingredient: true,
-                            alternateIngredient: true,
-                          },
-                        },
+                        ingredient: true,
+                        alternateIngredient: true,
                       },
                     },
                   },
                 },
-                mealToVegeStack: {
-                  with: {
-                    vegeStack: true,
-                  },
-                },
+              },
+            },
+            mealToVegeStack: {
+              with: {
+                vegeStack: true,
               },
             },
           },
@@ -50,24 +46,20 @@ export const planRouter = createTRPCRouter({
     const res = await ctx.db.query.plan.findFirst({
       where: (plan, { eq }) => eq(plan.id, input),
       with: {
-        planToMeal: {
+        meals: {
           with: {
-            meal: {
+            mealToRecipe: {
               with: {
-                mealToRecipe: {
+                recipe: {
                   with: {
-                    recipe: {
+                    recipeToIngredient: {
                       with: {
-                        recipeToIngredient: {
+                        alternateIngredient: true,
+                        ingredient: {
                           with: {
-                            alternateIngredient: true,
-                            ingredient: {
+                            ingredientToGroceryStore: {
                               with: {
-                                ingredientToGroceryStore: {
-                                  with: {
-                                    groceryStore: true,
-                                  },
-                                },
+                                groceryStore: true,
                               },
                             },
                           },
@@ -76,11 +68,11 @@ export const planRouter = createTRPCRouter({
                     },
                   },
                 },
-                mealToVegeStack: {
-                  with: {
-                    vegeStack: true,
-                  },
-                },
+              },
+            },
+            mealToVegeStack: {
+              with: {
+                vegeStack: true,
               },
             },
           },
@@ -176,37 +168,36 @@ export const planRouter = createTRPCRouter({
       for (const _m of meals) {
         const { recipes, ...m } = _m
         const mealRes = await ctx.db
-        .insert(meal)
-        .values({
-          name: m.mealTitle,
-          notes: m.note,
-          vegeNotes: m.vegeNotes,
-          vege: m.vege,
-          vegeCalories: m.vegeCalories,
-          planId: resId,
-          mealIndex: m.mealIndex,
-          calories: m.calories,
-          creatorId: userId,
-        })
-        .returning({ id: meal.id })
+          .insert(meal)
+          .values({
+            name: m.mealTitle,
+            notes: m.note,
+            vegeNotes: m.vegeNotes,
+            vege: m.vege,
+            vegeCalories: m.vegeCalories,
+            planId: resId,
+            mealIndex: m.mealIndex,
+            calories: m.calories,
+            creatorId: userId,
+          })
+          .returning({ id: meal.id })
 
-      const mealId = mealRes?.[0]?.id || 0
+        const mealId = mealRes?.[0]?.id || 0
 
-      const recipeRes = await ctx.db
-        .insert(mealToRecipe)
-        .values(
-          recipes.map((recipe, i) => ({
-            recipeId: recipe.recipeId,
-            index: i,
-            note: recipe.note,
-            mealId: mealId,
-          })),
-        )
-        .returning({ id: mealToRecipe.id })
-
+        const recipeRes = await ctx.db
+          .insert(mealToRecipe)
+          .values(
+            recipes.map((recipe, i) => ({
+              recipeId: recipe.recipeId,
+              index: i,
+              note: recipe.note,
+              mealId: mealId,
+            })),
+          )
+          .returning({ id: mealToRecipe.id })
       }
 
-      return { res, }
+      return { res }
     }),
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))

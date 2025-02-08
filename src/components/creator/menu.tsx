@@ -275,7 +275,7 @@ export const CreatorMenu = () => {
       image: '',
       notes: 'Test',
       recipeCategory: 'lunch',
-      calories: 443.7,
+      calories: 441.1,
       ingredients: [
         {
           ingredientId:
@@ -303,7 +303,7 @@ export const CreatorMenu = () => {
       image: '',
       notes: 'Test',
       recipeCategory: 'lunch',
-      calories: 426.1,
+      calories: 419.1,
       ingredients: [
         {
           ingredientId:
@@ -340,7 +340,7 @@ export const CreatorMenu = () => {
       image: '',
       notes: 'Test',
       recipeCategory: 'dinner',
-      calories: 546.5,
+      calories: 538.5,
       ingredients: [
         {
           ingredientId:

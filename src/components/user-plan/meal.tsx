@@ -47,9 +47,7 @@ const Meal = ({
     name: 'meals',
   })
   const field = mealsField.fields[index]
-  const [calories, setCalories] = useState(
-    plan?.planToMeal[index]?.calories || '',
-  )
+  const [calories, setCalories] = useState(plan?.meals[index]?.calories || '')
   const formCals = form.watch(`meals.${index}.calories`)
   const formProtien = form.watch(`meals.${index}.protein`)
   const formVege = form.watch(`meals.${index}.vege`)
@@ -60,7 +58,7 @@ const Meal = ({
     form.resetField(`meals.${index}`)
   }
   const balanceCals = () => {
-    const meal = plan?.planToMeal[index]?.meal
+    const meal = plan?.meals[index]
     if (!meal) return
 
     for (const [recipeIndex, recipe] of meal.mealToRecipe.entries()) {
@@ -85,7 +83,7 @@ const Meal = ({
     }
   }
   const balanceCalsProtien = () => {
-    const meal = plan?.planToMeal[index]?.meal
+    const meal = plan?.meals[index]
     if (!meal) return
     if (Number(formProtien) == 0) return
 
@@ -295,15 +293,32 @@ const Meal = ({
         </div>
         <div className='flex gap-4 items-center w-full tracking-tighter'>
           <div className='flex gap-2 flex-col items-center'>
-          <Label>Veg</Label>
-          <Checkbox
-            checked={isVege}
-            onCheckedChange={(e) => {
-              setIsVege(e === true)
-            }}
-          />
+            <Label>Veg</Label>
+            <Checkbox
+              checked={isVege}
+              onCheckedChange={(e) => {
+                setIsVege(e === true)
+                if (e === true) {
+                  form.setValue(
+                    `meals.${index}.vege`,
+                    'Lettuce, Onion, Green Beans, Zucchini, Kale, Spinach, Broccoli, Cauliflower, Capsicum, Cucumber',
+                  )
+                  form.setValue(`meals.${index}.vegeCalories`, '50')
+                  form.setValue(`meals.${index}.vegeNotes`, '2 Cups')
+                } else {
+                  form.setValue(`meals.${index}.vegeCalories`, '')
+                  form.setValue(`meals.${index}.vege`, '')
+                  form.setValue(`meals.${index}.vegeNotes`, '')
+                }
+              }}
+            />
           </div>
-          <div className={cn('flex gap-2 items-center w-full', !isVege && 'hidden')}>
+          <div
+            className={cn(
+              'flex gap-2 items-center w-full',
+              !isVege && 'hidden',
+            )}
+          >
             <FormField
               control={form.control}
               name={`meals.${index}.vege`}

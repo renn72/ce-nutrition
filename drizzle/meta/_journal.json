@@ -8,6 +8,13 @@
       "when": 1738827808308,
       "tag": "0000_graceful_black_widow",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1738885292064,
+      "tag": "0001_sleepy_omega_sentinel",
+      "breakpoints": true
     }
   ]
 }

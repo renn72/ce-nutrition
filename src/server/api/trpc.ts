@@ -148,7 +148,7 @@ export const rootProtectedProcedure = t.procedure
     const user = await ctx.db.query.user.findFirst({
       where: (user, { eq }) => eq(user.id, sessionUser.id),
     })
-  console.log('user', user)
+    console.log('user in protected', user)
     if (!user?.isRoot) {
       throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You are not poo' })
     }

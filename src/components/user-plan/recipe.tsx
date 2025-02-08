@@ -59,7 +59,7 @@ const Ingredient = ({
 
   if (!plan) return null
   const ingredient =
-    plan.planToMeal[mealIndex]?.meal?.mealToRecipe[recipeIndex]?.recipe
+    plan.meals[mealIndex]?.mealToRecipe[recipeIndex]?.recipe
       ?.recipeToIngredient[ingredientIndex]
   if (!ingredient) return null
 
@@ -163,7 +163,7 @@ const Recipe = ({
   if (!plan) return null
 
   const recipe =
-    plan.planToMeal[mealIndex]?.meal?.mealToRecipe[recipeIndex]?.recipe
+    plan.meals[mealIndex]?.mealToRecipe[recipeIndex]?.recipe
   if (!recipe) return null
   const [ingredientsSize, setIngredientsSize] = useState<number[]>(() =>
     recipe?.recipeToIngredient.map((ingredient) =>
