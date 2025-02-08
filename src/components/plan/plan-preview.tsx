@@ -34,14 +34,14 @@ const PlanPreview = ({ plan }: { plan: GetPlanById }) => {
             <div>{plan.planCategory}</div>
           </div>
           <div className='flex flex-col gap-2'>
-            {plan.planToMeal.map((meal) => (
+            {plan.meals.map((meal) => (
               <div
                 key={meal.id}
                 className='flex gap-2 flex-col'
               >
-                <div>{meal.mealTitle}</div>
+                <div>{meal.name}</div>
                 <div>
-                  {meal.meal?.mealToRecipe.map((recipe) => (
+                  {meal.mealToRecipe.map((recipe) => (
                     <div
                       key={recipe.id}
                     >{recipe.recipe?.name}</div>
