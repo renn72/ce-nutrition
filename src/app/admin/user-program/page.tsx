@@ -31,6 +31,12 @@ const UserInfo = ({ userId }: { userId: string }) => {
       ctx.invalidate()
     },
   })
+  const { mutate: finishPlan } = api.userPlan.finishPlan.useMutation({
+    onSuccess: () => {
+      toast.success('Deleted')
+      ctx.invalidate()
+    },
+  })
   const { data: currentUser } = api.user.get.useQuery(userId)
   const plans = currentUser?.userPlans.filter((plan) => plan.isActive)
 
@@ -51,10 +57,10 @@ const UserInfo = ({ userId }: { userId: string }) => {
                 variant='destructive'
                 size='sm'
                 onClick={() => {
-                  deletePlan(plan.id)
+                  finishPlan(plan.id)
                 }}
               >
-                Delete Plan
+                Finish Plan
               </Button>
             </div>
             <div>current program: {plan.name}</div>

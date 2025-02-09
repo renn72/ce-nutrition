@@ -17,6 +17,17 @@ export const userPlanRouter = createTRPCRouter({
       const res = await ctx.db.delete(userPlan).where(eq(userPlan.id, input))
       return res
     }),
+  finishPlan: protectedProcedure
+    .input(z.number())
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.db
+        .update(userPlan)
+        .set({
+          isActive: false,
+        })
+        .where(eq(userPlan.id, input))
+      return res
+    }),
   getMeal: protectedProcedure
     .input(z.number())
     .query(async ({ input, ctx }) => {
