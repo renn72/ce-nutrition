@@ -69,10 +69,10 @@ const data = {
           title: 'Plans',
           url: '/admin/plan',
         },
-        {
-          title: 'Meals',
-          url: '/admin/meal',
-        },
+        // {
+        //   title: 'Meals',
+        //   url: '/admin/meal',
+        // },
         {
           title: 'Recipes',
           url: '/admin/recipe',
