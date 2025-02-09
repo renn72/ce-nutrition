@@ -73,7 +73,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='w-[210px] truncate font-medium'>
+          <span className='w-[260px] truncate font-medium'>
             {row.getValue('name')}
           </span>
         </div>
