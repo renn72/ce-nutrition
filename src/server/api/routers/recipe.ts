@@ -104,6 +104,47 @@ export const recipeRouter = createTRPCRouter({
         .returning({ id: recipeToIngredient.id })
       return { res, ingredientsRes }
     }),
+  duplicate: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const userId = ctx.session.user.id
+      const recipeRes = await ctx.db.query.recipe.findFirst({
+        where: eq(recipe.id, input.id),
+        with: {
+          recipeToIngredient: {
+          },
+        },
+      })
+      if (!recipeRes) return
+      const { recipeToIngredient :ingredients, id, createdAt, updatedAt, ...data } = recipeRes
+      const res = await ctx.db
+        .insert(recipe)
+        .values({
+          ...data,
+          name: data.name + '-copy',
+          creatorId: userId,
+        })
+        .returning({ id: recipe.id })
+
+      const resId = res?.[0]?.id
+      if (!resId) return res
+
+      const ingredientsRes = await ctx.db
+        .insert(recipeToIngredient)
+        .values(
+          ingredients.map((ingredient) => ({
+            index: ingredient.index,
+            ingredientId: ingredient.ingredientId,
+            alternateId: ingredient.alternateId,
+            serveSize: ingredient.serveSize,
+            serveUnit: ingredient.serveUnit,
+            note: ingredient.note,
+            recipeId: resId,
+          })),
+        )
+        .returning({ id: recipeToIngredient.id })
+      return { res, ingredientsRes }
+    }),
   create: protectedProcedure
     .input(
       z.object({
@@ -121,7 +162,6 @@ export const recipeRouter = createTRPCRouter({
             serveSize: z.string(),
             serveUnit: z.string(),
             index: z.number(),
-            isAlternate: z.boolean().optional(),
           }),
         ),
       }),
@@ -146,7 +186,6 @@ export const recipeRouter = createTRPCRouter({
           ingredients.map((ingredient) => ({
             index: ingredient.index,
             ingredientId: ingredient.ingredientId,
-            isAlternate: ingredient.isAlternate,
             alternateId: ingredient.alternateId === '' ? null : Number(ingredient.alternateId),
             serveSize: ingredient.serveSize,
             serveUnit: ingredient.serveUnit,

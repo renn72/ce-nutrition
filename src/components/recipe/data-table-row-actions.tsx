@@ -34,6 +34,12 @@ export function DataTableRowActions<TData>({
       toast.success('Deleted successfully')
     },
   })
+  const { mutate: duplicateRecipe } = api.recipe.duplicate.useMutation({
+    onSuccess: () => {
+      ctx.recipe.invalidate()
+      toast.success('Duplicated successfully')
+    },
+  })
   const data = row.original as GetRecipeById
   return (
     <DropdownMenu>
@@ -56,6 +62,13 @@ export function DataTableRowActions<TData>({
           }
         >
           Edit
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={() =>
+            duplicateRecipe({ id: row.getValue('id') })
+          }
+        >
+          Duplicate
         </DropdownMenuItem>
         <DropdownMenuItem
           onSelect={() => deleteRecipe({ id: row.getValue('id') })}
