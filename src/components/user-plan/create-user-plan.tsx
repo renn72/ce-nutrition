@@ -132,11 +132,11 @@ const CreateUserPlan = () => {
           targetCalories:
             (Number(meal.calories) + Number(meal.vegeCalories)).toString() ||
             '',
-          targetProtein: '40',
+          targetProtein: '',
           vegeCalories: meal.vegeCalories || '',
           vege: meal.vege || '',
           vegeNotes: meal.vegeNotes || '',
-          protein: '40',
+          protein: '',
           note: '',
           recipes:
             meal?.mealToRecipe.map((recipe, recipeIndex) => ({
