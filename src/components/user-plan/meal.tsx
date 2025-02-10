@@ -223,8 +223,8 @@ const Meal = ({
           Reset
         </Button>
       </CardHeader>
-      <CardContent className='flex flex-col gap-2 w-full py-4'>
-        <div className='flex gap-2 items-center'>
+      <CardContent className='flex flex-col gap-2 w-full lg:py-4 px-1 lg:px-4'>
+        <div className='flex lg:gap-2 lg:items-center flex-col lg:flex-row'>
           <FormField
             control={form.control}
             name={`meals.${index}.mealTitle`}
@@ -369,9 +369,9 @@ const Meal = ({
             />
           </div>
         </div>
-        <div className='grid grid-cols-5 gap-2 w-full items-center '>
-          <div className='flex flex-col gap-2'>
-            <div className='flex flex-col gap-2 px-2 py-4 rounded-md border border-border'>
+        <div className='grid md:grid-cols-5 grid-cols-2 gap-2 w-full items-center '>
+          <div className='flex flex-col gap-2 w-full col-span-2 md:col-span-1'>
+            <div className='flex flex-col gap-2 px-2 py-4 rounded-md border border-border w-full'>
               <div className='flex gap-1 flex-col items-center'>
                 <Label>Calories</Label>
                 <div className='w-full flex justify-between items-center gap-4'>
@@ -462,7 +462,7 @@ const Meal = ({
             </div>
           </div>
 
-          <div className='flex flex-col gap-8 col-span-4 select-none'>
+          <div className='flex flex-col gap-8 col-span-4 select-none text-sm md:text-base tracking-tighter md:tracking-tight'>
             {field.recipes.map((_recipe, recipeIndex) => (
               <Recipe
                 key={recipeIndex}

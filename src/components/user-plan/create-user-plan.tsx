@@ -224,8 +224,8 @@ const CreateUserPlan = () => {
       {selectedPlanId === '' ? null : (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className='flex flex-col gap-2 '>
-              <div className='flex justify-between gap-8'>
+            <div className='flex flex-col lg:gap-2 '>
+              <div className='flex flex-col lg:flex-row justify-between lg:gap-8'>
                 <FormField
                   control={form.control}
                   name='name'

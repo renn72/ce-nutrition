@@ -67,8 +67,8 @@ const Ingredient = ({
 
   return (
     <div className='flex flex-col gap-1'>
-      <div className='grid grid-cols-10 gap-1 text-muted-foreground items-center'>
-        <div className='col-span-4 ml-2'>{ingredient.ingredient.name}</div>
+      <div className='grid md:grid-cols-10 grid-cols-8 md:gap-1 text-muted-foreground items-center'>
+        <div className='md:col-span-4 col-span-2 md:ml-2'>{ingredient.ingredient.name}</div>
         <FormField
           control={form.control}
           name={`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.serveSize`}
@@ -78,7 +78,7 @@ const Ingredient = ({
                 <div className='w-full flex justify-between items-center gap-2 px-2'>
                   <CircleMinus
                     size={20}
-                    className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0'
+                    className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0 hidden md:block'
                     onClick={() => {
                       field.onChange(
                         (Math.ceil(Number(field.value)) - 1).toString(),
@@ -95,7 +95,7 @@ const Ingredient = ({
                   />
                   <CirclePlus
                     size={20}
-                    className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0'
+                    className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0 hidden md:block'
                     onClick={() => {
                       field.onChange(
                         (Math.floor(Number(field.value)) + 1).toString(),
@@ -174,18 +174,18 @@ const Recipe = ({
 
   return (
     <div className='flex flex-col gap-1'>
-      <div className='grid grid-cols-10 gap-1 capitalize'>
-        <div className='col-span-4 ' />
+      <div className='grid md:grid-cols-10 grid-cols-8 md:gap-1 capitalize'>
+        <div className='md:col-span-4 col-span-2 ' />
         <div className='col-span-2 place-self-center'>size</div>
         <div>cals</div>
-        <div>protein</div>
+        <div>pro.</div>
         <div>carbs</div>
         <div>fat</div>
       </div>
-      <div className='grid grid-cols-10 gap-1 font-bold'>
-        <div className='col-span-4'>{recipe.name}</div>
+      <div className='grid md:grid-cols-10 grid-cols-8 md:gap-1 font-bold'>
+        <div className='md:col-span-4 col-span-2'>{recipe.name}</div>
         <div className='col-span-2 place-self-center'>
-          {recipeDetails.size} {recipeDetails.unit}
+          {recipeDetails.size} {recipeDetails.unit?.slice(0, 1)}
         </div>
         <div>{recipeDetails.cals}</div>
         <div>{recipeDetails.protein}</div>
