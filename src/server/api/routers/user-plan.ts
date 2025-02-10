@@ -24,6 +24,7 @@ export const userPlanRouter = createTRPCRouter({
         .update(userPlan)
         .set({
           isActive: false,
+          finishedAt: new Date(),
         })
         .where(eq(userPlan.id, input))
       return res
