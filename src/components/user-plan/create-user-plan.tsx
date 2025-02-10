@@ -79,7 +79,6 @@ const CreateUserPlan = () => {
 
   const [selectedPlanId, setSelectedPlanId] = useState('')
   const [selectedPlan, setSelectedPlan] = useState<GetPlanById | null>(null)
-  const [isMultiPlan, setIsMultiPlan] = useState(false)
 
   const [userId] = useAtom(userAtom)
 
@@ -173,7 +172,6 @@ const CreateUserPlan = () => {
       description: data.description,
       image: '',
       notes: data.notes,
-      isMultiPlan: isMultiPlan,
       meals: data.meals.map((meal, mealIndex) => ({
         mealIndex: mealIndex,
         mealTitle: meal.mealTitle,
@@ -222,15 +220,6 @@ const CreateUserPlan = () => {
           selectedPlan={selectedPlanId}
           onSetPlan={onSetPlan}
         />
-        <div className='flex flex-col gap-2'>
-          <Label>Multi Plan</Label>
-          <Switch
-            checked={isMultiPlan}
-            onCheckedChange={(e) => {
-              setIsMultiPlan(e === true)
-            }}
-          />
-        </div>
       </div>
       {selectedPlanId === '' ? null : (
         <Form {...form}>

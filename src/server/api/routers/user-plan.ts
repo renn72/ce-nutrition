@@ -80,7 +80,6 @@ export const userPlanRouter = createTRPCRouter({
         image: z.string(),
         notes: z.string(),
         userId: z.string(),
-        isMultiPlan: z.boolean(),
         meals: z.array(
           z.object({
             mealIndex: z.number(),
@@ -125,15 +124,6 @@ export const userPlanRouter = createTRPCRouter({
       const { meals, ...data } = input
       const recipes = meals.map((meal) => meal.recipes).flat()
       const ingredients = recipes.map((recipe) => recipe.ingredients).flat()
-
-      if (data.isMultiPlan === false) {
-        await ctx.db
-          .update(userPlan)
-          .set({
-            isActive: false,
-          })
-          .where(eq(userPlan.userId, input.userId))
-      }
 
       const res = await ctx.db
         .insert(userPlan)
