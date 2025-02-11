@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 import { cn } from '@/lib/utils'
 import { MoonIcon, SunIcon } from '@radix-ui/react-icons'
-import { Database, House, LogOutIcon, RefreshCcw, Settings, UserRoundCog, VenetianMask } from 'lucide-react'
+import { Database, GlassWater, House, LogOutIcon, RefreshCcw, Settings, UserRoundCog, VenetianMask } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import { toast } from 'sonner'
@@ -95,6 +95,14 @@ const User = () => {
         <DropdownMenuItem className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
           <House size={20} />
           <Link href='/'>Home</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
+          <Link href='/user/water'>
+            <span className='flex gap-6 items-center'>
+              <GlassWater size={20} />
+              <span>Water</span>
+            </span>
+          </Link>
         </DropdownMenuItem>
         {isTrainer && (
           <>
