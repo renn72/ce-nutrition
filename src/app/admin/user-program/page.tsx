@@ -18,6 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 
 const UserInfo = ({ userId }: { userId: string }) => {
   const searchParams = useSearchParams()
@@ -38,20 +39,24 @@ const UserInfo = ({ userId }: { userId: string }) => {
     },
   })
   const { data: currentUser } = api.user.get.useQuery(userId)
-  const plans = currentUser?.userPlans.filter((plan) => plan.isActive)
+  const plans = currentUser?.userPlans.filter((plan) => true)
 
   if (!plans) return null
 
   return (
-    <div className='flex flex-col gap-4 items-center mt-10 capitalize'>
+    <div className='flex flex-col gap-4 items-center mt-10 capitalize px-2'>
       {plans.map((plan) => (
         <Card
           key={plan.id}
-          className='w-full max-w-screen-xl'
+          className={cn('w-full max-w-screen-xl', plan.isActive ? ' border-green-500/90': '')}
         >
           <CardHeader className='pb-0 flex justify-between'>
-            <div className='flex gap-2 items-center w-full justify-between'>
-              <CardTitle className='text-xl font-medium'>Program</CardTitle>
+            <div className={cn('flex gap-2 items-center w-full justify-between', plan.isActive ? '': 'hidden')}>
+              <CardTitle className={cn('text-xl font-medium',)}>
+                <Badge
+                  className='bg-green-600 mb-2'
+                >Active</Badge>
+              </CardTitle>
 
               <Button
                 variant='destructive'
@@ -63,7 +68,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
                 Finish Plan
               </Button>
             </div>
-            <div>current program: {plan.name}</div>
+            <div>program: {plan.name}</div>
             <div>
               daily calories:{' '}
               {plan.userMeals.reduce(
@@ -71,20 +76,13 @@ const UserInfo = ({ userId }: { userId: string }) => {
                 0,
               )}
             </div>
-            <div>
-              daily protein:{' '}
-              {plan.userMeals.reduce(
-                (acc, meal) => acc + Number(meal.protein),
-                0,
-              )}
-            </div>
           </CardHeader>
           <CardContent className='flex flex-col gap-2 w-full py-4'>
             <Card>
-              <CardHeader className=''>
+              <CardHeader className='pb-0'>
                 <CardTitle className='text-xl font-medium'>Meals</CardTitle>
               </CardHeader>
-              <CardContent className='flex flex-col gap-2 w-full py-4'>
+              <CardContent className='flex flex-col gap-2 w-full pt-1 pb-4'>
                 {plan.userMeals.map((meal, mealIndex) => {
                   const recipes = plan.userRecipes.filter(
                     (recipe) => recipe.mealIndex == mealIndex,
@@ -103,12 +101,18 @@ const UserInfo = ({ userId }: { userId: string }) => {
                           <div className='text-sm text-muted-foreground'>
                             {meal.targetCalories}
                           </div>
-                          <div className='text-sm text-muted-foreground'>
-                            Protein
-                          </div>
+                          {
+                            meal.targetProtein !== '' ?(
+                              <>
+                              <div className='text-sm text-muted-foreground'>
+                                Protein
+                              </div>
                           <div className='text-sm text-muted-foreground'>
                             {meal.targetProtein}
                           </div>
+                              </>)
+                              : null
+                          }
                         </div>
                       </div>
                       <div className='flex flex-col gap-1 w-full ml-4'>
