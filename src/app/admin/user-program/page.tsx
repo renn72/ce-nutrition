@@ -2,8 +2,6 @@
 
 import { api } from '@/trpc/react'
 
-import { useState } from 'react'
-
 import { useSearchParams } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
@@ -13,25 +11,15 @@ import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
 const UserInfo = ({ userId }: { userId: string }) => {
-  const searchParams = useSearchParams()
 
-  const [selectedPlan, setSelectedPlan] = useState('')
   const ctx = api.useUtils()
 
-  const { mutate: deletePlan } = api.userPlan.delete.useMutation({
-    onSuccess: () => {
-      toast.success('Deleted')
-      ctx.invalidate()
-    },
-  })
   const { mutate: finishPlan } = api.userPlan.finishPlan.useMutation({
     onSuccess: () => {
       toast.success('Deleted')
@@ -39,7 +27,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
     },
   })
   const { data: currentUser } = api.user.get.useQuery(userId)
-  const plans = currentUser?.userPlans.filter((plan) => true)
+  const plans = currentUser?.userPlans.filter((_plan) => true).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 
   if (!plans) return null
 
@@ -67,6 +55,25 @@ const UserInfo = ({ userId }: { userId: string }) => {
               >
                 Finish Plan
               </Button>
+            </div>
+            <div className='text-[0.7rem] font-light text-muted-foreground flex gap-2 items-center'>
+            <div>
+              {plan.createdAt.toLocaleDateString('en-AU', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+              })}
+            </div>
+              {
+                plan.finishedAt ? <div>
+                  - {plan.finishedAt.toLocaleDateString('en-AU', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                  })}
+                </div>
+                : null
+              }
             </div>
             <div>program: {plan.name}</div>
             <div>
@@ -116,7 +123,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
                         </div>
                       </div>
                       <div className='flex flex-col gap-1 w-full ml-4'>
-                        {recipes.map((recipe, recipeIndex) => {
+                        {recipes.map((recipe, ) => {
                           return (
                             <div
                               className='flex flex-col gap-1 w-full'
