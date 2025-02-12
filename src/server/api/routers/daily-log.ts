@@ -68,16 +68,16 @@ export const dailyLogRouter = createTRPCRouter({
     .input(
       z.object({
         date: z.string(),
-        morningWeight: z.string(),
-        notes: z.string(),
-        sleep: z.string(),
+        morningWeight: z.string().optional(),
+        fastedBloodGlucose: z.string().optional(),
+        notes: z.string().optional(),
+        sleep: z.string().optional(),
         sleepQuality: z.string().optional(),
         nap: z.string().optional(),
         isHiit: z.boolean().optional(),
         isCardio: z.boolean().optional(),
         isLift: z.boolean().optional(),
         isLiss: z.boolean().optional(),
-        bowelMovements: z.string(),
         image: z.string().optional(),
         userId: z.string(),
       }),
@@ -260,9 +260,7 @@ export const dailyLogRouter = createTRPCRouter({
   deleteWaterLog: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      const res = await ctx.db
-        .delete(waterLog)
-        .where(eq(waterLog.id, input.id))
+      const res = await ctx.db.delete(waterLog).where(eq(waterLog.id, input.id))
       return res
     }),
   addPoopLog: protectedProcedure
@@ -308,9 +306,7 @@ export const dailyLogRouter = createTRPCRouter({
   deletePoopLog: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      const res = await ctx.db
-        .delete(poopLog)
-        .where(eq(poopLog.id, input.id))
+      const res = await ctx.db.delete(poopLog).where(eq(poopLog.id, input.id))
       return res
     }),
   addMeal: protectedProcedure
@@ -510,16 +506,16 @@ export const dailyLogRouter = createTRPCRouter({
       z.object({
         id: z.number(),
         date: z.string(),
-        morningWeight: z.string(),
-        notes: z.string(),
-        sleep: z.string(),
+        morningWeight: z.string().optional(),
+        notes: z.string().optional(),
+        sleep: z.string().optional(),
         sleepQuality: z.string().optional(),
+        fastedBloodGlucose: z.string().optional(),
         nap: z.string().optional(),
         isHiit: z.boolean().optional(),
         isCardio: z.boolean().optional(),
         isLift: z.boolean().optional(),
         isLiss: z.boolean().optional(),
-        bowelMovements: z.string(),
         image: z.string().optional(),
         userId: z.string(),
       }),
@@ -532,6 +528,7 @@ export const dailyLogRouter = createTRPCRouter({
         notes,
         sleep,
         sleepQuality,
+        fastedBloodGlucose,
         isHiit,
         isCardio,
         isLift,
@@ -548,6 +545,7 @@ export const dailyLogRouter = createTRPCRouter({
           notes,
           sleep,
           sleepQuality,
+          fastedBloodGlucose,
           nap,
           isHiit,
           isCardio,

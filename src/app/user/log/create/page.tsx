@@ -12,7 +12,7 @@ const Log = ({ id, date }: { id: number; date: string }) => {
   return (
     <DailyLogForm
       todaysLog={log}
-      date={new Date(date)}
+      date={new Date(date).toDateString()}
     />
   )
 }
@@ -24,7 +24,7 @@ export default function Home() {
 
   if (!date) return null
 
-  if (!id) return <DailyLogForm todaysLog={null} date={new Date(date)} />
+  if (!id) return <DailyLogForm todaysLog={null} date={new Date(date).toDateString()} />
 
   return (
     <Log

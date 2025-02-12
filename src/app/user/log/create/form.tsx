@@ -30,16 +30,16 @@ export const dynamic = 'force-dynamic'
 
 export const formSchema = z.object({
   date: z.string(),
-  morningWeight: z.string(),
-  notes: z.string(),
-  sleep: z.string(),
+  morningWeight: z.string().optional(),
+  notes: z.string().optional(),
+  sleep: z.string().optional(),
   sleepQuality: z.string().optional(),
+  fastedBloodGlucose: z.string().optional(),
   nap: z.string().optional(),
   isHiit: z.boolean().optional(),
   isCardio: z.boolean().optional(),
   isLift: z.boolean().optional(),
   isLiss: z.boolean().optional(),
-  bowelMovements: z.string(),
   image: z.string().optional(),
 })
 
@@ -80,6 +80,7 @@ const DailyLogForm = ({
       nap: todaysLog?.nap || '',
       sleep: todaysLog?.sleep || '',
       sleepQuality: todaysLog?.sleepQuality || '',
+      fastedBloodGlucose: todaysLog?.fastedBloodGlucose || '',
       isHiit: todaysLog?.isHiit || false,
       isCardio: todaysLog?.isCardio || false,
       isLift: todaysLog?.isLift || false,
@@ -89,9 +90,11 @@ const DailyLogForm = ({
   })
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     console.log('input', data)
+    console.log('todaysLog', todaysLog)
     const today = new Date()
     if (!currentUser) return
     if (todaysLog) {
+      console.log('update')
       updateDailyLog({
         id: todaysLog.id,
         date: data.date,
@@ -100,27 +103,28 @@ const DailyLogForm = ({
         nap: data.nap,
         sleep: data.sleep,
         sleepQuality: data.sleepQuality,
+        fastedBloodGlucose: data.fastedBloodGlucose,
         isHiit: data.isHiit,
         isCardio: data.isCardio,
         isLift: data.isLift,
         isLiss: data.isLiss,
-        bowelMovements: data.bowelMovements,
         image: data.image,
         userId: currentUser.id,
       })
     } else {
+      console.log('create')
       createDailyLog({
-        date: date || today.toDateString(),
+        date: data.date,
         morningWeight: data.morningWeight,
         notes: data.notes,
         sleep: data.sleep,
         sleepQuality: data.sleepQuality,
+        fastedBloodGlucose: data.fastedBloodGlucose,
         nap: data.nap,
         isHiit: data.isHiit,
         isCardio: data.isCardio,
         isLift: data.isLift,
         isLiss: data.isLiss,
-        bowelMovements: data.bowelMovements,
         image: data.image,
         userId: currentUser.id,
       })
@@ -148,6 +152,7 @@ const DailyLogForm = ({
                 weekday: 'long',
               })}
             </h2>
+            <div className='flex items-center gap-4'>
             <FormField
               control={form.control}
               name='morningWeight'
@@ -165,6 +170,25 @@ const DailyLogForm = ({
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name='fastedBloodGlucose'
+              render={({ field }) => (
+                <FormItem className='flex flex-col'>
+                  <FormLabel>Blood Glucose</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='Blood Glucose'
+                      {...field}
+                      type='number'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            </div>
+            <div className='flex items-center gap-4'>
             <FormField
               control={form.control}
               name='sleep'
@@ -216,23 +240,7 @@ const DailyLogForm = ({
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name='bowelMovements'
-              render={({ field }) => (
-                <FormItem className='flex flex-col'>
-                  <FormLabel>Bowel Movements</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="poop's"
-                      {...field}
-                      type='number'
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            </div>
             <div className='flex gap-4 justify-between px-4'>
               <FormField
                 control={form.control}
@@ -317,6 +325,7 @@ const DailyLogForm = ({
                     <Textarea
                       placeholder='Notes'
                       {...field}
+                      rows={1}
                     />
                   </FormControl>
                   <FormMessage />

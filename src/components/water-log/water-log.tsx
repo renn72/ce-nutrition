@@ -13,7 +13,7 @@ import { toast } from 'sonner'
 
 const WaterLog = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs | null | undefined }) => {
   const ctx = api.useUtils()
-  const [ size, setSize ] = useState(600)
+  const [ size, setSize ] = useState(1500)
 
   const { mutate: addWaterLog } = api.dailyLog.addWaterLog.useMutation({
     onSuccess: () => {

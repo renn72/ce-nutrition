@@ -72,6 +72,11 @@ const DailyLog = ({
               suffix='kg'
             />
             <Text
+              title='Blood Glucose'
+              text={todaysDailyLog?.fastedBloodGlucose}
+              suffix=''
+            />
+            <Text
               title='Sleep'
               text={todaysDailyLog?.sleep}
             />
@@ -124,19 +129,17 @@ const DailyLog = ({
   return (
     <Link href={`/user/log/create?id=${id}&date=${date.getTime()}`}>
       <div className='flex flex-col gap-2 w-full px-2 py-4 bg-secondary text-sm'>
-        <div className='grid grid-cols-2 grow'>
+        <div className='grid grid-cols-2 w-full '>
           <Text
             title='Weight'
             text={todaysDailyLog?.morningWeight}
             suffix='kg'
           />
-          <Text
-            title='Bowel Movements'
-                text={todaysDailyLog?.poopLogs.reduce(
-                  (acc, curr) => acc + 1,
-                  0,
-                ).toString()}
-          />
+            <Text
+              title='Blood Glucose'
+              text={todaysDailyLog?.fastedBloodGlucose}
+              suffix=''
+            />
         </div>
         <div className='grid grid-cols-3'>
           <Text
@@ -152,10 +155,17 @@ const DailyLog = ({
             text={todaysDailyLog?.sleepQuality}
           />
         </div>
-        <div className='w-full'>
+        <div className='w-full grid grid-cols-2 gap-2'>
           <Text
             title='Notes'
             text={todaysDailyLog?.notes}
+          />
+          <Text
+            title='Bowel Movements'
+                text={todaysDailyLog?.poopLogs.reduce(
+                  (acc, curr) => acc + 1,
+                  0,
+                ).toString()}
           />
         </div>
         <div className='flex gap-2 justify-center'>

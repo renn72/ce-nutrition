@@ -96,17 +96,19 @@ const User = () => {
           <House size={20} />
           <Link href='/'>Home</Link>
         </DropdownMenuItem>
+        <DropdownMenuSeparator />
         <DropdownMenuItem className='rounded-none cursor-pointer flex items-center gap-6'>
           <Link href='/user/water'>
-            <span className='flex gap-6 items-center w-full  px-1 py-4 '>
+            <span className='flex gap-6 items-center w-full  px-1 py-2 '>
               <GlassWater size={20} />
               <span>Water</span>
             </span>
           </Link>
         </DropdownMenuItem>
+        <DropdownMenuSeparator />
         <DropdownMenuItem className='-m-1 rounded-none cursor-pointer flex items-center gap-6'>
           <Link href='/user/toilet'>
-            <span className='flex gap-6 items-center w-full px-1 py-4 '>
+            <span className='flex gap-6 items-center w-full px-1 py-2 '>
               <Toilet size={20} />
               <span>Toilet</span>
             </span>
