@@ -39,7 +39,6 @@ const Meal = ({
   index: number
   recipeId: number | null
 }) => {
-  console.log('recipeId', recipeId)
   const [selectValue, setSelectValue] = useState<string>(
     () => recipeId?.toString() ?? '',
   )
@@ -77,18 +76,17 @@ const Meal = ({
     ?.find((dailyLog) => dailyLog.date === date.toDateString())
     ?.dailyMeals.find((dailyMeal) => dailyMeal.mealIndex == index)
 
-  console.log('logMeal', logMeal)
-
   const recipes = plans.map((plan) => plan.recipes).flat()
-  if ( !recipes.map((recipe) => recipe?.id).includes(recipeId ?? 0)) {
+  if (!recipes.map((recipe) => recipe?.id).includes(recipeId ?? 0)) {
     const r = logMeal?.recipe?.[0]
-    if (!r) return null
-    plans.push({
-      id: 0,
-      name: '',
-      mealCals: '',
-      recipes: [{...r, id: recipeId ?? 0}],
-    })
+    if (r) {
+      plans.push({
+        id: 0,
+        name: '',
+        mealCals: '',
+        recipes: [{ ...r, id: recipeId ?? 0 }],
+      })
+    }
   }
   console.log('plans', plans)
 
@@ -132,11 +130,11 @@ const Meal = ({
               >
                 <div className='flex gap-4 items-center'>
                   <h3>{plan.name}</h3>
-                  {
-                    plan.mealCals === ''
-                      ? null
-                      : <div className='text-[0.7rem] text-muted-foreground'>{plan.mealCals}cals</div>
-                  }
+                  {plan.mealCals === '' ? null : (
+                    <div className='text-[0.7rem] text-muted-foreground'>
+                      {plan.mealCals}cals
+                    </div>
+                  )}
                 </div>
                 <div className='flex gap-1 items-center flex-wrap'>
                   {plan.recipes?.map((recipe) => (
@@ -218,8 +216,6 @@ const Day = ({
   if (todaysLog?.dailyMeals.length && numMeals < todaysLog?.dailyMeals.length) {
     numMeals = todaysLog?.dailyMeals.length
   }
-
-
 
   return (
     <div className='flex gap-2 flex-col w-full bg-secondary min-h-[70px] px-2 py-1'>
@@ -325,13 +321,12 @@ const DayList = ({
     }
   }, [])
 
-  useEffect(() => {
-    console.log('selectedPlansId', selectedPlansId)
-  }, [selectedPlansId])
+  useEffect(() => {}, [selectedPlansId])
 
   const currentUserPlans = currentUser?.userPlans.filter(
     (plan) => plan.isActive,
   )
+  console.log('currentUserPlans', currentUserPlans)
 
   if (isLoadingDailyLogs) return null
   if (!currentUserPlans || currentUserPlans.length === 0) return null
