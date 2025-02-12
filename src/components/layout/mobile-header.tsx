@@ -107,8 +107,7 @@ const Notifications = ({
 }
 const MobileHeader = ({ isDesktop = false }: { isDesktop?: boolean }) => {
   const [notifications, setNotifications] = useState(() => [
-    { id: 1, state: 'unread', message: 'New body weight record' },
-    { id: 2, state: 'unread', message: 'Update to your diet plan' },
+    { id: 2, state: 'read', message: 'Update to your diet plan' },
   ])
   return (
     <div className={cn('flex gap-2 items-center justify-around fixed z-10 bg-background',
