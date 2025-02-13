@@ -332,6 +332,13 @@ const DailyLogForm = ({
                 </FormItem>
               )}
             />
+              <Button
+                className='w-full bg-green-600 text-white'
+
+                type='submit'
+              >
+                Save
+              </Button>
             {imageUrl === '' ? (
               <div className='flex gap-4 justify-around w-full'>
                 <UploadButton
@@ -364,12 +371,6 @@ const DailyLogForm = ({
               </div>
             )}
             <div>
-              <Button
-                className='w-full'
-                type='submit'
-              >
-                Save
-              </Button>
             </div>
           </div>
         </form>
