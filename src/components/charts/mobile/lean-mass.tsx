@@ -3,7 +3,12 @@
 import { GetAllDailyLogs, GetAllWeighIns, GetUserById } from '@/types'
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 
-import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from '@/components/ui/chart'
 
 export const dynamic = 'force-dynamic'
 
@@ -67,6 +72,7 @@ const LeanMass = ({ weighIns }: { weighIns: GetAllWeighIns }) => {
           type='monotone'
           isAnimationActive={true}
         />
+        <ChartTooltip content={<ChartTooltipContent />} />
       </AreaChart>
     </ChartContainer>
   )

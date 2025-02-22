@@ -11,6 +11,8 @@ import {
 
 import {
   ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
   type ChartConfig,
 } from '@/components/ui/chart'
 
@@ -76,6 +78,7 @@ const BodyFat = ({ weighIns }: { weighIns: GetAllWeighIns }) => {
           type='monotone'
           isAnimationActive={true}
         />
+        <ChartTooltip content={<ChartTooltipContent />} />
       </AreaChart>
     </ChartContainer>
   )
