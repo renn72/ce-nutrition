@@ -25,11 +25,11 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-const BodyFat = ({ weighIns }: { weighIns: GetAllWeighIns }) => {
+const BodyFat = ({ weighIns, range }: { weighIns: GetAllWeighIns, range: number }) => {
   const data = weighIns
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .filter((dailyLog) => new Date(dailyLog.date).getTime() < new Date().getTime())
-    .slice(0, 21)
+    .slice(0, range)
     .sort((b, a) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .map((weighIn) => ({
       date: weighIn.date.toLocaleDateString(undefined, {

@@ -29,11 +29,11 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-const Sleep = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
+const Sleep = ({ dailyLogs, range }: { dailyLogs: GetAllDailyLogs, range: number }) => {
   const data = dailyLogs
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .filter((dailyLog) => new Date(dailyLog.date).getTime() < new Date().getTime())
-    .slice(0, 21)
+    .slice(0, range)
     .sort((b, a) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .map((dailyLog, i, arr) => ({
       date: new Date(dailyLog.date).toLocaleDateString(undefined, {

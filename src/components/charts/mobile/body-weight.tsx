@@ -19,11 +19,11 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-const BodyWeight = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
+const BodyWeight = ({ dailyLogs, range }: { dailyLogs: GetAllDailyLogs, range: number }) => {
   const data = dailyLogs
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .filter((dailyLog) => new Date(dailyLog.date).getTime() < new Date().getTime())
-    .slice(0, 21)
+    .slice(0, range)
     .sort((b, a) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .map((dailyLog) => ({
       date: new Date(dailyLog.date || '').toLocaleDateString(undefined, {
