@@ -16,6 +16,7 @@ const PoopLog = ({
 
   const { mutate: addPoopLog } = api.dailyLog.addPoopLog.useMutation({
     onSuccess: () => {
+      ctx.dailyLog.invalidate()
       toast.success('Added poo')
     },
     onSettled: () => {
@@ -24,6 +25,7 @@ const PoopLog = ({
   })
   const { mutate: deletePoopLog } = api.dailyLog.deletePoopLog.useMutation({
     onSuccess: () => {
+      ctx.dailyLog.invalidate()
       toast.success('Deleted poo')
     },
     onSettled: () => {

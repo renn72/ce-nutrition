@@ -17,17 +17,21 @@ const WaterLog = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs | null | undefined
 
   const { mutate: addWaterLog } = api.dailyLog.addWaterLog.useMutation({
     onSuccess: () => {
+      ctx.dailyLog.invalidate()
       toast.success('Added water')
     },
     onSettled: () => {
+      ctx.dailyLog.invalidate()
       ctx.dailyLog.invalidate()
     },
   })
   const { mutate: deleteWaterLog } = api.dailyLog.deleteWaterLog.useMutation({
     onSuccess: () => {
+      ctx.dailyLog.invalidate()
       toast.success('Deleted water')
     },
     onSettled: () => {
+      ctx.dailyLog.invalidate()
       ctx.dailyLog.invalidate()
     },
   })
