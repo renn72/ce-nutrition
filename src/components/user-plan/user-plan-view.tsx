@@ -129,7 +129,6 @@ const UserPlanRecipe = ({
               ingredient.recipeIndex == recipeIndex,
           )
           .map((ingredient) => {
-            console.log('ingredient', ingredient)
             const serve = scale * Number(ingredient.serve)
             const calories =
               (Number(serve) / Number(ingredient.ingredient?.serveSize)) *
