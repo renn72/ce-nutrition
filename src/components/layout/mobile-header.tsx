@@ -5,7 +5,9 @@ import { api } from '@/trpc/react'
 import { useState } from 'react'
 
 import Image from 'next/image'
-import Link from 'next/link'
+// import Link from 'next/link'
+import { Link, useTransitionRouter } from 'next-view-transitions'
+import { slideInOut } from '@/lib/tranistions'
 
 import { cn } from '@/lib/utils'
 import { Bell, BellDot, NotebookText } from 'lucide-react'
@@ -109,6 +111,7 @@ const MobileHeader = ({ isDesktop = false }: { isDesktop?: boolean }) => {
   const [notifications, setNotifications] = useState(() => [
     { id: 2, state: 'read', message: 'Update to your diet plan' },
   ])
+  const router = useTransitionRouter()
   return (
     <div className={cn('flex gap-2 items-center justify-around fixed z-10 bg-background',
       isDesktop ? 'top-[129px] w-[388px]' : 'top-0 w-full '

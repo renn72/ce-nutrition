@@ -66,7 +66,9 @@ const Mobile = ({
     >
       <MobileHeader isDesktop={false} />
 
-      <div className={cn('flex flex-col gap-2 w-full max-w-screen-xl')}>
+      <div
+        id='main-content'
+        className={cn('flex flex-col gap-2 w-full max-w-screen-xl main-content')}>
         <div className='flex flex-col bg-secondary'>
         <Tabs
           defaultValue='bw'
