@@ -110,7 +110,7 @@ const Camera = ({ onUpload }: { onUpload: (url: string) => void }) => {
     >
       <DialogTrigger asChild>
         <Button
-          variant='accent'
+          variant='secondary'
           size='lg'
           className='flex items-center gap-2'
         >

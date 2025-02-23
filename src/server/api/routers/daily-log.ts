@@ -50,6 +50,7 @@ const createBlankLogs = async (
           isLift: false,
           isLiss: false,
           image: '',
+          waistMeasurement: '',
           userId: userId,
         })
         .returning()
@@ -74,6 +75,7 @@ export const dailyLogRouter = createTRPCRouter({
         sleep: z.string().optional(),
         sleepQuality: z.string().optional(),
         nap: z.string().optional(),
+        waistMeasurement: z.string().optional(),
         isHiit: z.boolean().optional(),
         isCardio: z.boolean().optional(),
         isLift: z.boolean().optional(),
@@ -239,6 +241,7 @@ export const dailyLogRouter = createTRPCRouter({
             isLift: false,
             isLiss: false,
             image: '',
+            waistMeasurement: '',
             userId: ctx.session.user.id,
           })
           .returning({ id: dailyLog.id })
@@ -280,6 +283,7 @@ export const dailyLogRouter = createTRPCRouter({
             morningWeight: '',
             notes: '',
             sleep: '',
+            waistMeasurement: '',
             sleepQuality: '',
             isHiit: false,
             isCardio: false,
@@ -363,6 +367,7 @@ export const dailyLogRouter = createTRPCRouter({
             notes: input.date.toDateString(),
             sleep: '',
             sleepQuality: '',
+            waistMeasurement: '',
             isHiit: false,
             isCardio: false,
             isLift: false,
@@ -512,6 +517,7 @@ export const dailyLogRouter = createTRPCRouter({
         sleepQuality: z.string().optional(),
         fastedBloodGlucose: z.string().optional(),
         nap: z.string().optional(),
+        waistMeasurement: z.string().optional(),
         isHiit: z.boolean().optional(),
         isCardio: z.boolean().optional(),
         isLift: z.boolean().optional(),
@@ -529,6 +535,7 @@ export const dailyLogRouter = createTRPCRouter({
         sleep,
         sleepQuality,
         fastedBloodGlucose,
+        waistMeasurement,
         isHiit,
         isCardio,
         isLift,
@@ -546,6 +553,7 @@ export const dailyLogRouter = createTRPCRouter({
           sleep,
           sleepQuality,
           fastedBloodGlucose,
+          waistMeasurement,
           nap,
           isHiit,
           isCardio,

@@ -157,8 +157,8 @@ const DailyLog = ({
         </div>
         <div className='w-full grid grid-cols-2 gap-2'>
           <Text
-            title='Notes'
-            text={todaysDailyLog?.notes}
+            title='Waist'
+            text={todaysDailyLog?.waistMeasurement}
           />
           <Text
             title='Bowel Movements'
@@ -168,6 +168,10 @@ const DailyLog = ({
                 ).toString()}
           />
         </div>
+          <Text
+            title='Notes'
+            text={todaysDailyLog?.notes}
+          />
         <div className='flex gap-2 justify-center'>
           <Icon
             title='Hiit'

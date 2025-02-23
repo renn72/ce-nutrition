@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { UploadButton } from '@/lib/uploadthing'
 import { GetDailyLogById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Image } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -36,6 +37,7 @@ export const formSchema = z.object({
   sleepQuality: z.string().optional(),
   fastedBloodGlucose: z.string().optional(),
   nap: z.string().optional(),
+  waistMeasurement: z.string().optional(),
   isHiit: z.boolean().optional(),
   isCardio: z.boolean().optional(),
   isLift: z.boolean().optional(),
@@ -79,6 +81,7 @@ const DailyLogForm = ({
       notes: todaysLog?.notes || '',
       nap: todaysLog?.nap || '',
       sleep: todaysLog?.sleep || '',
+      waistMeasurement: todaysLog?.waistMeasurement || '',
       sleepQuality: todaysLog?.sleepQuality || '',
       fastedBloodGlucose: todaysLog?.fastedBloodGlucose || '',
       isHiit: todaysLog?.isHiit || false,
@@ -103,6 +106,7 @@ const DailyLogForm = ({
         nap: data.nap,
         sleep: data.sleep,
         sleepQuality: data.sleepQuality,
+        waistMeasurement: data.waistMeasurement,
         fastedBloodGlucose: data.fastedBloodGlucose,
         isHiit: data.isHiit,
         isCardio: data.isCardio,
@@ -121,6 +125,7 @@ const DailyLogForm = ({
         sleepQuality: data.sleepQuality,
         fastedBloodGlucose: data.fastedBloodGlucose,
         nap: data.nap,
+        waistMeasurement: data.waistMeasurement,
         isHiit: data.isHiit,
         isCardio: data.isCardio,
         isLift: data.isLift,
@@ -143,7 +148,7 @@ const DailyLogForm = ({
     <div className='mt-10'>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className='flex flex-col gap-4 mt-10 px-2 mb-16'>
+          <div className='flex flex-col gap-2 mt-8 px-2 mb-16'>
             <h2 className='text-xl font-bold text-muted-foreground'>
               {new Date(formDate).toLocaleDateString('en-AU', {
                 year: 'numeric',
@@ -152,94 +157,130 @@ const DailyLogForm = ({
                 weekday: 'long',
               })}
             </h2>
-            <div className='flex items-center gap-4'>
-            <FormField
-              control={form.control}
-              name='morningWeight'
-              render={({ field }) => (
-                <FormItem className='flex flex-col'>
-                  <FormLabel>Morning Weight</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder='Morning Weight'
-                      {...field}
-                      type='number'
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='fastedBloodGlucose'
-              render={({ field }) => (
-                <FormItem className='flex flex-col'>
-                  <FormLabel>Blood Glucose</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder='Blood Glucose'
-                      {...field}
-                      type='number'
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className='flex items-center gap-8 w-full justify-between px-8'>
+              <Button
+                className='w-full'
+                variant='secondary'
+                type='submit'
+              >
+                Save
+              </Button>
+              <Button
+                className='w-full'
+                variant='secondary'
+                onClick={(e) => {
+                  e.preventDefault()
+                  form.reset()
+                }}
+              >
+                Clear
+              </Button>
             </div>
             <div className='flex items-center gap-4'>
-            <FormField
-              control={form.control}
-              name='sleep'
-              render={({ field }) => (
-                <FormItem className='flex flex-col'>
-                  <FormLabel>Sleep</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder='Sleep'
-                      {...field}
-                      type='number'
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='sleepQuality'
-              render={({ field }) => (
-                <FormItem className='flex flex-col'>
-                  <FormLabel>Sleep Quality</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder='Sleep Quality'
-                      {...field}
-                      type='number'
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='nap'
-              render={({ field }) => (
-                <FormItem className='flex flex-col'>
-                  <FormLabel>Nap</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder='Nap'
-                      {...field}
-                      type='number'
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name='morningWeight'
+                render={({ field }) => (
+                  <FormItem className='flex flex-col'>
+                    <FormLabel>Morning Weight</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Morning Weight'
+                        {...field}
+                        type='number'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='fastedBloodGlucose'
+                render={({ field }) => (
+                  <FormItem className='flex flex-col'>
+                    <FormLabel>Blood Glucose</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Blood Glucose'
+                        {...field}
+                        type='number'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='waistMeasurement'
+                render={({ field }) => (
+                  <FormItem className='flex flex-col'>
+                    <FormLabel>Waist</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Waist'
+                        {...field}
+                        type='number'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className='flex items-center gap-4'>
+              <FormField
+                control={form.control}
+                name='sleep'
+                render={({ field }) => (
+                  <FormItem className='flex flex-col'>
+                    <FormLabel>Sleep</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Sleep'
+                        {...field}
+                        type='number'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='sleepQuality'
+                render={({ field }) => (
+                  <FormItem className='flex flex-col'>
+                    <FormLabel>Sleep Quality</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Sleep Quality'
+                        {...field}
+                        type='number'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='nap'
+                render={({ field }) => (
+                  <FormItem className='flex flex-col'>
+                    <FormLabel>Nap</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Nap'
+                        {...field}
+                        type='number'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
             <div className='flex gap-4 justify-between px-4'>
               <FormField
@@ -332,24 +373,29 @@ const DailyLogForm = ({
                 </FormItem>
               )}
             />
-              <Button
-                className='w-full bg-green-600 text-white'
-
-                type='submit'
-              >
-                Save
-              </Button>
             {imageUrl === '' ? (
-              <div className='flex gap-4 justify-around w-full'>
-                <UploadButton
-                  endpoint='imageUploader'
-                  onClientUploadComplete={(res) => {
-                    console.log('onClientUploadComplete', res)
-                    const url = res?.[0]?.url
-                    form.setValue('image', url)
-                  }}
+              <div className='flex gap-4 flex-col w-full items-center'>
+                <Image
+                  className='text-muted-foreground'
+                  size={64}
+                  strokeWidth={1}
                 />
-                <Camera onUpload={updateImage} />
+                <div className='flex gap-4 justify-around w-full'>
+                  <UploadButton
+                    appearance={{
+                      button: {
+                        background: '#ccc',
+                      },
+                    }}
+                    endpoint='imageUploader'
+                    onClientUploadComplete={(res) => {
+                      console.log('onClientUploadComplete', res)
+                      const url = res?.[0]?.url
+                      form.setValue('image', url)
+                    }}
+                  />
+                  <Camera onUpload={updateImage} />
+                </div>
               </div>
             ) : (
               <div className='flex gap-4 flex-col '>
@@ -370,8 +416,7 @@ const DailyLogForm = ({
                 </Button>
               </div>
             )}
-            <div>
-            </div>
+            <div></div>
           </div>
         </form>
       </Form>

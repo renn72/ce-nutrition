@@ -114,6 +114,7 @@ export const dailyLog = createTable('daily_log', {
   isLift: int('is_lift', { mode: 'boolean' }),
   isLiss: int('is_liss', { mode: 'boolean' }),
   image: text('image'),
+  waistMeasurement: text('waist_measurement'),
   nap: text('nap'),
 })
 

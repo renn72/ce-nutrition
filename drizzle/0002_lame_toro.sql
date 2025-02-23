@@ -1,0 +1,1 @@
+ALTER TABLE `ce-nu_daily_log` ADD `waist_measurement` text;
