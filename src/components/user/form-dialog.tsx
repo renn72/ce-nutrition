@@ -73,7 +73,7 @@ const FormDialog = () => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Ingredient</DialogTitle>
+          <DialogTitle>Create User</DialogTitle>
         </DialogHeader>
         <DialogDescription></DialogDescription>
         <Form {...form}>
