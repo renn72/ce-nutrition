@@ -37,6 +37,7 @@ const signInSchema = z.object({
 })
 
 const SignIn = () => {
+  const [isLoading, setIsLoading] = useState(false)
   const [loginError, setLoginError] = useState('')
   const [email, setEmail] = useState('')
   const ctx = api.useUtils()
@@ -148,13 +149,15 @@ const SignIn = () => {
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <Button
-                  className='w-full'
+                  className='w-full relative'
+                  disabled={isLoading}
                   onClick={async (e) => {
                     e.preventDefault()
+                    setIsLoading(true)
                     void signIn('email', {email})
                   }}
                 >
-                  Send
+                  {isLoading ? 'Sending' : 'Send'}
                 </Button>
               </DialogContent>
             </Dialog>
