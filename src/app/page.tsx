@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-
 import { api } from '@/trpc/react'
+
+import { useState } from 'react'
 
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
@@ -44,13 +44,14 @@ const chartRanges = [7, 14, 30, 90]
 
 const Mobile = ({
   userId,
+  currentUser,
   isDesktop = false,
 }: {
   userId: string
+  currentUser: GetUserById
   isDesktop?: boolean
 }) => {
-  const [ chartRange, setChartRange ] = useState(7)
-  const { data: currentUser } = api.user.get.useQuery(userId)
+  const [chartRange, setChartRange] = useState(7)
   const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId)
   const { data: weighIns } = api.weighIn.getAllUser.useQuery(userId)
 
@@ -68,85 +69,108 @@ const Mobile = ({
 
       <div
         id='main-content'
-        className={cn('flex flex-col gap-2 w-full max-w-screen-xl main-content')}>
+        className={cn(
+          'flex flex-col gap-2 w-full max-w-screen-xl main-content',
+        )}
+      >
         <div className='flex flex-col bg-secondary'>
-        <Tabs
-          defaultValue='bw'
-          className='w-full'
-        >
-          <TabsList className='flex gap-2 items-center justify-center w-full bg-background '>
-            <TabsTrigger
-              className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
+          <Tabs
+            defaultValue='bw'
+            className='w-full'
+          >
+            <TabsList className='flex gap-2 items-center justify-center w-full bg-background '>
+              <TabsTrigger
+                className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
+                value='bw'
+              >
+                Body Weight
+              </TabsTrigger>
+              <TabsTrigger
+                className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
+                value='lm'
+              >
+                Lean Mass
+              </TabsTrigger>
+              <TabsTrigger
+                className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
+                value='bf'
+              >
+                Body Fat
+              </TabsTrigger>
+              <TabsTrigger
+                className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
+                value='sleep'
+              >
+                Sleep
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent
+              className='bg-secondary p-2'
               value='bw'
             >
-              Body Weight
-            </TabsTrigger>
-            <TabsTrigger
-              className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
+              {dailyLogs ? (
+                <BodyWeight
+                  dailyLogs={dailyLogs}
+                  range={chartRange}
+                />
+              ) : null}
+            </TabsContent>
+            <TabsContent
               value='lm'
+              className='bg-secondary p-2'
             >
-              Lean Mass
-            </TabsTrigger>
-            <TabsTrigger
-              className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
+              {weighIns ? (
+                <LeanMass
+                  weighIns={weighIns}
+                  range={chartRange}
+                />
+              ) : null}
+            </TabsContent>
+            <TabsContent
               value='bf'
+              className='bg-secondary p-2'
             >
-              Body Fat
-            </TabsTrigger>
-            <TabsTrigger
-              className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
+              {weighIns ? (
+                <BodyFat
+                  weighIns={weighIns}
+                  range={chartRange}
+                />
+              ) : null}
+            </TabsContent>
+            <TabsContent
               value='sleep'
+              className='bg-secondary p-2'
             >
-              Sleep
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent
-            className='bg-secondary p-2'
-            value='bw'
-          >
-            {dailyLogs ? <BodyWeight dailyLogs={dailyLogs} range={chartRange} /> : null}
-          </TabsContent>
-          <TabsContent
-            value='lm'
-            className='bg-secondary p-2'
-          >
-            {weighIns ? <LeanMass weighIns={weighIns} range={chartRange} /> : null}
-          </TabsContent>
-          <TabsContent
-            value='bf'
-            className='bg-secondary p-2'
-          >
-            {weighIns ? <BodyFat weighIns={weighIns} range={chartRange} /> : null}
-          </TabsContent>
-          <TabsContent
-            value='sleep'
-            className='bg-secondary p-2'
-          >
-            {dailyLogs ? <Sleep dailyLogs={dailyLogs} range={chartRange} /> : null}
-          </TabsContent>
-        </Tabs>
-        <div className='flex gap-6 justify-center font-normal text-xs mt-[-0.5rem]'>
-            {
-              chartRanges.map((range) => (
-                <div
-                  key={range}
-                  className={cn(
-                    'cursor-pointer p-1 rounded-full',
-                    chartRange === range ? 'underline font-bold' : '',
-                  )}
-                  onClick={() => {
-                    setChartRange(range)
-                  }}
-                >
-                  {range}
-                </div>
-              ))
-            }
-
+              {dailyLogs ? (
+                <Sleep
+                  dailyLogs={dailyLogs}
+                  range={chartRange}
+                />
+              ) : null}
+            </TabsContent>
+          </Tabs>
+          <div className='flex gap-6 justify-center font-normal text-xs mt-[-0.5rem]'>
+            {chartRanges.map((range) => (
+              <div
+                key={range}
+                className={cn(
+                  'cursor-pointer p-1 rounded-full',
+                  chartRange === range ? 'underline font-bold' : '',
+                )}
+                onClick={() => {
+                  setChartRange(range)
+                }}
+              >
+                {range}
+              </div>
+            ))}
           </div>
         </div>
         <div className='grid grid-cols-2 w-full bg-secondary p-2'>
-          <WaterLog dailyLogs={dailyLogs} defaultAmount={Number(currentUser?.settings?.defaultWater)} />
+          <WaterLog
+            dailyLogs={dailyLogs}
+            defaultAmount={Number(currentUser?.settings?.defaultWater ?? 600)}
+          />
           <PoopLog dailyLogs={dailyLogs} />
         </div>
         <div className='flex gap-0 w-full justify-center items-center my-6 flex-col bg-secondary pt-2'>
@@ -163,11 +187,18 @@ const Mobile = ({
   )
 }
 
-const Desktop = ({ userId }: { userId: string }) => {
+const Desktop = ({
+  userId,
+  currentUser,
+}: {
+  userId: string
+  currentUser: GetUserById
+}) => {
   return (
     <div className='flex flex-col items-center gap-2 '>
       <Mobile
         userId={userId}
+        currentUser={currentUser}
         isDesktop={true}
       />
     </div>
@@ -175,16 +206,23 @@ const Desktop = ({ userId }: { userId: string }) => {
 }
 
 export default function Home() {
-  const { data: currentUser } = api.user.getCurrentUser.useQuery()
+  const { data: currentUser , isLoading } = api.user.getCurrentUser.useQuery()
   const isMobile = useClientMediaQuery('(max-width: 600px)')
 
+  if (isLoading) return null
   if (!currentUser) return null
   return (
     <div className='flex min-h-screen flex-col'>
       {isMobile ? (
-        <Mobile userId={currentUser.id} />
+        <Mobile
+          userId={currentUser.id}
+          currentUser={currentUser}
+        />
       ) : (
-        <Desktop userId={currentUser.id} />
+        <Desktop
+          userId={currentUser.id}
+          currentUser={currentUser}
+        />
       )}
     </div>
   )
