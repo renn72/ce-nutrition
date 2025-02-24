@@ -13,11 +13,13 @@ import { Input } from '@/components/ui/input'
 
 const WaterLog = ({
   dailyLogs,
+  defaultAmount,
 }: {
   dailyLogs: GetAllDailyLogs | null | undefined
+  defaultAmount: number
 }) => {
   const ctx = api.useUtils()
-  const [size, setSize] = useState(1500)
+  const [size, setSize] = useState(() => defaultAmount)
 
   const { mutate: addWaterLog } = api.dailyLog.addWaterLog.useMutation({
     onSuccess: () => {

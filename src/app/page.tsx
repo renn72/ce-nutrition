@@ -146,7 +146,7 @@ const Mobile = ({
           </div>
         </div>
         <div className='grid grid-cols-2 w-full bg-secondary p-2'>
-          <WaterLog dailyLogs={dailyLogs} />
+          <WaterLog dailyLogs={dailyLogs} defaultAmount={Number(currentUser?.settings?.defaultWater)} />
           <PoopLog dailyLogs={dailyLogs} />
         </div>
         <div className='flex gap-0 w-full justify-center items-center my-6 flex-col bg-secondary pt-2'>

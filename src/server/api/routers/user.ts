@@ -65,6 +65,7 @@ export const userRouter = createTRPCRouter({
         password: false,
       },
       with: {
+        settings: true,
         userPlans: {
           with: {
             userMeals: true,
@@ -92,6 +93,7 @@ export const userRouter = createTRPCRouter({
         password: false,
       },
       with: {
+        settings: true,
         userPlans: {
           with: {
             userMeals: true,
@@ -259,6 +261,17 @@ export const userRouter = createTRPCRouter({
 
     return res
   }),
+  updateWater: protectedProcedure
+    .input(z.object({ water: z.number(), id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(userSettings)
+        .set({
+          defaultWater: input.water.toString(),
+        })
+        .where(eq(userSettings.id, input.id))
+      return res
+    }),
   deleteFakeUsers: rootProtectedProcedure.mutation(async ({ ctx }) => {
     const res = await ctx.db.delete(user).where(eq(user.isFake, true))
     return res
