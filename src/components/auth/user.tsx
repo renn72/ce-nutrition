@@ -2,36 +2,31 @@
 
 import { api } from '@/trpc/react'
 
-import Link from 'next/link'
-
 import { cn } from '@/lib/utils'
 import { MoonIcon, SunIcon } from '@radix-ui/react-icons'
-import { Database, GlassWater, House, LogOutIcon, RefreshCcw, Settings, Toilet, UserRoundCog, VenetianMask } from 'lucide-react'
+import {
+  Database,
+  GlassWater,
+  House,
+  LogOutIcon,
+  Settings,
+  Toilet,
+  UserRoundCog,
+} from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { useTheme } from 'next-themes'
+import { Link } from 'next-view-transitions'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import { Separator } from '@/components/ui/separator'
-
-import { Logout } from '@/components/auth/logout'
 import { SignInUp } from '@/components/auth/sign-in-up'
-import { CreatorMenu } from '../creator/menu'
 
 const User = () => {
   const ctx = api.useUtils()
@@ -124,19 +119,18 @@ const User = () => {
             </DropdownMenuItem>
           </>
         )}
-        {
-          isCreator && (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => sync()}
-                className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
-                <Database size={20} />
-                Sync DB
-              </DropdownMenuItem>
-            </>
-          )
-        }
+        {isCreator && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => sync()}
+              className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'
+            >
+              <Database size={20} />
+              Sync DB
+            </DropdownMenuItem>
+          </>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
           <Settings size={20} />

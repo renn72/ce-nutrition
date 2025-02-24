@@ -4,7 +4,8 @@ import { api } from '@/trpc/react'
 
 import * as React from 'react'
 
-import Link from 'next/link'
+// import Link from 'next/link'
+import { Link, useTransitionRouter } from 'next-view-transitions'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import { atom, useAtom } from 'jotai'
@@ -112,6 +113,7 @@ const AdminSidebar = ({
   children,
 }: Readonly<{ children: React.ReactNode }>) => {
   const router = useRouter()
+  const router2 = useTransitionRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const user = searchParams.get('user')
