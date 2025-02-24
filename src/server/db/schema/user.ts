@@ -83,6 +83,7 @@ export const userSettings = createTable('user_settings', {
   ),
   userId: text('user_id').notNull().references(() => user.id),
   defaultWater: text('default_water'),
+  defaultChartRange: text('default_chart_range'),
 })
 
 export const userSettingsRelations = relations(userSettings, ({ one,  }) => ({

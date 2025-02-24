@@ -51,9 +51,16 @@ const Mobile = ({
   currentUser: GetUserById
   isDesktop?: boolean
 }) => {
-  const [chartRange, setChartRange] = useState(7)
+  const ctx = api.useUtils()
+  const [chartRange, setChartRange] = useState(() => Number(currentUser?.settings?.defaultChartRange ?? 7))
   const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId)
   const { data: weighIns } = api.weighIn.getAllUser.useQuery(userId)
+
+  const { mutate: updateChartRange } = api.user.updateChartRange.useMutation({
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+  })
 
   const dailyLog = dailyLogs?.find(
     (dailyLog) => dailyLog.date === new Date().toDateString(),
@@ -159,6 +166,12 @@ const Mobile = ({
                 )}
                 onClick={() => {
                   setChartRange(range)
+                  if (!currentUser) return
+                  if (!currentUser.settings) return
+                  updateChartRange({
+                    range: range,
+                    id: currentUser.settings?.id,
+                  })
                 }}
               >
                 {range}

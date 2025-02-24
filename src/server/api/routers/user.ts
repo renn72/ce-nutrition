@@ -272,6 +272,17 @@ export const userRouter = createTRPCRouter({
         .where(eq(userSettings.id, input.id))
       return res
     }),
+  updateChartRange: protectedProcedure
+    .input(z.object({ range: z.number(), id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(userSettings)
+        .set({
+          defaultChartRange: input.range.toString(),
+        })
+        .where(eq(userSettings.id, input.id))
+      return res
+    }),
   deleteFakeUsers: rootProtectedProcedure.mutation(async ({ ctx }) => {
     const res = await ctx.db.delete(user).where(eq(user.isFake, true))
     return res

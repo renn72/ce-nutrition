@@ -1,0 +1,1 @@
+ALTER TABLE `ce-nu_user_settings` ADD `default_chart_range` text;
