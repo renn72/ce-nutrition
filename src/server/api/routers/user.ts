@@ -6,6 +6,7 @@ import {
   publicProcedure,
   rootProtectedProcedure,
 } from '~/server/api/trpc'
+import { log } from '~/server/db/schema/log'
 import { client, db } from '~/server/db'
 import { user, userSettings } from '~/server/db/schema/user'
 import { hash } from 'bcryptjs'
@@ -27,6 +28,28 @@ const createSchema = z.object({
   notes: z.string().optional(),
   email: z.string().optional(),
 })
+
+const createLog = async ({
+  user,
+  task,
+  notes,
+  userId,
+  objectId,
+}: {
+  user: string
+  task: string
+  notes: string
+  userId: string
+  objectId: number | null | undefined
+}) => {
+  await db.insert(log).values({
+    task: task,
+    notes: notes,
+    user: user,
+    userId: userId,
+    objectId: objectId,
+  })
+}
 
 const isUserRoot = async (userId: string) => {
   const res = await db.query.user.findFirst({
@@ -57,6 +80,103 @@ export const userRouter = createTRPCRouter({
     })
     return res
   }),
+  updateFirstName: protectedProcedure
+    .input(
+      z.object({
+        firstName: z.string(),
+        id: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(user)
+        .set({
+          firstName: input.firstName,
+        })
+        .where(eq(user.id, input.id))
+
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        objectId: null,
+        task: 'Update First Name',
+        notes: JSON.stringify(input),
+      })
+      return res
+    }),
+  updateLastName: protectedProcedure
+    .input(
+      z.object({
+        lastName: z.string(),
+        id: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(user)
+        .set({
+          lastName: input.lastName,
+        })
+        .where(eq(user.id, input.id))
+
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        objectId: null,
+        task: 'Update Last Name',
+        notes: JSON.stringify(input),
+      })
+      return res
+    }),
+  updateEmail: protectedProcedure
+    .input(
+      z.object({
+        email: z.string(),
+        id: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(user)
+        .set({
+          email: input.email,
+        })
+        .where(eq(user.id, input.id))
+
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        objectId: null,
+        task: 'Update Email',
+        notes: JSON.stringify(input),
+      })
+      return res
+    }),
+  updatePassword: protectedProcedure
+    .input(
+      z.object({
+        password: z.string(),
+        id: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const hashedPassword = await hash(input.password, 10)
+      const res = await ctx.db
+        .update(user)
+        .set({
+          password: hashedPassword,
+        })
+        .where(eq(user.id, input.id))
+
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        objectId: null,
+        task: 'Update Password',
+        notes: JSON.stringify(input),
+      })
+      return res
+    }),
   get: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
     if (input === '') throw new TRPCError({ code: 'BAD_REQUEST' })
     const res = await ctx.db.query.user.findFirst({
