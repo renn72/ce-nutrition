@@ -3,6 +3,7 @@
 import { api } from '@/trpc/react'
 
 import { useState } from 'react'
+
 import { useRouter } from 'next/navigation'
 
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -12,6 +13,14 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -29,6 +38,7 @@ const signInSchema = z.object({
 
 const SignIn = () => {
   const [loginError, setLoginError] = useState('')
+  const [email, setEmail] = useState('')
   const ctx = api.useUtils()
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -58,7 +68,6 @@ const SignIn = () => {
                 ctx.user.isUser.refetch()
                 router.push('/')
                 router.refresh()
-
               }
               if (res?.error) throw new Error(res.error)
             } catch (err: any) {
@@ -116,14 +125,39 @@ const SignIn = () => {
             <div className='text-sm text-destructive w-full text-center h-4 leading-none'>
               {loginError}
             </div>
-            <div className='text-sm text-muted-foreground w-full text-center hidden'>
-              Don't have an account?{' '}
-              <span
-                className='cursor-pointer text-primary p-2'
-              >
-                Sign up
-              </span>
-            </div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <div className='text-sm text-muted-foreground w-full text-center '>
+                  <span className='cursor-pointer text-primary/90 p-2'>
+                    Forgot password? Get email link
+                  </span>
+                </div>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Email Magic Link</DialogTitle>
+                  <DialogDescription className='px-6'>
+                    We sent you an email with a magic link to login.
+                  </DialogDescription>
+                </DialogHeader>
+                <Input
+                  placeholder='email'
+                  type='email'
+                  className='w-full'
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <Button
+                  className='w-full'
+                  onClick={async (e) => {
+                    e.preventDefault()
+                    void signIn('email', {email})
+                  }}
+                >
+                  Send
+                </Button>
+              </DialogContent>
+            </Dialog>
           </div>
         </form>
       </Form>

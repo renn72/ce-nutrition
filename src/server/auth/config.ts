@@ -8,9 +8,10 @@ import {
 } from '@/server/db/schema/user'
 import { DrizzleAdapter } from '@auth/drizzle-adapter'
 import { compare } from 'bcryptjs'
-import { type DefaultSession, type NextAuthConfig } from "next-auth";
+import { type DefaultSession, type NextAuthConfig } from 'next-auth'
 import { type Adapter } from 'next-auth/adapters'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import EmailProvider from 'next-auth/providers/email'
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -85,6 +86,17 @@ export const authConfig = {
     verificationTokensTable: verificationToken,
   }) as Adapter,
   providers: [
+    EmailProvider({
+      server: {
+        host: process.env.EMAIL_SERVER_HOST,
+        port: process.env.EMAIL_SERVER_PORT,
+        auth: {
+          user: process.env.EMAIL_SERVER_USER,
+          pass: process.env.EMAIL_SERVER_PASSWORD,
+        },
+      },
+      from: process.env.EMAIL_FROM,
+    }),
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
@@ -94,14 +106,18 @@ export const authConfig = {
       async authorize(credentials, req) {
         if (!credentials) return null
         const maybeUser = await db.query.user.findFirst({
-          where: (user, { eq }) => eq(user.email, credentials.username as string),
+          where: (user, { eq }) =>
+            eq(user.email, credentials.username as string),
         })
 
         if (!maybeUser) throw new Error('user not found')
         if (!maybeUser.password) throw new Error('invalid password')
         if (maybeUser.isFake) throw new Error('invalid credentials')
 
-        const isValid = await compare(credentials.password as string, maybeUser.password)
+        const isValid = await compare(
+          credentials.password as string,
+          maybeUser.password,
+        )
         if (maybeUser && isValid) {
           return {
             id: maybeUser.id,
