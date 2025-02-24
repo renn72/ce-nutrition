@@ -1,4 +1,5 @@
 import { db } from '@/server/db'
+import { log } from '@/server/db/schema/log'
 import {
   dailyLog,
   dailyMeal,
@@ -64,6 +65,28 @@ const createBlankLogs = async (
   return logs
 }
 
+const createLog = async ({
+  user,
+  task,
+  notes,
+  userId,
+  objectId,
+}: {
+  user: string
+  task: string
+  notes: string
+  userId: string
+  objectId: number | null | undefined
+}) => {
+  await db.insert(log).values({
+    task: task,
+    notes: notes,
+    user: user,
+    userId: userId,
+    objectId: objectId,
+  })
+}
+
 export const dailyLogRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
@@ -92,6 +115,14 @@ export const dailyLogRouter = createTRPCRouter({
           date: input.date,
         })
         .returning({ id: dailyLog.id })
+
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Create Daily Log',
+        notes: JSON.stringify(input),
+        objectId: res[0]?.id,
+      })
 
       return { res }
     }),
@@ -226,8 +257,10 @@ export const dailyLogRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       let logId = input.logId
+      let isCreateLog = false
 
       if (input.logId === null || input.logId === undefined) {
+        isCreateLog = true
         const log = await ctx.db
           .insert(dailyLog)
           .values({
@@ -258,12 +291,27 @@ export const dailyLogRouter = createTRPCRouter({
         })
         .returning({ id: waterLog.id })
 
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        objectId: water[0]?.id,
+        task: 'Add Water ' + input.amount.toString() + 'ml',
+        notes: isCreateLog ? 'Created new log' : '',
+      })
+
       return water
     }),
   deleteWaterLog: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input, ctx }) => {
       const res = await ctx.db.delete(waterLog).where(eq(waterLog.id, input.id))
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        objectId: input.id,
+        task: 'Deleted water',
+        notes: '',
+      })
       return res
     }),
   addPoopLog: protectedProcedure
@@ -274,8 +322,10 @@ export const dailyLogRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       let logId = input.logId
+      let isCreateLog = false
 
       if (input.logId === null || input.logId === undefined) {
+        isCreateLog = true
         const log = await ctx.db
           .insert(dailyLog)
           .values({
@@ -305,12 +355,27 @@ export const dailyLogRouter = createTRPCRouter({
         })
         .returning({ id: poopLog.id })
 
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        objectId: poop[0]?.id,
+        task: 'Poop',
+        notes: isCreateLog ? 'Created new log' : '',
+      })
+
       return poop
     }),
   deletePoopLog: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input, ctx }) => {
       const res = await ctx.db.delete(poopLog).where(eq(poopLog.id, input.id))
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        objectId: input.id,
+        task: 'Deleted Poo',
+        notes: '',
+      })
       return res
     }),
   addMeal: protectedProcedure
@@ -563,6 +628,11 @@ export const dailyLogRouter = createTRPCRouter({
           userId,
         })
         .where(eq(dailyLog.id, id))
+      createLog({
+        user: ctx.session.user.name,
+        task: 'Update Daily Log',
+        notes: JSON.stringify(input),
+      })
 
       return { res }
     }),
