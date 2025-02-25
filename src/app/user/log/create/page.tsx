@@ -21,10 +21,31 @@ export default function Home() {
   const searchParams = useSearchParams()
   const id = searchParams.get('id')
   const date = searchParams.get('date')
+  const { data: dailyLogs, isLoading } =
+    api.dailyLog.getAllCurrentUser.useQuery()
+
+  if (isLoading) return null
+
+  const log = dailyLogs?.find((log) => log.date === date)
 
   if (!date) return null
 
-  if (!id) return <DailyLogForm todaysLog={null} date={new Date(date).toDateString()} />
+  if (!id) {
+    if (log) {
+      return (
+        <Log
+          id={log.id}
+          date={log.date}
+        />
+      )
+    }
+    return (
+      <DailyLogForm
+        todaysLog={null}
+        date={new Date(date).toDateString()}
+      />
+    )
+  }
 
   return (
     <Log

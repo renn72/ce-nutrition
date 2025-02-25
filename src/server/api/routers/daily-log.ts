@@ -666,6 +666,8 @@ export const dailyLogRouter = createTRPCRouter({
         user: ctx.session.user.name,
         task: 'Update Daily Log',
         notes: JSON.stringify(input),
+        userId: ctx.session.user.id,
+        objectId: id,
       })
 
       return { res }
