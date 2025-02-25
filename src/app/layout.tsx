@@ -26,6 +26,8 @@ export const metadata: Metadata = {
 
 const font = Epilogue({ subsets: ['latin'] })
 
+export const dynamic = 'force-dynamic'
+
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -58,7 +60,9 @@ export default async function RootLayout({
                     </div>
                   </div>
                 ) : (
-                  <>{children}</>
+                  <>
+                    {children}
+                  </>
                 )}
                 <Toaster />
               </TRPCReactProvider>

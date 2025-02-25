@@ -2,8 +2,10 @@
 
 import { api } from '@/trpc/react'
 
+import { impersonatedUserAtom } from '@/atoms'
 import { cn } from '@/lib/utils'
 import { MoonIcon, SunIcon } from '@radix-ui/react-icons'
+import { useAtom } from 'jotai'
 import {
   Database,
   GlassWater,
@@ -11,7 +13,9 @@ import {
   LogOutIcon,
   Settings,
   Toilet,
+  UserCircle,
   UserRoundCog,
+  VenetianMask,
 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { useTheme } from 'next-themes'
@@ -24,9 +28,51 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+
 import { SignInUp } from '@/components/auth/sign-in-up'
+
+const ImpersonateUser = () => {
+  const [impersonatedUser, setImpersonatedUser] = useAtom(impersonatedUserAtom)
+  const { data: users } = api.user.getAll.useQuery()
+
+  return (
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
+        <VenetianMask size={20} />
+        Impersonate
+      </DropdownMenuSubTrigger>
+      <DropdownMenuSubContent
+        sideOffset={-36}
+        alignOffset={-180}
+        className='max-h-84 overflow-auto w-48'
+      >
+        <DropdownMenuSub>
+          {users?.map((user) => (
+            <DropdownMenuItem
+              key={user.id}
+              className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-2'
+              onClick={() =>
+                setImpersonatedUser((prev) => ({
+                  ...prev,
+                  id: user.id,
+                  name: user.name ?? '',
+                }))
+              }
+            >
+              <UserCircle size={20} />
+              <span className='truncate'>{user.name}</span>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuSub>
+      </DropdownMenuSubContent>
+    </DropdownMenuSub>
+  )
+}
 
 const User = () => {
   const ctx = api.useUtils()
@@ -129,6 +175,12 @@ const User = () => {
               <Database size={20} />
               Sync DB
             </DropdownMenuItem>
+          </>
+        )}
+        {isCreator && (
+          <>
+            <DropdownMenuSeparator />
+            <ImpersonateUser />
           </>
         )}
         <DropdownMenuSeparator />

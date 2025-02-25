@@ -222,8 +222,10 @@ export const userRouter = createTRPCRouter({
     })
     return res
   }),
-  getCurrentUser: protectedProcedure.query(async ({ ctx }) => {
-    const userId = ctx.session?.user.id
+  getCurrentUser: protectedProcedure.input(z.object({ id: z.string() }).optional()).query(async ({ ctx, input }) => {
+    let userId = ctx.session?.user.id
+
+    if (input?.id && input.id !== '') userId = input.id
 
     if (!userId) return null
 

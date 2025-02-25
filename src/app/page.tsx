@@ -4,10 +4,15 @@ import { api } from '@/trpc/react'
 
 import { useState } from 'react'
 
+import { impersonatedUserAtom } from '@/atoms'
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
 import { GetUserById } from '@/types'
+import { useAtom } from 'jotai'
+import { XIcon } from 'lucide-react'
 
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { BodyFat } from '@/components/charts/mobile/body-fat'
@@ -52,7 +57,9 @@ const Mobile = ({
   isDesktop?: boolean
 }) => {
   const ctx = api.useUtils()
-  const [chartRange, setChartRange] = useState(() => Number(currentUser?.settings?.defaultChartRange ?? 7))
+  const [chartRange, setChartRange] = useState(() =>
+    Number(currentUser?.settings?.defaultChartRange ?? 7),
+  )
   const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId)
   const { data: weighIns } = api.weighIn.getAllUser.useQuery(userId)
 
@@ -73,7 +80,6 @@ const Mobile = ({
       )}
     >
       <MobileHeader isDesktop={false} />
-
       <div
         id='main-content'
         className={cn(
@@ -219,13 +225,17 @@ const Desktop = ({
 }
 
 export default function Home() {
-  const { data: currentUser , isLoading } = api.user.getCurrentUser.useQuery()
+  const [impersonatedUser, setImpersonatedUser] = useAtom(impersonatedUserAtom)
+  console.log('impersonation', impersonatedUser.id, impersonatedUser.name)
+  const { data: currentUser, isLoading } = api.user.getCurrentUser.useQuery({
+    id: impersonatedUser.id,
+  })
   const isMobile = useClientMediaQuery('(max-width: 600px)')
 
   if (isLoading) return null
   if (!currentUser) return null
   return (
-    <div className='flex min-h-screen flex-col'>
+    <div className='flex min-h-screen flex-col relative'>
       {isMobile ? (
         <Mobile
           userId={currentUser.id}
@@ -237,6 +247,25 @@ export default function Home() {
           currentUser={currentUser}
         />
       )}
+      {impersonatedUser.id !== '' ? (
+        <div className='fixed bottom-14 left-1/2 -translate-x-1/2 opacity-80'>
+          <Badge
+            className='flex gap-4'
+          >
+        {impersonatedUser.name}
+            <XIcon
+              size={12}
+              className='cursor-pointer'
+              onClick={() => {
+                setImpersonatedUser({
+                  id: '',
+                  name: '',
+                })
+              }}
+            />
+          </Badge>
+        </div>
+      ) : null}
     </div>
   )
 }

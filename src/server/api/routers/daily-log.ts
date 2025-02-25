@@ -258,28 +258,41 @@ export const dailyLogRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       let logId = input.logId
       let isCreateLog = false
+      let catchMissedLog = false
 
       if (input.logId === null || input.logId === undefined) {
-        isCreateLog = true
-        const log = await ctx.db
-          .insert(dailyLog)
-          .values({
-            date: new Date().toDateString(),
-            morningWeight: '',
-            notes: '',
-            sleep: '',
-            sleepQuality: '',
-            isHiit: false,
-            isCardio: false,
-            isLift: false,
-            isLiss: false,
-            image: '',
-            waistMeasurement: '',
-            userId: ctx.session.user.id,
-          })
-          .returning({ id: dailyLog.id })
+        const logCheck = await ctx.db.query.dailyLog.findFirst({
+          where: and(
+            eq(dailyLog.userId, ctx.session.user.id),
+            eq(dailyLog.date, new Date().toDateString()),
+          ),
+        })
 
-        logId = log?.[0]?.id
+        if (logCheck) {
+          logId = logCheck.id
+          catchMissedLog = true
+        } else {
+          isCreateLog = true
+          const log = await ctx.db
+            .insert(dailyLog)
+            .values({
+              date: new Date().toDateString(),
+              morningWeight: '',
+              notes: '',
+              sleep: '',
+              sleepQuality: '',
+              isHiit: false,
+              isCardio: false,
+              isLift: false,
+              isLiss: false,
+              image: '',
+              waistMeasurement: '',
+              userId: ctx.session.user.id,
+            })
+            .returning({ id: dailyLog.id })
+
+          logId = log?.[0]?.id
+        }
       }
       if (!logId) throw new Error('Log not found')
 
@@ -296,7 +309,11 @@ export const dailyLogRouter = createTRPCRouter({
         userId: ctx.session.user.id,
         objectId: water[0]?.id,
         task: 'Add Water ' + input.amount.toString() + 'ml',
-        notes: isCreateLog ? 'Created new log' : '',
+        notes: isCreateLog
+          ? 'Created new log'
+          : catchMissedLog
+            ? 'Catched missed log'
+            : '',
       })
 
       return water
@@ -323,28 +340,41 @@ export const dailyLogRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       let logId = input.logId
       let isCreateLog = false
+      let catchMissedLog = false
 
       if (input.logId === null || input.logId === undefined) {
-        isCreateLog = true
-        const log = await ctx.db
-          .insert(dailyLog)
-          .values({
-            date: new Date().toDateString(),
-            morningWeight: '',
-            notes: '',
-            sleep: '',
-            waistMeasurement: '',
-            sleepQuality: '',
-            isHiit: false,
-            isCardio: false,
-            isLift: false,
-            isLiss: false,
-            image: '',
-            userId: ctx.session.user.id,
-          })
-          .returning({ id: dailyLog.id })
+        const logCheck = await ctx.db.query.dailyLog.findFirst({
+          where: and(
+            eq(dailyLog.userId, ctx.session.user.id),
+            eq(dailyLog.date, new Date().toDateString()),
+          ),
+        })
 
-        logId = log?.[0]?.id
+        if (logCheck) {
+          logId = logCheck.id
+          catchMissedLog = true
+        } else {
+          isCreateLog = true
+          const log = await ctx.db
+            .insert(dailyLog)
+            .values({
+              date: new Date().toDateString(),
+              morningWeight: '',
+              notes: '',
+              sleep: '',
+              waistMeasurement: '',
+              sleepQuality: '',
+              isHiit: false,
+              isCardio: false,
+              isLift: false,
+              isLiss: false,
+              image: '',
+              userId: ctx.session.user.id,
+            })
+            .returning({ id: dailyLog.id })
+
+          logId = log?.[0]?.id
+        }
       }
       if (!logId) throw new Error('Log not found')
 
@@ -360,7 +390,11 @@ export const dailyLogRouter = createTRPCRouter({
         userId: ctx.session.user.id,
         objectId: poop[0]?.id,
         task: 'Poop',
-        notes: isCreateLog ? 'Created new log' : '',
+        notes: isCreateLog
+          ? 'Created new log'
+          : catchMissedLog
+            ? 'Catched missed log'
+            : '',
       })
 
       return poop
