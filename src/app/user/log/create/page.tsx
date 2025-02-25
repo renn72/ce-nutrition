@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation'
 
 import { DailyLogForm } from './form'
 
-const Log = ({ id, date }: { id: number; date: string }) => {
+const Log = ({ id, date }: { id: number; date: string | number }) => {
   const { data: log, isLoading } = api.dailyLog.get.useQuery(id)
   if (isLoading) return null
   return (
@@ -20,13 +20,14 @@ const Log = ({ id, date }: { id: number; date: string }) => {
 export default function Home() {
   const searchParams = useSearchParams()
   const id = searchParams.get('id')
-  const date = searchParams.get('date')
+  const date = Number(searchParams.get('date'))
   const { data: dailyLogs, isLoading } =
     api.dailyLog.getAllCurrentUser.useQuery()
 
   if (isLoading) return null
 
-  const log = dailyLogs?.find((log) => log.date === date)
+  const log = dailyLogs?.find((log) => log.date === new Date(date).toDateString())
+  console.log('log', log)
 
   if (!date) return null
 
