@@ -9,9 +9,9 @@ import { GetUserById } from '@/types'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { Row } from '@tanstack/react-table'
 import { RefreshCw } from 'lucide-react'
+import { signIn } from 'next-auth/react'
 import { toast } from 'sonner'
 
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -29,6 +29,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
@@ -50,15 +51,17 @@ const DialogWrapper = ({
         setIsOpen(open)
       }}
     >
-      <DialogTrigger >
-        Update Email
+      <DialogTrigger asChild>
+        <Button variant='ghost'>Update Email</Button>
       </DialogTrigger>
       <DialogContent
         onOpenAutoFocus={(e) => {
           e.preventDefault()
         }}
-        className='w-full max-w-lg'>{children}</DialogContent>
-
+        className='w-full max-w-lg'
+      >
+        {children}
+      </DialogContent>
     </Dialog>
   )
 }
@@ -130,6 +133,55 @@ const Email = ({ currentUser }: { currentUser: GetUserById }) => {
   )
 }
 
+const DeleteAccount = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const { mutate: deleteUser } = api.user.deleteUser.useMutation({
+    onSuccess: () => {
+      ctx.user.invalidate()
+      toast.success('Deleted successfully')
+    },
+  })
+  const { data: isUser } = api.user.isUser.useQuery()
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant='ghost'>Delete Account</Button>
+      </DialogTrigger>
+      <DialogContent
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+        }}
+        className='w-full max-w-lg'
+      >
+        <DialogHeader>
+          <DialogTitle>Delete Account</DialogTitle>
+          <DialogDescription>
+            Are you sure you want to delete your account? This action is
+            irreversible.
+          </DialogDescription>
+        </DialogHeader>
+        <div className='flex flex-col gap-4 w-full'>
+          <Button
+            variant='destructive'
+            onClick={() => {
+              if (!currentUser) return
+              if (isUser?.id === currentUser?.id) {
+                toast.error('You cannot delete yourself')
+                return
+              }
+
+              deleteUser(currentUser?.id)
+            }}
+          >
+            Delete Account
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
@@ -177,7 +229,7 @@ export function DataTableRowActions<TData>({
             })
           }}
         >
-          Toggle Trainer
+          <Button variant='ghost'>Toggle Trainer</Button>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
@@ -187,6 +239,25 @@ export function DataTableRowActions<TData>({
           }}
         >
           <Email currentUser={data} />
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onSelect={async () => {
+            await signIn('email', { email: data?.email, redirect: false })
+            toast.success('Sent email invite')
+          }}
+        >
+          <Button variant='ghost'>Send Email Invite</Button>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          className='text-destructive'
+          onSelect={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+          }}
+        >
+          <DeleteAccount currentUser={data} />
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

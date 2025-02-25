@@ -81,12 +81,16 @@ export const userSettings = createTable('user_settings', {
   updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
-  userId: text('user_id').notNull().references(() => user.id),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, {
+      onDelete: 'cascade',
+    }),
   defaultWater: text('default_water'),
   defaultChartRange: text('default_chart_range'),
 })
 
-export const userSettingsRelations = relations(userSettings, ({ one,  }) => ({
+export const userSettingsRelations = relations(userSettings, ({ one }) => ({
   user: one(user, {
     fields: [userSettings.userId],
     references: [user.id],
@@ -103,7 +107,9 @@ export const dailyLog = createTable('daily_log', {
   ),
   userId: text('user_id')
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, {
+      onDelete: 'cascade',
+    }),
   date: text('date').notNull(),
   morningWeight: text('morning_weight'),
   notes: text('notes'),
@@ -214,8 +220,16 @@ export const weighIn = createTable('weigh_in', {
 })
 
 export const weighInRelations = relations(weighIn, ({ one }) => ({
-  user: one(user, { fields: [weighIn.userId], references: [user.id], relationName: 'user' }),
-  trainer: one(user, { fields: [weighIn.trainerId], references: [user.id], relationName: 'trainer' }),
+  user: one(user, {
+    fields: [weighIn.userId],
+    references: [user.id],
+    relationName: 'user',
+  }),
+  trainer: one(user, {
+    fields: [weighIn.trainerId],
+    references: [user.id],
+    relationName: 'trainer',
+  }),
 }))
 
 export const userToTrainer = createTable('user_to_trainer', {
@@ -309,7 +323,6 @@ export const roleRelations = relations(role, ({ one }) => ({
   }),
 }))
 
-
 export const userToTrainerRelations = relations(
   userToTrainer,
   ({ one, many }) => ({
@@ -325,4 +338,3 @@ export const userToTrainerRelations = relations(
     }),
   }),
 )
-
