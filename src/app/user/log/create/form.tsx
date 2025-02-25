@@ -2,6 +2,8 @@
 
 import { api } from '@/trpc/react'
 
+import { useState } from 'react'
+
 import { useRouter } from 'next/navigation'
 
 import { UploadButton } from '@/lib/uploadthing'
@@ -14,13 +16,14 @@ import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
@@ -45,6 +48,32 @@ export const formSchema = z.object({
   image: z.string().optional(),
 })
 
+const DialogWrapper = ({
+  children,
+  title,
+  value,
+}: {
+  children: React.ReactNode
+  title: string
+  value: string
+}) => {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <div className='flex gap-2 items-center justify-around flex-col bg-secondary px-4 py-2 rounded-md font-semibold w-40'>
+          <div className='text-muted-foreground text-center'>{title}</div>
+          {value !== '' && value !== undefined && value !== null ? (
+            <div>{value}</div>
+          ) : (
+            <div className='text-muted-foreground'>...</div>
+          )}
+        </div>
+      </DialogTrigger>
+      <DialogContent>{children}</DialogContent>
+    </Dialog>
+  )
+}
+
 const DailyLogForm = ({
   todaysLog,
   date,
@@ -52,374 +81,471 @@ const DailyLogForm = ({
   todaysLog: GetDailyLogById | null
   date?: string | null
 }) => {
+  const [weight, setWeight] = useState<number | null>(() =>
+    todaysLog?.morningWeight ? Number(todaysLog?.morningWeight) : null,
+  )
+  const [bloodGlucose, setBloodGlucose] = useState<number | null>(() =>
+    todaysLog?.fastedBloodGlucose
+      ? Number(todaysLog?.fastedBloodGlucose)
+      : null,
+  )
+  const [sleep, setSleep] = useState<number | null>(() =>
+    todaysLog?.sleep ? Number(todaysLog?.sleep) : null,
+  )
+  const [sleepQuality, setSleepQuality] = useState<number | null>(() =>
+    todaysLog?.sleepQuality ? Number(todaysLog?.sleepQuality) : null,
+  )
+  const [nap, setNap] = useState<number | null>(
+    todaysLog?.nap ? Number(todaysLog?.nap) : null,
+  )
+  const [waistMeasurement, setWaistMeasurement] = useState<number | null>(() =>
+    todaysLog?.waistMeasurement ? Number(todaysLog?.waistMeasurement) : null,
+  )
+  const [hiit, setHiit] = useState<number | null>(
+    todaysLog?.hiit ? Number(todaysLog?.hiit) : null,
+  )
+  const [liss, setLiss] = useState<number | null>(
+    todaysLog?.liss ? Number(todaysLog?.liss) : null,
+  )
+  const [weightTraining, setWeightTraining] = useState<number | null>(() =>
+    todaysLog?.weight ? Number(todaysLog?.weight) : null,
+  )
+
   const router = useRouter()
   const ctx = api.useUtils()
+  const todaysLogDate = new Date(date ?? '')
   const { data: currentUser } = api.user.getCurrentUser.useQuery()
-  const { mutate: createDailyLog } = api.dailyLog.create.useMutation({
-    onSuccess: () => {
-      toast.success('Updated successfully')
+  const { mutate: updateImage } = api.dailyLog.updateImage.useMutation({
+    onSettled: () => {
       ctx.dailyLog.invalidate()
-      setTimeout(() => {
-        router.push('/')
-      }, 1000)
     },
   })
-  const { mutate: updateDailyLog } = api.dailyLog.update.useMutation({
-    onSuccess: () => {
-      toast.success('Updated successfully')
+  const { mutate: updateWeightTraining } =
+    api.dailyLog.updateWeightTraining.useMutation({
+      onSettled: () => {
+        ctx.dailyLog.invalidate()
+      },
+    })
+  const { mutate: updateBloodGlucose } =
+    api.dailyLog.updateBloodGlucose.useMutation({
+      onSettled: () => {
+        ctx.dailyLog.invalidate()
+      },
+    })
+  const { mutate: updateSleep } = api.dailyLog.updateSleep.useMutation({
+    onSettled: () => {
       ctx.dailyLog.invalidate()
-      setTimeout(() => {
-        router.push('/')
-      }, 1000)
     },
   })
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      date: todaysLog?.date || new Date().toDateString(),
-      morningWeight: todaysLog?.morningWeight || '',
-      notes: todaysLog?.notes || '',
-      nap: todaysLog?.nap || '',
-      sleep: todaysLog?.sleep || '',
-      waistMeasurement: todaysLog?.waistMeasurement || '',
-      sleepQuality: todaysLog?.sleepQuality || '',
-      fastedBloodGlucose: todaysLog?.fastedBloodGlucose || '',
-      isHiit: todaysLog?.isHiit || false,
-      isCardio: todaysLog?.isCardio || false,
-      isLift: todaysLog?.isLift || false,
-      isLiss: todaysLog?.isLiss || false,
-      image: todaysLog?.image || '',
+  const { mutate: updateSleepQuality } =
+    api.dailyLog.updateSleepQuality.useMutation({
+      onSettled: () => {
+        ctx.dailyLog.invalidate()
+      },
+    })
+  const { mutate: updateNap } = api.dailyLog.updateNap.useMutation({
+    onSettled: () => {
+      ctx.dailyLog.invalidate()
     },
   })
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log('input', data)
-    console.log('todaysLog', todaysLog)
-    const today = new Date()
-    if (!currentUser) return
-    if (todaysLog) {
-      console.log('update')
-      updateDailyLog({
-        id: todaysLog.id,
-        date: data.date,
-        morningWeight: data.morningWeight,
-        notes: data.notes,
-        nap: data.nap,
-        sleep: data.sleep,
-        sleepQuality: data.sleepQuality,
-        waistMeasurement: data.waistMeasurement,
-        fastedBloodGlucose: data.fastedBloodGlucose,
-        isHiit: data.isHiit,
-        isCardio: data.isCardio,
-        isLift: data.isLift,
-        isLiss: data.isLiss,
-        image: data.image,
-        userId: currentUser.id,
-      })
-    } else {
-      console.log('create')
-      createDailyLog({
-        date: data.date,
-        morningWeight: data.morningWeight,
-        notes: data.notes,
-        sleep: data.sleep,
-        sleepQuality: data.sleepQuality,
-        fastedBloodGlucose: data.fastedBloodGlucose,
-        nap: data.nap,
-        waistMeasurement: data.waistMeasurement,
-        isHiit: data.isHiit,
-        isCardio: data.isCardio,
-        isLift: data.isLift,
-        isLiss: data.isLiss,
-        image: data.image,
-        userId: currentUser.id,
-      })
-    }
+  const { mutate: updateWaistMeasurement } =
+    api.dailyLog.updateWaistMeasurement.useMutation({
+      onSettled: () => {
+        ctx.dailyLog.invalidate()
+      },
+    })
+  const { mutate: updateHiit } = api.dailyLog.updateHiit.useMutation({
+    onSettled: () => {
+      ctx.dailyLog.invalidate()
+    },
+  })
+
+  const { mutate: updateLiss } = api.dailyLog.updateLiss.useMutation({
+    onSettled: () => {
+      ctx.dailyLog.invalidate()
+    },
+  })
+  const { mutate: updateWeight } = api.dailyLog.updateWeight.useMutation({
+    onSettled: () => {
+      ctx.dailyLog.invalidate()
+    },
+  })
+
+  const onUpdateImage = (url: string) => {
+    updateImage({
+      date: todaysLogDate.toDateString(),
+      image: url,
+    })
   }
 
-  const updateImage = (url: string) => {
-    form.setValue('image', url)
-  }
-
-  const formDate = form.watch('date')
-
-  const imageUrl = form.watch('image')
-  console.log('imageUrl', imageUrl)
   return (
-    <div className='mt-10'>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className='flex flex-col gap-2 mt-8 px-2 mb-16'>
-            <h2 className='text-xl font-bold text-muted-foreground'>
-              {new Date(formDate).toLocaleDateString('en-AU', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                weekday: 'long',
-              })}
-            </h2>
-            <div className='flex items-center gap-8 w-full justify-between px-8'>
+    <div className='mt-16 flex flex-col gap-3 px-4'>
+      <div className='w-full text-center text-xl font-semibold'>{date}</div>
+      <div className='flex gap-4 w-full justify-around'>
+        <DialogWrapper
+          title='Weight'
+          value={todaysLog?.morningWeight ?? ''}
+        >
+          <DialogHeader>
+            <DialogTitle>Weight</DialogTitle>
+            <DialogDescription>Enter your weight today</DialogDescription>
+          </DialogHeader>
+          <Input
+            placeholder='Weight'
+            className='w-full'
+            type='number'
+            value={weight ?? ''}
+            onChange={(e) => {
+              setWeight(Number(e.target.value))
+            }}
+          />
+          <DialogClose asChild>
+            <div className='flex  w-full items-center justify-around'>
               <Button
-                className='w-full'
-                variant='secondary'
-                type='submit'
+                variant='default'
+                size='lg'
+                onClick={() => {
+                  if (!weight) return
+                  updateWeight({
+                    date: todaysLogDate.toDateString(),
+                    morningWeight: weight?.toString(),
+                  })
+                }}
               >
                 Save
               </Button>
+            </div>
+          </DialogClose>
+        </DialogWrapper>
+        <DialogWrapper
+          title='Blood Glucose'
+          value={todaysLog?.fastedBloodGlucose ?? ''}
+        >
+          <DialogHeader>
+            <DialogTitle>Blood Glucose</DialogTitle>
+            <DialogDescription>
+              Enter yout blood glucose today
+            </DialogDescription>
+          </DialogHeader>
+          <Input
+            placeholder='Blood Glucose'
+            className='w-full'
+            type='number'
+            value={bloodGlucose ?? ''}
+            onChange={(e) => {
+              setBloodGlucose(Number(e.target.value))
+            }}
+          />
+          <DialogClose asChild>
+            <div className='flex  w-full items-center justify-around'>
               <Button
-                className='w-full'
-                variant='secondary'
-                onClick={(e) => {
-                  e.preventDefault()
-                  form.reset()
+                variant='default'
+                onClick={() => {
+                  if (!bloodGlucose) return
+                  updateBloodGlucose({
+                    date: todaysLogDate.toDateString(),
+                    fastedBloodGlucose: bloodGlucose?.toString(),
+                  })
                 }}
               >
-                Clear
+                Save
               </Button>
             </div>
-            <div className='flex items-center gap-4'>
-              <FormField
-                control={form.control}
-                name='morningWeight'
-                render={({ field }) => (
-                  <FormItem className='flex flex-col'>
-                    <FormLabel>Morning Weight</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Morning Weight'
-                        {...field}
-                        type='number'
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='fastedBloodGlucose'
-                render={({ field }) => (
-                  <FormItem className='flex flex-col'>
-                    <FormLabel>Blood Glucose</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Blood Glucose'
-                        {...field}
-                        type='number'
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='waistMeasurement'
-                render={({ field }) => (
-                  <FormItem className='flex flex-col'>
-                    <FormLabel>Waist</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Waist'
-                        {...field}
-                        type='number'
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          </DialogClose>
+        </DialogWrapper>
+      </div>
+      <div className='flex gap-4 w-full justify-around'>
+        <DialogWrapper
+          title='Sleep'
+          value={todaysLog?.sleep ?? ''}
+        >
+          <DialogHeader>
+            <DialogTitle>Sleep</DialogTitle>
+            <DialogDescription>Enter your sleep today</DialogDescription>
+          </DialogHeader>
+          <Input
+            placeholder='Sleep'
+            className='w-full'
+            type='number'
+            value={sleep ?? ''}
+            onChange={(e) => {
+              setSleep(Number(e.target.value))
+            }}
+          />
+          <DialogClose asChild>
+            <div className='flex  w-full items-center justify-around'>
+              <Button
+                variant='default'
+                onClick={() => {
+                  if (!sleep) return
+                  updateSleep({
+                    date: todaysLogDate.toDateString(),
+                    sleep: sleep?.toString(),
+                  })
+                }}
+              >
+                Save
+              </Button>
             </div>
-            <div className='flex items-center gap-4'>
-              <FormField
-                control={form.control}
-                name='sleep'
-                render={({ field }) => (
-                  <FormItem className='flex flex-col'>
-                    <FormLabel>Sleep</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Sleep'
-                        {...field}
-                        type='number'
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='sleepQuality'
-                render={({ field }) => (
-                  <FormItem className='flex flex-col'>
-                    <FormLabel>Sleep Quality</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Sleep Quality'
-                        {...field}
-                        type='number'
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='nap'
-                render={({ field }) => (
-                  <FormItem className='flex flex-col'>
-                    <FormLabel>Nap</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Nap'
-                        {...field}
-                        type='number'
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          </DialogClose>
+        </DialogWrapper>
+        <DialogWrapper
+          title='Sleep Quality'
+          value={todaysLog?.sleepQuality ?? ''}
+        >
+          <DialogHeader>
+            <DialogTitle>Sleep Quality</DialogTitle>
+            <DialogDescription>
+              Enter your sleep quality today
+            </DialogDescription>
+          </DialogHeader>
+          <Input
+            placeholder='Sleep Quality'
+            className='w-full'
+            type='number'
+            value={sleepQuality ?? ''}
+            onChange={(e) => {
+              setSleepQuality(Number(e.target.value))
+            }}
+          />
+          <DialogClose asChild>
+            <div className='flex  w-full items-center justify-around'>
+              <Button
+                variant='default'
+                onClick={() => {
+                  if (!sleepQuality) return
+                  updateSleepQuality({
+                    date: todaysLogDate.toDateString(),
+                    sleepQuality: sleepQuality?.toString(),
+                  })
+                }}
+              >
+                Save
+              </Button>
             </div>
-            <div className='flex gap-4 justify-between px-4'>
-              <FormField
-                control={form.control}
-                name='isHiit'
-                render={({ field }) => (
-                  <FormItem className='flex items-center gap-2'>
-                    <FormLabel className='mt-[8px]'>Hiit</FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={(value) => {
-                          field.onChange(value)
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='isCardio'
-                render={({ field }) => (
-                  <FormItem className='flex items-center gap-2'>
-                    <FormLabel className='mt-[8px]'>Cardio</FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={(value) => {
-                          field.onChange(value)
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='isLift'
-                render={({ field }) => (
-                  <FormItem className='flex items-center gap-2'>
-                    <FormLabel className='mt-[8px]'>Lift</FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={(value) => {
-                          field.onChange(value)
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='isLiss'
-                render={({ field }) => (
-                  <FormItem className='flex items-center gap-2'>
-                    <FormLabel className='mt-[8px]'>LISS</FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={(value) => {
-                          field.onChange(value)
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          </DialogClose>
+        </DialogWrapper>
+      </div>
+      <div className='flex gap-4 w-full justify-around'>
+        <DialogWrapper
+          title='Nap'
+          value={todaysLog?.nap ?? ''}
+        >
+          <DialogHeader>
+            <DialogTitle>Nap</DialogTitle>
+            <DialogDescription>Enter your nap today</DialogDescription>
+          </DialogHeader>
+          <Input
+            placeholder='Nap'
+            className='w-full'
+            type='number'
+            value={nap ?? ''}
+            onChange={(e) => {
+              setNap(Number(e.target.value))
+            }}
+          />
+          <DialogClose asChild>
+            <div className='flex  w-full items-center justify-around'>
+              <Button
+                variant='default'
+                onClick={() => {
+                  if (!nap) return
+                  updateNap({
+                    date: todaysLogDate.toDateString(),
+                    nap: nap?.toString(),
+                  })
+                }}
+              >
+                Save
+              </Button>
             </div>
-            <FormField
-              control={form.control}
-              name='notes'
-              render={({ field }) => (
-                <FormItem className='flex flex-col'>
-                  <FormLabel>Notes</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder='Notes'
-                      {...field}
-                      rows={1}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+          </DialogClose>
+        </DialogWrapper>
+        <DialogWrapper
+          title='Girth'
+          value={todaysLog?.waistMeasurement ?? ''}
+        >
+          <DialogHeader>
+            <DialogTitle>Girth</DialogTitle>
+            <DialogDescription>
+              Enter your waist measurement today
+            </DialogDescription>
+          </DialogHeader>
+          <Input
+            placeholder='Girth'
+            className='w-full'
+            type='number'
+            value={waistMeasurement ?? ''}
+            onChange={(e) => {
+              setWaistMeasurement(Number(e.target.value))
+            }}
+          />
+          <DialogClose asChild>
+            <div className='flex  w-full items-center justify-around'>
+              <Button
+                variant='default'
+                onClick={() => {
+                  if (!waistMeasurement) return
+                  updateWaistMeasurement({
+                    date: todaysLogDate.toDateString(),
+                    waistMeasurement: waistMeasurement?.toString(),
+                  })
+                }}
+              >
+                Save
+              </Button>
+            </div>
+          </DialogClose>
+        </DialogWrapper>
+      </div>
+      <div className='flex gap-2 w-full justify-around'>
+        <DialogWrapper
+          title='Hiit'
+          value={todaysLog?.hiit ?? ''}
+        >
+          <DialogHeader>
+            <DialogTitle>Hiit</DialogTitle>
+            <DialogDescription>Enter your hiit today</DialogDescription>
+          </DialogHeader>
+          <Input
+            placeholder='Hiit'
+            className='w-full'
+            type='number'
+            value={hiit ?? ''}
+            onChange={(e) => {
+              setHiit(Number(e.target.value))
+            }}
+          />
+          <DialogClose asChild>
+            <div className='flex  w-full items-center justify-around'>
+              <Button
+                variant='default'
+                onClick={() => {
+                  if (!hiit) return
+                  updateHiit({
+                    date: todaysLogDate.toDateString(),
+                    hiit: hiit?.toString(),
+                  })
+                }}
+              >
+                Save
+              </Button>
+            </div>
+          </DialogClose>
+        </DialogWrapper>
+        <DialogWrapper
+          title='Liss'
+          value={todaysLog?.liss ?? ''}
+        >
+          <DialogHeader>
+            <DialogTitle>Liss</DialogTitle>
+            <DialogDescription>Enter your liss today</DialogDescription>
+          </DialogHeader>
+          <Input
+            placeholder='Liss'
+            className='w-full'
+            type='number'
+            value={liss ?? ''}
+            onChange={(e) => {
+              setLiss(Number(e.target.value))
+            }}
+          />
+          <DialogClose asChild>
+            <div className='flex  w-full items-center justify-around'>
+              <Button
+                variant='default'
+                onClick={() => {
+                  if (!liss) return
+                  updateLiss({
+                    date: todaysLogDate.toDateString(),
+                    liss: liss?.toString(),
+                  })
+                }}
+              >
+                Save
+              </Button>
+            </div>
+          </DialogClose>
+        </DialogWrapper>
+        <DialogWrapper
+          title='Weight Training'
+          value={todaysLog?.weight ?? ''}
+        >
+          <DialogHeader>
+            <DialogTitle>Weight Training</DialogTitle>
+            <DialogDescription>
+              Enter your weight training today
+            </DialogDescription>
+          </DialogHeader>
+          <Input
+            placeholder='Weight Training'
+            className='w-full'
+            type='number'
+            value={weightTraining ?? ''}
+            onChange={(e) => {
+              setWeightTraining(Number(e.target.value))
+            }}
+          />
+          <DialogClose asChild>
+            <div className='flex  w-full items-center justify-around'>
+              <Button
+                variant='default'
+                onClick={() => {
+                  if (!weightTraining) return
+                  updateWeightTraining({
+                    date: todaysLogDate.toDateString(),
+                    weight: weightTraining?.toString(),
+                  })
+                }}
+              >
+                Save
+              </Button>
+            </div>
+          </DialogClose>
+        </DialogWrapper>
+      </div>
+      {todaysLog?.image === '' ||
+      todaysLog?.image === undefined ||
+      todaysLog?.image === null ? (
+        <div className='flex gap-4 flex-col w-full items-center'>
+          <Image
+            className='text-muted-foreground'
+            size={64}
+            strokeWidth={1}
+          />
+          <div className='flex gap-4 justify-around w-full'>
+            <UploadButton
+              appearance={{
+                button: {
+                  background: '#ccc',
+                },
+              }}
+              endpoint='imageUploader'
+              onClientUploadComplete={(res) => {
+                console.log('onClientUploadComplete', res)
+                const url = res?.[0]?.url
+              }}
             />
-            {imageUrl === '' ? (
-              <div className='flex gap-4 flex-col w-full items-center'>
-                <Image
-                  className='text-muted-foreground'
-                  size={64}
-                  strokeWidth={1}
-                />
-                <div className='flex gap-4 justify-around w-full'>
-                  <UploadButton
-                    appearance={{
-                      button: {
-                        background: '#ccc',
-                      },
-                    }}
-                    endpoint='imageUploader'
-                    onClientUploadComplete={(res) => {
-                      console.log('onClientUploadComplete', res)
-                      const url = res?.[0]?.url
-                      form.setValue('image', url)
-                    }}
-                  />
-                  <Camera onUpload={updateImage} />
-                </div>
-              </div>
-            ) : (
-              <div className='flex gap-4 flex-col '>
-                <div className='flex gap-2 items-center justify-around w-full'>
-                  <img
-                    src={imageUrl}
-                    alt='img'
-                    className='w-full h-full'
-                  />
-                </div>
-                <Button
-                  variant='secondary'
-                  onClick={() => {
-                    form.setValue('image', '')
-                  }}
-                >
-                  Clear
-                </Button>
-              </div>
-            )}
-            <div></div>
+            <Camera onUpload={onUpdateImage} />
           </div>
-        </form>
-      </Form>
+        </div>
+      ) : (
+        <div className='flex gap-4 flex-col '>
+          <div className='flex gap-2 items-center justify-around w-full'>
+            <img
+              src={todaysLog?.image ?? ''}
+              alt='img'
+              className='w-full h-full'
+            />
+          </div>
+          <Button
+            variant='secondary'
+            onClick={() => {}}
+          >
+            Clear
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

@@ -248,6 +248,397 @@ export const dailyLogRouter = createTRPCRouter({
 
       return dailyMeals
     }),
+  updateSleep: protectedProcedure
+    .input(
+      z.object({
+        date: z.string(),
+        sleep: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const log = await ctx.db.query.dailyLog.findFirst({
+        where: and(
+          eq(dailyLog.date, input.date),
+          eq(dailyLog.userId, ctx.session.user.id),
+        ),
+      })
+
+      if (!log) {
+        const res = await ctx.db.insert(dailyLog).values({
+          date: input.date,
+          sleep: input.sleep,
+          userId: ctx.session.user.id,
+        })
+        return res
+      }
+
+      const res = await ctx.db
+        .update(dailyLog)
+        .set({ sleep: input.sleep })
+        .where(
+          and(
+            eq(dailyLog.date, input.date),
+            eq(dailyLog.userId, ctx.session.user.id),
+          ),
+        )
+
+      return res
+    }),
+  updateSleepQuality: protectedProcedure
+    .input(
+      z.object({
+        date: z.string(),
+        sleepQuality: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const log = await ctx.db.query.dailyLog.findFirst({
+        where: and(
+          eq(dailyLog.date, input.date),
+          eq(dailyLog.userId, ctx.session.user.id),
+        ),
+      })
+
+      if (!log) {
+        const res = await ctx.db.insert(dailyLog).values({
+          date: input.date,
+          sleepQuality: input.sleepQuality,
+          userId: ctx.session.user.id,
+        })
+        return res
+      }
+
+      const res = await ctx.db
+        .update(dailyLog)
+        .set({ sleepQuality: input.sleepQuality })
+        .where(
+          and(
+            eq(dailyLog.date, input.date),
+            eq(dailyLog.userId, ctx.session.user.id),
+          ),
+        )
+
+      return res
+    }),
+  updateNap: protectedProcedure
+    .input(
+      z.object({
+        date: z.string(),
+        nap: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const log = await ctx.db.query.dailyLog.findFirst({
+        where: and(
+          eq(dailyLog.date, input.date),
+          eq(dailyLog.userId, ctx.session.user.id),
+        ),
+      })
+
+      if (!log) {
+        const res = await ctx.db.insert(dailyLog).values({
+          date: input.date,
+          nap: input.nap,
+          userId: ctx.session.user.id,
+        })
+        return res
+      }
+
+      const res = await ctx.db
+        .update(dailyLog)
+        .set({ nap: input.nap })
+        .where(
+          and(
+            eq(dailyLog.date, input.date),
+            eq(dailyLog.userId, ctx.session.user.id),
+          ),
+        )
+
+      return res
+    }),
+  updateHiit: protectedProcedure
+    .input(
+      z.object({
+        date: z.string(),
+        hiit: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const log = await ctx.db.query.dailyLog.findFirst({
+        where: and(
+          eq(dailyLog.date, input.date),
+          eq(dailyLog.userId, ctx.session.user.id),
+        ),
+      })
+
+      if (!log) {
+        const res = await ctx.db.insert(dailyLog).values({
+          date: input.date,
+          hiit: input.hiit,
+          userId: ctx.session.user.id,
+        })
+        return res
+      }
+
+      const res = await ctx.db
+        .update(dailyLog)
+        .set({ hiit: input.hiit })
+        .where(
+          and(
+            eq(dailyLog.date, input.date),
+            eq(dailyLog.userId, ctx.session.user.id),
+          ),
+        )
+
+      return res
+    }),
+  updateCardio: protectedProcedure
+    .input(
+      z.object({
+        date: z.string(),
+        cardio: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const log = await ctx.db.query.dailyLog.findFirst({
+        where: and(
+          eq(dailyLog.date, input.date),
+          eq(dailyLog.userId, ctx.session.user.id),
+        ),
+      })
+
+      if (!log) {
+        const res = await ctx.db.insert(dailyLog).values({
+          date: input.date,
+          cardio: input.cardio,
+          userId: ctx.session.user.id,
+        })
+        return res
+      }
+
+      const res = await ctx.db
+        .update(dailyLog)
+        .set({ cardio: input.cardio })
+        .where(
+          and(
+            eq(dailyLog.date, input.date),
+            eq(dailyLog.userId, ctx.session.user.id),
+          ),
+        )
+
+      return res
+    }),
+  updateWeightTraining: protectedProcedure
+    .input(
+      z.object({
+        date: z.string(),
+        weight: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const log = await ctx.db.query.dailyLog.findFirst({
+        where: and(
+          eq(dailyLog.date, input.date),
+          eq(dailyLog.userId, ctx.session.user.id),
+        ),
+      })
+
+      if (!log) {
+        const res = await ctx.db.insert(dailyLog).values({
+          date: input.date,
+          weight: input.weight,
+          userId: ctx.session.user.id,
+        })
+        return res
+      }
+
+      const res = await ctx.db
+        .update(dailyLog)
+        .set({ weight: input.weight })
+        .where(
+          and(
+            eq(dailyLog.date, input.date),
+            eq(dailyLog.userId, ctx.session.user.id),
+          ),
+        )
+
+      return res
+    }),
+  updateLiss: protectedProcedure
+    .input(
+      z.object({
+        date: z.string(),
+        liss: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const log = await ctx.db.query.dailyLog.findFirst({
+        where: and(
+          eq(dailyLog.date, input.date),
+          eq(dailyLog.userId, ctx.session.user.id),
+        ),
+      })
+
+      if (!log) {
+        const res = await ctx.db.insert(dailyLog).values({
+          date: input.date,
+          liss: input.liss,
+          userId: ctx.session.user.id,
+        })
+        return res
+      }
+
+      const res = await ctx.db
+        .update(dailyLog)
+        .set({ liss: input.liss })
+        .where(
+          and(
+            eq(dailyLog.date, input.date),
+            eq(dailyLog.userId, ctx.session.user.id),
+          ),
+        )
+
+      return res
+    }),
+  updateWaistMeasurement: protectedProcedure
+    .input(
+      z.object({
+        date: z.string(),
+        waistMeasurement: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const log = await ctx.db.query.dailyLog.findFirst({
+        where: and(
+          eq(dailyLog.date, input.date),
+          eq(dailyLog.userId, ctx.session.user.id),
+        ),
+      })
+
+      if (!log) {
+        const res = await ctx.db.insert(dailyLog).values({
+          date: input.date,
+          waistMeasurement: input.waistMeasurement,
+          userId: ctx.session.user.id,
+        })
+        return res
+      }
+
+      const res = await ctx.db
+        .update(dailyLog)
+        .set({ waistMeasurement: input.waistMeasurement })
+        .where(
+          and(
+            eq(dailyLog.date, input.date),
+            eq(dailyLog.userId, ctx.session.user.id),
+          ),
+        )
+
+      return res
+    }),
+  updateWeight: protectedProcedure
+    .input(
+      z.object({
+        date: z.string(),
+        morningWeight: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const log = await ctx.db.query.dailyLog.findFirst({
+        where: and(
+          eq(dailyLog.date, input.date),
+          eq(dailyLog.userId, ctx.session.user.id),
+        ),
+      })
+
+      if (!log) {
+        const res = await ctx.db.insert(dailyLog).values({
+          date: input.date,
+          morningWeight: input.morningWeight,
+          userId: ctx.session.user.id,
+        })
+        return res
+      }
+
+      const res = await ctx.db
+        .update(dailyLog)
+        .set({ morningWeight: input.morningWeight })
+        .where(
+          and(
+            eq(dailyLog.date, input.date),
+            eq(dailyLog.userId, ctx.session.user.id),
+          ),
+        )
+
+      return res
+    }),
+  updateBloodGlucose: protectedProcedure
+    .input(
+      z.object({
+        date: z.string(),
+        fastedBloodGlucose: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const log = await ctx.db.query.dailyLog.findFirst({
+        where: and(
+          eq(dailyLog.date, input.date),
+          eq(dailyLog.userId, ctx.session.user.id),
+        ),
+      })
+
+      if (!log) {
+        const res = await ctx.db.insert(dailyLog).values({
+          date: input.date,
+          fastedBloodGlucose: input.fastedBloodGlucose,
+          userId: ctx.session.user.id,
+        })
+        return res
+      }
+
+      const res = await ctx.db
+        .update(dailyLog)
+        .set({ fastedBloodGlucose: input.fastedBloodGlucose })
+        .where(
+          and(
+            eq(dailyLog.date, input.date),
+            eq(dailyLog.userId, ctx.session.user.id),
+          ),
+        )
+
+      return res
+    }),
+  updateImage: protectedProcedure
+    .input(
+      z.object({
+        date: z.string(),
+        image: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const log = await ctx.db.query.dailyLog.findFirst({
+        where: and(
+          eq(dailyLog.date, input.date),
+          eq(dailyLog.userId, ctx.session.user.id),
+        ),
+      })
+
+      if (!log) {
+        const res = await ctx.db.insert(dailyLog).values({
+          date: input.date,
+          image: input.image,
+          userId: ctx.session.user.id,
+        })
+        return res
+      }
+
+      const res = await ctx.db
+        .update(dailyLog)
+        .set({ image: input.image })
+        .where(eq(dailyLog.date, input.date))
+
+      return true
+    }),
   addWaterLog: protectedProcedure
     .input(
       z.object({

@@ -120,10 +120,19 @@ export const dailyLog = createTable('daily_log', {
   isCardio: int('is_cardio', { mode: 'boolean' }),
   isLift: int('is_lift', { mode: 'boolean' }),
   isLiss: int('is_liss', { mode: 'boolean' }),
+  hiit: text('hiit'),
+  cardio: text('cardio'),
+  weight: text('weight'),
+  liss: text('liss'),
+  cardioType: text('cardio_type'),
   image: text('image'),
   waistMeasurement: text('waist_measurement'),
   nap: text('nap'),
-})
+},
+  (l) => ({
+    dateIndex: index('date_idx').on(l.date),
+  }),
+)
 
 export const dailyLogRelations = relations(dailyLog, ({ one, many }) => ({
   user: one(user, { fields: [dailyLog.userId], references: [user.id] }),
