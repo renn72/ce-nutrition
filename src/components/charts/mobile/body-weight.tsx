@@ -68,7 +68,7 @@ const BodyWeight = ({ dailyLogs, range }: { dailyLogs: GetAllDailyLogs, range: n
         />
         <Area
           dataKey='weight'
-          dot={false}
+          dot={true}
           strokeWidth={2}
           type='monotone'
           isAnimationActive={true}

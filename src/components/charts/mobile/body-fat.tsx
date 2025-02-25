@@ -73,7 +73,7 @@ const BodyFat = ({ weighIns, range }: { weighIns: GetAllWeighIns, range: number 
         />
         <Area
           dataKey='weight'
-          dot={false}
+          dot={true}
           strokeWidth={2}
           type='monotone'
           isAnimationActive={true}
