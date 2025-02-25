@@ -1,3 +1,4 @@
+import { auth } from '@/server/auth'
 import { TRPCError } from '@trpc/server'
 import { generateFullName, generateName } from '~/lib/names'
 import {
@@ -6,13 +7,12 @@ import {
   publicProcedure,
   rootProtectedProcedure,
 } from '~/server/api/trpc'
-import { log } from '~/server/db/schema/log'
 import { client, db } from '~/server/db'
+import { log } from '~/server/db/schema/log'
 import { user, userSettings } from '~/server/db/schema/user'
 import { hash } from 'bcryptjs'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
-import { auth } from '@/server/auth'
 
 function isTuple<T>(array: T[]): array is [T, ...T[]] {
   return array.length > 0
@@ -62,6 +62,10 @@ const isUserRoot = async (userId: string) => {
 }
 
 export const userRouter = createTRPCRouter({
+  getAdminLogs: protectedProcedure.query(async ({ ctx }) => {
+    const res = await ctx.db.query.log.findMany({})
+    return res
+  }),
   sync: protectedProcedure.mutation(async () => {
     await client.sync()
     return true
@@ -70,16 +74,18 @@ export const userRouter = createTRPCRouter({
     await client.sync()
     return true
   }),
-  getByEmail: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
-    if (input === '') throw new TRPCError({ code: 'BAD_REQUEST' })
-    const res = await ctx.db.query.user.findFirst({
-      where: (user, { eq }) => eq(user.email, input),
-      columns: {
-        password: false,
-      },
-    })
-    return res
-  }),
+  getByEmail: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      if (input === '') throw new TRPCError({ code: 'BAD_REQUEST' })
+      const res = await ctx.db.query.user.findFirst({
+        where: (user, { eq }) => eq(user.email, input),
+        columns: {
+          password: false,
+        },
+      })
+      return res
+    }),
   updateTrainer: protectedProcedure
     .input(z.object({ id: z.string(), isTrainer: z.boolean() }))
     .mutation(async ({ ctx, input }) => {
@@ -222,36 +228,38 @@ export const userRouter = createTRPCRouter({
     })
     return res
   }),
-  getCurrentUser: protectedProcedure.input(z.object({ id: z.string() }).optional()).query(async ({ ctx, input }) => {
-    let userId = ctx.session?.user.id
+  getCurrentUser: protectedProcedure
+    .input(z.object({ id: z.string() }).optional())
+    .query(async ({ ctx, input }) => {
+      let userId = ctx.session?.user.id
 
-    if (input?.id && input.id !== '') userId = input.id
+      if (input?.id && input.id !== '') userId = input.id
 
-    if (!userId) return null
+      if (!userId) return null
 
-    const res = await ctx.db.query.user.findFirst({
-      where: (user, { eq }) => eq(user.id, userId),
-      columns: {
-        password: false,
-      },
-      with: {
-        settings: true,
-        userPlans: {
-          with: {
-            userMeals: true,
-            userRecipes: true,
-            userIngredients: {
-              with: {
-                ingredient: true,
-                alternateIngredient: true,
+      const res = await ctx.db.query.user.findFirst({
+        where: (user, { eq }) => eq(user.id, userId),
+        columns: {
+          password: false,
+        },
+        with: {
+          settings: true,
+          userPlans: {
+            with: {
+              userMeals: true,
+              userRecipes: true,
+              userIngredients: {
+                with: {
+                  ingredient: true,
+                  alternateIngredient: true,
+                },
               },
             },
           },
         },
-      },
-    })
-    return res
-  }),
+      })
+      return res
+    }),
   isUser: publicProcedure.query(async () => {
     console.log('isUser')
     const session = await auth()
@@ -313,11 +321,14 @@ export const userRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const hashedPassword = await hash(input.password, 10)
-      const res = await ctx.db.insert(user).values({
-        ...input,
-        name: input.firstName + ' ' + input.lastName,
-        password: hashedPassword,
-      }).returning({ id: user.id })
+      const res = await ctx.db
+        .insert(user)
+        .values({
+          ...input,
+          name: input.firstName + ' ' + input.lastName,
+          password: hashedPassword,
+        })
+        .returning({ id: user.id })
 
       await ctx.db.insert(userSettings).values({
         userId: res[0]?.id || '00',
@@ -387,14 +398,17 @@ export const userRouter = createTRPCRouter({
         isTrainer: user.isTrainer || false,
       })),
     )
-    const jamie = await ctx.db.insert(user).values({
-      firstName: 'Jamie',
-      lastName: 'Dash',
-      name: 'Jamie Dash',
-      email: 'jamie@comp-edge.com.au',
-      password: hashedJamie,
-      isTrainer: false,
-    }).returning({ id: user.id })
+    const jamie = await ctx.db
+      .insert(user)
+      .values({
+        firstName: 'Jamie',
+        lastName: 'Dash',
+        name: 'Jamie Dash',
+        email: 'jamie@comp-edge.com.au',
+        password: hashedJamie,
+        isTrainer: false,
+      })
+      .returning({ id: user.id })
 
     await ctx.db.insert(userSettings).values({
       userId: jamie[0]?.id || '00',
