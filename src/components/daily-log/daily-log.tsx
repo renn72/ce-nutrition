@@ -61,7 +61,7 @@ const DailyLog = ({
 
   const id = dailyLog?.id || ''
 
-  if (todaysDailyLog?.image && todaysDailyLog?.image !== '') {
+  if (todaysDailyLog?.image && todaysDailyLog?.image !== '' && false) {
     return (
       <Link href={`/user/log/create?id=${id}&date=${date.getTime()}`}>
         <div className='grid grid-cols-3 w-full px-4 py-2 bg-secondary text-sm w-full'>
@@ -156,10 +156,15 @@ const DailyLog = ({
           />
         </div>
         <div className='w-full grid grid-cols-2 gap-2'>
+          {
+            todaysDailyLog?.waistMeasurement &&todaysDailyLog?.waistMeasurement !== ''? (
           <Text
             title='Waist'
             text={todaysDailyLog?.waistMeasurement}
           />
+
+            ): null
+           }
           <Text
             title='Bowel Movements'
                 text={todaysDailyLog?.poopLogs.reduce(
@@ -167,11 +172,11 @@ const DailyLog = ({
                   0,
                 ).toString()}
           />
-        </div>
           <Text
             title='Notes'
             text={todaysDailyLog?.notes}
           />
+        </div>
         <div className='flex gap-2 justify-center'>
           <Icon
             title='Hiit'
