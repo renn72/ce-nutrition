@@ -80,6 +80,26 @@ export const userRouter = createTRPCRouter({
     })
     return res
   }),
+  updateTrainer: protectedProcedure
+    .input(z.object({ id: z.string(), isTrainer: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(user)
+        .set({
+          isTrainer: input.isTrainer,
+        })
+        .where(eq(user.id, input.id))
+
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        objectId: null,
+        task: 'Update Trainer',
+        notes: JSON.stringify(input),
+      })
+
+      return res
+    }),
   updateFirstName: protectedProcedure
     .input(
       z.object({

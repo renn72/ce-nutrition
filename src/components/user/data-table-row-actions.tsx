@@ -2,11 +2,25 @@
 
 import { api } from '@/trpc/react'
 
+import { useState } from 'react'
+
+import { cn } from '@/lib/utils'
+import { GetUserById } from '@/types'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { Row } from '@tanstack/react-table'
+import { RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 
+import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,10 +34,116 @@ interface DataTableRowActionsProps<TData> {
   row: Row<TData>
 }
 
+const DialogWrapper = ({
+  children,
+  isOpen,
+  setIsOpen,
+}: {
+  children: React.ReactNode
+  isOpen: boolean
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
+  return (
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open)
+      }}
+    >
+      <DialogTrigger >
+        Update Email
+      </DialogTrigger>
+      <DialogContent
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+        }}
+        className='w-full max-w-lg'>{children}</DialogContent>
+
+    </Dialog>
+  )
+}
+const Email = ({ currentUser }: { currentUser: GetUserById }) => {
+  const [email, setEmail] = useState(currentUser?.email ?? '')
+  const [isOpen, setIsOpen] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const ctx = api.useUtils()
+  const { mutate: updateEmail } = api.user.updateEmail.useMutation({
+    onSuccess: () => {
+      ctx.user.invalidate()
+      setIsOpen(false)
+      setTimeout(() => {
+        setIsSaving(false)
+      }, 100)
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+      setIsOpen(false)
+      setTimeout(() => {
+        setIsSaving(false)
+      }, 100)
+    },
+    onMutate: () => {
+      setIsSaving(true)
+    },
+  })
+  return (
+    <DialogWrapper
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+    >
+      <DialogHeader>
+        <DialogTitle>Email</DialogTitle>
+        <DialogDescription>Update your email.</DialogDescription>
+      </DialogHeader>
+      <div className='flex flex-col gap-4 w-full'>
+        <div className='text-sm text-muted-foreground font-medium'>
+          <Input
+            type='text'
+            className='w-full'
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value)
+            }}
+          />
+        </div>
+        <Button
+          disabled={isSaving}
+          className='relative'
+          onClick={() => {
+            updateEmail({
+              email: email,
+              id: currentUser?.id ?? '',
+            })
+          }}
+        >
+          {isSaving ? (
+            <RefreshCw
+              className={cn('animate-spin')}
+              size={20}
+            />
+          ) : (
+            <span>Save</span>
+          )}
+        </Button>
+      </div>
+    </DialogWrapper>
+  )
+}
+
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
   const ctx = api.useUtils()
+  const data = row.original as GetUserById
+  const { mutate: updateTrainer } = api.user.updateTrainer.useMutation({
+    onSuccess: () => {
+      ctx.user.invalidate()
+      toast.success('Updated successfully')
+    },
+  })
+  const { data: isUser } = api.user.isUser.useQuery()
+  console.log(data)
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -39,6 +159,35 @@ export function DataTableRowActions<TData>({
         align='end'
         className='w-[160px]'
       >
+        <DropdownMenuItem
+          onClick={(e) => {
+            e.stopPropagation()
+          }}
+          onSelect={(e) => {
+            e.stopPropagation()
+            if (!data) return
+            if (isUser?.id === data?.id) {
+              toast.error('You cannot toggle yourself as a trainer')
+              return
+            }
+
+            updateTrainer({
+              id: data?.id,
+              isTrainer: !data?.isTrainer,
+            })
+          }}
+        >
+          Toggle Trainer
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onSelect={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+          }}
+        >
+          <Email currentUser={data} />
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

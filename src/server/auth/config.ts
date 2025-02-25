@@ -48,6 +48,17 @@ export const authConfig = {
     strategy: 'jwt',
   },
   callbacks: {
+    signIn: async ({ user, account, email,  }) => {
+      if (!user) return false
+      const dbUser = await db.query.user.findFirst({
+        where: (u, { eq }) => eq(u.email, user.email as string),
+        columns: {
+          id: true,
+        },
+      })
+      if (dbUser) return true
+      return false
+    },
     session: async ({ session, token }) => {
       if (session.user && token.uid) {
         const dbUser = await db.query.user.findFirst({
