@@ -70,7 +70,11 @@ const DialogWrapper = ({
           )}
         </div>
       </DialogTrigger>
-      <DialogContent>{children}</DialogContent>
+      <DialogContent
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+        }}
+      >{children}</DialogContent>
     </Dialog>
   )
 }
@@ -90,8 +94,8 @@ const DailyLogForm = ({
       ? Number(todaysLog?.fastedBloodGlucose)
       : null,
   )
-  const [sleep, setSleep] = useState<number | null>(() =>
-    todaysLog?.sleep ? Number(todaysLog?.sleep) : null,
+  const [sleep, setSleep] = useState<number[]>(() =>
+    todaysLog?.sleep ? [Number(todaysLog?.sleep)] : [0],
   )
   const [sleepQuality, setSleepQuality] = useState<number[]>(() =>
     todaysLog?.sleepQuality ? [Number(todaysLog?.sleepQuality)] : [0],
@@ -264,24 +268,38 @@ const DailyLogForm = ({
             <DialogTitle>Sleep</DialogTitle>
             <DialogDescription>Enter your sleep today</DialogDescription>
           </DialogHeader>
+          <div className='flex flex-col items-center gap-6'>
           <Input
             placeholder='Sleep'
-            className='w-full'
+            className=''
             type='number'
-            value={sleep ?? ''}
+            value={sleep?.[0] ?? ''}
             onChange={(e) => {
-              setSleep(Number(e.target.value))
+              setSleep([Number(e.target.value)])
             }}
           />
+          <Slider
+            autoFocus
+            defaultValue={[0]}
+              min={4}
+            max={12}
+            step={1}
+            value={sleep}
+            onValueChange={(values) => {
+              setSleep(values)
+            }}
+          />
+          </div>
           <DialogClose asChild>
             <div className='flex  w-full items-center justify-around'>
               <Button
                 variant='default'
                 onClick={() => {
                   if (!sleep) return
+                  if (!sleep?.[0]) return
                   updateSleep({
                     date: todaysLogDate.toDateString(),
-                    sleep: sleep?.toString(),
+                    sleep: sleep[0].toString(),
                   })
                 }}
               >
