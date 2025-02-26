@@ -10,7 +10,7 @@ import { UploadButton } from '@/lib/uploadthing'
 import { cn } from '@/lib/utils'
 import { GetDailyLogById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Image } from 'lucide-react'
+import { ArrowDownIcon, ArrowUpIcon, Image, Minus, PlusIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -54,13 +54,18 @@ const DialogWrapper = ({
   children,
   title,
   value,
+  prevValue,
   isWidthFull = false,
+  fixed = 0,
 }: {
   children: React.ReactNode
   title: string
   value: string
+  prevValue: string
   isWidthFull?: boolean
+  fixed?: number
 }) => {
+  const diff = Number(prevValue) - Number(value)
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -74,10 +79,23 @@ const DialogWrapper = ({
           {value !== '' && value !== undefined && value !== null ? (
             <div
               className={cn(
+                'relative',
                 isWidthFull ? 'text-sm text-secondary-foreground' : '',
               )}
             >
               {value}
+              {prevValue !== '' &&
+              prevValue !== undefined &&
+              prevValue !== null ? (
+                <div className='absolute right-[-2.5rem] top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start'>
+                  {diff === 0 ? null : diff < 0 ? (
+                    <ArrowUpIcon size={12} />
+                  ) : (
+                    <ArrowDownIcon size={12} />
+                  )}
+                  {Math.abs(diff).toFixed(fixed)}
+                </div>
+              ) : null}
             </div>
           ) : (
             <div className='text-muted-foreground'>...</div>
@@ -97,9 +115,11 @@ const DialogWrapper = ({
 
 const DailyLogForm = ({
   todaysLog,
+  prevLog,
   date,
 }: {
   todaysLog: GetDailyLogById | null
+  prevLog: GetDailyLogById | null
   date?: string | null
 }) => {
   const [weight, setWeight] = useState<number | null>(() =>
@@ -213,20 +233,48 @@ const DailyLogForm = ({
         <DialogWrapper
           title='Weight'
           value={todaysLog?.morningWeight ?? ''}
+          prevValue={prevLog?.morningWeight ?? ''}
+          fixed={1}
         >
           <DialogHeader>
             <DialogTitle>Weight</DialogTitle>
             <DialogDescription>Enter your weight today</DialogDescription>
           </DialogHeader>
-          <Input
-            placeholder='Weight'
-            className='w-full'
-            type='number'
-            value={weight ?? ''}
-            onChange={(e) => {
-              setWeight(Number(e.target.value))
-            }}
-          />
+
+          <div className='flex justify-center '>
+            <div className='w-48 relative border rounded-lg h-12 flex items-center'>
+              <Input
+                placeholder='Weight'
+                className='relative w-full text-base rounded-lg text-center h-min border-none focus:ring-0 focus:border-none shadow-none py-0'
+                type='number'
+                value={weight?.toFixed(1) ?? ''}
+                onChange={(e) => {
+                  setWeight(Number(e.target.value))
+                }}
+              />
+
+              <div
+                onClick={() => {
+                  if (!weight) return
+                  setWeight(weight + 0.1)
+                }}
+                className='absolute right-0 top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start border-l'>
+                <div className='h-12 w-10 flex items-center justify-center'>
+                  <PlusIcon size={24} />
+                </div>
+              </div>
+              <div
+                onClick={() => {
+                  if (!weight) return
+                  setWeight(weight - 0.1)
+                }}
+                className='absolute left-0 top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start border-r'>
+                <div className='h-12 w-10 flex items-center justify-center'>
+                  <Minus size={24} />
+                </div>
+              </div>
+            </div>
+          </div>
           <DialogClose asChild>
             <div className='flex  w-full items-center justify-around'>
               <Button
@@ -248,6 +296,7 @@ const DailyLogForm = ({
         <DialogWrapper
           title='Blood Glucose'
           value={todaysLog?.fastedBloodGlucose ?? ''}
+          prevValue={prevLog?.fastedBloodGlucose ?? ''}
         >
           <DialogHeader>
             <DialogTitle>Blood Glucose</DialogTitle>
@@ -286,6 +335,7 @@ const DailyLogForm = ({
         <DialogWrapper
           title='Sleep'
           value={todaysLog?.sleep ?? ''}
+          prevValue={prevLog?.sleep ?? ''}
         >
           <DialogHeader>
             <DialogTitle>Sleep</DialogTitle>
@@ -334,6 +384,7 @@ const DailyLogForm = ({
         <DialogWrapper
           title='Sleep Quality'
           value={todaysLog?.sleepQuality ?? ''}
+          prevValue={prevLog?.sleepQuality ?? ''}
         >
           <DialogHeader>
             <DialogTitle>Sleep Quality</DialogTitle>
@@ -377,6 +428,7 @@ const DailyLogForm = ({
         <DialogWrapper
           title='Nap'
           value={todaysLog?.nap ?? ''}
+          prevValue={prevLog?.nap ?? ''}
         >
           <DialogHeader>
             <DialogTitle>Nap</DialogTitle>
@@ -411,6 +463,7 @@ const DailyLogForm = ({
         <DialogWrapper
           title='Girth'
           value={todaysLog?.waistMeasurement ?? ''}
+          prevValue={''}
         >
           <DialogHeader>
             <DialogTitle>Girth</DialogTitle>
@@ -449,6 +502,7 @@ const DailyLogForm = ({
         <DialogWrapper
           title='Hiit'
           value={todaysLog?.hiit ?? ''}
+          prevValue={''}
         >
           <DialogHeader>
             <DialogTitle>Hiit</DialogTitle>
@@ -502,6 +556,7 @@ const DailyLogForm = ({
         <DialogWrapper
           title='Liss'
           value={todaysLog?.liss ?? ''}
+          prevValue={''}
         >
           <DialogHeader>
             <DialogTitle>Liss</DialogTitle>
@@ -555,6 +610,7 @@ const DailyLogForm = ({
         <DialogWrapper
           title='Weight Training'
           value={todaysLog?.weight ?? ''}
+          prevValue={''}
         >
           <DialogHeader>
             <DialogTitle>Weight Training</DialogTitle>
@@ -612,6 +668,7 @@ const DailyLogForm = ({
         title='Notes'
         value={note ?? ''}
         isWidthFull={true}
+        prevValue={''}
       >
         <DialogHeader>
           <DialogTitle>Note</DialogTitle>

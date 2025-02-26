@@ -20,31 +20,25 @@ import {
 
 import { DailyLogForm } from './form'
 
-const Log = ({ id, date }: { id: number; date: string | number }) => {
-  const { data: log, isLoading } = api.dailyLog.get.useQuery(id)
-  if (isLoading) return null
-  return (
-    <DailyLogForm
-      todaysLog={log}
-      date={new Date(date).toDateString()}
-    />
-  )
-}
-
 export default function Home() {
   const searchParams = useSearchParams()
   const id = searchParams.get('id')
   const [date, setDate] = useState<Date | undefined>(
     () => new Date(Number(searchParams.get('date'))),
   )
-  const [ isOpen, setIsOpen ] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   const { data: dailyLogs, isLoading } =
     api.dailyLog.getAllCurrentUser.useQuery()
 
   if (isLoading) return null
 
   const log = dailyLogs?.find((log) => log.date === date?.toDateString())
+  const prevLog = dailyLogs?.find((log) => {
+    if (!date) return false
+    return log.date === new Date(date?.getTime() - 86400000).toDateString()
+  })
   console.log('log', log)
+  console.log('prevLog', prevLog)
 
   if (!date) return null
 
@@ -83,6 +77,7 @@ export default function Home() {
       </div>
       <DailyLogForm
         todaysLog={log}
+        prevLog={prevLog}
         date={date.toDateString()}
       />
     </div>
