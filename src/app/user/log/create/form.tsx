@@ -416,22 +416,41 @@ const DailyLogForm = ({
               setHiit(Number(e.target.value))
             }}
           />
-          <DialogClose asChild>
-            <div className='flex  w-full items-center justify-around'>
-              <Button
-                variant='default'
-                onClick={() => {
-                  if (!hiit) return
-                  updateHiit({
-                    date: todaysLogDate.toDateString(),
-                    hiit: hiit?.toString(),
-                  })
-                }}
-              >
-                Save
-              </Button>
-            </div>
-          </DialogClose>
+          <div className='flex gap-2 w-full justify-around'>
+            <DialogClose asChild>
+              <div className='flex  w-full items-center justify-around'>
+                <Button
+                  variant='default'
+                  onClick={() => {
+                    if (!hiit) return
+                    updateHiit({
+                      date: todaysLogDate.toDateString(),
+                      hiit: hiit?.toString(),
+                    })
+                  }}
+                >
+                  Save
+                </Button>
+              </div>
+            </DialogClose>
+            <DialogClose asChild>
+              <div className='flex  w-full items-center justify-around'>
+                <Button
+                  variant='outline'
+                  onClick={() => {
+                    if (!hiit) return
+                    setHiit(null)
+                    updateHiit({
+                      date: todaysLogDate.toDateString(),
+                      hiit: '',
+                    })
+                  }}
+                >
+                  Clear
+                </Button>
+              </div>
+            </DialogClose>
+          </div>
         </DialogWrapper>
         <DialogWrapper
           title='Liss'
@@ -450,6 +469,7 @@ const DailyLogForm = ({
               setLiss(Number(e.target.value))
             }}
           />
+          <div className='flex gap-2 w-full justify-around'>
           <DialogClose asChild>
             <div className='flex  w-full items-center justify-around'>
               <Button
@@ -466,6 +486,24 @@ const DailyLogForm = ({
               </Button>
             </div>
           </DialogClose>
+          <DialogClose asChild>
+            <div className='flex  w-full items-center justify-around'>
+              <Button
+                variant='outline'
+                onClick={() => {
+                  if (!liss) return
+                  setLiss(null)
+                  updateLiss({
+                    date: todaysLogDate.toDateString(),
+                    liss: '',
+                  })
+                }}
+              >
+                  Clear
+              </Button>
+            </div>
+          </DialogClose>
+          </div>
         </DialogWrapper>
         <DialogWrapper
           title='Weight Training'
@@ -486,6 +524,7 @@ const DailyLogForm = ({
               setWeightTraining(Number(e.target.value))
             }}
           />
+          <div className='flex gap-2 w-full justify-around'>
           <DialogClose asChild>
             <div className='flex  w-full items-center justify-around'>
               <Button
@@ -502,6 +541,24 @@ const DailyLogForm = ({
               </Button>
             </div>
           </DialogClose>
+          <DialogClose asChild>
+            <div className='flex  w-full items-center justify-around'>
+              <Button
+                variant='default'
+                onClick={() => {
+                  if (!weightTraining) return
+                  setWeightTraining(null)
+                  updateWeightTraining({
+                    date: todaysLogDate.toDateString(),
+                    weight: '',
+                  })
+                }}
+              >
+                  Clear
+              </Button>
+            </div>
+          </DialogClose>
+          </div>
         </DialogWrapper>
       </div>
       {todaysLog?.image === '' ||

@@ -180,15 +180,15 @@ const DailyLog = ({
         <div className='flex gap-2 justify-center'>
           <Icon
             title='Hiit'
-            text={todaysDailyLog?.isHiit}
+            text={todaysDailyLog?.hiit}
           />
           <Icon
-            title='Cardio'
-            text={todaysDailyLog?.isCardio}
+            title='Liss'
+            text={todaysDailyLog?.liss}
           />
           <Icon
-            title='Lift'
-            text={todaysDailyLog?.isLift}
+            title='Weight Training'
+            text={todaysDailyLog?.weight}
           />
         </div>
       </div>
