@@ -25,6 +25,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 
@@ -92,8 +93,8 @@ const DailyLogForm = ({
   const [sleep, setSleep] = useState<number | null>(() =>
     todaysLog?.sleep ? Number(todaysLog?.sleep) : null,
   )
-  const [sleepQuality, setSleepQuality] = useState<number | null>(() =>
-    todaysLog?.sleepQuality ? Number(todaysLog?.sleepQuality) : null,
+  const [sleepQuality, setSleepQuality] = useState<number[]>(() =>
+    todaysLog?.sleepQuality ? [Number(todaysLog?.sleepQuality)] : [0],
   )
   const [nap, setNap] = useState<number | null>(
     todaysLog?.nap ? Number(todaysLog?.nap) : null,
@@ -299,13 +300,17 @@ const DailyLogForm = ({
               Enter your sleep quality today
             </DialogDescription>
           </DialogHeader>
-          <Input
-            placeholder='Sleep Quality'
-            className='w-full'
-            type='number'
-            value={sleepQuality ?? ''}
-            onChange={(e) => {
-              setSleepQuality(Number(e.target.value))
+          <div className='text-muted-foreground text-center text-xl font-bold'>
+            {sleepQuality?.[0] ?? ''}
+          </div>
+          <Slider
+            defaultValue={[0]}
+            max={10}
+            step={1}
+            value={sleepQuality}
+            onValueChange={(values) => {
+              setSleepQuality(values)
+              console.log('values', values)
             }}
           />
           <DialogClose asChild>
@@ -314,9 +319,10 @@ const DailyLogForm = ({
                 variant='default'
                 onClick={() => {
                   if (!sleepQuality) return
+                  if (!sleepQuality?.[0]) return
                   updateSleepQuality({
                     date: todaysLogDate.toDateString(),
-                    sleepQuality: sleepQuality?.toString(),
+                    sleepQuality: sleepQuality?.[0]?.toString(),
                   })
                 }}
               >
@@ -470,39 +476,39 @@ const DailyLogForm = ({
             }}
           />
           <div className='flex gap-2 w-full justify-around'>
-          <DialogClose asChild>
-            <div className='flex  w-full items-center justify-around'>
-              <Button
-                variant='default'
-                onClick={() => {
-                  if (!liss) return
-                  updateLiss({
-                    date: todaysLogDate.toDateString(),
-                    liss: liss?.toString(),
-                  })
-                }}
-              >
-                Save
-              </Button>
-            </div>
-          </DialogClose>
-          <DialogClose asChild>
-            <div className='flex  w-full items-center justify-around'>
-              <Button
-                variant='outline'
-                onClick={() => {
-                  if (!liss) return
-                  setLiss(null)
-                  updateLiss({
-                    date: todaysLogDate.toDateString(),
-                    liss: '',
-                  })
-                }}
-              >
+            <DialogClose asChild>
+              <div className='flex  w-full items-center justify-around'>
+                <Button
+                  variant='default'
+                  onClick={() => {
+                    if (!liss) return
+                    updateLiss({
+                      date: todaysLogDate.toDateString(),
+                      liss: liss?.toString(),
+                    })
+                  }}
+                >
+                  Save
+                </Button>
+              </div>
+            </DialogClose>
+            <DialogClose asChild>
+              <div className='flex  w-full items-center justify-around'>
+                <Button
+                  variant='outline'
+                  onClick={() => {
+                    if (!liss) return
+                    setLiss(null)
+                    updateLiss({
+                      date: todaysLogDate.toDateString(),
+                      liss: '',
+                    })
+                  }}
+                >
                   Clear
-              </Button>
-            </div>
-          </DialogClose>
+                </Button>
+              </div>
+            </DialogClose>
           </div>
         </DialogWrapper>
         <DialogWrapper
@@ -525,39 +531,39 @@ const DailyLogForm = ({
             }}
           />
           <div className='flex gap-2 w-full justify-around'>
-          <DialogClose asChild>
-            <div className='flex  w-full items-center justify-around'>
-              <Button
-                variant='default'
-                onClick={() => {
-                  if (!weightTraining) return
-                  updateWeightTraining({
-                    date: todaysLogDate.toDateString(),
-                    weight: weightTraining?.toString(),
-                  })
-                }}
-              >
-                Save
-              </Button>
-            </div>
-          </DialogClose>
-          <DialogClose asChild>
-            <div className='flex  w-full items-center justify-around'>
-              <Button
-                variant='default'
-                onClick={() => {
-                  if (!weightTraining) return
-                  setWeightTraining(null)
-                  updateWeightTraining({
-                    date: todaysLogDate.toDateString(),
-                    weight: '',
-                  })
-                }}
-              >
+            <DialogClose asChild>
+              <div className='flex  w-full items-center justify-around'>
+                <Button
+                  variant='default'
+                  onClick={() => {
+                    if (!weightTraining) return
+                    updateWeightTraining({
+                      date: todaysLogDate.toDateString(),
+                      weight: weightTraining?.toString(),
+                    })
+                  }}
+                >
+                  Save
+                </Button>
+              </div>
+            </DialogClose>
+            <DialogClose asChild>
+              <div className='flex  w-full items-center justify-around'>
+                <Button
+                  variant='default'
+                  onClick={() => {
+                    if (!weightTraining) return
+                    setWeightTraining(null)
+                    updateWeightTraining({
+                      date: todaysLogDate.toDateString(),
+                      weight: '',
+                    })
+                  }}
+                >
                   Clear
-              </Button>
-            </div>
-          </DialogClose>
+                </Button>
+              </div>
+            </DialogClose>
           </div>
         </DialogWrapper>
       </div>
