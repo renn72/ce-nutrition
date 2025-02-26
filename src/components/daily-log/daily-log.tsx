@@ -1,11 +1,11 @@
 'use client'
 
 import Image from 'next/image'
-// import Link from 'next/link'
-import { Link } from 'next-view-transitions'
 
 import { cn } from '@/lib/utils'
 import { GetDailyLogById } from '@/types'
+// import Link from 'next/link'
+import { Link } from 'next-view-transitions'
 
 import { Badge } from '@/components/ui/badge'
 
@@ -19,12 +19,13 @@ const Text = ({
   text: string | undefined | null
 }) => {
   return (
-    <div className='flex gap-2 items-center'>
+    <div className={cn('flex gap-2 items-center', title === 'Notes' && text !== '' && 'flex-col')}>
       <div className='text-muted-foreground'>{title}</div>
       <div
         className={cn(
-          'text-sm font-semibold truncate',
+          'text-sm font-semibold ',
           text ? 'text-secondary-foreground' : 'text-muted-foreground/70',
+          title === 'Notes' ? '' : 'truncate',
         )}
       >
         {text ? text + suffix : '...'}
@@ -135,11 +136,11 @@ const DailyLog = ({
             text={todaysDailyLog?.morningWeight}
             suffix='kg'
           />
-            <Text
-              title='Blood Glucose'
-              text={todaysDailyLog?.fastedBloodGlucose}
-              suffix=''
-            />
+          <Text
+            title='Blood Glucose'
+            text={todaysDailyLog?.fastedBloodGlucose}
+            suffix=''
+          />
         </div>
         <div className='grid grid-cols-3'>
           <Text
@@ -156,27 +157,24 @@ const DailyLog = ({
           />
         </div>
         <div className='w-full grid grid-cols-2 gap-2'>
-          {
-            todaysDailyLog?.waistMeasurement &&todaysDailyLog?.waistMeasurement !== ''? (
-          <Text
-            title='Waist'
-            text={todaysDailyLog?.waistMeasurement}
-          />
-
-            ): null
-           }
+          {todaysDailyLog?.waistMeasurement &&
+          todaysDailyLog?.waistMeasurement !== '' ? (
+            <Text
+              title='Waist'
+              text={todaysDailyLog?.waistMeasurement}
+            />
+          ) : null}
           <Text
             title='Bowel Movements'
-                text={todaysDailyLog?.poopLogs.reduce(
-                  (acc, curr) => acc + 1,
-                  0,
-                ).toString()}
-          />
-          <Text
-            title='Notes'
-            text={todaysDailyLog?.notes}
+            text={todaysDailyLog?.poopLogs
+              .reduce((acc, curr) => acc + 1, 0)
+              .toString()}
           />
         </div>
+        <Text
+          title='Notes'
+          text={todaysDailyLog?.notes}
+        />
         <div className='flex gap-2 justify-center'>
           <Icon
             title='Hiit'

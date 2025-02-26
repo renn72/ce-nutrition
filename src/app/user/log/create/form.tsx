@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { UploadButton } from '@/lib/uploadthing'
+import { cn } from '@/lib/utils'
 import { GetDailyLogById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Image } from 'lucide-react'
@@ -53,18 +54,31 @@ const DialogWrapper = ({
   children,
   title,
   value,
+  isWidthFull = false,
 }: {
   children: React.ReactNode
   title: string
   value: string
+  isWidthFull?: boolean
 }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className='flex gap-2 items-center justify-around flex-col bg-secondary px-4 py-2 rounded-md font-semibold w-40'>
+        <div
+          className={cn(
+            'flex gap-2 items-center justify-around flex-col bg-secondary px-4 py-2 rounded-md ',
+            isWidthFull ? 'w-full' : 'w-40 font-semibold',
+          )}
+        >
           <div className='text-muted-foreground text-center'>{title}</div>
           {value !== '' && value !== undefined && value !== null ? (
-            <div>{value}</div>
+            <div
+              className={cn(
+                isWidthFull ? 'text-sm text-secondary-foreground' : '',
+              )}
+            >
+              {value}
+            </div>
           ) : (
             <div className='text-muted-foreground'>...</div>
           )}
@@ -117,12 +131,20 @@ const DailyLogForm = ({
   const [weightTraining, setWeightTraining] = useState<number | null>(() =>
     todaysLog?.weight ? Number(todaysLog?.weight) : null,
   )
+  const [note, setNote] = useState<string | null>(
+    todaysLog?.notes ? todaysLog?.notes : null,
+  )
 
   const router = useRouter()
   const ctx = api.useUtils()
   const todaysLogDate = new Date(date ?? '')
   const { data: currentUser } = api.user.getCurrentUser.useQuery()
   const { mutate: updateImage } = api.dailyLog.updateImage.useMutation({
+    onSettled: () => {
+      ctx.dailyLog.invalidate()
+    },
+  })
+  const { mutate: updateNote } = api.dailyLog.updateNote.useMutation({
     onSettled: () => {
       ctx.dailyLog.invalidate()
     },
@@ -586,6 +608,59 @@ const DailyLogForm = ({
           </div>
         </DialogWrapper>
       </div>
+      <DialogWrapper
+        title='Notes'
+        value={note ?? ''}
+        isWidthFull={true}
+      >
+        <DialogHeader>
+          <DialogTitle>Note</DialogTitle>
+          <DialogDescription>Enter your note today</DialogDescription>
+        </DialogHeader>
+        <Textarea
+          placeholder='Note'
+          className='w-full'
+          value={note ?? ''}
+          onChange={(e) => {
+            setNote(e.target.value)
+          }}
+        />
+        <div className='flex gap-2 w-full justify-around'>
+          <DialogClose asChild>
+            <div className='flex  w-full items-center justify-around'>
+              <Button
+                variant='default'
+                onClick={() => {
+                  if (!note) return
+                  updateNote({
+                    date: todaysLogDate.toDateString(),
+                    notes: note,
+                  })
+                }}
+              >
+                Save
+              </Button>
+            </div>
+          </DialogClose>
+          <DialogClose asChild>
+            <div className='flex  w-full items-center justify-around'>
+              <Button
+                variant='outline'
+                onClick={() => {
+                  if (!note) return
+                  setNote(null)
+                  updateNote({
+                    date: todaysLogDate.toDateString(),
+                    notes: '',
+                  })
+                }}
+              >
+                Clear
+              </Button>
+            </div>
+          </DialogClose>
+        </div>
+      </DialogWrapper>
       {todaysLog?.image === '' ||
       todaysLog?.image === undefined ||
       todaysLog?.image === null ? (
