@@ -263,6 +263,14 @@ export const dailyLogRouter = createTRPCRouter({
         ),
       })
 
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Update Sleep' + log ? '' : ' and Create Log',
+        notes: JSON.stringify(input),
+        objectId: null,
+      })
+
       if (!log) {
         const res = await ctx.db.insert(dailyLog).values({
           date: input.date,
@@ -297,6 +305,13 @@ export const dailyLogRouter = createTRPCRouter({
           eq(dailyLog.date, input.date),
           eq(dailyLog.userId, ctx.session.user.id),
         ),
+      })
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Update Sleep Qual' + log ? '' : ' and Create Log',
+        notes: JSON.stringify(input),
+        objectId: null,
       })
 
       if (!log) {
@@ -334,6 +349,13 @@ export const dailyLogRouter = createTRPCRouter({
           eq(dailyLog.userId, ctx.session.user.id),
         ),
       })
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Update Nap' + log ? '' : ' and Create Log',
+        notes: JSON.stringify(input),
+        objectId: null,
+      })
 
       if (!log) {
         const res = await ctx.db.insert(dailyLog).values({
@@ -369,6 +391,13 @@ export const dailyLogRouter = createTRPCRouter({
           eq(dailyLog.date, input.date),
           eq(dailyLog.userId, ctx.session.user.id),
         ),
+      })
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Update hiit' + log ? '' : ' and Create Log',
+        notes: JSON.stringify(input),
+        objectId: null,
       })
 
       if (!log) {
@@ -442,6 +471,13 @@ export const dailyLogRouter = createTRPCRouter({
           eq(dailyLog.userId, ctx.session.user.id),
         ),
       })
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Update Weight Training' + log ? '' : ' and Create Log',
+        notes: JSON.stringify(input),
+        objectId: null,
+      })
 
       if (!log) {
         const res = await ctx.db.insert(dailyLog).values({
@@ -477,6 +513,13 @@ export const dailyLogRouter = createTRPCRouter({
           eq(dailyLog.date, input.date),
           eq(dailyLog.userId, ctx.session.user.id),
         ),
+      })
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Update Liss' + log ? '' : ' and Create Log',
+        notes: JSON.stringify(input),
+        objectId: null,
       })
 
       if (!log) {
@@ -514,6 +557,13 @@ export const dailyLogRouter = createTRPCRouter({
           eq(dailyLog.userId, ctx.session.user.id),
         ),
       })
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Update Girth' + log ? '' : ' and Create Log',
+        notes: JSON.stringify(input),
+        objectId: null,
+      })
 
       if (!log) {
         const res = await ctx.db.insert(dailyLog).values({
@@ -549,6 +599,13 @@ export const dailyLogRouter = createTRPCRouter({
           eq(dailyLog.date, input.date),
           eq(dailyLog.userId, ctx.session.user.id),
         ),
+      })
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Update Weight' + log ? '' : ' and Create Log',
+        notes: JSON.stringify(input),
+        objectId: null,
       })
 
       if (!log) {
@@ -586,6 +643,13 @@ export const dailyLogRouter = createTRPCRouter({
           eq(dailyLog.userId, ctx.session.user.id),
         ),
       })
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Update Blood Glucose' + log ? '' : ' and Create Log',
+        notes: JSON.stringify(input),
+        objectId: null,
+      })
 
       if (!log) {
         const res = await ctx.db.insert(dailyLog).values({
@@ -621,6 +685,13 @@ export const dailyLogRouter = createTRPCRouter({
           eq(dailyLog.date, input.date),
           eq(dailyLog.userId, ctx.session.user.id),
         ),
+      })
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Update Image' + log ? '' : ' and Create Log',
+        notes: JSON.stringify(input),
+        objectId: null,
       })
 
       if (!log) {
