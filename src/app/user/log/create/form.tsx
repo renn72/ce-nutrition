@@ -74,7 +74,9 @@ const DialogWrapper = ({
         onOpenAutoFocus={(e) => {
           e.preventDefault()
         }}
-      >{children}</DialogContent>
+      >
+        {children}
+      </DialogContent>
     </Dialog>
   )
 }
@@ -184,8 +186,7 @@ const DailyLogForm = ({
   }
 
   return (
-    <div className='mt-16 flex flex-col gap-3 px-4'>
-      <div className='w-full text-center text-xl font-semibold'>{date}</div>
+    <div className='flex flex-col gap-3 px-4'>
       <div className='flex gap-4 w-full justify-around'>
         <DialogWrapper
           title='Weight'
@@ -269,26 +270,26 @@ const DailyLogForm = ({
             <DialogDescription>Enter your sleep today</DialogDescription>
           </DialogHeader>
           <div className='flex flex-col items-center gap-6'>
-          <Input
-            placeholder='Sleep'
-            className=''
-            type='number'
-            value={sleep?.[0] ?? ''}
-            onChange={(e) => {
-              setSleep([Number(e.target.value)])
-            }}
-          />
-          <Slider
-            autoFocus
-            defaultValue={[0]}
+            <Input
+              placeholder='Sleep'
+              className=''
+              type='number'
+              value={sleep?.[0] ?? ''}
+              onChange={(e) => {
+                setSleep([Number(e.target.value)])
+              }}
+            />
+            <Slider
+              autoFocus
+              defaultValue={[0]}
               min={4}
-            max={12}
-            step={1}
-            value={sleep}
-            onValueChange={(values) => {
-              setSleep(values)
-            }}
-          />
+              max={12}
+              step={1}
+              value={sleep}
+              onValueChange={(values) => {
+                setSleep(values)
+              }}
+            />
           </div>
           <DialogClose asChild>
             <div className='flex  w-full items-center justify-around'>
