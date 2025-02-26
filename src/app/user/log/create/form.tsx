@@ -10,7 +10,13 @@ import { UploadButton } from '@/lib/uploadthing'
 import { cn } from '@/lib/utils'
 import { GetDailyLogById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowDownIcon, ArrowUpIcon, Image, Minus, PlusIcon } from 'lucide-react'
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  Image,
+  Minus,
+  PlusIcon,
+} from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -49,6 +55,61 @@ export const formSchema = z.object({
   isLiss: z.boolean().optional(),
   image: z.string().optional(),
 })
+
+const NumberInput = ({
+  value,
+  setValue,
+  fixed = 0,
+  scale,
+  postfix = '',
+}: {
+  value: number | null
+  setValue: (value: number) => void
+  fixed?: number
+  scale: number
+  postfix?: string
+}) => {
+  return (
+    <div className='w-60 relative border rounded-lg h-16 flex items-center'>
+      <Input
+        placeholder=''
+        className='relative w-full text-xl font-medium rounded-lg text-center h-min border-none focus-visible:ring-0 focus:border-none shadow-none py-0 active:border-none'
+        type='number'
+        value={value?.toFixed(fixed) ?? ''}
+        onChange={(e) => {
+          setValue(Number(e.target.value))
+        }}
+      />
+
+      <div className='absolute right-16 top-1/2 -translate-y-1/2 text-xs text-muted-foreground flex gap-0 items-start pt-[2px]'>
+        {postfix}
+      </div>
+
+      <div
+        onClick={() => {
+          if (!value) return
+          setValue(value + scale)
+        }}
+        className='absolute right-0 top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start border-l active:bg-primary/60 rounded-r-lg'
+      >
+        <div className='h-16 w-14 flex items-center justify-center scale-75'>
+          <PlusIcon size={24} />
+        </div>
+      </div>
+      <div
+        onClick={() => {
+          if (!value) return
+          setValue(value - scale)
+        }}
+        className='absolute left-0 top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start border-r active:bg-primary/30 rounded-l-lg'
+      >
+        <div className='h-16 w-14 flex items-center justify-center active:scale-75'>
+          <Minus size={24} />
+        </div>
+      </div>
+    </div>
+  )
+}
 
 const DialogWrapper = ({
   children,
@@ -123,24 +184,46 @@ const DailyLogForm = ({
   date?: string | null
 }) => {
   const [weight, setWeight] = useState<number | null>(() =>
-    todaysLog?.morningWeight ? Number(todaysLog?.morningWeight) : null,
+    todaysLog?.morningWeight
+      ? Number(todaysLog?.morningWeight)
+      : prevLog?.morningWeight
+        ? Number(prevLog?.morningWeight)
+        : null,
   )
   const [bloodGlucose, setBloodGlucose] = useState<number | null>(() =>
     todaysLog?.fastedBloodGlucose
       ? Number(todaysLog?.fastedBloodGlucose)
-      : null,
+      : prevLog?.fastedBloodGlucose
+        ? Number(prevLog?.fastedBloodGlucose)
+        : null,
   )
   const [sleep, setSleep] = useState<number[]>(() =>
-    todaysLog?.sleep ? [Number(todaysLog?.sleep)] : [0],
+    todaysLog?.sleep
+      ? [Number(todaysLog?.sleep)]
+      : prevLog?.sleep
+        ? [Number(prevLog?.sleep)]
+        : [0],
   )
   const [sleepQuality, setSleepQuality] = useState<number[]>(() =>
-    todaysLog?.sleepQuality ? [Number(todaysLog?.sleepQuality)] : [0],
+    todaysLog?.sleepQuality
+      ? [Number(todaysLog?.sleepQuality)]
+      : prevLog?.sleepQuality
+        ? [Number(prevLog?.sleepQuality)]
+        : [0],
   )
   const [nap, setNap] = useState<number | null>(
-    todaysLog?.nap ? Number(todaysLog?.nap) : null,
+    todaysLog?.nap
+      ? Number(todaysLog?.nap)
+      : prevLog?.nap
+        ? Number(prevLog?.nap)
+        : null,
   )
   const [waistMeasurement, setWaistMeasurement] = useState<number | null>(() =>
-    todaysLog?.waistMeasurement ? Number(todaysLog?.waistMeasurement) : null,
+    todaysLog?.waistMeasurement
+      ? Number(todaysLog?.waistMeasurement)
+      : prevLog?.waistMeasurement
+        ? Number(prevLog?.waistMeasurement)
+        : null,
   )
   const [hiit, setHiit] = useState<number | null>(
     todaysLog?.hiit ? Number(todaysLog?.hiit) : null,
@@ -242,38 +325,13 @@ const DailyLogForm = ({
           </DialogHeader>
 
           <div className='flex justify-center '>
-            <div className='w-48 relative border rounded-lg h-12 flex items-center'>
-              <Input
-                placeholder='Weight'
-                className='relative w-full text-base rounded-lg text-center h-min border-none focus:ring-0 focus:border-none shadow-none py-0'
-                type='number'
-                value={weight?.toFixed(1) ?? ''}
-                onChange={(e) => {
-                  setWeight(Number(e.target.value))
-                }}
-              />
-
-              <div
-                onClick={() => {
-                  if (!weight) return
-                  setWeight(weight + 0.1)
-                }}
-                className='absolute right-0 top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start border-l'>
-                <div className='h-12 w-10 flex items-center justify-center'>
-                  <PlusIcon size={24} />
-                </div>
-              </div>
-              <div
-                onClick={() => {
-                  if (!weight) return
-                  setWeight(weight - 0.1)
-                }}
-                className='absolute left-0 top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start border-r'>
-                <div className='h-12 w-10 flex items-center justify-center'>
-                  <Minus size={24} />
-                </div>
-              </div>
-            </div>
+            <NumberInput
+              value={weight}
+              setValue={setWeight}
+              fixed={1}
+              scale={0.1}
+              postfix='kg'
+            />
           </div>
           <DialogClose asChild>
             <div className='flex  w-full items-center justify-around'>
@@ -304,15 +362,14 @@ const DailyLogForm = ({
               Enter yout blood glucose today
             </DialogDescription>
           </DialogHeader>
-          <Input
-            placeholder='Blood Glucose'
-            className='w-full'
-            type='number'
-            value={bloodGlucose ?? ''}
-            onChange={(e) => {
-              setBloodGlucose(Number(e.target.value))
-            }}
-          />
+          <div className='flex justify-center '>
+            <NumberInput
+              value={bloodGlucose}
+              setValue={setBloodGlucose}
+              fixed={1}
+              scale={0.1}
+            />
+          </div>
           <DialogClose asChild>
             <div className='flex  w-full items-center justify-around'>
               <Button
@@ -342,15 +399,15 @@ const DailyLogForm = ({
             <DialogDescription>Enter your sleep today</DialogDescription>
           </DialogHeader>
           <div className='flex flex-col items-center gap-6'>
-            <Input
-              placeholder='Sleep'
-              className=''
-              type='number'
-              value={sleep?.[0] ?? ''}
-              onChange={(e) => {
-                setSleep([Number(e.target.value)])
-              }}
-            />
+            <div className='flex justify-center '>
+              <NumberInput
+                value={sleep[0] ?? null}
+                setValue={(e) => setSleep([e])}
+                fixed={1}
+                scale={1}
+                postfix='hrs'
+              />
+            </div>
             <Slider
               autoFocus
               defaultValue={[0]}
@@ -392,8 +449,13 @@ const DailyLogForm = ({
               Enter your sleep quality today
             </DialogDescription>
           </DialogHeader>
-          <div className='text-muted-foreground text-center text-xl font-bold'>
-            {sleepQuality?.[0] ?? ''}
+          <div className='flex justify-center '>
+            <NumberInput
+              value={sleepQuality[0] ?? null}
+              setValue={(e) => setSleepQuality([e])}
+              fixed={0}
+              scale={1}
+            />
           </div>
           <Slider
             defaultValue={[0]}
@@ -434,15 +496,15 @@ const DailyLogForm = ({
             <DialogTitle>Nap</DialogTitle>
             <DialogDescription>Enter your nap today</DialogDescription>
           </DialogHeader>
-          <Input
-            placeholder='Nap'
-            className='w-full'
-            type='number'
-            value={nap ?? ''}
-            onChange={(e) => {
-              setNap(Number(e.target.value))
-            }}
-          />
+          <div className='flex justify-center '>
+            <NumberInput
+              value={nap}
+              setValue={setNap}
+              fixed={1}
+              scale={1}
+              postfix='hrs'
+            />
+          </div>
           <DialogClose asChild>
             <div className='flex  w-full items-center justify-around'>
               <Button
@@ -471,15 +533,15 @@ const DailyLogForm = ({
               Enter your waist measurement today
             </DialogDescription>
           </DialogHeader>
-          <Input
-            placeholder='Girth'
-            className='w-full'
-            type='number'
-            value={waistMeasurement ?? ''}
-            onChange={(e) => {
-              setWaistMeasurement(Number(e.target.value))
-            }}
-          />
+          <div className='flex justify-center '>
+            <NumberInput
+              value={waistMeasurement}
+              setValue={setWaistMeasurement}
+              fixed={1}
+              scale={1}
+              postfix='cm'
+            />
+          </div>
           <DialogClose asChild>
             <div className='flex  w-full items-center justify-around'>
               <Button
@@ -506,17 +568,17 @@ const DailyLogForm = ({
         >
           <DialogHeader>
             <DialogTitle>Hiit</DialogTitle>
-            <DialogDescription>Enter your hiit today</DialogDescription>
+            <DialogDescription>Enter your minutes of hiit</DialogDescription>
           </DialogHeader>
-          <Input
-            placeholder='Hiit'
-            className='w-full'
-            type='number'
-            value={hiit ?? ''}
-            onChange={(e) => {
-              setHiit(Number(e.target.value))
-            }}
-          />
+          <div className='flex justify-center '>
+            <NumberInput
+              value={hiit}
+              setValue={setHiit}
+              fixed={0}
+              scale={1}
+              postfix='mins'
+            />
+          </div>
           <div className='flex gap-2 w-full justify-around'>
             <DialogClose asChild>
               <div className='flex  w-full items-center justify-around'>
@@ -560,17 +622,17 @@ const DailyLogForm = ({
         >
           <DialogHeader>
             <DialogTitle>Liss</DialogTitle>
-            <DialogDescription>Enter your liss today</DialogDescription>
+            <DialogDescription>Enter your minutes of liss</DialogDescription>
           </DialogHeader>
-          <Input
-            placeholder='Liss'
-            className='w-full'
-            type='number'
-            value={liss ?? ''}
-            onChange={(e) => {
-              setLiss(Number(e.target.value))
-            }}
-          />
+          <div className='flex justify-center '>
+            <NumberInput
+              value={liss}
+              setValue={setLiss}
+              fixed={0}
+              scale={1}
+              postfix='mins'
+            />
+          </div>
           <div className='flex gap-2 w-full justify-around'>
             <DialogClose asChild>
               <div className='flex  w-full items-center justify-around'>
@@ -615,18 +677,18 @@ const DailyLogForm = ({
           <DialogHeader>
             <DialogTitle>Weight Training</DialogTitle>
             <DialogDescription>
-              Enter your weight training today
+              Enter your minutes of weight training
             </DialogDescription>
           </DialogHeader>
-          <Input
-            placeholder='Weight Training'
-            className='w-full'
-            type='number'
-            value={weightTraining ?? ''}
-            onChange={(e) => {
-              setWeightTraining(Number(e.target.value))
-            }}
-          />
+          <div className='flex justify-center '>
+            <NumberInput
+              value={weightTraining}
+              setValue={setWeightTraining}
+              fixed={0}
+              scale={1}
+              postfix='mins'
+            />
+          </div>
           <div className='flex gap-2 w-full justify-around'>
             <DialogClose asChild>
               <div className='flex  w-full items-center justify-around'>
