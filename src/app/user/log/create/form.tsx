@@ -75,7 +75,7 @@ const NumberInput = ({
         placeholder=''
         className='relative w-full text-xl font-medium rounded-lg text-center h-min border-none focus-visible:ring-0 focus:border-none shadow-none py-0 active:border-none'
         type='number'
-        value={value?.toFixed(fixed) ?? ''}
+        value={value && value % 1 === 0 ? value : value?.toFixed(fixed) ?? ''}
         onChange={(e) => {
           setValue(Number(e.target.value))
         }}
@@ -144,7 +144,7 @@ const DialogWrapper = ({
                 isWidthFull ? 'text-sm text-secondary-foreground' : '',
               )}
             >
-              {value}
+              {Number(value).toFixed(fixed)}
               {prevValue !== '' &&
               prevValue !== undefined &&
               prevValue !== null ? (
@@ -355,6 +355,7 @@ const DailyLogForm = ({
           title='Blood Glucose'
           value={todaysLog?.fastedBloodGlucose ?? ''}
           prevValue={prevLog?.fastedBloodGlucose ?? ''}
+          fixed={1}
         >
           <DialogHeader>
             <DialogTitle>Blood Glucose</DialogTitle>
