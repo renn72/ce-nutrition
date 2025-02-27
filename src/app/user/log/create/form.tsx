@@ -342,7 +342,7 @@ const DailyLogForm = ({
                   if (!weight) return
                   updateWeight({
                     date: todaysLogDate.toDateString(),
-                    morningWeight: weight?.toString(),
+                    morningWeight: weight?.toFixed(2),
                   })
                 }}
               >
@@ -379,7 +379,7 @@ const DailyLogForm = ({
                   if (!bloodGlucose) return
                   updateBloodGlucose({
                     date: todaysLogDate.toDateString(),
-                    fastedBloodGlucose: bloodGlucose?.toString(),
+                    fastedBloodGlucose: bloodGlucose?.toFixed(1),
                   })
                 }}
               >
@@ -430,7 +430,7 @@ const DailyLogForm = ({
                   if (!sleep?.[0]) return
                   updateSleep({
                     date: todaysLogDate.toDateString(),
-                    sleep: sleep[0].toString(),
+                    sleep: sleep[0].toFixed(1),
                   })
                 }}
               >
@@ -477,7 +477,7 @@ const DailyLogForm = ({
                   if (!sleepQuality?.[0]) return
                   updateSleepQuality({
                     date: todaysLogDate.toDateString(),
-                    sleepQuality: sleepQuality?.[0]?.toString(),
+                    sleepQuality: sleepQuality?.[0]?.toFixed(0),
                   })
                 }}
               >
@@ -551,7 +551,7 @@ const DailyLogForm = ({
                   if (!waistMeasurement) return
                   updateWaistMeasurement({
                     date: todaysLogDate.toDateString(),
-                    waistMeasurement: waistMeasurement?.toString(),
+                    waistMeasurement: waistMeasurement?.toFixed(1),
                   })
                 }}
               >
@@ -589,7 +589,7 @@ const DailyLogForm = ({
                     if (!hiit) return
                     updateHiit({
                       date: todaysLogDate.toDateString(),
-                      hiit: hiit?.toString(),
+                      hiit: hiit?.toFixed(0),
                     })
                   }}
                 >
@@ -643,7 +643,7 @@ const DailyLogForm = ({
                     if (!liss) return
                     updateLiss({
                       date: todaysLogDate.toDateString(),
-                      liss: liss?.toString(),
+                      liss: liss?.toFixed(0),
                     })
                   }}
                 >
@@ -699,7 +699,7 @@ const DailyLogForm = ({
                     if (!weightTraining) return
                     updateWeightTraining({
                       date: todaysLogDate.toDateString(),
-                      weight: weightTraining?.toString(),
+                      weight: weightTraining?.toFixed(0),
                     })
                   }}
                 >
