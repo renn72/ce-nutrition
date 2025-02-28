@@ -118,6 +118,7 @@ const DialogWrapper = ({
   prevValue,
   isWidthFull = false,
   fixed = 0,
+  isString = false,
 }: {
   children: React.ReactNode
   title: string
@@ -125,6 +126,7 @@ const DialogWrapper = ({
   prevValue: string
   isWidthFull?: boolean
   fixed?: number
+  isString?: boolean
 }) => {
   const diff = Number(prevValue) - Number(value)
   return (
@@ -144,7 +146,7 @@ const DialogWrapper = ({
                 isWidthFull ? 'text-sm text-secondary-foreground' : '',
               )}
             >
-              {Number(value).toFixed(fixed)}
+              {isString ? value :Number(value).toFixed(fixed)}
               {prevValue !== '' &&
               prevValue !== undefined &&
               prevValue !== null ? (
@@ -732,6 +734,7 @@ const DailyLogForm = ({
         value={note ?? ''}
         isWidthFull={true}
         prevValue={''}
+        isString={true}
       >
         <DialogHeader>
           <DialogTitle>Note</DialogTitle>
@@ -801,6 +804,7 @@ const DailyLogForm = ({
               onClientUploadComplete={(res) => {
                 console.log('onClientUploadComplete', res)
                 const url = res?.[0]?.url
+                onUpdateImage(url ?? '')
               }}
             />
             <Camera onUpload={onUpdateImage} />
