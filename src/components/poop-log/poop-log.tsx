@@ -47,7 +47,7 @@ const PoopLog = ({
   }, 0)
 
   return (
-    <div className='flex flex-col gap-0 w-full'>
+    <div className='flex flex-col gap-0 w-full relative'>
       <div className='w-full text-center font-bold text-lg'>{totalPoop}</div>
       <div className='grid grid-cols-1 place-items-center gap-2 h-12'>
         <div className='rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center justify-center active:scale-90 transition-transform cursor-pointer'>
@@ -64,7 +64,7 @@ const PoopLog = ({
         <div />
       </div>
       <Collapsible>
-        <CollapsibleTrigger className='flex gap-2 items-center justify-center w-full'>
+        <CollapsibleTrigger className='flex gap-2 items-center justify-center absolute top-10 right-0'>
           <ListCollapse
             size={20}
             className='text-muted-foreground'

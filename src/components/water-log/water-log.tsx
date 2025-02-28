@@ -61,14 +61,14 @@ const WaterLog = ({
     }, 0) ?? 0
 
   return (
-    <div className='flex flex-col gap-0 w-full'>
+    <div className='flex flex-col gap-0 w-full relative'>
       {totalWater > 0 ? (
         <div className='w-full text-center font-bold text-lg'>
           {totalWater}ml
         </div>
       ) : null}
 
-      <div className='grid grid-cols-2 place-items-center gap-2 h-12'>
+      <div className='grid grid-cols-1 place-items-center gap-2 h-12'>
         <div className='rounded-full border-[3px] border-primary/80 w-10 h-10 flex items-center justify-center active:scale-90 transition-transform cursor-pointer'>
           <GlassWater
             size={28}
@@ -80,19 +80,10 @@ const WaterLog = ({
             }}
           />
         </div>
-        <Input
-          placeholder='Size'
-          className='w-14 col-span-1'
-          type='number'
-          value={size}
-          onChange={(e) => {
-            setSize(Number(e.target.value))
-          }}
-        />
       </div>
 
       <Collapsible>
-        <CollapsibleTrigger className='flex gap-2 items-center justify-center w-full'>
+        <CollapsibleTrigger className='flex gap-2 items-center justify-center absolute top-10 right-0'>
           <ListCollapse
             size={20}
             className='text-muted-foreground'
@@ -103,13 +94,16 @@ const WaterLog = ({
           {todaysDailyLog?.waterLogs.map((waterLog) => (
             <div
               key={waterLog.id}
-              className='flex gap-2 text-xs justify-center w-full items-end'
+              className='flex gap-1 tracking-tight text-xs justify-center w-full items-end'
             >
               <div className='text-muted-foreground font-medium'>
                 {waterLog.amount}ml
               </div>
               <div className='text-muted-foreground font-normal'>
-                {waterLog.createdAt.toLocaleTimeString('en-AU')}
+                {waterLog.createdAt.toLocaleTimeString('en-AU', {
+                  hour: 'numeric',
+                  minute: 'numeric',
+                })}
               </div>
               <CircleX
                 size={18}

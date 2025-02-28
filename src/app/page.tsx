@@ -1,6 +1,7 @@
 'use client'
 
 import { api } from '@/trpc/react'
+import { toast } from 'sonner'
 
 import { useState } from 'react'
 
@@ -9,7 +10,7 @@ import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
 import { GetUserById } from '@/types'
 import { useAtom } from 'jotai'
-import { XIcon } from 'lucide-react'
+import { Salad, XIcon } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -185,11 +186,23 @@ const Mobile = ({
             ))}
           </div>
         </div>
-        <div className='grid grid-cols-2 w-full bg-secondary p-2'>
+        <div className='grid grid-cols-3 w-full bg-secondary p-2'>
           <WaterLog
             dailyLogs={dailyLogs}
             defaultAmount={Number(currentUser?.settings?.defaultWater ?? 600)}
           />
+          <div className='flex flex-col gap-0 items-center justify-start w-full'>
+            <div className='text-secondary text-lg' >0</div>
+            <div className='rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center justify-center active:scale-90 transition-transform cursor-pointer'>
+              <Salad
+                size={28}
+                className='text-primary/80 hover:text-primary active:scale-90 transition-transform cursor-pointer'
+                onClick={() => {
+                  toast.success('Salad')
+                }}
+              />
+            </div>
+          </div>
           <PoopLog dailyLogs={dailyLogs} />
         </div>
         <div className='flex gap-0 w-full justify-center items-center flex-col bg-secondary pt-2'>
@@ -249,10 +262,8 @@ export default function Home() {
       )}
       {impersonatedUser.id !== '' ? (
         <div className='fixed bottom-14 left-1/2 -translate-x-1/2 opacity-80'>
-          <Badge
-            className='flex gap-4'
-          >
-        {impersonatedUser.name}
+          <Badge className='flex gap-4'>
+            {impersonatedUser.name}
             <XIcon
               size={12}
               className='cursor-pointer'

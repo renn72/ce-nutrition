@@ -31,6 +31,7 @@ function ImageCarousel({ userId }: Props) {
     onSelect()
   }, [embla])
 
+  // @ts-ignore
   useEffect(() => {
     if (!embla) return
     const handler = () => {
@@ -53,19 +54,21 @@ function ImageCarousel({ userId }: Props) {
           >
             <div className='flex'>
               {dailyLogs
+                ?.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
                 ?.filter((log) => log.image !== '')
+                ?.filter((log) => log.image !== null)
                 .map((log, index) => (
                   <div
                     key={index}
                     className='flex min-w-[300px] justify-center relative'
                   >
                     <img
-                      src={log.image ?? ''}
+                      src={log.image}
                       alt={log.notes ?? ''}
                       className='h-[500px] w-[300px] object-contain'
                     />
                     <div className='text-sm text-muted-foreground font-medium absolute bottom-0 left-1/2 -translate-x-1/2'>
-                      {log.date.toLocaleDateString('en-AU', {
+                      {new Date(log.date).toLocaleDateString('en-AU', {
                         weekday: 'long',
                         day: 'numeric',
                         month: 'long',
