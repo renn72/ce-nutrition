@@ -488,8 +488,6 @@ const DailyLogForm = ({
             </div>
           </DialogClose>
         </DialogWrapper>
-      </div>
-      <div className='flex gap-4 w-full justify-around'>
         <DialogWrapper
           title='Nap'
           value={todaysLog?.nap ?? ''}
@@ -517,43 +515,6 @@ const DailyLogForm = ({
                   updateNap({
                     date: todaysLogDate.toDateString(),
                     nap: nap?.toString(),
-                  })
-                }}
-              >
-                Save
-              </Button>
-            </div>
-          </DialogClose>
-        </DialogWrapper>
-        <DialogWrapper
-          title='Girth'
-          value={todaysLog?.waistMeasurement ?? ''}
-          prevValue={''}
-        >
-          <DialogHeader>
-            <DialogTitle>Girth</DialogTitle>
-            <DialogDescription>
-              Enter your waist measurement today
-            </DialogDescription>
-          </DialogHeader>
-          <div className='flex justify-center '>
-            <NumberInput
-              value={waistMeasurement}
-              setValue={setWaistMeasurement}
-              fixed={1}
-              scale={1}
-              postfix='cm'
-            />
-          </div>
-          <DialogClose asChild>
-            <div className='flex  w-full items-center justify-around'>
-              <Button
-                variant='default'
-                onClick={() => {
-                  if (!waistMeasurement) return
-                  updateWaistMeasurement({
-                    date: todaysLogDate.toDateString(),
-                    waistMeasurement: waistMeasurement?.toFixed(1),
                   })
                 }}
               >
