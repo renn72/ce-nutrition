@@ -83,7 +83,7 @@ const Mobile = ({
       <div
         id='main-content'
         className={cn(
-          'flex flex-col gap-2 w-full max-w-screen-xl main-content',
+          'flex flex-col gap-4 w-full max-w-screen-xl main-content',
         )}
       >
         <div className='flex flex-col bg-secondary'>
@@ -91,27 +91,27 @@ const Mobile = ({
             defaultValue='bw'
             className='w-full'
           >
-            <TabsList className='flex gap-2 items-center justify-center w-full bg-background '>
+            <TabsList className='flex gap-2 items-center justify-center w-full bg-secondary '>
               <TabsTrigger
-                className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
+                className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none data-[state=active]:bg-secondary'
                 value='bw'
               >
                 Body Weight
               </TabsTrigger>
               <TabsTrigger
-                className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
+                className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none data-[state=active]:bg-secondary'
                 value='lm'
               >
                 Lean Mass
               </TabsTrigger>
               <TabsTrigger
-                className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
+                className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none data-[state=active]:bg-secondary'
                 value='bf'
               >
                 Body Fat
               </TabsTrigger>
               <TabsTrigger
-                className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none'
+                className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none data-[state=active]:bg-secondary'
                 value='sleep'
               >
                 Sleep
@@ -192,7 +192,7 @@ const Mobile = ({
           />
           <PoopLog dailyLogs={dailyLogs} />
         </div>
-        <div className='flex gap-0 w-full justify-center items-center my-6 flex-col bg-secondary pt-2'>
+        <div className='flex gap-0 w-full justify-center items-center flex-col bg-secondary pt-2'>
           <h2 className=' font-bold'>Today</h2>
           <DailyLog
             dailyLog={dailyLog}

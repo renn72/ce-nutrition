@@ -3,8 +3,7 @@
 import { api } from '@/trpc/react'
 
 import { GetAllDailyLogs } from '@/types'
-import { CircleX, Toilet } from 'lucide-react'
-import { CirclePlus, } from 'lucide-react'
+import { CirclePlus, CircleX, Toilet } from 'lucide-react'
 import { toast } from 'sonner'
 
 const PoopLog = ({
@@ -17,7 +16,6 @@ const PoopLog = ({
   const { mutate: addPoopLog } = api.dailyLog.addPoopLog.useMutation({
     onSuccess: () => {
       ctx.dailyLog.invalidate()
-      toast.success('Added poo')
     },
     onSettled: () => {
       ctx.dailyLog.invalidate()
@@ -26,7 +24,6 @@ const PoopLog = ({
   const { mutate: deletePoopLog } = api.dailyLog.deletePoopLog.useMutation({
     onSuccess: () => {
       ctx.dailyLog.invalidate()
-      toast.success('Deleted poo')
     },
     onSettled: () => {
       ctx.dailyLog.invalidate()
@@ -45,18 +42,19 @@ const PoopLog = ({
 
   return (
     <div className='flex flex-col gap-0 w-full'>
-      <div className='w-full text-center'>{totalPoop}</div>
-      <div className='grid grid-cols-4 place-items-center gap-2 h-12'>
-        <div />
-        <Toilet size={28} />
-        <CirclePlus
-          size={28}
-          onClick={() => {
-            addPoopLog({
-              logId: todaysDailyLog?.id,
-            })
-          }}
-        />
+      <div className='w-full text-center font-bold text-lg'>{totalPoop}</div>
+      <div className='grid grid-cols-1 place-items-center gap-2 h-12'>
+        <div className='rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center justify-center active:scale-90 transition-transform cursor-pointer'>
+          <Toilet
+            className='ml-[1px]'
+            size={28}
+            onClick={() => {
+              addPoopLog({
+                logId: todaysDailyLog?.id,
+              })
+            }}
+          />
+        </div>
         <div />
       </div>
       {todaysDailyLog?.poopLogs.map((poopLog) => (

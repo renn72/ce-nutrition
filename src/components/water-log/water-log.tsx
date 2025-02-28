@@ -24,20 +24,16 @@ const WaterLog = ({
   const { mutate: addWaterLog } = api.dailyLog.addWaterLog.useMutation({
     onSuccess: () => {
       ctx.dailyLog.invalidate()
-      toast.success('Added water')
     },
     onSettled: () => {
-      ctx.dailyLog.invalidate()
       ctx.dailyLog.invalidate()
     },
   })
   const { mutate: deleteWaterLog } = api.dailyLog.deleteWaterLog.useMutation({
     onSuccess: () => {
       ctx.dailyLog.invalidate()
-      toast.success('Deleted water')
     },
     onSettled: () => {
-      ctx.dailyLog.invalidate()
       ctx.dailyLog.invalidate()
     },
   })
@@ -56,27 +52,28 @@ const WaterLog = ({
   return (
     <div className='flex flex-col gap-0 w-full'>
       {totalWater > 0 ? (
-        <div className='w-full text-center'>{totalWater}ml</div>
+        <div className='w-full text-center font-bold text-lg'>{totalWater}ml</div>
       ) : null}
 
-      <div className='grid grid-cols-4 place-items-center gap-2 h-12'>
-        <GlassWater size={28} />
+      <div className='grid grid-cols-2 place-items-center gap-2 h-12'>
+        <div className='rounded-full border-[3px] border-primary/80 w-10 h-10 flex items-center justify-center active:scale-90 transition-transform cursor-pointer'>
+          <GlassWater
+            size={28}
+            onClick={() => {
+              addWaterLog({
+                logId: todaysDailyLog?.id,
+                amount: size,
+              })
+            }}
+          />
+        </div>
         <Input
           placeholder='Size'
-          className='w-full col-span-2'
+          className='w-14 col-span-1'
           type='number'
           value={size}
           onChange={(e) => {
             setSize(Number(e.target.value))
-          }}
-        />
-        <CirclePlus
-          size={28}
-          onClick={() => {
-            addWaterLog({
-              logId: todaysDailyLog?.id,
-              amount: size,
-            })
           }}
         />
       </div>
