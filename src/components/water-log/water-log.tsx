@@ -6,9 +6,20 @@ import { useState } from 'react'
 
 import { cn } from '@/lib/utils'
 import { GetAllDailyLogs } from '@/types'
-import { CirclePlus, CircleX, GlassWater } from 'lucide-react'
+import { ChevronDown, CirclePlus, CircleX, GlassWater, ListCollapse } from 'lucide-react'
 import { toast } from 'sonner'
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import { Input } from '@/components/ui/input'
 
 const WaterLog = ({
@@ -52,7 +63,9 @@ const WaterLog = ({
   return (
     <div className='flex flex-col gap-0 w-full'>
       {totalWater > 0 ? (
-        <div className='w-full text-center font-bold text-lg'>{totalWater}ml</div>
+        <div className='w-full text-center font-bold text-lg'>
+          {totalWater}ml
+        </div>
       ) : null}
 
       <div className='grid grid-cols-2 place-items-center gap-2 h-12'>
@@ -77,28 +90,40 @@ const WaterLog = ({
           }}
         />
       </div>
-      {todaysDailyLog?.waterLogs.map((waterLog) => (
-        <div
-          key={waterLog.id}
-          className='flex gap-2 text-xs justify-center w-full items-end'
-        >
-          <div className='text-muted-foreground font-medium'>
-            {waterLog.amount}ml
-          </div>
-          <div className='text-muted-foreground font-normal'>
-            {waterLog.createdAt.toLocaleTimeString('en-AU')}
-          </div>
-          <CircleX
-            size={18}
-            className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer ml-4 mb-[1px]'
-            onClick={() => {
-              deleteWaterLog({
-                id: waterLog.id,
-              })
-            }}
+
+      <Collapsible>
+        <CollapsibleTrigger className='flex gap-2 items-center justify-center w-full'>
+          <ListCollapse
+            size={20}
+            className='text-muted-foreground'
           />
-        </div>
-      ))}
+        </CollapsibleTrigger>
+
+        <CollapsibleContent>
+          {todaysDailyLog?.waterLogs.map((waterLog) => (
+            <div
+              key={waterLog.id}
+              className='flex gap-2 text-xs justify-center w-full items-end'
+            >
+              <div className='text-muted-foreground font-medium'>
+                {waterLog.amount}ml
+              </div>
+              <div className='text-muted-foreground font-normal'>
+                {waterLog.createdAt.toLocaleTimeString('en-AU')}
+              </div>
+              <CircleX
+                size={18}
+                className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer ml-4 mb-[1px]'
+                onClick={() => {
+                  deleteWaterLog({
+                    id: waterLog.id,
+                  })
+                }}
+              />
+            </div>
+          ))}
+        </CollapsibleContent>
+      </Collapsible>
     </div>
   )
 }

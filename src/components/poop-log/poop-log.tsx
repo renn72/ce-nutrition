@@ -3,8 +3,14 @@
 import { api } from '@/trpc/react'
 
 import { GetAllDailyLogs } from '@/types'
-import { CirclePlus, CircleX, Toilet } from 'lucide-react'
+import { ChevronDown, CircleX, ListCollapse, Toilet } from 'lucide-react'
 import { toast } from 'sonner'
+
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 
 const PoopLog = ({
   dailyLogs,
@@ -57,25 +63,36 @@ const PoopLog = ({
         </div>
         <div />
       </div>
-      {todaysDailyLog?.poopLogs.map((poopLog) => (
-        <div
-          key={poopLog.id}
-          className='flex gap-2 text-xs justify-center w-full items-end'
-        >
-          <div className='text-muted-foreground font-normal'>
-            {poopLog.createdAt.toLocaleTimeString('en-AU')}
-          </div>
-          <CircleX
-            size={18}
-            className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer ml-4 mb-[1px]'
-            onClick={() => {
-              deletePoopLog({
-                id: poopLog.id,
-              })
-            }}
+      <Collapsible>
+        <CollapsibleTrigger className='flex gap-2 items-center justify-center w-full'>
+          <ListCollapse
+            size={20}
+            className='text-muted-foreground'
           />
-        </div>
-      ))}
+        </CollapsibleTrigger>
+
+        <CollapsibleContent>
+          {todaysDailyLog?.poopLogs.map((poopLog) => (
+            <div
+              key={poopLog.id}
+              className='flex gap-2 text-xs justify-center w-full items-end'
+            >
+              <div className='text-muted-foreground font-normal'>
+                {poopLog.createdAt.toLocaleTimeString('en-AU')}
+              </div>
+              <CircleX
+                size={18}
+                className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer ml-4 mb-[1px]'
+                onClick={() => {
+                  deletePoopLog({
+                    id: poopLog.id,
+                  })
+                }}
+              />
+            </div>
+          ))}
+        </CollapsibleContent>
+      </Collapsible>
     </div>
   )
 }
