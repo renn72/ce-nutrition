@@ -773,14 +773,6 @@ export const dailyLogRouter = createTRPCRouter({
       // @ts-ignore
       let logId = log?.[0]?.id as number | null | undefined
 
-      createLog({
-        user: ctx.session.user.name,
-        userId: ctx.session.user.id,
-        task: 'Update Sleep' + logId ? '' : ' and Create Log',
-        notes: JSON.stringify(input),
-        objectId: null,
-      })
-
       if (!logId) {
         const res = await ctx.db
           .insert(dailyLog)
@@ -843,14 +835,6 @@ export const dailyLogRouter = createTRPCRouter({
 
       // @ts-ignore
       let logId = log?.[0]?.id as number | null | undefined
-
-      createLog({
-        user: ctx.session.user.name,
-        userId: ctx.session.user.id,
-        task: 'Update poop' + logId ? '' : ' and Create Log',
-        notes: JSON.stringify(input),
-        objectId: null,
-      })
 
       if (!logId) {
         const res = await ctx.db
