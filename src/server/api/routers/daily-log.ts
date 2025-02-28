@@ -770,8 +770,7 @@ export const dailyLogRouter = createTRPCRouter({
         ),
       })
 
-      // @ts-ignore
-      let logId = log?.[0]?.id as number | null | undefined
+      let logId = log?.id as number | undefined
 
       if (!logId) {
         const res = await ctx.db
@@ -825,6 +824,7 @@ export const dailyLogRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       let isCreateLog = false
+      console.log('input', input)
 
       const log = await ctx.db.query.dailyLog.findFirst({
         where: and(
@@ -832,11 +832,15 @@ export const dailyLogRouter = createTRPCRouter({
           eq(dailyLog.userId, ctx.session.user.id),
         ),
       })
+      console.log('log', log)
 
       // @ts-ignore
-      let logId = log?.[0]?.id as number | null | undefined
+      let logId = log?.id as number | undefined
+      console.log('logId', logId)
+      console.log('logId', !logId)
 
       if (!logId) {
+        console.log('create')
         const res = await ctx.db
           .insert(dailyLog)
           .values({
