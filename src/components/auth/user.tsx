@@ -118,21 +118,23 @@ const User = () => {
         sideOffset={12}
         className='min-w-48'
       >
-        <DropdownMenuLabel>
-          <div className='flex gap-6 items-center'>
-            <div
-              className={cn(
-                'flex items-center justify-center rounded-full cursor-pointer',
-                'bg-secondary-foreground/40 h-8 w-8 pt-1 text-sm font-bold',
-                'hover:bg-secondary-foreground/70',
-              )}
-            >
-              {user.firstName?.slice(0, 1).toUpperCase()}
-              {user.lastName?.slice(0, 1).toUpperCase()}
+        <Link href='/'>
+          <DropdownMenuLabel>
+            <div className='flex gap-6 items-center'>
+              <div
+                className={cn(
+                  'flex items-center justify-center rounded-full cursor-pointer',
+                  'bg-secondary-foreground/40 h-8 w-8 pt-1 text-sm font-bold',
+                  'hover:bg-secondary-foreground/70',
+                )}
+              >
+                {user.firstName?.slice(0, 1).toUpperCase()}
+                {user.lastName?.slice(0, 1).toUpperCase()}
+              </div>
+              <div className='pt-1'>{user.name}</div>
             </div>
-            <div className='pt-1'>{user.name}</div>
-          </div>
-        </DropdownMenuLabel>
+          </DropdownMenuLabel>
+        </Link>
         <DropdownMenuSeparator />
         <DropdownMenuItem className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
           <House size={20} />
@@ -169,9 +171,7 @@ const User = () => {
         {isCreator && (
           <>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'
-            >
+            <DropdownMenuItem className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
               <Warehouse size={20} />
               <Link href='/user/admin-logs'>Admin Logs</Link>
             </DropdownMenuItem>
