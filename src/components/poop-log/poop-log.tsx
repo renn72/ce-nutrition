@@ -48,7 +48,9 @@ const PoopLog = ({
 
   return (
     <div className='flex flex-col gap-0 w-full relative'>
-      <div className='w-full text-center font-bold text-lg'>{totalPoop}</div>
+      <div className='w-full text-center font-bold text-lg'>
+        {totalPoop ?? 0}
+      </div>
       <div className='grid grid-cols-1 place-items-center gap-2 h-12'>
         <div className='rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center justify-center active:scale-90 transition-transform cursor-pointer'>
           <Toilet
@@ -56,7 +58,7 @@ const PoopLog = ({
             size={28}
             onClick={() => {
               addPoopLog({
-                logId: todaysDailyLog?.id,
+                date: today.toDateString(),
               })
             }}
           />
@@ -72,25 +74,29 @@ const PoopLog = ({
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          {todaysDailyLog?.poopLogs.map((poopLog) => (
-            <div
-              key={poopLog.id}
-              className='flex gap-2 text-xs justify-center w-full items-end'
-            >
-              <div className='text-muted-foreground font-normal'>
-                {poopLog.createdAt.toLocaleTimeString('en-AU')}
+          {todaysDailyLog?.poopLogs.length === 0 || !todaysDailyLog ? (
+            <div className='text-center'>...</div>
+          ) : (
+            todaysDailyLog?.poopLogs.map((poopLog) => (
+              <div
+                key={poopLog.id}
+                className='flex gap-2 text-xs justify-center w-full items-end'
+              >
+                <div className='text-muted-foreground font-normal'>
+                  {poopLog.createdAt.toLocaleTimeString('en-AU')}
+                </div>
+                <CircleX
+                  size={18}
+                  className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer ml-4 mb-[1px]'
+                  onClick={() => {
+                    deletePoopLog({
+                      id: poopLog.id,
+                    })
+                  }}
+                />
               </div>
-              <CircleX
-                size={18}
-                className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer ml-4 mb-[1px]'
-                onClick={() => {
-                  deletePoopLog({
-                    id: poopLog.id,
-                  })
-                }}
-              />
-            </div>
-          ))}
+            ))
+          )}
         </CollapsibleContent>
       </Collapsible>
     </div>

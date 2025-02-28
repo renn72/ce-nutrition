@@ -62,11 +62,9 @@ const WaterLog = ({
 
   return (
     <div className='flex flex-col gap-0 w-full relative'>
-      {totalWater > 0 ? (
         <div className='w-full text-center font-bold text-lg'>
           {totalWater}ml
         </div>
-      ) : null}
 
       <div className='grid grid-cols-1 place-items-center gap-2 h-12'>
         <div className='rounded-full border-[3px] border-primary/80 w-10 h-10 flex items-center justify-center active:scale-90 transition-transform cursor-pointer'>
@@ -74,7 +72,7 @@ const WaterLog = ({
             size={28}
             onClick={() => {
               addWaterLog({
-                logId: todaysDailyLog?.id,
+                date: today.toDateString(),
                 amount: size,
               })
             }}

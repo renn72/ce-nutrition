@@ -33,6 +33,7 @@ const BodyWeight = ({ dailyLogs, range }: { dailyLogs: GetAllDailyLogs, range: n
       weight: dailyLog.morningWeight,
     }))
     .filter((dailyLog) => dailyLog.weight !== '')
+    .filter((dailyLog) => dailyLog.weight)
 
 
   const dataMin = Math.floor(Math.min(...data.map((d) => Number(d.weight)))) - 1
