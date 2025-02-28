@@ -91,6 +91,15 @@ const WaterLog = ({
         </CollapsibleTrigger>
 
         <CollapsibleContent>
+          <Input
+            placeholder='Amount'
+            className='w-full mb-1'
+            type='number'
+            value={size}
+            onChange={(e) => {
+              setSize(Number(e.target.value))
+            }}
+          />
           {todaysDailyLog?.waterLogs.map((waterLog) => (
             <div
               key={waterLog.id}
