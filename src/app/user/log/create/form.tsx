@@ -75,7 +75,7 @@ const NumberInput = ({
         placeholder=''
         className='relative w-full text-xl font-medium rounded-lg text-center h-min border-none focus-visible:ring-0 focus:border-none shadow-none py-0 active:border-none'
         type='number'
-        value={value && value % 1 === 0 ? value : value?.toFixed(fixed) ?? ''}
+        value={value && value % 1 === 0 ? value : (value?.toFixed(fixed) ?? '')}
         onChange={(e) => {
           setValue(Number(e.target.value))
         }}
@@ -128,15 +128,21 @@ const DialogWrapper = ({
   isWidthFull?: boolean
   fixed?: number
   isString?: boolean
-    postfix?: string
+  postfix?: string
 }) => {
   const diff = Number(prevValue) - Number(value)
+  const [isOpen, setIsOpen] = useState(false)
   return (
-    <Dialog>
+    <Dialog
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
       <DialogTrigger asChild>
         <div
           className={cn(
-            'flex gap-2 items-center justify-around flex-col bg-secondary px-4 py-2 rounded-md shadow-md ',
+            'flex gap-2 items-center justify-around flex-col bg-secondary px-4 py-2 rounded-md shadow-md',
+            'active:scale-90 active:shadow-none transition-transform cursor-pointer',
+            isOpen ? 'scale-90 shadow-none' : '',
             isWidthFull ? 'w-full' : 'w-40 font-semibold',
           )}
         >
@@ -148,13 +154,12 @@ const DialogWrapper = ({
                 isWidthFull ? 'text-sm text-secondary-foreground' : '',
               )}
             >
-              {
-                postfix !== '' ?
+              {postfix !== '' ? (
                 <div className='absolute right-[-2.5rem] top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start'>
                   {postfix}
-                </div> : null
-              }
-              {isString ? value :Number(value).toFixed(fixed)}
+                </div>
+              ) : null}
+              {isString ? value : Number(value).toFixed(fixed)}
               {prevValue !== '' &&
               prevValue !== undefined &&
               prevValue !== null ? (

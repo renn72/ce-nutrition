@@ -2,9 +2,12 @@
 
 import { api } from '@/trpc/react'
 
-import { GetAllDailyLogs } from '@/types'
-import { ChevronDown, CircleX, ListCollapse, Toilet } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+
+import { GetAllDailyLogs } from '@/types'
+import NumberFlow from '@number-flow/react'
+import { CircleX, ListCollapse, Toilet } from 'lucide-react'
 
 import {
   Collapsible,
@@ -13,18 +16,47 @@ import {
 } from '@/components/ui/collapsible'
 
 const PoopLog = ({
+  userId,
   dailyLogs,
 }: {
+  userId: string
   dailyLogs: GetAllDailyLogs | null | undefined
 }) => {
+  const today = new Date()
+
   const ctx = api.useUtils()
 
+
   const { mutate: addPoopLog } = api.dailyLog.addPoopLog.useMutation({
+    onMutate: async (newPoopLog) => {
+      await ctx.dailyLog.getAllCurrentUser.cancel()
+      const previousLog = ctx.dailyLog.getAllUser.getData(userId)
+      if (!previousLog) return
+      ctx.dailyLog.getAllUser.setData(userId, [
+        ...previousLog.map((log) => {
+          if (log.date === newPoopLog.date) {
+            return {
+              ...log,
+              poopLogs: [
+                ...log.poopLogs,
+                { id: -1, createdAt: new Date(), dailyLogId: log.id },
+              ],
+            }
+          }
+          return log
+        }),
+      ])
+      return { previousLog }
+    },
     onSuccess: () => {
       ctx.dailyLog.invalidate()
     },
     onSettled: () => {
       ctx.dailyLog.invalidate()
+    },
+    onError: (err, newPoopLog, context) => {
+      toast.error('error')
+      ctx.dailyLog.getAllUser.setData(userId, context?.previousLog)
     },
   })
   const { mutate: deletePoopLog } = api.dailyLog.deletePoopLog.useMutation({
@@ -36,20 +68,19 @@ const PoopLog = ({
     },
   })
 
-  const today = new Date()
-
   const todaysDailyLog = dailyLogs?.find(
     (dailyLog) => dailyLog.date === today.toDateString(),
   )
 
-  const totalPoop = todaysDailyLog?.poopLogs.reduce((acc, curr) => {
-    return acc + 1
-  }, 0)
+  const totalPoop =
+    todaysDailyLog?.poopLogs.reduce((acc, _curr) => {
+      return acc + 1
+    }, 0) ?? 0
 
   return (
     <div className='flex flex-col gap-0 w-full relative'>
       <div className='w-full text-center font-bold text-lg'>
-        {totalPoop ?? 0}
+        <NumberFlow value={totalPoop ?? 0} />
       </div>
       <div className='grid grid-cols-1 place-items-center gap-2 h-12'>
         <div className='rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center justify-center active:scale-90 transition-transform cursor-pointer'>

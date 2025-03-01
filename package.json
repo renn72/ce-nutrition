@@ -20,6 +20,7 @@
     "@heroui/number-input": "^2.0.3",
     "@hookform/resolvers": "^3.9.0",
     "@libsql/client": "^0.14.0",
+    "@number-flow/react": "^0.5.5",
     "@oslojs/crypto": "^1.0.1",
     "@oslojs/encoding": "^1.1.0",
     "@radix-ui/react-accordion": "^1.2.1",

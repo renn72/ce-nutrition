@@ -2,19 +2,13 @@
 
 import { api } from '@/trpc/react'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { cn } from '@/lib/utils'
 import { GetAllDailyLogs } from '@/types'
-import { ChevronDown, CirclePlus, CircleX, GlassWater, ListCollapse } from 'lucide-react'
+import NumberFlow from '@number-flow/react'
+import { CircleX, GlassWater, ListCollapse } from 'lucide-react'
 import { toast } from 'sonner'
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
 import {
   Collapsible,
   CollapsibleContent,
@@ -23,21 +17,52 @@ import {
 import { Input } from '@/components/ui/input'
 
 const WaterLog = ({
+  userId,
   dailyLogs,
   defaultAmount,
 }: {
   dailyLogs: GetAllDailyLogs | null | undefined
   defaultAmount: number
+  userId: string
 }) => {
   const ctx = api.useUtils()
   const [size, setSize] = useState(() => defaultAmount)
 
   const { mutate: addWaterLog } = api.dailyLog.addWaterLog.useMutation({
+    onMutate: async (newWaterLog) => {
+      await ctx.dailyLog.getAllCurrentUser.cancel()
+      const previousLog = ctx.dailyLog.getAllUser.getData(userId)
+      if (!previousLog) return
+      ctx.dailyLog.getAllUser.setData(userId, [
+        ...previousLog.map((log) => {
+          if (log.date === newWaterLog.date) {
+            return {
+              ...log,
+              waterLogs: [
+                ...log.waterLogs,
+                {
+                  id: -1,
+                  createdAt: new Date(),
+                  dailyLogId: log.id,
+                  amount: newWaterLog.amount.toString(),
+                },
+              ],
+            }
+          }
+          return log
+        }),
+      ])
+      return { previousLog }
+    },
     onSuccess: () => {
       ctx.dailyLog.invalidate()
     },
     onSettled: () => {
       ctx.dailyLog.invalidate()
+    },
+    onError: (err, newPoopLog, context) => {
+      toast.error('error')
+      ctx.dailyLog.getAllUser.setData(userId, context?.previousLog)
     },
   })
   const { mutate: deleteWaterLog } = api.dailyLog.deleteWaterLog.useMutation({
@@ -62,9 +87,9 @@ const WaterLog = ({
 
   return (
     <div className='flex flex-col gap-0 w-full relative'>
-        <div className='w-full text-center font-bold text-lg'>
-          {totalWater}ml
-        </div>
+      <div className='w-full text-center font-bold text-lg'>
+        <NumberFlow value={totalWater ?? 0} />
+      </div>
 
       <div className='grid grid-cols-1 place-items-center gap-2 h-12'>
         <div className='rounded-full border-[3px] border-primary/80 w-10 h-10 flex items-center justify-center active:scale-90 transition-transform cursor-pointer'>

@@ -70,6 +70,7 @@ const Mobile = ({
     },
   })
 
+  console.log('dailyLogs', dailyLogs)
   const dailyLog = dailyLogs?.find(
     (dailyLog) => dailyLog.date === new Date().toDateString(),
   )
@@ -188,6 +189,7 @@ const Mobile = ({
         </div>
         <div className='grid grid-cols-3 w-full bg-secondary p-2'>
           <WaterLog
+            userId={userId}
             dailyLogs={dailyLogs}
             defaultAmount={Number(currentUser?.settings?.defaultWater ?? 600)}
           />
@@ -203,7 +205,9 @@ const Mobile = ({
               />
             </div>
           </div>
-          <PoopLog dailyLogs={dailyLogs} />
+          <PoopLog
+            userId={userId}
+            dailyLogs={dailyLogs} />
         </div>
         <div className='flex gap-0 w-full justify-center items-center flex-col bg-secondary pt-2'>
           <h2 className=' font-bold'>Today</h2>
