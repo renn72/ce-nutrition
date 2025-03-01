@@ -175,7 +175,7 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
       <CardHeader className='pb-0'>
         <CardTitle className='text-center'>{userPlan?.name}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className='flex flex-col gap-2'>
         {userPlan?.userMeals.map((meal) => (
           <div
             className='flex gap-2 flex-col'
