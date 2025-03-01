@@ -769,7 +769,10 @@ const DailyLogForm = ({
             <UploadButton
               appearance={{
                 button: {
-                  background: '#ccc',
+                  background: 'hsl(var(--secondary))',
+                  color: 'hsl(var(--secondary-foreground))',
+                  fontSize: '14px',
+                  fontWeight: '550',
                 },
               }}
               endpoint='imageUploader'
