@@ -9,7 +9,7 @@ import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
 import { GetUserById } from '@/types'
 import { useAtom } from 'jotai'
-import { Salad, XIcon } from 'lucide-react'
+import { Loader, Salad, XIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
@@ -67,8 +67,10 @@ const Mobile = ({
   const [chartRange, setChartRange] = useState(() =>
     Number(currentUser?.settings?.defaultChartRange ?? 7),
   )
-  const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId)
-  const { data: weighIns } = api.weighIn.getAllUser.useQuery(userId)
+  const { data: dailyLogs, isLoading: dailyLogsLoading } =
+    api.dailyLog.getAllUser.useQuery(userId)
+  const { data: weighIns, isLoading: weighInsLoading } =
+    api.weighIn.getAllUser.useQuery(userId)
 
   const { mutate: updateChartRange } = api.user.updateChartRange.useMutation({
     onSettled: () => {
@@ -93,7 +95,7 @@ const Mobile = ({
           'flex flex-col gap-4 w-full max-w-screen-xl main-content',
         )}
       >
-        <Card className=''>
+        <Card className='h-[300px]'>
           <CardContent>
             <Tabs
               defaultValue='bw'
@@ -129,34 +131,67 @@ const Mobile = ({
                 className='bg-secondary p-2'
                 value='bw'
               >
-                {dailyLogs ? (
-                  <BodyWeight
-                    dailyLogs={dailyLogs}
-                    range={chartRange}
-                  />
-                ) : null}
+                {dailyLogsLoading ? (
+                  <div className='flex flex-col items-center justify-center w-full min-h-[200px]'>
+                    <Loader
+                      size={32}
+                      className='animate-spin text-primary/70'
+                    />
+                  </div>
+                ) : (
+                  <>
+                    {dailyLogs ? (
+                      <BodyWeight
+                        dailyLogs={dailyLogs}
+                        range={chartRange}
+                      />
+                    ) : null}
+                  </>
+                )}
               </TabsContent>
               <TabsContent
                 value='lm'
                 className='bg-secondary p-2'
               >
-                {weighIns ? (
-                  <LeanMass
-                    weighIns={weighIns}
-                    range={chartRange}
-                  />
-                ) : null}
+                {weighInsLoading ? (
+                  <div className='flex flex-col items-center justify-center w-full min-h-[200px]'>
+                    <Loader
+                      size={32}
+                      className='animate-spin text-primary/70'
+                    />
+                  </div>
+                ) : (
+                  <>
+                    {weighIns ? (
+                      <LeanMass
+                        weighIns={weighIns}
+                        range={chartRange}
+                      />
+                    ) : null}
+                  </>
+                )}
               </TabsContent>
               <TabsContent
                 value='bf'
                 className='bg-secondary p-2'
               >
-                {weighIns ? (
-                  <BodyFat
-                    weighIns={weighIns}
-                    range={chartRange}
-                  />
-                ) : null}
+                {weighInsLoading ? (
+                  <div className='flex flex-col items-center justify-center w-full min-h-[200px]'>
+                    <Loader
+                      size={32}
+                      className='animate-spin text-primary/70'
+                    />
+                  </div>
+                ) : (
+                  <>
+                    {weighIns ? (
+                      <BodyFat
+                        weighIns={weighIns}
+                        range={chartRange}
+                      />
+                    ) : null}
+                  </>
+                )}
               </TabsContent>
               <TabsContent
                 value='sleep'
