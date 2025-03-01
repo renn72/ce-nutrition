@@ -7,6 +7,7 @@ import type { UserPlan } from '@/types'
 import { RotateCcw } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -170,43 +171,47 @@ const UserPlanRecipe = ({
 
 const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
   return (
-    <div className='flex flex-col gap-4 w-full px-2 py-4 bg-secondary text-xs'>
-      <h2 className='text-lg font-bold'>{userPlan?.name}</h2>
-      {userPlan?.userMeals.map((meal) => (
-        <div
-          className='flex gap-2 flex-col'
-          key={meal.id}
-        >
-          <div className='flex gap-2 items-center justify-between'>
-            <Label className=''>{meal.mealTitle}</Label>
-            <div className='text-xs text-muted-foreground tracking-tighter'>
-              {meal.targetCalories}cals - {meal.targetProtein}g Protein
+    <Card className=''>
+      <CardHeader className='pb-0'>
+        <CardTitle className='text-center'>{userPlan?.name}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {userPlan?.userMeals.map((meal) => (
+          <div
+            className='flex gap-2 flex-col'
+            key={meal.id}
+          >
+            <div className='flex gap-2 items-center justify-between'>
+              <Label className=''>{meal.mealTitle}</Label>
+              <div className='text-xs text-muted-foreground tracking-tighter'>
+                {meal.targetCalories}cals - {meal.targetProtein}g Protein
+              </div>
             </div>
-          </div>
-          <div className='flex gap-2 flex-row pl-0 flex-wrap'>
-            {userPlan.userRecipes
-              .filter((recipe) => recipe.mealIndex == meal.mealIndex)
-              .map((recipe) => (
-                <UserPlanRecipe
-                  key={recipe.id}
+            <div className='flex gap-2 flex-row pl-0 flex-wrap'>
+              {userPlan.userRecipes
+                .filter((recipe) => recipe.mealIndex == meal.mealIndex)
+                .map((recipe) => (
+                  <UserPlanRecipe
+                    key={recipe.id}
+                    userPlan={userPlan}
+                    mealIndex={meal.mealIndex}
+                    recipeIndex={recipe.recipeIndex}
+                  />
+                ))}
+            </div>
+            {meal.veges !== '' && (
+              <div className='grid grid-cols-1 place-items-center w-[50px]'>
+                <div className='w-min'>&</div>
+                <UserPlanVege
                   userPlan={userPlan}
                   mealIndex={meal.mealIndex}
-                  recipeIndex={recipe.recipeIndex}
                 />
-              ))}
+              </div>
+            )}
           </div>
-          {meal.veges !== '' && (
-            <div className='grid grid-cols-1 place-items-center w-[50px]'>
-              <div className='w-min'>&</div>
-              <UserPlanVege
-                userPlan={userPlan}
-                mealIndex={meal.mealIndex}
-              />
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
+        ))}
+      </CardContent>
+    </Card>
   )
 }
 

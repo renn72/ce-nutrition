@@ -44,14 +44,14 @@ const Notifications = ({
         {isNotifications ? (
           <div className='relative'>
             <BellDot
-              size={40}
+              size={36}
               className='bg-accentt cursor-pointer rounded-full p-1'
             />
-            <div className='absolute top-[8px] right-[6px] w-3 h-3 bg-red-600 rounded-full'></div>
+            <div className='absolute top-[7px] right-[6px] w-3 h-3 bg-red-600 rounded-full'></div>
           </div>
         ) : (
           <Bell
-            size={40}
+            size={36}
             className='bg-accentt cursor-pointer rounded-full p-1'
           />
         )}
@@ -121,7 +121,7 @@ const MobileHeader = ({ isDesktop = false }: { isDesktop?: boolean }) => {
           href='/user/program'
           >
         <NotebookText
-          size={40}
+          size={36}
           className='bg-accentt cursor-pointer rounded-full p-1'
         />
         </Link>
@@ -134,11 +134,11 @@ const MobileHeader = ({ isDesktop = false }: { isDesktop?: boolean }) => {
         <Image
           src='/logo/ce.png'
           alt='logo'
-          width={40}
-          height={40}
+          width={36}
+          height={36}
           priority
           style={{
-            width: '100%',
+            width: '90%',
             height: 'auto',
           }}
         />

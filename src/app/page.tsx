@@ -1,7 +1,6 @@
 'use client'
 
 import { api } from '@/trpc/react'
-import { toast } from 'sonner'
 
 import { useState } from 'react'
 
@@ -11,9 +10,16 @@ import { cn } from '@/lib/utils'
 import { GetUserById } from '@/types'
 import { useAtom } from 'jotai'
 import { Salad, XIcon } from 'lucide-react'
+import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { BodyFat } from '@/components/charts/mobile/body-fat'
@@ -35,7 +41,7 @@ const PlanPreview = ({ user }: { user: GetUserById }) => {
   if (!plans) return null
 
   return (
-    <div className='flex flex-col gap-2 w-full '>
+    <div className='flex flex-col gap-4 w-full '>
       {plans?.map((plan) => (
         <UserPlanView
           key={plan.id}
@@ -87,134 +93,147 @@ const Mobile = ({
           'flex flex-col gap-4 w-full max-w-screen-xl main-content',
         )}
       >
-        <div className='flex flex-col bg-secondary'>
-          <Tabs
-            defaultValue='bw'
-            className='w-full'
-          >
-            <TabsList className='flex gap-2 items-center justify-center w-full bg-secondary '>
-              <TabsTrigger
-                className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none data-[state=active]:bg-secondary'
+        <Card className=''>
+          <CardContent>
+            <Tabs
+              defaultValue='bw'
+              className='w-full'
+            >
+              <TabsList className='flex gap-2 items-center justify-center w-full bg-secondary '>
+                <TabsTrigger
+                  className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none data-[state=active]:bg-secondary'
+                  value='bw'
+                >
+                  Body Weight
+                </TabsTrigger>
+                <TabsTrigger
+                  className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none data-[state=active]:bg-secondary'
+                  value='lm'
+                >
+                  Lean Mass
+                </TabsTrigger>
+                <TabsTrigger
+                  className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none data-[state=active]:bg-secondary'
+                  value='bf'
+                >
+                  Body Fat
+                </TabsTrigger>
+                <TabsTrigger
+                  className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none data-[state=active]:bg-secondary'
+                  value='sleep'
+                >
+                  Sleep
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent
+                className='bg-secondary p-2'
                 value='bw'
               >
-                Body Weight
-              </TabsTrigger>
-              <TabsTrigger
-                className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none data-[state=active]:bg-secondary'
+                {dailyLogs ? (
+                  <BodyWeight
+                    dailyLogs={dailyLogs}
+                    range={chartRange}
+                  />
+                ) : null}
+              </TabsContent>
+              <TabsContent
                 value='lm'
+                className='bg-secondary p-2'
               >
-                Lean Mass
-              </TabsTrigger>
-              <TabsTrigger
-                className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none data-[state=active]:bg-secondary'
+                {weighIns ? (
+                  <LeanMass
+                    weighIns={weighIns}
+                    range={chartRange}
+                  />
+                ) : null}
+              </TabsContent>
+              <TabsContent
                 value='bf'
+                className='bg-secondary p-2'
               >
-                Body Fat
-              </TabsTrigger>
-              <TabsTrigger
-                className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none data-[state=active]:bg-secondary'
+                {weighIns ? (
+                  <BodyFat
+                    weighIns={weighIns}
+                    range={chartRange}
+                  />
+                ) : null}
+              </TabsContent>
+              <TabsContent
                 value='sleep'
+                className='bg-secondary p-2'
               >
-                Sleep
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent
-              className='bg-secondary p-2'
-              value='bw'
-            >
-              {dailyLogs ? (
-                <BodyWeight
-                  dailyLogs={dailyLogs}
-                  range={chartRange}
-                />
-              ) : null}
-            </TabsContent>
-            <TabsContent
-              value='lm'
-              className='bg-secondary p-2'
-            >
-              {weighIns ? (
-                <LeanMass
-                  weighIns={weighIns}
-                  range={chartRange}
-                />
-              ) : null}
-            </TabsContent>
-            <TabsContent
-              value='bf'
-              className='bg-secondary p-2'
-            >
-              {weighIns ? (
-                <BodyFat
-                  weighIns={weighIns}
-                  range={chartRange}
-                />
-              ) : null}
-            </TabsContent>
-            <TabsContent
-              value='sleep'
-              className='bg-secondary p-2'
-            >
-              {dailyLogs ? (
-                <Sleep
-                  dailyLogs={dailyLogs}
-                  range={chartRange}
-                />
-              ) : null}
-            </TabsContent>
-          </Tabs>
-          <div className='flex gap-6 justify-center font-normal text-xs mt-[-0.5rem]'>
-            {chartRanges.map((range) => (
-              <div
-                key={range}
-                className={cn(
-                  'cursor-pointer p-1 rounded-full',
-                  chartRange === range ? 'underline font-bold' : '',
+                {dailyLogs ? (
+                  <Sleep
+                    dailyLogs={dailyLogs}
+                    range={chartRange}
+                  />
+                ) : null}
+              </TabsContent>
+            </Tabs>
+            <div className='flex gap-6 justify-center font-normal text-xs mt-[-0.5rem]'>
+              {chartRanges.map((range) => (
+                <div
+                  key={range}
+                  className={cn(
+                    'cursor-pointer p-1 rounded-full',
+                    chartRange === range ? 'underline font-bold' : '',
+                  )}
+                  onClick={() => {
+                    setChartRange(range)
+                    if (!currentUser) return
+                    if (!currentUser.settings) return
+                    updateChartRange({
+                      range: range,
+                      id: currentUser.settings?.id,
+                    })
+                  }}
+                >
+                  {range}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+        <Card className='py-2'>
+          <CardContent className='px-2 py-0'>
+            <div className='grid grid-cols-3 w-full p-2'>
+              <WaterLog
+                userId={userId}
+                dailyLogs={dailyLogs}
+                defaultAmount={Number(
+                  currentUser?.settings?.defaultWater ?? 600,
                 )}
-                onClick={() => {
-                  setChartRange(range)
-                  if (!currentUser) return
-                  if (!currentUser.settings) return
-                  updateChartRange({
-                    range: range,
-                    id: currentUser.settings?.id,
-                  })
-                }}
-              >
-                {range}
+              />
+              <div className='flex flex-col gap-0 items-center justify-start w-full'>
+                <div className='text-secondary text-lg'>0</div>
+                <div className='rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center justify-center active:scale-90 transition-transform cursor-pointer'>
+                  <Salad
+                    size={28}
+                    className='text-primary/80 hover:text-primary active:scale-90 transition-transform cursor-pointer'
+                    onClick={() => {
+                      toast.success('Salad')
+                    }}
+                  />
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-        <div className='grid grid-cols-3 w-full bg-secondary p-2'>
-          <WaterLog
-            userId={userId}
-            dailyLogs={dailyLogs}
-            defaultAmount={Number(currentUser?.settings?.defaultWater ?? 600)}
-          />
-          <div className='flex flex-col gap-0 items-center justify-start w-full'>
-            <div className='text-secondary text-lg' >0</div>
-            <div className='rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center justify-center active:scale-90 transition-transform cursor-pointer'>
-              <Salad
-                size={28}
-                className='text-primary/80 hover:text-primary active:scale-90 transition-transform cursor-pointer'
-                onClick={() => {
-                  toast.success('Salad')
-                }}
+              <PoopLog
+                userId={userId}
+                dailyLogs={dailyLogs}
               />
             </div>
-          </div>
-          <PoopLog
-            userId={userId}
-            dailyLogs={dailyLogs} />
-        </div>
-        <div className='flex gap-0 w-full justify-center items-center flex-col bg-secondary pt-2'>
-          <h2 className=' font-bold'>Today</h2>
-          <DailyLog
-            dailyLog={dailyLog}
-            date={new Date()}
-          />
-        </div>
+          </CardContent>
+        </Card>
+        <Card className=''>
+          <CardContent>
+            <CardHeader className='pb-0'>
+              <CardTitle className='text-center'>Today</CardTitle>
+            </CardHeader>
+            <DailyLog
+              dailyLog={dailyLog}
+              date={new Date()}
+            />
+          </CardContent>
+        </Card>
         <PlanPreview user={currentUser} />
       </div>
       <MobileFooter />
