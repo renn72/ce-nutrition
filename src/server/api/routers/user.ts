@@ -66,6 +66,12 @@ export const userRouter = createTRPCRouter({
     const res = await ctx.db.query.log.findMany({})
     return res
   }),
+  deleteAdminLog: protectedProcedure
+    .input(z.number())
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db.delete(log).where(eq(log.id, input))
+      return res
+    }),
   sync: protectedProcedure.mutation(async () => {
     await client.sync()
     return true
