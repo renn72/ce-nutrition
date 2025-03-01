@@ -83,7 +83,7 @@ const PoopLog = ({
         <NumberFlow value={totalPoop ?? 0} />
       </div>
       <div className='grid grid-cols-1 place-items-center gap-2 h-12'>
-        <div className='rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center justify-center active:scale-90 transition-transform cursor-pointer'>
+        <div className='rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center justify-center active:scale-90 transition-transform cursor-pointer shadow-sm'>
           <Toilet
             className='ml-[1px]'
             size={28}
@@ -111,14 +111,14 @@ const PoopLog = ({
             todaysDailyLog?.poopLogs.map((poopLog) => (
               <div
                 key={poopLog.id}
-                className='flex gap-2 text-xs justify-center w-full items-end'
+                className='grid grid-cols-3 gap-2 text-xs w-full items-center'
               >
-                <div className='text-muted-foreground font-normal'>
+                <div className='text-muted-foreground font-normal col-span-2'>
                   {poopLog.createdAt.toLocaleTimeString('en-AU')}
                 </div>
                 <CircleX
                   size={18}
-                  className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer ml-4 mb-[1px]'
+                  className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer mb-[1px]'
                   onClick={() => {
                     deletePoopLog({
                       id: poopLog.id,

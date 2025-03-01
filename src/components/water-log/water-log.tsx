@@ -92,7 +92,7 @@ const WaterLog = ({
       </div>
 
       <div className='grid grid-cols-1 place-items-center gap-2 h-12'>
-        <div className='rounded-full border-[3px] border-primary/80 w-10 h-10 flex items-center justify-center active:scale-90 transition-transform cursor-pointer'>
+        <div className='rounded-full border-[3px] border-primary/80 w-10 h-10 flex items-center justify-center active:scale-90 transition-transform cursor-pointer shadow-sm '>
           <GlassWater
             size={28}
             onClick={() => {
@@ -126,12 +126,12 @@ const WaterLog = ({
           {todaysDailyLog?.waterLogs.map((waterLog) => (
             <div
               key={waterLog.id}
-              className='flex gap-1 tracking-tight text-xs justify-center w-full items-end'
+              className='gap-1 tracking-tight text-xs w-full items-center grid grid-cols-6'
             >
-              <div className='text-muted-foreground font-medium'>
+              <div className='text-muted-foreground font-medium col-span-2'>
                 {waterLog.amount}ml
               </div>
-              <div className='text-muted-foreground font-normal'>
+              <div className='text-muted-foreground font-normal col-span-3'>
                 {waterLog.createdAt.toLocaleTimeString('en-AU', {
                   hour: 'numeric',
                   minute: 'numeric',
@@ -139,7 +139,7 @@ const WaterLog = ({
               </div>
               <CircleX
                 size={18}
-                className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer ml-4 mb-[1px]'
+                className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer mb-[1px]'
                 onClick={() => {
                   deleteWaterLog({
                     id: waterLog.id,
