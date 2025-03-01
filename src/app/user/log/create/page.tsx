@@ -50,17 +50,19 @@ export default function Home() {
           onOpenChange={setIsOpen}
         >
           <PopoverTrigger asChild>
-            <Button
-              variant={'outline'}
-              size={'lg'}
-              className={cn(
-                'w-[280px] justify-start text-left font-semibold text-base',
-                !date && 'text-muted-foreground',
-              )}
-            >
-              <CalendarIcon className='mr-4 h-4 w-4 mt-[-5px]' />
-              {date ? format(date, 'PPP') : <span>Pick a date</span>}
-            </Button>
+            <div className='flex items-center justify-center'>
+              <Button
+                variant={'secondary'}
+                size={'lg'}
+                className={cn(
+                  'w-[280px] font-semibold text-base mt-[2px] flex items-center justify-center shadow-md',
+                  !date && 'text-muted-foreground',
+                )}
+              >
+                <CalendarIcon className='mr-4 h-4 w-4 mt-[0px]' />
+                {date ? <span className='mt-[5px]'>{format(date, 'PPP')}</span> : <span>Pick a date</span>}
+              </Button>
+            </div>
           </PopoverTrigger>
           <PopoverContent className='w-auto p-0'>
             <Calendar

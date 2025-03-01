@@ -119,6 +119,7 @@ const DialogWrapper = ({
   isWidthFull = false,
   fixed = 0,
   isString = false,
+  postfix = '',
 }: {
   children: React.ReactNode
   title: string
@@ -127,6 +128,7 @@ const DialogWrapper = ({
   isWidthFull?: boolean
   fixed?: number
   isString?: boolean
+    postfix?: string
 }) => {
   const diff = Number(prevValue) - Number(value)
   return (
@@ -134,7 +136,7 @@ const DialogWrapper = ({
       <DialogTrigger asChild>
         <div
           className={cn(
-            'flex gap-2 items-center justify-around flex-col bg-secondary px-4 py-2 rounded-md ',
+            'flex gap-2 items-center justify-around flex-col bg-secondary px-4 py-2 rounded-md shadow-md ',
             isWidthFull ? 'w-full' : 'w-40 font-semibold',
           )}
         >
@@ -146,6 +148,12 @@ const DialogWrapper = ({
                 isWidthFull ? 'text-sm text-secondary-foreground' : '',
               )}
             >
+              {
+                postfix !== '' ?
+                <div className='absolute right-[-2.5rem] top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start'>
+                  {postfix}
+                </div> : null
+              }
               {isString ? value :Number(value).toFixed(fixed)}
               {prevValue !== '' &&
               prevValue !== undefined &&
@@ -529,6 +537,7 @@ const DailyLogForm = ({
           title='HIIT'
           value={todaysLog?.hiit ?? ''}
           prevValue={''}
+          postfix='mins'
         >
           <DialogHeader>
             <DialogTitle>HIIT</DialogTitle>
@@ -583,6 +592,7 @@ const DailyLogForm = ({
           title='LISS'
           value={todaysLog?.liss ?? ''}
           prevValue={''}
+          postfix='mins'
         >
           <DialogHeader>
             <DialogTitle>LISS</DialogTitle>
@@ -637,6 +647,7 @@ const DailyLogForm = ({
           title='Weight Training'
           value={todaysLog?.weight ?? ''}
           prevValue={''}
+          postfix='mins'
         >
           <DialogHeader>
             <DialogTitle>Weight Training</DialogTitle>
