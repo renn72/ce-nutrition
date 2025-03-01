@@ -177,11 +177,11 @@ const DailyLog = ({
         />
         <div className='flex gap-2 justify-center'>
           <Icon
-            title='Hiit'
+            title='HIIT'
             text={todaysDailyLog?.hiit}
           />
           <Icon
-            title='Liss'
+            title='LISS'
             text={todaysDailyLog?.liss}
           />
           <Icon

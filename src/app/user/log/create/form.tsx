@@ -526,13 +526,13 @@ const DailyLogForm = ({
       </div>
       <div className='flex gap-2 w-full justify-around'>
         <DialogWrapper
-          title='Hiit'
+          title='HIIT'
           value={todaysLog?.hiit ?? ''}
           prevValue={''}
         >
           <DialogHeader>
-            <DialogTitle>Hiit</DialogTitle>
-            <DialogDescription>Enter your minutes of hiit</DialogDescription>
+            <DialogTitle>HIIT</DialogTitle>
+            <DialogDescription>Enter your minutes of HIIT</DialogDescription>
           </DialogHeader>
           <div className='flex justify-center '>
             <NumberInput
@@ -580,13 +580,13 @@ const DailyLogForm = ({
           </div>
         </DialogWrapper>
         <DialogWrapper
-          title='Liss'
+          title='LISS'
           value={todaysLog?.liss ?? ''}
           prevValue={''}
         >
           <DialogHeader>
-            <DialogTitle>Liss</DialogTitle>
-            <DialogDescription>Enter your minutes of liss</DialogDescription>
+            <DialogTitle>LISS</DialogTitle>
+            <DialogDescription>Enter your minutes of LISS</DialogDescription>
           </DialogHeader>
           <div className='flex justify-center '>
             <NumberInput
