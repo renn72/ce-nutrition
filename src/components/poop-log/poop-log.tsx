@@ -26,7 +26,6 @@ const PoopLog = ({
 
   const ctx = api.useUtils()
 
-
   const { mutate: addPoopLog } = api.dailyLog.addPoopLog.useMutation({
     onMutate: async (newPoopLog) => {
       await ctx.dailyLog.getAllCurrentUser.cancel()

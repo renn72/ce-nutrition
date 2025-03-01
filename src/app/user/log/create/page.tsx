@@ -37,8 +37,6 @@ export default function Home() {
     if (!date) return false
     return log.date === new Date(date?.getTime() - 86400000).toDateString()
   })
-  console.log('log', log)
-  console.log('prevLog', prevLog)
 
   if (!date) return null
 

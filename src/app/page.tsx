@@ -70,7 +70,6 @@ const Mobile = ({
     },
   })
 
-  console.log('dailyLogs', dailyLogs)
   const dailyLog = dailyLogs?.find(
     (dailyLog) => dailyLog.date === new Date().toDateString(),
   )
