@@ -11,6 +11,7 @@ import * as plan from './schema/plan'
 import * as meal from './schema/meal'
 import * as userPlan from './schema/user-plan'
 import * as log from './schema/log'
+import * as message from './schema/message'
 
 const schema = {
   ...log,
@@ -22,6 +23,7 @@ const schema = {
   ...plan,
   ...meal,
   ...userPlan,
+  ...message,
 }
 
 /**
