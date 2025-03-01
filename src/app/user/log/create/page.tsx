@@ -55,7 +55,7 @@ export default function Home() {
                 variant={'secondary'}
                 size={'lg'}
                 className={cn(
-                  'w-[280px] font-semibold text-base mt-[2px] flex items-center justify-center shadow-md',
+                  'w-[280px] font-semibold text-base mt-[2px] flex items-center justify-center shadow-sm',
                   !date && 'text-muted-foreground',
                 )}
               >
