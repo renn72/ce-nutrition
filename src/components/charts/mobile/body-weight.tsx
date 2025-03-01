@@ -1,7 +1,6 @@
 'use client'
 
 import { GetAllDailyLogs, GetAllWeighIns, GetUserById } from '@/types'
-import { Loader } from 'lucide-react'
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 
 import {
@@ -20,18 +19,10 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-const BodyWeight = ({
-  dailyLogs,
-  range,
-}: {
-  dailyLogs: GetAllDailyLogs
-  range: number
-}) => {
+const BodyWeight = ({ dailyLogs, range }: { dailyLogs: GetAllDailyLogs, range: number }) => {
   const data = dailyLogs
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .filter(
-      (dailyLog) => new Date(dailyLog.date).getTime() < new Date().getTime(),
-    )
+    .filter((dailyLog) => new Date(dailyLog.date).getTime() < new Date().getTime())
     .slice(0, range)
     .sort((b, a) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .map((dailyLog) => ({
@@ -44,18 +35,11 @@ const BodyWeight = ({
     .filter((dailyLog) => dailyLog.weight !== '')
     .filter((dailyLog) => dailyLog.weight)
 
+
   const dataMin = Math.floor(Math.min(...data.map((d) => Number(d.weight)))) - 1
   const dataMax = Math.ceil(Math.max(...data.map((d) => Number(d.weight)))) + 1
 
-  if (!dailyLogs|| dailyLogs.length === 0 || data.length === 0)
-    return (
-      <div className='flex flex-col items-center justify-center w-full min-h-[200px]'>
-        <Loader
-          size={32}
-          className='animate-spin text-primary'
-        />
-      </div>
-    )
+  if (!dailyLogs) return null
 
   return (
     <ChartContainer

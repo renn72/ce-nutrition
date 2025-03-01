@@ -11,6 +11,7 @@ import {
   GlassWater,
   House,
   LogOutIcon,
+  MessageSquareMore,
   Settings,
   Toilet,
   UserCircle,
@@ -195,6 +196,11 @@ const User = () => {
             <ImpersonateUser />
           </>
         )}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
+          <MessageSquareMore size={20} />
+          <Link href='/user/message'>Messages</Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
           <Settings size={20} />

@@ -2,7 +2,7 @@
 
 import { api } from '@/trpc/react'
 
-import { XCircle } from 'lucide-react'
+import { RefreshCcw, XCircle } from 'lucide-react'
 
 import {
   Popover,
@@ -27,11 +27,18 @@ export default function AdminLogs() {
 
   return (
     <div className='flex flex-col gap-2 mt-16 w-[100vw] px-1 '>
-      <div className='flex items-center justify-between w-full'>
+      <div className='flex items-center justify-around gap-8 w-full'>
         <Switch
           checked={isHideMe}
           onCheckedChange={(checked) => {
             setIsHideMe(checked)
+          }}
+        />
+        <RefreshCcw
+          size={20}
+          className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer'
+          onClick={() => {
+            ctx.user.invalidate()
           }}
         />
       </div>
