@@ -16,6 +16,7 @@ import { Bell, BellDot, NotebookText } from 'lucide-react'
 import { Link, useTransitionRouter } from 'next-view-transitions'
 import { toast } from 'sonner'
 
+import { Button } from '@/components/ui/button'
 import {
   Collapsible,
   CollapsibleContent,
@@ -54,6 +55,12 @@ const Notifications = ({
       if (!previousLog) return
       ctx.message.getAllUser.setData(currentUser.id, [
         ...previousLog.map((message) => {
+          if (message.id === newMessage) {
+            return {
+              ...message,
+              isViewed: true,
+            }
+          }
           return message
         }),
       ])
@@ -68,8 +75,29 @@ const Notifications = ({
     },
   })
   const { mutate: markAsRead } = api.message.markAsRead.useMutation({
+    onMutate: async (newMessage) => {
+      await ctx.message.getAllUser.cancel()
+      const previousLog = ctx.message.getAllUser.getData(currentUser.id)
+      if (!previousLog) return
+      ctx.message.getAllUser.setData(currentUser.id, [
+        ...previousLog.map((message) => {
+          if (message.id === newMessage) {
+            return {
+              ...message,
+              isRead: true,
+            }
+          }
+          return message
+        }),
+      ])
+      return { previousLog }
+    },
     onSettled: () => {
       ctx.message.invalidate()
+    },
+    onError: (err, newPoopLog, context) => {
+      toast.error('error')
+      ctx.message.getAllUser.setData(currentUser.id, context?.previousLog)
     },
   })
 
@@ -101,6 +129,7 @@ const Notifications = ({
         alignOffset={-28}
         align='end'
         sideOffset={8}
+        className='min-w-[240px]'
       >
         <DropdownMenuLabel>Notifications</DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -113,6 +142,8 @@ const Notifications = ({
               <DropdownMenuItem
                 onSelect={(e) => {
                   e.preventDefault()
+                }}
+                onClick={() => {
                   if (message.isRead === false || message.isRead === null) {
                     markAsViewed(message.id)
                   }
@@ -129,7 +160,11 @@ const Notifications = ({
                           : '',
                       )}
                     >
-                      <div className=''>{message.isViewed === false || message.isViewed === null ? 'New Message' : 'message'}</div>
+                      <div className='w-32'>
+                        {message.isViewed === false || message.isViewed === null
+                          ? 'New Message'
+                          : 'message'}
+                      </div>
                       <div className='font-normal text-[0.65rem] text-muted-foreground'>
                         {`from ${message.fromUser?.name}`}
                       </div>
@@ -144,8 +179,18 @@ const Notifications = ({
                     </div>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
-                    <div className='flex gap-2 items-center'>
-                      {message.message}
+                    <div className='flex gap-2 items-center flex-col'>
+                      <div>{message.message}</div>
+                      <Button
+                        className=''
+                        variant='outline'
+                        size='sm'
+                        onClick={() => {
+                          markAsRead(message.id)
+                        }}
+                      >
+                        Mark as Read
+                      </Button>
                     </div>
                   </CollapsibleContent>
                 </Collapsible>
