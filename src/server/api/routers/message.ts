@@ -1,8 +1,32 @@
+import { db } from '@/server/db'
+import { log } from '@/server/db/schema/log'
 import { message } from '@/server/db/schema/message'
 import { TRPCError } from '@trpc/server'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
+
+const createLog = async ({
+  user,
+  task,
+  notes,
+  userId,
+  objectId,
+}: {
+  user: string
+  task: string
+  notes: string
+  userId: string
+  objectId: number | null | undefined
+}) => {
+  await db.insert(log).values({
+    task: task,
+    notes: notes,
+    user: user,
+    userId: userId,
+    objectId: objectId,
+  })
+}
 
 export const messageRouter = createTRPCRouter({
   create: protectedProcedure
@@ -23,6 +47,14 @@ export const messageRouter = createTRPCRouter({
           ...input,
         })
         .returning({ id: message.id })
+
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Create Message',
+        notes: JSON.stringify(input),
+        objectId: res[0]?.id,
+      })
 
       return { res }
     }),
@@ -73,6 +105,15 @@ export const messageRouter = createTRPCRouter({
         .update(message)
         .set({ isViewed: true })
         .where(eq(message.id, input))
+
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Mark Message as Viewed',
+        notes: '',
+        objectId: input,
+      })
+
       return res
     }),
   markAsRead: protectedProcedure
@@ -82,6 +123,13 @@ export const messageRouter = createTRPCRouter({
         .update(message)
         .set({ isRead: true })
         .where(eq(message.id, input))
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Mark Message as Read',
+        notes: '',
+        objectId: input,
+      })
       return res
     }),
 
