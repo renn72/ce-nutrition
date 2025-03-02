@@ -264,10 +264,48 @@ const Messages = ({ currentUser }: { currentUser: GetUserById }) => {
           <TabsTrigger value='inbox'>Inbox</TabsTrigger>
           <TabsTrigger value='sent'>Sent</TabsTrigger>
         </TabsList>
-        <TabsContent value='inbox'>
-          Make changes to your account here.
+        <TabsContent
+          value='inbox'
+          className='w-full flex flex-col gap-4'
+        >
+          {messages?.map((message) => (
+            <Card
+              className='w-full'
+              key={message.id}
+            >
+              <CardHeader className='flex justify-between'>
+                <CardTitle className='text-center w-full relative'>
+                  <span>To {message.user?.name}</span>
+                  {message.isViewed ? (
+                    <CircleCheck
+                      size={16}
+                      className={cn(
+                        'absolute right-0 top-0 cursor-pointer text-green-700',
+                      )}
+                    />
+                  ) : (
+                    <CircleDot
+                      size={16}
+                      className={cn(
+                        'absolute right-0 top-0 cursor-pointer text-muted-foreground',
+                      )}
+                    />
+                  )}
+                </CardTitle>
+                <CardDescription className='text-center'>
+                  {message.subject}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className='flex justify-between'>
+                {message.message}
+              </CardContent>
+            </Card>
+          ))}
         </TabsContent>
-        <TabsContent value='sent'>
+        <TabsContent
+          value='sent'
+          className='w-full flex flex-col gap-4'
+        >
           {sentMessages?.map((message) => (
             <Card
               className='w-full'
