@@ -22,6 +22,7 @@ export const message = createTable(
     isViewed: int('is_viewed', { mode: 'boolean' }),
     isDeleted: int('is_deleted', { mode: 'boolean' }),
     message: text('message'),
+    image: text('image'),
     fromUserId: text('from_user_id').references(() => user.id, {
       onDelete: 'cascade',
     }),
