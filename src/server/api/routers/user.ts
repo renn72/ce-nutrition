@@ -465,4 +465,30 @@ export const userRouter = createTRPCRouter({
     const res = await ctx.db.query.user.findMany()
     return res
   }),
+  getGaurenteed: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
+    if (input === '') throw new TRPCError({ code: 'BAD_REQUEST' })
+    const res = await ctx.db.query.user.findFirst({
+      where: (user, { eq }) => eq(user.id, input),
+      columns: {
+        password: false,
+      },
+      with: {
+        settings: true,
+        userPlans: {
+          with: {
+            userMeals: true,
+            userRecipes: true,
+            userIngredients: {
+              with: {
+                ingredient: true,
+                alternateIngredient: true,
+              },
+            },
+          },
+        },
+      },
+    })
+    if (!res) throw new TRPCError({ code: 'NOT_FOUND' })
+    return res
+  }),
 })

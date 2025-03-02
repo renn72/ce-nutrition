@@ -5,13 +5,22 @@ import { api } from '@/trpc/react'
 import { useState } from 'react'
 
 import Image from 'next/image'
+
+import { impersonatedUserAtom } from '@/atoms'
+import { slideInOut } from '@/lib/tranistions'
+import { cn } from '@/lib/utils'
+import { GetUserById } from '@/types'
+import { useAtom } from 'jotai'
+import { Bell, BellDot, NotebookText } from 'lucide-react'
 // import Link from 'next/link'
 import { Link, useTransitionRouter } from 'next-view-transitions'
-import { slideInOut } from '@/lib/tranistions'
+import { toast } from 'sonner'
 
-import { cn } from '@/lib/utils'
-import { Bell, BellDot, NotebookText } from 'lucide-react'
-
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,14 +39,46 @@ interface Notification {
 const Notifications = ({
   notifications,
   setNotifications,
+  currentUser,
 }: {
   notifications: Notification[]
   setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>
+  currentUser: GetUserById
 }) => {
-  const isNotifications = notifications.reduce(
-    (acc, idx) => (acc ? true : idx.state === 'unread' ? true : false),
-    false,
+  const ctx = api.useUtils()
+  const { data: userMessages } = api.message.getAllUser.useQuery(currentUser.id)
+  const { mutate: markAsViewed } = api.message.markAsViewed.useMutation({
+    onMutate: async (newMessage) => {
+      await ctx.message.getAllUser.cancel()
+      const previousLog = ctx.message.getAllUser.getData(currentUser.id)
+      if (!previousLog) return
+      ctx.message.getAllUser.setData(currentUser.id, [
+        ...previousLog.map((message) => {
+          return message
+        }),
+      ])
+      return { previousLog }
+    },
+    onSettled: () => {
+      ctx.message.invalidate()
+    },
+    onError: (err, newPoopLog, context) => {
+      toast.error('error')
+      ctx.message.getAllUser.setData(currentUser.id, context?.previousLog)
+    },
+  })
+  const { mutate: markAsRead } = api.message.markAsRead.useMutation({
+    onSettled: () => {
+      ctx.message.invalidate()
+    },
+  })
+
+  console.log('userMessages', userMessages)
+
+  const isNotifications = userMessages?.some(
+    (message) => message.isViewed === false || message.isViewed === null,
   )
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -63,67 +104,82 @@ const Notifications = ({
       >
         <DropdownMenuLabel>Notifications</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {notifications.map((notification) => (
-          <div key={notification.id}>
-            <DropdownMenuItem
-              onSelect={(e) => {
-                e.preventDefault()
-                setNotifications(
-                  notifications.map((n) => {
-                    if (n.id == notification.id) {
-                      return {
-                        ...n,
-                        state: 'read',
-                      }
-                    }
-                    return n
-                  }),
-                )
-              }}
-              key={notification.id}
-            >
-              <div
-                className={cn(
-                  'flex gap-2 items-center',
-                  notification.state === 'unread'
-                    ? 'text-foreground font-semibold'
-                    : '',
-                )}
+        {userMessages
+          ?.filter(
+            (message) => message.isRead === false || message.isRead === null,
+          )
+          .map((message) => (
+            <div key={message.id}>
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault()
+                  if (message.isRead === false || message.isRead === null) {
+                    markAsViewed(message.id)
+                  }
+                }}
+                key={message.id}
               >
-                <div className=''>{notification.message}</div>
-                <div className='text-sm text-muted-foreground'>
-                  {notification.state === 'unread' ? (
-                    <div className='h-2 w-2 rounded-full bg-red-600' />
-                  ) : (
-                    <div className='w-2' />
-                  )}
-                </div>
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-          </div>
-        ))}
+                <Collapsible>
+                  <CollapsibleTrigger asChild>
+                    <div
+                      className={cn(
+                        'flex gap-2 items-center',
+                        message.isViewed === false || message.isViewed === null
+                          ? 'text-foreground font-semibold'
+                          : '',
+                      )}
+                    >
+                      <div className=''>message</div>
+                      <div className='font-normal text-[0.65rem] text-muted-foreground'>
+                        {`from ${message.fromUser?.name}`}
+                      </div>
+                      <div className='text-sm text-muted-foreground'>
+                        {message.isViewed === false ||
+                        message.isViewed === null ? (
+                          <div className='h-2 w-2 rounded-full bg-red-600' />
+                        ) : (
+                          <div className='w-2' />
+                        )}
+                      </div>
+                    </div>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div className='flex gap-2 items-center'>
+                      {message.message}
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+            </div>
+          ))}
       </DropdownMenuContent>
     </DropdownMenu>
   )
 }
 const MobileHeader = ({ isDesktop = false }: { isDesktop?: boolean }) => {
+  const [impersonatedUser, setImpersonatedUser] = useAtom(impersonatedUserAtom)
+  const { data: currentUser, isLoading } = api.user.getCurrentUser.useQuery({
+    id: impersonatedUser.id,
+  })
   const [notifications, setNotifications] = useState(() => [
     { id: 2, state: 'read', message: 'Update to your diet plan' },
   ])
   const router = useTransitionRouter()
+  if (!currentUser) return null
   return (
-    <div className={cn('flex gap-2 items-center justify-around fixed z-10 bg-background',
-      isDesktop ? 'top-[129px] w-[388px]' : 'top-0 w-full '
-    )}>
+    <div
+      className={cn(
+        'flex gap-2 items-center justify-around fixed z-10 bg-background',
+        isDesktop ? 'top-[129px] w-[388px]' : 'top-0 w-full ',
+      )}
+    >
       <div className='flex flex-col gap-0 items-center justify-center'>
-        <Link
-          href='/user/program'
-          >
-        <NotebookText
-          size={36}
-          className='bg-accentt cursor-pointer rounded-full p-1'
-        />
+        <Link href='/user/program'>
+          <NotebookText
+            size={36}
+            className='bg-accentt cursor-pointer rounded-full p-1'
+          />
         </Link>
         <Label className='text-xs text-muted-foreground'>Program</Label>
       </div>
@@ -145,6 +201,7 @@ const MobileHeader = ({ isDesktop = false }: { isDesktop?: boolean }) => {
       </Link>
       <div className='flex flex-col gap-0 items-center justify-center'>
         <Notifications
+          currentUser={currentUser}
           notifications={notifications}
           setNotifications={setNotifications}
         />
@@ -154,4 +211,4 @@ const MobileHeader = ({ isDesktop = false }: { isDesktop?: boolean }) => {
   )
 }
 
-export {MobileHeader}
+export { MobileHeader }

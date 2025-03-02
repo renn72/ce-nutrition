@@ -13,7 +13,7 @@ export const messageRouter = createTRPCRouter({
         subject: z.string(),
         message: z.string(),
         isImportant: z.boolean(),
-        image: z.string(),
+        image: z.string().optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -36,6 +36,10 @@ export const messageRouter = createTRPCRouter({
       const res = await ctx.db.query.message.findMany({
         where: eq(message.userId, input),
         orderBy: (data, { desc }) => desc(data.createdAt),
+        with: {
+          fromUser: true,
+          user: true,
+        },
       })
       return res
     }),
@@ -49,6 +53,10 @@ export const messageRouter = createTRPCRouter({
       const res = await ctx.db.query.message.findMany({
         where: eq(message.fromUserId, input),
         orderBy: (data, { desc }) => desc(data.createdAt),
+        with: {
+          fromUser: true,
+          user: true,
+        },
       })
       return res
     }),
@@ -58,7 +66,7 @@ export const messageRouter = createTRPCRouter({
     })
     return res
   }),
-  markAsView: protectedProcedure
+  markAsViewed: protectedProcedure
     .input(z.number())
     .mutation(async ({ input, ctx }) => {
       const res = await ctx.db

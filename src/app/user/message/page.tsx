@@ -6,11 +6,28 @@ import { useState } from 'react'
 
 import { impersonatedUserAtom } from '@/atoms'
 import { cn } from '@/lib/utils'
-import { GetAllUsers } from '@/types'
+import { GetAllUsers, GetUserById } from '@/types'
 import { useAtomValue } from 'jotai'
-import { Check, ChevronsUpDown, CirclePlus } from 'lucide-react'
+import {
+  Check,
+  ChevronsUpDown,
+  CircleAlert,
+  CircleCheck,
+  CircleDot,
+  CirclePlus,
+  Star,
+} from 'lucide-react'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import {
   Command,
   CommandEmpty,
@@ -27,13 +44,24 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
 
-const SendTo = ({ sendList, value, setValue }: { sendList: GetAllUsers | null | undefined, value: string, setValue: (value: string) => void }) => {
+const SendTo = ({
+  sendList,
+  value,
+  setValue,
+}: {
+  sendList: GetAllUsers | null | undefined
+  value: string
+  setValue: (value: string) => void
+}) => {
   const [open, setOpen] = useState(false)
   if (!sendList) return null
   return (
@@ -46,7 +74,10 @@ const SendTo = ({ sendList, value, setValue }: { sendList: GetAllUsers | null | 
           variant='outline'
           role='combobox'
           aria-expanded={open}
-          className='w-[200px] justify-between'
+          className={cn(
+            'w-[200px] justify-between px-3',
+            value ? '' : 'text-muted-foreground font-normal',
+          )}
         >
           {value
             ? sendList.find((user) => user.id === value)?.name
@@ -88,16 +119,37 @@ const SendTo = ({ sendList, value, setValue }: { sendList: GetAllUsers | null | 
 
 const NewMessage = ({
   sendList,
+  currentUser,
 }: {
   sendList: GetAllUsers | null | undefined
+  currentUser: GetUserById
 }) => {
   const [message, setMessage] = useState('')
   const [subject, setSubject] = useState('')
   const [recipient, setRecipient] = useState<string>('')
+  const [isImportant, setIsImportant] = useState(false)
+  const [isSending, setIsSending] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
 
+  const ctx = api.useUtils()
+  const { mutate: sendMessage } = api.message.create.useMutation({
+    onMutate: () => setIsSending(true),
+    onSettled: () => setIsSending(false),
+    onSuccess: () => {
+      ctx.message.invalidate()
+      toast.success('Message sent')
+      setIsOpen(false)
+      setMessage('')
+      setSubject('')
+      setRecipient('')
+    },
+  })
+
+  if (!currentUser) return null
   return (
     <Dialog
-
+      open={isOpen}
+      onOpenChange={(open) => setIsOpen(open)}
     >
       <DialogTrigger asChild>
         <CirclePlus
@@ -107,7 +159,8 @@ const NewMessage = ({
       </DialogTrigger>
       <DialogContent
         onOpenAutoFocus={(e) => e.preventDefault()}
-        className=''>
+        className='flex flex-col gap-4'
+      >
         <DialogHeader>
           <DialogTitle>New Message</DialogTitle>
           <DialogDescription></DialogDescription>
@@ -117,30 +170,70 @@ const NewMessage = ({
             setValue={setRecipient}
           />
         </DialogHeader>
+        <div className='flex gap-4 items-center'>
+          <Input
+            placeholder='Subject'
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+          />
+          <CircleAlert
+            size={36}
+            strokeWidth={isImportant ? 3 : 2}
+            className={cn(
+              'cursor-pointer text-muted-foreground p-1',
+              isImportant ? 'text-alert rounded-md' : '',
+            )}
+            onClick={() => setIsImportant(!isImportant)}
+          />
+        </div>
+        <Textarea
+          placeholder='Message'
+          value={message}
+          rows={12}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+        <div className='flex gap-4'>
+          <Button
+            className='w-full'
+            disabled={isSending}
+            onClick={() => {
+              if (message === '') return toast.error('Message cannot be empty')
+              sendMessage({
+                message: message,
+                subject: subject,
+                userId: recipient,
+                fromUserId: currentUser.id,
+                isImportant: isImportant,
+              })
+            }}
+          >
+            {isSending ? 'Sending' : 'Send'}
+          </Button>
+          <Button
+            className='w-full'
+            onClick={() => {
+              setRecipient('')
+              setSubject('')
+              setMessage('')
+            }}
+          >
+            Clear
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   )
 }
 
-export default function Message() {
-  const impersonatedUser = useAtomValue(impersonatedUserAtom)
+const Messages = ({ currentUser }: { currentUser: GetUserById }) => {
   const { data: messages, isLoading: messagesLoading } =
-    api.message.getAllUser.useQuery(impersonatedUser.id)
-  const { data: sendMessage, isLoading: sendMessageLoading } =
-    api.message.getAllFromUser.useQuery(impersonatedUser.id)
-  const { data: currentUser, isLoading: currentUserLoading } =
-    api.user.getCurrentUser.useQuery({ id: impersonatedUser.id })
+    api.message.getAllUser.useQuery(currentUser.id)
+  const { data: sentMessages, isLoading: sentMessageLoading } =
+    api.message.getAllFromUser.useQuery(currentUser.id)
   const { data: getAllUser, isLoading: getAllUserLoading } =
     api.user.getAll.useQuery()
 
-  if (!currentUser) return null
-  if (
-    messagesLoading ||
-    sendMessageLoading ||
-    currentUserLoading ||
-    getAllUserLoading
-  )
-    return null
+  if (messagesLoading || sentMessageLoading || getAllUserLoading) return null
   const sendList = getAllUser?.filter((user) => {
     if (currentUser.isRoot) return true
     if (currentUser.isCreator) return true
@@ -151,14 +244,75 @@ export default function Message() {
     return false
   })
 
-  console.log('sendList', sendList)
+  console.log('sent', sentMessages)
+  console.log('messages', messages)
 
   return (
-    <div className='flex gap-4 flex-col items-center justify-center w-full min-h-[200px]'>
+    <div className='flex gap-4 flex-col items-center justify-center w-full mt-16'>
       <div className='flex gap-4'>
         <h1>Messages</h1>
-        <NewMessage sendList={sendList} />
+        <NewMessage
+          sendList={sendList}
+          currentUser={currentUser}
+        />
       </div>
+      <Tabs
+        defaultValue='inbox'
+        className='w-full'
+      >
+        <TabsList className='w-full'>
+          <TabsTrigger value='inbox'>Inbox</TabsTrigger>
+          <TabsTrigger value='sent'>Sent</TabsTrigger>
+        </TabsList>
+        <TabsContent value='inbox'>
+          Make changes to your account here.
+        </TabsContent>
+        <TabsContent value='sent'>
+          {sentMessages?.map((message) => (
+            <Card
+              className='w-full'
+              key={message.id}
+            >
+              <CardHeader className='flex justify-between'>
+                <CardTitle className='text-center w-full relative'>
+                  <span>To {message.user?.name}</span>
+                  {message.isViewed ? (
+                    <CircleCheck
+                      size={16}
+                      className={cn(
+                        'absolute right-0 top-0 cursor-pointer text-green-700',
+                      )}
+                    />
+                  ) : (
+                    <CircleDot
+                      size={16}
+                      className={cn(
+                        'absolute right-0 top-0 cursor-pointer text-muted-foreground',
+                      )}
+                    />
+                  )}
+                </CardTitle>
+                <CardDescription className='text-center'>
+                  {message.subject}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className='flex justify-between'>
+                {message.message}
+              </CardContent>
+            </Card>
+          ))}
+        </TabsContent>
+      </Tabs>
     </div>
   )
+}
+
+export default function Page() {
+  const impersonatedUser = useAtomValue(impersonatedUserAtom)
+  const { data: currentUser } = api.user.getCurrentUser.useQuery({
+    id: impersonatedUser.id,
+  })
+
+  if (!currentUser) return null
+  return <Messages currentUser={currentUser} />
 }

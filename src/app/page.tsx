@@ -88,7 +88,10 @@ const Mobile = ({
         'flex flex-col gap-2 w-full min-h-screen my-16 items-center ',
       )}
     >
-      <MobileHeader isDesktop={false} />
+      <MobileHeader
+        isDesktop={false}
+      />
+
       <div
         id='main-content'
         className={cn(
