@@ -57,6 +57,13 @@
       "when": 1740787144076,
       "tag": "0007_curly_yellowjacket",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1740873826063,
+      "tag": "0008_nebulous_hairball",
+      "breakpoints": true
     }
   ]
 }

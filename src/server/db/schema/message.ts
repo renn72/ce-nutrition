@@ -16,16 +16,20 @@ export const message = createTable(
     userId: text('user_id').references(() => user.id, {
       onDelete: 'cascade',
     }),
-    title: text('title'),
     subject: text('subject'),
+    isImportant: int('is_important', { mode: 'boolean' }),
     isRead: int('is_read', { mode: 'boolean' }),
     isViewed: int('is_viewed', { mode: 'boolean' }),
     isDeleted: int('is_deleted', { mode: 'boolean' }),
     message: text('message'),
+    fromUserId: text('from_user_id').references(() => user.id, {
+      onDelete: 'cascade',
+    }),
   },
   (e) => {
     return {
       userIdIndex: index('message_user_id_idx').on(e.userId),
+      fromUserIdIndex: index('message_from_user_id_idx').on(e.fromUserId),
     }
   },
 )
@@ -36,6 +40,12 @@ export const messageRelations = relations(
     user: one(user, {
       fields: [message.userId],
       references: [user.id],
+      relationName: 'userMessages',
+    }),
+    fromUser: one(user, {
+      fields: [message.fromUserId],
+      references: [user.id],
+      relationName: 'sentMessages',
     }),
   }),
 )
