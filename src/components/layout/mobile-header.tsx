@@ -129,7 +129,7 @@ const Notifications = ({
                           : '',
                       )}
                     >
-                      <div className=''>message</div>
+                      <div className=''>{message.isViewed === false || message.isViewed === null ? 'New Message' : 'message'}</div>
                       <div className='font-normal text-[0.65rem] text-muted-foreground'>
                         {`from ${message.fromUser?.name}`}
                       </div>
