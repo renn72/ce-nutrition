@@ -111,12 +111,13 @@ const Notifications = ({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         {isNotifications ? (
-          <div className='relative'>
+          <div className={cn('relative', isNotifications ? '' : '')}>
             <BellDot
               size={36}
               className='bg-accentt cursor-pointer rounded-full p-1'
             />
             <div className='absolute top-[7px] right-[6px] w-3 h-3 bg-red-600 rounded-full'></div>
+            <div className='absolute top-[7px] right-[6px] w-3 h-3 bg-red-600 rounded-full animate-ping'></div>
           </div>
         ) : (
           <Bell
