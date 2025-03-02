@@ -275,7 +275,7 @@ const Messages = ({ currentUser }: { currentUser: GetUserById }) => {
             >
               <CardHeader className='flex justify-between'>
                 <CardTitle className='text-center w-full relative'>
-                  <span>To {message.user?.name}</span>
+                  <span>From {message.fromUser?.name}</span>
                   {message.isViewed ? (
                     <CircleCheck
                       size={16}
