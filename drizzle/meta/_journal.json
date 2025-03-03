@@ -71,6 +71,13 @@
       "when": 1740874653134,
       "tag": "0009_confused_rocket_raccoon",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1740992961237,
+      "tag": "0010_boring_black_cat",
+      "breakpoints": true
     }
   ]
 }

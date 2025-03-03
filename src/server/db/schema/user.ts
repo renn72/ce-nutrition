@@ -9,6 +9,7 @@ import {
 import { type AdapterAccount } from 'next-auth/adapters'
 
 import { message } from './message'
+import { bodyFat, bodyWeight, leanMass, skinfold } from './metrics'
 import { notification } from './notification'
 import { userIngredient, userPlan, userRecipe } from './user-plan'
 
@@ -70,6 +71,10 @@ export const userRelations = relations(user, ({ one, many }) => ({
   dailyLogs: many(dailyLog),
   weighIns: many(weighIn, { relationName: 'user' }),
   weighInsTrainer: many(weighIn, { relationName: 'trainer' }),
+  skinfolds: many(skinfold),
+  bodyFat: many(bodyFat),
+  leanMass: many(leanMass),
+  bodyWeight: many(bodyWeight),
   settings: one(userSettings, {
     fields: [user.id],
     references: [userSettings.userId],
@@ -100,38 +105,40 @@ export const userSettingsRelations = relations(userSettings, ({ one }) => ({
   }),
 }))
 
-export const dailyLog = createTable('daily_log', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
-    .default(sql`(unixepoch())`)
-    .notNull(),
-  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-    () => new Date(),
-  ),
-  userId: text('user_id')
-    .notNull()
-    .references(() => user.id, {
-      onDelete: 'cascade',
-    }),
-  date: text('date').notNull(),
-  morningWeight: text('morning_weight'),
-  notes: text('notes'),
-  fastedBloodGlucose: text('fasted_blood_glucose'),
-  sleep: text('sleep'),
-  sleepQuality: text('sleep_quality'),
-  isHiit: int('is_hiit', { mode: 'boolean' }),
-  isCardio: int('is_cardio', { mode: 'boolean' }),
-  isLift: int('is_lift', { mode: 'boolean' }),
-  isLiss: int('is_liss', { mode: 'boolean' }),
-  hiit: text('hiit'),
-  cardio: text('cardio'),
-  weight: text('weight'),
-  liss: text('liss'),
-  cardioType: text('cardio_type'),
-  image: text('image'),
-  waistMeasurement: text('waist_measurement'),
-  nap: text('nap'),
-},
+export const dailyLog = createTable(
+  'daily_log',
+  {
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+    createdAt: int('created_at', { mode: 'timestamp' })
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+      () => new Date(),
+    ),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, {
+        onDelete: 'cascade',
+      }),
+    date: text('date').notNull(),
+    morningWeight: text('morning_weight'),
+    notes: text('notes'),
+    fastedBloodGlucose: text('fasted_blood_glucose'),
+    sleep: text('sleep'),
+    sleepQuality: text('sleep_quality'),
+    isHiit: int('is_hiit', { mode: 'boolean' }),
+    isCardio: int('is_cardio', { mode: 'boolean' }),
+    isLift: int('is_lift', { mode: 'boolean' }),
+    isLiss: int('is_liss', { mode: 'boolean' }),
+    hiit: text('hiit'),
+    cardio: text('cardio'),
+    weight: text('weight'),
+    liss: text('liss'),
+    cardioType: text('cardio_type'),
+    image: text('image'),
+    waistMeasurement: text('waist_measurement'),
+    nap: text('nap'),
+  },
   (l) => ({
     dateIndex: index('date_idx').on(l.date),
   }),

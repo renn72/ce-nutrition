@@ -12,6 +12,7 @@ import * as meal from './schema/meal'
 import * as userPlan from './schema/user-plan'
 import * as log from './schema/log'
 import * as message from './schema/message'
+import * as metrics from './schema/metrics'
 
 const schema = {
   ...log,
@@ -24,6 +25,7 @@ const schema = {
   ...meal,
   ...userPlan,
   ...message,
+  ...metrics,
 }
 
 /**
