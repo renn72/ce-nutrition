@@ -2,7 +2,6 @@
 
 import { api } from '@/trpc/react'
 
-
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { getFormattedDate } from '@/lib/utils'
 
@@ -11,21 +10,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CheckIn } from '@/components/check-in/check-in'
 import { DailyLog } from '@/components/daily-log/daily-log'
 
-const DailyLogs = ({ userId }: { userId: string }) => {
+const DailyLogs = ({ userId, isAdmin = false }: { userId: string, isAdmin?: boolean }) => {
   const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId || '')
   const today = new Date()
 
   return (
-    <div className='flex flex-col gap-1 items-center max-w-md'>
-      {Array.from({ length: 7 }).map((_, i) => {
+    <div className='flex flex-col gap-0 items-center max-w-md'>
+      {Array.from({ length: 21 }).map((_, i) => {
         const date = new Date(today.getTime() - i * 86400000)
         const dailyLog = dailyLogs?.find(
           (dailyLog) => dailyLog.date === date.toDateString(),
         )
+        if (!dailyLog) return null
         return (
           <div
             key={i}
-            className='flex gap-2 flex-col w-full'
+            className='flex gap-2 flex-col w-full my-2'
           >
             <div className='text-sm text-muted-foreground font-semibold text-center'>
               {getFormattedDate(date)}
@@ -33,6 +33,7 @@ const DailyLogs = ({ userId }: { userId: string }) => {
             <DailyLog
               dailyLog={dailyLog}
               date={date}
+              isAdmin={isAdmin}
             />
           </div>
         )
@@ -61,7 +62,13 @@ const CheckIns = ({ userId }: { userId: string }) => {
   )
 }
 
-const UserLogs = ({ userId }: { userId: string }) => {
+const UserLogs = ({
+  userId,
+  isAdmin = false,
+}: {
+  userId: string
+  isAdmin?: boolean
+}) => {
   const isMobile = useClientMediaQuery('(max-width: 600px)')
   const { data: user } = api.user.get.useQuery(userId || '')
   console.log('user', user)
@@ -71,7 +78,7 @@ const UserLogs = ({ userId }: { userId: string }) => {
 
   if (isMobile) {
     return (
-      <div className='flex flex-col gap-4 items-center mt-10 '>
+      <div className='flex flex-col gap-4 items-center my-10 '>
         <Tabs defaultValue='log'>
           <div className='w-full flex justify-center'>
             <TabsList className='px-6'>
@@ -90,9 +97,11 @@ const UserLogs = ({ userId }: { userId: string }) => {
     )
   }
   return (
-    <div className='flex flex-col gap-4 items-center mt-10 '>
+    <div className='flex flex-col gap-4 items-center my-10 '>
       <div className='flex gap-4 items-center'>
-        <DailyLogs userId={userId} />
+        <DailyLogs
+          isAdmin={isAdmin}
+          userId={userId} />
         <CheckIns userId={userId} />
       </div>
     </div>

@@ -16,5 +16,10 @@ export default function Home() {
   )
     return <div>Select a user</div>
 
-  return <UserLogs userId={userId} />
+  return (
+    <UserLogs
+      isAdmin={true}
+      userId={userId}
+    />
+  )
 }

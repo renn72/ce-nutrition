@@ -274,6 +274,20 @@ export const userRouter = createTRPCRouter({
     if (!session?.user?.id) return null
     return session.user
   }),
+  isCreator: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session?.user.id
+
+    if (!userId) return null
+
+    const res = await ctx.db.query.user.findFirst({
+      where: (user, { eq }) => eq(user.id, userId),
+      columns: {
+        isCreator: true,
+      },
+    })
+
+    return res
+  }),
   isTrainer: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session?.user.id
 
