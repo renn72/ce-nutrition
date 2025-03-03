@@ -44,7 +44,7 @@ const BodyWeight = ({ dailyLogs, range }: { dailyLogs: GetAllDailyLogs, range: n
   return (
     <ChartContainer
       config={chartConfig}
-      className='w-full min-h-[200px]'
+      className='w-full min-h-[200px] max-h-[300px]'
     >
       <AreaChart data={data}>
         <CartesianGrid vertical={false} />

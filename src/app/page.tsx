@@ -98,8 +98,10 @@ const Mobile = ({
           'flex flex-col gap-4 w-full max-w-screen-xl main-content',
         )}
       >
-        <Card className='h-[300px]'>
-          <CardContent>
+        <Card className=''>
+          <CardContent
+            className='pb-2'
+          >
             <Tabs
               defaultValue='bw'
               className='w-full'
@@ -208,13 +210,13 @@ const Mobile = ({
                 ) : null}
               </TabsContent>
             </Tabs>
-            <div className='flex gap-6 justify-center font-normal text-xs mt-[-0.5rem]'>
+            <div className='flex gap-4 justify-center font-normal text-xs mt-[-0.5rem]'>
               {chartRanges.map((range) => (
                 <div
                   key={range}
                   className={cn(
-                    'cursor-pointer p-1 rounded-full',
-                    chartRange === range ? 'underline font-bold' : '',
+                    'cursor-pointer p-2 rounded-lg',
+                    chartRange === range ? 'underline font-bold bg-accent-foreground/10' : '',
                   )}
                   onClick={() => {
                     setChartRange(range)
