@@ -2,7 +2,6 @@ import { relations, sql } from 'drizzle-orm'
 import {
   index,
   int,
-  primaryKey,
   sqliteTableCreator,
   text,
 } from 'drizzle-orm/sqlite-core'
@@ -14,7 +13,7 @@ export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 export const skinfold = createTable(
   'skinfold',
   {
-    id: text('id', { length: 255 }).notNull().primaryKey(),
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
     createdAt: int('created_at', { mode: 'timestamp' })
       .default(sql`(unixepoch())`)
       .notNull(),
@@ -55,7 +54,7 @@ export const skinfoldRelations = relations(skinfold, ({ one }) => ({
 export const bodyFat = createTable(
   'body_fat',
   {
-    id: text('id', { length: 255 }).notNull().primaryKey(),
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
     createdAt: int('created_at', { mode: 'timestamp' })
       .default(sql`(unixepoch())`)
       .notNull(),
@@ -81,7 +80,7 @@ export const bodyFatRelations = relations(bodyFat, ({ one }) => ({
 export const leanMass = createTable(
   'lean_mass',
   {
-    id: text('id', { length: 255 }).notNull().primaryKey(),
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
     createdAt: int('created_at', { mode: 'timestamp' })
       .default(sql`(unixepoch())`)
       .notNull(),
@@ -107,7 +106,7 @@ export const leanMassRelations = relations(leanMass, ({ one }) => ({
 export const bodyWeight = createTable(
   'body_weight',
   {
-    id: text('id', { length: 255 }).notNull().primaryKey(),
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
     createdAt: int('created_at', { mode: 'timestamp' })
       .default(sql`(unixepoch())`)
       .notNull(),

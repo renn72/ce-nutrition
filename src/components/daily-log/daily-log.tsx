@@ -152,7 +152,7 @@ const DailyLog = ({
     return (
       <div className='bg-secondary p-2 relative'>
         {
-          isAdmin && isCreator.isCreator && (
+          isAdmin && isCreator?.isCreator && (
             <CircleX
               size={16}
               className='absolute right-2 top-2 text-destructive hover:text-red-700 cursor-pointer'
