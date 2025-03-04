@@ -82,16 +82,22 @@ export const metricsRouter = createTRPCRouter({
         .values(input)
         .returning({ id: skinfold.id })
 
+      const skinfoldId = res[0]?.id
+
+      if (!skinfoldId) throw new Error('Skinfold not created')
+
       await ctx.db.insert(leanMass).values({
         date: input.date,
         userId: input.userId,
         leanMass: input.leanMass,
+        skinfoldId: skinfoldId,
       })
 
       await ctx.db.insert(bodyFat).values({
         date: input.date,
         userId: input.userId,
         bodyFat: input.bodyFat,
+        skinfoldId: skinfoldId,
       })
 
       await ctx.db.insert(bodyWeight).values({
@@ -99,6 +105,7 @@ export const metricsRouter = createTRPCRouter({
         userId: input.userId,
         bodyWeight: input.bodyWeight,
         source: 'skinfold',
+        skinfoldId: skinfoldId,
       })
 
       createLog({
