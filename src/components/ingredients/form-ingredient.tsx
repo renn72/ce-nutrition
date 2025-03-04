@@ -240,7 +240,9 @@ const FormIngredient = ({
                   control={form.control}
                   name='caloriesWOFibre'
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem
+                    className='hidden'
+                  >
                       <FormLabel>Calories w/0 fibre</FormLabel>
                       <FormControl>
                         <div className='relative w-full'>
@@ -266,7 +268,7 @@ const FormIngredient = ({
                 name='caloriesWFibre'
                 render={({ field }) => (
                   <FormItem
-                    className='hidden'
+                    className=''
                   >
                     <FormLabel>Calories</FormLabel>
                     <FormControl>

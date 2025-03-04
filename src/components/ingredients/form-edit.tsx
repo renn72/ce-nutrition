@@ -195,7 +195,7 @@ const FormEdit = ({ ingredient }: { ingredient: GetIngredientById }) => {
                   control={form.control}
                   name='caloriesWOFibre'
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className='hidden'>
                       <FormLabel>Calories w/0 fibre</FormLabel>
                       <FormControl>
                         <div className='relative w-full'>
