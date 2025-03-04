@@ -44,11 +44,14 @@ export const skinfold = createTable(
   }),
 )
 
-export const skinfoldRelations = relations(skinfold, ({ one }) => ({
+export const skinfoldRelations = relations(skinfold, ({ one, many }) => ({
   user: one(user, {
     fields: [skinfold.userId],
     references: [user.id],
   }),
+  bodyFat: many(bodyFat),
+  leanMass: many(leanMass),
+  bodyWeight: many(bodyWeight),
 }))
 
 export const bodyFat = createTable(
@@ -64,6 +67,7 @@ export const bodyFat = createTable(
     date: text('date').notNull(),
     bodyFat: text('body_fat'),
     notes: text('notes'),
+    skinfoldId: int('skinfold_id').references(() => skinfold.id),
   },
   (s) => ({
     dateIndex: index('body_fat_date_idx').on(s.date),
@@ -74,6 +78,10 @@ export const bodyFatRelations = relations(bodyFat, ({ one }) => ({
   user: one(user, {
     fields: [bodyFat.userId],
     references: [user.id],
+  }),
+  skinfold: one(skinfold, {
+    fields: [bodyFat.skinfoldId],
+    references: [skinfold.id],
   }),
 }))
 
@@ -90,6 +98,7 @@ export const leanMass = createTable(
     date: text('date').notNull(),
     leanMass: text('lean_mass'),
     notes: text('notes'),
+    skinfoldId: int('skinfold_id').references(() => skinfold.id),
   },
   (s) => ({
     dateIndex: index('lean_mass_date_idx').on(s.date),
@@ -100,6 +109,10 @@ export const leanMassRelations = relations(leanMass, ({ one }) => ({
   user: one(user, {
     fields: [leanMass.userId],
     references: [user.id],
+  }),
+  skinfold: one(skinfold, {
+    fields: [leanMass.skinfoldId],
+    references: [skinfold.id],
   }),
 }))
 
@@ -117,6 +130,7 @@ export const bodyWeight = createTable(
     bodyWeight: text('body_weight'),
     source: text('source'),
     notes: text('notes'),
+    skinfoldId: int('skinfold_id').references(() => skinfold.id),
   },
   (s) => ({
     dateIndex: index('body_weight_date_idx').on(s.date),
@@ -127,5 +141,9 @@ export const bodyWeightRelations = relations(bodyWeight, ({ one }) => ({
   user: one(user, {
     fields: [bodyWeight.userId],
     references: [user.id],
+  }),
+  skinfold: one(skinfold, {
+    fields: [bodyWeight.skinfoldId],
+    references: [skinfold.id],
   }),
 }))

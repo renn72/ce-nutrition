@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
+import { GetSkinfoldById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { ArrowDownIcon, ArrowUpIcon, CalendarIcon } from 'lucide-react'
@@ -16,6 +17,14 @@ import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import {
   Dialog,
   DialogClose,
@@ -40,6 +49,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { SaveButton } from '@/components/ui/save-button'
 import { Textarea } from '@/components/ui/textarea'
 
 export const dynamic = 'force-dynamic'
@@ -63,6 +73,30 @@ const formSchema = z.object({
   shoulder: z.string(),
   notes: z.string(),
 })
+
+const SkinFold = ({ skinfold }: { skinfold: GetSkinfoldById }) => {
+  return (
+    <Card className=''>
+      <CardContent>
+      </CardContent>
+    </Card>
+  )
+}
+
+const SkinFolds = ({ userId }: { userId: string }) => {
+  const { data: userSkinfolds } = api.metrics.getUserSkinfolds.useQuery(userId)
+
+  return (
+    <div className='flex flex-col gap-4 w-full '>
+      {userSkinfolds?.map((skinfold) => (
+        <SkinFold
+          key={skinfold.id}
+          skinfold={skinfold}
+        />
+      ))}
+    </div>
+  )
+}
 
 const BodyWeight = ({
   bodyWeight,
@@ -137,9 +171,23 @@ const SkinFoldsForm = ({
 }) => {
   const router = useRouter()
   const ctx = api.useUtils()
-  const { data: trainer } = api.user.getCurrentUser.useQuery()
+
+  const [isMutating, setIsMutating] = useState(false)
 
   console.log('bodyWeight', _bodyWeight)
+
+  const { mutate: createSkinfold } = api.metrics.createSkinfold.useMutation({
+    onMutate: () => {
+      setIsMutating(true)
+    },
+    onSuccess: () => {
+      toast.success('Skinfold saved')
+    },
+    onSettled: () => {
+      setIsMutating(false)
+      ctx.metrics.invalidate()
+    },
+  })
 
   const [bodyWeight, setBodyWeight] = useState<number>(() =>
     Number(_bodyWeight),
@@ -167,10 +215,6 @@ const SkinFoldsForm = ({
       notes: '',
     },
   })
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log('data', data)
-    if (!trainer) return
-  }
 
   const chin = Number(form.watch('chin'))
   const cheek = Number(form.watch('cheek'))
@@ -227,10 +271,37 @@ const SkinFoldsForm = ({
 
   const leanMass = bodyWeight * (1 - bodyFat / 100)
 
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    createSkinfold({
+      date: date.toDateString(),
+      chin: data.chin,
+      cheek: data.cheek,
+      lowerAbdominal: data.lowerAbdominal,
+      pectoral: data.pectoral,
+      biceps: data.biceps,
+      triceps: data.triceps,
+      subscapular: data.subscapular,
+      midAxillary: data.midAxillary,
+      suprailiac: data.suprailiac,
+      umbilical: data.umbilical,
+      lowerBack: data.lowerBack,
+      quadriceps: data.quadriceps,
+      hamstrings: data.hamstrings,
+      medialCalf: data.medialCalf,
+      knee: data.knee,
+      shoulder: data.shoulder,
+      notes: data.notes,
+      userId: userId,
+      bodyWeight: bodyWeight.toString(),
+      leanMass: leanMass.toString(),
+      bodyFat: bodyFat.toString(),
+    })
+  }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className='flex flex-col gap-4 mt-10 px-2 mb-16'>
+        <div className='flex flex-col gap-4 my-10 px-2 mb-16'>
           <div className='grid grid-cols-3 gap-4'>
             <BodyWeight
               bodyWeight={bodyWeight}
@@ -246,7 +317,7 @@ const SkinFoldsForm = ({
             </div>
           </div>
 
-          <div className='grid grid-cols-4 gap-4'>
+          <div className='grid grid-cols-3 lg:grid-cols-4 gap-4'>
             <FormField
               control={form.control}
               name='chin'
@@ -286,7 +357,7 @@ const SkinFoldsForm = ({
               name='lowerAbdominal'
               render={({ field }) => (
                 <FormItem className='flex flex-col'>
-                  <FormLabel>Lower Abdominal</FormLabel>
+                  <FormLabel className='truncate'>Lower Abdominal</FormLabel>
                   <FormControl>
                     <Input
                       placeholder='Lower Abdominal'
@@ -536,15 +607,8 @@ const SkinFoldsForm = ({
               </FormItem>
             )}
           />
+          <SaveButton isSaving={isMutating} />
         </div>
-        <Button
-          variant='default'
-          size='lg'
-          disabled={true}
-          onClick={() => {}}
-        >
-          Save
-        </Button>
       </form>
     </Form>
   )
@@ -572,8 +636,6 @@ export default function Home() {
   const bodyWeight = currentUserLogs?.sort((a, b) =>
     b.date.localeCompare(a.date),
   )[0]?.morningWeight
-
-  console.log('bodyWeight', bodyWeight)
 
   return (
     <div className='max-w-2xl w-full mx-auto mt-10'>
