@@ -115,18 +115,6 @@ const Mobile = ({
                 </TabsTrigger>
                 <TabsTrigger
                   className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none data-[state=active]:bg-secondary'
-                  value='lm'
-                >
-                  Lean Mass
-                </TabsTrigger>
-                <TabsTrigger
-                  className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none data-[state=active]:bg-secondary'
-                  value='bf'
-                >
-                  Body Fat
-                </TabsTrigger>
-                <TabsTrigger
-                  className='data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent-foreground rounded-none data-[state=active]:bg-secondary'
                   value='sleep'
                 >
                   Sleep

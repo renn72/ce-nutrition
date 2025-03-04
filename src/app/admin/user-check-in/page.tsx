@@ -93,6 +93,10 @@ const WeighInForm = ({ userId }: { userId: string }) => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className='flex flex-col gap-4 mt-10 px-2 mb-16'>
+          <h1 className='text-center text-2xl font-semibold'
+          >
+            Not Working
+          </h1>
           <FormField
             control={form.control}
             name='date'
@@ -256,6 +260,7 @@ const WeighInForm = ({ userId }: { userId: string }) => {
             <Button
               className='w-full'
               type='submit'
+              disabled={true}
             >
               Save
             </Button>

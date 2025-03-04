@@ -9,13 +9,22 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
-import { CalendarIcon } from 'lucide-react'
+import { ArrowDownIcon, ArrowUpIcon, CalendarIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -25,6 +34,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { NumberInput } from '@/components/ui/number-input'
 import {
   Popover,
   PopoverContent,
@@ -54,10 +64,86 @@ const formSchema = z.object({
   notes: z.string(),
 })
 
-const SkinFoldsForm = ({ userId, date }: { userId: string; date: Date }) => {
+const BodyWeight = ({
+  bodyWeight,
+  setBodyWeight,
+}: {
+  bodyWeight: number
+  setBodyWeight: React.Dispatch<React.SetStateAction<number>>
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  return (
+    <Dialog
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
+      <DialogTrigger asChild>
+        <div
+          className={cn(
+            'flex gap-2 items-center justify-around flex-col bg-secondary px-4 py-2 rounded-md shadow-sm',
+            'active:scale-90 active:shadow-none transition-transform cursor-pointer',
+            isOpen ? 'scale-90 shadow-none' : '',
+          )}
+        >
+          <div className='text-muted-foreground text-center'>Body Weight</div>
+          <div>{bodyWeight}</div>
+        </div>
+      </DialogTrigger>
+      <DialogContent
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+        }}
+      >
+        <DialogHeader>
+          <DialogTitle>Weight</DialogTitle>
+          <DialogDescription>Enter your weight today</DialogDescription>
+        </DialogHeader>
+
+        <div className='flex justify-center '>
+          <NumberInput
+            value={bodyWeight}
+            setValue={setBodyWeight}
+            fixed={1}
+            scale={0.1}
+            postfix='kg'
+          />
+        </div>
+        <DialogClose asChild>
+          <div className='flex  w-full items-center justify-around'>
+            <Button
+              variant='default'
+              size='lg'
+              onClick={() => {
+                setIsOpen(false)
+              }}
+            >
+              Save
+            </Button>
+          </div>
+        </DialogClose>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+const SkinFoldsForm = ({
+  userId,
+  date,
+  bodyWeight: _bodyWeight,
+}: {
+  userId: string
+  date: Date
+  bodyWeight: string
+}) => {
   const router = useRouter()
   const ctx = api.useUtils()
   const { data: trainer } = api.user.getCurrentUser.useQuery()
+
+  console.log('bodyWeight', _bodyWeight)
+
+  const [bodyWeight, setBodyWeight] = useState<number>(() =>
+    Number(_bodyWeight),
+  )
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -139,13 +225,27 @@ const SkinFoldsForm = ({ userId, date }: { userId: string; date: Date }) => {
     constFifteen * knee +
     constSixteen * shoulder
 
+  const leanMass = bodyWeight * (1 - bodyFat / 100)
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className='flex flex-col gap-4 mt-10 px-2 mb-16'>
-          <div className='font-semibold text-center text-3xl'>
-            BodyFat {bodyFat === 0.3 ? 0 : bodyFat.toFixed(2)}%
+          <div className='grid grid-cols-3 gap-4'>
+            <BodyWeight
+              bodyWeight={bodyWeight}
+              setBodyWeight={setBodyWeight}
+            />
+            <div className='flex gap-2 items-center justify-around flex-col bg-secondary px-4 py-2 rounded-md shadow-sm'>
+              <div className='text-muted-foreground text-center'>Body Fat</div>
+              <div>{bodyFat === 0.3 ? 0 : bodyFat.toFixed(2)}%</div>
+            </div>
+            <div className='flex gap-2 items-center justify-around flex-col bg-secondary px-4 py-2 rounded-md shadow-sm'>
+              <div className='text-muted-foreground text-center'>Lean Mass</div>
+              <div>{leanMass.toFixed(2)}</div>
+            </div>
           </div>
+
           <div className='grid grid-cols-4 gap-4'>
             <FormField
               control={form.control}
@@ -437,6 +537,14 @@ const SkinFoldsForm = ({ userId, date }: { userId: string; date: Date }) => {
             )}
           />
         </div>
+        <Button
+          variant='default'
+          size='lg'
+          disabled={true}
+          onClick={() => {}}
+        >
+          Save
+        </Button>
       </form>
     </Form>
   )
@@ -447,6 +555,12 @@ export default function Home() {
 
   const [date, setDate] = useState<Date | undefined>(new Date())
 
+  const { data: currentUserLogs, isLoading } = api.dailyLog.getAllUser.useQuery(
+    userId ?? '',
+  )
+
+  if (isLoading) return null
+
   if (
     userId === '' ||
     userId === undefined ||
@@ -454,6 +568,12 @@ export default function Home() {
     userId === 'null'
   )
     return <div>Select a user</div>
+
+  const bodyWeight = currentUserLogs?.sort((a, b) =>
+    b.date.localeCompare(a.date),
+  )[0]?.morningWeight
+
+  console.log('bodyWeight', bodyWeight)
 
   return (
     <div className='max-w-2xl w-full mx-auto mt-10'>
@@ -489,6 +609,7 @@ export default function Home() {
       <SkinFoldsForm
         userId={userId}
         date={date ?? new Date()}
+        bodyWeight={bodyWeight ?? ''}
       />
     </div>
   )
