@@ -115,6 +115,7 @@ export const bodyWeight = createTable(
       .references(() => user.id),
     date: text('date').notNull(),
     bodyWeight: text('body_weight'),
+    source: text('source'),
     notes: text('notes'),
   },
   (s) => ({
