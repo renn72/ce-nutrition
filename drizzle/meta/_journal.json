@@ -99,6 +99,13 @@
       "when": 1741066006652,
       "tag": "0013_keen_prodigy",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "6",
+      "when": 1741067900821,
+      "tag": "0014_rare_malice",
+      "breakpoints": true
     }
   ]
 }

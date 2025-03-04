@@ -1,6 +1,11 @@
 import { db } from '@/server/db'
 import { log } from '@/server/db/schema/log'
-import { leanMass, skinfold, bodyFat, bodyWeight } from '@/server/db/schema/metrics'
+import {
+  bodyFat,
+  bodyWeight,
+  leanMass,
+  skinfold,
+} from '@/server/db/schema/metrics'
 import { TRPCError } from '@trpc/server'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { and, desc, eq } from 'drizzle-orm'
@@ -29,15 +34,16 @@ const createLog = async ({
 }
 
 export const metricsRouter = createTRPCRouter({
-  getAllSkinfolds: protectedProcedure.query(async ({ ctx }) => {
-    const res = await ctx.db.query.skinfold.findMany()
-    return res
-  }),
   getUserSkinfolds: protectedProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
       const res = await ctx.db.query.skinfold.findMany({
         where: eq(skinfold.userId, input),
+        with: {
+          bodyFat: true,
+          leanMass: true,
+          bodyWeight: true,
+        },
       })
       return res
     }),
@@ -46,7 +52,20 @@ export const metricsRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       const res = await ctx.db.query.skinfold.findFirst({
         where: eq(skinfold.id, input),
+        with: {
+          bodyFat: true,
+          leanMass: true,
+          bodyWeight: true,
+        },
       })
+      return res
+    }),
+  deleteSkinfold: protectedProcedure
+    .input(z.number())
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.db
+        .delete(skinfold)
+        .where(eq(skinfold.id, input))
       return res
     }),
   createSkinfold: protectedProcedure
@@ -79,7 +98,7 @@ export const metricsRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const res = await ctx.db
         .insert(skinfold)
-        .values(input)
+        .values({ ...input })
         .returning({ id: skinfold.id })
 
       const skinfoldId = res[0]?.id

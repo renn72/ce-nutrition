@@ -1,28 +1,44 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { Loader2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Loader2 } from 'lucide-react'
 
 export const SaveButton = ({
   className,
-  props,
   isSaving,
   name = 'Save',
   savingText = '',
+  variant = 'default',
+  size = 'default',
+  onClick = () => {},
+  props,
 }: {
   className?: string
-  props?: React.ButtonHTMLAttributes<HTMLButtonElement>
   isSaving: boolean
   name?: string
   savingText?: string
+  variant?:
+    | 'default'
+    | 'outline'
+    | 'secondary'
+    | 'accent'
+    | 'ghost'
+    | 'link'
+    | 'destructive'
+  size?: 'default' | 'sm' | 'lg' | 'icon'
+  props?: React.ButtonHTMLAttributes<HTMLButtonElement>
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
 }) => {
   return (
     <Button
       className={cn('relative min-w-[100px]', className)}
-      {...props}
+      variant={variant}
+      size={size}
       disabled={isSaving}
+      onClick={onClick}
+      {...props}
     >
       {isSaving ? savingText : name}
       {isSaving ? (

@@ -10,7 +10,13 @@ import { cn } from '@/lib/utils'
 import { GetSkinfoldById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
-import { ArrowDownIcon, ArrowUpIcon, CalendarIcon } from 'lucide-react'
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  CalendarIcon,
+  CircleX,
+  XIcon,
+} from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -75,16 +81,159 @@ const formSchema = z.object({
 })
 
 const SkinFold = ({ skinfold }: { skinfold: GetSkinfoldById }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const ctx = api.useUtils()
+  const { mutate: deleteSkinfold } = api.metrics.deleteSkinfold.useMutation({
+    onSuccess: () => {
+      ctx.metrics.invalidate()
+      toast.success('Skinfold deleted')
+    },
+    onSettled: () => {
+      setIsOpen(false)
+      setIsDeleting(false)
+    },
+  })
+  if (!skinfold) return null
   return (
     <Card className=''>
-      <CardContent>
+      <CardHeader className='flex justify-between items-center relative'>
+        <div className='flex gap-2 items-center'>
+          <div className='text-muted-foreground text-center'>Skinfold</div>
+          <div>{skinfold.date}</div>
+        </div>
+        <Dialog
+          open={isOpen}
+          onOpenChange={setIsOpen}
+        >
+          <DialogTrigger asChild>
+            <CircleX
+              size={24}
+              className='cursor-pointer absolute right-2 top-2 hover:text-destructive active:scale-90 transition-transform'
+            />
+          </DialogTrigger>
+          <DialogContent className=''>
+            <DialogHeader>
+              <DialogTitle>Delete Skinfold</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this Skinfold?
+              </DialogDescription>
+            </DialogHeader>
+            <SaveButton
+              variant='destructive'
+              name='Delete'
+              isSaving={isDeleting}
+              onClick={() => {
+                setIsDeleting(true)
+                deleteSkinfold(skinfold.id)
+              }}
+            />
+            <Button
+              variant='outline'
+              onClick={() => {
+                setIsOpen(false)
+              }}
+            >
+              Cancel
+            </Button>
+          </DialogContent>
+        </Dialog>
+      </CardHeader>
+
+      <CardContent className='flex flex-col gap-2'>
+        <div className='flex gap-2'>
+          <div className='flex gap-2 items-center'>
+            <div className='text-muted-foreground text-center'>Weight</div>
+            <div>{skinfold.bodyWeight?.[0]?.bodyWeight}</div>
+          </div>
+          <div className='flex gap-2 items-center'>
+            <div className='text-muted-foreground text-center'>Lean Mass</div>
+            <div>{skinfold.leanMass?.[0]?.leanMass}</div>
+          </div>
+          <div className='flex gap-2 items-center'>
+            <div className='text-muted-foreground text-center'>Body Fat</div>
+            <div>{skinfold.bodyFat?.[0]?.bodyFat}</div>
+          </div>
+        </div>
+
+        <div className='grid grid-cols-4 gap-1'>
+          <div className='flex flex-col truncate'>
+            <div className='truncate'>Chin</div>
+            <div>{skinfold.chin}</div>
+          </div>
+          <div className='flex flex-col'>
+            <div>Cheek</div>
+            <div>{skinfold.cheek}</div>
+          </div>
+          <div className='flex flex-col'>
+            <div className='truncate'>Lower Abdominal</div>
+            <div>{skinfold.lowerAbdominal}</div>
+          </div>
+          <div className='flex flex-col'>
+            <div>Pectoral</div>
+            <div>{skinfold.pectoral}</div>
+          </div>
+          <div className='flex flex-col'>
+            <div>Biceps</div>
+            <div>{skinfold.biceps}</div>
+          </div>
+          <div className='flex flex-col'>
+            <div>Triceps</div>
+            <div>{skinfold.triceps}</div>
+          </div>
+          <div className='flex flex-col'>
+            <div>Subscapular</div>
+            <div>{skinfold.subscapular}</div>
+          </div>
+          <div className='flex flex-col'>
+            <div>Mid Axillary</div>
+            <div>{skinfold.midAxillary}</div>
+          </div>
+          <div className='flex flex-col'>
+            <div>Suprailiac</div>
+            <div>{skinfold.suprailiac}</div>
+          </div>
+          <div className='flex flex-col'>
+            <div>Umbilical</div>
+            <div>{skinfold.umbilical}</div>
+          </div>
+          <div className='flex flex-col'>
+            <div>Lower Back</div>
+            <div>{skinfold.lowerBack}</div>
+          </div>
+          <div className='flex flex-col'>
+            <div>Quadriceps</div>
+            <div>{skinfold.quadriceps}</div>
+          </div>
+          <div className='flex flex-col'>
+            <div>Hamstrings</div>
+            <div>{skinfold.hamstrings}</div>
+          </div>
+          <div className='flex flex-col'>
+            <div>Medial Calf</div>
+            <div>{skinfold.medialCalf}</div>
+          </div>
+          <div className='flex flex-col'>
+            <div>Knee</div>
+            <div>{skinfold.knee}</div>
+          </div>
+          <div className='flex flex-col'>
+            <div>Shoulder</div>
+            <div>{skinfold.shoulder}</div>
+          </div>
+        </div>
       </CardContent>
     </Card>
   )
 }
 
 const SkinFolds = ({ userId }: { userId: string }) => {
-  const { data: userSkinfolds } = api.metrics.getUserSkinfolds.useQuery(userId)
+  const { data: userSkinfolds, isLoading } =
+    api.metrics.getUserSkinfolds.useQuery(userId)
+
+  console.log('userSkinfolds', userSkinfolds)
+
+  if (isLoading) return null
 
   return (
     <div className='flex flex-col gap-4 w-full '>
@@ -272,6 +421,7 @@ const SkinFoldsForm = ({
   const leanMass = bodyWeight * (1 - bodyFat / 100)
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
+    console.log('data', data, bodyWeight, leanMass, bodyFat)
     createSkinfold({
       date: date.toDateString(),
       chin: data.chin,
@@ -292,9 +442,9 @@ const SkinFoldsForm = ({
       shoulder: data.shoulder,
       notes: data.notes,
       userId: userId,
-      bodyWeight: bodyWeight.toString(),
-      leanMass: leanMass.toString(),
-      bodyFat: bodyFat.toString(),
+      bodyWeight: bodyWeight.toFixed(2),
+      leanMass: leanMass.toFixed(2),
+      bodyFat: bodyFat.toFixed(2),
     })
   }
 
@@ -607,7 +757,46 @@ const SkinFoldsForm = ({
               </FormItem>
             )}
           />
-          <SaveButton isSaving={isMutating} />
+          <div className='flex gap-4 justify-around'>
+            <SaveButton isSaving={isMutating} />
+            <Button
+              variant='outline'
+              onClick={(e) => {
+                e.preventDefault()
+                const value = 6
+                form.setValue('chin', (Math.random() * value).toFixed(2))
+                form.setValue('cheek', (Math.random() * value).toFixed(2))
+                form.setValue(
+                  'lowerAbdominal',
+                  (Math.random() * value).toFixed(2),
+                )
+                form.setValue('pectoral', (Math.random() * value).toFixed(2))
+                form.setValue('biceps', (Math.random() * value).toFixed(2))
+                form.setValue('triceps', (Math.random() * value).toFixed(2))
+                form.setValue('subscapular', (Math.random() * value).toFixed(2))
+                form.setValue('midAxillary', (Math.random() * value).toFixed(2))
+                form.setValue('suprailiac', (Math.random() * value).toFixed(2))
+                form.setValue('umbilical', (Math.random() * value).toFixed(2))
+                form.setValue('lowerBack', (Math.random() * value).toFixed(2))
+                form.setValue('quadriceps', (Math.random() * value).toFixed(2))
+                form.setValue('hamstrings', (Math.random() * value).toFixed(2))
+                form.setValue('medialCalf', (Math.random() * value).toFixed(2))
+                form.setValue('knee', (Math.random() * value).toFixed(2))
+                form.setValue('shoulder', (Math.random() * value).toFixed(2))
+              }}
+            >
+              Generate
+            </Button>
+            <Button
+              variant='outline'
+              onClick={(e) => {
+                e.preventDefault()
+                form.reset()
+              }}
+            >
+              Reset
+            </Button>
+          </div>
         </div>
       </form>
     </Form>
@@ -638,7 +827,7 @@ export default function Home() {
   )[0]?.morningWeight
 
   return (
-    <div className='max-w-2xl w-full mx-auto mt-10'>
+    <div className='max-w-4xl mx-auto my-10'>
       <Popover>
         <PopoverTrigger asChild>
           <Button
@@ -673,6 +862,7 @@ export default function Home() {
         date={date ?? new Date()}
         bodyWeight={bodyWeight ?? ''}
       />
+      <SkinFolds userId={userId} />
     </div>
   )
 }
