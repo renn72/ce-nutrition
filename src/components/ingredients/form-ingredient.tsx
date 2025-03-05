@@ -83,9 +83,6 @@ const FormIngredient = ({
       setIsOpen(false)
       ctx.ingredient.invalidate()
       toast.success('Ingredient added successfully')
-      setTimeout(() => {
-        router.push('/admin/base/ingredient')
-      }, 1000)
     },
   })
   const form = useForm<z.infer<typeof formSchema>>({
