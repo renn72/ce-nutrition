@@ -163,10 +163,10 @@ const FormPlanMeal = ({
       key={index}
       className='w-full'
     >
-      <CardHeader className='pb-2 pt-4'>
+      <CardHeader className='pb-2 pt-4 bg-background'>
         <CardTitle className='text-2xl'>Meal {index + 1}</CardTitle>
       </CardHeader>
-      <CardContent className=''>
+      <CardContent className='bg-background'>
         <div
           key={index}
           className='grid grid-cols-5 gap-1 w-full py-2'

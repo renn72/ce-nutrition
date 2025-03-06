@@ -93,35 +93,71 @@ export const planRouter = createTRPCRouter({
         numberOfMeals: z.number(),
         meals: z.array(
           z.object({
-            mealId: z.number(),
             mealIndex: z.number(),
             mealTitle: z.string(),
             calories: z.string(),
             vegeCalories: z.string(),
+            vegeNotes: z.string(),
+            vege: z.string(),
             note: z.string(),
+            recipes: z.array(
+              z.object({
+                recipeId: z.number(),
+                note: z.string(),
+              }),
+            ),
           }),
         ),
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const { meals, ...data } = input
+      await ctx.db.delete(plan).where(eq(plan.id, input.id))
+      const userId = ctx.session.user.id
+      const { id, meals, ...data } = input
       const res = await ctx.db
-        .update(plan)
-        .set(data)
-        .where(eq(plan.id, input.id))
+        .insert(plan)
+        .values({
+          ...data,
+          creatorId: userId,
+        })
+        .returning({ id: plan.id })
 
-      await ctx.db.delete(planToMeal).where(eq(planToMeal.planId, input.id))
-      const mealRes = await ctx.db
-        .insert(planToMeal)
-        .values(
-          meals.map((meal) => ({
-            ...meal,
-            planId: input.id,
-          })),
-        )
-        .returning({ id: planToMeal.id })
+      const resId = res?.[0]?.id
+      if (!resId) return res
 
-      return { res, mealRes }
+      for (const _m of meals) {
+        const { recipes, ...m } = _m
+        const mealRes = await ctx.db
+          .insert(meal)
+          .values({
+            name: m.mealTitle,
+            notes: m.note,
+            vegeNotes: m.vegeNotes,
+            vege: m.vege,
+            vegeCalories: m.vegeCalories,
+            planId: resId,
+            mealIndex: m.mealIndex,
+            calories: m.calories,
+            creatorId: userId,
+          })
+          .returning({ id: meal.id })
+
+        const mealId = mealRes?.[0]?.id || 0
+
+        const recipeRes = await ctx.db
+          .insert(mealToRecipe)
+          .values(
+            recipes.map((recipe, i) => ({
+              recipeId: recipe.recipeId,
+              index: i,
+              note: recipe.note,
+              mealId: mealId,
+            })),
+          )
+          .returning({ id: mealToRecipe.id })
+      }
+
+      return { res }
     }),
   create: protectedProcedure
     .input(

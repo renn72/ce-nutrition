@@ -55,6 +55,13 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
   const { mutate: createPlan } = api.plan.create.useMutation({
     onSuccess: () => {
       toast.success('Plan added successfully')
+      ctx.plan.getAll.invalidate()
+    },
+  })
+  const { mutate: updatePlan } = api.plan.update.useMutation({
+    onSuccess: () => {
+      toast.success('Plan updated successfully')
+      ctx.plan.getAll.invalidate()
     },
   })
 
@@ -69,15 +76,17 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
       image: plan?.image || '',
       notes: plan?.notes || '',
       planCategory: plan?.planCategory || '',
-      meals: plan?.planToMeal?.map((planToMeal) => ({
-        mealId: planToMeal.meal?.id.toString(),
-        mealTitle: planToMeal.meal?.name || '',
-        calories:
-          planToMeal.meal?.mealToRecipe?.[0]?.recipe?.calories.toString() || '',
-        vegeCalories:
-          planToMeal.meal?.mealToVegeStack?.[0]?.vegeStack?.calories || '',
-        note: planToMeal.meal?.mealToRecipe?.[0]?.note || '',
-        mealIndex: planToMeal.mealIndex,
+      meals: plan?.meals?.map((meal) => ({
+        mealId: meal?.id.toString(),
+        mealTitle: meal?.name || '',
+        calories: meal?.mealToRecipe?.[0]?.recipe?.calories.toString() || '',
+        vegeCalories: meal?.mealToVegeStack?.[0]?.vegeStack?.calories || '',
+        note: meal?.mealToRecipe?.[0]?.note || '',
+        mealIndex: meal.mealIndex,
+        recipes: meal.mealToRecipe?.map((recipe) => ({
+          recipeId: recipe?.recipeId?.toString(),
+          note: recipe?.note || '',
+        })),
       })) || [
         {
           mealTitle: '1',
@@ -99,29 +108,55 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
     name: 'meals',
   })
 
+  console.log(form.getValues())
+
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log('data', data)
-    createPlan({
-      name: data.name,
-      description: data.description,
-      image: data.image,
-      notes: data.notes,
-      planCategory: data.planCategory,
-      numberOfMeals: data.meals.length,
-      meals: data.meals.map((meal, i) => ({
-        mealIndex: i + 1,
-        mealTitle: meal.mealTitle,
-        calories: meal.calories,
-        vegeCalories: meal.vegeCalories || '',
-        vegeNotes: meal.vegeNotes || '',
-        vege: meal.vege || '',
-        note: meal.note,
-        recipes: meal.recipes.map((recipe) => ({
-          recipeId: Number(recipe.recipeId),
-          note: recipe.note,
+    if (plan?.id) {
+      updatePlan({
+        id: plan.id,
+        name: data.name,
+        description: data.description,
+        image: data.image,
+        notes: data.notes,
+        planCategory: data.planCategory,
+        numberOfMeals: data.meals.length,
+        meals: data.meals.map((meal, i) => ({
+          mealIndex: i + 1,
+          mealTitle: meal.mealTitle,
+          calories: meal.calories,
+          vegeCalories: meal.vegeCalories || '',
+          vegeNotes: meal.vegeNotes || '',
+          vege: meal.vege || '',
+          note: meal.note,
+          recipes: meal.recipes.map((recipe) => ({
+            recipeId: Number(recipe.recipeId),
+            note: recipe.note,
+          })),
         })),
-      })),
-    })
+      })
+    } else {
+      createPlan({
+        name: data.name,
+        description: data.description,
+        image: data.image,
+        notes: data.notes,
+        planCategory: data.planCategory,
+        numberOfMeals: data.meals.length,
+        meals: data.meals.map((meal, i) => ({
+          mealIndex: i + 1,
+          mealTitle: meal.mealTitle,
+          calories: meal.calories,
+          vegeCalories: meal.vegeCalories || '',
+          vegeNotes: meal.vegeNotes || '',
+          vege: meal.vege || '',
+          note: meal.note,
+          recipes: meal.recipes.map((recipe) => ({
+            recipeId: Number(recipe.recipeId),
+            note: recipe.note,
+          })),
+        })),
+      })
+    }
   }
 
   if (isLoadingAllMeals) return null
@@ -223,7 +258,7 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
             </div>
             <div className='flex flex-col gap-1 mt-4'>
               <h2 className='text-3xl font-bold text-center'>Meals</h2>
-              <div className='flex flex-col gap-1'>
+              <div className='flex flex-col gap-2'>
                 {mealsField.fields.map((field, index) => (
                   <FormPlanMeal
                     key={index}
@@ -255,7 +290,7 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
               </div>
             </div>
             <div>
-              <Button type='submit'>Submit</Button>
+              <Button type='submit'>{ plan?.id ? 'Update' : 'Submit' }</Button>
             </div>
           </div>
         </form>

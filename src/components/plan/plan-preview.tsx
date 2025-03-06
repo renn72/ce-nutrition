@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/popover'
 
 const PlanPreview = ({ plan }: { plan: GetPlanById }) => {
-  console.log('plan', plan)
   if (!plan) return null
   return (
     <Popover>
