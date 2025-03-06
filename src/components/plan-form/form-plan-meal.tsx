@@ -6,7 +6,7 @@ import { ReactNode, useState } from 'react'
 
 import { cn, getRecipeDetailsByCals } from '@/lib/utils'
 import type { GetIngredientById, GetRecipeById } from '@/types'
-import { Check, ChevronsUpDown, CirclePlus } from 'lucide-react'
+import { Check, ChevronsUpDown, CirclePlus, CircleX } from 'lucide-react'
 import { useFieldArray, UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -69,11 +69,13 @@ const Recipe = ({
   form,
   mealIndex,
   recipeIndex,
+  remove,
 }: {
   calories: string
   form: UseFormReturn<z.infer<typeof formSchema>>
   mealIndex: number
   recipeIndex: number
+  remove: (index: number) => void
 }) => {
   const { data: recipes } = api.recipe.getAll.useQuery()
   const recipeId = form.watch(
@@ -81,8 +83,9 @@ const Recipe = ({
   )
   const recipe = recipes?.find((recipe) => recipe.id === Number(recipeId))
   const recipeDetails = getRecipeDetailsByCals(recipe, Number(calories))
+
   return (
-    <div className='grid grid-cols-9 gap-1 py-1 items-center'>
+    <div className='grid grid-cols-9 gap-1 py-1 items-center text-sm relative'>
       <FormField
         control={form.control}
         name={`meals.${mealIndex}.recipes.${recipeIndex}.recipeId`}
@@ -119,7 +122,7 @@ const Recipe = ({
       {recipe?.name && (
         <>
           <div>
-            {recipeDetails.size} {recipeDetails.unit}
+            {recipeDetails.size} {recipeDetails.unit?.slice(0, 1)}
           </div>
           <div>{recipeDetails.cals}</div>
           <div>{recipeDetails.protein}</div>
@@ -127,6 +130,13 @@ const Recipe = ({
           <div>{recipeDetails.fat} </div>
         </>
       )}
+      <CircleX
+        size={20}
+        className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer absolute right-0 top-1/2 -translate-y-1/2'
+        onClick={() =>
+          remove(recipeIndex)
+        }
+      />
     </div>
   )
 }
@@ -149,7 +159,7 @@ const FormPlanMeal = ({
     Number(form.watch(`meals.${index}.vegeCalories`))
   const selectedMeal = allMeals?.find((meal) => meal.id === Number(0))
 
-  const recipesField = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: `meals.${index}.recipes`,
   })
@@ -169,7 +179,7 @@ const FormPlanMeal = ({
       <CardContent className='bg-background'>
         <div
           key={index}
-          className='grid grid-cols-5 gap-1 w-full py-2'
+          className='grid grid-cols-5 gap-1 w-full py-2 '
         >
           <div className='flex flex-col gap-2'>
             <FormField
@@ -295,7 +305,7 @@ const FormPlanMeal = ({
               </>
             )}
           </div>
-          <div className='flex flex-col gap-0 col-span-4 ml-12 divide-y divide-border'>
+          <div className='flex flex-col gap-0 col-span-4 ml-4 divide-y divide-border'>
             <div className='grid grid-cols-9 gap-1 capitalize py-1'>
               <div className='col-span-4 ' />
               <div>size</div>
@@ -304,13 +314,14 @@ const FormPlanMeal = ({
               <div>carbs</div>
               <div>fat</div>
             </div>
-            {recipesField.fields.map((field, recipeIndex) => (
+            {fields.map((field, recipeIndex) => (
               <Recipe
                 mealIndex={index}
                 recipeIndex={recipeIndex}
                 form={form}
                 calories={calories.toFixed(2)}
-                key={recipeIndex}
+                key={field.id}
+                remove={remove}
               />
             ))}
             <div className='flex justify-center w-full pt-4'>
@@ -318,7 +329,7 @@ const FormPlanMeal = ({
                 size={20}
                 className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
                 onClick={() =>
-                  recipesField.append({
+                  append({
                     recipeId: '',
                     note: '',
                   })

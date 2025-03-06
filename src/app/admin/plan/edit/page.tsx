@@ -16,7 +16,7 @@ export default function Home() {
   if (isLoading) return null
 
   return (
-    <div className='flex flex-col max-w-screen-lg w-full mx-auto mt-10'>
+    <div className='flex flex-col max-w-7xl w-full mx-auto mt-0'>
       <FormPlan plan={plan} />
     </div>
   )
