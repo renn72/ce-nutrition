@@ -39,6 +39,7 @@ const DataTable = ({ recipe: data }: { recipe: GetAllRecipes }) => {
       select: false,
       caloriesWOFibre: true,
       caloriesWFibre: false,
+      size: false,
     })
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],

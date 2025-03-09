@@ -5,19 +5,14 @@ import { api } from '@/trpc/react'
 import { useSearchParams } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
+import { Link } from 'next-view-transitions'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 const UserInfo = ({ userId }: { userId: string }) => {
-
   const ctx = api.useUtils()
 
   const { mutate: finishPlan } = api.userPlan.finishPlan.useMutation({
@@ -27,7 +22,9 @@ const UserInfo = ({ userId }: { userId: string }) => {
     },
   })
   const { data: currentUser } = api.user.get.useQuery(userId)
-  const plans = currentUser?.userPlans.filter((_plan) => true).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+  const plans = currentUser?.userPlans
+    .filter((_plan) => true)
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 
   if (!plans) return null
 
@@ -36,44 +33,63 @@ const UserInfo = ({ userId }: { userId: string }) => {
       {plans.map((plan) => (
         <Card
           key={plan.id}
-          className={cn('w-full max-w-screen-xl', plan.isActive ? ' border-green-500/90': '')}
+          className={cn(
+            'w-full max-w-screen-xl',
+            plan.isActive ? ' border-green-500/90' : '',
+          )}
         >
           <CardHeader className='pb-0 flex justify-between'>
-            <div className={cn('flex gap-2 items-center w-full justify-between', plan.isActive ? '': 'hidden')}>
-              <CardTitle className={cn('text-xl font-medium',)}>
-                <Badge
-                  className='bg-green-600 mb-2'
-                >Active</Badge>
+            <div
+              className={cn(
+                'flex gap-2 items-center w-full justify-between',
+                plan.isActive ? '' : 'hidden',
+              )}
+            >
+              <CardTitle className={cn('text-xl font-medium')}>
+                <Badge className='bg-green-600 mb-2'>Active</Badge>
               </CardTitle>
 
-              <Button
-                variant='destructive'
-                size='sm'
-                onClick={() => {
-                  finishPlan(plan.id)
-                }}
-              >
-                Finish Plan
-              </Button>
+              <div className='flex gap-2 items-center'>
+                <Link
+                  href={`/admin/user-program-edit?user=${userId}&plan=${plan.id}`}
+                  prefetch={false}
+                >
+                  <Button
+                    variant='outline'
+                    size='sm'
+                  >
+                    Edit Plan
+                  </Button>
+                </Link>
+                <Button
+                  variant='destructive'
+                  size='sm'
+                  onClick={() => {
+                    finishPlan(plan.id)
+                  }}
+                >
+                  Finish Plan
+                </Button>
+              </div>
             </div>
             <div className='text-[0.7rem] font-light text-muted-foreground flex gap-2 items-center'>
-            <div>
-              {plan.createdAt.toLocaleDateString('en-AU', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric',
-              })}
-            </div>
-              {
-                plan.finishedAt ? <div>
-                  - {plan.finishedAt.toLocaleDateString('en-AU', {
+              <div>
+                {plan.createdAt.toLocaleDateString('en-AU', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                })}
+              </div>
+              {plan.finishedAt ? (
+                <div>
+                  -{' '}
+                  {plan.finishedAt.toLocaleDateString('en-AU', {
                     day: 'numeric',
                     month: 'short',
                     year: 'numeric',
                   })}
                 </div>
-                : null
-              }
+              ) : null}
             </div>
             <div>program: {plan.name}</div>
             <div>
@@ -108,22 +124,20 @@ const UserInfo = ({ userId }: { userId: string }) => {
                           <div className='text-sm text-muted-foreground'>
                             {meal.targetCalories}
                           </div>
-                          {
-                            meal.targetProtein !== '' ?(
-                              <>
+                          {meal.targetProtein !== '' ? (
+                            <>
                               <div className='text-sm text-muted-foreground'>
                                 Protein
                               </div>
-                          <div className='text-sm text-muted-foreground'>
-                            {meal.targetProtein}
-                          </div>
-                              </>)
-                              : null
-                          }
+                              <div className='text-sm text-muted-foreground'>
+                                {meal.targetProtein}
+                              </div>
+                            </>
+                          ) : null}
                         </div>
                       </div>
                       <div className='flex flex-col gap-1 w-full ml-4'>
-                        {recipes.map((recipe, ) => {
+                        {recipes.map((recipe) => {
                           return (
                             <div
                               className='flex flex-col gap-1 w-full'

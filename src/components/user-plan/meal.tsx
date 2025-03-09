@@ -214,7 +214,7 @@ const Meal = ({
 
   return (
     <Card>
-      <CardHeader className='pb-0 flex flex-row justify-between'>
+      <CardHeader className='pb-0 flex flex-row justify-between bg-background'>
         <CardTitle className='text-xl font-medium'>Meal {index + 1}</CardTitle>
         <Button
           variant='secondary'
@@ -223,7 +223,7 @@ const Meal = ({
           Reset
         </Button>
       </CardHeader>
-      <CardContent className='flex flex-col gap-2 w-full lg:py-4 px-1 lg:px-4'>
+      <CardContent className='flex flex-col gap-2 w-full lg:py-4 px-1 lg:px-4 bg-background'>
         <div className='flex lg:gap-2 lg:items-center flex-col lg:flex-row'>
           <FormField
             control={form.control}

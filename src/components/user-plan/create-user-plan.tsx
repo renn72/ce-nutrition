@@ -280,7 +280,7 @@ const CreateUserPlan = () => {
               </div>
               <div className='flex flex-col gap-2 mt-4'>
                 <h2 className='text-2xl font-bold'>Meals</h2>
-                <div className='flex flex-col gap-1 '>
+                <div className='flex flex-col gap-3 '>
                   {mealsField.fields.map((field, index) => (
                     <Meal
                       key={field.mealId}
