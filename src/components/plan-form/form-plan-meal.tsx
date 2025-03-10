@@ -144,6 +144,7 @@ const Recipe = ({
 const FormPlanMeal = ({
   index,
   form,
+  remove : removeMeal,
 }: {
   index: number
   form: UseFormReturn<z.infer<typeof formSchema>>
@@ -173,8 +174,17 @@ const FormPlanMeal = ({
       key={index}
       className='w-full'
     >
-      <CardHeader className='pb-2 pt-4 bg-background'>
+      <CardHeader className='pb-2 pt-4 bg-background  w-full'>
+        <div className='flex w-full justify-between'>
         <CardTitle className='text-2xl'>Meal {index + 1}</CardTitle>
+        <CircleX
+          size={24}
+          className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
+          onClick={() =>
+            removeMeal(index)
+          }
+        />
+        </div>
       </CardHeader>
       <CardContent className='bg-background'>
         <div
