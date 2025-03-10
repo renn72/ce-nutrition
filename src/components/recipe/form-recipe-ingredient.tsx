@@ -418,7 +418,7 @@ const FormRecipeIngredient = ({
         {isMobile ? (
           <Badge
             variant='destructive'
-            className=''
+            className='cursor-pointer active:scale-90'
             onClick={() => {
               remove(index)
             }}
@@ -427,7 +427,7 @@ const FormRecipeIngredient = ({
         ) : (
           <Badge
             variant='destructive'
-            className=''
+            className='cursor-pointer active:scale-90'
             onClick={() => {
               remove(index)
             }}

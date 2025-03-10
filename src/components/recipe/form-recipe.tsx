@@ -126,7 +126,7 @@ const MainForm = ({
       serveUnit: ingredient.serveUnit || '',
       alternateId: ingredient.alternateId?.toString() || '',
     })) ||
-      initialData?.ingredients.map((ingredient) => ({
+      initialData?.ingredients?.map((ingredient) => ({
         index: ingredient.index,
         ingredientId: ingredient.ingredientId,
         note: ingredient.note,
@@ -160,7 +160,7 @@ const MainForm = ({
     )
   }
 
-  const onClear = () => {
+  const onClear =  () => {
     const clearedValues = {
       name: '',
       description: '',
@@ -179,8 +179,8 @@ const MainForm = ({
       ],
     }
     form.reset(clearedValues)
-    window.localStorage.setItem('ce-recipe-formValues', '')
     setReset(reset + 1)
+    window.localStorage.setItem('ce-recipe-formValues', '')
   }
 
   const { fields, append, remove } = useFieldArray({
@@ -538,6 +538,7 @@ const MainForm = ({
                 <Button
                   onClick={(e) => {
                     e.preventDefault()
+                    e.stopPropagation()
                     onClear()
                   }}
                   variant='outline'

@@ -2,6 +2,8 @@
 
 import { api } from '@/trpc/react'
 
+import { useEffect, useState } from 'react'
+
 import { GetPlanById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusCircle } from 'lucide-react'
@@ -50,6 +52,49 @@ export const formSchema = z.object({
 })
 
 const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
+  const [initialData, setInitialData] = useState<z.infer<
+    typeof formSchema
+  > | null>()
+
+  useEffect(() => {
+    const loadFormData = () => {
+      const savedForm = localStorage.getItem('ce-plan-formValues')
+      console.log('savedForm', savedForm)
+
+      // @ts-ignore
+      if (savedForm === null || savedForm === '') {
+        setInitialData(null)
+        return
+      }
+
+      if (JSON.parse(savedForm) satisfies z.infer<typeof formSchema>) {
+        setInitialData(JSON.parse(savedForm))
+      } else {
+        setInitialData(null)
+      }
+    }
+
+    loadFormData()
+  }, [])
+
+  if (initialData === undefined) return null
+
+  return (
+    <MainForm
+      plan={plan}
+      initialData={initialData}
+    />
+  )
+}
+
+const MainForm = ({
+  plan,
+  initialData,
+}: {
+  plan: GetPlanById | null
+  initialData: z.infer<typeof formSchema> | null
+}) => {
+  console.log('initialData', initialData)
   const ctx = api.useUtils()
 
   const { mutate: createPlan } = api.plan.create.useMutation({
@@ -71,11 +116,11 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: plan?.name || '',
-      description: plan?.description || '',
-      image: plan?.image || '',
-      notes: plan?.notes || '',
-      planCategory: plan?.planCategory || '',
+      name: plan?.name || initialData?.name || '',
+      description: plan?.description || initialData?.description || '',
+      image: plan?.image || initialData?.image || '',
+      notes: plan?.notes || initialData?.notes || '',
+      planCategory: plan?.planCategory || initialData?.planCategory || '',
       meals: plan?.meals?.map((meal) => ({
         mealId: meal?.id.toString(),
         mealTitle: meal?.name || '',
@@ -87,28 +132,38 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
           recipeId: recipe?.recipeId?.toString(),
           note: recipe?.note || '',
         })),
-      })) || [
-        {
-          mealTitle: '1',
-          calories: '500',
-          vegeCalories: '',
-          note: '',
-          recipes: [
-            {
-              recipeId: '',
-              note: '',
-            },
-          ],
-        },
-      ],
+      })) ||
+        initialData?.meals?.map((meal) => ({
+          mealTitle: meal.mealTitle,
+          calories: meal.calories,
+          vegeCalories: meal.vegeCalories || '',
+          vegeNotes: meal.vegeNotes || '',
+          vege: meal.vege || '',
+          note: meal.note,
+          recipes: meal.recipes.map((recipe) => ({
+            recipeId: recipe.recipeId,
+            note: recipe.note,
+          })),
+        })) || [
+          {
+            mealTitle: '1',
+            calories: '500',
+            vegeCalories: '',
+            note: '',
+            recipes: [
+              {
+                recipeId: '',
+                note: '',
+              },
+            ],
+          },
+        ],
     },
   })
   const mealsField = useFieldArray({
     control: form.control,
     name: 'meals',
   })
-
-  console.log(form.getValues())
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     if (plan?.id) {
@@ -159,13 +214,49 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
     }
   }
 
+  const onClear = () => {
+    form.reset({
+      name: '',
+      description: '',
+      image: '',
+      notes: '',
+      planCategory: '',
+      meals: [
+        {
+          mealTitle: '1',
+          calories: '500',
+          vegeCalories: '',
+          note: '',
+          recipes: [
+            {
+              recipeId: '',
+              note: '',
+            },
+          ],
+        },
+      ],
+    })
+    window.localStorage.setItem('ce-plan-formValues', '')
+  }
+
+  const formData = form.watch()
+
+  const onChange = () => {
+    window.localStorage.setItem('ce-plan-formValues', JSON.stringify(formData))
+  }
+
   if (isLoadingAllMeals) return null
 
   return (
     <div className='my-1 flex flex-col gap-2 p-2'>
       <BackButton />
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          onKeyUp={onChange}
+          onClick={onChange}
+          onChange={onChange}
+        >
           <div className='flex flex-col gap-1 '>
             <div className='flex justify-between gap-8'>
               <FormField
@@ -261,7 +352,7 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
               <div className='flex flex-col gap-2'>
                 {mealsField.fields.map((field, index) => (
                   <FormPlanMeal
-                    key={index}
+                    key={field.id}
                     index={index}
                     form={form}
                     remove={mealsField.remove}
@@ -289,8 +380,18 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
                 />
               </div>
             </div>
-            <div>
-              <Button type='submit'>{ plan?.id ? 'Update' : 'Submit' }</Button>
+            <div className='flex gap-4'>
+              <Button type='submit'>{plan?.id ? 'Update' : 'Submit'}</Button>
+              <Button
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  onClear()
+                }}
+                variant='outline'
+              >
+                Clear
+              </Button>
             </div>
           </div>
         </form>

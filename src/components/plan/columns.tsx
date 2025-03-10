@@ -91,7 +91,7 @@ export const columns: ColumnDef<GetPlanById>[] = [
     cell: ({ row }) => {
       return (
         <div className='flex space-x-2'>
-          <span className='lg:w-[210px] truncate font-medium'>
+          <span className='lg:w-[410px] truncate font-medium'>
             {row.getValue('name')}
           </span>
         </div>
