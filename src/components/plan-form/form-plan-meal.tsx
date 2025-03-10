@@ -4,6 +4,7 @@ import { api } from '@/trpc/react'
 
 import { ReactNode, useState } from 'react'
 
+import { useIsMobile } from '@/hooks/use-mobile'
 import { cn, getRecipeDetailsByCals } from '@/lib/utils'
 import type { GetIngredientById, GetRecipeById } from '@/types'
 import { Check, ChevronsUpDown, CirclePlus, CircleX } from 'lucide-react'
@@ -21,6 +22,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -28,10 +30,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-
-import { Label } from '@/components/ui/label'
-import { formSchema } from './form-plan'
 import { Textarea } from '@/components/ui/textarea'
+
+import { formSchema } from './form-plan'
 
 export const dynamic = 'force-dynamic'
 
@@ -77,6 +78,7 @@ const Recipe = ({
   recipeIndex: number
   remove: (index: number) => void
 }) => {
+  const isMobile = useIsMobile()
   const { data: recipes } = api.recipe.getAll.useQuery()
   const recipeId = form.watch(
     `meals.${mealIndex}.recipes.${recipeIndex}.recipeId`,
@@ -85,13 +87,13 @@ const Recipe = ({
   const recipeDetails = getRecipeDetailsByCals(recipe, Number(calories))
 
   return (
-    <div className='grid grid-cols-9 gap-1 py-1 items-center text-sm relative'>
+    <div className='grid grid-cols-4 lg:grid-cols-9 gap-1 py-1 items-center text-sm relative'>
       <FormField
         control={form.control}
         name={`meals.${mealIndex}.recipes.${recipeIndex}.recipeId`}
         render={({ field }) => (
-          <FormItem className='w-full col-span-4'>
-            <div className='flex gap-2 items-center max-w-sm'>
+          <FormItem className='w-full col-span-5 flex'>
+            <div className='flex gap-2 items-center max-w-md w-full'>
               <Select
                 onValueChange={(value) => {
                   field.onChange(value)
@@ -99,7 +101,7 @@ const Recipe = ({
                 defaultValue={field.value}
               >
                 <FormControl>
-                  <SelectTrigger className='border-none shadow-none focus:ring-0 bg-transparent'>
+                  <SelectTrigger className='border-none shadow-none focus:ring-0 bg-transparent hover:bg-secondary px-1 font-semibold'>
                     <SelectValue placeholder='Pick a recipe' />
                   </SelectTrigger>
                 </FormControl>
@@ -116,27 +118,50 @@ const Recipe = ({
               </Select>
             </div>
             <FormMessage />
+            {isMobile ? (
+              <CircleX
+                size={20}
+                className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
+                onClick={() => remove(recipeIndex)}
+              />
+            ) : null}
           </FormItem>
         )}
       />
       {recipe?.name && (
         <>
-          <div>
-            {recipeDetails.size} {recipeDetails.unit?.slice(0, 1)}
-          </div>
-          <div>{recipeDetails.cals}</div>
-          <div>{recipeDetails.protein}</div>
-          <div>{recipeDetails.carbs}</div>
-          <div>{recipeDetails.fat} </div>
+          {isMobile ? (
+            <div className='flex flex-col gap-0 col-span-4'>
+              <div className='grid grid-cols-4 gap-1 items-center capitalize place-items-center text-muted-foreground font-medium'>
+                <div>cals</div>
+                <div>protein</div>
+                <div>carbs</div>
+                <div>fat</div>
+              </div>
+              <div className='grid grid-cols-4 gap-1 items-center place-items-center -mt-1'>
+                <div>{recipeDetails.cals}</div>
+                <div>{recipeDetails.protein}</div>
+                <div>{recipeDetails.carbs}</div>
+                <div>{recipeDetails.fat} </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div>{recipeDetails.cals}</div>
+              <div>{recipeDetails.protein}</div>
+              <div>{recipeDetails.carbs}</div>
+              <div>{recipeDetails.fat} </div>
+            </>
+          )}
         </>
       )}
-      <CircleX
-        size={20}
-        className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer absolute right-0 top-1/2 -translate-y-1/2'
-        onClick={() =>
-          remove(recipeIndex)
-        }
-      />
+      {isMobile ? null : (
+        <CircleX
+          size={20}
+          className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer absolute right-0 top-1/2 -translate-y-1/2'
+          onClick={() => remove(recipeIndex)}
+        />
+      )}
     </div>
   )
 }
@@ -144,12 +169,13 @@ const Recipe = ({
 const FormPlanMeal = ({
   index,
   form,
-  remove : removeMeal,
+  remove: removeMeal,
 }: {
   index: number
   form: UseFormReturn<z.infer<typeof formSchema>>
   remove: (index: number) => void
 }) => {
+  const isMobile = useIsMobile()
   const ctx = api.useUtils()
   const allMeals = ctx.meal.getAll.getData()
 
@@ -165,8 +191,6 @@ const FormPlanMeal = ({
     name: `meals.${index}.recipes`,
   })
 
-
-
   if (!allMeals) return <div />
 
   return (
@@ -176,20 +200,18 @@ const FormPlanMeal = ({
     >
       <CardHeader className='pb-2 pt-4 bg-background  w-full'>
         <div className='flex w-full justify-between'>
-        <CardTitle className='text-2xl'>Meal {index + 1}</CardTitle>
-        <CircleX
-          size={24}
-          className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
-          onClick={() =>
-            removeMeal(index)
-          }
-        />
+          <CardTitle className='text-2xl'>Meal {index + 1}</CardTitle>
+          <CircleX
+            size={24}
+            className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
+            onClick={() => removeMeal(index)}
+          />
         </div>
       </CardHeader>
-      <CardContent className='bg-background'>
+      <CardContent className='bg-background px-2 lg:px-6'>
         <div
           key={index}
-          className='grid grid-cols-5 gap-1 w-full py-2 '
+          className='grid grid-cols-1 lg:grid-cols-5 gap-1 w-full py-2 '
         >
           <div className='flex flex-col gap-2'>
             <FormField
@@ -249,7 +271,10 @@ const FormPlanMeal = ({
                 onCheckedChange={(e) => {
                   setIsVege(e === true)
                   if (e === true) {
-                    form.setValue(`meals.${index}.vege`, 'Lettuce, Onion, Green Beans, Zucchini, Kale, Spinach, Broccoli, Cauliflower, Capsicum, Cucumber')
+                    form.setValue(
+                      `meals.${index}.vege`,
+                      'Lettuce, Onion, Green Beans, Zucchini, Kale, Spinach, Broccoli, Cauliflower, Capsicum, Cucumber',
+                    )
                     form.setValue(`meals.${index}.vegeCalories`, '50')
                     form.setValue(`meals.${index}.vegeNotes`, '2 Cups')
                   } else {
@@ -315,15 +340,18 @@ const FormPlanMeal = ({
               </>
             )}
           </div>
-          <div className='flex flex-col gap-0 col-span-4 ml-4 divide-y divide-border'>
-            <div className='grid grid-cols-9 gap-1 capitalize py-1'>
-              <div className='col-span-4 ' />
-              <div>size</div>
-              <div>cals</div>
-              <div>protein</div>
-              <div>carbs</div>
-              <div>fat</div>
-            </div>
+          <div className='flex flex-col gap-0 col-span-4 lg:ml-4 divide-y divide-border'>
+            {isMobile ? (
+              <div className='mt-1' />
+            ) : (
+              <div className='grid grid-cols-9 gap-1 capitalize py-1'>
+                <div className='col-span-5 ' />
+                <div>cals</div>
+                <div>protein</div>
+                <div>carbs</div>
+                <div>fat</div>
+              </div>
+            )}
             {fields.map((field, recipeIndex) => (
               <Recipe
                 mealIndex={index}
