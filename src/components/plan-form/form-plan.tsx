@@ -258,7 +258,7 @@ const MainForm = ({
           onChange={onChange}
         >
           <div className='flex flex-col gap-1 '>
-            <div className='flex justify-between gap-8'>
+            <div className='flex flex-col lg:flex-row justify-between gap-1 lg:gap-8'>
               <FormField
                 control={form.control}
                 name='name'
@@ -297,7 +297,7 @@ const MainForm = ({
                 control={form.control}
                 name='image'
                 render={({ field }) => (
-                  <FormItem className='w-full'>
+                  <FormItem className='w-full hidden'>
                     <FormLabel>Image TODO</FormLabel>
                     <FormControl>
                       <Input
@@ -311,7 +311,7 @@ const MainForm = ({
                 )}
               />
             </div>
-            <div className='flex justify-between gap-8'>
+            <div className='flex flex-col lg:flex-row justify-between gap-1 lg:gap-8'>
               <FormField
                 control={form.control}
                 name='description'

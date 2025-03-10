@@ -303,7 +303,7 @@ const MainForm = ({
   if (isLoadingAllIngredients) return null
 
   return (
-    <div className='flex flex-col gap-2 lg:gap-4 p-2'>
+    <div className='flex flex-col gap-2 lg:gap-4 p-2 mb-28 lg:mb-0 relative'>
       <BackButton />
       <Form {...form}>
         <form
@@ -384,7 +384,7 @@ const MainForm = ({
                 {fields.length > 0 ? (
                   <>
                     {isMobile ? (
-                      <div className='flex flex-col divide-y divide-border mt-8'>
+                      <div className='flex flex-col divide-y divide-border mt-8 fixed bottom-0 left-0 right-0 w-full z-10 bg-background'>
                         <div
                           className={cn(
                             'grid grid-cols-4 w-full divide-x divid-y divide-border text-base font-bold capitalize',
@@ -512,7 +512,7 @@ const MainForm = ({
                   )}
                 />
               </div>
-              <div className='w-full'>
+              <div className='w-full hidden'>
                 <FormField
                   control={form.control}
                   name='image'
