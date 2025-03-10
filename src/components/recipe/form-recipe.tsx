@@ -2,8 +2,9 @@
 
 import { api } from '@/trpc/react'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
+import { useLocalStorage } from '@/hooks/use-local-storage'
 import { cn } from '@/lib/utils'
 import { GetRecipeById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -34,26 +35,67 @@ export const formSchema = z.object({
   image: z.string(),
   notes: z.string(),
   recipeCategory: z.string(),
-  ingredients: z.array(
-    z.object({
-      index: z.number(),
-      ingredientId: z.string(),
-      note: z.string(),
-      serveSize: z.string(),
-      serveUnit: z.string(),
-      alternateId: z.string(),
-    }),
-  ).nonempty(),
+  ingredients: z
+    .array(
+      z.object({
+        index: z.number(),
+        ingredientId: z.string(),
+        note: z.string(),
+        serveSize: z.string(),
+        serveUnit: z.string(),
+        alternateId: z.string(),
+      }),
+    )
+    .nonempty(),
 })
 
 const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
-  const ctx = api.useUtils()
-  const [recipeId] = useState<number | null>(() => {
-    if (recipe) {
-      return recipe.id
+  const [initialData, setInitialData] = useState<z.infer<
+    typeof formSchema
+  > | null>()
+
+  useEffect(() => {
+    const loadFormData = () => {
+      const savedForm = localStorage.getItem('ce-recipe-formValues') as z.infer<
+        typeof formSchema
+      > | null
+
+      console.log('savedForm', savedForm)
+
+      // @ts-ignore
+      if (savedForm === null || savedForm === '') {
+        setInitialData(null)
+        return
+      }
+      // @ts-ignore
+      setInitialData(JSON.parse(savedForm))
     }
-    return null
-  })
+
+    loadFormData()
+  }, [])
+
+  if (initialData === undefined) return null
+
+  return (
+    <MainForm
+      recipe={recipe}
+      initialData={initialData}
+    />
+  )
+}
+
+const MainForm = ({
+  recipe,
+  initialData,
+}: {
+  recipe: GetRecipeById | null
+  initialData: z.infer<typeof formSchema> | null
+}) => {
+  console.log('initialData', initialData)
+  const [reset, setReset] = useState(0)
+
+  const ctx = api.useUtils()
+
   const { data: allIngredients, isLoading: isLoadingAllIngredients } =
     api.ingredient.getAll.useQuery()
   const { mutate: createRecipe } = api.recipe.create.useMutation({
@@ -69,25 +111,74 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
     },
   })
 
+  const initValues = {
+    name: recipe?.name || initialData?.name || '',
+    description: recipe?.description || initialData?.description || '',
+    image: recipe?.image || initialData?.image || '',
+    notes: recipe?.notes || initialData?.notes || '',
+    recipeCategory: recipe?.recipeCategory || initialData?.recipeCategory || '',
+    ingredients: recipe?.recipeToIngredient.map((ingredient) => ({
+      index: ingredient.index,
+      ingredientId: ingredient.ingredient.id.toString() || '',
+      note: ingredient.note || '',
+      serveSize: ingredient.serveSize || '',
+      serveUnit: ingredient.serveUnit || '',
+      alternateId: ingredient.alternateId?.toString() || '',
+    })) ||
+      initialData?.ingredients.map((ingredient) => ({
+        index: ingredient.index,
+        ingredientId: ingredient.ingredientId,
+        note: ingredient.note,
+        serveSize: ingredient.serveSize,
+        serveUnit: ingredient.serveUnit,
+        alternateId: ingredient.alternateId,
+      })) || [
+        {
+          index: 1,
+          ingredientId: '',
+          note: '',
+          serveSize: '',
+          serveUnit: '',
+          alternateId: '',
+        },
+      ],
+  }
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: recipe?.name || '',
-      description: recipe?.description || '',
-      image: recipe?.image || '',
-      notes: recipe?.notes || '',
-      recipeCategory: recipe?.recipeCategory || '',
-      ingredients:
-        recipe?.recipeToIngredient.map((ingredient) => ({
-          index: ingredient.index,
-          ingredientId: ingredient.ingredient.id.toString() || '',
-          note: ingredient.note || '',
-          serveSize: ingredient.serveSize || '',
-          serveUnit: ingredient.serveUnit || '',
-          alternateId: ingredient.alternateId?.toString() || '',
-        })) || [],
-    },
+    defaultValues: initValues,
   })
+
+  const formData = form.watch()
+  console.log('formData', formData)
+
+  const onChange = () => {
+    window.localStorage.setItem('ce-recipe-formValues', JSON.stringify(formData))
+  }
+
+  const onClear = () => {
+    const clearedValues = {
+      name: '',
+      description: '',
+      image: '',
+      notes: '',
+      recipeCategory: '',
+      ingredients: [
+        {
+          index: 1,
+          ingredientId: '',
+          note: '',
+          serveSize: '',
+          serveUnit: '',
+          alternateId: '',
+        },
+      ],
+    }
+    form.reset(clearedValues)
+    window.localStorage.setItem('ce-recipe-formValues', '')
+    setReset(reset + 1)
+  }
+
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'ingredients',
@@ -211,7 +302,12 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
     <div className='flex flex-col gap-4 p-2'>
       <BackButton />
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          onKeyUp={onChange}
+          onClick={onChange}
+          onChange={onChange}
+        >
           <div className='flex flex-col gap-4'>
             <FormField
               control={form.control}
@@ -278,6 +374,7 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
                     form={form}
                     remove={remove}
                     allIngredients={allIngredients}
+                    reset={reset}
                   />
                 ))}
                 {fields.length > 0 ? (
@@ -381,7 +478,18 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
               </div>
             </div>
             <div>
-              <Button type='submit'>Submit</Button>
+              <div className='flex gap-4'>
+                <Button type='submit'>Submit</Button>
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    onClear()
+                  }}
+                  variant='outline'
+                >
+                  Clear
+                </Button>
+              </div>
             </div>
           </div>
         </form>

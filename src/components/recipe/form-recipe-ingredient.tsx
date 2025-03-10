@@ -5,7 +5,7 @@ import { api } from '@/trpc/react'
 import { ReactNode, useEffect, useState } from 'react'
 
 import { cn } from '@/lib/utils'
-import type { GetIngredientById, GetAllIngredients } from '@/types'
+import type { GetAllIngredients, GetIngredientById } from '@/types'
 import {
   Combobox,
   ComboboxInput,
@@ -46,11 +46,13 @@ const FormRecipeIngredient = ({
   form,
   remove,
   allIngredients,
+  reset,
 }: {
   index: number
   form: UseFormReturn<z.infer<typeof formSchema>>
   remove: (index: number) => void
   allIngredients: GetAllIngredients | null | undefined
+  reset: number
 }) => {
   const ctx = api.useUtils()
 
@@ -60,23 +62,22 @@ const FormRecipeIngredient = ({
   const ingredientId = form.watch(`ingredients.${index}.ingredientId`)
   const alternateId = form.watch(`ingredients.${index}.alternateId`)
 
-  const [selected, setSelected] = useState<GetIngredientById | null>(() => {
+  const [selected, setSelected] = useState<GetIngredientById | null>(null)
+
+  const [selectedAlt, setSelectedAlt] = useState<GetIngredientById | null>(null)
+
+  useEffect(() => {
     if (ingredientId) {
-      return allIngredients?.find((i) => i?.id === Number(ingredientId))
+      setSelected(allIngredients?.find((i) => i.id === Number(ingredientId)))
+    } else {
+      setSelected(null)
     }
-    return null
-  })
-
-  console.log('selected', ingredientId, alternateId)
-
-  const [selectedAlt, setSelectedAlt] = useState<GetIngredientById | null>(
-    () => {
-      if (alternateId) {
-        return allIngredients?.find((i) => i?.id === Number(alternateId))
-      }
-      return null
-    },
-  )
+    if (alternateId) {
+      setSelectedAlt(allIngredients?.find((i) => i.id === Number(alternateId)))
+    } else {
+      setSelectedAlt(null)
+    }
+  }, [reset])
 
   if (!allIngredients) return null
 
