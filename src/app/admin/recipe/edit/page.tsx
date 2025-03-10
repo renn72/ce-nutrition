@@ -2,7 +2,7 @@
 
 import { api } from '@/trpc/react'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 
 import { FormRecipe } from '@/components/recipe/form-recipe'
 
@@ -16,7 +16,7 @@ export default function Home() {
   if (isLoading) return null
 
   return (
-    <div className='flex flex-col max-w-screen-lg w-full mx-auto mt-10'>
+    <div className='flex flex-col max-w-screen-lg w-full mx-auto lg:mt-10'>
       <FormRecipe recipe={recipe} />
     </div>
   )

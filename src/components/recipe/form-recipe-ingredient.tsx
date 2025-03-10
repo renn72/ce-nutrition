@@ -4,6 +4,7 @@ import { api } from '@/trpc/react'
 
 import { ReactNode, useEffect, useState } from 'react'
 
+import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/lib/utils'
 import type { GetAllIngredients, GetIngredientById } from '@/types'
 import {
@@ -15,12 +16,14 @@ import {
 import { CheckIcon, ChevronDownIcon, Star, XCircle } from 'lucide-react'
 import { useForm, UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
+import { Badge } from '@/components/ui/badge'
 
+import { Button } from '@/components/ui/button'
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -36,7 +39,12 @@ const GridWrapper = ({
   children: ReactNode
   className?: string
 }) => (
-  <div className={cn('px-2 py-2 flex items-center justify-center', className)}>
+  <div
+    className={cn(
+      'px-1 lg:px-2 py-0 lg:py-2 flex items-center justify-center',
+      className,
+    )}
+  >
     {children}
   </div>
 )
@@ -55,6 +63,8 @@ const FormRecipeIngredient = ({
   reset: number
 }) => {
   const ctx = api.useUtils()
+
+  const isMobile = useIsMobile()
 
   const [query, setQuery] = useState('')
   const [queryAlt, setQueryAlt] = useState('')
@@ -80,15 +90,6 @@ const FormRecipeIngredient = ({
   }, [reset])
 
   if (!allIngredients) return null
-
-  // useEffect(() => {
-  //   if (ingredientId) {
-  //     setSelected(allIngredients?.find((i) => i.id === Number(ingredientId)))
-  //   }
-  //   if (alternateId) {
-  //     setSelectedAlt(allIngredients?.find((i) => i.id === Number(alternateId)))
-  //   }
-  // }, [ingredientId, alternateId, allIngredients])
 
   if (!allIngredients) return <div />
 
@@ -142,15 +143,18 @@ const FormRecipeIngredient = ({
   return (
     <div
       key={index}
-      className='grid grid-cols-15 w-full divide-x divide-border'
+      className='grid grid-cols-4 lg:grid-cols-15 w-full lg:divide-x divide-border relative'
     >
-      <GridWrapper className='col-span-4 px-1'>
+      <GridWrapper className='col-span-4'>
         <FormField
           control={form.control}
           name={`ingredients.${index}.ingredientId`}
           render={({ field }) => (
-            <FormItem className='flex flex-col w-full'>
-              <div className='flex gap-2 items-center w-content'>
+            <FormItem className='grid grid-cols-4 lg:flex lg:flex-col w-full items-center gap-2 lg:gap-0'>
+              <FormLabel className='block lg:hidden mt-2 text-muted-foreground'>
+                Ingredient
+              </FormLabel>
+              <div className='flex gap-2 items-center w-full lg:w-content col-span-3'>
                 <Combobox
                   value={selected}
                   onChange={(value) => {
@@ -169,7 +173,7 @@ const FormRecipeIngredient = ({
                   virtual={{ options: filteredIngredients }}
                   immediate
                 >
-                  <div className='relative w-content'>
+                  <div className='relative w-full lg:w-content'>
                     <ComboboxInput
                       className={cn(
                         'w-full rounded-lg text-sm font-semibold border bg-background py-1.5 pr-6 pl-3 cursor-pointer',
@@ -225,60 +229,16 @@ const FormRecipeIngredient = ({
           )}
         />
       </GridWrapper>
-      <GridWrapper className='col-span-2'>
-        <FormField
-          control={form.control}
-          name={`ingredients.${index}.serveSize`}
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  placeholder='Serve Size'
-                  {...field}
-                  type='number'
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </GridWrapper>
-      <GridWrapper>{selected?.serveUnit}</GridWrapper>
-      <GridWrapper>
-        {selected &&
-          (
-            Number(selected.caloriesWFibre) *
-            (Number(serveSize) / Number(selected.serveSize))
-          ).toFixed(1)}
-      </GridWrapper>
-      <GridWrapper>
-        {selected &&
-          (
-            Number(selected.protein) *
-            (Number(serveSize) / Number(selected.serveSize))
-          ).toFixed(1)}
-      </GridWrapper>
-      <GridWrapper>
-        {selected &&
-          (
-            Number(selected.availableCarbohydrateWithSugarAlcohols) *
-            (Number(serveSize) / Number(selected.serveSize))
-          ).toFixed(1)}
-      </GridWrapper>
-      <GridWrapper>
-        {selected &&
-          (
-            Number(selected.fatTotal) *
-            (Number(serveSize) / Number(selected.serveSize))
-          ).toFixed(1)}
-      </GridWrapper>
-      <GridWrapper className='col-span-3 px-1'>
+      <GridWrapper className='col-span-4 lg:col-span-3'>
         <FormField
           control={form.control}
           name={`ingredients.${index}.alternateId`}
           render={({ field }) => (
-            <FormItem className='flex flex-col w-full'>
-              <div className='flex gap-2 items-center w-full'>
+            <FormItem className='grid grid-cols-4 lg:flex lg:flex-col w-full items-center gap-2 lg:gap-0'>
+              <FormLabel className='block lg:hidden mt-2 text-muted-foreground'>
+                Alternate
+              </FormLabel>
+              <div className='flex gap-2 items-center w-full col-span-3'>
                 <Combobox
                   value={selectedAlt}
                   onChange={(value) => {
@@ -345,14 +305,134 @@ const FormRecipeIngredient = ({
           )}
         />
       </GridWrapper>
-      <GridWrapper className=''>
-        <XCircle
-          size={24}
-          className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-125 transition-transform cursor-pointer'
-          onClick={() => {
-            remove(index)
-          }}
+      <GridWrapper className='col-span-4 lg:col-span-2 '>
+        <FormField
+          control={form.control}
+          name={`ingredients.${index}.serveSize`}
+          render={({ field }) => (
+            <FormItem className='grid grid-cols-4 lg:flex items-center justify-start gap-2 w-full relative'>
+              <FormLabel className='block lg:hidden mt-2 text-muted-foreground'>
+                Size
+              </FormLabel>
+              <FormControl className='col-span-3'>
+                <Input
+                  placeholder='Serve Size'
+                  {...field}
+                  type='number'
+                />
+              </FormControl>
+              <FormMessage />
+        {isMobile ? (
+          <div className='absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pb-1'>
+            {selected?.serveUnit}
+          </div>
+        ) : null}
+            </FormItem>
+          )}
         />
+      </GridWrapper>
+      {isMobile ? null : (
+        <GridWrapper className={cn('text-sm')}>
+          {selected?.serveUnit}
+        </GridWrapper>
+      )}
+      {isMobile ? (
+        <>
+          <div className='col-span-4 px-2 mt-2'>
+            <div className='grid grid-cols-4 w-full border divide-x divide-border col-span-4 text-muted-foreground text-sm'>
+              <div className='text-center py-1'>Cals</div>
+              <div className='text-center py-1'>Protein</div>
+              <div className='text-center py-1'>Carbs</div>
+              <div className='text-center py-1'>Fat</div>
+            </div>
+          </div>
+          <div className='col-span-4 px-2 mb-1'>
+            {selected && (
+              <div className='grid grid-cols-4 w-full border-l border-r border-b divide-x divide-border'>
+                <GridWrapper className={cn('text-sm')}>
+                  {selected &&
+                    (
+                      Number(selected.caloriesWFibre) *
+                      (Number(serveSize) / Number(selected.serveSize))
+                    ).toFixed(1)}
+                </GridWrapper>
+                <GridWrapper className={cn('text-sm')}>
+                  {selected &&
+                    (
+                      Number(selected.protein) *
+                      (Number(serveSize) / Number(selected.serveSize))
+                    ).toFixed(1)}
+                </GridWrapper>
+                <GridWrapper className={cn('text-sm')}>
+                  {selected &&
+                    (
+                      Number(selected.availableCarbohydrateWithSugarAlcohols) *
+                      (Number(serveSize) / Number(selected.serveSize))
+                    ).toFixed(1)}
+                </GridWrapper>
+                <GridWrapper className={cn('text-sm')}>
+                  {selected &&
+                    (
+                      Number(selected.fatTotal) *
+                      (Number(serveSize) / Number(selected.serveSize))
+                    ).toFixed(1)}
+                </GridWrapper>
+              </div>
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          <GridWrapper className={cn('text-sm')}>
+            {selected &&
+              (
+                Number(selected.caloriesWFibre) *
+                (Number(serveSize) / Number(selected.serveSize))
+              ).toFixed(1)}
+          </GridWrapper>
+          <GridWrapper className={cn('text-sm')}>
+            {selected &&
+              (
+                Number(selected.protein) *
+                (Number(serveSize) / Number(selected.serveSize))
+              ).toFixed(1)}
+          </GridWrapper>
+          <GridWrapper className={cn('text-sm')}>
+            {selected &&
+              (
+                Number(selected.availableCarbohydrateWithSugarAlcohols) *
+                (Number(serveSize) / Number(selected.serveSize))
+              ).toFixed(1)}
+          </GridWrapper>
+          <GridWrapper className={cn('text-sm')}>
+            {selected &&
+              (
+                Number(selected.fatTotal) *
+                (Number(serveSize) / Number(selected.serveSize))
+              ).toFixed(1)}
+          </GridWrapper>
+        </>
+      )}
+
+      <GridWrapper className='col-span-4 lg:col-span-1 pb-1'>
+        {isMobile ? (
+          <Badge
+            variant='destructive'
+            className=''
+            onClick={() => {
+              remove(index)
+            }}
+          >delete</Badge>
+
+        ) : (
+          <Badge
+            variant='destructive'
+            className=''
+            onClick={() => {
+              remove(index)
+            }}
+          >delete</Badge>
+        )}
       </GridWrapper>
     </div>
   )

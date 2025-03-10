@@ -4,7 +4,7 @@ import { api } from '@/trpc/react'
 
 import { useEffect, useState } from 'react'
 
-import { useLocalStorage } from '@/hooks/use-local-storage'
+import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/lib/utils'
 import { GetRecipeById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -93,6 +93,7 @@ const MainForm = ({
 }) => {
   console.log('initialData', initialData)
   const [reset, setReset] = useState(0)
+  const isMobile = useIsMobile()
 
   const ctx = api.useUtils()
 
@@ -153,7 +154,10 @@ const MainForm = ({
   console.log('formData', formData)
 
   const onChange = () => {
-    window.localStorage.setItem('ce-recipe-formValues', JSON.stringify(formData))
+    window.localStorage.setItem(
+      'ce-recipe-formValues',
+      JSON.stringify(formData),
+    )
   }
 
   const onClear = () => {
@@ -299,7 +303,7 @@ const MainForm = ({
   if (isLoadingAllIngredients) return null
 
   return (
-    <div className='flex flex-col gap-4 p-2'>
+    <div className='flex flex-col gap-2 lg:gap-4 p-2'>
       <BackButton />
       <Form {...form}>
         <form
@@ -345,17 +349,18 @@ const MainForm = ({
             />
             <div className='flex flex-col gap-4'>
               <h2>Ingredients</h2>
-              <div className='flex flex-col divide-y divide-border border rounded-md '>
+              <div className='flex flex-col divide-y divide-border border rounded-md shadow-md'>
                 <div
                   className={cn(
-                    'grid grid-cols-15 w-full divide-x divide-border text-sm font-medium capitalize',
+                    'hidden lg:grid grid-cols-15 w-full divide-x divide-border text-sm font-medium capitalize',
                     'items-center tracking-tighter ',
                   )}
                 >
                   <div className={cn('col-span-4', 'px-2 py-2')}>
                     ingredient
                   </div>
-                  <div className='pl-2 py-2 col-span-2'>serve size</div>
+                  <div className='pl-2 py-2 col-span-3'>Alternate</div>
+                  <div className='pl-2 py-2 col-span-2'>size</div>
                   <div className='pl-2 py-2'>serve unit</div>
                   <div className='pl-2 py-2'>calories</div>
                   <div className='pl-2 py-2'>protein</div>
@@ -364,8 +369,7 @@ const MainForm = ({
                   <div className='pl-2 py-2 col-span-3 hidden'>
                     core attributes
                   </div>
-                  <div className='pl-2 py-2 col-span-3'>Alternate</div>
-                  <div className='pl-2 py-2'>delete</div>
+                  <div className='pl-2 py-2'>&#8192;</div>
                 </div>
                 {fields.map((_ingredient, index) => (
                   <FormRecipeIngredient
@@ -378,47 +382,98 @@ const MainForm = ({
                   />
                 ))}
                 {fields.length > 0 ? (
-                  <div
-                    className={cn(
-                      'grid grid-cols-15 w-full divide-x divide-border text-base font-bold capitalize',
-                      'items-center ',
+                  <>
+                    {isMobile ? (
+                      <div className='flex flex-col divide-y divide-border mt-8'>
+                        <div
+                          className={cn(
+                            'grid grid-cols-4 w-full divide-x divid-y divide-border text-base font-bold capitalize',
+                            'items-center ',
+                          )}
+                        >
+                          <div className='px-2 py-2 flex justify-center'>
+                            Calories
+                          </div>
+                          <div className='px-2 py-2 flex justify-center'>
+                            Protein
+                          </div>
+                          <div className='px-2 py-2 flex justify-center'>
+                            Carbs
+                          </div>
+                          <div className='px-2 py-2 flex justify-center'>
+                            Fat
+                          </div>
+                        </div>
+                        <div
+                          className={cn(
+                            'grid grid-cols-4 w-full divide-x divid-y divide-border text-base font-bold capitalize',
+                            'items-center ',
+                          )}
+                        >
+                          <div className='px-2 py-2 flex justify-center'>
+                            {calorieTotal}
+                          </div>
+                          <div className='px-2 py-2 flex justify-center'>
+                            {proteinTotal}
+                          </div>
+                          <div className='px-2 py-2 flex justify-center'>
+                            {carbTotal}
+                          </div>
+                          <div className='px-2 py-2 flex justify-center'>
+                            {fatTotal}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        className={cn(
+                          'grid grid-cols-15 w-full divide-x divide-border text-base font-bold capitalize',
+                          'items-center ',
+                        )}
+                      >
+                        <div className={cn('col-span-4', 'px-2 py-2')}>
+                          &#8192;
+                        </div>
+                        <div className='px-2 py-2 col-span-3 hidden'>
+                          &#8192;
+                        </div>
+                        <div className='px-2 py-2 col-span-3'>&#8192;</div>
+                        <div className='px-5 py-2 col-span-2'>&#8192;</div>
+                        <div className='px-2 py-2'>&#8192;</div>
+                        <div className='px-2 py-2 flex justify-center'>
+                          {calorieTotal}
+                        </div>
+                        <div className='px-2 py-2 flex justify-center'>
+                          {proteinTotal}
+                        </div>
+                        <div className='px-2 py-2 flex justify-center'>
+                          {carbTotal}
+                        </div>
+                        <div className='px-2 py-2 flex justify-center'>
+                          {fatTotal}
+                        </div>
+                        <div className='px-2 py-2'>&#8192;</div>
+                      </div>
                     )}
-                  >
-                    <div className={cn('col-span-4', 'px-2 py-2')}>&#8192;</div>
-                    <div className='px-5 py-2 col-span-2'>{sizeTotal}</div>
-                    <div className='px-2 py-2'>&#8192;</div>
-                    <div className='px-2 py-2 flex justify-center'>
-                      {calorieTotal}
-                    </div>
-                    <div className='px-2 py-2 flex justify-center'>
-                      {proteinTotal}
-                    </div>
-                    <div className='px-2 py-2 flex justify-center'>
-                      {carbTotal}
-                    </div>
-                    <div className='px-2 py-2 flex justify-center'>
-                      {fatTotal}
-                    </div>
-                    <div className='px-2 py-2 col-span-3 hidden'>&#8192;</div>
-                    <div className='px-2 py-2 col-span-3'>&#8192;</div>
-                    <div className='px-2 py-2'>&#8192;</div>
-                  </div>
+                  </>
                 ) : null}
               </div>
-              <PlusCircle
-                size={24}
-                className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-125 transition-transform cursor-pointer'
-                onClick={() =>
-                  append({
-                    ingredientId: '',
-                    serveSize: '',
-                    serveUnit: '',
-                    index: fields.length + 1,
-                    note: '',
-                    alternateId: '',
-                  })
-                }
-              />
+              <div className='flex justify-center w-full'>
+                <PlusCircle
+                  size={36}
+                  className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
+                  onClick={() =>
+                    append({
+                      ingredientId: '',
+                      serveSize: '',
+                      serveUnit: '',
+                      index: fields.length + 1,
+                      note: '',
+                      alternateId: '',
+                    })
+                  }
+                />
+              </div>
             </div>
             <FormField
               control={form.control}
