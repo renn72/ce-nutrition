@@ -101,8 +101,6 @@ const Notifications = ({
     },
   })
 
-  console.log('userMessages', userMessages)
-
   const isNotifications = userMessages?.some(
     (message) => message.isViewed === false || message.isViewed === null,
   )

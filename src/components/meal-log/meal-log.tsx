@@ -45,7 +45,7 @@ const Meal = ({
   }[]
   userId: string
   index: number
-    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const [selectValue, setSelectValue] = useState<string>('')
 
@@ -83,7 +83,7 @@ const Meal = ({
   return (
     <div className='flex gap-0 flex flex-col items-start w-full'>
       <DialogHeader>
-        <DialogTitle>Meal {index}</DialogTitle>
+        <DialogTitle>Meal {index + 1}</DialogTitle>
         <DialogDescription></DialogDescription>
       </DialogHeader>
 
@@ -133,9 +133,11 @@ const Meal = ({
                     <ToggleGroupItem
                       key={recipe?.id}
                       value={recipe?.id.toString() ?? ''}
-                      className='text-sm truncate min-w-44 py-1 px-2 data-[state=on]:bg-blue-900/70 data-[state=on]:text-slate-100 data-[state=on]:shadow-none h-8'
+                      className='text-sm truncate min-w-44  py-1 px-2 data-[state=on]:bg-blue-900/70 data-[state=on]:text-slate-100 data-[state=on]:shadow-none h-8'
                     >
-                      {recipe?.name}
+                      {recipe?.name && recipe?.name?.length > 40
+                        ? recipe?.name?.slice(0, 37) + '...'
+                        : recipe?.name}
                     </ToggleGroupItem>
                   ))}
                 </div>
@@ -174,11 +176,6 @@ const MealLog = ({
 
   const currentMeal = todaysLog?.dailyMeals?.length ?? 0
 
-  const meals = activePlans
-    .map((plan) => plan.userMeals)
-    .flat()
-    .filter((meal) => meal.mealIndex === currentMeal)
-
   const recipes = activePlans
     .map((plan) => plan.userRecipes)
     .flat()
@@ -200,6 +197,13 @@ const MealLog = ({
     }
   })
 
+  const isFinished =
+    currentMeal ===
+    activePlans
+      .map((plan) => plan.userMeals?.length)
+      .reduce((a, b) => (a > b ? a : b), 0)
+  console.log('isFinished', isFinished)
+
   return (
     <div className='flex flex-col gap-0 w-full relative col-span-3'>
       <Dialog
@@ -208,7 +212,14 @@ const MealLog = ({
       >
         <DialogTrigger disabled={isNotActivePlan}>
           <div className='flex flex-col gap-0 items-center justify-start w-full'>
-            <div className='text-lg font-semibold'>Meal {currentMeal + 1}</div>
+            <div
+              className={cn(
+                'text-lg font-semibold',
+                isFinished ? 'opacity-0' : '',
+              )}
+            >
+              Meal {currentMeal + 1}
+            </div>
             <div
               className={cn(
                 'rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center',
@@ -257,13 +268,12 @@ const MealLog = ({
                 className='text-xs flex flex-col items-start py-[2px]'
               >
                 <div>
-                {meal.createdAt.toLocaleTimeString('en-AU', {
-                  hour: 'numeric',
-                  minute: 'numeric',
-                })}
+                  {meal.createdAt.toLocaleTimeString('en-AU', {
+                    hour: 'numeric',
+                    minute: 'numeric',
+                  })}
                 </div>
-                <div className=''>
-                  {meal.recipe?.[0]?.name}</div>
+                <div className=''>{meal.recipe?.[0]?.name}</div>
               </div>
             ))}
           </div>

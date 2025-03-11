@@ -11,6 +11,7 @@ import { atomWithStorage } from 'jotai/utils'
 import { ChevronLeft, ChevronRight, CircleX, Loader } from 'lucide-react'
 import { toast } from 'sonner'
 
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
@@ -91,8 +92,24 @@ const Meal = ({
 
   return (
     <div className='flex gap-0 flex flex-col items-start w-full'>
-      <div className='text-sm text-muted-foreground font-medium'>
-        Meal {Number(index) + 1}
+      <div className='flex justify-between items-center w-full'>
+        <div className='text-sm text-muted-foreground font-medium'>
+          Meal {Number(index) + 1}
+        </div>
+        <Badge
+          className='cursor-pointer active:scale-90 transition-transform active:bg-destructive'
+          onClick={() => {
+            setSelectValue('')
+            deleteMeal({
+              userId: userId,
+              mealIndex: index,
+              date: date,
+              logId: log?.id || null,
+            })
+          }}
+        >
+          Clear
+        </Badge>
       </div>
 
       <ToggleGroup
@@ -108,6 +125,7 @@ const Meal = ({
             plan.recipes?.find((recipe) => recipe?.id == Number(value)),
           )
           if (!recipe || !plan) return
+
           addMeal({
             userId: userId,
             planId: plan.id,
@@ -119,7 +137,7 @@ const Meal = ({
           })
         }}
       >
-        <div className='flex flex-col ml-2'>
+        <div className='flex flex-col ml-2 w-full'>
           {plans?.map((plan) => {
             if (plan.recipes?.length === 0) return null
             return (
@@ -135,8 +153,12 @@ const Meal = ({
                     </div>
                   )}
                 </div>
-                <div className='flex gap-1 items-center flex-wrap'>
+                <div className='flex flex-col gap-0 '>
                   {plan.recipes?.map((recipe) => (
+                    <div
+                      key={recipe?.id}
+                      className='py-1'
+                    >
                     <ToggleGroupItem
                       key={recipe?.id}
                       value={recipe?.id.toString() ?? ''}
@@ -144,6 +166,7 @@ const Meal = ({
                     >
                       {recipe?.name}
                     </ToggleGroupItem>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -151,20 +174,6 @@ const Meal = ({
           })}
         </div>
       </ToggleGroup>
-
-      <CircleX
-        size={20}
-        className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform active:text-red-500 hidden'
-        onClick={() => {
-          // setSelectValue('')
-          deleteMeal({
-            userId: userId,
-            mealIndex: index,
-            date: date,
-            logId: log?.id || null,
-          })
-        }}
-      />
     </div>
   )
 }
@@ -217,7 +226,7 @@ const Day = ({
   }
 
   return (
-    <div className='flex gap-2 flex-col w-full bg-secondary min-h-[70px] px-2 py-1'>
+    <div className='flex gap-6 flex-col w-full bg-secondary min-h-[70px] px-2 py-1'>
       <div className='w-full flex justify-between items-center'>
         <div className='text-sm text-muted-foreground font-medium'>
           {date.toLocaleDateString('en-AU', {
@@ -240,7 +249,7 @@ const Day = ({
           Clear
         </Button>
       </div>
-      <div className='flex gap-2 flex-col'>
+      <div className='flex gap-2 flex-col w-full'>
         {Array.from({ length: numMeals }).map((_, i) => {
           const logMeal = dailyLogs
             ?.find((dailyLog) => dailyLog.date === date.toDateString())
