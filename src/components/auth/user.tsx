@@ -101,6 +101,7 @@ const User = () => {
     ctx.user.isUser.refetch()
   }
 
+  // @ts-ignore
   let installPrompt = null
   let installButton = false
 
@@ -162,6 +163,7 @@ const User = () => {
           <DropdownMenuItem className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
             <Button
               onClick={ async () => {
+                // @ts-ignore
                 if (!installPrompt) return
 
                 const result = await installPrompt.prompt()

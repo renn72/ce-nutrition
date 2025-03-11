@@ -32,6 +32,7 @@ import { MobileHeader } from '@/components/layout/mobile-header'
 import { PoopLog } from '@/components/poop-log/poop-log'
 import { UserPlanView } from '@/components/user-plan/user-plan-view'
 import { WaterLog } from '@/components/water-log/water-log'
+import { MealLog } from '@/components/meal-log/meal-log'
 
 export const dynamic = 'force-dynamic'
 
@@ -78,9 +79,13 @@ const Mobile = ({
     },
   })
 
+  const currentUserPlans = currentUser?.userPlans.filter((plan) => plan.isActive)
+
   const dailyLog = dailyLogs?.find(
     (dailyLog) => dailyLog.date === new Date().toDateString(),
   )
+
+  if (dailyLogsLoading) return null
 
   return (
     <div
@@ -222,8 +227,8 @@ const Mobile = ({
             </div>
           </CardContent>
         </Card>
-        <Card className='py-2'>
-          <CardContent className='px-2 py-0'>
+        <Card className='py-2 '>
+          <CardContent className='px-0 py-0'>
             <div className='grid grid-cols-3 w-full p-2'>
               <WaterLog
                 userId={userId}
@@ -232,18 +237,9 @@ const Mobile = ({
                   currentUser?.settings?.defaultWater ?? 600,
                 )}
               />
-              <div className='flex flex-col gap-0 items-center justify-start w-full'>
-                <div className='text-secondary text-lg'>0</div>
-                <div className='rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center justify-center active:scale-90 transition-transform cursor-pointer'>
-                  <Salad
-                    size={28}
-                    className='text-primary/80 hover:text-primary active:scale-90 transition-transform cursor-pointer'
-                    onClick={() => {
-                      toast.success('Salad')
-                    }}
-                  />
-                </div>
-              </div>
+              <MealLog
+                dailyLogs={dailyLogs}
+                currentUser={currentUser} />
               <PoopLog
                 userId={userId}
                 dailyLogs={dailyLogs}

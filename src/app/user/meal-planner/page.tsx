@@ -88,7 +88,6 @@ const Meal = ({
       })
     }
   }
-  console.log('plans', plans)
 
   return (
     <div className='flex gap-0 flex flex-col items-start w-full'>
