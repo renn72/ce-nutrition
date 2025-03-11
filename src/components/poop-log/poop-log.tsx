@@ -77,7 +77,7 @@ const PoopLog = ({
     }, 0) ?? 0
 
   return (
-    <div className='flex flex-col gap-0 w-full relative'>
+    <div className='flex flex-col gap-0 w-full relative col-span-2'>
       <div className='w-full text-center font-bold text-lg'>
         <NumberFlow value={totalPoop ?? 0} />
       </div>
@@ -103,7 +103,7 @@ const PoopLog = ({
           />
         </CollapsibleTrigger>
 
-        <CollapsibleContent>
+        <CollapsibleContent className=''>
           {todaysDailyLog?.poopLogs.length === 0 || !todaysDailyLog ? (
             <div className='text-center'>...</div>
           ) : (

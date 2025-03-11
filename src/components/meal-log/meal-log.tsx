@@ -201,7 +201,7 @@ const MealLog = ({
   })
 
   return (
-    <div className='flex flex-col gap-0 w-full relative'>
+    <div className='flex flex-col gap-0 w-full relative col-span-3'>
       <Dialog
         open={isOpen}
         onOpenChange={setIsOpen}
@@ -250,14 +250,20 @@ const MealLog = ({
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <div className='flex flex-col gap-0 divide-y divide-border items-center justify-center mt-[4px] text-muted-foreground tracking-tight'>
+          <div className='flex flex-col gap-0 divide-y divide-border items-start justify-center mt-[4px] text-muted-foreground tracking-tight px-[6px]'>
             {todaysLog?.dailyMeals.map((meal) => (
               <div
                 key={meal.mealIndex}
-                className='text-[0.6rem] flex flex-col items-center'
+                className='text-xs flex flex-col items-start py-[2px]'
               >
-                <div>{meal.createdAt.toLocaleTimeString('en-AU')}</div>
-                <div>{meal.recipe?.[0]?.name}</div>
+                <div>
+                {meal.createdAt.toLocaleTimeString('en-AU', {
+                  hour: 'numeric',
+                  minute: 'numeric',
+                })}
+                </div>
+                <div className=''>
+                  {meal.recipe?.[0]?.name}</div>
               </div>
             ))}
           </div>

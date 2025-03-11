@@ -86,7 +86,7 @@ const WaterLog = ({
     }, 0) ?? 0
 
   return (
-    <div className='flex flex-col gap-0 w-full relative'>
+    <div className='flex flex-col gap-0 w-full relative col-span-2'>
       <div className='w-full text-center font-bold text-lg'>
         <NumberFlow value={totalWater ?? 0} />
       </div>
@@ -113,7 +113,7 @@ const WaterLog = ({
           />
         </CollapsibleTrigger>
 
-        <CollapsibleContent>
+        <CollapsibleContent className='pr-[3px]'>
           <Input
             placeholder='Amount'
             className='w-full mb-1'
