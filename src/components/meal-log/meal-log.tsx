@@ -5,11 +5,12 @@ import { api } from '@/trpc/react'
 import { useEffect, useState } from 'react'
 
 import { cn } from '@/lib/utils'
-import { GetAllDailyLogs, GetUserById, userPlan, UserRecipe } from '@/types'
+import { GetAllDailyLogs, GetUserById, UserRecipe } from '@/types'
 import NumberFlow from '@number-flow/react'
 import { CircleX, ListCollapse, Salad, Toilet } from 'lucide-react'
 import { toast } from 'sonner'
 
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Collapsible,
   CollapsibleContent,
@@ -49,6 +50,10 @@ const Meal = ({
 }) => {
   const [selectValue, setSelectValue] = useState<string>('')
 
+  const [selectedPlans, setSelectedPlans] = useState<string[]>(() =>
+    plans.map((plan) => plan.id.toString()),
+  )
+
   const ctx = api.useUtils()
   const { mutate: addMeal } = api.dailyLog.addMeal.useMutation({
     onMutate: async () => {
@@ -82,9 +87,37 @@ const Meal = ({
 
   return (
     <div className='flex gap-0 flex flex-col items-start w-full'>
-      <DialogHeader>
-        <DialogTitle>Meal {index + 1}</DialogTitle>
+      <DialogHeader
+        className='pb-4'
+      >
+        <DialogTitle
+          className='text-xl'
+        >Meal {index + 1}</DialogTitle>
         <DialogDescription></DialogDescription>
+        <ToggleGroup
+          orientation='vertical'
+          size='sm'
+          variant='outline'
+          type='multiple'
+          className='w-full justify-start flex flex-wrap'
+          value={selectedPlans}
+          onValueChange={setSelectedPlans}
+        >
+          {plans?.map((plan) => (
+            <ToggleGroupItem
+              key={plan.id}
+              value={plan.id.toString()}
+              className={cn(
+                'text-xs truncate max-w-28 py-1 px-2 tracking-tight h-min',
+                'data-[state=on]:bg-foreground data-[state=on]:text-background data-[state=on]:shadow-none',
+                'block rounded-full font-semibold',
+
+              )}
+            >
+              {plan.name}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       </DialogHeader>
 
       <ToggleGroup
@@ -112,38 +145,40 @@ const Meal = ({
           })
         }}
       >
-        <div className='flex flex-col ml-2'>
-          {plans?.map((plan) => {
-            if (plan.recipes?.length === 0) return null
-            return (
-              <div
-                key={plan.id}
-                className='flex flex-col'
-              >
-                <div className='flex gap-4 items-center'>
-                  <h3>{plan.name}</h3>
-                  {plan.mealCals === '' ? null : (
-                    <div className='text-[0.7rem] text-muted-foreground'>
-                      {plan.mealCals}cals
-                    </div>
-                  )}
+        <div className='flex flex-col ml-2 gap-2'>
+          {plans
+            ?.filter((plan) => selectedPlans.includes(plan.id.toString()))
+            ?.map((plan) => {
+              if (plan.recipes?.length === 0) return null
+              return (
+                <div
+                  key={plan.id}
+                  className='flex flex-col'
+                >
+                  <div className='flex gap-4 items-center'>
+                    <h3>{plan.name}</h3>
+                    {plan.mealCals === '' ? null : (
+                      <div className='text-[0.7rem] text-muted-foreground'>
+                        {plan.mealCals}cals
+                      </div>
+                    )}
+                  </div>
+                  <div className='flex gap-1 flex-col items-start mt-2'>
+                    {plan.recipes?.map((recipe) => (
+                      <ToggleGroupItem
+                        key={recipe?.id}
+                        value={recipe?.id.toString() ?? ''}
+                        className='text-sm truncate min-w-44  py-1 px-2 data-[state=on]:bg-blue-900/70 data-[state=on]:text-slate-100 data-[state=on]:shadow-none h-8'
+                      >
+                        {recipe?.name && recipe?.name?.length > 40
+                          ? recipe?.name?.slice(0, 37) + '...'
+                          : recipe?.name}
+                      </ToggleGroupItem>
+                    ))}
+                  </div>
                 </div>
-                <div className='flex gap-4 flex-col items-start mt-2'>
-                  {plan.recipes?.map((recipe) => (
-                    <ToggleGroupItem
-                      key={recipe?.id}
-                      value={recipe?.id.toString() ?? ''}
-                      className='text-sm truncate min-w-44  py-1 px-2 data-[state=on]:bg-blue-900/70 data-[state=on]:text-slate-100 data-[state=on]:shadow-none h-8'
-                    >
-                      {recipe?.name && recipe?.name?.length > 40
-                        ? recipe?.name?.slice(0, 37) + '...'
-                        : recipe?.name}
-                    </ToggleGroupItem>
-                  ))}
-                </div>
-              </div>
-            )
-          })}
+              )
+            })}
         </div>
       </ToggleGroup>
     </div>
@@ -238,10 +273,12 @@ const MealLog = ({
           </div>
         </DialogTrigger>
         <DialogContent
+          className='px-2'
           onOpenAutoFocus={(e) => {
             e.preventDefault()
           }}
         >
+          <ScrollArea className='max-h-[80vh]'>
           <Meal
             date={today}
             dailyLogs={dailyLogs}
@@ -250,6 +287,7 @@ const MealLog = ({
             index={currentMeal}
             setIsOpen={setIsOpen}
           />
+          </ScrollArea>
         </DialogContent>
       </Dialog>
       <Collapsible>
