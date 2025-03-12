@@ -21,6 +21,12 @@ const UserInfo = ({ userId }: { userId: string }) => {
       ctx.invalidate()
     },
   })
+  const { mutate: activePlan } = api.userPlan.activePlan.useMutation({
+    onSuccess: () => {
+      toast.success('Actived')
+      ctx.invalidate()
+    },
+  })
   const { data: currentUser } = api.user.get.useQuery(userId)
   const plans = currentUser?.userPlans
     .filter((_plan) => true)
@@ -42,6 +48,28 @@ const UserInfo = ({ userId }: { userId: string }) => {
             <div
               className={cn(
                 'flex gap-2 items-center w-full justify-between',
+                plan.isActive ? 'hidden' : '',
+              )}
+            >
+              <CardTitle className={cn('text-xl font-medium')}>
+                <Badge className=''>Finished</Badge>
+              </CardTitle>
+
+              <div className='flex gap-2 items-center'>
+                <Button
+                  variant='default'
+                  size='sm'
+                  onClick={() => {
+                    activePlan(plan.id)
+                  }}
+                >
+                  Reactivate Plan
+                </Button>
+              </div>
+            </div>
+            <div
+              className={cn(
+                'flex gap-2 items-center w-full justify-between',
                 plan.isActive ? '' : 'hidden',
               )}
             >
@@ -51,6 +79,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
 
               <div className='flex gap-2 items-center'>
                 <Link
+                  className='hidden'
                   href={`/admin/user-program-edit?user=${userId}&plan=${plan.id}`}
                   prefetch={false}
                 >

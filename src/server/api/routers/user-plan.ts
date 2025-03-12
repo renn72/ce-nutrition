@@ -29,6 +29,18 @@ export const userPlanRouter = createTRPCRouter({
         .where(eq(userPlan.id, input))
       return res
     }),
+  activePlan: protectedProcedure
+    .input(z.number())
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.db
+        .update(userPlan)
+        .set({
+          isActive: true,
+          finishedAt: null,
+        })
+        .where(eq(userPlan.id, input))
+      return res
+    }),
   getMeal: protectedProcedure
     .input(z.number())
     .query(async ({ input, ctx }) => {
