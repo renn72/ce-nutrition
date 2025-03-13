@@ -5,12 +5,20 @@ import { api } from '@/trpc/react'
 import { useEffect, useState } from 'react'
 
 import { cn } from '@/lib/utils'
-import { GetAllDailyLogs, GetUserById, UserRecipe } from '@/types'
+import { GetAllDailyLogs, GetUserById, UserPlan, UserRecipe } from '@/types'
 import NumberFlow from '@number-flow/react'
-import { CircleX, ListCollapse, Salad, Toilet } from 'lucide-react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  CircleX,
+  ListCollapse,
+  Salad,
+  Toilet,
+} from 'lucide-react'
 import { toast } from 'sonner'
 
-import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Collapsible,
   CollapsibleContent,
@@ -24,13 +32,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Switch } from '@/components/ui/switch'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+
+import { Label } from '../ui/label'
 
 export const dynamic = 'force-dynamic'
 
 const Meal = ({
   date,
   plans,
+  allPlans,
   dailyLogs,
   userId,
   index,
@@ -38,6 +51,7 @@ const Meal = ({
 }: {
   date: Date
   dailyLogs: GetAllDailyLogs | null | undefined
+  allPlans: UserPlan[]
   plans: {
     id: number
     name: string
@@ -53,6 +67,8 @@ const Meal = ({
   const [selectedPlans, setSelectedPlans] = useState<string[]>(() =>
     plans.map((plan) => plan.id.toString()),
   )
+
+  const [mealIndex, setMealIndex] = useState(() => index)
 
   const ctx = api.useUtils()
   const { mutate: addMeal } = api.dailyLog.addMeal.useMutation({
@@ -81,18 +97,39 @@ const Meal = ({
 
   const logMeal = dailyLogs
     ?.find((dailyLog) => dailyLog.date === date.toDateString())
-    ?.dailyMeals.find((dailyMeal) => dailyMeal.mealIndex == index)
+    ?.dailyMeals.find((dailyMeal) => dailyMeal.mealIndex == mealIndex)
+  console.log('logMeal', logMeal)
 
   const recipes = plans.map((plan) => plan.recipes).flat()
 
+  useEffect(() => {
+    if (logMeal) {
+      setSelectValue(logMeal?.recipeId?.toString() ?? '')
+    }
+  }, [logMeal])
+
+  console.log('selectValue', selectValue)
+
   return (
     <div className='flex gap-0 flex flex-col items-start w-full'>
-      <DialogHeader
-        className='pb-4'
-      >
-        <DialogTitle
-          className='text-xl'
-        >Meal {index + 1}</DialogTitle>
+      <DialogHeader className='pb-4'>
+        <DialogTitle className='text-xl flex gap-6 items-center w-full justify-center relative'>
+          <ChevronsLeft
+            size={32}
+            className='cursor-pointer '
+            onClick={() => {
+              setMealIndex(mealIndex - 1)
+            }}
+          />
+          <div className='mt-[6px]'>Meal {mealIndex + 1}</div>
+          <ChevronsRight
+            size={32}
+            className='cursor-pointer '
+            onClick={() => {
+              setMealIndex(mealIndex + 1)
+            }}
+          />
+        </DialogTitle>
         <DialogDescription></DialogDescription>
         <ToggleGroup
           orientation='vertical'
@@ -111,7 +148,6 @@ const Meal = ({
                 'text-xs truncate max-w-28 py-1 px-2 tracking-tight h-min',
                 'data-[state=on]:bg-foreground data-[state=on]:text-background data-[state=on]:shadow-none',
                 'block rounded-full font-semibold',
-
               )}
             >
               {plan.name}
@@ -194,6 +230,7 @@ const MealLog = ({
 }) => {
   const today = new Date()
 
+  const [isAllMeals, setIsAllMeals] = useState<boolean>(false)
   const ctx = api.useUtils()
 
   const [isOpen, setIsOpen] = useState(false)
@@ -219,6 +256,10 @@ const MealLog = ({
 
   console.log('todaysLog', todaysLog)
 
+  const isAll =
+    currentUser.id === 'f3feb152-06de-4a1e-8c9f-19d5c96c6788' ||
+    currentUser.id === 'f19482e2-a009-4dd4-801d-4aff3911924a'
+
   const recipePlans = activePlans.map((plan) => {
     return {
       id: plan?.id ?? 0,
@@ -227,7 +268,7 @@ const MealLog = ({
         plan?.userMeals.find((meal) => meal.mealIndex == currentMeal)
           ?.calories ?? '',
       recipes: plan?.userRecipes.filter(
-        (recipe) => recipe.mealIndex == currentMeal,
+        (recipe) => recipe.mealIndex == currentMeal || isAllMeals,
       ),
     }
   })
@@ -237,7 +278,6 @@ const MealLog = ({
     activePlans
       .map((plan) => plan.userMeals?.length)
       .reduce((a, b) => (a > b ? a : b), 0)
-  console.log('isFinished', isFinished)
 
   return (
     <div className='flex flex-col gap-0 w-full relative col-span-3'>
@@ -279,14 +319,26 @@ const MealLog = ({
           }}
         >
           <ScrollArea className='max-h-[80vh]'>
-          <Meal
-            date={today}
-            dailyLogs={dailyLogs}
-            plans={recipePlans}
-            userId={currentUser.id}
-            index={currentMeal}
-            setIsOpen={setIsOpen}
-          />
+            {isAll ? (
+              <div className='flex items-center gap-2'>
+                <Label> All Meals </Label>
+                <Switch
+                  checked={isAllMeals}
+                  onCheckedChange={(checked) => {
+                    setIsAllMeals(checked)
+                  }}
+                />
+              </div>
+            ) : null}
+            <Meal
+              allPlans={activePlans}
+              date={today}
+              dailyLogs={dailyLogs}
+              plans={recipePlans}
+              userId={currentUser.id}
+              index={currentMeal}
+              setIsOpen={setIsOpen}
+            />
           </ScrollArea>
         </DialogContent>
       </Dialog>
