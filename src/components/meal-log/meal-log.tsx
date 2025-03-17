@@ -64,9 +64,7 @@ const Meal = ({
 }) => {
   const [selectValue, setSelectValue] = useState<string>('')
 
-  const [selectedPlans, setSelectedPlans] = useState<string[]>(() =>
-    plans.map((plan) => plan.id.toString()),
-  )
+  const [selectedPlans, setSelectedPlans] = useState<string[]>([''])
 
   const [mealIndex, setMealIndex] = useState(() => index)
 
