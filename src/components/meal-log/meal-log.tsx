@@ -64,7 +64,12 @@ const Meal = ({
 }) => {
   const [selectValue, setSelectValue] = useState<string>('')
 
-  const [selectedPlans, setSelectedPlans] = useState<string[]>([''])
+  const [selectedPlans, setSelectedPlans] = useState<string[]>(() =>{
+    if(plans.length === 1) return [...plans.map((plan) => plan.id.toString())]
+    return ['']
+
+  }
+  )
 
   const [mealIndex, setMealIndex] = useState(() => index)
 
@@ -114,7 +119,7 @@ const Meal = ({
         <DialogTitle className='text-xl flex gap-6 items-center w-full justify-center relative'>
           <ChevronsLeft
             size={32}
-            className='cursor-pointer '
+            className='cursor-pointer hidden '
             onClick={() => {
               setMealIndex(mealIndex - 1)
             }}
@@ -122,7 +127,7 @@ const Meal = ({
           <div className='mt-[6px]'>Meal {mealIndex + 1}</div>
           <ChevronsRight
             size={32}
-            className='cursor-pointer '
+            className='cursor-pointer hidden '
             onClick={() => {
               setMealIndex(mealIndex + 1)
             }}
