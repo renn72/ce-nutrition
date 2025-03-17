@@ -243,7 +243,7 @@ export function DataTableRowActions<TData>({
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onSelect={async () => {
-            await signIn('email', { email: data?.email, redirect: false })
+            await signIn('resend', { email: data?.email?.toLowerCase(), redirect: false })
             toast.success('Sent email invite')
           }}
         >
