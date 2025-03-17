@@ -102,20 +102,6 @@ const User = () => {
   }
 
   // @ts-ignore
-  let installPrompt = null
-  let installButton = false
-
-  window.addEventListener('beforeinstallprompt', (event) => {
-    event.preventDefault()
-    installPrompt = event
-    installButton = true
-  })
-
-  const disableInstallPrompt = () => {
-    installPrompt = null
-    installButton = false
-  }
-
   if (isLoading) return <div className='w-8' />
   if (!user) return <SignInUp />
   return (
@@ -159,25 +145,6 @@ const User = () => {
           <Link href='/'>Home</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        {installButton && (
-          <DropdownMenuItem className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
-            <Button
-              onClick={ async () => {
-                // @ts-ignore
-                if (!installPrompt) return
-
-                const result = await installPrompt.prompt()
-                console.log('install result', result.outcome)
-
-                disableInstallPrompt()
-
-
-              }}
-            >
-              Install
-            </Button>
-          </DropdownMenuItem>
-        )}
         <DropdownMenuItem className='rounded-none cursor-pointer flex items-center gap-6'>
           <Link href='/user/water'>
             <span className='flex gap-6 items-center w-full  px-1 py-2 '>
