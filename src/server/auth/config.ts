@@ -50,8 +50,9 @@ export const authConfig = {
   callbacks: {
     signIn: async ({ user, account, email,  }) => {
       if (!user) return false
+      console.log('user', user, account, email)
       const dbUser = await db.query.user.findFirst({
-        where: (u, { eq }) => eq(u.email, user.email as string),
+        where: (u, { eq }) => eq(u.email, user.email?.toLowerCase() as string),
         columns: {
           id: true,
         },
