@@ -154,7 +154,7 @@ const SignIn = () => {
                   onClick={async (e) => {
                     e.preventDefault()
                     setIsLoading(true)
-                    void signIn('email', {email})
+                    await signIn('resend', {email : email.toLowerCase()})
                   }}
                 >
                   {isLoading ? 'Sending' : 'Send'}

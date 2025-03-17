@@ -12,6 +12,7 @@ import { type DefaultSession, type NextAuthConfig } from 'next-auth'
 import { type Adapter } from 'next-auth/adapters'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import EmailProvider from 'next-auth/providers/email'
+import Resend from 'next-auth/providers/resend'
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -48,7 +49,7 @@ export const authConfig = {
     strategy: 'jwt',
   },
   callbacks: {
-    signIn: async ({ user, account, email,  }) => {
+    signIn: async ({ user, account, email }) => {
       if (!user) return false
       console.log('user', user, account, email)
       const dbUser = await db.query.user.findFirst({
@@ -98,17 +99,22 @@ export const authConfig = {
     verificationTokensTable: verificationToken,
   }) as Adapter,
   providers: [
-    EmailProvider({
-      server: {
-        host: process.env.EMAIL_SERVER_HOST,
-        port: process.env.EMAIL_SERVER_PORT,
-        auth: {
-          user: process.env.EMAIL_SERVER_USER,
-          pass: process.env.EMAIL_SERVER_PASSWORD,
-        },
-      },
-      from: process.env.EMAIL_FROM,
+    Resend({
+      // If your environment variable is named differently than default
+      apiKey: env.EMAIL_SERVER_PASSWORD,
+      from: env.EMAIL_FROM,
     }),
+    // EmailProvider({
+    //   server: {
+    //     host: process.env.EMAIL_SERVER_HOST,
+    //     port: process.env.EMAIL_SERVER_PORT,
+    //     auth: {
+    //       user: process.env.EMAIL_SERVER_USER,
+    //       pass: process.env.EMAIL_SERVER_PASSWORD,
+    //     },
+    //   },
+    //   from: process.env.EMAIL_FROM,
+    // }),
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
