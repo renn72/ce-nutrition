@@ -457,7 +457,7 @@ const Meal = ({
                   balanceCalsProtien()
                 }}
               >
-                Balance Cal+Protien
+                Balance Cal+Protein
               </Button>
             </div>
           </div>
