@@ -8,6 +8,7 @@ import { impersonatedUserAtom } from '@/atoms'
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
 import { GetUserById } from '@/types'
+import useEmblaCarousel from 'embla-carousel-react'
 import { useAtom } from 'jotai'
 import { Loader, Salad, XIcon } from 'lucide-react'
 import { toast } from 'sonner'
@@ -29,10 +30,11 @@ import { Sleep } from '@/components/charts/mobile/sleep'
 import { DailyLog } from '@/components/daily-log/daily-log'
 import { MobileFooter } from '@/components/layout/mobile-footer'
 import { MobileHeader } from '@/components/layout/mobile-header'
+import { MealLog } from '@/components/meal-log/meal-log'
 import { PoopLog } from '@/components/poop-log/poop-log'
 import { UserPlanView } from '@/components/user-plan/user-plan-view'
 import { WaterLog } from '@/components/water-log/water-log'
-import { MealLog } from '@/components/meal-log/meal-log'
+import DailyLogCarousel from './_components/dailylog-carousel'
 
 export const dynamic = 'force-dynamic'
 
@@ -79,8 +81,6 @@ const Mobile = ({
     },
   })
 
-  const currentUserPlans = currentUser?.userPlans.filter((plan) => plan.isActive)
-
   const dailyLog = dailyLogs?.find(
     (dailyLog) => dailyLog.date === new Date().toDateString(),
   )
@@ -93,9 +93,7 @@ const Mobile = ({
         'flex flex-col gap-2 w-full min-h-screen my-16 items-center ',
       )}
     >
-      <MobileHeader
-        isDesktop={false}
-      />
+      <MobileHeader isDesktop={false} />
 
       <div
         id='main-content'
@@ -104,9 +102,7 @@ const Mobile = ({
         )}
       >
         <Card className=''>
-          <CardContent
-            className='pb-2'
-          >
+          <CardContent className='pb-2'>
             <Tabs
               defaultValue='bw'
               className='w-full'
@@ -209,7 +205,9 @@ const Mobile = ({
                   key={range}
                   className={cn(
                     'cursor-pointer p-2 rounded-lg',
-                    chartRange === range ? 'underline font-bold bg-accent-foreground/10' : '',
+                    chartRange === range
+                      ? 'underline font-bold bg-accent-foreground/10'
+                      : '',
                   )}
                   onClick={() => {
                     setChartRange(range)
@@ -239,7 +237,8 @@ const Mobile = ({
               />
               <MealLog
                 dailyLogs={dailyLogs}
-                currentUser={currentUser} />
+                currentUser={currentUser}
+              />
               <PoopLog
                 userId={userId}
                 dailyLogs={dailyLogs}
@@ -247,7 +246,7 @@ const Mobile = ({
             </div>
           </CardContent>
         </Card>
-        <Card className=''>
+        <Card className='hidden'>
           <CardContent>
             <CardHeader className='pb-0'>
               <CardTitle className='text-center'>Today</CardTitle>
@@ -258,6 +257,8 @@ const Mobile = ({
             />
           </CardContent>
         </Card>
+
+        <DailyLogCarousel dailyLogs={dailyLogs} />
         <PlanPreview user={currentUser} />
       </div>
       <MobileFooter />

@@ -170,6 +170,9 @@ importers:
       drizzle-orm:
         specifier: ^0.38.3
         version: 0.38.3(@libsql/client@0.14.0)(@types/react@18.3.12)(react@18.3.1)
+      embla-carousel:
+        specifier: ^8.5.2
+        version: 8.5.2
       embla-carousel-react:
         specifier: ^8.3.0
         version: 8.3.0(react@18.3.1)
@@ -2929,6 +2932,9 @@ packages:
 
   embla-carousel@8.3.0:
     resolution: {integrity: sha512-Ve8dhI4w28qBqR8J+aMtv7rLK89r1ZA5HocwFz6uMB/i5EiC7bGI7y+AM80yAVUJw3qqaZYK7clmZMUR8kM3UA==}
+
+  embla-carousel@8.5.2:
+    resolution: {integrity: sha512-xQ9oVLrun/eCG/7ru3R+I5bJ7shsD8fFwLEY7yPe27/+fDHCNj0OT5EoG5ZbFyOxOcG6yTwW8oTz/dWyFnyGpg==}
 
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
@@ -7178,6 +7184,8 @@ snapshots:
       embla-carousel: 8.3.0
 
   embla-carousel@8.3.0: {}
+
+  embla-carousel@8.5.2: {}
 
   emoji-regex@8.0.0: {}
 
