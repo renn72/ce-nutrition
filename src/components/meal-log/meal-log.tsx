@@ -384,7 +384,7 @@ const MealLog = ({
 
         <CollapsibleContent>
           <div className='flex flex-col gap-0 divide-y divide-border items-start justify-center mt-[4px] text-muted-foreground tracking-tight px-[6px] w-full'>
-            {todaysLog?.dailyMeals.map((meal) => (
+            {todaysLog?.dailyMeals.sort((a, b) => Number(a.mealIndex) - Number(b.mealIndex)).map((meal) => (
               <div
                 key={meal.mealIndex}
                 className='text-xs flex flex-col items-start py-[2px] w-full'
