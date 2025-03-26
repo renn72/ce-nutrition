@@ -916,15 +916,14 @@ export const dailyLogRouter = createTRPCRouter({
 
       const recipe = plan.userRecipes.find(
         (recipe) =>
-          recipe.recipeIndex == input.recipeIndex &&
-          recipe.mealIndex == input.mealIndex,
+          recipe.id === input.recipeId
       )
       if (!recipe) return
 
       const ingredients = plan.userIngredients.filter(
         (ingredient) =>
-          ingredient.recipeIndex == input.recipeIndex &&
-          ingredient.mealIndex == input.mealIndex,
+          ingredient.recipeIndex == recipe.recipeIndex &&
+          ingredient.mealIndex == recipe.mealIndex,
       )
       if (!ingredients) return
 
@@ -971,6 +970,7 @@ export const dailyLogRouter = createTRPCRouter({
           .insert(userRecipe)
           .values({
             ...recipeInput,
+            mealIndex: input.mealIndex,
             dailyMealId: dailyMealId,
             dailyLogId: logId,
             isLog: true,
@@ -987,8 +987,8 @@ export const dailyLogRouter = createTRPCRouter({
                 id: undefined,
                 ingredientId: ingredient.ingredientId,
                 recipeId: recipeInsert?.[0]?.id,
-                mealIndex: ingredient.mealIndex,
-                recipeIndex: ingredient.recipeIndex,
+                mealIndex: input.mealIndex,
+                recipeIndex: input.recipeIndex,
                 alternateId: ingredient.alternateId,
                 dailyMealId: dailyMealId,
                 dailyLogId: logId,
@@ -1047,6 +1047,8 @@ export const dailyLogRouter = createTRPCRouter({
           .insert(userRecipe)
           .values({
             ...recipeInput,
+            mealIndex: input.mealIndex,
+            recipeIndex: input.recipeIndex,
             dailyMealId: dailyMealId,
             dailyLogId: input.logId,
             isLog: true,
@@ -1060,8 +1062,8 @@ export const dailyLogRouter = createTRPCRouter({
               return {
                 ingredientId: ingredient.ingredientId,
                 recipeId: recipeInsert?.[0]?.id,
-                mealIndex: ingredient.mealIndex,
-                recipeIndex: ingredient.recipeIndex,
+                mealIndex: input.mealIndex,
+                recipeIndex: input.recipeIndex,
                 alternateId: ingredient.alternateId,
                 dailyMealId: dailyMealId,
                 dailyLogId: input.logId,

@@ -4,7 +4,7 @@ import { api } from '@/trpc/react'
 
 import { useEffect, useState } from 'react'
 
-import { cn } from '@/lib/utils'
+import { cn, getRecipeDetailsForDailyLog } from '@/lib/utils'
 import { GetAllDailyLogs, GetUserById, UserPlan, UserRecipe } from '@/types'
 import NumberFlow from '@number-flow/react'
 import {
@@ -42,7 +42,6 @@ export const dynamic = 'force-dynamic'
 
 const Meal = ({
   date,
-  plans,
   allPlans,
   dailyLogs,
   userId,
@@ -52,24 +51,21 @@ const Meal = ({
   date: Date
   dailyLogs: GetAllDailyLogs | null | undefined
   allPlans: UserPlan[]
-  plans: {
-    id: number
-    name: string
-    mealCals: string
-    recipes: UserRecipe[] | undefined
-  }[]
   userId: string
   index: number
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const [selectValue, setSelectValue] = useState<string>('')
 
-  const [selectedPlans, setSelectedPlans] = useState<string[]>(() =>{
-    if(plans.length === 1) return [...plans.map((plan) => plan.id.toString())]
-    return ['']
+  const [recipeName, setRecipeName] = useState<string>('')
 
-  }
-  )
+  const [selectedPlans, setSelectedPlans] = useState<string[]>(() => {
+    if (allPlans.length === 1)
+      return [...allPlans.map((plan) => plan?.id.toString() ?? '')]
+    return ['']
+  })
+
+  console.log('mealIndex', index)
 
   const [mealIndex, setMealIndex] = useState(() => index)
 
@@ -82,6 +78,9 @@ const Meal = ({
     onSettled: () => {
       setIsOpen(false)
       ctx.dailyLog.invalidate()
+    },
+    onSuccess: () => {
+      toast.success(`${recipeName} Added`)
     },
   })
   const { mutate: deleteMeal } = api.dailyLog.deleteMeal.useMutation({
@@ -103,7 +102,7 @@ const Meal = ({
     ?.dailyMeals.find((dailyMeal) => dailyMeal.mealIndex == mealIndex)
   console.log('logMeal', logMeal)
 
-  const recipes = plans.map((plan) => plan.recipes).flat()
+  const recipes = allPlans.map((plan) => plan?.userRecipes).flat()
 
   useEffect(() => {
     if (logMeal) {
@@ -143,19 +142,22 @@ const Meal = ({
           value={selectedPlans}
           onValueChange={setSelectedPlans}
         >
-          {plans?.map((plan) => (
-            <ToggleGroupItem
-              key={plan.id}
-              value={plan.id.toString()}
-              className={cn(
-                'text-xs truncate max-w-28 py-1 px-2 tracking-tight h-min',
-                'data-[state=on]:bg-foreground data-[state=on]:text-background data-[state=on]:shadow-none',
-                'block rounded-full font-semibold',
-              )}
-            >
-              {plan.name}
-            </ToggleGroupItem>
-          ))}
+          {allPlans?.map((plan) => {
+            if (!plan) return null
+            return (
+              <ToggleGroupItem
+                key={plan.id}
+                value={plan.id.toString()}
+                className={cn(
+                  'text-xs truncate max-w-28 py-1 px-2 tracking-tight h-min',
+                  'data-[state=on]:bg-foreground data-[state=on]:text-background data-[state=on]:shadow-none',
+                  'block rounded-full font-semibold',
+                )}
+              >
+                {plan.name}
+              </ToggleGroupItem>
+            )
+          })}
         </ToggleGroup>
       </DialogHeader>
 
@@ -169,9 +171,12 @@ const Meal = ({
         onValueChange={(value) => {
           setSelectValue(value)
           const recipe = recipes.find((recipe) => recipe?.id == Number(value))
-          const plan = plans.find((plan) =>
-            plan.recipes?.find((recipe) => recipe?.id == Number(value)),
+          setRecipeName(recipe?.name ?? '')
+          const plan = allPlans.find((plan) =>
+            plan?.userRecipes?.find((recipe) => recipe?.id == Number(value)),
           )
+          console.log('recipe', recipe)
+          console.log('plan', plan)
           if (!recipe || !plan) return
           addMeal({
             userId: userId,
@@ -185,35 +190,53 @@ const Meal = ({
         }}
       >
         <div className='flex flex-col ml-2 gap-2'>
-          {plans
-            ?.filter((plan) => selectedPlans.includes(plan.id.toString()))
+          {allPlans
+            ?.filter((plan) =>
+              selectedPlans.includes(plan?.id.toString() ?? 'aabb'),
+            )
             ?.map((plan) => {
-              if (plan.recipes?.length === 0) return null
+              if (!plan) return null
+              if (plan.userRecipes?.length === 0) return null
+
               return (
                 <div
                   key={plan.id}
                   className='flex flex-col'
                 >
                   <div className='flex gap-4 items-center'>
-                    <h3>{plan.name}</h3>
-                    {plan.mealCals === '' ? null : (
-                      <div className='text-[0.7rem] text-muted-foreground'>
-                        {plan.mealCals}cals
-                      </div>
-                    )}
+                    <h3 className='font-semibold text-primary/80'>
+                      {plan.name}
+                    </h3>
                   </div>
-                  <div className='flex gap-1 flex-col items-start mt-2'>
-                    {plan.recipes?.map((recipe) => (
-                      <ToggleGroupItem
-                        key={recipe?.id}
-                        value={recipe?.id.toString() ?? ''}
-                        className='text-sm truncate min-w-44  py-1 px-2 data-[state=on]:bg-blue-900/70 data-[state=on]:text-slate-100 data-[state=on]:shadow-none h-8'
-                      >
-                        {recipe?.name && recipe?.name?.length > 40
-                          ? recipe?.name?.slice(0, 37) + '...'
-                          : recipe?.name}
-                      </ToggleGroupItem>
-                    ))}
+                  <div className='flex gap-2 flex-col items-center py-2 w-full'>
+                    {plan.userRecipes?.map((recipe) => {
+                      const { cals, protein, carbs, fat } =
+                        getRecipeDetailsForDailyLog(plan, recipe.id)
+                      return (
+                        <ToggleGroupItem
+                          key={recipe?.id}
+                          value={recipe?.id.toString() ?? ''}
+                          className={cn(
+                            'text-sm truncate max-w-[600px]  py-2 px-4 data-[state=on]:bg-blue-900/70 relative',
+                            'data-[state=on]:text-slate-100 data-[state=on]:shadow-none',
+                            'h-full shadow-md flex flex-col w-[calc(100vw-2rem)]',
+                          )}
+                        >
+                          <div className=' flex'>
+                            <div className='truncate font-semibold'>{recipe?.name && recipe?.name?.length > 41
+                              ? recipe?.name?.slice(0, 43) + '...'
+                              : recipe?.name}</div>
+                            <div className='absolute -top-1 right-1 text-[0.6rem] text-muted-foreground font-light'>{`${cals} cals`}</div>
+                          </div>
+
+                          <div className='text-xs text-muted-foreground flex gap-4 font-medium'>
+                            <div>{`C:${carbs}g`}</div>
+                            <div>{`P:${protein}g`}</div>
+                            <div>{`F:${fat}g`}</div>
+                          </div>
+                        </ToggleGroupItem>
+                      )
+                    })}
                   </div>
                 </div>
               )
@@ -241,7 +264,6 @@ const MealLog = ({
   const activePlans = currentUser?.userPlans.filter((plan) => plan.isActive)
 
   console.log('activePlans', activePlans)
-  console.log('currentUser', currentUser)
 
   const isNotActivePlan = activePlans.length === 0
 
@@ -249,15 +271,14 @@ const MealLog = ({
     (dailyLog) => dailyLog.date === today.toDateString(),
   )
 
+  console.log('todaysLog', todaysLog)
+
   const currentMeal = todaysLog?.dailyMeals?.length ?? 0
 
   const recipes = activePlans
     .map((plan) => plan.userRecipes)
     .flat()
     .filter((recipe) => recipe.mealIndex === currentMeal)
-  console.log('recipes', recipes)
-
-  console.log('todaysLog', todaysLog)
 
   const isAll =
     currentUser.id === 'f3feb152-06de-4a1e-8c9f-19d5c96c6788' ||
@@ -272,6 +293,15 @@ const MealLog = ({
           ?.calories ?? '',
       recipes: plan?.userRecipes.filter(
         (recipe) => recipe.mealIndex == currentMeal || isAllMeals,
+      ),
+    }
+  })
+
+  const refinedPlans = activePlans.map((plan) => {
+    return {
+      ...plan,
+      userRecipes: plan.userRecipes.filter(
+        (recipe) => recipe.mealIndex === currentMeal || isAllMeals,
       ),
     }
   })
@@ -334,10 +364,9 @@ const MealLog = ({
               </div>
             ) : null}
             <Meal
-              allPlans={activePlans}
+              allPlans={refinedPlans}
               date={today}
               dailyLogs={dailyLogs}
-              plans={recipePlans}
               userId={currentUser.id}
               index={currentMeal}
               setIsOpen={setIsOpen}
@@ -354,11 +383,11 @@ const MealLog = ({
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <div className='flex flex-col gap-0 divide-y divide-border items-start justify-center mt-[4px] text-muted-foreground tracking-tight px-[6px]'>
+          <div className='flex flex-col gap-0 divide-y divide-border items-start justify-center mt-[4px] text-muted-foreground tracking-tight px-[6px] w-full'>
             {todaysLog?.dailyMeals.map((meal) => (
               <div
                 key={meal.mealIndex}
-                className='text-xs flex flex-col items-start py-[2px]'
+                className='text-xs flex flex-col items-start py-[2px] w-full'
               >
                 <div>
                   {meal.createdAt.toLocaleTimeString('en-AU', {
