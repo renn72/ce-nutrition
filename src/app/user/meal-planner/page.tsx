@@ -2,6 +2,7 @@
 
 import { api } from '@/trpc/react'
 
+import { impersonatedUserAtom } from '@/atoms'
 import { useEffect, useState } from 'react'
 
 import { cn } from '@/lib/utils'
@@ -394,11 +395,15 @@ export default function Home() {
         ? today
         : new Date(today.setDate(today.getDate() - today.getDay() + 1))
   })
-  const { data: currentUser } = api.user.getCurrentUser.useQuery()
+  const [impersonatedUser, setImpersonatedUser] = useAtom(impersonatedUserAtom)
+  const { data: currentUser, isLoading : isLoadingCurrentUser } = api.user.getCurrentUser.useQuery({
+    id: impersonatedUser.id,
+  })
   // console.log('currentUser', currentUser)
 
   // console.log(weekStart)
 
+  if (isLoadingCurrentUser) return null
   if (!currentUser) return null
 
   return (

@@ -217,14 +217,14 @@ const DailyLogForm = ({
       ? [Number(todaysLog?.sleep)]
       : prevLog?.sleep
         ? [Number(prevLog?.sleep)]
-        : [0],
+        : [5],
   )
   const [sleepQuality, setSleepQuality] = useState<number[]>(() =>
     todaysLog?.sleepQuality
       ? [Number(todaysLog?.sleepQuality)]
       : prevLog?.sleepQuality
         ? [Number(prevLog?.sleepQuality)]
-        : [0],
+        : [5],
   )
   const [nap, setNap] = useState<number | null>(
     todaysLog?.nap
@@ -417,19 +417,19 @@ const DailyLogForm = ({
           <div className='flex flex-col items-center gap-6'>
             <div className='flex justify-center '>
               <NumberInput
-                value={sleep[0] ?? null}
-                setValue={(e) => setSleep([e])}
+                value={sleep[0] ?? 5}
+                setValue={(e) => setSleep([Number(e)])}
                 fixed={1}
-                scale={1}
+                scale={0.1}
                 postfix='hrs'
               />
             </div>
             <Slider
               autoFocus
-              defaultValue={[0]}
+              defaultValue={[5]}
               min={4}
               max={12}
-              step={1}
+              step={0.1}
               value={sleep}
               onValueChange={(values) => {
                 setSleep(values)
@@ -467,20 +467,19 @@ const DailyLogForm = ({
           </DialogHeader>
           <div className='flex justify-center '>
             <NumberInput
-              value={sleepQuality[0] ?? null}
+              value={sleepQuality[0] ?? 5}
               setValue={(e) => setSleepQuality([e])}
-              fixed={0}
-              scale={1}
+              fixed={1}
+              scale={0.1}
             />
           </div>
           <Slider
-            defaultValue={[0]}
+            defaultValue={[5]}
             max={10}
-            step={1}
+            step={0.1}
             value={sleepQuality}
             onValueChange={(values) => {
               setSleepQuality(values)
-              console.log('values', values)
             }}
           />
           <DialogClose asChild>
@@ -515,7 +514,7 @@ const DailyLogForm = ({
               value={nap}
               setValue={setNap}
               fixed={1}
-              scale={1}
+              scale={0.1}
               postfix='hrs'
             />
           </div>

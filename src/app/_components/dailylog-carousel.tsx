@@ -25,8 +25,7 @@ const DailyLogCarousel = ({ dailyLogs }: { dailyLogs: GetDailyLogById[] | undefi
   })
 
   // @ts-ignore
-  const { selectedIndex, scrollSnaps, onDotButtonClick } =
-    useDotButton(emblaApi)
+  const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi)
 
   if (!dailyLogs) return null
   const today = new Date()

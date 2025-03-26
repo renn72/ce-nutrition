@@ -8,7 +8,6 @@ import { impersonatedUserAtom } from '@/atoms'
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
 import { GetUserById } from '@/types'
-import useEmblaCarousel from 'embla-carousel-react'
 import { useAtom } from 'jotai'
 import { Loader, Salad, XIcon } from 'lucide-react'
 import { toast } from 'sonner'
@@ -17,7 +16,6 @@ import { Badge } from '@/components/ui/badge'
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
@@ -286,7 +284,6 @@ const Desktop = ({
 
 export default function Home() {
   const [impersonatedUser, setImpersonatedUser] = useAtom(impersonatedUserAtom)
-  console.log('impersonation', impersonatedUser.id, impersonatedUser.name)
   const { data: currentUser, isLoading } = api.user.getCurrentUser.useQuery({
     id: impersonatedUser.id,
   })
