@@ -1,9 +1,9 @@
 'use client'
 
 import { GetDailyLogById } from '@/types'
-import { Sheet } from '@silk-hq/components'
-import { ChevronDown, CircleX, ListCollapse } from 'lucide-react'
 import NumberFlow from '@number-flow/react'
+import { Sheet } from '@silk-hq/components'
+import { ChevronDown, CircleX, ListCollapse, Trash, Trash2 } from 'lucide-react'
 
 const PoopBottomSheet = ({
   todaysDailyLog,
@@ -23,8 +23,8 @@ const PoopBottomSheet = ({
         />
       </Sheet.Trigger>
       <Sheet.Portal>
-        <Sheet.View className='z-[999] h-[100vh] bg-primary/50 '>
-          <Sheet.Content className='min-h-[200px] max-h-[80vh] h-full rounded-t-3xl'>
+        <Sheet.View className='z-[999] h-[100vh] bg-primary/20 '>
+          <Sheet.Content className='min-h-[200px] max-h-[80vh] h-full rounded-t-3xl bg-background'>
             <div className='flex flex-col justify-between h-full'>
               <div className='flex flex-col '>
                 <div className='flex justify-center pt-1'>
@@ -33,14 +33,15 @@ const PoopBottomSheet = ({
                     action='dismiss'
                   />
                 </div>
-                <div className='flex justify-center pt-4 border-b-[1px] border-primary pb-4 relative'>
-                  <Sheet.Title className='text-lg'>Toilet Log</Sheet.Title>
+                <div className='flex gap-4 pt-4 border-b-[1px] border-primary pb-4 relative'>
+                  <Sheet.Title className='text-lg ml-4'>Toilet Log</Sheet.Title>
                   <Sheet.Description className='hidden'>
                     Toilet Log
                   </Sheet.Description>
+                  <div className='border w-px h-6'/>
                   <NumberFlow
                     value={totalPoop}
-                    className='absolute right-4 top-1/2 -translate-y-1/2 text-primary hidden'
+                    className='text-lg text-primary ml-2 '
                   />
                 </div>
                 <div className='flex flex-col gap-2 p-4'>
@@ -50,23 +51,27 @@ const PoopBottomSheet = ({
                     todaysDailyLog?.poopLogs.map((poopLog, i) => (
                       <div
                         key={poopLog.id}
-                        className='grid grid-cols-4 gap-2 text-sm w-full items-center bg-secondary rounded-full px-4 py-2'
+                        className='grid grid-cols-4 gap-2 text-sm w-full bg-secondary rounded-full px-4 py-2 items-center'
                       >
-                        <div className='text-muted-foreground font-normal col-span-1'>
-                          {i + 1}
+                        <div className='text-primary font-normal col-span-1'>
+                          <div className='rounded-full h-6 w-6 bg-primary/20 flex justify-center items-center pt-[1px]'>
+                            {i + 1}
+                          </div>
                         </div>
                         <div className='text-muted-foreground font-normal col-span-2'>
                           {poopLog.createdAt.toLocaleTimeString('en-AU')}
                         </div>
-                        <CircleX
-                          size={20}
-                          className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer mb-[1px]'
+                        <div className='justify-self-end'>
+                        <Trash2
+                          size={16}
+                          className='cursor-pointer text-destructive hover:text-primary active:scale-90 transition-transform cursor-pointer mb-[1px]'
                           onClick={() => {
                             deletePoopLog({
                               id: poopLog.id,
                             })
                           }}
                         />
+                      </div>
                       </div>
                     ))
                   )}
