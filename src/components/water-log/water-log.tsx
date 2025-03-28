@@ -2,19 +2,14 @@
 
 import { api } from '@/trpc/react'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import { GetAllDailyLogs } from '@/types'
 import NumberFlow from '@number-flow/react'
-import { CircleX, GlassWater, ListCollapse } from 'lucide-react'
+import { GlassWater, } from 'lucide-react'
 import { toast } from 'sonner'
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
-import { Input } from '@/components/ui/input'
+import { WaterBottomSheet } from './water-bottom-sheet'
 
 const WaterLog = ({
   userId,
@@ -105,51 +100,14 @@ const WaterLog = ({
         </div>
       </div>
 
-      <Collapsible>
-        <CollapsibleTrigger className='flex gap-2 items-center justify-center absolute top-10 right-0'>
-          <ListCollapse
-            size={20}
-            className='text-muted-foreground'
-          />
-        </CollapsibleTrigger>
+      <WaterBottomSheet
+        todaysDailyLog={todaysDailyLog}
+        totalWater={totalWater}
+        deleteWaterLog={deleteWaterLog}
+        size={size}
+        setSize={setSize}
+      />
 
-        <CollapsibleContent className='pr-[3px]'>
-          <Input
-            placeholder='Amount'
-            className='w-full mb-1'
-            type='number'
-            value={size}
-            onChange={(e) => {
-              setSize(Number(e.target.value))
-            }}
-          />
-          {todaysDailyLog?.waterLogs.map((waterLog) => (
-            <div
-              key={waterLog.id}
-              className='gap-1 tracking-tight text-xs w-full items-center grid grid-cols-6'
-            >
-              <div className='text-muted-foreground font-medium col-span-2'>
-                {waterLog.amount}ml
-              </div>
-              <div className='text-muted-foreground font-normal col-span-3'>
-                {waterLog.createdAt.toLocaleTimeString('en-AU', {
-                  hour: 'numeric',
-                  minute: 'numeric',
-                })}
-              </div>
-              <CircleX
-                size={18}
-                className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer mb-[1px]'
-                onClick={() => {
-                  deleteWaterLog({
-                    id: waterLog.id,
-                  })
-                }}
-              />
-            </div>
-          ))}
-        </CollapsibleContent>
-      </Collapsible>
     </div>
   )
 }
