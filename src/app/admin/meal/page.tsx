@@ -1,5 +1,3 @@
-
-
 'use client'
 
 import { api } from '@/trpc/react'
@@ -8,7 +6,6 @@ import { DataTable } from '@/components/meal/data-table'
 import { DataTableSkeleton } from '@/components/table/data-table-skeleton'
 
 export default function Home() {
-
   const { data, isLoading } = api.meal.getAll.useQuery()
   return (
     <div className='flex min-h-screen flex-col items-center w-full px-2'>

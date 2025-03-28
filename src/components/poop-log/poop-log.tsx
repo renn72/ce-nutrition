@@ -2,18 +2,12 @@
 
 import { api } from '@/trpc/react'
 
-import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
-
 import { GetAllDailyLogs } from '@/types'
 import NumberFlow from '@number-flow/react'
-import { CircleX, ListCollapse, Toilet } from 'lucide-react'
+import { Toilet } from 'lucide-react'
+import { toast } from 'sonner'
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
+import { PoopBottomSheet } from './poop-bottom-sheet'
 
 const PoopLog = ({
   userId,
@@ -95,42 +89,10 @@ const PoopLog = ({
         </div>
         <div />
       </div>
-      <Collapsible>
-        <CollapsibleTrigger className='flex gap-2 items-center justify-center absolute top-10 right-0'>
-          <ListCollapse
-            size={20}
-            className='text-muted-foreground'
-          />
-        </CollapsibleTrigger>
-
-        <CollapsibleContent className=''>
-          {todaysDailyLog?.poopLogs.length === 0 || !todaysDailyLog ? (
-            <div className='text-center'>...</div>
-          ) : (
-            todaysDailyLog?.poopLogs.map((poopLog) => (
-              <div
-                key={poopLog.id}
-                className='grid grid-cols-3 gap-2 text-xs w-full items-center'
-              >
-                <div className='text-muted-foreground font-normal col-span-2'>
-                  {poopLog.createdAt.toLocaleTimeString('en-AU')}
-                </div>
-                <CircleX
-                  size={18}
-                  className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer mb-[1px]'
-                  onClick={() => {
-                    deletePoopLog({
-                      id: poopLog.id,
-                    })
-                  }}
-                />
-              </div>
-            ))
-          )}
-        </CollapsibleContent>
-      </Collapsible>
+      <PoopBottomSheet totalPoop={totalPoop} todaysDailyLog={todaysDailyLog} deletePoopLog={deletePoopLog} />
     </div>
   )
 }
 
 export { PoopLog }
+

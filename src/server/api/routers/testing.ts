@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs'
 
 import { db } from '@/server/db'
+import { schema } from '@/server/db/index'
 import {
   groceryStore,
   ingredient,
@@ -10,6 +11,7 @@ import {
 } from '@/server/db/schema/ingredient'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { parse } from 'csv-parse/sync'
+import { pgGenerate } from 'drizzle-dbml-generator' // Using Postgres for this example
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 
@@ -18,6 +20,14 @@ function isTuple<T>(array: T[]): array is [T, ...T[]] {
 }
 
 export const testRouter = createTRPCRouter({
+  createDBMap: protectedProcedure.mutation(async ({ ctx }) => {
+    const out = './schema.dbml'
+    const relational = true
+
+    pgGenerate({ schema, out, relational })
+
+    return true
+  }),
   generateGroceryStores: protectedProcedure.mutation(async ({ ctx }) => {
     const res = await ctx.db.insert(groceryStore).values([
       {
@@ -65,8 +75,12 @@ export const testRouter = createTRPCRouter({
           classification: row['Classification'],
           foodName: row['Food name'],
           name: row['Food name'],
-          caloriesWFibre: (Number(row['Energy with dietary fibre, equated \n(kJ)'])*0.239).toFixed(2),
-          caloriesWOFibre: (Number(row['Energy, without dietary fibre, equated \n(kJ)'])*0.239).toFixed(2),
+          caloriesWFibre: (
+            Number(row['Energy with dietary fibre, equated \n(kJ)']) * 0.239
+          ).toFixed(2),
+          caloriesWOFibre: (
+            Number(row['Energy, without dietary fibre, equated \n(kJ)']) * 0.239
+          ).toFixed(2),
           protein: row['Protein \n(g)'],
           fatTotal: row['Fat, total \n(g)'],
           totalDietaryFibre: row['Total dietary fibre \n(g)'],
@@ -371,8 +385,12 @@ export const testRouter = createTRPCRouter({
           classification: row['Classification'],
           foodName: row['Food Name'],
           name: row['Food Name'],
-          caloriesWFibre: (Number(row['Energy with dietary fibre, equated \n(kJ)'])*0.239).toFixed(2),
-          caloriesWOFibre: (Number(row['Energy, without dietary fibre, equated \n(kJ)'])*0.239).toFixed(2),
+          caloriesWFibre: (
+            Number(row['Energy with dietary fibre, equated \n(kJ)']) * 0.239
+          ).toFixed(2),
+          caloriesWOFibre: (
+            Number(row['Energy, without dietary fibre, equated \n(kJ)']) * 0.239
+          ).toFixed(2),
           protein: row['Protein \n(g)'],
           fatTotal: row['Fat, total \n(g)'],
           totalDietaryFibre: row['Total dietary fibre \n(g)'],
