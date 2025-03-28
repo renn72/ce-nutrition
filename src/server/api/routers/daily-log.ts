@@ -915,8 +915,7 @@ export const dailyLogRouter = createTRPCRouter({
       if (!meal) return
 
       const recipe = plan.userRecipes.find(
-        (recipe) =>
-          recipe.id === input.recipeId
+        (recipe) => recipe.id === input.recipeId,
       )
       if (!recipe) return
 
@@ -1157,7 +1156,11 @@ export const dailyLogRouter = createTRPCRouter({
           dailyMeals: {
             with: {
               recipe: true,
-              ingredients: true,
+              ingredients: {
+                with: {
+                  ingredient: true,
+                },
+              },
             },
           },
         },
@@ -1205,6 +1208,16 @@ export const dailyLogRouter = createTRPCRouter({
       with: {
         poopLogs: true,
         waterLogs: true,
+        dailyMeals: {
+          with: {
+            recipe: true,
+              ingredients: {
+                with: {
+                  ingredient: true,
+                },
+              },
+          },
+        },
       },
     })
     return res

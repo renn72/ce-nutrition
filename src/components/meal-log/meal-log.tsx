@@ -3,27 +3,13 @@
 import { api } from '@/trpc/react'
 
 import { useEffect, useState } from 'react'
+import { MealBottomSheet } from './meal-bottom-sheet'
 
 import { cn, getRecipeDetailsForDailyLog } from '@/lib/utils'
 import { GetAllDailyLogs, GetUserById, UserPlan, UserRecipe } from '@/types'
-import NumberFlow from '@number-flow/react'
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  CircleX,
-  ListCollapse,
-  Salad,
-  Toilet,
-} from 'lucide-react'
+import { ChevronsLeft, ChevronsRight, ListCollapse, Salad } from 'lucide-react'
 import { toast } from 'sonner'
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
 import {
   Dialog,
   DialogContent,
@@ -81,16 +67,6 @@ const Meal = ({
     },
     onSuccess: () => {
       toast.success(`${recipeName} Added`)
-    },
-  })
-  const { mutate: deleteMeal } = api.dailyLog.deleteMeal.useMutation({
-    onMutate: async () => {
-      console.log('deleteMeal')
-    },
-
-    onSettled: () => {
-      console.log('settled')
-      ctx.dailyLog.invalidate()
     },
   })
   const log = dailyLogs?.find(
@@ -223,9 +199,11 @@ const Meal = ({
                           )}
                         >
                           <div className=' flex'>
-                            <div className='truncate font-semibold'>{recipe?.name && recipe?.name?.length > 41
-                              ? recipe?.name?.slice(0, 43) + '...'
-                              : recipe?.name}</div>
+                            <div className='truncate font-semibold'>
+                              {recipe?.name && recipe?.name?.length > 41
+                                ? recipe?.name?.slice(0, 43) + '...'
+                                : recipe?.name}
+                            </div>
                             <div className='absolute -top-1 right-1 text-[0.6rem] text-muted-foreground font-light'>{`${cals} cals`}</div>
                           </div>
 
@@ -265,6 +243,16 @@ const MealLog = ({
 
   console.log('activePlans', activePlans)
 
+  const { mutate: deleteMeal } = api.dailyLog.deleteMeal.useMutation({
+    onMutate: async () => {
+      console.log('deleteMeal')
+    },
+
+    onSettled: () => {
+      console.log('settled')
+      ctx.dailyLog.invalidate()
+    },
+  })
   const isNotActivePlan = activePlans.length === 0
 
   const todaysLog = dailyLogs?.find(
@@ -374,33 +362,10 @@ const MealLog = ({
           </ScrollArea>
         </DialogContent>
       </Dialog>
-      <Collapsible>
-        <CollapsibleTrigger className='flex gap-2 items-center justify-center absolute top-10 right-0'>
-          <ListCollapse
-            size={20}
-            className='text-muted-foreground'
-          />
-        </CollapsibleTrigger>
-
-        <CollapsibleContent>
-          <div className='flex flex-col gap-0 divide-y divide-border items-start justify-center mt-[4px] text-muted-foreground tracking-tight px-[6px] w-full'>
-            {todaysLog?.dailyMeals.sort((a, b) => Number(a.mealIndex) - Number(b.mealIndex)).map((meal) => (
-              <div
-                key={meal.mealIndex}
-                className='text-xs flex flex-col items-start py-[2px] w-full'
-              >
-                <div>
-                  {meal.createdAt.toLocaleTimeString('en-AU', {
-                    hour: 'numeric',
-                    minute: 'numeric',
-                  })}
-                </div>
-                <div className=''>{meal.recipe?.[0]?.name}</div>
-              </div>
-            ))}
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
+      <MealBottomSheet
+        todaysDailyLog={todaysLog}
+        deleteMealLog={deleteMeal}
+      />
     </div>
   )
 }
