@@ -32,7 +32,7 @@ const PoopLog = ({
               ...log,
               poopLogs: [
                 ...log.poopLogs,
-                { id: -1, createdAt: new Date(), dailyLogId: log.id },
+                { id: 9999999, createdAt: new Date(), dailyLogId: log.id },
               ],
             }
           }

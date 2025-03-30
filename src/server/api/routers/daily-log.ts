@@ -832,7 +832,6 @@ export const dailyLogRouter = createTRPCRouter({
           eq(dailyLog.userId, ctx.session.user.id),
         ),
       })
-      console.log('log', log)
 
       // @ts-ignore
       let logId = log?.id as number | undefined
@@ -859,6 +858,8 @@ export const dailyLogRouter = createTRPCRouter({
           dailyLogId: logId,
         })
         .returning({ id: poopLog.id })
+
+      console.log('poop', poop)
 
       createLog({
         user: ctx.session.user.name,
