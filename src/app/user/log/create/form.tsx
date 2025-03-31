@@ -87,7 +87,10 @@ const NumberInput = ({
 
       <div
         onClick={() => {
-          if (!value) return
+          if (!value) {
+            setValue(scale)
+            return
+          }
           setValue(value + scale)
         }}
         className='absolute right-0 top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start border-l active:bg-primary/60 rounded-r-lg'
