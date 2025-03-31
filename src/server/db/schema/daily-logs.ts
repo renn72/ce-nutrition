@@ -57,7 +57,58 @@ export const dailyLogRelations = relations(dailyLog, ({ one, many }) => ({
   dailyMeals: many(dailyMeal),
   waterLogs: many(waterLog),
   poopLogs: many(poopLog),
+  tags: many(tagToDailyLog),
 }))
+
+export const tag = createTable('tag', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  createdAt: int('created_at', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  name: text('name').notNull(),
+  icon: text('icon').notNull(),
+  color: text('color').notNull(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, {
+      onDelete: 'cascade',
+    }),
+})
+
+export const tagRelations = relations(tag, ({ one, many }) => ({
+  user: one(user, {
+    fields: [tag.userId],
+    references: [user.id],
+  }),
+  dailyLogs: many(tagToDailyLog),
+}))
+
+export const tagToDailyLog = createTable('tag_to_daily_log', {
+  tagId: int('tag_id')
+    .notNull()
+    .references(() => tag.id, {
+      onDelete: 'cascade',
+    }),
+  dailyLogId: int('daily_log_id')
+    .notNull()
+    .references(() => dailyLog.id, {
+      onDelete: 'cascade',
+    }),
+})
+
+export const tagToDailyLogRelations = relations(
+  tagToDailyLog,
+  ({ one, }) => ({
+    tag: one(tag, {
+      fields: [tagToDailyLog.tagId],
+      references: [tag.id],
+    }),
+    dailyLog: one(dailyLog, {
+      fields: [tagToDailyLog.dailyLogId],
+      references: [dailyLog.id],
+    }),
+  }),
+)
 
 export const poopLog = createTable('poop_log', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),

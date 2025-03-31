@@ -11,8 +11,8 @@ import { type AdapterAccount } from 'next-auth/adapters'
 import { message } from './message'
 import { bodyFat, bodyWeight, leanMass, skinfold } from './metrics'
 import { notification } from './notification'
-import { userIngredient, userPlan, userRecipe } from './user-plan'
-import { dailyLog } from './daily-logs'
+import { userPlan, } from './user-plan'
+import { dailyLog, tag } from './daily-logs'
 
 export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
@@ -80,6 +80,7 @@ export const userRelations = relations(user, ({ one, many }) => ({
     fields: [user.id],
     references: [userSettings.userId],
   }),
+  tags: many(tag),
 }))
 
 export const userSettings = createTable('user_settings', {
