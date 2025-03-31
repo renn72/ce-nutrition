@@ -9,6 +9,8 @@ import { toast } from 'sonner'
 
 import { PoopBottomSheet } from './poop-bottom-sheet'
 
+import confetti from 'canvas-confetti'
+
 const PoopLog = ({
   userId,
   dailyLogs,
@@ -81,6 +83,12 @@ const PoopLog = ({
             className='ml-[1px]'
             size={28}
             onClick={() => {
+              confetti({
+                particleCount: 40,
+                spread: 30,
+                angle: 120,
+                origin: { x: 0.85, y: 0.65 },
+              })
               addPoopLog({
                 date: today.toDateString(),
               })
