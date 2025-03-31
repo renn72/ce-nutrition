@@ -334,7 +334,7 @@ const MealLog = ({
           </div>
         </div>
         <DialogContent
-          className='px-2'
+          className='px-2 min-h-[60vh] top-20 translate-y-0 '
           onOpenAutoFocus={(e) => {
             e.preventDefault()
           }}
