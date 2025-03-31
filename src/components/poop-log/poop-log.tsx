@@ -85,10 +85,10 @@ const PoopLog = ({
             size={28}
             onClick={() => {
               confetti({
-                particleCount: 40,
+                particleCount: 20,
                 spread: 30,
                 angle: 120,
-                origin: { x: 0.85, y: 0.65 },
+                origin: { x: 0.80, y: 0.60 },
               })
               addPoopLog({
                 date: today.toDateString(),
