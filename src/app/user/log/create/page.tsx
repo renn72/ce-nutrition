@@ -8,17 +8,195 @@ import { useSearchParams } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
-import { Bookmark, Calendar as CalendarIcon, Dot, Star } from 'lucide-react'
+import {
+  AlarmClock,
+  Beer,
+  Bone,
+  Bookmark,
+  Calendar as CalendarIcon,
+  Dot,
+  Fish,
+  Hand,
+  Plus,
+  Star,
+  Zap,
+} from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar-log'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 import { DailyLogForm } from './form'
+
+const Tags = () => {
+  const ctx = api.useUtils()
+  const { data: tags } = api.dailyLog.getAllTagsCurrentUser.useQuery()
+
+  const [tagName, setTagName] = useState('')
+  const [tagColor, setTagColor] = useState('')
+  const [tagIcon, setTagIcon] = useState('')
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Bookmark
+          size={20}
+          className='cursor-pointer'
+        />
+      </DialogTrigger>
+      <DialogContent
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        className='top-20 translate-y-0 px-2 '
+      >
+        <DialogHeader>
+          <DialogTitle>Tags</DialogTitle>
+          <DialogDescription>Add tags to your daily log</DialogDescription>
+        </DialogHeader>
+        {tags?.map((tag) => (
+          <div
+            key={tag.id}
+            className='flex gap-2 items-center justify-center w-full p-2 rounded-lg bg-secondary-foreground/10 hover:bg-secondary-foreground/20'
+          >
+            <div className='flex gap-2 items-center justify-center w-full'>
+              <div className='flex gap-2 items-center justify-center w-full'>
+                {tag.name}
+              </div>
+            </div>
+          </div>
+        ))}
+        <Collapsible
+          open={isOpen}
+          onOpenChange={setIsOpen}
+        >
+          <div className='flex justify-center w-full'>
+            <CollapsibleTrigger asChild>
+              <Button
+                variant='default'
+                className='flex gap-2 items-center justify-center'
+              >
+                <Plus size={16} />
+                <span className='text-sm mt-[2px]'>Create Tag</span>
+              </Button>
+            </CollapsibleTrigger>
+          </div>
+          <CollapsibleContent>
+            <div className='flex flex-col gap-4 w-full mt-4'>
+              <div className='grid grid-cols-4 gap-2 w-full items-center'>
+                <Label>Name</Label>
+                <Input
+                  placeholder='Tag Name'
+                  className='col-span-3'
+                  value={tagName}
+                  onChange={(e) => {
+                    setTagName(e.target.value)
+                  }}
+                />
+              </div>
+              <div className='grid grid-cols-4 gap-2 w-full items-center'>
+                <Label>Colour</Label>
+                <ToggleGroup
+                  type='single'
+                  variant='border'
+                  className='col-span-3 flex gap-2'
+                  value={tagColor}
+                  onValueChange={(value) => {
+                    setTagColor(value)
+                  }}
+                >
+                  <ToggleGroupItem
+                    value='red'
+                    className='bg-red-500'
+                  ></ToggleGroupItem>
+                  <ToggleGroupItem
+                    value='green'
+                    className='bg-green-500'
+                  ></ToggleGroupItem>
+                  <ToggleGroupItem
+                    value='blue'
+                    className='bg-blue-500'
+                  ></ToggleGroupItem>
+                  <ToggleGroupItem
+                    value='purple'
+                    className='bg-purple-500'
+                  ></ToggleGroupItem>
+                  <ToggleGroupItem
+                    value='orange'
+                    className='bg-orange-500'
+                  ></ToggleGroupItem>
+                </ToggleGroup>
+              </div>
+              <div className='grid grid-cols-4 gap-2 w-full items-center'>
+                <Label>Icon</Label>
+                <ToggleGroup
+                  type='single'
+                  className='col-span-3 flex gap-1 flex-wrap'
+                  variant='border'
+                  value={tagIcon}
+                  onValueChange={(value) => {
+                    setTagIcon(value)
+                  }}
+                >
+                  <ToggleGroupItem
+                    className='px-0'
+                    value='bone'>
+                    <Bone
+                      className='h-12 w-12'
+                    />
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value='fish'>
+                    <Fish size={20} />
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value='hand'>
+                    <Hand size={20} />
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value='zap'>
+                    <Zap size={20} />
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value='beer'>
+                    <Beer size={20} />
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value='alarm'>
+                    <AlarmClock size={20} />
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </div>
+              <div className='flex w-full justify-center'>
+              <Button
+                variant='default'
+                className='w-40'
+                disabled
+              >
+                Save
+              </Button>
+            </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      </DialogContent>
+    </Dialog>
+  )
+}
 
 export default function Home() {
   const ctx = api.useUtils()
@@ -50,7 +228,7 @@ export default function Home() {
   return (
     <div className='mt-16 flex flex-col gap-3'>
       <div className='w-full flex items-center justify-center text-center text-xl font-semibold gap-2'>
-        <Bookmark size={20} />
+        <Tags />
         <Popover
           open={isOpen}
           onOpenChange={setIsOpen}
@@ -91,25 +269,19 @@ export default function Home() {
                   )
                   return (
                     <div className='flex flex-col'>
-                      <div
-                        className=''
-                      >{props.date.getDate()}</div>
+                      <div className=''>{props.date.getDate()}</div>
 
                       <div className='flex justify-center h-[16px] items-center gap-1'>
                         {log ? (
-                          <div
-                            className='bg-secondary-foreground h-[7px] w-[7px] rounded-full'
+                          <div className='bg-secondary-foreground h-[7px] w-[7px] rounded-full' />
+                        ) : null}
+                        {log?.isStarred === true ? (
+                          <Star
+                            className='text-yellow-500'
+                            fill='currentColor'
+                            size={12}
                           />
                         ) : null}
-                        {
-                          log?.isStarred === true ? (
-                            <Star
-                              className='text-yellow-500'
-                              fill='currentColor'
-                              size={12}
-                            />
-                          ) : null
-                        }
                       </div>
                     </div>
                   )

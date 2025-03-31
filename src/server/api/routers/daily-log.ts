@@ -4,6 +4,7 @@ import {
   dailyMeal,
   poopLog,
   waterLog,
+  tag,
 } from '@/server/db/schema/daily-logs'
 import { log } from '@/server/db/schema/log'
 import {
@@ -1244,6 +1245,30 @@ export const dailyLogRouter = createTRPCRouter({
         },
       },
       orderBy: (data, { desc }) => desc(data.date),
+    })
+    return res
+  }),
+  createTag: protectedProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        color: z.string(),
+        icon: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.db.insert(tag).values({
+        name: input.name,
+        color: input.color,
+        icon: input.icon,
+        userId: ctx.session.user.id,
+      })
+      return res
+    }),
+  getAllTagsCurrentUser: protectedProcedure.query(async ({ ctx }) => {
+    const res = await ctx.db.query.tag.findMany({
+      where: eq(tag.userId, ctx.session.user.id),
+      orderBy: (data, { desc }) => desc(data.createdAt),
     })
     return res
   }),
