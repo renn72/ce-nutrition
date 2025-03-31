@@ -182,6 +182,7 @@ const DialogWrapper = ({
         </div>
       </DialogTrigger>
       <DialogContent
+        className='top-20 translate-y-0 '
         onOpenAutoFocus={(e) => {
           e.preventDefault()
         }}
