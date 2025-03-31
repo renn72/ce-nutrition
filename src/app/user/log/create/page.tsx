@@ -8,7 +8,8 @@ import { useSearchParams } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
-import { Calendar as CalendarIcon } from 'lucide-react'
+import { Bookmark, Calendar as CalendarIcon, Star } from 'lucide-react'
+import Component from '@/components/comp-510'
 
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -21,6 +22,7 @@ import {
 import { DailyLogForm } from './form'
 
 export default function Home() {
+  const ctx = api.useUtils()
   const searchParams = useSearchParams()
   const id = searchParams.get('id')
   const [date, setDate] = useState<Date | undefined>(
@@ -29,6 +31,12 @@ export default function Home() {
   const [isOpen, setIsOpen] = useState(false)
   const { data: dailyLogs, isLoading } =
     api.dailyLog.getAllCurrentUser.useQuery()
+
+  const { mutate: updateIsStarred } = api.dailyLog.updateIsStarred.useMutation({
+    onSettled: () => {
+      ctx.dailyLog.invalidate()
+    },
+  })
 
   if (isLoading) return null
 
@@ -42,7 +50,10 @@ export default function Home() {
 
   return (
     <div className='mt-16 flex flex-col gap-3'>
-      <div className='w-full text-center text-xl font-semibold'>
+      <div className='w-full flex items-center justify-center text-center text-xl font-semibold gap-2'>
+        <Bookmark
+          size={20}
+          />
         <Popover
           open={isOpen}
           onOpenChange={setIsOpen}
@@ -74,6 +85,18 @@ export default function Home() {
             />
           </PopoverContent>
         </Popover>
+        <Star
+          size={20}
+          className={cn('cursor-pointer active:scale-90 transition-transform',
+            log?.isStarred === true ? 'text-yellow-500' : 'text-muted-foreground')}
+          fill={log?.isStarred === true ? 'currentColor' : 'none'}
+          onClick={() => {
+            updateIsStarred({
+              date: date.toDateString(),
+              isStarred: log?.isStarred === true ? false : true,
+            })
+          }}
+        />
       </div>
       <DailyLogForm
         todaysLog={log}
