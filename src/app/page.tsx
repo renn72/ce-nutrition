@@ -2,7 +2,7 @@
 
 import { api } from '@/trpc/react'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { impersonatedUserAtom } from '@/atoms'
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
@@ -13,12 +13,7 @@ import { Loader, Salad, XIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { BodyFat } from '@/components/charts/mobile/body-fat'
@@ -32,6 +27,7 @@ import { MealLog } from '@/components/meal-log/meal-log'
 import { PoopLog } from '@/components/poop-log/poop-log'
 import { UserPlanView } from '@/components/user-plan/user-plan-view'
 import { WaterLog } from '@/components/water-log/water-log'
+
 import DailyLogCarousel from './_components/dailylog-carousel'
 
 export const dynamic = 'force-dynamic'
@@ -72,16 +68,34 @@ const Mobile = ({
     api.dailyLog.getAllUser.useQuery(userId)
   const { data: weighIns, isLoading: weighInsLoading } =
     api.weighIn.getAllUser.useQuery(userId)
+  const [ isCreatingLog, setIsCreatingLog ] = useState(false)
 
   const { mutate: updateChartRange } = api.user.updateChartRange.useMutation({
     onSettled: () => {
       ctx.user.invalidate()
     },
   })
+  const { mutate: createDailyLog } = api.dailyLog.create.useMutation({
+    onSettled: () => {
+      ctx.dailyLog.invalidate()
+    },
+  })
 
   const dailyLog = dailyLogs?.find(
     (dailyLog) => dailyLog.date === new Date().toDateString(),
   )
+
+  useEffect(() => {
+    if (dailyLogsLoading) return
+    if (isCreatingLog) return
+    if (!dailyLog) {
+      setIsCreatingLog(true)
+      createDailyLog({
+        date: new Date().toDateString(),
+        userId: currentUser.id,
+      })
+    }
+  }, [dailyLogs])
 
   if (dailyLogsLoading) return null
 
