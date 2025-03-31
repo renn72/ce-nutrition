@@ -1,15 +1,13 @@
 import { db } from '@/server/db'
-import { log } from '@/server/db/schema/log'
 import {
   dailyLog,
   dailyMeal,
   poopLog,
-  user,
   waterLog,
-} from '@/server/db/schema/user'
+} from '@/server/db/schema/daily-logs'
+import { log } from '@/server/db/schema/log'
 import {
   userIngredient,
-  userMeal,
   userPlan,
   userRecipe,
 } from '@/server/db/schema/user-plan'
@@ -108,7 +106,6 @@ export const dailyLogRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-
       const log = await ctx.db.query.dailyLog.findFirst({
         where: and(
           eq(dailyLog.date, input.date),
@@ -987,7 +984,6 @@ export const dailyLogRouter = createTRPCRouter({
           })
           .returning({ id: userRecipe.id })
 
-
         const ingredientInsert = await ctx.db
           .insert(userIngredient)
           .values(
@@ -1192,6 +1188,16 @@ export const dailyLogRouter = createTRPCRouter({
       with: {
         poopLogs: true,
         waterLogs: true,
+        dailyMeals: {
+          with: {
+            recipe: true,
+            ingredients: {
+              with: {
+                ingredient: true,
+              },
+            },
+          },
+        },
       },
       orderBy: (data, { desc }) => desc(data.date),
     })
@@ -1229,11 +1235,11 @@ export const dailyLogRouter = createTRPCRouter({
         dailyMeals: {
           with: {
             recipe: true,
-              ingredients: {
-                with: {
-                  ingredient: true,
-                },
+            ingredients: {
+              with: {
+                ingredient: true,
               },
+            },
           },
         },
       },

@@ -2,7 +2,8 @@ import { relations, sql } from 'drizzle-orm'
 import { int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
 
 import { ingredient } from './ingredient'
-import { dailyMeal, user, dailyLog } from './user'
+import { user, } from './user'
+import { dailyLog, dailyMeal } from './daily-logs'
 
 export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 

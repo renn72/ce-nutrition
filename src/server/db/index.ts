@@ -13,6 +13,7 @@ import * as userPlan from './schema/user-plan'
 import * as log from './schema/log'
 import * as message from './schema/message'
 import * as metrics from './schema/metrics'
+import * as dailyLog from './schema/daily-logs'
 
 export const schema = {
   ...log,
@@ -26,6 +27,7 @@ export const schema = {
   ...userPlan,
   ...message,
   ...metrics,
+  ...dailyLog,
 }
 
 /**
