@@ -21,6 +21,7 @@ import {
   Star,
   Zap,
 } from 'lucide-react'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar-log'
@@ -159,10 +160,9 @@ const Tags = () => {
                 >
                   <ToggleGroupItem
                     className='px-0'
-                    value='bone'>
-                    <Bone
-                      className='h-12 w-12'
-                    />
+                    value='bone'
+                  >
+                    <Bone className='h-12 w-12' />
                   </ToggleGroupItem>
                   <ToggleGroupItem value='fish'>
                     <Fish size={20} />
@@ -182,14 +182,14 @@ const Tags = () => {
                 </ToggleGroup>
               </div>
               <div className='flex w-full justify-center'>
-              <Button
-                variant='default'
-                className='w-40'
-                disabled
-              >
-                Save
-              </Button>
-            </div>
+                <Button
+                  variant='default'
+                  className='w-40'
+                  disabled
+                >
+                  Save
+                </Button>
+              </div>
             </div>
           </CollapsibleContent>
         </Collapsible>
@@ -210,8 +210,29 @@ export default function Home() {
     api.dailyLog.getAllCurrentUser.useQuery()
 
   const { mutate: updateIsStarred } = api.dailyLog.updateIsStarred.useMutation({
+    onMutate: async (data) => {
+      await ctx.dailyLog.getAllCurrentUser.cancel()
+      const previousLog = ctx.dailyLog.getAllCurrentUser.getData()
+      if (!previousLog) return
+      ctx.dailyLog.getAllCurrentUser.setData(undefined, [
+        ...previousLog.map((log) => {
+          if (log.date === data.date) {
+            return {
+              ...log,
+              isStarred: data.isStarred,
+            }
+          }
+          return log
+        }),
+      ])
+      return { previousLog }
+    },
     onSettled: () => {
       ctx.dailyLog.invalidate()
+    },
+    onError: (err, newPoopLog, context) => {
+      toast.error('error')
+      ctx.dailyLog.getAllCurrentUser.setData(undefined, context?.previousLog)
     },
   })
 
@@ -293,7 +314,7 @@ export default function Home() {
         <Star
           size={20}
           className={cn(
-            'cursor-pointer active:scale-90 transition-transform',
+            'cursor-pointer active:scale-75 transition-transform',
             log?.isStarred === true
               ? 'text-yellow-500'
               : 'text-muted-foreground',
