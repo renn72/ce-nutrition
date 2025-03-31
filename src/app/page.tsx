@@ -13,6 +13,7 @@ import { Loader, Salad, XIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
@@ -68,7 +69,7 @@ const Mobile = ({
     api.dailyLog.getAllUser.useQuery(userId)
   const { data: weighIns, isLoading: weighInsLoading } =
     api.weighIn.getAllUser.useQuery(userId)
-  const [ isCreatingLog, setIsCreatingLog ] = useState(false)
+  const [isCreatingLog, setIsCreatingLog] = useState(false)
 
   const { mutate: updateChartRange } = api.user.updateChartRange.useMutation({
     onSettled: () => {
@@ -78,6 +79,10 @@ const Mobile = ({
   const { mutate: createDailyLog } = api.dailyLog.create.useMutation({
     onSettled: () => {
       ctx.dailyLog.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error conflict')
+      ctx.dailyLog.getAllUser.setData(userId, dailyLogs)
     },
   })
 
@@ -90,10 +95,14 @@ const Mobile = ({
     if (isCreatingLog) return
     if (!dailyLog) {
       setIsCreatingLog(true)
-      createDailyLog({
-        date: new Date().toDateString(),
-        userId: currentUser.id,
-      })
+      try {
+        createDailyLog({
+          date: new Date().toDateString(),
+          userId: currentUser.id,
+        })
+      } catch (err) {
+        // toast.error('error', err.message)
+      }
     }
   }, [dailyLogs])
 
@@ -106,7 +115,6 @@ const Mobile = ({
       )}
     >
       <MobileHeader isDesktop={false} />
-
       <div
         id='main-content'
         className={cn(

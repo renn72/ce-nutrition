@@ -108,6 +108,16 @@ export const dailyLogRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
+
+      const log = await ctx.db.query.dailyLog.findFirst({
+        where: and(
+          eq(dailyLog.date, input.date),
+          eq(dailyLog.userId, input.userId),
+        ),
+      })
+
+      if (log) throw new TRPCError({ code: 'CONFLICT' })
+
       const res = await ctx.db
         .insert(dailyLog)
         .values({
@@ -262,6 +272,7 @@ export const dailyLogRouter = createTRPCRouter({
           eq(dailyLog.userId, ctx.session.user.id),
         ),
       })
+
       createLog({
         user: ctx.session.user.name,
         userId: ctx.session.user.id,
