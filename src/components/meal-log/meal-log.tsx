@@ -51,32 +51,62 @@ const Meal = ({
     return ['']
   })
 
-  console.log('mealIndex', index)
-
   const [mealIndex, setMealIndex] = useState(() => index)
+
 
   const ctx = api.useUtils()
   const { mutate: addMeal } = api.dailyLog.addMeal.useMutation({
     onMutate: async () => {
-      console.log('addMeal')
+      await ctx.dailyLog.getAllCurrentUser.cancel()
+      const previousLog = ctx.dailyLog.getAllUser.getData(userId)
+      if (!previousLog) return
+      ctx.dailyLog.getAllUser.setData(userId, [
+        ...previousLog.map((log) => {
+          if (log.date === date.toDateString()) {
+            return {
+              ...log,
+              dailyMeals: [
+                ...log.dailyMeals,
+                {
+                  id: -1,
+                  createdAt: new Date(),
+                  dailyLogId: -1,
+                  mealIndex: null,
+                  date: null,
+                  recipeId: null,
+                  vegeCalories: null,
+                  veges: null,
+                  recipe: [],
+                  ingredients: [],
+                },
+              ],
+            }
+          }
+          return log
+        }),
+      ])
+      return { previousLog }
     },
 
     onSettled: () => {
-      setIsOpen(false)
       ctx.dailyLog.invalidate()
     },
     onSuccess: () => {
       toast.success(`${recipeName} Added`)
     },
+    onError: (err, newLog, context) => {
+      toast.error('error')
+      ctx.dailyLog.getAllUser.setData(userId, context?.previousLog)
+    },
   })
   const log = dailyLogs?.find(
     (dailyLog) => dailyLog.date === date.toDateString(),
   )
+  console.log('logs', log)
 
   const logMeal = dailyLogs
     ?.find((dailyLog) => dailyLog.date === date.toDateString())
     ?.dailyMeals.find((dailyMeal) => dailyMeal.mealIndex == mealIndex)
-  console.log('logMeal', logMeal)
 
   const recipes = allPlans.map((plan) => plan?.userRecipes).flat()
 
@@ -85,8 +115,6 @@ const Meal = ({
       setSelectValue(logMeal?.recipeId?.toString() ?? '')
     }
   }, [logMeal])
-
-  console.log('selectValue', selectValue)
 
   return (
     <div className='flex gap-0 flex flex-col items-start w-full'>
@@ -151,9 +179,8 @@ const Meal = ({
           const plan = allPlans.find((plan) =>
             plan?.userRecipes?.find((recipe) => recipe?.id == Number(value)),
           )
-          console.log('recipe', recipe)
-          console.log('plan', plan)
           if (!recipe || !plan) return
+          setIsOpen(false)
           addMeal({
             userId: userId,
             planId: plan.id,
@@ -204,10 +231,10 @@ const Meal = ({
                                 ? recipe?.name?.slice(0, 43) + '...'
                                 : recipe?.name}
                             </div>
-                            <div className='absolute -top-1 right-1 text-[0.6rem] text-muted-foreground font-light'>{`${cals} cals`}</div>
+                            <div className='absolute -top-1 right-1 text-[0.6rem] data-[state=off]:text-muted-foreground font-light'>{`${cals} cals`}</div>
                           </div>
 
-                          <div className='text-xs text-muted-foreground flex gap-4 font-medium'>
+                          <div className='text-xs data-[state=off]:text-muted-foreground flex gap-4 font-medium'>
                             <div>{`C:${carbs}g`}</div>
                             <div>{`P:${protein}g`}</div>
                             <div>{`F:${fat}g`}</div>
@@ -241,8 +268,6 @@ const MealLog = ({
 
   const activePlans = currentUser?.userPlans.filter((plan) => plan.isActive)
 
-  console.log('activePlans', activePlans)
-
   const { mutate: deleteMeal } = api.dailyLog.deleteMeal.useMutation({
     onMutate: async () => {
       console.log('deleteMeal')
@@ -258,8 +283,6 @@ const MealLog = ({
   const todaysLog = dailyLogs?.find(
     (dailyLog) => dailyLog.date === today.toDateString(),
   )
-
-  console.log('todaysLog', todaysLog)
 
   const currentMeal = todaysLog?.dailyMeals?.length ?? 0
 

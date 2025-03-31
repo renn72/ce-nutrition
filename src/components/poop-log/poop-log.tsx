@@ -9,6 +9,7 @@ import { toast } from 'sonner'
 
 import { PoopBottomSheet } from './poop-bottom-sheet'
 
+// @ts-ignore
 import confetti from 'canvas-confetti'
 
 const PoopLog = ({
