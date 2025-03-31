@@ -3,7 +3,6 @@
 import { api } from '@/trpc/react'
 
 import { useEffect, useState } from 'react'
-import { MealBottomSheet } from './meal-bottom-sheet'
 
 import { cn, getRecipeDetailsForDailyLog } from '@/lib/utils'
 import { GetAllDailyLogs, GetUserById, UserPlan, UserRecipe } from '@/types'
@@ -23,6 +22,7 @@ import { Switch } from '@/components/ui/switch'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 import { Label } from '../ui/label'
+import { MealBottomSheet } from './meal-bottom-sheet'
 
 export const dynamic = 'force-dynamic'
 
@@ -306,23 +306,23 @@ const MealLog = ({
         open={isOpen}
         onOpenChange={setIsOpen}
       >
-        <DialogTrigger disabled={isNotActivePlan}>
-          <div className='flex flex-col gap-0 items-center justify-start w-full'>
-            <div
-              className={cn(
-                'text-lg font-semibold',
-                isFinished ? 'opacity-0' : '',
-              )}
-            >
-              Meal {currentMeal + 1}
-            </div>
-            <div
-              className={cn(
-                'rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center',
-                'justify-center active:scale-75 transition-transform cursor-pointer',
-                isOpen ? 'scale-75' : '',
-              )}
-            >
+        <div className='flex flex-col gap-0 items-center justify-start w-full'>
+          <div
+            className={cn(
+              'text-lg font-semibold',
+              isFinished ? 'opacity-0' : '',
+            )}
+          >
+            Meal {currentMeal + 1}
+          </div>
+          <div
+            className={cn(
+              'rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center',
+              'justify-center active:scale-75 transition-transform cursor-pointer',
+              isOpen ? 'scale-75' : '',
+            )}
+          >
+            <DialogTrigger disabled={isNotActivePlan}>
               <Salad
                 size={28}
                 className={cn(
@@ -330,9 +330,9 @@ const MealLog = ({
                   isOpen ? 'scale-90' : '',
                 )}
               />
-            </div>
+            </DialogTrigger>
           </div>
-        </DialogTrigger>
+        </div>
         <DialogContent
           className='px-2'
           onOpenAutoFocus={(e) => {
