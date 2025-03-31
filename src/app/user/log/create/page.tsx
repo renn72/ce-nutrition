@@ -8,11 +8,10 @@ import { useSearchParams } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
-import { Bookmark, Calendar as CalendarIcon, Star } from 'lucide-react'
-import Component from '@/components/comp-510'
+import { Bookmark, Calendar as CalendarIcon, Dot, Star } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
+import { Calendar } from '@/components/ui/calendar-log'
 import {
   Popover,
   PopoverContent,
@@ -51,9 +50,7 @@ export default function Home() {
   return (
     <div className='mt-16 flex flex-col gap-3'>
       <div className='w-full flex items-center justify-center text-center text-xl font-semibold gap-2'>
-        <Bookmark
-          size={20}
-          />
+        <Bookmark size={20} />
         <Popover
           open={isOpen}
           onOpenChange={setIsOpen}
@@ -69,7 +66,11 @@ export default function Home() {
                 )}
               >
                 <CalendarIcon className='mr-4 h-4 w-4 mt-[0px]' />
-                {date ? <span className='mt-[5px]'>{format(date, 'PPP')}</span> : <span>Pick a date</span>}
+                {date ? (
+                  <span className='mt-[5px]'>{format(date, 'PPP')}</span>
+                ) : (
+                  <span>Pick a date</span>
+                )}
               </Button>
             </div>
           </PopoverTrigger>
@@ -82,13 +83,49 @@ export default function Home() {
                 setIsOpen(false)
               }}
               initialFocus
+              components={{
+                // @ts-ignore
+                DayContent: (props) => {
+                  const log = dailyLogs?.find(
+                    (log) => log.date === props.date.toDateString(),
+                  )
+                  return (
+                    <div className='flex flex-col'>
+                      <div
+                        className=''
+                      >{props.date.getDate()}</div>
+
+                      <div className='flex justify-center h-[16px] items-center gap-1'>
+                        {log ? (
+                          <div
+                            className='bg-secondary-foreground h-[7px] w-[7px] rounded-full'
+                          />
+                        ) : null}
+                        {
+                          log?.isStarred === true ? (
+                            <Star
+                              className='text-yellow-500'
+                              fill='currentColor'
+                              size={12}
+                            />
+                          ) : null
+                        }
+                      </div>
+                    </div>
+                  )
+                },
+              }}
             />
           </PopoverContent>
         </Popover>
         <Star
           size={20}
-          className={cn('cursor-pointer active:scale-90 transition-transform',
-            log?.isStarred === true ? 'text-yellow-500' : 'text-muted-foreground')}
+          className={cn(
+            'cursor-pointer active:scale-90 transition-transform',
+            log?.isStarred === true
+              ? 'text-yellow-500'
+              : 'text-muted-foreground',
+          )}
           fill={log?.isStarred === true ? 'currentColor' : 'none'}
           onClick={() => {
             updateIsStarred({
