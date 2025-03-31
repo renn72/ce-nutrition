@@ -25,8 +25,8 @@ export default function Home() {
   return (
     <div className='my-16'>
       <Tabs defaultValue='all'>
-        <div className='w-full flex justify-center'>
-          <TabsList className='px-6'>
+        <div className=' flex justify-center'>
+          <TabsList className='px-2 flex flex-wrap bg-secondary h-full'>
             <TabsTrigger value='all'>All</TabsTrigger>
             {plans.map((plan) => (
               <TabsTrigger value={plan.id.toString()} key={plan.id}>
