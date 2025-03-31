@@ -958,7 +958,6 @@ export const dailyLogRouter = createTRPCRouter({
           .returning({ id: dailyLog.id })
 
         const logId = log?.[0]?.id
-        console.log('logId', logId)
         if (!logId) throw new Error('Log not found')
 
         const meal = await ctx.db
@@ -988,7 +987,6 @@ export const dailyLogRouter = createTRPCRouter({
           })
           .returning({ id: userRecipe.id })
 
-        console.log('recipeInsert', recipeInsert?.[0]?.id)
 
         const ingredientInsert = await ctx.db
           .insert(userIngredient)
@@ -1038,6 +1036,14 @@ export const dailyLogRouter = createTRPCRouter({
               ),
             ),
         ])
+
+        createLog({
+          user: ctx.session.user.name,
+          userId: ctx.session.user.id,
+          task: 'Add Meal',
+          notes: recipe.name ?? '',
+          objectId: input.logId,
+        })
 
         const meal = await ctx.db
           .insert(dailyMeal)
