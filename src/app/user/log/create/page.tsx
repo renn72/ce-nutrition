@@ -202,7 +202,7 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
   const handleSubmit = () => {
     if (tagName === '') return
     createTag({
-      name: tagName,
+      name: tagName.slice(0, 1).toUpperCase() + tagName.slice(1),
       color: tagColor,
       icon: tagIcon,
     })
@@ -240,11 +240,11 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
             return (
               <div
                 key={tag.id}
-                className='w-full flex justify-center relative'
+                className='w-full grid grid-cols-5 justify-items-center'
               >
                 <div
                   className={cn(
-                    'text-sm w-40 h-8 rounded-md border flex items-center justify-center gap-2 cursor-pointer border relative  active:scale-90 transition-transform',
+                    'text-sm w-40 h-8 rounded-md border flex items-center justify-center gap-2 cursor-pointer border relative  active:scale-90 transition-transform col-span-3',
                     isTagged ? 'border-0 text-white' : borderDict[color],
                     isTagged ? bgDict[color] : '',
                   )}
@@ -270,17 +270,48 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
                     )}
                   />
                 </div>
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  className='absolute right-0 top-1/2 -translate-y-1/2  active:scale-90 transition-transform '
-                  onClick={() => {
-                    if (!log) return
-                    deleteTag(tag.id)
-                  }}
-                >
-                  Delete
-                </Button>
+                <div className='col-span-2'>
+
+                <Collapsible>
+                  <CollapsibleTrigger asChild>
+                      <div className='flex justify-center'>
+
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className='hover:bg-muted/00'
+                    >
+                      Delete
+                    </Button>
+                    </div>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className='text-xs'>
+                    <div className='text-center'>If you delete this tag, it will be removed from all your logs.</div>
+                    <div className='flex gap-2 items-center'>
+                      <Button
+                        size='sm'
+                        variant='destructive'
+                        className=' h-6 active:scale-90 transition-transform'
+                        onClick={() => {
+                          if (!log) return
+                          deleteTag(tag.id)
+                        }}
+                      >
+                        Confirm
+                      </Button>
+                      <Button
+                        size='sm'
+                        variant='ghost'
+                        className='hover:bg-muted/00'
+                        onClick={() => {
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+              </div>
               </div>
             )
           })}
