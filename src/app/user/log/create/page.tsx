@@ -244,7 +244,7 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
               >
                 <div
                   className={cn(
-                    'text-sm w-40 h-8 rounded-md border flex items-center justify-center gap-2 cursor-pointer border relative',
+                    'text-sm w-40 h-8 rounded-md border flex items-center justify-center gap-2 cursor-pointer border relative  active:scale-90 transition-transform',
                     isTagged ? 'border-0 text-white' : borderDict[color],
                     isTagged ? bgDict[color] : '',
                   )}
@@ -273,7 +273,7 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
                 <Button
                   variant='ghost'
                   size='sm'
-                  className='absolute right-0 top-1/2 -translate-y-1/2'
+                  className='absolute right-0 top-1/2 -translate-y-1/2  active:scale-90 transition-transform '
                   onClick={() => {
                     if (!log) return
                     deleteTag(tag.id)
@@ -294,7 +294,7 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
               <Button
                 variant='default'
                 size='sm'
-                className='flex gap-2 items-center justify-center'
+                className='flex gap-2 items-center justify-center  active:scale-90 transition-transform'
               >
                 <Plus size={16} />
                 <span className='text-sm mt-[2px]'>Create Tag</span>
@@ -413,7 +413,7 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
               <div className='flex w-full justify-center'>
                 <Button
                   variant='default'
-                  className='w-40 relative'
+                  className='w-40 relative active:scale-90 transition-transform'
                   disabled={isSaving || tagName === ''}
                   onClick={handleSubmit}
                 >
