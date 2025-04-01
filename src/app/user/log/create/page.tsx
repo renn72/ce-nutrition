@@ -218,7 +218,7 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
       </DialogTrigger>
       <DialogContent
         onOpenAutoFocus={(e) => e.preventDefault()}
-        className='top-36 translate-y-0 px-2 '
+        className='top-36 translate-y-0 px-2 min-h-[300px]'
       >
         <DialogHeader>
           <DialogTitle>Tags</DialogTitle>
@@ -320,7 +320,9 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
           open={isOpen}
           onOpenChange={setIsOpen}
         >
-          <div className='flex justify-center w-full'>
+          <div className={cn('flex justify-center w-full',
+            isOpen ? '' : 'h-full items-end'
+          )}>
             <CollapsibleTrigger asChild>
               <Button
                 variant='default'
