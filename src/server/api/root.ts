@@ -12,6 +12,7 @@ import { dailyLogRouter } from '@/server/api/routers/daily-log'
 import { weighInRouter } from '@/server/api/routers/weigh-in'
 import { messageRouter } from '@/server/api/routers/message'
 import { metricsRouter } from '@/server/api/routers/metric'
+import { tagRouter } from '@/server/api/routers/tag'
 
 import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc'
 
@@ -21,6 +22,7 @@ import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc'
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
+  tag: tagRouter,
   dailyLog: dailyLogRouter,
   user: userRouter,
   ingredient: ingredientRouter,

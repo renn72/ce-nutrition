@@ -26,6 +26,9 @@ importers:
       '@libsql/client':
         specifier: ^0.14.0
         version: 0.14.0
+      '@lucide/lab':
+        specifier: ^0.1.2
+        version: 0.1.2
       '@number-flow/react':
         specifier: ^0.5.5
         version: 0.5.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1250,6 +1253,9 @@ packages:
     resolution: {integrity: sha512-Q0axn110zDNELfkEog3Nl8p9BU4eI/UvgaHevGyOiSDN7s0KPfj0j6jwVHk4oz3o/d/Gg3DRIxomZ4ftfTOy/g==}
     cpu: [x64]
     os: [win32]
+
+  '@lucide/lab@0.1.2':
+    resolution: {integrity: sha512-VprF2BJa7ZuTGOhUd5cf8tHJXyL63wdxcGieAiVVoR9hO0YmPsnZO0AGqDiX2/br+/MC6n8BoJcmPilltOXIJA==}
 
   '@mediapipe/pose@0.5.1675469404':
     resolution: {integrity: sha512-DFZsNWTsSphRIZppnUCuunzBiHP2FdJXR9ehc7mMi4KG+oPaOH0Em3d6kr7Py+TSyTXC1doH88KcF28k2sBxsQ==}
@@ -5577,6 +5583,8 @@ snapshots:
 
   '@libsql/win32-x64-msvc@0.4.6':
     optional: true
+
+  '@lucide/lab@0.1.2': {}
 
   '@mediapipe/pose@0.5.1675469404': {}
 

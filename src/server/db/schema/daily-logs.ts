@@ -84,6 +84,7 @@ export const tagRelations = relations(tag, ({ one, many }) => ({
 }))
 
 export const tagToDailyLog = createTable('tag_to_daily_log', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   tagId: int('tag_id')
     .notNull()
     .references(() => tag.id, {
