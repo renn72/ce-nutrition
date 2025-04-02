@@ -1,5 +1,5 @@
 import { env } from '@/env'
-import { db, client } from '@/server/db'
+import { db, } from '@/server/db'
 import {
   account,
   session,
@@ -11,7 +11,6 @@ import { compare } from 'bcryptjs'
 import { type DefaultSession, type NextAuthConfig } from 'next-auth'
 import { type Adapter } from 'next-auth/adapters'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import EmailProvider from 'next-auth/providers/email'
 import Resend from 'next-auth/providers/resend'
 
 /**
@@ -52,8 +51,6 @@ export const authConfig = {
     signIn: async ({ user, account, email }) => {
       if (!user) return false
       console.log('user', user, account, email)
-
-      await client.sync()
       const dbUser = await db.query.user.findFirst({
         where: (u, { eq }) => eq(u.email, user.email?.toLowerCase() as string),
         columns: {
