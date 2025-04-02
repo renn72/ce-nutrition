@@ -1,5 +1,5 @@
 import { env } from '@/env'
-import { db } from '@/server/db'
+import { db, client } from '@/server/db'
 import {
   account,
   session,
@@ -52,6 +52,8 @@ export const authConfig = {
     signIn: async ({ user, account, email }) => {
       if (!user) return false
       console.log('user', user, account, email)
+
+      await client.sync()
       const dbUser = await db.query.user.findFirst({
         where: (u, { eq }) => eq(u.email, user.email?.toLowerCase() as string),
         columns: {
