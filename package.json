@@ -19,7 +19,7 @@
     "@headlessui/tailwindcss": "^0.2.1",
     "@heroui/number-input": "^2.0.3",
     "@hookform/resolvers": "^3.9.0",
-    "@libsql/client": "^0.14.0",
+    "@libsql/client": "^0.15.2",
     "@lucide/lab": "^0.1.2",
     "@number-flow/react": "^0.5.5",
     "@oslojs/crypto": "^1.0.1",
