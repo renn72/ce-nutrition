@@ -5,14 +5,15 @@ import {
   primaryKey,
   sqliteTableCreator,
   text,
+  sqliteTable,
 } from 'drizzle-orm/sqlite-core'
 
 import { user } from './user'
 import { userIngredient, userRecipe } from './user-plan'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+// export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
-export const dailyLog = createTable(
+export const dailyLog = sqliteTable(
   'daily_log',
   {
     id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
@@ -60,7 +61,7 @@ export const dailyLogRelations = relations(dailyLog, ({ one, many }) => ({
   tags: many(tagToDailyLog),
 }))
 
-export const tag = createTable('tag', {
+export const tag = sqliteTable('tag', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -83,7 +84,7 @@ export const tagRelations = relations(tag, ({ one, many }) => ({
   dailyLogs: many(tagToDailyLog),
 }))
 
-export const tagToDailyLog = createTable('tag_to_daily_log', {
+export const tagToDailyLog = sqliteTable('tag_to_daily_log', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   tagId: int('tag_id')
     .notNull()
@@ -111,7 +112,7 @@ export const tagToDailyLogRelations = relations(
   }),
 )
 
-export const poopLog = createTable('poop_log', {
+export const poopLog = sqliteTable('poop_log', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -130,7 +131,7 @@ export const poopLogRelations = relations(poopLog, ({ one, many }) => ({
   }),
 }))
 
-export const waterLog = createTable('water_log', {
+export const waterLog = sqliteTable('water_log', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -150,7 +151,7 @@ export const waterLogRelations = relations(waterLog, ({ one, many }) => ({
   }),
 }))
 
-export const dailyMeal = createTable('daily_meal', {
+export const dailyMeal = sqliteTable('daily_meal', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)

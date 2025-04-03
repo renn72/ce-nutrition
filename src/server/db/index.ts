@@ -42,10 +42,11 @@ const globalForDb = globalThis as unknown as {
 export const client =
   globalForDb.client ??
   createClient({
-    url: env.DATABASE_URL,
-    syncUrl: env.DATABASE_SYNC_URL,
+    url: env.DATABASE_SYNC_URL,
+    // syncUrl: env.DATABASE_SYNC_URL,
     authToken: env.DATABASE_AUTH_TOKEN,
-    offline: true,
+    // offline: true,
+    // syncInterval: 10,
   })
 if (env.NODE_ENV !== 'production') globalForDb.client = client
 
