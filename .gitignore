@@ -51,4 +51,3 @@ yarn-error.log*
 *.db-wal
 replica.db
 db/replica.db-info
-/db/
