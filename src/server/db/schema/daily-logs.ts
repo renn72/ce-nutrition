@@ -11,7 +11,7 @@ import {
 import { user } from './user'
 import { userIngredient, userRecipe } from './user-plan'
 
-// export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+// export const createTable = sqliteTableCreator((name) => `ce_${name}`)
 
 export const dailyLog = sqliteTable(
   'daily_log',

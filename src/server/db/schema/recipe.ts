@@ -1,13 +1,13 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
+import { index, int, sqliteTableCreator, text, sqliteTable } from 'drizzle-orm/sqlite-core'
 import { z } from 'zod'
 
 import { ingredient } from './ingredient'
 import { user } from './user'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+// export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
-export const recipe = createTable('recipe', {
+export const recipe = sqliteTable('recipe', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -29,7 +29,7 @@ export const recipe = createTable('recipe', {
   hiddenAt: int('hidden_at', { mode: 'timestamp' }),
 })
 
-export const recipeToIngredient = createTable('recipe_to_ingredient', {
+export const recipeToIngredient = sqliteTable('recipe_to_ingredient', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)

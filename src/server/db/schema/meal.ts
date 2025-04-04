@@ -1,14 +1,14 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
+import { index, int, sqliteTableCreator, text, sqliteTable } from 'drizzle-orm/sqlite-core'
 
 import { planToMeal, plan } from './plan'
 
 import { recipe } from './recipe'
 import { user } from './user'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+// export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
-export const meal = createTable('meal', {
+export const meal = sqliteTable('meal', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -35,7 +35,7 @@ export const meal = createTable('meal', {
   calories: text('calories'),
 })
 
-export const mealToRecipe = createTable('meal_to_recipe', {
+export const mealToRecipe = sqliteTable('meal_to_recipe', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -50,7 +50,7 @@ export const mealToRecipe = createTable('meal_to_recipe', {
   note: text('note'),
 })
 
-export const vegeStack = createTable('vege_stack', {
+export const vegeStack = sqliteTable('vege_stack', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -64,7 +64,7 @@ export const vegeStack = createTable('vege_stack', {
   calories: text('calories'),
 })
 
-export const mealToVegeStack = createTable('meal_to_vege_stack', {
+export const mealToVegeStack = sqliteTable('meal_to_vege_stack', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)

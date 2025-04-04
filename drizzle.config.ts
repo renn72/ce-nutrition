@@ -5,6 +5,7 @@ import { env } from "@/env";
 export default {
   schema: "./src/server/db/schema/*",
   dialect: "turso",
+  out: "./drizzle",
   dbCredentials: {
     url: env.DATABASE_SYNC_URL ?? '',
     authToken: env.DATABASE_AUTH_TOKEN ?? '',

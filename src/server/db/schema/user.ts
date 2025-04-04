@@ -5,6 +5,7 @@ import {
   primaryKey,
   sqliteTableCreator,
   text,
+  sqliteTable,
 } from 'drizzle-orm/sqlite-core'
 import { type AdapterAccount } from 'next-auth/adapters'
 
@@ -14,9 +15,9 @@ import { notification } from './notification'
 import { userPlan, } from './user-plan'
 import { dailyLog, tag } from './daily-logs'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+// export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
-export const user = createTable(
+export const user = sqliteTable(
   'user',
   {
     id: text('id', { length: 255 })
@@ -83,7 +84,7 @@ export const userRelations = relations(user, ({ one, many }) => ({
   tags: many(tag),
 }))
 
-export const userSettings = createTable('user_settings', {
+export const userSettings = sqliteTable('user_settings', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -108,7 +109,7 @@ export const userSettingsRelations = relations(userSettings, ({ one }) => ({
 }))
 
 
-export const weighIn = createTable('weigh_in', {
+export const weighIn = sqliteTable('weigh_in', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -143,7 +144,7 @@ export const weighInRelations = relations(weighIn, ({ one }) => ({
   }),
 }))
 
-export const userToTrainer = createTable('user_to_trainer', {
+export const userToTrainer = sqliteTable('user_to_trainer', {
   userId: text('user_id')
     .notNull()
     .references(() => user.id),
@@ -152,7 +153,7 @@ export const userToTrainer = createTable('user_to_trainer', {
     .references(() => user.id),
 })
 
-export const role = createTable('role', {
+export const role = sqliteTable('role', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -166,7 +167,7 @@ export const role = createTable('role', {
   name: text('name'),
 })
 
-export const account = createTable(
+export const account = sqliteTable(
   'account',
   {
     userId: text('user_id', { length: 255 })
@@ -193,7 +194,7 @@ export const account = createTable(
   }),
 )
 
-export const verificationToken = createTable(
+export const verificationToken = sqliteTable(
   'verification_token',
   {
     identifier: text('identifier', { length: 255 }).notNull(),
@@ -205,7 +206,7 @@ export const verificationToken = createTable(
   }),
 )
 
-export const session = createTable(
+export const session = sqliteTable(
   'session',
   {
     sessionToken: text('session_token', { length: 255 }).notNull().primaryKey(),

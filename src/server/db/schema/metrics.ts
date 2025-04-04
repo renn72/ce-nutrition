@@ -1,11 +1,11 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
+import { index, int, sqliteTableCreator, text, sqliteTable } from 'drizzle-orm/sqlite-core'
 
 import { user } from './user'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+// export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
-export const skinfold = createTable(
+export const skinfold = sqliteTable(
   'skinfold',
   {
     id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
@@ -49,7 +49,7 @@ export const skinfoldRelations = relations(skinfold, ({ one, many }) => ({
   bodyWeight: many(bodyWeight),
 }))
 
-export const bodyFat = createTable(
+export const bodyFat = sqliteTable(
   'body_fat',
   {
     id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
@@ -82,7 +82,7 @@ export const bodyFatRelations = relations(bodyFat, ({ one }) => ({
   }),
 }))
 
-export const leanMass = createTable(
+export const leanMass = sqliteTable(
   'lean_mass',
   {
     id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
@@ -115,7 +115,7 @@ export const leanMassRelations = relations(leanMass, ({ one }) => ({
   }),
 }))
 
-export const bodyWeight = createTable(
+export const bodyWeight = sqliteTable(
   'body_weight',
   {
     id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),

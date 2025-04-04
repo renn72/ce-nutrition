@@ -42,12 +42,14 @@ const globalForDb = globalThis as unknown as {
 export const client =
   globalForDb.client ??
   createClient({
-    url: env.DATABASE_SYNC_URL,
-    // syncUrl: env.DATABASE_SYNC_URL,
+    url: env.DATABASE_URL,
+    // url: env.DATABASE_SYNC_URL,
+    syncUrl: env.DATABASE_SYNC_URL,
     authToken: env.DATABASE_AUTH_TOKEN,
-    // offline: true,
-    // syncInterval: 10,
+    offline: true,
+    // syncInterval: 100,
   })
 if (env.NODE_ENV !== 'production') globalForDb.client = client
 
 export const db = drizzle(client, { schema, logger: false })
+

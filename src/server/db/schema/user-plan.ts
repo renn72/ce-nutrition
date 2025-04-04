@@ -1,13 +1,12 @@
 import { relations, sql } from 'drizzle-orm'
-import { int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
+import { int, text, sqliteTable } from 'drizzle-orm/sqlite-core'
 
 import { ingredient } from './ingredient'
 import { user, } from './user'
 import { dailyLog, dailyMeal } from './daily-logs'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
-export const userPlan = createTable('user-plan', {
+export const userPlan = sqliteTable('user_plan', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -34,7 +33,7 @@ export const userPlan = createTable('user-plan', {
   hiddenAt: int('hidden_at', { mode: 'timestamp' }),
 })
 
-export const userMeal = createTable('user-meal', {
+export const userMeal = sqliteTable('user_meal', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -59,7 +58,7 @@ export const userMeal = createTable('user-meal', {
   note: text('note'),
 })
 
-export const userRecipe = createTable('user-recipe', {
+export const userRecipe = sqliteTable('user_recipe', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -84,7 +83,7 @@ export const userRecipe = createTable('user-recipe', {
   dailyLogId: int('daily_log_id').references(() => dailyLog.id),
 })
 
-export const userIngredient = createTable('user-ingredient', {
+export const userIngredient = sqliteTable('user_ingredient', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)

@@ -1,12 +1,12 @@
 
 import { relations, sql } from 'drizzle-orm'
-import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
+import { index, int, sqliteTableCreator, text, sqliteTable } from 'drizzle-orm/sqlite-core'
 
 import { user } from './user'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+// export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
-export const message = createTable(
+export const message = sqliteTable(
   'message',
   {
     id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),

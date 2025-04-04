@@ -1,14 +1,14 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
+import { index, int, sqliteTableCreator, text, sqliteTable } from 'drizzle-orm/sqlite-core'
 import { z } from 'zod'
 
 import { recipeToIngredient } from './recipe'
 import { userIngredient } from './user-plan'
 import { user } from './user'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+// export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
-export const ingredient = createTable(
+export const ingredient = sqliteTable(
   'ingredient',
   {
     id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
@@ -51,7 +51,7 @@ export const ingredient = createTable(
   }),
 )
 
-export const ingredientAdditionOne = createTable('ingredient_addition_one', {
+export const ingredientAdditionOne = sqliteTable('ingredient_addition_one', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -93,7 +93,7 @@ export const ingredientAdditionOne = createTable('ingredient_addition_one', {
   sorbitol: text('sorbitol'),
 })
 
-export const ingredientAdditionTwo = createTable('ingredient_addition_two', {
+export const ingredientAdditionTwo = sqliteTable('ingredient_addition_two', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -179,7 +179,7 @@ export const ingredientAdditionTwo = createTable('ingredient_addition_two', {
   vitaminE: text('vitamin_e'),
 })
 
-export const ingredientAdditionThree = createTable(
+export const ingredientAdditionThree = sqliteTable(
   'ingredient_addition_three',
   {
     id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
@@ -295,7 +295,7 @@ export const ingredientAdditionThree = createTable(
     ),
   },
 )
-export const groceryStore = createTable('grocery_store', {
+export const groceryStore = sqliteTable('grocery_store', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -304,7 +304,7 @@ export const groceryStore = createTable('grocery_store', {
   location: text('locations'),
 })
 
-export const ingredientToGroceryStore = createTable(
+export const ingredientToGroceryStore = sqliteTable(
   'ingredient_to_grocery_store',
   {
     id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
