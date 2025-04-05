@@ -1,0 +1,5271 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "6",
+  "dialect": "sqlite",
+  "tables": {
+    "grocery_store": {
+      "name": "grocery_store",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "locations": {
+          "autoincrement": false,
+          "name": "locations",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "ingredient": {
+      "name": "ingredient",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "favourite_at": {
+          "autoincrement": false,
+          "name": "favourite_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deleted_at": {
+          "autoincrement": false,
+          "name": "deleted_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hidden_at": {
+          "autoincrement": false,
+          "name": "hidden_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_aus_food": {
+          "autoincrement": false,
+          "name": "is_aus_food",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_all_stores": {
+          "default": true,
+          "autoincrement": false,
+          "name": "is_all_stores",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "serve_size": {
+          "autoincrement": false,
+          "name": "serve_size",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "serve_unit": {
+          "autoincrement": false,
+          "name": "serve_unit",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "public_food_key": {
+          "autoincrement": false,
+          "name": "public_food_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "classification": {
+          "autoincrement": false,
+          "name": "classification",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "food_name": {
+          "autoincrement": false,
+          "name": "food_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "calories_w_fibre": {
+          "autoincrement": false,
+          "name": "calories_w_fibre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "calories_wo_fibre": {
+          "autoincrement": false,
+          "name": "calories_wo_fibre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "protein": {
+          "autoincrement": false,
+          "name": "protein",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fat_total": {
+          "autoincrement": false,
+          "name": "fat_total",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_dietary_fibre": {
+          "autoincrement": false,
+          "name": "total_dietary_fibre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_sugars": {
+          "autoincrement": false,
+          "name": "total_sugars",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "starch": {
+          "autoincrement": false,
+          "name": "starch",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "resistant_starch": {
+          "autoincrement": false,
+          "name": "resistant_starch",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "available_carbohydrate_without_sugar_alcohols": {
+          "autoincrement": false,
+          "name": "available_carbohydrate_without_sugar_alcohols",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "available_carbohydrate_with_sugar_alcohols": {
+          "autoincrement": false,
+          "name": "available_carbohydrate_with_sugar_alcohols",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "ingredient_food_key_idx": {
+          "name": "ingredient_food_key_idx",
+          "columns": [
+            "public_food_key"
+          ],
+          "isUnique": false
+        },
+        "ingredient_food_name_idx": {
+          "name": "ingredient_food_name_idx",
+          "columns": [
+            "food_name"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "ingredient_user_id_user_id_fk": {
+          "name": "ingredient_user_id_user_id_fk",
+          "tableFrom": "ingredient",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "ingredient_addition_one": {
+      "name": "ingredient_addition_one",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ingredient_id": {
+          "autoincrement": false,
+          "name": "ingredient_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "energy_with_dietary_fibre": {
+          "autoincrement": false,
+          "name": "energy_with_dietary_fibre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "energy_without_dietary_fibre": {
+          "autoincrement": false,
+          "name": "energy_without_dietary_fibre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "added_sugars": {
+          "autoincrement": false,
+          "name": "added_sugars",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "free_sugars": {
+          "autoincrement": false,
+          "name": "free_sugars",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "moisture": {
+          "autoincrement": false,
+          "name": "moisture",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nitrogen": {
+          "autoincrement": false,
+          "name": "nitrogen",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "alcohol": {
+          "autoincrement": false,
+          "name": "alcohol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fructose": {
+          "autoincrement": false,
+          "name": "fructose",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "glucose": {
+          "autoincrement": false,
+          "name": "glucose",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sucrose": {
+          "autoincrement": false,
+          "name": "sucrose",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "maltose": {
+          "autoincrement": false,
+          "name": "maltose",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lactose": {
+          "autoincrement": false,
+          "name": "lactose",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "galactose": {
+          "autoincrement": false,
+          "name": "galactose",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "maltotrios": {
+          "autoincrement": false,
+          "name": "maltotrios",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ash": {
+          "autoincrement": false,
+          "name": "ash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dextrin": {
+          "autoincrement": false,
+          "name": "dextrin",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "glycerol": {
+          "autoincrement": false,
+          "name": "glycerol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "glycogen": {
+          "autoincrement": false,
+          "name": "glycogen",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "inulin": {
+          "autoincrement": false,
+          "name": "inulin",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "erythritol": {
+          "autoincrement": false,
+          "name": "erythritol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "maltitol": {
+          "autoincrement": false,
+          "name": "maltitol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mannitol": {
+          "autoincrement": false,
+          "name": "mannitol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "xylitol": {
+          "autoincrement": false,
+          "name": "xylitol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "maltodextrin": {
+          "autoincrement": false,
+          "name": "maltodextrin",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "oligosaccharides": {
+          "autoincrement": false,
+          "name": "oligosaccharides",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "polydextrose": {
+          "autoincrement": false,
+          "name": "polydextrose",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "raffinose": {
+          "autoincrement": false,
+          "name": "raffinose",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stachyose": {
+          "autoincrement": false,
+          "name": "stachyose",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sorbitol": {
+          "autoincrement": false,
+          "name": "sorbitol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "ingredient_addition_one_ingredient_id_ingredient_id_fk": {
+          "name": "ingredient_addition_one_ingredient_id_ingredient_id_fk",
+          "tableFrom": "ingredient_addition_one",
+          "tableTo": "ingredient",
+          "columnsFrom": [
+            "ingredient_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "ingredient_addition_three": {
+      "name": "ingredient_addition_three",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ingredient_id": {
+          "autoincrement": false,
+          "name": "ingredient_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_saturated_fatty_acids": {
+          "autoincrement": false,
+          "name": "total_saturated_fatty_acids",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_monounsaturated_fatty_acids": {
+          "autoincrement": false,
+          "name": "total_monounsaturated_fatty_acids",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_polyunsaturated_fatty_acids": {
+          "autoincrement": false,
+          "name": "total_polyunsaturated_fatty_acids",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_long_chain_omega_3_fatty_acids": {
+          "autoincrement": false,
+          "name": "total_long_chain_omega_3_fatty_acids",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_trans_fatty_acids": {
+          "autoincrement": false,
+          "name": "total_trans_fatty_acids",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "caffeine": {
+          "autoincrement": false,
+          "name": "caffeine",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cholesterol": {
+          "autoincrement": false,
+          "name": "cholesterol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "alanine": {
+          "autoincrement": false,
+          "name": "alanine",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "arginine": {
+          "autoincrement": false,
+          "name": "arginine",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "aspartic_acid": {
+          "autoincrement": false,
+          "name": "aspartic_acid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cystine_plus_cysteine": {
+          "autoincrement": false,
+          "name": "cystine_plus_cysteine",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "glutamic_acid": {
+          "autoincrement": false,
+          "name": "glutamic_acid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "glycine": {
+          "autoincrement": false,
+          "name": "glycine",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "histidine": {
+          "autoincrement": false,
+          "name": "histidine",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "isoleucine": {
+          "autoincrement": false,
+          "name": "isoleucine",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "leucine": {
+          "autoincrement": false,
+          "name": "leucine",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lysine": {
+          "autoincrement": false,
+          "name": "lysine",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "methionine": {
+          "autoincrement": false,
+          "name": "methionine",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phenylalanine": {
+          "autoincrement": false,
+          "name": "phenylalanine",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "proline": {
+          "autoincrement": false,
+          "name": "proline",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "serine": {
+          "autoincrement": false,
+          "name": "serine",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "threonine": {
+          "autoincrement": false,
+          "name": "threonine",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tyrosine": {
+          "autoincrement": false,
+          "name": "tyrosine",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tryptophan": {
+          "autoincrement": false,
+          "name": "tryptophan",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "valine": {
+          "autoincrement": false,
+          "name": "valine",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c4": {
+          "autoincrement": false,
+          "name": "c4",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c6": {
+          "autoincrement": false,
+          "name": "c6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c8": {
+          "autoincrement": false,
+          "name": "c8",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c10": {
+          "autoincrement": false,
+          "name": "c10",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c11": {
+          "autoincrement": false,
+          "name": "c11",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c12": {
+          "autoincrement": false,
+          "name": "c12",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c13": {
+          "autoincrement": false,
+          "name": "c13",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c14": {
+          "autoincrement": false,
+          "name": "c14",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c15": {
+          "autoincrement": false,
+          "name": "c15",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c16": {
+          "autoincrement": false,
+          "name": "c16",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c17": {
+          "autoincrement": false,
+          "name": "c17",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c18": {
+          "autoincrement": false,
+          "name": "c18",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c19": {
+          "autoincrement": false,
+          "name": "c19",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c20": {
+          "autoincrement": false,
+          "name": "c20",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c21": {
+          "autoincrement": false,
+          "name": "c21",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c22": {
+          "autoincrement": false,
+          "name": "c22",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c23": {
+          "autoincrement": false,
+          "name": "c23",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c24": {
+          "autoincrement": false,
+          "name": "c24",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_saturated_fatty_acids_equated": {
+          "autoincrement": false,
+          "name": "total_saturated_fatty_acids_equated",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c10_1": {
+          "autoincrement": false,
+          "name": "c10_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c12_1": {
+          "autoincrement": false,
+          "name": "c12_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c14_1": {
+          "autoincrement": false,
+          "name": "c14_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c15_1": {
+          "autoincrement": false,
+          "name": "c15_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c16_1": {
+          "autoincrement": false,
+          "name": "c16_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c17_1": {
+          "autoincrement": false,
+          "name": "c17_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c18_1": {
+          "autoincrement": false,
+          "name": "c18_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c18_1w5": {
+          "autoincrement": false,
+          "name": "c18_1w5",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c18_1w6": {
+          "autoincrement": false,
+          "name": "c18_1w6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c18_1w7": {
+          "autoincrement": false,
+          "name": "c18_1w7",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c18_1w9": {
+          "autoincrement": false,
+          "name": "c18_1w9",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c20_1": {
+          "autoincrement": false,
+          "name": "c20_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c20_1w9": {
+          "autoincrement": false,
+          "name": "c20_1w9",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c20_1w13": {
+          "autoincrement": false,
+          "name": "c20_1w13",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c20_1w11": {
+          "autoincrement": false,
+          "name": "c20_1w11",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c22_1": {
+          "autoincrement": false,
+          "name": "c22_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c22_1w9": {
+          "autoincrement": false,
+          "name": "c22_1w9",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c22_1w11": {
+          "autoincrement": false,
+          "name": "c22_1w11",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c24_1": {
+          "autoincrement": false,
+          "name": "c24_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c24_1w9": {
+          "autoincrement": false,
+          "name": "c24_1w9",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c24_1w11": {
+          "autoincrement": false,
+          "name": "c24_1w11",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c24_1w13": {
+          "autoincrement": false,
+          "name": "c24_1w13",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_monounsaturated_fatty_acids_equated": {
+          "autoincrement": false,
+          "name": "total_monounsaturated_fatty_acids_equated",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c12_2": {
+          "autoincrement": false,
+          "name": "c12_2",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c16_2w4": {
+          "autoincrement": false,
+          "name": "c16_2w4",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c16_3": {
+          "autoincrement": false,
+          "name": "c16_3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c18_2w6": {
+          "autoincrement": false,
+          "name": "c18_2w6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c18_3w3": {
+          "autoincrement": false,
+          "name": "c18_3w3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c18_3w4": {
+          "autoincrement": false,
+          "name": "c18_3w4",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c18_3w6": {
+          "autoincrement": false,
+          "name": "c18_3w6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c18_4w1": {
+          "autoincrement": false,
+          "name": "c18_4w1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c18_4w3": {
+          "autoincrement": false,
+          "name": "c18_4w3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c20_2": {
+          "autoincrement": false,
+          "name": "c20_2",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c20_2w6": {
+          "autoincrement": false,
+          "name": "c20_2w6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c20_3": {
+          "autoincrement": false,
+          "name": "c20_3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c20_3w3": {
+          "autoincrement": false,
+          "name": "c20_3w3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c20_3w6": {
+          "autoincrement": false,
+          "name": "c20_3w6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c20_4": {
+          "autoincrement": false,
+          "name": "c20_4",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c20_4w3": {
+          "autoincrement": false,
+          "name": "c20_4w3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c20_4w6": {
+          "autoincrement": false,
+          "name": "c20_4w6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c20_5w3": {
+          "autoincrement": false,
+          "name": "c20_5w3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c21_5w3": {
+          "autoincrement": false,
+          "name": "c21_5w3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c22_2": {
+          "autoincrement": false,
+          "name": "c22_2",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c22_2w6": {
+          "autoincrement": false,
+          "name": "c22_2w6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c22_4w6": {
+          "autoincrement": false,
+          "name": "c22_4w6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c22_5w3": {
+          "autoincrement": false,
+          "name": "c22_5w3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c22_5w6": {
+          "autoincrement": false,
+          "name": "c22_5w6",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "c22_6w3": {
+          "autoincrement": false,
+          "name": "c22_6w3",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_polyunsaturated_fatty_acids_equated": {
+          "autoincrement": false,
+          "name": "total_polyunsaturated_fatty_acids_equated",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "ingredient_addition_three_ingredient_id_ingredient_id_fk": {
+          "name": "ingredient_addition_three_ingredient_id_ingredient_id_fk",
+          "tableFrom": "ingredient_addition_three",
+          "tableTo": "ingredient",
+          "columnsFrom": [
+            "ingredient_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "ingredient_addition_two": {
+      "name": "ingredient_addition_two",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ingredient_id": {
+          "autoincrement": false,
+          "name": "ingredient_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "acetic_acid": {
+          "autoincrement": false,
+          "name": "acetic_acid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "citric_acid": {
+          "autoincrement": false,
+          "name": "citric_acid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fumaric_acid": {
+          "autoincrement": false,
+          "name": "fumaric_acid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lactic_acid": {
+          "autoincrement": false,
+          "name": "lactic_acid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "malic_acid": {
+          "autoincrement": false,
+          "name": "malic_acid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "oxalic_acid": {
+          "autoincrement": false,
+          "name": "oxalic_acid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "propionic_acid": {
+          "autoincrement": false,
+          "name": "propionic_acid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "quinic_acid": {
+          "autoincrement": false,
+          "name": "quinic_acid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "shikimic_acid": {
+          "autoincrement": false,
+          "name": "shikimic_acid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "succinic_acid": {
+          "autoincrement": false,
+          "name": "succinic_acid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tartaric_acid": {
+          "autoincrement": false,
+          "name": "tartaric_acid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "aluminium": {
+          "autoincrement": false,
+          "name": "aluminium",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "antimony": {
+          "autoincrement": false,
+          "name": "antimony",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "arsenic": {
+          "autoincrement": false,
+          "name": "arsenic",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cadmium": {
+          "autoincrement": false,
+          "name": "cadmium",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "calcium": {
+          "autoincrement": false,
+          "name": "calcium",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "chromium": {
+          "autoincrement": false,
+          "name": "chromium",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "chloride": {
+          "autoincrement": false,
+          "name": "chloride",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cobalt": {
+          "autoincrement": false,
+          "name": "cobalt",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "copper": {
+          "autoincrement": false,
+          "name": "copper",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fluoride": {
+          "autoincrement": false,
+          "name": "fluoride",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "iodine": {
+          "autoincrement": false,
+          "name": "iodine",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "iron": {
+          "autoincrement": false,
+          "name": "iron",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lead": {
+          "autoincrement": false,
+          "name": "lead",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "magnesium": {
+          "autoincrement": false,
+          "name": "magnesium",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "manganese": {
+          "autoincrement": false,
+          "name": "manganese",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mercury": {
+          "autoincrement": false,
+          "name": "mercury",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "molybdenum": {
+          "autoincrement": false,
+          "name": "molybdenum",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nickel": {
+          "autoincrement": false,
+          "name": "nickel",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phosphorus": {
+          "autoincrement": false,
+          "name": "phosphorus",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "potassium": {
+          "autoincrement": false,
+          "name": "potassium",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "selenium": {
+          "autoincrement": false,
+          "name": "selenium",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sodium": {
+          "autoincrement": false,
+          "name": "sodium",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sulphur": {
+          "autoincrement": false,
+          "name": "sulphur",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tin": {
+          "autoincrement": false,
+          "name": "tin",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "zinc": {
+          "autoincrement": false,
+          "name": "zinc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "retinol": {
+          "autoincrement": false,
+          "name": "retinol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "alpha_carotene": {
+          "autoincrement": false,
+          "name": "alpha_carotene",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "beta_carotene": {
+          "autoincrement": false,
+          "name": "beta_carotene",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cryptoxanthin": {
+          "autoincrement": false,
+          "name": "cryptoxanthin",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "beta_carotene_equivalents": {
+          "autoincrement": false,
+          "name": "beta_carotene_equivalents",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vitamin_a_retinol_equivalents": {
+          "autoincrement": false,
+          "name": "vitamin_a_retinol_equivalents",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lutein": {
+          "autoincrement": false,
+          "name": "lutein",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lycopene": {
+          "autoincrement": false,
+          "name": "lycopene",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "xanthophyl": {
+          "autoincrement": false,
+          "name": "xanthophyl",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "thiamin": {
+          "autoincrement": false,
+          "name": "thiamin",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "riboflavin": {
+          "autoincrement": false,
+          "name": "riboflavin",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "niacin": {
+          "autoincrement": false,
+          "name": "niacin",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "niacin_derived_from_tryptophan": {
+          "autoincrement": false,
+          "name": "niacin_derived_from_tryptophan",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "niacin_derived_equivalents": {
+          "autoincrement": false,
+          "name": "niacin_derived_equivalents",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pantothenic_acid": {
+          "autoincrement": false,
+          "name": "pantothenic_acid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pyridoxine": {
+          "autoincrement": false,
+          "name": "pyridoxine",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "biotin": {
+          "autoincrement": false,
+          "name": "biotin",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cobalamin": {
+          "autoincrement": false,
+          "name": "cobalamin",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "folate_natural": {
+          "autoincrement": false,
+          "name": "folate_natural",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "folic_acid": {
+          "autoincrement": false,
+          "name": "folic_acid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_folates": {
+          "autoincrement": false,
+          "name": "total_folates",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dietary_folate_equivalents": {
+          "autoincrement": false,
+          "name": "dietary_folate_equivalents",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vitamin_c": {
+          "autoincrement": false,
+          "name": "vitamin_c",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cholecalciferol": {
+          "autoincrement": false,
+          "name": "cholecalciferol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ergocalciferol": {
+          "autoincrement": false,
+          "name": "ergocalciferol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hydroxy_cholecalciferol": {
+          "autoincrement": false,
+          "name": "hydroxy_cholecalciferol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hydroxy_ergocalciferol": {
+          "autoincrement": false,
+          "name": "hydroxy_ergocalciferol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vitamin_d_equivalents": {
+          "autoincrement": false,
+          "name": "vitamin_d_equivalents",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "alpha_tocopherol": {
+          "autoincrement": false,
+          "name": "alpha_tocopherol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "alpha_tocotrienol": {
+          "autoincrement": false,
+          "name": "alpha_tocotrienol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "beta_tocopherol": {
+          "autoincrement": false,
+          "name": "beta_tocopherol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "beta_tocotrienol": {
+          "autoincrement": false,
+          "name": "beta_tocotrienol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delta_tocopherol": {
+          "autoincrement": false,
+          "name": "delta_tocopherol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delta_tocotrienol": {
+          "autoincrement": false,
+          "name": "delta_tocotrienol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gamma_tocopherol": {
+          "autoincrement": false,
+          "name": "gamma_tocopherol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gamma_tocotrienol": {
+          "autoincrement": false,
+          "name": "gamma_tocotrienol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vitamin_e": {
+          "autoincrement": false,
+          "name": "vitamin_e",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "ingredient_addition_two_ingredient_id_ingredient_id_fk": {
+          "name": "ingredient_addition_two_ingredient_id_ingredient_id_fk",
+          "tableFrom": "ingredient_addition_two",
+          "tableTo": "ingredient",
+          "columnsFrom": [
+            "ingredient_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "ingredient_to_grocery_store": {
+      "name": "ingredient_to_grocery_store",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ingredient_id": {
+          "autoincrement": false,
+          "name": "ingredient_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "grocery_store_id": {
+          "autoincrement": false,
+          "name": "grocery_store_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "ingredient_to_grocery_store_grocery_store_id_grocery_store_id_fk": {
+          "name": "ingredient_to_grocery_store_grocery_store_id_grocery_store_id_fk",
+          "tableFrom": "ingredient_to_grocery_store",
+          "tableTo": "grocery_store",
+          "columnsFrom": [
+            "grocery_store_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "ingredient_to_grocery_store_ingredient_id_ingredient_id_fk": {
+          "name": "ingredient_to_grocery_store_ingredient_id_ingredient_id_fk",
+          "tableFrom": "ingredient_to_grocery_store",
+          "tableTo": "ingredient",
+          "columnsFrom": [
+            "ingredient_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "meal": {
+      "name": "meal",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plan_id": {
+          "autoincrement": false,
+          "name": "plan_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "autoincrement": false,
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "autoincrement": false,
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "creator_id": {
+          "autoincrement": false,
+          "name": "creator_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "meal_category": {
+          "autoincrement": false,
+          "name": "meal_category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "favourite_at": {
+          "autoincrement": false,
+          "name": "favourite_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deleted_at": {
+          "autoincrement": false,
+          "name": "deleted_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hidden_at": {
+          "autoincrement": false,
+          "name": "hidden_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vege_notes": {
+          "autoincrement": false,
+          "name": "vege_notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vege": {
+          "autoincrement": false,
+          "name": "vege",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vege_calories": {
+          "autoincrement": false,
+          "name": "vege_calories",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "index": {
+          "autoincrement": false,
+          "name": "index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "calories": {
+          "autoincrement": false,
+          "name": "calories",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "meal_creator_id_user_id_fk": {
+          "name": "meal_creator_id_user_id_fk",
+          "tableFrom": "meal",
+          "tableTo": "user",
+          "columnsFrom": [
+            "creator_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "meal_plan_id_plan_id_fk": {
+          "name": "meal_plan_id_plan_id_fk",
+          "tableFrom": "meal",
+          "tableTo": "plan",
+          "columnsFrom": [
+            "plan_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "meal_to_recipe": {
+      "name": "meal_to_recipe",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "meal_id": {
+          "autoincrement": false,
+          "name": "meal_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "recipe_id": {
+          "autoincrement": false,
+          "name": "recipe_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "index": {
+          "autoincrement": false,
+          "name": "index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "note": {
+          "autoincrement": false,
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "meal_to_recipe_recipe_id_recipe_id_fk": {
+          "name": "meal_to_recipe_recipe_id_recipe_id_fk",
+          "tableFrom": "meal_to_recipe",
+          "tableTo": "recipe",
+          "columnsFrom": [
+            "recipe_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "meal_to_recipe_meal_id_meal_id_fk": {
+          "name": "meal_to_recipe_meal_id_meal_id_fk",
+          "tableFrom": "meal_to_recipe",
+          "tableTo": "meal",
+          "columnsFrom": [
+            "meal_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "meal_to_vege_stack": {
+      "name": "meal_to_vege_stack",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "meal_id": {
+          "autoincrement": false,
+          "name": "meal_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vege_stack_id": {
+          "autoincrement": false,
+          "name": "vege_stack_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "calories": {
+          "autoincrement": false,
+          "name": "calories",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "note": {
+          "autoincrement": false,
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "meal_to_vege_stack_vege_stack_id_vege_stack_id_fk": {
+          "name": "meal_to_vege_stack_vege_stack_id_vege_stack_id_fk",
+          "tableFrom": "meal_to_vege_stack",
+          "tableTo": "vege_stack",
+          "columnsFrom": [
+            "vege_stack_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "meal_to_vege_stack_meal_id_meal_id_fk": {
+          "name": "meal_to_vege_stack_meal_id_meal_id_fk",
+          "tableFrom": "meal_to_vege_stack",
+          "tableTo": "meal",
+          "columnsFrom": [
+            "meal_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "vege_stack": {
+      "name": "vege_stack",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "veges": {
+          "autoincrement": false,
+          "name": "veges",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "autoincrement": false,
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "calories": {
+          "autoincrement": false,
+          "name": "calories",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "notification": {
+      "name": "notification",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "title": {
+          "autoincrement": false,
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_read": {
+          "autoincrement": false,
+          "name": "is_read",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_viewed": {
+          "autoincrement": false,
+          "name": "is_viewed",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_deleted": {
+          "autoincrement": false,
+          "name": "is_deleted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "autoincrement": false,
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "notification_user_id_idx": {
+          "name": "notification_user_id_idx",
+          "columns": [
+            "user_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "notification_user_id_user_id_fk": {
+          "name": "notification_user_id_user_id_fk",
+          "tableFrom": "notification",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "plan": {
+      "name": "plan",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "autoincrement": false,
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "autoincrement": false,
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "number_of_meals": {
+          "autoincrement": false,
+          "name": "number_of_meals",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "creator_id": {
+          "autoincrement": false,
+          "name": "creator_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "recipe_category": {
+          "autoincrement": false,
+          "name": "recipe_category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "favourite_at": {
+          "autoincrement": false,
+          "name": "favourite_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deleted_at": {
+          "autoincrement": false,
+          "name": "deleted_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hidden_at": {
+          "autoincrement": false,
+          "name": "hidden_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "plan_creator_id_user_id_fk": {
+          "name": "plan_creator_id_user_id_fk",
+          "tableFrom": "plan",
+          "tableTo": "user",
+          "columnsFrom": [
+            "creator_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "plan_to_meal": {
+      "name": "plan_to_meal",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plan_id": {
+          "autoincrement": false,
+          "name": "plan_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "meal_id": {
+          "autoincrement": false,
+          "name": "meal_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "index": {
+          "autoincrement": false,
+          "name": "index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "meal_title": {
+          "autoincrement": false,
+          "name": "meal_title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "calories": {
+          "autoincrement": false,
+          "name": "calories",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vege_calories": {
+          "autoincrement": false,
+          "name": "vege_calories",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "note": {
+          "autoincrement": false,
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "plan_to_meal_meal_id_meal_id_fk": {
+          "name": "plan_to_meal_meal_id_meal_id_fk",
+          "tableFrom": "plan_to_meal",
+          "tableTo": "meal",
+          "columnsFrom": [
+            "meal_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "plan_to_meal_plan_id_plan_id_fk": {
+          "name": "plan_to_meal_plan_id_plan_id_fk",
+          "tableFrom": "plan_to_meal",
+          "tableTo": "plan",
+          "columnsFrom": [
+            "plan_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "recipe": {
+      "name": "recipe",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image": {
+          "autoincrement": false,
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "notes": {
+          "autoincrement": false,
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "calories": {
+          "autoincrement": false,
+          "name": "calories",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "creator_id": {
+          "autoincrement": false,
+          "name": "creator_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "recipe_category": {
+          "autoincrement": false,
+          "name": "recipe_category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "favourite_at": {
+          "autoincrement": false,
+          "name": "favourite_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deleted_at": {
+          "autoincrement": false,
+          "name": "deleted_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hidden_at": {
+          "autoincrement": false,
+          "name": "hidden_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "recipe_creator_id_user_id_fk": {
+          "name": "recipe_creator_id_user_id_fk",
+          "tableFrom": "recipe",
+          "tableTo": "user",
+          "columnsFrom": [
+            "creator_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "recipe_to_ingredient": {
+      "name": "recipe_to_ingredient",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "recipe_id": {
+          "autoincrement": false,
+          "name": "recipe_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ingredient_id": {
+          "autoincrement": false,
+          "name": "ingredient_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "index": {
+          "autoincrement": false,
+          "name": "index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "alternate_id": {
+          "autoincrement": false,
+          "name": "alternate_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "serve": {
+          "autoincrement": false,
+          "name": "serve",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "serve_unit": {
+          "autoincrement": false,
+          "name": "serve_unit",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "note": {
+          "autoincrement": false,
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "recipe_to_ingredient_alternate_id_ingredient_id_fk": {
+          "name": "recipe_to_ingredient_alternate_id_ingredient_id_fk",
+          "tableFrom": "recipe_to_ingredient",
+          "tableTo": "ingredient",
+          "columnsFrom": [
+            "alternate_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "recipe_to_ingredient_ingredient_id_ingredient_id_fk": {
+          "name": "recipe_to_ingredient_ingredient_id_ingredient_id_fk",
+          "tableFrom": "recipe_to_ingredient",
+          "tableTo": "ingredient",
+          "columnsFrom": [
+            "ingredient_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "recipe_to_ingredient_recipe_id_recipe_id_fk": {
+          "name": "recipe_to_ingredient_recipe_id_recipe_id_fk",
+          "tableFrom": "recipe_to_ingredient",
+          "tableTo": "recipe",
+          "columnsFrom": [
+            "recipe_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "settings": {
+      "name": "settings",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "is_calories_with_fibre": {
+          "autoincrement": false,
+          "name": "is_calories_with_fibre",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "user_meal": {
+      "name": "user_meal",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_plan_id": {
+          "autoincrement": false,
+          "name": "user_plan_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "index": {
+          "autoincrement": false,
+          "name": "index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "meal_title": {
+          "autoincrement": false,
+          "name": "meal_title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "calories": {
+          "autoincrement": false,
+          "name": "calories",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "protein": {
+          "autoincrement": false,
+          "name": "protein",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "target_protein": {
+          "autoincrement": false,
+          "name": "target_protein",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "target_calories": {
+          "autoincrement": false,
+          "name": "target_calories",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vege_calories": {
+          "autoincrement": false,
+          "name": "vege_calories",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "veges": {
+          "autoincrement": false,
+          "name": "veges",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vege_notes": {
+          "autoincrement": false,
+          "name": "vege_notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "note": {
+          "autoincrement": false,
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "user_meal_user_plan_id_user_plan_id_fk": {
+          "name": "user_meal_user_plan_id_user_plan_id_fk",
+          "tableFrom": "user_meal",
+          "tableTo": "user_plan",
+          "columnsFrom": [
+            "user_plan_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "user_plan": {
+      "name": "user_plan",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "finished_at": {
+          "autoincrement": false,
+          "name": "finished_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "start_at": {
+          "autoincrement": false,
+          "name": "start_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_active": {
+          "autoincrement": false,
+          "name": "is_active",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image": {
+          "autoincrement": false,
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "notes": {
+          "autoincrement": false,
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "number_of_meals": {
+          "autoincrement": false,
+          "name": "number_of_meals",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "creator_id": {
+          "autoincrement": false,
+          "name": "creator_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "favourite_at": {
+          "autoincrement": false,
+          "name": "favourite_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deleted_at": {
+          "autoincrement": false,
+          "name": "deleted_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hidden_at": {
+          "autoincrement": false,
+          "name": "hidden_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "user_plan_user_id_user_id_fk": {
+          "name": "user_plan_user_id_user_id_fk",
+          "tableFrom": "user_plan",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "user_plan_creator_id_user_id_fk": {
+          "name": "user_plan_creator_id_user_id_fk",
+          "tableFrom": "user_plan",
+          "tableTo": "user",
+          "columnsFrom": [
+            "creator_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "account": {
+      "name": "account",
+      "columns": {
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "autoincrement": false,
+          "name": "type",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider": {
+          "autoincrement": false,
+          "name": "provider",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider_account_id": {
+          "autoincrement": false,
+          "name": "provider_account_id",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "refresh_token": {
+          "autoincrement": false,
+          "name": "refresh_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "access_token": {
+          "autoincrement": false,
+          "name": "access_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "expires_at": {
+          "autoincrement": false,
+          "name": "expires_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "token_type": {
+          "autoincrement": false,
+          "name": "token_type",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "scope": {
+          "autoincrement": false,
+          "name": "scope",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_token": {
+          "autoincrement": false,
+          "name": "id_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "session_state": {
+          "autoincrement": false,
+          "name": "session_state",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "account_provider_provider_account_id_pk": {
+          "columns": [
+            "provider",
+            "provider_account_id"
+          ],
+          "name": "account_provider_provider_account_id_pk"
+        }
+      },
+      "indexes": {
+        "account_user_id_idx": {
+          "name": "account_user_id_idx",
+          "columns": [
+            "user_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "account_user_id_user_id_fk": {
+          "name": "account_user_id_user_id_fk",
+          "tableFrom": "account",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "role": {
+      "name": "role",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "role_user_id_user_id_fk": {
+          "name": "role_user_id_user_id_fk",
+          "tableFrom": "role",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "session": {
+      "name": "session",
+      "columns": {
+        "session_token": {
+          "autoincrement": false,
+          "name": "session_token",
+          "type": "text(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "userId": {
+          "autoincrement": false,
+          "name": "userId",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires": {
+          "autoincrement": false,
+          "name": "expires",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "session_userId_idx": {
+          "name": "session_userId_idx",
+          "columns": [
+            "userId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "session_userId_user_id_fk": {
+          "name": "session_userId_user_id_fk",
+          "tableFrom": "session",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "user": {
+      "name": "user",
+      "columns": {
+        "id": {
+          "autoincrement": false,
+          "name": "id",
+          "type": "text(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "first_name": {
+          "autoincrement": false,
+          "name": "first_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_name": {
+          "autoincrement": false,
+          "name": "last_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "clerk_id": {
+          "autoincrement": false,
+          "name": "clerk_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_date": {
+          "autoincrement": false,
+          "name": "birth_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gender": {
+          "autoincrement": false,
+          "name": "gender",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "autoincrement": false,
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "autoincrement": false,
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "instagram": {
+          "autoincrement": false,
+          "name": "instagram",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "open_lifter": {
+          "autoincrement": false,
+          "name": "open_lifter",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "autoincrement": false,
+          "name": "phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "autoincrement": false,
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email_verified": {
+          "autoincrement": false,
+          "name": "email_verified",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password": {
+          "autoincrement": false,
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "current_plan_id": {
+          "autoincrement": false,
+          "name": "current_plan_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "autoincrement": false,
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_fake": {
+          "default": false,
+          "autoincrement": false,
+          "name": "is_fake",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_trainer": {
+          "default": false,
+          "autoincrement": false,
+          "name": "is_trainer",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_root": {
+          "default": false,
+          "autoincrement": false,
+          "name": "is_root",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_creator": {
+          "default": false,
+          "autoincrement": false,
+          "name": "is_creator",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "email_idx": {
+          "name": "email_idx",
+          "columns": [
+            "email"
+          ],
+          "isUnique": false
+        },
+        "clerk_id_idx": {
+          "name": "clerk_id_idx",
+          "columns": [
+            "clerk_id"
+          ],
+          "isUnique": false
+        },
+        "name_idx": {
+          "name": "name_idx",
+          "columns": [
+            "name"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "user_to_trainer": {
+      "name": "user_to_trainer",
+      "columns": {
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "trainer_id": {
+          "autoincrement": false,
+          "name": "trainer_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "user_to_trainer_trainer_id_user_id_fk": {
+          "name": "user_to_trainer_trainer_id_user_id_fk",
+          "tableFrom": "user_to_trainer",
+          "tableTo": "user",
+          "columnsFrom": [
+            "trainer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "user_to_trainer_user_id_user_id_fk": {
+          "name": "user_to_trainer_user_id_user_id_fk",
+          "tableFrom": "user_to_trainer",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "verification_token": {
+      "name": "verification_token",
+      "columns": {
+        "identifier": {
+          "autoincrement": false,
+          "name": "identifier",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "autoincrement": false,
+          "name": "token",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires": {
+          "autoincrement": false,
+          "name": "expires",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "verification_token_identifier_token_pk": {
+          "columns": [
+            "identifier",
+            "token"
+          ],
+          "name": "verification_token_identifier_token_pk"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "weigh_in": {
+      "name": "weigh_in",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "trainer_id": {
+          "autoincrement": false,
+          "name": "trainer_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "body_weight": {
+          "autoincrement": false,
+          "name": "body_weight",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lean_mass": {
+          "autoincrement": false,
+          "name": "lean_mass",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "body_fat": {
+          "autoincrement": false,
+          "name": "body_fat",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "blood_pressure": {
+          "autoincrement": false,
+          "name": "blood_pressure",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "autoincrement": false,
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "autoincrement": false,
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "weigh_in_trainer_id_user_id_fk": {
+          "name": "weigh_in_trainer_id_user_id_fk",
+          "tableFrom": "weigh_in",
+          "tableTo": "user",
+          "columnsFrom": [
+            "trainer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "weigh_in_user_id_user_id_fk": {
+          "name": "weigh_in_user_id_user_id_fk",
+          "tableFrom": "weigh_in",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "log": {
+      "name": "log",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "task": {
+          "autoincrement": false,
+          "name": "task",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "autoincrement": false,
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user": {
+          "autoincrement": false,
+          "name": "user",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "object_id": {
+          "autoincrement": false,
+          "name": "object_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "user_settings": {
+      "name": "user_settings",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "default_water": {
+          "autoincrement": false,
+          "name": "default_water",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "default_chart_range": {
+          "autoincrement": false,
+          "name": "default_chart_range",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "user_settings_user_id_user_id_fk": {
+          "name": "user_settings_user_id_user_id_fk",
+          "tableFrom": "user_settings",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "skinfold": {
+      "name": "skinfold",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "autoincrement": false,
+          "name": "date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "chin": {
+          "autoincrement": false,
+          "name": "chin",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cheek": {
+          "autoincrement": false,
+          "name": "cheek",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lower_abdominal": {
+          "autoincrement": false,
+          "name": "lower_abdominal",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pectoral": {
+          "autoincrement": false,
+          "name": "pectoral",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "biceps": {
+          "autoincrement": false,
+          "name": "biceps",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "triceps": {
+          "autoincrement": false,
+          "name": "triceps",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "subscapular": {
+          "autoincrement": false,
+          "name": "subscapular",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mid_axillary": {
+          "autoincrement": false,
+          "name": "mid_axillary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "suprailiac": {
+          "autoincrement": false,
+          "name": "suprailiac",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "umbilical": {
+          "autoincrement": false,
+          "name": "umbilical",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lower_back": {
+          "autoincrement": false,
+          "name": "lower_back",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "quadriceps": {
+          "autoincrement": false,
+          "name": "quadriceps",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hamstrings": {
+          "autoincrement": false,
+          "name": "hamstrings",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "medial_calf": {
+          "autoincrement": false,
+          "name": "medial_calf",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "knee": {
+          "autoincrement": false,
+          "name": "knee",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "shoulder": {
+          "autoincrement": false,
+          "name": "shoulder",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "autoincrement": false,
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "skinfold_date_idx": {
+          "name": "skinfold_date_idx",
+          "columns": [
+            "date"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "skinfold_user_id_user_id_fk": {
+          "name": "skinfold_user_id_user_id_fk",
+          "tableFrom": "skinfold",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "body_fat": {
+      "name": "body_fat",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "autoincrement": false,
+          "name": "date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "body_fat": {
+          "autoincrement": false,
+          "name": "body_fat",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "autoincrement": false,
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "skinfold_id": {
+          "autoincrement": false,
+          "name": "skinfold_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "body_fat_date_idx": {
+          "name": "body_fat_date_idx",
+          "columns": [
+            "date"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "body_fat_skinfold_id_skinfold_id_fk": {
+          "name": "body_fat_skinfold_id_skinfold_id_fk",
+          "tableFrom": "body_fat",
+          "tableTo": "skinfold",
+          "columnsFrom": [
+            "skinfold_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "body_fat_user_id_user_id_fk": {
+          "name": "body_fat_user_id_user_id_fk",
+          "tableFrom": "body_fat",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "body_weight": {
+      "name": "body_weight",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "autoincrement": false,
+          "name": "date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "body_weight": {
+          "autoincrement": false,
+          "name": "body_weight",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "source": {
+          "autoincrement": false,
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "autoincrement": false,
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "skinfold_id": {
+          "autoincrement": false,
+          "name": "skinfold_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "body_weight_date_idx": {
+          "name": "body_weight_date_idx",
+          "columns": [
+            "date"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "body_weight_skinfold_id_skinfold_id_fk": {
+          "name": "body_weight_skinfold_id_skinfold_id_fk",
+          "tableFrom": "body_weight",
+          "tableTo": "skinfold",
+          "columnsFrom": [
+            "skinfold_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "body_weight_user_id_user_id_fk": {
+          "name": "body_weight_user_id_user_id_fk",
+          "tableFrom": "body_weight",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "lean_mass": {
+      "name": "lean_mass",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "autoincrement": false,
+          "name": "date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lean_mass": {
+          "autoincrement": false,
+          "name": "lean_mass",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "autoincrement": false,
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "skinfold_id": {
+          "autoincrement": false,
+          "name": "skinfold_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "lean_mass_date_idx": {
+          "name": "lean_mass_date_idx",
+          "columns": [
+            "date"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "lean_mass_skinfold_id_skinfold_id_fk": {
+          "name": "lean_mass_skinfold_id_skinfold_id_fk",
+          "tableFrom": "lean_mass",
+          "tableTo": "skinfold",
+          "columnsFrom": [
+            "skinfold_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "lean_mass_user_id_user_id_fk": {
+          "name": "lean_mass_user_id_user_id_fk",
+          "tableFrom": "lean_mass",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "message": {
+      "name": "message",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "subject": {
+          "autoincrement": false,
+          "name": "subject",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_important": {
+          "autoincrement": false,
+          "name": "is_important",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_read": {
+          "autoincrement": false,
+          "name": "is_read",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_viewed": {
+          "autoincrement": false,
+          "name": "is_viewed",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_deleted": {
+          "autoincrement": false,
+          "name": "is_deleted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "message": {
+          "autoincrement": false,
+          "name": "message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "autoincrement": false,
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "from_user_id": {
+          "autoincrement": false,
+          "name": "from_user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "message_from_user_id_idx": {
+          "name": "message_from_user_id_idx",
+          "columns": [
+            "from_user_id"
+          ],
+          "isUnique": false
+        },
+        "message_user_id_idx": {
+          "name": "message_user_id_idx",
+          "columns": [
+            "user_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "message_from_user_id_user_id_fk": {
+          "name": "message_from_user_id_user_id_fk",
+          "tableFrom": "message",
+          "tableTo": "user",
+          "columnsFrom": [
+            "from_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "message_user_id_user_id_fk": {
+          "name": "message_user_id_user_id_fk",
+          "tableFrom": "message",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "tag": {
+      "name": "tag",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "icon": {
+          "autoincrement": false,
+          "name": "icon",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "color": {
+          "autoincrement": false,
+          "name": "color",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "tag_user_id_user_id_fk": {
+          "name": "tag_user_id_user_id_fk",
+          "tableFrom": "tag",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "daily_log": {
+      "name": "daily_log",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "autoincrement": false,
+          "name": "date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "morning_weight": {
+          "autoincrement": false,
+          "name": "morning_weight",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "autoincrement": false,
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fasted_blood_glucose": {
+          "autoincrement": false,
+          "name": "fasted_blood_glucose",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sleep": {
+          "autoincrement": false,
+          "name": "sleep",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sleep_quality": {
+          "autoincrement": false,
+          "name": "sleep_quality",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_hiit": {
+          "autoincrement": false,
+          "name": "is_hiit",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_cardio": {
+          "autoincrement": false,
+          "name": "is_cardio",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_lift": {
+          "autoincrement": false,
+          "name": "is_lift",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_liss": {
+          "autoincrement": false,
+          "name": "is_liss",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_starred": {
+          "default": false,
+          "autoincrement": false,
+          "name": "is_starred",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hiit": {
+          "autoincrement": false,
+          "name": "hiit",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cardio": {
+          "autoincrement": false,
+          "name": "cardio",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "weight": {
+          "autoincrement": false,
+          "name": "weight",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "liss": {
+          "autoincrement": false,
+          "name": "liss",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cardio_type": {
+          "autoincrement": false,
+          "name": "cardio_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "autoincrement": false,
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "waist_measurement": {
+          "autoincrement": false,
+          "name": "waist_measurement",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nap": {
+          "autoincrement": false,
+          "name": "nap",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "date_idx": {
+          "name": "date_idx",
+          "columns": [
+            "date"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "daily_log_user_id_user_id_fk": {
+          "name": "daily_log_user_id_user_id_fk",
+          "tableFrom": "daily_log",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "user_ingredient": {
+      "name": "user_ingredient",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ingredient_id": {
+          "autoincrement": false,
+          "name": "ingredient_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_plan_id": {
+          "autoincrement": false,
+          "name": "user_plan_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "daily_meal_id": {
+          "autoincrement": false,
+          "name": "daily_meal_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "meal_index": {
+          "autoincrement": false,
+          "name": "meal_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "recipe_index": {
+          "autoincrement": false,
+          "name": "recipe_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "alternate_id": {
+          "autoincrement": false,
+          "name": "alternate_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "serve": {
+          "autoincrement": false,
+          "name": "serve",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "serve_unit": {
+          "autoincrement": false,
+          "name": "serve_unit",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "note": {
+          "autoincrement": false,
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "daily_log_id": {
+          "autoincrement": false,
+          "name": "daily_log_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "user_ingredient_daily_log_id_daily_log_id_fk": {
+          "name": "user_ingredient_daily_log_id_daily_log_id_fk",
+          "tableFrom": "user_ingredient",
+          "tableTo": "daily_log",
+          "columnsFrom": [
+            "daily_log_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "user_ingredient_alternate_id_ingredient_id_fk": {
+          "name": "user_ingredient_alternate_id_ingredient_id_fk",
+          "tableFrom": "user_ingredient",
+          "tableTo": "ingredient",
+          "columnsFrom": [
+            "alternate_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "user_ingredient_daily_meal_id_daily_meal_id_fk": {
+          "name": "user_ingredient_daily_meal_id_daily_meal_id_fk",
+          "tableFrom": "user_ingredient",
+          "tableTo": "daily_meal",
+          "columnsFrom": [
+            "daily_meal_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "user_ingredient_user_plan_id_user_plan_id_fk": {
+          "name": "user_ingredient_user_plan_id_user_plan_id_fk",
+          "tableFrom": "user_ingredient",
+          "tableTo": "user_plan",
+          "columnsFrom": [
+            "user_plan_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "user_ingredient_ingredient_id_ingredient_id_fk": {
+          "name": "user_ingredient_ingredient_id_ingredient_id_fk",
+          "tableFrom": "user_ingredient",
+          "tableTo": "ingredient",
+          "columnsFrom": [
+            "ingredient_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "user_recipe": {
+      "name": "user_recipe",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "meal_index": {
+          "autoincrement": false,
+          "name": "meal_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "recipe_index": {
+          "autoincrement": false,
+          "name": "recipe_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_plan_id": {
+          "autoincrement": false,
+          "name": "user_plan_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "daily_meal_id": {
+          "autoincrement": false,
+          "name": "daily_meal_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "index": {
+          "autoincrement": false,
+          "name": "index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "serve": {
+          "autoincrement": false,
+          "name": "serve",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "serve_unit": {
+          "autoincrement": false,
+          "name": "serve_unit",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "note": {
+          "autoincrement": false,
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_log": {
+          "autoincrement": false,
+          "name": "is_log",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "daily_log_id": {
+          "autoincrement": false,
+          "name": "daily_log_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "user_recipe_daily_log_id_daily_log_id_fk": {
+          "name": "user_recipe_daily_log_id_daily_log_id_fk",
+          "tableFrom": "user_recipe",
+          "tableTo": "daily_log",
+          "columnsFrom": [
+            "daily_log_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "user_recipe_daily_meal_id_daily_meal_id_fk": {
+          "name": "user_recipe_daily_meal_id_daily_meal_id_fk",
+          "tableFrom": "user_recipe",
+          "tableTo": "daily_meal",
+          "columnsFrom": [
+            "daily_meal_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "user_recipe_user_plan_id_user_plan_id_fk": {
+          "name": "user_recipe_user_plan_id_user_plan_id_fk",
+          "tableFrom": "user_recipe",
+          "tableTo": "user_plan",
+          "columnsFrom": [
+            "user_plan_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "daily_meal": {
+      "name": "daily_meal",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "daily_log_id": {
+          "autoincrement": false,
+          "name": "daily_log_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "meal_index": {
+          "autoincrement": false,
+          "name": "meal_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date": {
+          "autoincrement": false,
+          "name": "date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "recipe_id": {
+          "autoincrement": false,
+          "name": "recipe_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vege_calories": {
+          "autoincrement": false,
+          "name": "vege_calories",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "veges": {
+          "autoincrement": false,
+          "name": "veges",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "daily_meal_daily_log_id_daily_log_id_fk": {
+          "name": "daily_meal_daily_log_id_daily_log_id_fk",
+          "tableFrom": "daily_meal",
+          "tableTo": "daily_log",
+          "columnsFrom": [
+            "daily_log_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "poop_log": {
+      "name": "poop_log",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "daily_log_id": {
+          "autoincrement": false,
+          "name": "daily_log_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "poop_log_daily_log_id_daily_log_id_fk": {
+          "name": "poop_log_daily_log_id_daily_log_id_fk",
+          "tableFrom": "poop_log",
+          "tableTo": "daily_log",
+          "columnsFrom": [
+            "daily_log_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "water_log": {
+      "name": "water_log",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "default": "(unixepoch())",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "daily_log_id": {
+          "autoincrement": false,
+          "name": "daily_log_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "water": {
+          "autoincrement": false,
+          "name": "water",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "water_log_daily_log_id_daily_log_id_fk": {
+          "name": "water_log_daily_log_id_daily_log_id_fk",
+          "tableFrom": "water_log",
+          "tableTo": "daily_log",
+          "columnsFrom": [
+            "daily_log_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "tag_to_daily_log": {
+      "name": "tag_to_daily_log",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "tag_id": {
+          "autoincrement": false,
+          "name": "tag_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "daily_log_id": {
+          "autoincrement": false,
+          "name": "daily_log_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "tag_to_daily_log_daily_log_id_daily_log_id_fk": {
+          "name": "tag_to_daily_log_daily_log_id_daily_log_id_fk",
+          "tableFrom": "tag_to_daily_log",
+          "tableTo": "daily_log",
+          "columnsFrom": [
+            "daily_log_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "tag_to_daily_log_tag_id_tag_id_fk": {
+          "name": "tag_to_daily_log_tag_id_tag_id_fk",
+          "tableFrom": "tag_to_daily_log",
+          "tableTo": "tag",
+          "columnsFrom": [
+            "tag_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}
