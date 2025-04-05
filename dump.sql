@@ -1,1 +1,0 @@
-{"error":"SQL string could not be parsed: near MINUS, \"None\": syntax error at (1, 22)"}

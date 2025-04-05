@@ -90,6 +90,8 @@ const Mobile = ({
     (dailyLog) => dailyLog.date === new Date().toDateString(),
   )
 
+  console.log(dailyLog)
+
   useEffect(() => {
     if (dailyLogsLoading) return
     if (isCreatingLog) return

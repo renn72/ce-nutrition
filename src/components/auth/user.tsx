@@ -83,9 +83,13 @@ const User = () => {
   const { data: user, isLoading } = api.user.getCurrentUser.useQuery()
 
   const { mutate: sync } = api.user.sync.useMutation({
+    onMutate: () => {
+      console.log('syncing')
+    },
     onSuccess: () => {
       ctx.invalidate()
       toast.success('Synced')
+      console.log('synced')
     },
   })
   const { theme, setTheme } = useTheme()

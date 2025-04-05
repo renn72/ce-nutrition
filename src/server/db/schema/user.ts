@@ -56,7 +56,6 @@ export const user = sqliteTable(
   (u) => ({
     nameIndex: index('name_idx').on(u.name),
     clerkIdIndex: index('clerk_id_idx').on(u.clerkId),
-    emailIndex: index('email_idx').on(u.email),
   }),
 )
 
