@@ -44,6 +44,7 @@ export const dailyLog = sqliteTable(
     weight: text('weight'),
     liss: text('liss'),
     posing: text('posing'),
+    test: text('test'),
     cardioType: text('cardio_type'),
     image: text('image'),
     waistMeasurement: text('waist_measurement'),

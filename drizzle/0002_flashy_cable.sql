@@ -1,0 +1,1 @@
+ALTER TABLE `daily_log` ADD `test` text;
