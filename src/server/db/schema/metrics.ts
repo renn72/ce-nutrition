@@ -34,9 +34,6 @@ export const skinfold = sqliteTable(
     shoulder: text('shoulder'),
     notes: text('notes'),
   },
-  (s) => ({
-    dateIndex: index('skinfold_date_idx').on(s.date),
-  }),
 )
 
 export const skinfoldRelations = relations(skinfold, ({ one, many }) => ({
@@ -66,9 +63,6 @@ export const bodyFat = sqliteTable(
       onDelete: 'cascade',
     }),
   },
-  (s) => ({
-    dateIndex: index('body_fat_date_idx').on(s.date),
-  }),
 )
 
 export const bodyFatRelations = relations(bodyFat, ({ one }) => ({
@@ -99,9 +93,6 @@ export const leanMass = sqliteTable(
       onDelete: 'cascade',
     }),
   },
-  (s) => ({
-    dateIndex: index('lean_mass_date_idx').on(s.date),
-  }),
 )
 
 export const leanMassRelations = relations(leanMass, ({ one }) => ({
@@ -133,9 +124,6 @@ export const bodyWeight = sqliteTable(
       onDelete: 'cascade',
     }),
   },
-  (s) => ({
-    dateIndex: index('body_weight_date_idx').on(s.date),
-  }),
 )
 
 export const bodyWeightRelations = relations(bodyWeight, ({ one }) => ({

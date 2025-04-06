@@ -53,10 +53,6 @@ export const user = sqliteTable(
       () => new Date(),
     ),
   },
-  (u) => ({
-    nameIndex: index('name_idx').on(u.name),
-    clerkIdIndex: index('clerk_id_idx').on(u.clerkId),
-  }),
 )
 
 export const userRelations = relations(user, ({ one, many }) => ({
@@ -185,12 +181,6 @@ export const account = sqliteTable(
     id_token: text('id_token'),
     session_state: text('session_state', { length: 255 }),
   },
-  (account) => ({
-    compoundKey: primaryKey({
-      columns: [account.provider, account.providerAccountId],
-    }),
-    userIdIdx: index('account_user_id_idx').on(account.userId),
-  }),
 )
 
 export const verificationToken = sqliteTable(
@@ -214,9 +204,6 @@ export const session = sqliteTable(
       .references(() => user.id),
     expires: int('expires', { mode: 'timestamp' }).notNull(),
   },
-  (session) => ({
-    userIdIdx: index('session_userId_idx').on(session.userId),
-  }),
 )
 
 export const sessionsRelations = relations(session, ({ one }) => ({

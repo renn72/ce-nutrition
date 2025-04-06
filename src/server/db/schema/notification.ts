@@ -22,11 +22,6 @@ export const notification = sqliteTable(
     isDeleted: int('is_deleted', { mode: 'boolean' }),
     notes: text('notes'),
   },
-  (e) => {
-    return {
-      userIdIndex: index('notification_user_id_idx').on(e.userId),
-    }
-  },
 )
 
 export const notificationRelations = relations(

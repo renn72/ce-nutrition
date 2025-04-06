@@ -27,12 +27,6 @@ export const message = sqliteTable(
       onDelete: 'cascade',
     }),
   },
-  (e) => {
-    return {
-      userIdIndex: index('message_user_id_idx').on(e.userId),
-      fromUserIdIndex: index('message_from_user_id_idx').on(e.fromUserId),
-    }
-  },
 )
 
 export const messageRelations = relations(

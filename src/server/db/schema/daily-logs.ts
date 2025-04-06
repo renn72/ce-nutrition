@@ -50,9 +50,6 @@ export const dailyLog = sqliteTable(
     waistMeasurement: text('waist_measurement'),
     nap: text('nap'),
   },
-  (l) => ({
-    dateIndex: index('date_idx').on(l.date),
-  }),
 )
 
 export const dailyLogRelations = relations(dailyLog, ({ one, many }) => ({

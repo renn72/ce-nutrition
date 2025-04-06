@@ -45,10 +45,6 @@ export const ingredient = sqliteTable(
       'available_carbohydrate_with_sugar_alcohols',
     ),
   },
-  (i) => ({
-    foodNameIndex: index('ingredient_food_name_idx').on(i.foodName),
-    foodKeyIndex: index('ingredient_food_key_idx').on(i.publicFoodKey),
-  }),
 )
 
 export const ingredientAdditionOne = sqliteTable('ingredient_addition_one', {
