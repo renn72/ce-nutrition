@@ -1,29 +1,36 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
-import { z } from 'zod'
+import {
+  date,
+  index,
+  integer,
+  boolean,
+  pgTableCreator,
+  serial,
+  text,
+} from 'drizzle-orm/pg-core'
 
 import { recipeToIngredient } from './recipe'
 import { userIngredient } from './user-plan'
 import { user } from './user'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+export const createTable = pgTableCreator((name) => `nutrition_${name}`)
 
 export const ingredient = createTable(
   'ingredient',
   {
-    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-    createdAt: int('created_at', { mode: 'timestamp' })
+    id: serial().primaryKey(),
+    createdAt: date('created_at')
       .default(sql`(unixepoch())`)
       .notNull(),
-    updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-      () => new Date(),
+    updatedAt: date('updated_at', ).$onUpdate(
+      () => new Date().getTime().toString(),
     ),
     userId: text('user_id').references(() => user.id),
-    favouriteAt: int('favourite_at', { mode: 'timestamp' }),
-    deletedAt: int('deleted_at', { mode: 'timestamp' }),
-    hiddenAt: int('hidden_at', { mode: 'timestamp' }),
-    isAusFood: int('is_aus_food', { mode: 'boolean' }),
-    isAllStores: int('is_all_stores', { mode: 'boolean' }).default(true),
+    favouriteAt: date('favourite_at', ),
+    deletedAt: date('deleted_at', ),
+    hiddenAt: date('hidden_at'),
+    isAusFood: boolean('is_aus_food'),
+    isAllStores: boolean('is_all_stores').default(true),
     serveSize: text('serve_size'),
     serveUnit: text('serve_unit'),
     publicFoodKey: text('public_food_key'),
@@ -45,21 +52,21 @@ export const ingredient = createTable(
       'available_carbohydrate_with_sugar_alcohols',
     ),
   },
-  (i) => ({
-    foodNameIndex: index('ingredient_food_name_idx').on(i.foodName),
-    foodKeyIndex: index('ingredient_food_key_idx').on(i.publicFoodKey),
-  }),
+  (i) => [
+    index('ingredient_food_name_idx').on(i.foodName),
+    index('ingredient_food_key_idx').on(i.publicFoodKey),
+  ],
 )
 
 export const ingredientAdditionOne = createTable('ingredient_addition_one', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
+  id: serial().primaryKey(),
+  createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-    () => new Date(),
+  updatedAt: date('updated_at').$onUpdate(
+    () => new Date().getTime().toString(),
   ),
-  ingredientId: int('ingredient_id').references(() => ingredient.id, {
+  ingredientId: integer('ingredient_id').references(() => ingredient.id, {
     onDelete: 'cascade',
   }),
   energyWithDietaryFibre: text('energy_with_dietary_fibre'),
@@ -94,14 +101,14 @@ export const ingredientAdditionOne = createTable('ingredient_addition_one', {
 })
 
 export const ingredientAdditionTwo = createTable('ingredient_addition_two', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
+  id: serial().primaryKey(),
+  createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-    () => new Date(),
+  updatedAt: date('updated_at').$onUpdate(
+    () => new Date().getTime().toString(),
   ),
-  ingredientId: int('ingredient_id').references(() => ingredient.id, {
+  ingredientId: integer('ingredient_id').references(() => ingredient.id, {
     onDelete: 'cascade',
   }),
   aceticAcid: text('acetic_acid'),
@@ -182,14 +189,14 @@ export const ingredientAdditionTwo = createTable('ingredient_addition_two', {
 export const ingredientAdditionThree = createTable(
   'ingredient_addition_three',
   {
-    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-    createdAt: int('created_at', { mode: 'timestamp' })
+    id: serial().primaryKey(),
+    createdAt: date('created_at')
       .default(sql`(unixepoch())`)
       .notNull(),
-    updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-      () => new Date(),
+    updatedAt: date('updated_at').$onUpdate(
+      () => new Date().getTime().toString(),
     ),
-    ingredientId: int('ingredient_id').references(() => ingredient.id, {
+    ingredientId: integer('ingredient_id').references(() => ingredient.id, {
       onDelete: 'cascade',
     }),
     totalSaturatedFattyAcids: text('total_saturated_fatty_acids'),
@@ -296,8 +303,8 @@ export const ingredientAdditionThree = createTable(
   },
 )
 export const groceryStore = createTable('grocery_store', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
+  id: serial().primaryKey(),
+  createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
   name: text('name'),
@@ -307,14 +314,14 @@ export const groceryStore = createTable('grocery_store', {
 export const ingredientToGroceryStore = createTable(
   'ingredient_to_grocery_store',
   {
-    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-    createdAt: int('created_at', { mode: 'timestamp' })
+    id: serial().primaryKey(),
+    createdAt: date('created_at')
       .default(sql`(unixepoch())`)
       .notNull(),
-    ingredientId: int('ingredient_id').references(() => ingredient.id, {
+    ingredientId: integer('ingredient_id').references(() => ingredient.id, {
       onDelete: 'cascade',
     }),
-    groceryStoreId: int('grocery_store_id').references(() => groceryStore.id, {
+    groceryStoreId: integer('grocery_store_id').references(() => groceryStore.id, {
       onDelete: 'cascade',
     }),
   },

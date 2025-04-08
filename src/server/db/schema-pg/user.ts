@@ -1,25 +1,28 @@
 import { relations, sql } from 'drizzle-orm'
 import {
+  boolean,
+  date,
   index,
-  int,
+  integer,
+  pgTableCreator,
   primaryKey,
-  sqliteTableCreator,
+  serial,
   text,
-} from 'drizzle-orm/sqlite-core'
+} from 'drizzle-orm/pg-core'
 import { type AdapterAccount } from 'next-auth/adapters'
 
+import { dailyLog, tag } from './daily-logs'
 import { message } from './message'
 import { bodyFat, bodyWeight, leanMass, skinfold } from './metrics'
 import { notification } from './notification'
-import { userPlan, } from './user-plan'
-import { dailyLog, tag } from './daily-logs'
+import { userPlan } from './user-plan'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+export const createTable = pgTableCreator((name) => `nutrition_${name}`)
 
 export const user = createTable(
   'user',
   {
-    id: text('id', { length: 255 })
+    id: text()
       .notNull()
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
@@ -27,36 +30,29 @@ export const user = createTable(
     firstName: text('first_name'),
     lastName: text('last_name'),
     clerkId: text('clerk_id'),
-    birthDate: int('birth_date', { mode: 'timestamp' }),
+    birthDate: date('birth_date'),
     gender: text('gender'),
     address: text('address'),
     notes: text('notes'),
     instagram: text('instagram'),
-    openLifter: text('open_lifter'),
     phone: text('phone'),
     email: text('email').unique(),
-    emailVerified: int('email_verified', {
-      mode: 'timestamp',
-    }),
+    emailVerified: date('email_verified'),
     password: text('password'),
-    currentPlanId: int('current_plan_id'),
+    currentPlanId: integer('current_plan_id'),
     image: text('image'),
-    isFake: int('is_fake', { mode: 'boolean' }).default(false),
-    isTrainer: int('is_trainer', { mode: 'boolean' }).default(false),
-    isRoot: int('is_root', { mode: 'boolean' }).default(false),
-    isCreator: int('is_creator', { mode: 'boolean' }).default(false),
-    createdAt: int('created_at', { mode: 'timestamp' })
+    isFake: boolean('is_fake').default(false),
+    isTrainer: boolean('is_trainer').default(false),
+    isRoot: boolean('is_root').default(false),
+    isCreator: boolean('is_creator').default(false),
+    createdAt: date('created_at')
       .default(sql`(unixepoch())`)
       .notNull(),
-    updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-      () => new Date(),
+    updatedAt: date('updated_at').$onUpdate(() =>
+      new Date().getTime().toString(),
     ),
   },
-  (u) => ({
-    nameIndex: index('name_idx').on(u.name),
-    clerkIdIndex: index('clerk_id_idx').on(u.clerkId),
-    emailIndex: index('email_idx').on(u.email),
-  }),
+  (u) => [index('email_idx').on(u.email)],
 )
 
 export const userRelations = relations(user, ({ one, many }) => ({
@@ -84,12 +80,12 @@ export const userRelations = relations(user, ({ one, many }) => ({
 }))
 
 export const userSettings = createTable('user_settings', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
+  id: serial().primaryKey(),
+  createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-    () => new Date(),
+  updatedAt: date('updated_at').$onUpdate(() =>
+    new Date().getTime().toString(),
   ),
   userId: text('user_id')
     .notNull()
@@ -107,10 +103,9 @@ export const userSettingsRelations = relations(userSettings, ({ one }) => ({
   }),
 }))
 
-
 export const weighIn = createTable('weigh_in', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
+  id: serial().primaryKey(),
+  createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
   userId: text('user_id')
@@ -119,7 +114,7 @@ export const weighIn = createTable('weigh_in', {
   trainerId: text('trainer_id')
     .notNull()
     .references(() => user.id),
-  date: int('date', { mode: 'timestamp' })
+  date: date('date')
     .default(sql`(unixepoch())`)
     .notNull(),
   bodyWeight: text('body_weight'),
@@ -153,13 +148,10 @@ export const userToTrainer = createTable('user_to_trainer', {
 })
 
 export const role = createTable('role', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
+  id: serial().primaryKey(),
+  createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-    () => new Date(),
-  ),
   userId: text('user_id').references(() => user.id, {
     onDelete: 'cascade',
   }),
@@ -169,54 +161,52 @@ export const role = createTable('role', {
 export const account = createTable(
   'account',
   {
-    userId: text('user_id', { length: 255 })
+    userId: text('user_id')
       .notNull()
       .references(() => user.id),
-    type: text('type', { length: 255 })
-      .$type<AdapterAccount['type']>()
-      .notNull(),
-    provider: text('provider', { length: 255 }).notNull(),
-    providerAccountId: text('provider_account_id', { length: 255 }).notNull(),
+    type: text('type').$type<AdapterAccount['type']>().notNull(),
+    provider: text('provider').notNull(),
+    providerAccountId: text('provider_account_id').notNull(),
     refresh_token: text('refresh_token'),
     access_token: text('access_token'),
-    expires_at: int('expires_at'),
-    token_type: text('token_type', { length: 255 }),
-    scope: text('scope', { length: 255 }),
+    expires_at: integer('expires_at'),
+    token_type: text('token_type'),
+    scope: text('scope'),
     id_token: text('id_token'),
-    session_state: text('session_state', { length: 255 }),
+    session_state: text('session_state'),
   },
-  (account) => ({
-    compoundKey: primaryKey({
+  (account) => [
+    primaryKey({
       columns: [account.provider, account.providerAccountId],
     }),
-    userIdIdx: index('account_user_id_idx').on(account.userId),
-  }),
+    index('account_user_id_idx').on(account.userId),
+  ],
 )
 
 export const verificationToken = createTable(
   'verification_token',
   {
-    identifier: text('identifier', { length: 255 }).notNull(),
-    token: text('token', { length: 255 }).notNull(),
-    expires: int('expires', { mode: 'timestamp' }).notNull(),
+    identifier: text('identifier').notNull(),
+    token: text('token').notNull(),
+    expires: date('expires').notNull(),
   },
-  (vt) => ({
-    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-  }),
+  (vt) => [
+    primaryKey({ columns: [vt.identifier, vt.token] }),
+  ],
 )
 
 export const session = createTable(
   'session',
   {
-    sessionToken: text('session_token', { length: 255 }).notNull().primaryKey(),
-    userId: text('userId', { length: 255 })
+    sessionToken: text('session_token').notNull().primaryKey(),
+    userId: text('userId')
       .notNull()
       .references(() => user.id),
-    expires: int('expires', { mode: 'timestamp' }).notNull(),
+    expires: date('expires').notNull(),
   },
-  (session) => ({
-    userIdIdx: index('session_userId_idx').on(session.userId),
-  }),
+  (session) => [
+    index('session_userId_idx').on(session.userId),
+  ],
 )
 
 export const sessionsRelations = relations(session, ({ one }) => ({

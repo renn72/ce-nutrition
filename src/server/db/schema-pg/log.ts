@@ -1,14 +1,22 @@
-import { sql } from 'drizzle-orm'
-import { int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
+import { relations, sql } from 'drizzle-orm'
+import {
+  date,
+  index,
+  integer,
+  boolean,
+  pgTableCreator,
+  serial,
+  text,
+} from 'drizzle-orm/pg-core'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+export const createTable = pgTableCreator((name) => `nutrition_${name}`)
 
 export const log = createTable('log', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
+  id: serial().primaryKey(),
+  createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
-  objectId: int('object_id'),
+  objectId: integer('object_id'),
   task: text('task'),
   notes: text('notes'),
   user: text('user'),
