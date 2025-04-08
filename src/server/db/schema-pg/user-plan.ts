@@ -17,7 +17,7 @@ const createTable = pgTableCreator((name) => `nutrition_${name}`)
 export const userPlan = createTable('user_plan', {
   id: serial().primaryKey(),
   createdAt: date('created_at')
-    .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
     .notNull(),
   updatedAt: date('updated_at').$onUpdate(() =>
     new Date().getTime().toString(),
@@ -44,7 +44,7 @@ export const userPlan = createTable('user_plan', {
 export const userMeal = createTable('user_meal', {
   id: serial().primaryKey(),
   createdAt: date('created_at')
-    .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
     .notNull(),
   updatedAt: date('updated_at').$onUpdate(() =>
     new Date().getTime().toString(),
@@ -69,7 +69,7 @@ export const userMeal = createTable('user_meal', {
 export const userRecipe = createTable('user_recipe', {
   id: serial().primaryKey(),
   createdAt: date('created_at')
-    .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
     .notNull(),
   updatedAt: date('updated_at').$onUpdate(() =>
     new Date().getTime().toString(),
@@ -94,7 +94,7 @@ export const userRecipe = createTable('user_recipe', {
 export const userIngredient = createTable('user_ingredient', {
   id: serial().primaryKey(),
   createdAt: date('created_at')
-    .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
     .notNull(),
   updatedAt: date('updated_at').$onUpdate(() =>
     new Date().getTime().toString(),

@@ -1,5 +1,5 @@
 {
-  "id": "5965772c-b90c-43e5-ad07-2a2702a37e4f",
+  "id": "c848e74c-2a7f-43bf-a08d-f7f30c53670a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -19,7 +19,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279140'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -206,7 +206,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279140'"
         },
         "daily_log_id": {
           "name": "daily_log_id",
@@ -282,7 +282,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279140'"
         },
         "daily_log_id": {
           "name": "daily_log_id",
@@ -328,7 +328,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279140'"
         },
         "user_Id": {
           "name": "user_Id",
@@ -484,7 +484,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279139'"
         },
         "name": {
           "name": "name",
@@ -522,7 +522,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279138'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -726,19 +726,6 @@
           "type": "serial",
           "primaryKey": true,
           "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "(unixepoch())"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": false
         },
         "ingredient_id": {
           "name": "ingredient_id",
@@ -952,19 +939,6 @@
           "type": "serial",
           "primaryKey": true,
           "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "(unixepoch())"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": false
         },
         "ingredient_id": {
           "name": "ingredient_id",
@@ -1563,19 +1537,6 @@
           "primaryKey": true,
           "notNull": true
         },
-        "created_at": {
-          "name": "created_at",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "(unixepoch())"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": false
-        },
         "ingredient_id": {
           "name": "ingredient_id",
           "type": "integer",
@@ -2058,7 +2019,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279139'"
         },
         "ingredient_id": {
           "name": "ingredient_id",
@@ -2123,7 +2084,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279141'"
         },
         "object_id": {
           "name": "object_id",
@@ -2179,7 +2140,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279146'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -2328,7 +2289,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279146'"
         },
         "meal_id": {
           "name": "meal_id",
@@ -2405,7 +2366,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279146'"
         },
         "meal_id": {
           "name": "meal_id",
@@ -2482,7 +2443,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279146'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -2538,7 +2499,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279125'"
         },
         "user_id": {
           "name": "user_id",
@@ -2645,7 +2606,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279128'"
         },
         "user_id": {
           "name": "user_id",
@@ -2744,7 +2705,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279128'"
         },
         "user_id": {
           "name": "user_id",
@@ -2849,7 +2810,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279128'"
         },
         "user_id": {
           "name": "user_id",
@@ -2948,7 +2909,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279128'"
         },
         "user_id": {
           "name": "user_id",
@@ -3118,7 +3079,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279130'"
         },
         "user_id": {
           "name": "user_id",
@@ -3216,7 +3177,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279146'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -3322,7 +3283,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279146'"
         },
         "plan_id": {
           "name": "plan_id",
@@ -3417,7 +3378,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279138'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -3523,7 +3484,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279138'"
         },
         "recipe_id": {
           "name": "recipe_id",
@@ -3662,7 +3623,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279139'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -3826,7 +3787,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279139'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -3938,7 +3899,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279139'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -4075,7 +4036,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279139'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -4561,7 +4522,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "(now())"
         },
         "updated_at": {
           "name": "updated_at",
@@ -4617,7 +4578,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279139'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -4772,7 +4733,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "(now())"
         },
         "user_id": {
           "name": "user_id",
@@ -4791,7 +4752,7 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true,
-          "default": "(unixepoch())"
+          "default": "'1744101279139'"
         },
         "body_weight": {
           "name": "body_weight",

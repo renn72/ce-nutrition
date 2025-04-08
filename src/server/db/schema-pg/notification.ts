@@ -17,7 +17,7 @@ export const notification = createTable(
   {
     id: serial().primaryKey(),
     createdAt: date('created_at')
-      .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
       .notNull(),
     userId: text('user_id').references(() => user.id, {
       onDelete: 'cascade',

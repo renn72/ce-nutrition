@@ -12,7 +12,7 @@ const createTable = pgTableCreator((name) => `nutrition_${name}`)
 export const log = createTable('log', {
   id: serial().primaryKey(),
   createdAt: date('created_at')
-    .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
     .notNull(),
   objectId: integer('object_id'),
   task: text('task'),

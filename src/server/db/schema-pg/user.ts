@@ -46,7 +46,7 @@ export const user = createTable(
     isRoot: boolean('is_root').default(false),
     isCreator: boolean('is_creator').default(false),
     createdAt: date('created_at')
-      .default(sql`(unixepoch())`)
+      .default(sql`(now())`)
       .notNull(),
     updatedAt: date('updated_at').$onUpdate(() =>
       new Date().getTime().toString(),
@@ -82,7 +82,7 @@ export const userRelations = relations(user, ({ one, many }) => ({
 export const userSettings = createTable('user_settings', {
   id: serial().primaryKey(),
   createdAt: date('created_at')
-    .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
     .notNull(),
   updatedAt: date('updated_at').$onUpdate(() =>
     new Date().getTime().toString(),
@@ -106,7 +106,7 @@ export const userSettingsRelations = relations(userSettings, ({ one }) => ({
 export const weighIn = createTable('weigh_in', {
   id: serial().primaryKey(),
   createdAt: date('created_at')
-    .default(sql`(unixepoch())`)
+    .default(sql`(now())`)
     .notNull(),
   userId: text('user_id')
     .notNull()
@@ -115,7 +115,7 @@ export const weighIn = createTable('weigh_in', {
     .notNull()
     .references(() => user.id),
   date: date('date')
-    .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
     .notNull(),
   bodyWeight: text('body_weight'),
   leanMass: text('lean_mass'),

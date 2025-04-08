@@ -18,7 +18,7 @@ export const dailyLog = createTable(
   {
     id: serial().primaryKey(),
     createdAt: date('created_at')
-      .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
       .notNull(),
     updatedAt: date('updated_at').$onUpdate(() =>
       new Date().getTime().toString(),
@@ -62,7 +62,7 @@ export const dailyLogRelations = relations(dailyLog, ({ one, many }) => ({
 export const tag = createTable('tag', {
   id: serial().primaryKey(),
   createdAt: date()
-    .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
     .notNull(),
   userId: text('user_Id')
     .notNull()
@@ -107,7 +107,7 @@ export const tagToDailyLogRelations = relations(tagToDailyLog, ({ one }) => ({
 export const poopLog = createTable('poop_log', {
   id: serial().primaryKey(),
   createdAt: date('created_at')
-    .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
     .notNull(),
   dailyLogId: integer('daily_log_id')
     .notNull()
@@ -146,7 +146,7 @@ export const waterLogRelations = relations(waterLog, ({ one }) => ({
 export const dailyMeal = createTable('daily_meal', {
   id: serial().primaryKey(),
   createdAt: date('created_at')
-    .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
     .notNull(),
   dailyLogId: integer('daily_log_id')
     .notNull()

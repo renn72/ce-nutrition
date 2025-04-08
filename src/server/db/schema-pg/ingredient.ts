@@ -20,7 +20,7 @@ export const ingredient = createTable(
   {
     id: serial().primaryKey(),
     createdAt: date('created_at')
-      .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
       .notNull(),
     updatedAt: date('updated_at').$onUpdate(() =>
       new Date().getTime().toString(),
@@ -60,12 +60,6 @@ export const ingredient = createTable(
 
 export const ingredientAdditionOne = createTable('ingredient_addition_one', {
   id: serial().primaryKey(),
-  createdAt: date('created_at')
-    .default(sql`(unixepoch())`)
-    .notNull(),
-  updatedAt: date('updated_at').$onUpdate(() =>
-    new Date().getTime().toString(),
-  ),
   ingredientId: integer('ingredient_id').references(() => ingredient.id, {
     onDelete: 'cascade',
   }),
@@ -102,12 +96,6 @@ export const ingredientAdditionOne = createTable('ingredient_addition_one', {
 
 export const ingredientAdditionTwo = createTable('ingredient_addition_two', {
   id: serial().primaryKey(),
-  createdAt: date('created_at')
-    .default(sql`(unixepoch())`)
-    .notNull(),
-  updatedAt: date('updated_at').$onUpdate(() =>
-    new Date().getTime().toString(),
-  ),
   ingredientId: integer('ingredient_id').references(() => ingredient.id, {
     onDelete: 'cascade',
   }),
@@ -190,12 +178,6 @@ export const ingredientAdditionThree = createTable(
   'ingredient_addition_three',
   {
     id: serial().primaryKey(),
-    createdAt: date('created_at')
-      .default(sql`(unixepoch())`)
-      .notNull(),
-    updatedAt: date('updated_at').$onUpdate(() =>
-      new Date().getTime().toString(),
-    ),
     ingredientId: integer('ingredient_id').references(() => ingredient.id, {
       onDelete: 'cascade',
     }),
@@ -305,7 +287,7 @@ export const ingredientAdditionThree = createTable(
 export const groceryStore = createTable('grocery_store', {
   id: serial().primaryKey(),
   createdAt: date('created_at')
-    .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
     .notNull(),
   name: text('name'),
   location: text('locations'),
@@ -316,7 +298,7 @@ export const ingredientToGroceryStore = createTable(
   {
     id: serial().primaryKey(),
     createdAt: date('created_at')
-      .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
       .notNull(),
     ingredientId: integer('ingredient_id').references(() => ingredient.id, {
       onDelete: 'cascade',

@@ -15,7 +15,7 @@ const createTable = pgTableCreator((name) => `nutrition_${name}`)
 export const plan = createTable('plan', {
   id: serial().primaryKey(),
   createdAt: date('created_at')
-    .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
     .notNull(),
   updatedAt: date('updated_at').$onUpdate(() =>
     new Date().getTime().toString(),
@@ -35,7 +35,7 @@ export const plan = createTable('plan', {
 export const planToMeal = createTable('plan_to_meal', {
   id: serial().primaryKey(),
   createdAt: date('created_at')
-    .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
     .notNull(),
   planId: integer('plan_id').references(() => plan.id, {
     onDelete: 'cascade',

@@ -17,7 +17,7 @@ export const skinfold = createTable(
   {
     id: serial().primaryKey(),
     createdAt: date('created_at')
-      .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
       .notNull(),
     userId: text('user_id')
       .notNull()
@@ -59,7 +59,7 @@ export const bodyFat = createTable(
   {
     id: serial().primaryKey(),
     createdAt: date('created_at')
-      .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
       .notNull(),
     userId: text('user_id')
       .notNull()
@@ -90,7 +90,7 @@ export const leanMass = createTable(
   {
     id: serial().primaryKey(),
     createdAt: date('created_at')
-      .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
       .notNull(),
     userId: text('user_id')
       .notNull()
@@ -121,7 +121,7 @@ export const bodyWeight = createTable(
   {
     id: serial().primaryKey(),
     createdAt: date('created_at')
-      .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
       .notNull(),
     userId: text('user_id')
       .notNull()

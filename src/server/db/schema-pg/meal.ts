@@ -16,7 +16,7 @@ const createTable = pgTableCreator((name) => `nutrition_${name}`)
 export const meal = createTable('meal', {
   id: serial().primaryKey(),
   createdAt: date('created_at')
-    .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
     .notNull(),
   updatedAt: date('updated_at').$onUpdate(() =>
     new Date().getTime().toString(),
@@ -43,7 +43,7 @@ export const meal = createTable('meal', {
 export const mealToRecipe = createTable('meal_to_recipe', {
   id: serial().primaryKey(),
   createdAt: date('created_at')
-    .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
     .notNull(),
   mealId: integer('meal_id').references(() => meal.id, {
     onDelete: 'cascade',
@@ -58,7 +58,7 @@ export const mealToRecipe = createTable('meal_to_recipe', {
 export const vegeStack = createTable('vege_stack', {
   id: serial().primaryKey(),
   createdAt: date('created_at')
-    .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
     .notNull(),
   updatedAt: date('updated_at').$onUpdate(() =>
     new Date().getTime().toString(),
@@ -72,7 +72,7 @@ export const vegeStack = createTable('vege_stack', {
 export const mealToVegeStack = createTable('meal_to_vege_stack', {
   id: serial().primaryKey(),
   createdAt: date('created_at')
-    .default(sql`(unixepoch())`)
+    .default(new Date().getTime().toString())
     .notNull(),
   mealId: integer('meal_id').references(() => meal.id, {
     onDelete: 'cascade',

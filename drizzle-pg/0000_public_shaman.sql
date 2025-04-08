@@ -1,6 +1,6 @@
 CREATE TABLE "nutrition_daily_log" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279140' NOT NULL,
 	"updated_at" date,
 	"user_id" text NOT NULL,
 	"date" text NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE "nutrition_daily_log" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_daily_meal" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279140' NOT NULL,
 	"daily_log_id" integer NOT NULL,
 	"meal_index" integer NOT NULL,
 	"date" date NOT NULL,
@@ -37,13 +37,13 @@ CREATE TABLE "nutrition_daily_meal" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_poop_log" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279140' NOT NULL,
 	"daily_log_id" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "nutrition_tag" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"createdAt" date DEFAULT (unixepoch()) NOT NULL,
+	"createdAt" date DEFAULT '1744101279140' NOT NULL,
 	"user_Id" text NOT NULL
 );
 --> statement-breakpoint
@@ -62,14 +62,14 @@ CREATE TABLE "nutrition_water_log" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_grocery_store" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279139' NOT NULL,
 	"name" text,
 	"locations" text
 );
 --> statement-breakpoint
 CREATE TABLE "nutrition_ingredient" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279138' NOT NULL,
 	"updated_at" date,
 	"user_id" text,
 	"favourite_at" date,
@@ -97,8 +97,6 @@ CREATE TABLE "nutrition_ingredient" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_ingredient_addition_one" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
-	"updated_at" date,
 	"ingredient_id" integer,
 	"energy_with_dietary_fibre" text,
 	"energy_without_dietary_fibre" text,
@@ -133,8 +131,6 @@ CREATE TABLE "nutrition_ingredient_addition_one" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_ingredient_addition_three" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
-	"updated_at" date,
 	"ingredient_id" integer,
 	"total_saturated_fatty_acids" text,
 	"total_monounsaturated_fatty_acids" text,
@@ -233,8 +229,6 @@ CREATE TABLE "nutrition_ingredient_addition_three" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_ingredient_addition_two" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
-	"updated_at" date,
 	"ingredient_id" integer,
 	"acetic_acid" text,
 	"citric_acid" text,
@@ -313,14 +307,14 @@ CREATE TABLE "nutrition_ingredient_addition_two" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_ingredient_to_grocery_store" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279139' NOT NULL,
 	"ingredient_id" integer,
 	"grocery_store_id" integer
 );
 --> statement-breakpoint
 CREATE TABLE "nutrition_log" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279141' NOT NULL,
 	"object_id" integer,
 	"task" text,
 	"notes" text,
@@ -330,7 +324,7 @@ CREATE TABLE "nutrition_log" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_meal" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279146' NOT NULL,
 	"updated_at" date,
 	"plan_id" integer,
 	"name" text,
@@ -351,7 +345,7 @@ CREATE TABLE "nutrition_meal" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_meal_to_recipe" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279146' NOT NULL,
 	"meal_id" integer,
 	"recipe_id" integer,
 	"index" integer NOT NULL,
@@ -360,7 +354,7 @@ CREATE TABLE "nutrition_meal_to_recipe" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_meal_to_vege_stack" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279146' NOT NULL,
 	"meal_id" integer,
 	"vege_stack_id" integer,
 	"calories" text,
@@ -369,7 +363,7 @@ CREATE TABLE "nutrition_meal_to_vege_stack" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_vege_stack" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279146' NOT NULL,
 	"updated_at" date,
 	"name" text,
 	"veges" text,
@@ -379,7 +373,7 @@ CREATE TABLE "nutrition_vege_stack" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_message" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279125' NOT NULL,
 	"user_id" text,
 	"subject" text,
 	"is_important" boolean,
@@ -393,7 +387,7 @@ CREATE TABLE "nutrition_message" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_body_fat" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279128' NOT NULL,
 	"user_id" text NOT NULL,
 	"date" text NOT NULL,
 	"body_fat" text,
@@ -403,7 +397,7 @@ CREATE TABLE "nutrition_body_fat" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_body_weight" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279128' NOT NULL,
 	"user_id" text NOT NULL,
 	"date" text NOT NULL,
 	"body_weight" text,
@@ -414,7 +408,7 @@ CREATE TABLE "nutrition_body_weight" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_lean_mass" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279128' NOT NULL,
 	"user_id" text NOT NULL,
 	"date" text NOT NULL,
 	"lean_mass" text,
@@ -424,7 +418,7 @@ CREATE TABLE "nutrition_lean_mass" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_skinfold" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279128' NOT NULL,
 	"user_id" text NOT NULL,
 	"date" text NOT NULL,
 	"chin" text,
@@ -448,7 +442,7 @@ CREATE TABLE "nutrition_skinfold" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_notification" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279130' NOT NULL,
 	"user_id" text,
 	"title" text,
 	"description" text,
@@ -460,7 +454,7 @@ CREATE TABLE "nutrition_notification" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_plan" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279146' NOT NULL,
 	"updated_at" date,
 	"name" text,
 	"description" text,
@@ -476,7 +470,7 @@ CREATE TABLE "nutrition_plan" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_plan_to_meal" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279146' NOT NULL,
 	"plan_id" integer,
 	"meal_id" integer,
 	"index" integer,
@@ -488,7 +482,7 @@ CREATE TABLE "nutrition_plan_to_meal" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_recipe" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279138' NOT NULL,
 	"updated_at" date,
 	"name" text NOT NULL,
 	"description" text NOT NULL,
@@ -504,7 +498,7 @@ CREATE TABLE "nutrition_recipe" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_recipe_to_ingredient" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279138' NOT NULL,
 	"recipe_id" integer NOT NULL,
 	"ingredient_id" integer NOT NULL,
 	"index" integer NOT NULL,
@@ -522,7 +516,7 @@ CREATE TABLE "nutrition_settings" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_user_ingredient" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279139' NOT NULL,
 	"updated_at" date,
 	"ingredient_id" integer,
 	"user_plan_id" integer,
@@ -539,7 +533,7 @@ CREATE TABLE "nutrition_user_ingredient" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_user_meal" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279139' NOT NULL,
 	"updated_at" date,
 	"user_plan_id" integer NOT NULL,
 	"index" integer,
@@ -556,7 +550,7 @@ CREATE TABLE "nutrition_user_meal" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_user_plan" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279139' NOT NULL,
 	"updated_at" date,
 	"finished_at" date,
 	"start_at" date,
@@ -575,7 +569,7 @@ CREATE TABLE "nutrition_user_plan" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_user_recipe" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279139' NOT NULL,
 	"updated_at" date,
 	"meal_index" integer,
 	"recipe_index" integer,
@@ -639,14 +633,14 @@ CREATE TABLE "nutrition_user" (
 	"is_trainer" boolean DEFAULT false,
 	"is_root" boolean DEFAULT false,
 	"is_creator" boolean DEFAULT false,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT (now()) NOT NULL,
 	"updated_at" date,
 	CONSTRAINT "nutrition_user_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
 CREATE TABLE "nutrition_user_settings" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT '1744101279139' NOT NULL,
 	"updated_at" date,
 	"user_id" text NOT NULL,
 	"default_water" text,
@@ -667,10 +661,10 @@ CREATE TABLE "nutrition_verification_token" (
 --> statement-breakpoint
 CREATE TABLE "nutrition_weigh_in" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"created_at" date DEFAULT (unixepoch()) NOT NULL,
+	"created_at" date DEFAULT (now()) NOT NULL,
 	"user_id" text NOT NULL,
 	"trainer_id" text NOT NULL,
-	"date" date DEFAULT (unixepoch()) NOT NULL,
+	"date" date DEFAULT '1744101279139' NOT NULL,
 	"body_weight" text,
 	"lean_mass" text,
 	"body_fat" text,
