@@ -1,53 +1,60 @@
 import { relations, sql } from 'drizzle-orm'
-import { int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
+import {
+  boolean,
+  date,
+  integer as int,
+  pgTableCreator,
+  serial,
+  text,
+} from 'drizzle-orm/pg-core'
 
-import { ingredient } from './ingredient'
-import { user, } from './user'
 import { dailyLog, dailyMeal } from './daily-logs'
+import { ingredient } from './ingredient'
+import { user } from './user'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+const createTable = pgTableCreator((name) => `nutrition_${name}`)
 
-export const userPlan = createTable('user-plan', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
+export const userPlan = createTable('user_plan', {
+  id: serial().primaryKey(),
+  createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-    () => new Date(),
+  updatedAt: date('updated_at').$onUpdate(() =>
+    new Date().getTime().toString(),
   ),
-  finishedAt: int('finished_at', { mode: 'timestamp' }),
-  startAt: int('start_at', { mode: 'timestamp' }),
-  isActive: int('is_active', { mode: 'boolean' }),
+  finishedAt: date('finished_at'),
+  startAt: date('start_at'),
+  isActive: date('is_active'),
   name: text('name').notNull(),
   description: text('description').notNull(),
   image: text('image').notNull(),
   notes: text('notes').notNull(),
-  numberOfMeals: int('number_of_meals', { mode: 'number' }),
+  numberOfMeals: int('number_of_meals'),
   creatorId: text('creator_id')
     .references(() => user.id)
     .notNull(),
   userId: text('user_id')
     .references(() => user.id)
     .notNull(),
-  favouriteAt: int('favourite_at', { mode: 'timestamp' }),
-  deletedAt: int('deleted_at', { mode: 'timestamp' }),
-  hiddenAt: int('hidden_at', { mode: 'timestamp' }),
+  favouriteAt: date('favourite_at'),
+  deletedAt: date('deleted_at'),
+  hiddenAt: date('hidden_at'),
 })
 
-export const userMeal = createTable('user-meal', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
+export const userMeal = createTable('user_meal', {
+  id: serial().primaryKey(),
+  createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-    () => new Date(),
+  updatedAt: date('updated_at').$onUpdate(() =>
+    new Date().getTime().toString(),
   ),
   userPlanId: int('user_plan_id')
     .references(() => userPlan.id, {
       onDelete: 'cascade',
     })
     .notNull(),
-  mealIndex: int('index', { mode: 'number' }),
+  mealIndex: int('index'),
   mealTitle: text('meal_title'),
   calories: text('calories'),
   protein: text('protein'),
@@ -59,16 +66,16 @@ export const userMeal = createTable('user-meal', {
   note: text('note'),
 })
 
-export const userRecipe = createTable('user-recipe', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
+export const userRecipe = createTable('user_recipe', {
+  id: serial().primaryKey(),
+  createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-    () => new Date(),
+  updatedAt: date('updated_at').$onUpdate(() =>
+    new Date().getTime().toString(),
   ),
-  mealIndex: int('meal_index', { mode: 'number' }),
-  recipeIndex: int('recipe_index', { mode: 'number' }),
+  mealIndex: int('meal_index'),
+  recipeIndex: int('recipe_index'),
   userPlanId: int('user_plan_id').references(() => userPlan.id, {
     onDelete: 'cascade',
   }),
@@ -76,21 +83,21 @@ export const userRecipe = createTable('user-recipe', {
     onDelete: 'cascade',
   }),
   name: text('name'),
-  index: int('index', { mode: 'number' }),
+  index: int('index'),
   serve: text('serve'),
   serveUnit: text('serve_unit'),
   note: text('note'),
-  isLog: int('is_log', { mode: 'boolean' }),
+  isLog: boolean('is_log'),
   dailyLogId: int('daily_log_id').references(() => dailyLog.id),
 })
 
-export const userIngredient = createTable('user-ingredient', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
+export const userIngredient = createTable('user_ingredient', {
+  id: serial().primaryKey(),
+  createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-    () => new Date(),
+  updatedAt: date('updated_at').$onUpdate(() =>
+    new Date().getTime().toString(),
   ),
   ingredientId: int('ingredient_id').references(() => ingredient.id, {
     onDelete: 'cascade',
@@ -102,8 +109,8 @@ export const userIngredient = createTable('user-ingredient', {
     onDelete: 'cascade',
   }),
   name: text('name'),
-  mealIndex: int('meal_index', { mode: 'number' }),
-  recipeIndex: int('recipe_index', { mode: 'number' }),
+  mealIndex: int('meal_index'),
+  recipeIndex: int('recipe_index'),
   alternateId: int('alternate_id').references(() => ingredient.id),
   serve: text('serve'),
   serveUnit: text('serve_unit'),

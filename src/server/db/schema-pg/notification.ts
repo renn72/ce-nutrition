@@ -1,15 +1,22 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
+import {
+  boolean,
+  date,
+  index,
+  pgTableCreator,
+  serial,
+  text,
+} from 'drizzle-orm/pg-core'
 
 import { user } from './user'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+const createTable = pgTableCreator((name) => `nutrition_${name}`)
 
 export const notification = createTable(
   'notification',
   {
-    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-    createdAt: int('created_at', { mode: 'timestamp' })
+    id: serial().primaryKey(),
+    createdAt: date('created_at')
       .default(sql`(unixepoch())`)
       .notNull(),
     userId: text('user_id').references(() => user.id, {
@@ -17,24 +24,19 @@ export const notification = createTable(
     }),
     title: text('title'),
     description: text('description'),
-    isRead: int('is_read', { mode: 'boolean' }),
-    isViewed: int('is_viewed', { mode: 'boolean' }),
-    isDeleted: int('is_deleted', { mode: 'boolean' }),
+    isRead: boolean('is_read'),
+    isViewed: boolean('is_viewed'),
+    isDeleted: boolean('is_deleted'),
     notes: text('notes'),
   },
   (e) => {
-    return {
-      userIdIndex: index('notification_user_id_idx').on(e.userId),
-    }
+    return [index('notification_user_id_idx').on(e.userId)]
   },
 )
 
-export const notificationRelations = relations(
-  notification,
-  ({ one, }) => ({
-    user: one(user, {
-      fields: [notification.userId],
-      references: [user.id],
-    }),
+export const notificationRelations = relations(notification, ({ one }) => ({
+  user: one(user, {
+    fields: [notification.userId],
+    references: [user.id],
   }),
-)
+}))

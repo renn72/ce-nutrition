@@ -1,15 +1,13 @@
-import { relations, sql } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
 import {
   date,
-  index,
   integer,
-  boolean,
   pgTableCreator,
   serial,
   text,
 } from 'drizzle-orm/pg-core'
 
-export const createTable = pgTableCreator((name) => `nutrition_${name}`)
+const createTable = pgTableCreator((name) => `nutrition_${name}`)
 
 export const log = createTable('log', {
   id: serial().primaryKey(),

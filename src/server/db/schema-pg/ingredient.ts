@@ -1,17 +1,17 @@
 import { relations, sql } from 'drizzle-orm'
 import {
+  boolean,
   date,
   index,
   integer,
-  boolean,
   pgTableCreator,
   serial,
   text,
 } from 'drizzle-orm/pg-core'
 
 import { recipeToIngredient } from './recipe'
-import { userIngredient } from './user-plan'
 import { user } from './user'
+import { userIngredient } from './user-plan'
 
 export const createTable = pgTableCreator((name) => `nutrition_${name}`)
 
@@ -22,12 +22,12 @@ export const ingredient = createTable(
     createdAt: date('created_at')
       .default(sql`(unixepoch())`)
       .notNull(),
-    updatedAt: date('updated_at', ).$onUpdate(
-      () => new Date().getTime().toString(),
+    updatedAt: date('updated_at').$onUpdate(() =>
+      new Date().getTime().toString(),
     ),
     userId: text('user_id').references(() => user.id),
-    favouriteAt: date('favourite_at', ),
-    deletedAt: date('deleted_at', ),
+    favouriteAt: date('favourite_at'),
+    deletedAt: date('deleted_at'),
     hiddenAt: date('hidden_at'),
     isAusFood: boolean('is_aus_food'),
     isAllStores: boolean('is_all_stores').default(true),
@@ -63,8 +63,8 @@ export const ingredientAdditionOne = createTable('ingredient_addition_one', {
   createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: date('updated_at').$onUpdate(
-    () => new Date().getTime().toString(),
+  updatedAt: date('updated_at').$onUpdate(() =>
+    new Date().getTime().toString(),
   ),
   ingredientId: integer('ingredient_id').references(() => ingredient.id, {
     onDelete: 'cascade',
@@ -105,8 +105,8 @@ export const ingredientAdditionTwo = createTable('ingredient_addition_two', {
   createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: date('updated_at').$onUpdate(
-    () => new Date().getTime().toString(),
+  updatedAt: date('updated_at').$onUpdate(() =>
+    new Date().getTime().toString(),
   ),
   ingredientId: integer('ingredient_id').references(() => ingredient.id, {
     onDelete: 'cascade',
@@ -193,8 +193,8 @@ export const ingredientAdditionThree = createTable(
     createdAt: date('created_at')
       .default(sql`(unixepoch())`)
       .notNull(),
-    updatedAt: date('updated_at').$onUpdate(
-      () => new Date().getTime().toString(),
+    updatedAt: date('updated_at').$onUpdate(() =>
+      new Date().getTime().toString(),
     ),
     ingredientId: integer('ingredient_id').references(() => ingredient.id, {
       onDelete: 'cascade',
@@ -321,9 +321,12 @@ export const ingredientToGroceryStore = createTable(
     ingredientId: integer('ingredient_id').references(() => ingredient.id, {
       onDelete: 'cascade',
     }),
-    groceryStoreId: integer('grocery_store_id').references(() => groceryStore.id, {
-      onDelete: 'cascade',
-    }),
+    groceryStoreId: integer('grocery_store_id').references(
+      () => groceryStore.id,
+      {
+        onDelete: 'cascade',
+      },
+    ),
   },
 )
 
@@ -348,9 +351,13 @@ export const ingredientToGroceryStoreRelations = relations(
 export const ingredientRelations = relations(ingredient, ({ one, many }) => ({
   user: one(user, { fields: [ingredient.userId], references: [user.id] }),
   recipeToIngredient: many(recipeToIngredient, { relationName: 'ingredient' }),
-  recipeToIngredientAlternate: many(recipeToIngredient, { relationName: 'alternateIngredient' }),
+  recipeToIngredientAlternate: many(recipeToIngredient, {
+    relationName: 'alternateIngredient',
+  }),
   userIngredient: many(userIngredient, { relationName: 'ingredient' }),
-  userInhgredientAlternate: many(userIngredient, { relationName: 'alternateIngredient' }),
+  userInhgredientAlternate: many(userIngredient, {
+    relationName: 'alternateIngredient',
+  }),
   ingredientAdditionOne: one(ingredientAdditionOne, {
     fields: [ingredient.id],
     references: [ingredientAdditionOne.ingredientId],

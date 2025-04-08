@@ -1,15 +1,22 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
+import {
+  date,
+  index,
+  integer,
+  pgTableCreator,
+  serial,
+  text,
+} from 'drizzle-orm/pg-core'
 
 import { user } from './user'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+const createTable = pgTableCreator((name) => `nutrition_${name}`)
 
 export const skinfold = createTable(
   'skinfold',
   {
-    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-    createdAt: int('created_at', { mode: 'timestamp' })
+    id: serial().primaryKey(),
+    createdAt: date('created_at')
       .default(sql`(unixepoch())`)
       .notNull(),
     userId: text('user_id')
@@ -34,9 +41,7 @@ export const skinfold = createTable(
     shoulder: text('shoulder'),
     notes: text('notes'),
   },
-  (s) => ({
-    dateIndex: index('skinfold_date_idx').on(s.date),
-  }),
+  (s) => [index('skinfold_date_idx').on(s.date)],
 )
 
 export const skinfoldRelations = relations(skinfold, ({ one, many }) => ({
@@ -52,8 +57,8 @@ export const skinfoldRelations = relations(skinfold, ({ one, many }) => ({
 export const bodyFat = createTable(
   'body_fat',
   {
-    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-    createdAt: int('created_at', { mode: 'timestamp' })
+    id: serial().primaryKey(),
+    createdAt: date('created_at')
       .default(sql`(unixepoch())`)
       .notNull(),
     userId: text('user_id')
@@ -62,13 +67,11 @@ export const bodyFat = createTable(
     date: text('date').notNull(),
     bodyFat: text('body_fat'),
     notes: text('notes'),
-    skinfoldId: int('skinfold_id').references(() => skinfold.id, {
+    skinfoldId: integer('skinfold_id').references(() => skinfold.id, {
       onDelete: 'cascade',
     }),
   },
-  (s) => ({
-    dateIndex: index('body_fat_date_idx').on(s.date),
-  }),
+  (s) => [index('body_fat_date_idx').on(s.date)],
 )
 
 export const bodyFatRelations = relations(bodyFat, ({ one }) => ({
@@ -85,8 +88,8 @@ export const bodyFatRelations = relations(bodyFat, ({ one }) => ({
 export const leanMass = createTable(
   'lean_mass',
   {
-    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-    createdAt: int('created_at', { mode: 'timestamp' })
+    id: serial().primaryKey(),
+    createdAt: date('created_at')
       .default(sql`(unixepoch())`)
       .notNull(),
     userId: text('user_id')
@@ -95,13 +98,11 @@ export const leanMass = createTable(
     date: text('date').notNull(),
     leanMass: text('lean_mass'),
     notes: text('notes'),
-    skinfoldId: int('skinfold_id').references(() => skinfold.id, {
+    skinfoldId: integer('skinfold_id').references(() => skinfold.id, {
       onDelete: 'cascade',
     }),
   },
-  (s) => ({
-    dateIndex: index('lean_mass_date_idx').on(s.date),
-  }),
+  (s) => [index('lean_mass_date_idx').on(s.date)],
 )
 
 export const leanMassRelations = relations(leanMass, ({ one }) => ({
@@ -118,8 +119,8 @@ export const leanMassRelations = relations(leanMass, ({ one }) => ({
 export const bodyWeight = createTable(
   'body_weight',
   {
-    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-    createdAt: int('created_at', { mode: 'timestamp' })
+    id: serial().primaryKey(),
+    createdAt: date('created_at')
       .default(sql`(unixepoch())`)
       .notNull(),
     userId: text('user_id')
@@ -129,13 +130,11 @@ export const bodyWeight = createTable(
     bodyWeight: text('body_weight'),
     source: text('source'),
     notes: text('notes'),
-    skinfoldId: int('skinfold_id').references(() => skinfold.id, {
+    skinfoldId: integer('skinfold_id').references(() => skinfold.id, {
       onDelete: 'cascade',
     }),
   },
-  (s) => ({
-    dateIndex: index('body_weight_date_idx').on(s.date),
-  }),
+  (s) => [index('body_weight_date_idx').on(s.date)],
 )
 
 export const bodyWeightRelations = relations(bodyWeight, ({ one }) => ({

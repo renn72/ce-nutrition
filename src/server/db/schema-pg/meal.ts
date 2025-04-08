@@ -1,22 +1,27 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
+import {
+  date,
+  integer,
+  pgTableCreator,
+  serial,
+  text,
+} from 'drizzle-orm/pg-core'
 
-import { planToMeal, plan } from './plan'
-
+import { plan, planToMeal } from './plan'
 import { recipe } from './recipe'
 import { user } from './user'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+const createTable = pgTableCreator((name) => `nutrition_${name}`)
 
 export const meal = createTable('meal', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
+  id: serial().primaryKey(),
+  createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-    () => new Date(),
+  updatedAt: date('updated_at').$onUpdate(() =>
+    new Date().getTime().toString(),
   ),
-  planId: int('plan_id').references(() => plan.id, {
+  planId: integer('plan_id').references(() => plan.id, {
     onDelete: 'cascade',
   }),
   name: text('name'),
@@ -25,38 +30,38 @@ export const meal = createTable('meal', {
   notes: text('notes'),
   creatorId: text('creator_id').references(() => user.id),
   mealCategory: text('meal_category'),
-  favouriteAt: int('favourite_at', { mode: 'timestamp' }),
-  deletedAt: int('deleted_at', { mode: 'timestamp' }),
-  hiddenAt: int('hidden_at', { mode: 'timestamp' }),
+  favouriteAt: date('favourite_at'),
+  deletedAt: date('deleted_at'),
+  hiddenAt: date('hidden_at'),
   vegeNotes: text('vege_notes'),
   vege: text('vege'),
   vegeCalories: text('vege_calories'),
-  mealIndex: int('index', { mode: 'number' }),
+  mealIndex: integer('index'),
   calories: text('calories'),
 })
 
 export const mealToRecipe = createTable('meal_to_recipe', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
+  id: serial().primaryKey(),
+  createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
-  mealId: int('meal_id').references(() => meal.id, {
+  mealId: integer('meal_id').references(() => meal.id, {
     onDelete: 'cascade',
   }),
-  recipeId: int('recipe_id').references(() => recipe.id, {
+  recipeId: integer('recipe_id').references(() => recipe.id, {
     onDelete: 'cascade',
   }),
-  index: int('index', { mode: 'number' }).notNull(),
+  index: integer('index').notNull(),
   note: text('note'),
 })
 
 export const vegeStack = createTable('vege_stack', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
+  id: serial().primaryKey(),
+  createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-    () => new Date(),
+  updatedAt: date('updated_at').$onUpdate(() =>
+    new Date().getTime().toString(),
   ),
   name: text('name'),
   veges: text('veges'),
@@ -65,14 +70,14 @@ export const vegeStack = createTable('vege_stack', {
 })
 
 export const mealToVegeStack = createTable('meal_to_vege_stack', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
+  id: serial().primaryKey(),
+  createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
-  mealId: int('meal_id').references(() => meal.id, {
+  mealId: integer('meal_id').references(() => meal.id, {
     onDelete: 'cascade',
   }),
-  vegeStackId: int('vege_stack_id').references(() => vegeStack.id, {
+  vegeStackId: integer('vege_stack_id').references(() => vegeStack.id, {
     onDelete: 'cascade',
   }),
   calories: text('calories'),
@@ -90,7 +95,7 @@ export const mealRelations = relations(meal, ({ one, many }) => ({
   }),
 }))
 
-export const vegeStackRelations = relations(vegeStack, ({ one, many }) => ({
+export const vegeStackRelations = relations(vegeStack, ({ many }) => ({
   mealToVegeStack: many(mealToVegeStack),
 }))
 

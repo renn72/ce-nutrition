@@ -11,7 +11,7 @@ import {
 import { user } from './user'
 import { userIngredient, userRecipe } from './user-plan'
 
-export const createTable = pgTableCreator((name) => `nutrition_${name}`)
+const createTable = pgTableCreator((name) => `nutrition_${name}`)
 
 export const dailyLog = createTable(
   'daily_log',

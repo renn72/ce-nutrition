@@ -17,7 +17,7 @@ import { bodyFat, bodyWeight, leanMass, skinfold } from './metrics'
 import { notification } from './notification'
 import { userPlan } from './user-plan'
 
-export const createTable = pgTableCreator((name) => `nutrition_${name}`)
+const createTable = pgTableCreator((name) => `nutrition_${name}`)
 
 export const user = createTable(
   'user',
@@ -190,9 +190,7 @@ export const verificationToken = createTable(
     token: text('token').notNull(),
     expires: date('expires').notNull(),
   },
-  (vt) => [
-    primaryKey({ columns: [vt.identifier, vt.token] }),
-  ],
+  (vt) => [primaryKey({ columns: [vt.identifier, vt.token] })],
 )
 
 export const session = createTable(
@@ -204,9 +202,7 @@ export const session = createTable(
       .references(() => user.id),
     expires: date('expires').notNull(),
   },
-  (session) => [
-    index('session_userId_idx').on(session.userId),
-  ],
+  (session) => [index('session_userId_idx').on(session.userId)],
 )
 
 export const sessionsRelations = relations(session, ({ one }) => ({
@@ -224,18 +220,15 @@ export const roleRelations = relations(role, ({ one }) => ({
   }),
 }))
 
-export const userToTrainerRelations = relations(
-  userToTrainer,
-  ({ one, many }) => ({
-    user: one(user, {
-      fields: [userToTrainer.userId],
-      references: [user.id],
-      relationName: 'clients',
-    }),
-    trainer: one(user, {
-      fields: [userToTrainer.trainerId],
-      references: [user.id],
-      relationName: 'trainers',
-    }),
+export const userToTrainerRelations = relations(userToTrainer, ({ one }) => ({
+  user: one(user, {
+    fields: [userToTrainer.userId],
+    references: [user.id],
+    relationName: 'clients',
   }),
-)
+  trainer: one(user, {
+    fields: [userToTrainer.trainerId],
+    references: [user.id],
+    relationName: 'trainers',
+  }),
+}))

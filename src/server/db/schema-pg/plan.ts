@@ -1,44 +1,49 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
-import { z } from 'zod'
+import {
+  date,
+  integer,
+  pgTableCreator,
+  serial,
+  text,
+} from 'drizzle-orm/pg-core'
 
-import { meal, mealToVegeStack } from './meal'
+import { meal } from './meal'
 import { user } from './user'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+const createTable = pgTableCreator((name) => `nutrition_${name}`)
 
 export const plan = createTable('plan', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
+  id: serial().primaryKey(),
+  createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
-  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-    () => new Date(),
+  updatedAt: date('updated_at').$onUpdate(() =>
+    new Date().getTime().toString(),
   ),
   name: text('name'),
   description: text('description'),
   image: text('image'),
   notes: text('notes'),
-  numberOfMeals: int('number_of_meals', { mode: 'number' }),
+  numberOfMeals: integer('number_of_meals'),
   creatorId: text('creator_id').references(() => user.id),
   planCategory: text('recipe_category'),
-  favouriteAt: int('favourite_at', { mode: 'timestamp' }),
-  deletedAt: int('deleted_at', { mode: 'timestamp' }),
-  hiddenAt: int('hidden_at', { mode: 'timestamp' }),
+  favouriteAt: date('favourite_at'),
+  deletedAt: date('deleted_at'),
+  hiddenAt: date('hidden_at'),
 })
 
 export const planToMeal = createTable('plan_to_meal', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
+  id: serial().primaryKey(),
+  createdAt: date('created_at')
     .default(sql`(unixepoch())`)
     .notNull(),
-  planId: int('plan_id').references(() => plan.id, {
+  planId: integer('plan_id').references(() => plan.id, {
     onDelete: 'cascade',
   }),
-  mealId: int('meal_id').references(() => meal.id, {
+  mealId: integer('meal_id').references(() => meal.id, {
     onDelete: 'cascade',
   }),
-  mealIndex: int('index', { mode: 'number' }),
+  mealIndex: integer('index'),
   mealTitle: text('meal_title'),
   calories: text('calories'),
   vegeCalories: text('vege_calories'),
