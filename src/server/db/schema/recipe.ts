@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { ingredient } from './ingredient'
 import { user } from './user'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+import { createTable } from '@/server/db/'
 
 export const recipe = createTable('recipe', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),

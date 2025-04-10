@@ -6,7 +6,7 @@ import { recipeToIngredient } from './recipe'
 import { userIngredient } from './user-plan'
 import { user } from './user'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+import { createTable } from '@/server/db/'
 
 export const ingredient = createTable(
   'ingredient',

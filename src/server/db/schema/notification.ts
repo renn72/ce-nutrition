@@ -3,7 +3,7 @@ import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
 
 import { user } from './user'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+import { createTable } from '@/server/db/'
 
 export const notification = createTable(
   'notification',

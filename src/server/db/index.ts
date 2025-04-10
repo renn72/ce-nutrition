@@ -1,6 +1,8 @@
 import { createClient, type Client } from '@libsql/client'
 import { drizzle } from 'drizzle-orm/libsql'
 
+import { sqliteTableCreator } from 'drizzle-orm/sqlite-core'
+
 import { env } from '@/env'
 import * as user from './schema/user'
 import * as notification from './schema/notification'
@@ -14,6 +16,8 @@ import * as log from './schema/log'
 import * as message from './schema/message'
 import * as metrics from './schema/metrics'
 import * as dailyLog from './schema/daily-logs'
+
+export const createTable = sqliteTableCreator((name) => `${name}`)
 
 export const schema = {
   ...log,
@@ -43,9 +47,9 @@ export const client =
   globalForDb.client ??
   createClient({
     url: env.DATABASE_URL,
-    syncUrl: env.DATABASE_SYNC_URL,
-    authToken: env.DATABASE_AUTH_TOKEN,
-    offline: true,
+    // syncUrl: env.DATABASE_SYNC_URL,
+    // authToken: env.DATABASE_AUTH_TOKEN,
+    // offline: true,
   })
 if (env.NODE_ENV !== 'production') globalForDb.client = client
 

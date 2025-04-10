@@ -14,7 +14,7 @@ import { notification } from './notification'
 import { userPlan, } from './user-plan'
 import { dailyLog, tag } from './daily-logs'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+import { createTable } from '@/server/db/'
 
 export const user = createTable(
   'user',

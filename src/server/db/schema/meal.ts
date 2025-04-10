@@ -6,7 +6,7 @@ import { planToMeal, plan } from './plan'
 import { recipe } from './recipe'
 import { user } from './user'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+import { createTable } from '@/server/db/'
 
 export const meal = createTable('meal', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),

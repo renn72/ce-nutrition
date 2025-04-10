@@ -10,7 +10,7 @@ import {
 import { user } from './user'
 import { userIngredient, userRecipe } from './user-plan'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+import { createTable } from '@/server/db/'
 
 export const dailyLog = createTable(
   'daily_log',

@@ -1,7 +1,7 @@
 import { sql } from 'drizzle-orm'
 import { int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+import { createTable } from '@/server/db/'
 
 export const log = createTable('log', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),

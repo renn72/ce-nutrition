@@ -5,9 +5,9 @@ import { ingredient } from './ingredient'
 import { user, } from './user'
 import { dailyLog, dailyMeal } from './daily-logs'
 
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
+import { createTable } from '@/server/db/'
 
-export const userPlan = createTable('user-plan', {
+export const userPlan = createTable('user_plan', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -34,7 +34,7 @@ export const userPlan = createTable('user-plan', {
   hiddenAt: int('hidden_at', { mode: 'timestamp' }),
 })
 
-export const userMeal = createTable('user-meal', {
+export const userMeal = createTable('user_meal', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -59,7 +59,7 @@ export const userMeal = createTable('user-meal', {
   note: text('note'),
 })
 
-export const userRecipe = createTable('user-recipe', {
+export const userRecipe = createTable('user_recipe', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)
@@ -84,7 +84,7 @@ export const userRecipe = createTable('user-recipe', {
   dailyLogId: int('daily_log_id').references(() => dailyLog.id),
 })
 
-export const userIngredient = createTable('user-ingredient', {
+export const userIngredient = createTable('user_ingredient', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
   createdAt: int('created_at', { mode: 'timestamp' })
     .default(sql`(unixepoch())`)

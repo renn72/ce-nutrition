@@ -1,10 +1,8 @@
-
+import { createTable } from '@/server/db/'
 import { relations, sql } from 'drizzle-orm'
 import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
 
 import { user } from './user'
-
-export const createTable = sqliteTableCreator((name) => `ce-nu_${name}`)
 
 export const message = createTable(
   'message',
@@ -35,18 +33,15 @@ export const message = createTable(
   },
 )
 
-export const messageRelations = relations(
-  message,
-  ({ one, }) => ({
-    user: one(user, {
-      fields: [message.userId],
-      references: [user.id],
-      relationName: 'userMessages',
-    }),
-    fromUser: one(user, {
-      fields: [message.fromUserId],
-      references: [user.id],
-      relationName: 'sentMessages',
-    }),
+export const messageRelations = relations(message, ({ one }) => ({
+  user: one(user, {
+    fields: [message.userId],
+    references: [user.id],
+    relationName: 'userMessages',
   }),
-)
+  fromUser: one(user, {
+    fields: [message.fromUserId],
+    references: [user.id],
+    relationName: 'sentMessages',
+  }),
+}))
