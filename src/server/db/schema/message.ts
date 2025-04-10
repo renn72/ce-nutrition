@@ -1,8 +1,8 @@
-import { createTable } from '@/server/db/'
 import { relations, sql } from 'drizzle-orm'
-import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
+import { index, int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 import { user } from './user'
+const createTable = sqliteTable
 
 export const message = createTable(
   'message',
@@ -24,12 +24,6 @@ export const message = createTable(
     fromUserId: text('from_user_id').references(() => user.id, {
       onDelete: 'cascade',
     }),
-  },
-  (e) => {
-    return {
-      userIdIndex: index('message_user_id_idx').on(e.userId),
-      fromUserIdIndex: index('message_from_user_id_idx').on(e.fromUserId),
-    }
   },
 )
 

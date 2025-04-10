@@ -19,10 +19,12 @@ tab {
           command "pnpm"
           args "drizzle-kit" "studio"
           size "20%"
+          start_suspended = true
         }
         pane  {
           command "pnpm"
           args "run" "dev"
+          start_suspended = true
         }
       }
     }

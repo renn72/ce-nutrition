@@ -3,7 +3,7 @@ import {
   index,
   int,
   primaryKey,
-  sqliteTableCreator,
+  sqliteTable,
   text,
 } from 'drizzle-orm/sqlite-core'
 import { type AdapterAccount } from 'next-auth/adapters'
@@ -14,7 +14,8 @@ import { notification } from './notification'
 import { userPlan, } from './user-plan'
 import { dailyLog, tag } from './daily-logs'
 
-import { createTable } from '@/server/db/'
+const createTable = sqliteTable
+
 
 export const user = createTable(
   'user',
@@ -52,11 +53,6 @@ export const user = createTable(
       () => new Date(),
     ),
   },
-  (u) => ({
-    nameIndex: index('name_idx').on(u.name),
-    clerkIdIndex: index('clerk_id_idx').on(u.clerkId),
-    emailIndex: index('email_idx').on(u.email),
-  }),
 )
 
 export const userRelations = relations(user, ({ one, many }) => ({
@@ -189,7 +185,6 @@ export const account = createTable(
     compoundKey: primaryKey({
       columns: [account.provider, account.providerAccountId],
     }),
-    userIdIdx: index('account_user_id_idx').on(account.userId),
   }),
 )
 
@@ -214,9 +209,6 @@ export const session = createTable(
       .references(() => user.id),
     expires: int('expires', { mode: 'timestamp' }).notNull(),
   },
-  (session) => ({
-    userIdIdx: index('session_userId_idx').on(session.userId),
-  }),
 )
 
 export const sessionsRelations = relations(session, ({ one }) => ({

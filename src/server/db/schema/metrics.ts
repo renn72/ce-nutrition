@@ -1,9 +1,9 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
+import { index, int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 import { user } from './user'
 
-import { createTable } from '@/server/db/'
+const createTable = sqliteTable
 
 export const skinfold = createTable(
   'skinfold',
@@ -34,9 +34,6 @@ export const skinfold = createTable(
     shoulder: text('shoulder'),
     notes: text('notes'),
   },
-  (s) => ({
-    dateIndex: index('skinfold_date_idx').on(s.date),
-  }),
 )
 
 export const skinfoldRelations = relations(skinfold, ({ one, many }) => ({
@@ -66,9 +63,6 @@ export const bodyFat = createTable(
       onDelete: 'cascade',
     }),
   },
-  (s) => ({
-    dateIndex: index('body_fat_date_idx').on(s.date),
-  }),
 )
 
 export const bodyFatRelations = relations(bodyFat, ({ one }) => ({
@@ -99,9 +93,6 @@ export const leanMass = createTable(
       onDelete: 'cascade',
     }),
   },
-  (s) => ({
-    dateIndex: index('lean_mass_date_idx').on(s.date),
-  }),
 )
 
 export const leanMassRelations = relations(leanMass, ({ one }) => ({
@@ -133,9 +124,6 @@ export const bodyWeight = createTable(
       onDelete: 'cascade',
     }),
   },
-  (s) => ({
-    dateIndex: index('body_weight_date_idx').on(s.date),
-  }),
 )
 
 export const bodyWeightRelations = relations(bodyWeight, ({ one }) => ({

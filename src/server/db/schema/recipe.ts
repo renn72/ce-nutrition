@@ -1,11 +1,11 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, int, sqliteTableCreator, text } from 'drizzle-orm/sqlite-core'
+import { index, int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { z } from 'zod'
 
 import { ingredient } from './ingredient'
 import { user } from './user'
 
-import { createTable } from '@/server/db/'
+const createTable = sqliteTable
 
 export const recipe = createTable('recipe', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),

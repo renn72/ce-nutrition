@@ -3,14 +3,14 @@ import {
   index,
   int,
   primaryKey,
-  sqliteTableCreator,
+  sqliteTable,
   text,
 } from 'drizzle-orm/sqlite-core'
 
 import { user } from './user'
 import { userIngredient, userRecipe } from './user-plan'
 
-import { createTable } from '@/server/db/'
+const createTable = sqliteTable
 
 export const dailyLog = createTable(
   'daily_log',
@@ -47,9 +47,6 @@ export const dailyLog = createTable(
     waistMeasurement: text('waist_measurement'),
     nap: text('nap'),
   },
-  (l) => ({
-    dateIndex: index('date_idx').on(l.date),
-  }),
 )
 
 export const dailyLogRelations = relations(dailyLog, ({ one, many }) => ({
