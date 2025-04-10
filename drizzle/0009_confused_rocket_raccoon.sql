@@ -1,1 +1,0 @@
-ALTER TABLE `ce-nu_message` ADD `image` text;
