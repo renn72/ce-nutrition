@@ -45,4 +45,7 @@ yarn-error.log*
 # idea files
 .idea
 
-/db
+/db/local.db
+/db/local.db-wal
+/db/local.db-shm
+/db/local.db-info
