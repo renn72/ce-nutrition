@@ -37,7 +37,7 @@ const Posing = ({
   const ctx = api.useUtils()
   const todaysLogDate = new Date(date ?? '')
 
-  const { mutate: updateHiit } = api.dailyLog.updateHiit.useMutation({
+  const { mutate: updatePosing } = api.dailyLog.updatePosing.useMutation({
     onSettled: () => {
       ctx.dailyLog.invalidate()
     },
@@ -70,6 +70,10 @@ const Posing = ({
               variant='default'
               onClick={() => {
                 if (!posing) return
+                updatePosing({
+                  date: todaysLogDate.toDateString(),
+                  posing: posing?.toFixed(0),
+                })
               }}
             >
               Save
@@ -83,6 +87,10 @@ const Posing = ({
               onClick={() => {
                 if (!posing) return
                 setPosing(null)
+                updatePosing({
+                  date: todaysLogDate.toDateString(),
+                  posing: '',
+                })
               }}
             >
               Clear
@@ -93,5 +101,5 @@ const Posing = ({
     </DialogWrapper>
   )
 }
-export { Hiit }
+export { Posing }
 

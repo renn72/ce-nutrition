@@ -10,21 +10,15 @@ import { cn } from '@/lib/utils'
 import { GetDailyLogById } from '@/types'
 import { format } from 'date-fns'
 import {
-  AlarmClock,
-  Beer,
   Bone,
   Bookmark,
   Calendar as CalendarIcon,
-  Dot,
   Fish,
-  Hand,
   Heart,
   Loader,
-  Paperclip,
   Pencil,
   Plus,
   Star,
-  ThumbsDown,
   ThumbsUp,
   Zap,
 } from 'lucide-react'

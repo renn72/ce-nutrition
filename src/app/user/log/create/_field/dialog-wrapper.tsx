@@ -42,10 +42,10 @@ const DialogWrapper = ({
       <DialogTrigger asChild>
         <div
           className={cn(
-            'flex gap-2 items-center justify-around flex-col bg-secondary px-4 py-2 rounded-md shadow-sm',
+            'flex gap-2 items-center justify-around flex-col bg-secondary px-2 py-2 rounded-md shadow-sm',
             'active:scale-90 active:shadow-none transition-transform cursor-pointer',
             isOpen ? 'scale-90 shadow-none' : '',
-            isWidthFull ? 'w-full min-w-[300px]' : 'w-40 font-semibold',
+            isWidthFull ? 'w-full min-w-[300px]' : 'w-28 font-semibold',
           )}
         >
           <div className='text-muted-foreground text-center'>{title}</div>
