@@ -94,7 +94,15 @@ export const userSettings = createTable('user_settings', {
     }),
   defaultWater: text('default_water'),
   defaultChartRange: text('default_chart_range'),
-  isPosingAdmin: int('is_posing_admin', { mode: 'boolean' }).default(false),
+  isPosing: int('is_posing', { mode: 'boolean' }).default(false),
+  isBloodGlucose: int('is_blood_glucose', { mode: 'boolean' }).default(false),
+  isSleep: int('is_sleep', { mode: 'boolean' }).default(true),
+  isSleepQuality: int('is_sleep_quality', { mode: 'boolean' }).default(true),
+  isNap: int('is_nap', { mode: 'boolean' }).default(true),
+  isWeightTraining: int('is_weight', { mode: 'boolean' }).default(true),
+  isHiit: int('is_hiit', { mode: 'boolean' }).default(true),
+  isLiss: int('is_liss', { mode: 'boolean' }).default(true),
+  isNotes: int('is_notes', { mode: 'boolean' }).default(true),
 })
 
 export const userSettingsRelations = relations(userSettings, ({ one }) => ({
