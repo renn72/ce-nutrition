@@ -53,7 +53,7 @@ const DialogWrapper = ({
             <div
               className={cn(
                 'relative',
-                isWidthFull ? 'text-sm text-secondary-foreground' : '',
+                isWidthFull ? 'text-sm first-letter:capitalize' : '',
               )}
             >
               {postfix !== '' ? (
