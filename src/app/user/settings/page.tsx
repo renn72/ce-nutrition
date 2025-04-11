@@ -638,7 +638,7 @@ const WeightTraining = ({ currentUser }: { currentUser: GetUserById }) => {
         onCheckedChange={(checked) => {
           setIsWeightTraining(checked)
           updateIsWeightTraining({
-            id: user.id,
+            id: currentUser.id,
             isWeightTraining: checked,
           })
         }}
