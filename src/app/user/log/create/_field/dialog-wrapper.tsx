@@ -65,7 +65,7 @@ const DialogWrapper = ({
               {prevValue !== '' &&
               prevValue !== undefined &&
               prevValue !== null ? (
-                <div className='absolute right-[-2.5rem] top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start'>
+                <div className='absolute right-[-2.1rem] top-1/2 -translate-y-1/2 text-[0.7rem] text-secondary-foreground flex gap-0 items-start'>
                   {diff === 0 ? null : diff < 0 ? (
                     <ArrowUpIcon size={12} />
                   ) : (

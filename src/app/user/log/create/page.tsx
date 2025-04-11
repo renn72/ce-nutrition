@@ -50,6 +50,8 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 import { DailyLogForm } from './form'
 
+export const dynamic = 'force-dynamic'
+
 const borderDict = {
   black: 'border-black',
   red: 'border-red-600',
