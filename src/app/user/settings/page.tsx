@@ -449,7 +449,7 @@ const Posing = ({ currentUser }: { currentUser: GetUserById }) => {
       <div className='space-y-0.5'>
         <Label>Posing</Label>
         <div className='text-sm text-muted-foreground'>
-          Tracks the time spent posing.
+          Enable posing tracking.
         </div>
       </div>
       <Switch
@@ -486,7 +486,7 @@ const BloodGlucose = ({ currentUser }: { currentUser: GetUserById }) => {
       <div className='space-y-0.5'>
         <Label>Blood Glucose</Label>
         <div className='text-sm text-muted-foreground'>
-          Tracks the time spent on blood glucose.
+          Enable blood glucose tracking.
         </div>
       </div>
       <Switch
@@ -522,7 +522,7 @@ const Sleep = ({ currentUser }: { currentUser: GetUserById }) => {
       <div className='space-y-0.5'>
         <Label>Sleep</Label>
         <div className='text-sm text-muted-foreground'>
-          Tracks the time spent sleeping.
+          Enable sleep tracking.
         </div>
       </div>
       <Switch
@@ -558,7 +558,7 @@ const SleepQuality = ({ currentUser }: { currentUser: GetUserById }) => {
       <div className='space-y-0.5'>
         <Label>Sleep Quality</Label>
         <div className='text-sm text-muted-foreground'>
-          Tracks the time spent sleeping.
+          Enable sleep quality tracking.
         </div>
       </div>
       <Switch
@@ -594,7 +594,7 @@ const Nap = ({ currentUser }: { currentUser: GetUserById }) => {
       <div className='space-y-0.5'>
         <Label>Nap</Label>
         <div className='text-sm text-muted-foreground'>
-          Tracks the time spent napping.
+          Enable nap tracking.
         </div>
       </div>
       <Switch
@@ -630,7 +630,7 @@ const WeightTraining = ({ currentUser }: { currentUser: GetUserById }) => {
       <div className='space-y-0.5'>
         <Label>Weight Training</Label>
         <div className='text-sm text-muted-foreground'>
-          Tracks the time spent weight training.
+          Enable weight training tracking.
         </div>
       </div>
       <Switch
@@ -666,7 +666,7 @@ const Hiit = ({ currentUser }: { currentUser: GetUserById }) => {
       <div className='space-y-0.5'>
         <Label>HIIT</Label>
         <div className='text-sm text-muted-foreground'>
-          Tracks the time spent HIIT.
+          Enable high intensity interval training tracking.
         </div>
       </div>
       <Switch
@@ -702,7 +702,7 @@ const Liss = ({ currentUser }: { currentUser: GetUserById }) => {
       <div className='space-y-0.5'>
         <Label>LISS</Label>
         <div className='text-sm text-muted-foreground'>
-          Tracks the time spent LISS.
+          Enable low intensity steady state cardio tracking.
         </div>
       </div>
       <Switch
@@ -738,7 +738,7 @@ const Notes = ({ currentUser }: { currentUser: GetUserById }) => {
       <div className='space-y-0.5'>
         <Label>Notes</Label>
         <div className='text-sm text-muted-foreground'>
-          Tracks the time spent taking notes.
+          Enables the you to take notes.
         </div>
       </div>
       <Switch
