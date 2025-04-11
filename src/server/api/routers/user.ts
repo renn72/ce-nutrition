@@ -92,6 +92,18 @@ export const userRouter = createTRPCRouter({
       })
       return res
     }),
+  updatePosing: protectedProcedure
+    .input(z.object({ id: z.string(), isPosing: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(userSettings)
+        .set({
+          isPosingAdmin: input.isPosing,
+        })
+        .where(eq(userSettings.userId, input.id))
+
+      return res
+    }),
   updateTrainer: protectedProcedure
     .input(z.object({ id: z.string(), isTrainer: z.boolean() }))
     .mutation(async ({ ctx, input }) => {

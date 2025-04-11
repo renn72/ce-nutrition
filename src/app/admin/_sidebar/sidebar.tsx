@@ -61,6 +61,10 @@ const data = {
           url: '/admin/user-create-plan',
         },
         {
+          title: 'Settings',
+          url: '/admin/user-settings',
+        },
+        {
           title: 'User Super',
           url: '/admin/user-super',
         },
@@ -100,10 +104,10 @@ const data = {
       title: 'Admin',
       url: '#',
       items: [
-        {
-          title: 'Settings',
-          url: '/admin/settings',
-        },
+        // {
+        //   title: 'Settings',
+        //   url: '/admin/settings',
+        // },
         {
           title: 'Super',
           url: '/admin/super',

@@ -1,0 +1,1 @@
+ALTER TABLE `user_settings` RENAME COLUMN "is_posing" TO "is_posing_admin";

@@ -94,6 +94,7 @@ export const userSettings = createTable('user_settings', {
     }),
   defaultWater: text('default_water'),
   defaultChartRange: text('default_chart_range'),
+  isPosingAdmin: int('is_posing_admin', { mode: 'boolean' }).default(false),
 })
 
 export const userSettingsRelations = relations(userSettings, ({ one }) => ({
