@@ -479,6 +479,7 @@ export default function Home() {
   const [isOpen, setIsOpen] = useState(false)
   const { data: dailyLogs, isLoading } =
     api.dailyLog.getAllCurrentUser.useQuery()
+  const { data: currentUser } = api.user.getCurrentUser.useQuery()
 
   const { mutate: updateIsStarred } = api.dailyLog.updateIsStarred.useMutation({
     onMutate: async (data) => {
@@ -516,6 +517,7 @@ export default function Home() {
   })
 
   if (!date) return null
+  if (!currentUser) return null
 
   return (
     <div className='mt-16 flex flex-col gap-0'>
@@ -659,6 +661,7 @@ export default function Home() {
       <DailyLogForm
         todaysLog={log}
         prevLog={prevLog}
+        currentUser={currentUser}
         date={date.toDateString()}
       />
     </div>

@@ -3,7 +3,7 @@
 import { api } from '@/trpc/react'
 
 import { UploadButton } from '@/lib/uploadthing'
-import { GetDailyLogById } from '@/types'
+import { GetDailyLogById, GetUserById } from '@/types'
 import { Image } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button'
 import { Camera } from '@/components/camera/camera'
 
 import { Notes } from './_field/notes'
+import { BloodGlucose } from './_field/blood-glucose'
+import { Weight } from './_field/weight'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,10 +20,12 @@ const DailyLogForm = ({
   todaysLog,
   prevLog,
   date,
+  currentUser,
 }: {
   todaysLog: GetDailyLogById | null
   prevLog: GetDailyLogById | null
   date?: string | null
+  currentUser: GetUserById
 }) => {
   const ctx = api.useUtils()
   const todaysLogDate = new Date(date ?? '')
@@ -41,8 +45,11 @@ const DailyLogForm = ({
   return (
     <div className='flex flex-col gap-3 px-4'>
       <div className='flex gap-4 w-full justify-around flex-wrap'>
+        <Weight todaysLog={todaysLog} prevLog={prevLog} date={date} />
+        {
+          currentUser?.settings?.isBloodGlucose ? <BloodGlucose todaysLog={todaysLog} prevLog={prevLog} date={date} /> : null
+        }
         <Notes todaysLog={todaysLog} prevLog={prevLog} date={date} />
-
       </div>
       {todaysLog?.image === '' ||
       todaysLog?.image === undefined ||

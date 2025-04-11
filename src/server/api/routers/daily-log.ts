@@ -3,8 +3,8 @@ import {
   dailyLog,
   dailyMeal,
   poopLog,
-  waterLog,
   tag,
+  waterLog,
 } from '@/server/db/schema/daily-logs'
 import { log } from '@/server/db/schema/log'
 import {
@@ -335,6 +335,50 @@ export const dailyLogRouter = createTRPCRouter({
       const res = await ctx.db
         .update(dailyLog)
         .set({ notes: input.notes })
+        .where(
+          and(
+            eq(dailyLog.date, input.date),
+            eq(dailyLog.userId, ctx.session.user.id),
+          ),
+        )
+
+      return res
+    }),
+  updatePosing: protectedProcedure
+    .input(
+      z.object({
+        date: z.string(),
+        posing: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const log = await ctx.db.query.dailyLog.findFirst({
+        where: and(
+          eq(dailyLog.date, input.date),
+          eq(dailyLog.userId, ctx.session.user.id),
+        ),
+      })
+
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Update Posing' + log ? '' : ' and Create Log',
+        notes: JSON.stringify(input),
+        objectId: null,
+      })
+
+      if (!log) {
+        const res = await ctx.db.insert(dailyLog).values({
+          date: input.date,
+          posing: input.posing,
+          userId: ctx.session.user.id,
+        })
+        return res
+      }
+
+      const res = await ctx.db
+        .update(dailyLog)
+        .set({ posing: input.posing })
         .where(
           and(
             eq(dailyLog.date, input.date),
@@ -802,7 +846,12 @@ export const dailyLogRouter = createTRPCRouter({
       const res = await ctx.db
         .update(dailyLog)
         .set({ image: input.image })
-        .where(eq(dailyLog.date, input.date))
+        .where(
+          and(
+            eq(dailyLog.date, input.date),
+            eq(dailyLog.userId, ctx.session.user.id),
+          ),
+        )
 
       return true
     }),
