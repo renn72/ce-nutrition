@@ -14,9 +14,9 @@ import { Switch } from '@/components/ui/switch'
 
 const Settings = ({ user }: { user: GetUserById }) => {
   const ctx = api.useUtils()
-  const [isPosing, setIsPosing] = useState(user.settings.isPosingAdmin)
+  const [isPosing, setIsPosing] = useState(user.settings.isPosing)
 
-  const { mutate: updatePosing } = api.user.updatePosing.useMutation({
+  const { mutate: updateIsPosing } = api.user.updateIsPosing.useMutation({
     onSuccess: () => {
       toast.success('Updated')
     },
@@ -43,7 +43,7 @@ const Settings = ({ user }: { user: GetUserById }) => {
           checked={isPosing === true}
           onCheckedChange={(checked) => {
             setIsPosing(checked)
-            updatePosing({
+            updateIsPosing({
               id: user.id,
               isPosing: checked,
             })

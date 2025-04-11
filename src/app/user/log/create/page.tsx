@@ -152,7 +152,7 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
 
   const { mutate: updateTagToDailyLog } =
     api.tag.updateTagToDailyLog.useMutation({
-      onMutate: async (data) => {
+      onMutate: async (_data) => {
         await ctx.dailyLog.getAllCurrentUser.cancel()
         const previousLog = ctx.dailyLog.getAllCurrentUser.getData()
         if (!previousLog) return

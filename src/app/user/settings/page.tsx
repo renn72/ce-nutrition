@@ -2,13 +2,12 @@
 
 import { api } from '@/trpc/react'
 
-import { toast } from 'sonner'
-
 import { useState } from 'react'
 
 import { cn } from '@/lib/utils'
 import { GetUserById } from '@/types'
 import { RefreshCw } from 'lucide-react'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -20,6 +19,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 
 const DefaultWater = ({ currentUser }: { currentUser: GetUserById }) => {
   const [water, setWater] = useState(
@@ -54,51 +55,47 @@ const DefaultWater = ({ currentUser }: { currentUser: GetUserById }) => {
       isOpen={isOpen}
       setIsOpen={setIsOpen}
     >
-        <DialogHeader>
-          <DialogTitle>Default Water</DialogTitle>
-          <DialogDescription>
-            Set the default amount of water.
-          </DialogDescription>
-        </DialogHeader>
-        <div className='flex flex-col gap-4 w-full'>
-          <div className='text-sm text-muted-foreground font-medium'>
-            <Input
-              type='number'
-              className='w-full'
-              value={water}
-              onChange={(e) => {
-                setWater(Number(e.target.value))
-              }}
-            />
-          </div>
-          <Button
-            disabled={isSaving}
-            className='relative'
-            onClick={() => {
-              updateWater({
-                water: water,
-                id: Number(currentUser?.settings?.id),
-              })
+      <DialogHeader>
+        <DialogTitle>Default Water</DialogTitle>
+        <DialogDescription>Set the default amount of water.</DialogDescription>
+      </DialogHeader>
+      <div className='flex flex-col gap-4 w-full'>
+        <div className='text-sm text-muted-foreground font-medium'>
+          <Input
+            type='number'
+            className='w-full'
+            value={water}
+            onChange={(e) => {
+              setWater(Number(e.target.value))
             }}
-          >
-            {isSaving ? (
-              <RefreshCw
-                className={cn('animate-spin')}
-                size={20}
-              />
-            ) : (
-              <span>Save</span>
-            )}
-          </Button>
+          />
         </div>
+        <Button
+          disabled={isSaving}
+          className='relative'
+          onClick={() => {
+            updateWater({
+              water: water,
+              id: Number(currentUser?.settings?.id),
+            })
+          }}
+        >
+          {isSaving ? (
+            <RefreshCw
+              className={cn('animate-spin')}
+              size={20}
+            />
+          ) : (
+            <span>Save</span>
+          )}
+        </Button>
+      </div>
     </DialogWrapper>
   )
 }
 
 const FirstName = ({ currentUser }: { currentUser: GetUserById }) => {
-  const [firstName, setFirstName] = useState(
-    currentUser?.firstName ?? '',
-  )
+  const [firstName, setFirstName] = useState(currentUser?.firstName ?? '')
   const [isOpen, setIsOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const ctx = api.useUtils()
@@ -129,12 +126,10 @@ const FirstName = ({ currentUser }: { currentUser: GetUserById }) => {
       isOpen={isOpen}
       setIsOpen={setIsOpen}
     >
-        <DialogHeader>
-          <DialogTitle>First Name</DialogTitle>
-          <DialogDescription>
-            Update your first name.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogHeader>
+        <DialogTitle>First Name</DialogTitle>
+        <DialogDescription>Update your first name.</DialogDescription>
+      </DialogHeader>
       <div className='flex flex-col gap-4 w-full'>
         <div className='text-sm text-muted-foreground font-medium'>
           <Input
@@ -202,12 +197,10 @@ const LastName = ({ currentUser }: { currentUser: GetUserById }) => {
       isOpen={isOpen}
       setIsOpen={setIsOpen}
     >
-        <DialogHeader>
-          <DialogTitle>Last Name</DialogTitle>
-          <DialogDescription>
-            Update your last name.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogHeader>
+        <DialogTitle>Last Name</DialogTitle>
+        <DialogDescription>Update your last name.</DialogDescription>
+      </DialogHeader>
       <div className='flex flex-col gap-4 w-full'>
         <div className='text-sm text-muted-foreground font-medium'>
           <Input
@@ -275,12 +268,10 @@ const Email = ({ currentUser }: { currentUser: GetUserById }) => {
       isOpen={isOpen}
       setIsOpen={setIsOpen}
     >
-        <DialogHeader>
-          <DialogTitle>Email</DialogTitle>
-          <DialogDescription>
-            Update your email.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogHeader>
+        <DialogTitle>Email</DialogTitle>
+        <DialogDescription>Update your email.</DialogDescription>
+      </DialogHeader>
       <div className='flex flex-col gap-4 w-full'>
         <div className='text-sm text-muted-foreground font-medium'>
           <Input
@@ -349,12 +340,10 @@ const Password = ({ currentUser }: { currentUser: GetUserById }) => {
       isOpen={isOpen}
       setIsOpen={setIsOpen}
     >
-        <DialogHeader>
-          <DialogTitle>Password</DialogTitle>
-          <DialogDescription>
-            Update your password.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogHeader>
+        <DialogTitle>Password</DialogTitle>
+        <DialogDescription>Update your password.</DialogDescription>
+      </DialogHeader>
       <div className='flex flex-col gap-4 w-full'>
         <div className='text-sm text-muted-foreground font-medium flex gap-4 flex-col'>
           <Input
@@ -377,10 +366,10 @@ const Password = ({ currentUser }: { currentUser: GetUserById }) => {
           />
         </div>
         <Button
-          disabled={isSaving || (password !== passwordConfirm)}
+          disabled={isSaving || password !== passwordConfirm}
           className='relative'
           onClick={() => {
-            if (password !== passwordConfirm){
+            if (password !== passwordConfirm) {
               toast.error('Passwords do not match')
               return
             }
@@ -439,20 +428,363 @@ const DialogWrapper = ({
   )
 }
 
-const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
+const Posing = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isPosing, setIsPosing] = useState(currentUser.settings.isPosing)
+
+  const { mutate: updateIsPosing } = api.user.updateIsPosing.useMutation({
+    onSuccess: () => {
+      toast.success('Updated')
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error')
+      ctx.user.invalidate()
+    },
+  })
   return (
-    <div className='flex flex-col gap-4 w-full'>
-      <div className='flex gap-2 justify-between px-2 bg-secondary w-full py-2 items-end text-base font-semibold text-muted-foreground '>
-        <div className='text-sm text-muted-foreground font-medium'>
-          Profile
+    <div className='flex flex-row items-center justify-between rounded-lg border p-3 gap-4 shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>Posing</Label>
+        <div className='text-sm text-muted-foreground'>
+          Tracks the time spent posing.
         </div>
       </div>
-      <div className='flex flex-col gap-2 w-full px-8'>
+      <Switch
+        checked={isPosing === true}
+        onCheckedChange={(checked) => {
+          setIsPosing(checked)
+          updateIsPosing({
+            id: currentUser.id,
+            isPosing: checked,
+          })
+        }}
+      />
+    </div>
+  )
+}
+
+const BloodGlucose = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isBloodGlucose, setIsBloodGlucose] = useState(currentUser.settings.isBloodGlucose)
+  const { mutate: updateIsBloodGlucose } = api.user.updateIsBloodGlucose.useMutation({
+    onSuccess: () => {
+      toast.success('Updated')
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error')
+      ctx.user.invalidate()
+    },
+  })
+  return (
+    <div className='flex flex-row items-center justify-between rounded-lg border p-3 gap-4 shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>Blood Glucose</Label>
+        <div className='text-sm text-muted-foreground'>
+          Tracks the time spent on blood glucose.
+        </div>
+      </div>
+      <Switch
+        checked={isBloodGlucose === true}
+        onCheckedChange={(checked) => {
+          setIsBloodGlucose(checked)
+          updateIsBloodGlucose({
+            id: currentUser.id,
+            isBloodGlucose: checked,
+          })
+        }}
+      />
+    </div>
+  )
+}
+const Sleep = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isSleep, setIsSleep] = useState(currentUser.settings.isSleep)
+  const { mutate: updateIsSleep } = api.user.updateIsSleep.useMutation({
+    onSuccess: () => {
+      toast.success('Updated')
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error')
+      ctx.user.invalidate()
+    },
+  })
+  return (
+    <div className='flex flex-row items-center justify-between rounded-lg border p-3 gap-4 shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>Sleep</Label>
+        <div className='text-sm text-muted-foreground'>
+          Tracks the time spent sleeping.
+        </div>
+      </div>
+      <Switch
+        checked={isSleep === true}
+        onCheckedChange={(checked) => {
+          setIsSleep(checked)
+          updateIsSleep({
+            id: currentUser.id,
+            isSleep: checked,
+          })
+        }}
+      />
+    </div>
+  )
+}
+const SleepQuality = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isSleepQuality, setIsSleepQuality] = useState(currentUser.settings.isSleepQuality)
+  const { mutate: updateIsSleepQuality } = api.user.updateIsSleepQuality.useMutation({
+    onSuccess: () => {
+      toast.success('Updated')
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error')
+      ctx.user.invalidate()
+    },
+  })
+  return (
+    <div className='flex flex-row items-center justify-between rounded-lg border p-3 gap-4 shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>Sleep Quality</Label>
+        <div className='text-sm text-muted-foreground'>
+          Tracks the time spent sleeping.
+        </div>
+      </div>
+      <Switch
+        checked={isSleepQuality === true}
+        onCheckedChange={(checked) => {
+          setIsSleepQuality(checked)
+          updateIsSleepQuality({
+            id: currentUser.id,
+            isSleepQuality: checked,
+          })
+        }}
+      />
+    </div>
+  )
+}
+const Nap = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isNap, setIsNap] = useState(currentUser.settings.isNap)
+  const { mutate: updateIsNap } = api.user.updateIsNap.useMutation({
+    onSuccess: () => {
+      toast.success('Updated')
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error')
+      ctx.user.invalidate()
+    },
+  })
+  return (
+    <div className='flex flex-row items-center justify-between rounded-lg border p-3 gap-4 shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>Nap</Label>
+        <div className='text-sm text-muted-foreground'>
+          Tracks the time spent napping.
+        </div>
+      </div>
+      <Switch
+        checked={isNap === true}
+        onCheckedChange={(checked) => {
+          setIsNap(checked)
+          updateIsNap({
+            id: currentUser.id,
+            isNap: checked,
+          })
+        }}
+      />
+    </div>
+  )
+}
+const WeightTraining = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isWeightTraining, setIsWeightTraining] = useState(currentUser.settings.isWeightTraining)
+  const { mutate: updateIsWeightTraining } = api.user.updateIsWeightTraining.useMutation({
+    onSuccess: () => {
+      toast.success('Updated')
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error')
+      ctx.user.invalidate()
+    },
+  })
+  return (
+    <div className='flex flex-row items-center justify-between rounded-lg border p-3 gap-4 shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>Weight Training</Label>
+        <div className='text-sm text-muted-foreground'>
+          Tracks the time spent weight training.
+        </div>
+      </div>
+      <Switch
+        checked={isWeightTraining === true}
+        onCheckedChange={(checked) => {
+          setIsWeightTraining(checked)
+          updateIsWeightTraining({
+            id: user.id,
+            isWeightTraining: checked,
+          })
+        }}
+      />
+    </div>
+  )
+}
+const Hiit = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isHiit, setIsHiit] = useState(currentUser.settings.isHiit)
+  const { mutate: updateIsHiit } = api.user.updateIsHiit.useMutation({
+    onSuccess: () => {
+      toast.success('Updated')
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error')
+      ctx.user.invalidate()
+    },
+  })
+  return (
+    <div className='flex flex-row items-center justify-between rounded-lg border p-3 gap-4 shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>HIIT</Label>
+        <div className='text-sm text-muted-foreground'>
+          Tracks the time spent HIIT.
+        </div>
+      </div>
+      <Switch
+        checked={isHiit === true}
+        onCheckedChange={(checked) => {
+          setIsHiit(checked)
+          updateIsHiit({
+            id: currentUser.id,
+            isHiit: checked,
+          })
+        }}
+      />
+    </div>
+  )
+}
+const Liss = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isLiss, setIsLiss] = useState(currentUser.settings.isLiss)
+  const { mutate: updateIsLiss } = api.user.updateIsLiss.useMutation({
+    onSuccess: () => {
+      toast.success('Updated')
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error')
+      ctx.user.invalidate()
+    },
+  })
+  return (
+    <div className='flex flex-row items-center justify-between rounded-lg border p-3 gap-4 shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>LISS</Label>
+        <div className='text-sm text-muted-foreground'>
+          Tracks the time spent LISS.
+        </div>
+      </div>
+      <Switch
+        checked={isLiss === true}
+        onCheckedChange={(checked) => {
+          setIsLiss(checked)
+          updateIsLiss({
+            id: currentUser.id,
+            isLiss: checked,
+          })
+        }}
+      />
+    </div>
+  )
+}
+const Notes = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isNote, setIsNote] = useState(currentUser.settings.isNotes)
+  const { mutate: updateIsNote } = api.user.updateIsNote.useMutation({
+    onSuccess: () => {
+      toast.success('Updated')
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error')
+      ctx.user.invalidate()
+    },
+  })
+  return (
+    <div className='flex flex-row items-center justify-between rounded-lg border p-3 gap-4 shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>Notes</Label>
+        <div className='text-sm text-muted-foreground'>
+          Tracks the time spent taking notes.
+        </div>
+      </div>
+      <Switch
+        checked={isNote === true}
+        onCheckedChange={(checked) => {
+          setIsNote(checked)
+          updateIsNote({
+            id: currentUser.id,
+            isNote: checked,
+          })
+        }}
+      />
+    </div>
+  )
+}
+
+
+
+
+
+
+const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
+  console.log('currentUser', currentUser)
+  return (
+    <div className='flex flex-col gap-4 w-full px-2'>
+      <div className='flex gap-2 justify-between px-2 bg-secondary w-full py-2 items-end text-base font-semibold text-muted-foreground '>
+        <div className='text-sm text-muted-foreground font-medium'>Profile</div>
+      </div>
+      <div className='flex flex-col gap-2 w-full px-4'>
         <FirstName currentUser={currentUser} />
         <LastName currentUser={currentUser} />
         <Email currentUser={currentUser} />
         <Password currentUser={currentUser} />
         <DefaultWater currentUser={currentUser} />
+      </div>
+      <div className='flex flex-col gap-2 w-full p-4 border rounded-lg'>
+        <h2 className='text-base font-semibold'>Daily Log</h2>
+        <Sleep currentUser={currentUser} />
+        <SleepQuality currentUser={currentUser} />
+        <Nap currentUser={currentUser} />
+        <WeightTraining currentUser={currentUser} />
+        <Hiit currentUser={currentUser} />
+        <Liss currentUser={currentUser} />
+        <BloodGlucose currentUser={currentUser} />
+        <Posing currentUser={currentUser} />
+        <Notes currentUser={currentUser} />
       </div>
     </div>
   )
@@ -465,7 +797,7 @@ export default function Home() {
   if (!currentUser) return null
 
   return (
-    <div className='w-full mt-16'>
+    <div className='w-full my-16'>
       <Settings currentUser={currentUser} />
     </div>
   )

@@ -92,13 +92,109 @@ export const userRouter = createTRPCRouter({
       })
       return res
     }),
-  updatePosing: protectedProcedure
+  updateIsPosing: protectedProcedure
     .input(z.object({ id: z.string(), isPosing: z.boolean() }))
     .mutation(async ({ ctx, input }) => {
       const res = await ctx.db
         .update(userSettings)
         .set({
-          isPosingAdmin: input.isPosing,
+          isPosing: input.isPosing,
+        })
+        .where(eq(userSettings.userId, input.id))
+
+      return res
+    }),
+  updateIsBloodGlucose: protectedProcedure
+    .input(z.object({ id: z.string(), isBloodGlucose: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(userSettings)
+        .set({
+          isBloodGlucose: input.isBloodGlucose,
+        })
+        .where(eq(userSettings.userId, input.id))
+
+      return res
+    }),
+  updateIsSleep: protectedProcedure
+    .input(z.object({ id: z.string(), isSleep: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(userSettings)
+        .set({
+          isSleep: input.isSleep,
+        })
+        .where(eq(userSettings.userId, input.id))
+
+      return res
+    }),
+  updateIsSleepQuality: protectedProcedure
+    .input(z.object({ id: z.string(), isSleepQuality: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(userSettings)
+        .set({
+          isSleepQuality: input.isSleepQuality,
+        })
+        .where(eq(userSettings.userId, input.id))
+
+      return res
+    }),
+  updateIsNap: protectedProcedure
+    .input(z.object({ id: z.string(), isNap: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(userSettings)
+        .set({
+          isNap: input.isNap,
+        })
+        .where(eq(userSettings.userId, input.id))
+
+      return res
+    }),
+  updateIsWeightTraining: protectedProcedure
+    .input(z.object({ id: z.string(), isWeightTraining: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(userSettings)
+        .set({
+          isWeightTraining: input.isWeightTraining,
+        })
+        .where(eq(userSettings.userId, input.id))
+
+      return res
+    }),
+  updateIsHiit: protectedProcedure
+    .input(z.object({ id: z.string(), isHiit: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(userSettings)
+        .set({
+          isHiit: input.isHiit,
+        })
+        .where(eq(userSettings.userId, input.id))
+
+      return res
+    }),
+  updateIsLiss: protectedProcedure
+    .input(z.object({ id: z.string(), isLiss: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(userSettings)
+        .set({
+          isLiss: input.isLiss,
+        })
+        .where(eq(userSettings.userId, input.id))
+
+      return res
+    }),
+  updateIsNote: protectedProcedure
+    .input(z.object({ id: z.string(), isNote: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(userSettings)
+        .set({
+          isNotes: input.isNote,
         })
         .where(eq(userSettings.userId, input.id))
 
