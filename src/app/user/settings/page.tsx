@@ -414,11 +414,11 @@ const DialogWrapper = ({
       }}
     >
       <DialogTrigger asChild>
-        <div className='flex gap-6 items-center justify-between px-8 py-2 bg-secondary text-sm'>
-          <div className='text-sm text-muted-foreground/80 font-medium'>
+        <div className='flex gap-6 items-center justify-between px-3 py-2 text-sm border rounded-lg'>
+          <div className='text-sm text-muted-foreground font-medium'>
             {title}
           </div>
-          <div className='text-sm text-muted-foreground font-semibold truncate'>
+          <div className='text-sm font-semibold truncate'>
             {value}
           </div>
         </div>
@@ -764,14 +764,16 @@ const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
   console.log('currentUser', currentUser)
   return (
     <div className='flex flex-col gap-4 w-full px-2'>
-      <div className='flex gap-2 justify-between px-2 bg-secondary w-full py-2 items-end text-base font-semibold text-muted-foreground '>
-        <div className='text-sm text-muted-foreground font-medium'>Profile</div>
-      </div>
-      <div className='flex flex-col gap-2 w-full px-4'>
+        <div className='text-lg font-bold'>Settings</div>
+      <div className='flex flex-col gap-2 w-full p-4 border rounded-lg'>
+        <h2 className='text-base font-semibold'>Profile</h2>
         <FirstName currentUser={currentUser} />
         <LastName currentUser={currentUser} />
         <Email currentUser={currentUser} />
         <Password currentUser={currentUser} />
+      </div>
+      <div className='flex flex-col gap-2 w-full p-4 border rounded-lg'>
+        <h2 className='text-base font-semibold'>Defaults</h2>
         <DefaultWater currentUser={currentUser} />
       </div>
       <div className='flex flex-col gap-2 w-full p-4 border rounded-lg'>
