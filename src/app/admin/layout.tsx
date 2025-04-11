@@ -4,6 +4,8 @@ import { SignIn } from '@/components/auth/sign-in'
 import { AdminSidebar } from './_sidebar/sidebar'
 import { SidebarHeader } from './_sidebar/sidebar-header'
 
+import { redirect } from 'next/navigation'
+
 
 export default async function RootLayout({
   children,
@@ -18,6 +20,8 @@ export default async function RootLayout({
         </div>
       </>
     )
+
+  if (!session?.user.isTrainer) redirect('/')
 
   return (
       <>
