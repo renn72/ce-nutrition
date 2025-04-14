@@ -122,7 +122,7 @@ const Mobile = ({
         )}
       >
         <Card className=''>
-          <CardContent className='pb-2'>
+          <CardContent className='pb-2 px-0'>
             <Tabs
               defaultValue='bw'
               className='w-full'
