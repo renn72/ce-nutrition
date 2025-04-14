@@ -60,7 +60,7 @@ const MealBottomSheet = ({
       </Sheet.Trigger>
       <Sheet.Portal>
         <Sheet.View className='z-[999] h-[100vh] bg-black/50 '>
-          <Sheet.Content className='min-h-[200px] max-h-[80vh] h-full rounded-t-3xl bg-background relative'>
+          <Sheet.Content className='min-h-[200px] max-h-[90vh] h-full rounded-t-3xl bg-background relative'>
             <div className='flex flex-col justify-between h-full'>
               <div className='flex flex-col '>
                 <div className='flex justify-center pt-1'>
@@ -118,7 +118,7 @@ const MealBottomSheet = ({
                   </div>
                 </div>
 
-                <ScrollArea className='py-4 px-2 h-[calc(80vh-110px)]'>
+                <ScrollArea className='pt-4 px-2 h-[calc(90vh-130px)]'>
                   <div className='flex flex-col gap-2 '>
                     {todaysDailyLog?.dailyMeals.length === 0 ||
                     !todaysDailyLog ? (

@@ -4,9 +4,21 @@ import { api } from '@/trpc/react'
 
 import { useEffect, useState } from 'react'
 
-import { cn, getRecipeDetailsForDailyLog } from '@/lib/utils'
+import {
+  cn,
+  getRecipeDetailsForDailyLog,
+  getRecipeDetailsFromDailyLog,
+} from '@/lib/utils'
 import { GetAllDailyLogs, GetUserById, UserPlan, UserRecipe } from '@/types'
-import { ChevronsLeft, ChevronsRight, ListCollapse, Salad } from 'lucide-react'
+import NumberFlow from '@number-flow/react'
+import { Sheet } from '@silk-hq/components'
+import {
+  ChevronDown,
+  ChevronsLeft,
+  ChevronsRight,
+  ListCollapse,
+  Salad,
+} from 'lucide-react'
 import { toast } from 'sonner'
 
 import {
@@ -19,6 +31,7 @@ import {
 } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
+import { Checkbox } from '@/components/ui/checkbox'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 import { Label } from '../ui/label'
@@ -32,14 +45,12 @@ const Meal = ({
   dailyLogs,
   userId,
   index,
-  setIsOpen,
 }: {
   date: Date
   dailyLogs: GetAllDailyLogs | null | undefined
   allPlans: UserPlan[]
   userId: string
   index: number
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const [selectValue, setSelectValue] = useState<string>('')
 
@@ -52,7 +63,6 @@ const Meal = ({
   })
 
   const [mealIndex, setMealIndex] = useState(() => index)
-
 
   const ctx = api.useUtils()
   const { mutate: addMeal } = api.dailyLog.addMeal.useMutation({
@@ -85,25 +95,7 @@ const Meal = ({
 
   return (
     <div className='flex gap-0 flex flex-col items-start w-full'>
-      <DialogHeader className='pb-4'>
-        <DialogTitle className='text-xl flex gap-6 items-center w-full justify-center relative'>
-          <ChevronsLeft
-            size={32}
-            className='cursor-pointer hidden '
-            onClick={() => {
-              setMealIndex(mealIndex - 1)
-            }}
-          />
-          <div className='mt-[6px]'>Meal {mealIndex + 1}</div>
-          <ChevronsRight
-            size={32}
-            className='cursor-pointer hidden '
-            onClick={() => {
-              setMealIndex(mealIndex + 1)
-            }}
-          />
-        </DialogTitle>
-        <DialogDescription></DialogDescription>
+      <div className='pb-4'>
         <ToggleGroup
           orientation='vertical'
           size='sm'
@@ -120,7 +112,7 @@ const Meal = ({
                 key={plan.id}
                 value={plan.id.toString()}
                 className={cn(
-                  'text-xs truncate max-w-28 py-1 px-2 tracking-tight h-min',
+                  'text-xs truncate max-w-32 py-1 px-2 tracking-tight h-min',
                   'data-[state=on]:bg-foreground data-[state=on]:text-background data-[state=on]:shadow-none',
                   'block rounded-full font-semibold',
                 )}
@@ -130,7 +122,7 @@ const Meal = ({
             )
           })}
         </ToggleGroup>
-      </DialogHeader>
+      </div>
 
       <ToggleGroup
         orientation='vertical'
@@ -146,18 +138,7 @@ const Meal = ({
           const plan = allPlans.find((plan) =>
             plan?.userRecipes?.find((recipe) => recipe?.id == Number(value)),
           )
-          console.log({
-            userId: userId,
-            planId: plan?.id,
-            mealIndex: index,
-            recipeIndex: recipe?.recipeIndex,
-            recipeId: Number(value),
-            date: date,
-            logId: log?.id || null,
-          })
-          console.log({recipe, plan})
           if (!recipe || !plan) return
-          setIsOpen(false)
           addMeal({
             userId: userId,
             planId: plan.id,
@@ -255,8 +236,7 @@ const MealLog = ({
       ctx.dailyLog.invalidate()
     },
   })
-  const onDeleteMeal =  ({id} : {id: number}) => {
-  }
+  const onDeleteMeal = ({ id }: { id: number }) => {}
   const isNotActivePlan = activePlans.length === 0
 
   const todaysLog = dailyLogs?.find(
@@ -302,18 +282,41 @@ const MealLog = ({
       .map((plan) => plan.userMeals?.length)
       .reduce((a, b) => (a > b ? a : b), 0)
 
+  const mealsMacros = todaysLog?.dailyMeals
+    .map((meal) => {
+      const { cals, protein, carbs, fat } = getRecipeDetailsFromDailyLog(
+        todaysLog,
+        meal.mealIndex ?? 0,
+      )
+      return {
+        cals: Number(cals),
+        protein: Number(protein),
+        carbs: Number(carbs),
+        fat: Number(fat),
+      }
+    })
+    .reduce(
+      (acc, curr) => {
+        return {
+          cals: acc.cals + curr.cals,
+          protein: acc.protein + curr.protein,
+          carbs: acc.carbs + curr.carbs,
+          fat: acc.fat + curr.fat,
+        }
+      },
+      {
+        cals: 0,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
+      },
+    )
+
   return (
     <div className='flex flex-col gap-0 w-full relative col-span-3'>
-      <Dialog
-        open={isOpen}
-        onOpenChange={setIsOpen}
-      >
+      <Sheet.Root license='non-commercial'>
         <div className='flex flex-col gap-0 items-center justify-start w-full'>
-          <div
-            className={cn(
-              'text-lg font-semibold',
-            )}
-          >
+          <div className={cn('text-lg font-semibold')}>
             Meal {currentMeal + 1}
           </div>
           <div
@@ -323,7 +326,7 @@ const MealLog = ({
               isOpen ? 'scale-75' : '',
             )}
           >
-            <DialogTrigger disabled={isNotActivePlan}>
+            <Sheet.Trigger disabled={isNotActivePlan}>
               <Salad
                 size={28}
                 className={cn(
@@ -331,38 +334,106 @@ const MealLog = ({
                   isOpen ? 'scale-90' : '',
                 )}
               />
-            </DialogTrigger>
+            </Sheet.Trigger>
           </div>
         </div>
-        <DialogContent
-          className='px-2 min-h-[60vh] top-20 translate-y-0 '
-          onOpenAutoFocus={(e) => {
-            e.preventDefault()
-          }}
-        >
-          <ScrollArea className='max-h-[80vh]'>
-            {isAll ? (
-              <div className='flex items-center gap-2'>
-                <Label> All Meals </Label>
-                <Switch
-                  checked={isAllMeals}
-                  onCheckedChange={(checked) => {
-                    setIsAllMeals(checked)
-                  }}
-                />
+        <Sheet.Portal>
+          <Sheet.View className='z-[999] h-[100vh] bg-black/50 '>
+            <Sheet.Content className='min-h-[200px] max-h-[90vh] h-full rounded-t-3xl bg-background relative'>
+              <div className='flex flex-col justify-between h-full'>
+                <div className='flex flex-col '>
+                  <div className='flex justify-center pt-1'>
+                    <Sheet.Handle
+                      className=' w-[50px] h-[6px] border-0 rounded-full bg-primary/20'
+                      action='dismiss'
+                    />
+                  </div>
+                  <div className='flex gap-0 pt-2 flex-col border-b-[1px] border-primary pb-4 relative font-medium'>
+                    <div className='flex justify-center'>
+                      <Sheet.Title className='text-xl ml-0 font-semibold'>
+                        Meal {currentMeal + 1}
+                      </Sheet.Title>
+                      <Sheet.Description className='hidden'>
+                        Meal Log
+                      </Sheet.Description>
+                    </div>
+                    <div className='flex items-baseline'>
+                      <div className='flex items-center gap-2'>
+                        <NumberFlow
+                          value={mealsMacros?.cals ?? 0}
+                          className='text-lg text-primary ml-2 '
+                        />
+                        <span className='text-xs text-primary/50 ml-[1px]'>
+                          cals
+                        </span>
+                      </div>
+                      <div className='flex items-center gap-2'>
+                        <NumberFlow
+                          value={mealsMacros?.carbs ?? 0}
+                          className='text-lg text-primary ml-2 '
+                        />
+                        <span className='text-xs text-primary/50 ml-[1px]'>
+                          carbs
+                        </span>
+                      </div>
+                      <div className='flex items-center gap-2'>
+                        <NumberFlow
+                          value={mealsMacros?.protein ?? 0}
+                          className='text-lg text-primary ml-2 '
+                        />
+                        <span className='text-xs text-primary/50 ml-[1px]'>
+                          protein
+                        </span>
+                      </div>
+                      <div className='flex items-center gap-2'>
+                        <NumberFlow
+                          value={mealsMacros?.fat ?? 0}
+                          className='text-lg text-primary ml-2 '
+                        />
+                        <span className='text-xs text-primary/50 ml-[1px]'>
+                          fat
+                        </span>
+                      </div>
+                    </div>
+                      {isAll ? (
+                        <div className='flex items-center gap-2 absolute top-1 right-2'>
+                          <Label className='text-xs mt-1' >All Meals</Label>
+                          <Checkbox
+                            checked={isAllMeals}
+                            onCheckedChange={(checked) => {
+                              setIsAllMeals(checked === true)
+                            }}
+                          />
+                        </div>
+                      ) : null}
+                  </div>
+                  <ScrollArea className='pt-4 px-2 h-[calc(90vh-130px)]'>
+                    <div className='flex flex-col gap-2 '>
+                      <Meal
+                        allPlans={refinedPlans}
+                        date={today}
+                        dailyLogs={dailyLogs}
+                        userId={currentUser.id}
+                        index={currentMeal}
+                      />
+                    </div>
+                  </ScrollArea>
+                </div>
+                <Sheet.Trigger
+                  className='w-full flex justify-center'
+                  action='dismiss'
+                >
+                  <ChevronDown
+                    size={32}
+                    strokeWidth={2}
+                    className='text-muted-foreground'
+                  />
+                </Sheet.Trigger>
               </div>
-            ) : null}
-            <Meal
-              allPlans={refinedPlans}
-              date={today}
-              dailyLogs={dailyLogs}
-              userId={currentUser.id}
-              index={currentMeal}
-              setIsOpen={setIsOpen}
-            />
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
+            </Sheet.Content>
+          </Sheet.View>
+        </Sheet.Portal>
+      </Sheet.Root>
       <MealBottomSheet
         todaysDailyLog={todaysLog}
         deleteMealLog={onDeleteMeal}
