@@ -56,36 +56,7 @@ const Meal = ({
 
   const ctx = api.useUtils()
   const { mutate: addMeal } = api.dailyLog.addMeal.useMutation({
-    onMutate: async () => {
-      await ctx.dailyLog.getAllCurrentUser.cancel()
-      const previousLog = ctx.dailyLog.getAllUser.getData(userId)
-      if (!previousLog) return
-      ctx.dailyLog.getAllUser.setData(userId, [
-        ...previousLog.map((log) => {
-          if (log.date === date.toDateString()) {
-            return {
-              ...log,
-              dailyMeals: [
-                ...log.dailyMeals,
-                {
-                  id: -1,
-                  createdAt: new Date(),
-                  dailyLogId: -1,
-                  mealIndex: null,
-                  date: null,
-                  recipeId: null,
-                  vegeCalories: null,
-                  veges: null,
-                  recipe: [],
-                  ingredients: [],
-                },
-              ],
-            }
-          }
-          return log
-        }),
-      ])
-      return { previousLog }
+    onMutate:  (e) => {
     },
 
     onSettled: () => {
@@ -96,7 +67,6 @@ const Meal = ({
     },
     onError: (err, newLog, context) => {
       toast.error('error')
-      ctx.dailyLog.getAllUser.setData(userId, context?.previousLog)
     },
   })
   const log = dailyLogs?.find(
@@ -333,7 +303,6 @@ const MealLog = ({
           <div
             className={cn(
               'text-lg font-semibold',
-              isFinished ? 'opacity-0' : '',
             )}
           >
             Meal {currentMeal + 1}
