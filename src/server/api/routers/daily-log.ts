@@ -1261,6 +1261,11 @@ export const dailyLogRouter = createTRPCRouter({
         with: {
           waterLogs: true,
           poopLogs: true,
+          tags: {
+            with: {
+              tag: true,
+            },
+          },
           dailyMeals: {
             with: {
               recipe: true,

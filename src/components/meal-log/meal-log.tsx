@@ -248,6 +248,8 @@ const MealLog = ({
       ctx.dailyLog.invalidate()
     },
   })
+  const onDeleteMeal =  ({id} : {id: number}) => {
+  }
   const isNotActivePlan = activePlans.length === 0
 
   const todaysLog = dailyLogs?.find(
@@ -356,7 +358,7 @@ const MealLog = ({
       </Dialog>
       <MealBottomSheet
         todaysDailyLog={todaysLog}
-        deleteMealLog={deleteMeal}
+        deleteMealLog={onDeleteMeal}
       />
     </div>
   )
