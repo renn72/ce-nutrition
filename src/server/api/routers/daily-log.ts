@@ -1012,10 +1012,10 @@ export const dailyLogRouter = createTRPCRouter({
 
       if (!plan) return
 
-      const meal = plan.userMeals.find(
-        (meal) => meal.mealIndex == input.mealIndex,
-      )
-      if (!meal) return
+      // const meal = plan.userMeals.find(
+      //   (meal) => meal.mealIndex == input.mealIndex,
+      // )
+      // if (!meal) return
 
       const recipe = plan.userRecipes.find(
         (recipe) => recipe.id === input.recipeId,

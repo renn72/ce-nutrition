@@ -56,9 +56,6 @@ const Meal = ({
 
   const ctx = api.useUtils()
   const { mutate: addMeal } = api.dailyLog.addMeal.useMutation({
-    onMutate:  (e) => {
-    },
-
     onSettled: () => {
       ctx.dailyLog.invalidate()
     },
@@ -149,6 +146,16 @@ const Meal = ({
           const plan = allPlans.find((plan) =>
             plan?.userRecipes?.find((recipe) => recipe?.id == Number(value)),
           )
+          console.log({
+            userId: userId,
+            planId: plan?.id,
+            mealIndex: index,
+            recipeIndex: recipe?.recipeIndex,
+            recipeId: Number(value),
+            date: date,
+            logId: log?.id || null,
+          })
+          console.log({recipe, plan})
           if (!recipe || !plan) return
           setIsOpen(false)
           addMeal({
