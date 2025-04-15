@@ -298,7 +298,7 @@ const MealLog = ({
     )
 
   return (
-    <div className='flex flex-col gap-0 w-full relative col-span-3'>
+    <div className='flex flex-col gap-0 w-full items-center'>
       <Sheet.Root license='non-commercial'>
         <div className='flex flex-col gap-0 items-center justify-start w-full'>
           <div className={cn('text-lg font-semibold')}>

@@ -49,7 +49,7 @@ const MealBottomSheet = ({
 
   return (
     <Sheet.Root license='non-commercial'>
-      <Sheet.Trigger className='flex gap-2 items-center justify-center absolute  top-10 right-0'>
+      <Sheet.Trigger className='flex gap-2 items-center justify-center mt-2'>
         <ListCollapse
           size={20}
           className='text-muted-foreground'

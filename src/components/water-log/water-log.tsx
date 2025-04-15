@@ -81,7 +81,7 @@ const WaterLog = ({
     }, 0) ?? 0
 
   return (
-    <div className='flex flex-col gap-0 w-full relative col-span-2'>
+    <div className='flex flex-col gap-0 w-full relative items-center'>
       <div className='w-full text-center font-bold text-lg'>
         <NumberFlow value={totalWater ?? 0} />
       </div>

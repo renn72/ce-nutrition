@@ -74,7 +74,7 @@ const PoopLog = ({
     }, 0) ?? 0
 
   return (
-    <div className='flex flex-col gap-0 w-full relative col-span-2'>
+    <div className='flex flex-col gap-0 w-full items-center'>
       <div className='w-full text-center font-bold text-lg'>
         <NumberFlow value={totalPoop ?? 0} />
       </div>

@@ -247,7 +247,7 @@ const Mobile = ({
         </Card>
         <Card className='py-2 '>
           <CardContent className='px-0 py-0'>
-            <div className='grid grid-cols-7 w-full p-1'>
+            <div className='flex justify-between w-full'>
               <WaterLog
                 userId={userId}
                 dailyLogs={dailyLogs}
