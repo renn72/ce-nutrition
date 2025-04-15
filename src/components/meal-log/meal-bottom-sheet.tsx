@@ -1,12 +1,9 @@
 'use client'
 
-import { useState } from 'react'
-
 import { getRecipeDetailsFromDailyLog } from '@/lib/utils'
 import { GetDailyLogById } from '@/types'
 import NumberFlow from '@number-flow/react'
 import { Sheet } from '@silk-hq/components'
-import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown, ListCollapse, Shuffle, Trash2 } from 'lucide-react'
 
 import { ScrollArea } from '@/components/ui/scroll-area'

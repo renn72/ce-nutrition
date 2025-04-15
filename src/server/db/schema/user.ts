@@ -9,7 +9,7 @@ import {
 import { type AdapterAccount } from 'next-auth/adapters'
 
 import { message } from './message'
-import { bodyFat, bodyWeight, leanMass, skinfold } from './metrics'
+import { bodyFat, bodyWeight, leanMass, skinfold, girthMeasurement } from './metrics'
 import { notification } from './notification'
 import { userPlan, } from './user-plan'
 import { dailyLog, tag } from './daily-logs'
@@ -77,6 +77,7 @@ export const userRelations = relations(user, ({ one, many }) => ({
     references: [userSettings.userId],
   }),
   tags: many(tag),
+  girthMeasurements: many(girthMeasurement),
 }))
 
 export const userSettings = createTable('user_settings', {
@@ -103,6 +104,9 @@ export const userSettings = createTable('user_settings', {
   isHiit: int('is_hiit', { mode: 'boolean' }).default(true),
   isLiss: int('is_liss', { mode: 'boolean' }).default(true),
   isNotes: int('is_notes', { mode: 'boolean' }).default(true),
+  isSteps: int('is_steps', { mode: 'boolean' }).default(true),
+  isSauna: int('is_sauna', { mode: 'boolean' }).default(true),
+  isColdPlunge: int('is_cold_plunge', { mode: 'boolean' }).default(true),
 })
 
 export const userSettingsRelations = relations(userSettings, ({ one }) => ({

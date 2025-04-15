@@ -44,6 +44,8 @@ export const dailyLog = createTable(
     liss: text('liss'),
     posing: text('posing'),
     steps: text('steps'),
+    sauna: text('sauna'),
+    coldPlunge: text('cold_plunge'),
     cardioType: text('cardio_type'),
     image: text('image'),
     waistMeasurement: text('waist_measurement'),
