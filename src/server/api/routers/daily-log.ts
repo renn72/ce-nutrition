@@ -475,6 +475,96 @@ export const dailyLogRouter = createTRPCRouter({
 
       return res
     }),
+  updateSteps: protectedProcedure
+    .input(
+      z.object({
+        date: z.string(),
+        steps: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+
+      const log = await ctx.db.query.dailyLog.findFirst({
+        where: and(
+          eq(dailyLog.date, input.date),
+          eq(dailyLog.userId, ctx.session.user.id),
+        ),
+      })
+
+      if (!log) return
+
+      const res = await ctx.db
+        .update(dailyLog)
+        .set({ steps: input.steps })
+        .where(
+          and(
+            eq(dailyLog.date, input.date),
+            eq(dailyLog.userId, ctx.session.user.id),
+          ),
+        )
+
+      return res
+    }),
+  updateSauna: protectedProcedure
+    .input(
+      z.object({
+        date: z.string(),
+        sauna: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+
+      const log = await ctx.db.query.dailyLog.findFirst({
+        where: and(
+          eq(dailyLog.date, input.date),
+          eq(dailyLog.userId, ctx.session.user.id),
+        ),
+      })
+
+      if (!log) return
+
+      const res = await ctx.db
+        .update(dailyLog)
+        .set({ sauna: input.sauna })
+        .where(
+          and(
+            eq(dailyLog.date, input.date),
+            eq(dailyLog.userId, ctx.session.user.id),
+          ),
+        )
+
+      return res
+    }),
+  updateColdPlunge: protectedProcedure
+    .input(
+      z.object({
+        date: z.string(),
+        coldPlunge: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+
+      const log = await ctx.db.query.dailyLog.findFirst({
+        where: and(
+          eq(dailyLog.date, input.date),
+          eq(dailyLog.userId, ctx.session.user.id),
+        ),
+      })
+
+      if (!log) return
+
+      const res = await ctx.db
+        .update(dailyLog)
+        .set({ coldPlunge: input.coldPlunge })
+        .where(
+          and(
+            eq(dailyLog.date, input.date),
+            eq(dailyLog.userId, ctx.session.user.id),
+          ),
+        )
+
+      return res
+    }),
   updateNap: protectedProcedure
     .input(
       z.object({

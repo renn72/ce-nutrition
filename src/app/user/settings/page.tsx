@@ -754,11 +754,114 @@ const Notes = ({ currentUser }: { currentUser: GetUserById }) => {
     </div>
   )
 }
-
-
-
-
-
+const Sauna = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isSauna, setIsSauna] = useState(currentUser.settings.isSauna)
+  const { mutate: updateIsSauna } = api.user.updateIsSauna.useMutation({
+    onSuccess: () => {
+      toast.success('Updated')
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error')
+      ctx.user.invalidate()
+    },
+  })
+  return (
+    <div className='flex flex-row items-center justify-between rounded-lg border p-3 gap-4 shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>Sauna</Label>
+        <div className='text-sm text-muted-foreground'>
+          Enable sauna tracking.
+        </div>
+      </div>
+      <Switch
+        checked={isSauna === true}
+        onCheckedChange={(checked) => {
+          setIsSauna(checked)
+          updateIsSauna({
+            id: currentUser.id,
+            isSauna: checked,
+          })
+        }}
+      />
+    </div>
+  )
+}
+const ColdPlunge = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isColdPlunge, setIsColdPlunge] = useState(currentUser.settings.isColdPlunge)
+  const { mutate: updateIsColdPlunge } = api.user.updateIsColdPlunge.useMutation({
+    onSuccess: () => {
+      toast.success('Updated')
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error')
+      ctx.user.invalidate()
+    },
+  })
+  return (
+    <div className='flex flex-row items-center justify-between rounded-lg border p-3 gap-4 shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>Cold Plunge</Label>
+        <div className='text-sm text-muted-foreground'>
+          Enable cold plunge tracking.
+        </div>
+      </div>
+      <Switch
+        checked={isColdPlunge === true}
+        onCheckedChange={(checked) => {
+          setIsColdPlunge(checked)
+          updateIsColdPlunge({
+            id: currentUser.id,
+            isColdPlunge: checked,
+          })
+        }}
+      />
+    </div>
+  )
+}
+const Steps = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isSteps, setIsSteps] = useState(currentUser.settings.isSteps)
+  const { mutate: updateIsSteps } = api.user.updateIsSteps.useMutation({
+    onSuccess: () => {
+      toast.success('Updated')
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error')
+      ctx.user.invalidate()
+    },
+  })
+  return (
+    <div className='flex flex-row items-center justify-between rounded-lg border p-3 gap-4 shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>Steps</Label>
+        <div className='text-sm text-muted-foreground'>
+          Enable steps tracking.
+        </div>
+      </div>
+      <Switch
+        checked={isSteps === true}
+        onCheckedChange={(checked) => {
+          setIsSteps(checked)
+          updateIsSteps({
+            id: currentUser.id,
+            isSteps: checked,
+          })
+        }}
+      />
+    </div>
+  )
+}
 
 const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
   console.log('currentUser', currentUser)
@@ -781,9 +884,12 @@ const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
         <Sleep currentUser={currentUser} />
         <SleepQuality currentUser={currentUser} />
         <Nap currentUser={currentUser} />
+        <Steps currentUser={currentUser} />
         <WeightTraining currentUser={currentUser} />
         <Hiit currentUser={currentUser} />
         <Liss currentUser={currentUser} />
+        <Sauna currentUser={currentUser} />
+        <ColdPlunge currentUser={currentUser} />
         <BloodGlucose currentUser={currentUser} />
         <Posing currentUser={currentUser} />
         <Notes currentUser={currentUser} />

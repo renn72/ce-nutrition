@@ -42,13 +42,13 @@ const DialogWrapper = ({
       <DialogTrigger asChild>
         <div
           className={cn(
-            'flex gap-2 items-center justify-around flex-col bg-secondary px-2 py-2 rounded-md shadow-sm',
+            'flex gap-1 items-center justify-around flex-col bg-secondary px-2 py-2 rounded-md shadow-sm',
             'active:scale-90 active:shadow-none transition-transform cursor-pointer',
             isOpen ? 'scale-90 shadow-none' : '',
             isWidthFull ? 'w-full min-w-[300px]' : 'w-28 font-semibold',
           )}
         >
-          <div className='text-muted-foreground text-center'>{title}</div>
+          <div className='text-muted-foreground text-center leading-5'>{title}</div>
           {value !== '' && value !== undefined && value !== null ? (
             <div
               className={cn(
@@ -81,7 +81,7 @@ const DialogWrapper = ({
         </div>
       </DialogTrigger>
       <DialogContent
-        className='top-20 translate-y-0 '
+        className='top-20 translate-y-0 rounded-xl py-8 '
         onOpenAutoFocus={(e) => {
           e.preventDefault()
         }}

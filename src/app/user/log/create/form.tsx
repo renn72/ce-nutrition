@@ -18,8 +18,11 @@ import { Notes } from './_field/notes'
 import { Posing } from './_field/posing'
 import { Sleep } from './_field/sleep'
 import { SleepQuality } from './_field/sleep-quality'
+import { Steps } from './_field/steps'
 import { Weight } from './_field/weight'
 import { WeightTraining } from './_field/weight-training'
+import { Sauna } from './_field/sauna'
+import { ColdPlunge } from './_field/cold-plunge'
 
 export const dynamic = 'force-dynamic'
 
@@ -85,6 +88,13 @@ const DailyLogForm = ({
             date={date}
           />
         ) : null}
+        {currentUser?.settings?.isSteps ? (
+          <Steps
+            todaysLog={todaysLog}
+            prevLog={prevLog}
+            date={date}
+          />
+        ) : null}
         {currentUser?.settings?.isWeightTraining ? (
           <WeightTraining
             todaysLog={todaysLog}
@@ -108,6 +118,20 @@ const DailyLogForm = ({
         ) : null}
         {currentUser?.settings?.isPosing ? (
           <Posing
+            todaysLog={todaysLog}
+            prevLog={prevLog}
+            date={date}
+          />
+        ) : null}
+        {currentUser?.settings?.isSauna ? (
+          <Sauna
+            todaysLog={todaysLog}
+            prevLog={prevLog}
+            date={date}
+          />
+        ) : null}
+        {currentUser?.settings?.isColdPlunge ? (
+          <ColdPlunge
             todaysLog={todaysLog}
             prevLog={prevLog}
             date={date}
