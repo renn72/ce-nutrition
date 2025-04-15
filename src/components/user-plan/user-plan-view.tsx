@@ -2,9 +2,15 @@
 
 import { useState } from 'react'
 
-import { cn } from '@/lib/utils'
+import {
+  cn,
+  getRecipeDetailsForDailyLog,
+  getRecipeDetailsFromDailyLog,
+} from '@/lib/utils'
 import type { UserPlan } from '@/types'
-import { RotateCcw } from 'lucide-react'
+import NumberFlow from '@number-flow/react'
+import { Sheet } from '@silk-hq/components'
+import { ChevronDown, RotateCcw } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -72,110 +78,141 @@ const UserPlanRecipe = ({
   )
   if (!recipe) return null
 
+  const { cals, protein, carbs, fat } = getRecipeDetailsForDailyLog(
+    userPlan,
+    recipe.id,
+  )
+
   return (
-    <Dialog key={recipe.id}>
-      <DialogTrigger asChild>
+    <Sheet.Root license='non-commercial'>
+      <Sheet.Trigger>
         <Badge
           className='cursor-pointer'
           variant='accent'
         >
           {recipe.name}
         </Badge>
-      </DialogTrigger>
-      <DialogContent
-        className='py-14 px-2'
-        onOpenAutoFocus={(e) => {
-          e.preventDefault()
-        }}
-      >
-        <DialogHeader>
-          <DialogTitle>{recipe.name}</DialogTitle>
-          <DialogDescription></DialogDescription>
-        </DialogHeader>
-        <div className='grid grid-cols-4 gap-2 place-items-center'>
-          <Label>Serves</Label>
-          <div className='flex gap-3 items-center w-full col-span-3'>
-            <Input
-              placeholder='Scale'
-              className='max-w-[52px]'
-              type='number'
-              value={scale}
-              onChange={(e) => {
-                setScale(Number(e.target.value))
-              }}
-            />
-            <Slider
-              min={0}
-              max={10}
-              step={0.25}
-              value={[scale]}
-              onValueChange={(newValue) => {
-                if (!newValue[0]) return
-                setScale(newValue[0])
-              }}
-            />
-            <RotateCcw
-              size={32}
-              className='text-muted-foreground'
-              onClick={() => {
-                setScale(1)
-              }}
-            />
-          </div>
-        </div>
-        {userPlan.userIngredients
-          .filter(
-            (ingredient) =>
-              ingredient.mealIndex == mealIndex &&
-              ingredient.recipeIndex == recipeIndex,
-          )
-          .map((ingredient) => {
-            const serve = scale * Number(ingredient.serve)
-            const calories =
-              (Number(serve) / Number(ingredient.ingredient?.serveSize)) *
-              Number(ingredient.ingredient?.caloriesWOFibre)
-            const altSize =
-              (calories /
-                Number(ingredient.alternateIngredient?.caloriesWOFibre)) *
-              Number(ingredient.alternateIngredient?.serveSize)
-            return (
-              <div
-                key={ingredient.id}
-                className='flex gap-0 flex-col'
-              >
-                <div className='grid grid-cols-6 w-full px-2 py-2 bg-secondary text-sm'>
-                  <div className='col-span-4'>{ingredient.name}</div>
-                  <div className='justify-self-end  mr-1 self-center '>
-                    {serve.toFixed(0)}
-                  </div>
-                  <div className='self-center '>{ingredient.serveUnit}</div>
+      </Sheet.Trigger>
+      <Sheet.Portal>
+        <Sheet.View className='z-[999] h-[100vh] bg-black/50 '>
+          <Sheet.Content className='min-h-[200px] max-h-[80vh] h-full rounded-t-3xl bg-background relative'>
+            <div className='flex flex-col justify-between h-full'>
+              <div className='flex flex-col gap-4 '>
+                <div className='flex justify-center pt-1'>
+                  <Sheet.Handle
+                    className=' w-[50px] h-[6px] border-0 rounded-full bg-primary/20'
+                    action='dismiss'
+                  />
                 </div>
-                {ingredient.alternateIngredient ? (
-                  <div className='grid grid-cols-6 w-full pl-4 pr-3 pb-1 bg-secondary text-[0.7rem] tracking-tighter'>
-                    <div className='col-span-4 truncate'>
-                      or {ingredient.alternateIngredient.name}
+                <div className='flex flex-col gap-2 px-4 '>
+                  <Sheet.Title className='text-lg font-semibold'>
+                    {recipe.name}
+                  </Sheet.Title>
+                  <Sheet.Description className='flex gap-1 items-center justify-between text-xs font-normal bg-primary text-background shadow-md rounded-full py-1 px-4 '>
+                    <div>{`${(Number(cals) * scale).toFixed(0)} cals`}</div>
+                    <div>{`${(Number(protein) * scale).toFixed(0)} protein`}</div>
+                    <div>{`${(Number(carbs) * scale).toFixed(0)} carbs`}</div>
+                    <div>{`${(Number(fat) * scale).toFixed(0)} fat`}</div>
+                  </Sheet.Description>
+                  <div className='grid grid-cols-4 gap-2 place-items-center mt-4'>
+                    <Label>Serves</Label>
+                    <div className='flex gap-3 items-center w-full col-span-3'>
+                      <Input
+                        placeholder='Scale'
+                        className='max-w-[52px]'
+                        type='number'
+                        value={scale}
+                        onChange={(e) => {
+                          setScale(Number(e.target.value))
+                        }}
+                      />
+                      <Slider
+                        min={0}
+                        max={10}
+                        step={0.25}
+                        value={[scale]}
+                        onValueChange={(newValue) => {
+                          if (!newValue[0]) return
+                          setScale(newValue[0])
+                        }}
+                      />
+                      <RotateCcw
+                        size={32}
+                        className='text-muted-foreground'
+                        onClick={() => {
+                          setScale(1)
+                        }}
+                      />
                     </div>
-                    <div className='justify-self-end  mr-1 self-center '>
-                      {altSize.toFixed(0)}
-                    </div>
-                    <div className='self-center '>{ingredient.serveUnit}</div>
                   </div>
-                ) : null}
+                </div>
+                {userPlan.userIngredients
+                  .filter(
+                    (ingredient) =>
+                      ingredient.mealIndex == mealIndex &&
+                      ingredient.recipeIndex == recipeIndex,
+                  )
+                  .map((ingredient) => {
+                    const serve = scale * Number(ingredient.serve)
+                    const calories =
+                      (Number(serve) /
+                        Number(ingredient.ingredient?.serveSize)) *
+                      Number(ingredient.ingredient?.caloriesWOFibre)
+                    const altSize =
+                      (calories /
+                        Number(
+                          ingredient.alternateIngredient?.caloriesWOFibre,
+                        )) *
+                      Number(ingredient.alternateIngredient?.serveSize)
+                    return (
+                      <div
+                        key={ingredient.id}
+                        className='flex gap-0 flex-col'
+                      >
+                        <div className='grid grid-cols-6 w-full px-1 py-2 bg-secondary text-sm'>
+                          <div className='truncate col-span-5'>
+                            {ingredient.name}
+                          </div>
+                          <div className='place-self-end'>{`${serve.toFixed(0)}${ingredient.serveUnit?.slice(0, 1)}`}</div>
+                        </div>
+                        {ingredient.alternateIngredient ? (
+                          <div className='grid grid-cols-6 w-full px-1 py-0 bg-secondary text-xs font-light'>
+                            <div className='truncate col-span-5'>
+                              or {ingredient.alternateIngredient.name}
+                            </div>
+                            <div className='place-self-end'>{`${altSize.toFixed(0)}${ingredient.alternateIngredient?.serveUnit?.slice(0, 1)}`}</div>
+                          </div>
+                        ) : null}
+                      </div>
+                    )
+                  })}
               </div>
-            )
-          })}
-      </DialogContent>
-    </Dialog>
+              <Sheet.Trigger
+                className='w-full flex justify-center'
+                action='dismiss'
+              >
+                <ChevronDown
+                  size={32}
+                  strokeWidth={2}
+                  className='text-muted-foreground'
+                />
+              </Sheet.Trigger>
+            </div>
+          </Sheet.Content>
+        </Sheet.View>
+      </Sheet.Portal>
+    </Sheet.Root>
   )
 }
 
 const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
+  console.log(userPlan)
   return (
     <Card className=''>
       <CardHeader className='pb-0'>
         <CardTitle className='text-center'>{userPlan?.name}</CardTitle>
       </CardHeader>
-      <CardContent className='flex flex-col gap-2'>
+      <CardContent className='flex flex-col gap-2 px-2'>
         {userPlan?.userMeals.map((meal) => (
           <div
             className='flex gap-2 flex-col'
@@ -183,8 +220,13 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
           >
             <div className='flex gap-2 items-center justify-between'>
               <Label className=''>{meal.mealTitle}</Label>
-              <div className='text-xs text-muted-foreground tracking-tighter'>
-                {meal.targetCalories}cals - {meal.targetProtein}g Protein
+              <div className='text-xs text-muted-foreground tracking-tighter flex gap-1'>
+                {meal.targetCalories !== '' ? (
+                  <div>{`${meal.targetCalories} cals`}</div>
+                ) : null}
+                {meal.targetProtein !== '' ? (
+                  <div>{`${meal.targetProtein}g Protien`}</div>
+                ) : null}
               </div>
             </div>
             <div className='flex gap-2 flex-row pl-0 flex-wrap'>

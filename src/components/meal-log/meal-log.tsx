@@ -9,29 +9,14 @@ import {
   getRecipeDetailsForDailyLog,
   getRecipeDetailsFromDailyLog,
 } from '@/lib/utils'
-import { GetAllDailyLogs, GetUserById, UserPlan, UserRecipe } from '@/types'
+import { GetAllDailyLogs, GetUserById, UserPlan } from '@/types'
 import NumberFlow from '@number-flow/react'
 import { Sheet } from '@silk-hq/components'
-import {
-  ChevronDown,
-  ChevronsLeft,
-  ChevronsRight,
-  ListCollapse,
-  Salad,
-} from 'lucide-react'
+import { ChevronDown, Salad } from 'lucide-react'
 import { toast } from 'sonner'
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Switch } from '@/components/ui/switch'
 import { Checkbox } from '@/components/ui/checkbox'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 import { Label } from '../ui/label'
@@ -395,17 +380,17 @@ const MealLog = ({
                         </span>
                       </div>
                     </div>
-                      {isAll ? (
-                        <div className='flex items-center gap-2 absolute top-1 right-2'>
-                          <Label className='text-xs mt-1' >All Meals</Label>
-                          <Checkbox
-                            checked={isAllMeals}
-                            onCheckedChange={(checked) => {
-                              setIsAllMeals(checked === true)
-                            }}
-                          />
-                        </div>
-                      ) : null}
+                    {isAll ? (
+                      <div className='flex items-center gap-2 absolute top-1 right-2'>
+                        <Label className='text-xs mt-1'>All Meals</Label>
+                        <Checkbox
+                          checked={isAllMeals}
+                          onCheckedChange={(checked) => {
+                            setIsAllMeals(checked === true)
+                          }}
+                        />
+                      </div>
+                    ) : null}
                   </div>
                   <ScrollArea className='pt-4 px-2 h-[calc(90vh-130px)]'>
                     <div className='flex flex-col gap-2 '>
