@@ -5,7 +5,18 @@ import { api } from '@/trpc/react'
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { formatDate } from '@/lib/utils'
 import type { GetIngredientById } from '@/types'
-import { ColumnDef, SortingFn } from '@tanstack/react-table'
+import {
+  compareItems,
+  RankingInfo,
+  rankings,
+  rankItem,
+} from '@tanstack/match-sorter-utils'
+import {
+  ColumnDef,
+  FilterFn,
+  SortingFn,
+  sortingFns,
+} from '@tanstack/react-table'
 import { Bookmark } from 'lucide-react'
 
 import { Checkbox } from '@/components/ui/checkbox'
@@ -31,6 +42,7 @@ const floatSortingFn: SortingFn<GetIngredientById> = (a, b, c) => {
   const bValue = parseFloat(b.getValue(c).replace(',', ''))
   return aValue - bValue
 }
+
 
 export const columns: ColumnDef<GetIngredientById>[] = [
   {
@@ -181,6 +193,23 @@ export const columns: ColumnDef<GetIngredientById>[] = [
         title='Name'
       />
     ),
+    filterFn: (row, columnId, filterValue) => {
+      const cell = row.getValue(columnId)?.replace(',', '') as string
+
+      const values = filterValue.split(' ').filter((v) => v !== '')
+      console.log(values)
+      let res = false
+      let i = 0
+      for (const value of values) {
+        if (cell.toLowerCase().includes(value.toLowerCase())) {
+          if (i === 0) res = true
+        } else {
+          i = 1
+          res = false
+        }
+      }
+      return res
+    },
     cell: ({ row }) => {
       const isMobile = useClientMediaQuery('(max-width: 600px)')
       return (
