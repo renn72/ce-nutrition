@@ -204,7 +204,13 @@ const MealLog = ({
 }) => {
   const today = new Date()
 
-  const [isAllMeals, setIsAllMeals] = useState<boolean>(false)
+  const [isAllMeals, setIsAllMeals] = useState<boolean>(() => {
+    return (
+      currentUser.id === 'f3feb152-06de-4a1e-8c9f-19d5c96c6788' ||
+      currentUser.id === 'f19482e2-a009-4dd4-801d-4aff3911924a'
+    )
+  })
+
   const ctx = api.useUtils()
 
   const [isOpen, setIsOpen] = useState(false)
