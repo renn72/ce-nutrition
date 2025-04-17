@@ -51,11 +51,6 @@ const Meal = ({
     setSelectValue(todaysLog?.dailyMeals[index]?.recipe?.[0]?.parentId?.toString() ?? '')
   }, [index])
 
-  console.log('todaysLog', todaysLog)
-  console.log('index', index)
-  console.log('selectValue', selectValue)
-  console.log('recipeName', recipeName)
-
   const [selectedPlans, setSelectedPlans] = useState<string[]>(() => {
     if (allPlans.length === 1)
       return [...allPlans.map((plan) => plan?.id.toString() ?? '')]
