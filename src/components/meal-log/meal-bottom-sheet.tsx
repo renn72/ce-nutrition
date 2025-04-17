@@ -10,12 +10,9 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 
 const MealBottomSheet = ({
   todaysDailyLog,
-  deleteMealLog,
 }: {
   todaysDailyLog: GetDailyLogById | null | undefined
-  deleteMealLog: ({ id }: { id: number }) => void
 }) => {
-  const totalMeals = todaysDailyLog?.dailyMeals.length ?? 0
 
   const mealsMacros = todaysDailyLog?.dailyMeals
     .map((meal) => {

@@ -206,7 +206,6 @@ const UserPlanRecipe = ({
 }
 
 const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
-  console.log(userPlan)
   return (
     <Card className=''>
       <CardHeader className='pb-0'>
