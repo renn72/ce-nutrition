@@ -17,15 +17,22 @@ import { DotButton, useDotButton } from './carousel-dots'
 
 import '~/styles/embla.css'
 
-import { GetDailyLogById } from '@/types'
+import { GetDailyLogById, GetUserById } from '@/types'
 
-const DailyLogCarousel = ({ dailyLogs }: { dailyLogs: GetDailyLogById[] | undefined }) => {
+const DailyLogCarousel = ({
+  dailyLogs,
+  currentUser,
+}: {
+  dailyLogs: GetDailyLogById[] | undefined
+  currentUser: GetUserById
+}) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     direction: 'rtl',
   })
 
   // @ts-ignore
-  const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi)
+  const { selectedIndex, scrollSnaps, onDotButtonClick } =
+    useDotButton(emblaApi)
 
   if (!dailyLogs) return null
   const today = new Date()
@@ -53,7 +60,9 @@ const DailyLogCarousel = ({ dailyLogs }: { dailyLogs: GetDailyLogById[] | undefi
                 dir='ltr'
                 className={cn('flex-[0_0_100%]', index === 4 ? '' : 'ml-4')}
               >
-                <CardContent>
+                <CardContent
+                  className='px-0'
+                >
                   <CardHeader className='pb-0'>
                     <CardTitle className='text-center'>
                       {day.getTime() === today.getTime()
@@ -66,6 +75,7 @@ const DailyLogCarousel = ({ dailyLogs }: { dailyLogs: GetDailyLogById[] | undefi
                   <DailyLog
                     dailyLog={dailyLog}
                     date={day}
+                    currentUser={currentUser}
                   />
                 </CardContent>
               </Card>

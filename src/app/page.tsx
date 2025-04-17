@@ -266,19 +266,9 @@ const Mobile = ({
             </div>
           </CardContent>
         </Card>
-        <Card className='hidden'>
-          <CardContent>
-            <CardHeader className='pb-0'>
-              <CardTitle className='text-center'>Today</CardTitle>
-            </CardHeader>
-            <DailyLog
-              dailyLog={dailyLog}
-              date={new Date()}
-            />
-          </CardContent>
-        </Card>
-
-        <DailyLogCarousel dailyLogs={dailyLogs} />
+        <DailyLogCarousel
+          currentUser={currentUser}
+          dailyLogs={dailyLogs} />
         <PlanPreview user={currentUser} />
       </div>
       <MobileFooter />
