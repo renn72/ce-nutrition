@@ -84,6 +84,7 @@ const Logs = ({
   const isSauna = isAdmin || currentUser?.settings?.isSauna
   const isColdPlunge = isAdmin || currentUser?.settings?.isColdPlunge
   const isNotes = isAdmin || currentUser?.settings?.isNotes
+  const isSteps = isAdmin || currentUser?.settings?.isSteps
 
   return (
     <div className='flex flex-col gap-2 w-full px-2 py-4 bg-secondary text-sm'>
@@ -111,6 +112,14 @@ const Logs = ({
             text={todaysDailyLog?.sleepQuality}
           />
         )}
+        {
+          isSteps && (
+            <Text
+              title='Steps'
+              text={todaysDailyLog?.steps}
+            />
+          )
+        }
         {isBloodGlucose && (
           <Text
             title='Blood Glucose'
