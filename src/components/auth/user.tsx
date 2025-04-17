@@ -19,7 +19,6 @@ import {
   VenetianMask,
   Warehouse,
 } from 'lucide-react'
-
 import { signOut } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import { Link } from 'next-view-transitions'
@@ -81,6 +80,7 @@ const ImpersonateUser = () => {
 const User = () => {
   const ctx = api.useUtils()
   const { data: user, isLoading } = api.user.getCurrentUser.useQuery()
+  const [isOpen, setIsOpen] = useState(false)
 
   const { mutate: sync } = api.user.sync.useMutation({
     onSuccess: () => {
@@ -105,7 +105,10 @@ const User = () => {
   if (isLoading) return <div className='w-8' />
   if (!user) return <SignInUp />
   return (
-    <DropdownMenu>
+    <DropdownMenu
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
       <DropdownMenuTrigger asChild>
         <div
           className={cn(
@@ -140,32 +143,21 @@ const User = () => {
           </DropdownMenuLabel>
         </Link>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
+        <DropdownMenuItem
+          onClick={() => setIsOpen(false)}
+          className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'
+        >
           <House size={20} />
           <Link href='/'>Home</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className='rounded-none cursor-pointer flex items-center gap-6'>
-          <Link href='/user/water'>
-            <span className='flex gap-6 items-center w-full  px-1 py-2 '>
-              <GlassWater size={20} />
-              <span>Water</span>
-            </span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem className='-m-1 rounded-none cursor-pointer flex items-center gap-6'>
-          <Link href='/user/toilet'>
-            <span className='flex gap-6 items-center w-full px-1 py-2 '>
-              <Toilet size={20} />
-              <span>Toilet</span>
-            </span>
-          </Link>
-        </DropdownMenuItem>
         {isTrainer && (
           <>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
+            <DropdownMenuItem
+              onClick={() => setIsOpen(false)}
+              className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'
+            >
               <UserRoundCog size={20} />
 
               <Link href='/admin'>Admin</Link>
@@ -175,7 +167,9 @@ const User = () => {
         {isCreator && (
           <>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
+            <DropdownMenuItem
+              onClick={() => setIsOpen(false)}
+              className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
               <Warehouse size={20} />
               <Link href='/user/admin-logs'>Admin Logs</Link>
             </DropdownMenuItem>
@@ -200,12 +194,16 @@ const User = () => {
           </>
         )}
         <DropdownMenuSeparator />
-        <DropdownMenuItem className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
+        <DropdownMenuItem
+          onClick={() => setIsOpen(false)}
+          className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
           <MessageSquareMore size={20} />
           <Link href='/user/message'>Messages</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
+        <DropdownMenuItem
+          onClick={() => setIsOpen(false)}
+          className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
           <Settings size={20} />
           <Link href='/user/settings'>Settings</Link>
         </DropdownMenuItem>
