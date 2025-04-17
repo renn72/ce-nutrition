@@ -48,7 +48,7 @@ const Meal = ({
 
   useEffect(() => {
     setRecipeName(todaysLog?.dailyMeals[index]?.recipe?.[0]?.name ?? '')
-    setSelectValue(todaysLog?.dailyMeals[index]?.recipe?.[0]?.id?.toString() ?? '')
+    setSelectValue(todaysLog?.dailyMeals[index]?.recipe?.[0]?.parentId?.toString() ?? '')
   }, [index])
 
   console.log('todaysLog', todaysLog)

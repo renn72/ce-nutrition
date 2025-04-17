@@ -1,0 +1,1 @@
+ALTER TABLE `user_recipe` ADD `parent_id` integer;
