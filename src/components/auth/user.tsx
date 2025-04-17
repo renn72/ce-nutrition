@@ -2,6 +2,8 @@
 
 import { api } from '@/trpc/react'
 
+import { useState } from 'react'
+
 import { impersonatedUserAtom } from '@/atoms'
 import { cn } from '@/lib/utils'
 import { MoonIcon, SunIcon } from '@radix-ui/react-icons'
@@ -90,6 +92,7 @@ const User = () => {
   })
   const { theme, setTheme } = useTheme()
   const isTrainer = user?.isTrainer
+
   const isCreator = user?.isCreator
   const onLogout = async () => {
     try {
@@ -150,7 +153,6 @@ const User = () => {
           <House size={20} />
           <Link href='/'>Home</Link>
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
         {isTrainer && (
           <>
             <DropdownMenuSeparator />
