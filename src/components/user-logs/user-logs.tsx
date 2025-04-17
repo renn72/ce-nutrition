@@ -9,8 +9,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { CheckIn } from '@/components/check-in/check-in'
 import { DailyLog } from '@/components/daily-log/daily-log'
+import { GetUserById } from '@/types'
 
-const DailyLogs = ({ userId, isAdmin = false }: { userId: string, isAdmin?: boolean }) => {
+const DailyLogs = ({
+  userId,
+  user,
+  isAdmin = false,
+}: {
+  user: GetUserById
+  userId: string
+  isAdmin?: boolean
+}) => {
   const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId || '')
   const today = new Date()
 
@@ -31,9 +40,11 @@ const DailyLogs = ({ userId, isAdmin = false }: { userId: string, isAdmin?: bool
               {getFormattedDate(date)}
             </div>
             <DailyLog
+              currentUser={user}
               dailyLog={dailyLog}
               date={date}
               isAdmin={isAdmin}
+              isLogPage={true}
             />
           </div>
         )
@@ -74,7 +85,6 @@ const UserLogs = ({
   console.log('user', user)
 
   if (!user) return null
-  const plan = user?.userPlans.find((plan) => plan.id == user?.currentPlanId)
 
   if (isMobile) {
     return (
@@ -87,7 +97,10 @@ const UserLogs = ({
             </TabsList>
           </div>
           <TabsContent value='log'>
-            <DailyLogs userId={userId} />
+            <DailyLogs
+              userId={userId}
+              user={user}
+            />
           </TabsContent>
           <TabsContent value='checkin'>
             <CheckIns userId={userId} />
@@ -101,7 +114,8 @@ const UserLogs = ({
       <div className='flex gap-4 items-center'>
         <DailyLogs
           isAdmin={isAdmin}
-          userId={userId} />
+          userId={userId}
+        />
         <CheckIns userId={userId} />
       </div>
     </div>

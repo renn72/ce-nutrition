@@ -67,10 +67,12 @@ const Logs = ({
   todaysDailyLog,
   currentUser,
   isAdmin,
+  isLogPage,
 }: {
   todaysDailyLog: GetDailyLogById | undefined
   currentUser: GetUserById
   isAdmin?: boolean
+  isLogPage?: boolean
 }) => {
   console.log(currentUser)
 
@@ -127,7 +129,7 @@ const Logs = ({
             suffix=''
           />
         )}
-        {isAdmin && (
+        {(isAdmin || isLogPage) && (
           <Text
             title='Bowel Movements'
             text={todaysDailyLog?.poopLogs
@@ -135,7 +137,7 @@ const Logs = ({
               .toString()}
           />
         )}
-        {isAdmin && (
+        {(isAdmin || isLogPage) && (
           <Text
             title='Water'
             text={todaysDailyLog?.waterLogs
@@ -212,11 +214,13 @@ const DailyLog = ({
   date,
   currentUser,
   isAdmin = false,
+  isLogPage = false,
 }: {
   dailyLog: GetDailyLogById | undefined
   date: Date
   currentUser: GetUserById
   isAdmin?: boolean
+  isLogPage?: boolean
 }) => {
   const ctx = api.useUtils()
   const { data: isCreator } = api.user.isCreator.useQuery()
@@ -244,6 +248,7 @@ const DailyLog = ({
           isAdmin={isAdmin}
           currentUser={currentUser}
           todaysDailyLog={dailyLog}
+          isLogPage={isLogPage}
         />
       </div>
     )
@@ -254,6 +259,7 @@ const DailyLog = ({
         isAdmin={isAdmin}
         todaysDailyLog={dailyLog}
         currentUser={currentUser}
+        isLogPage={isLogPage}
       />
     </Link>
   )
