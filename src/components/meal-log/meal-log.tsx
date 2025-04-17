@@ -17,7 +17,7 @@ import {
 } from '@/types'
 import NumberFlow from '@number-flow/react'
 import { Sheet } from '@silk-hq/components'
-import { ChevronDown, Salad } from 'lucide-react'
+import { ArrowBigLeftDash, ArrowBigRightDash, ChevronDown, Salad } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -50,6 +50,11 @@ const Meal = ({
     setRecipeName(todaysLog?.dailyMeals[index]?.recipe?.[0]?.name ?? '')
     setSelectValue(todaysLog?.dailyMeals[index]?.recipe?.[0]?.id?.toString() ?? '')
   }, [index])
+
+  console.log('todaysLog', todaysLog)
+  console.log('index', index)
+  console.log('selectValue', selectValue)
+  console.log('recipeName', recipeName)
 
   const [selectedPlans, setSelectedPlans] = useState<string[]>(() => {
     if (allPlans.length === 1)
@@ -191,13 +196,11 @@ const MealList = ({
   currentMeal : _currentMeal,
   todaysLog,
   currentUser,
-  dailyLogs,
   today,
 }: {
   currentMeal: number
   currentUser: GetUserById
   todaysLog: GetDailyLogById | null | undefined
-  dailyLogs: GetAllDailyLogs | null | undefined
   today: Date
 }) => {
   const [currentMeal, setCurrentMeal] = useState(
@@ -264,10 +267,25 @@ const MealList = ({
             />
           </div>
           <div className='flex gap-0 pt-2 flex-col border-b-[1px] border-primary pb-4 relative font-medium'>
-            <div className='flex justify-center'>
-              <Sheet.Title className='text-xl ml-0 font-semibold'>
+            <div className='flex justify-center items-center gap-6'>
+              <ArrowBigLeftDash
+                size={28}
+                className='active:scale-90 transition-transform cursor-pointer active:text-muted-foreground'
+                onClick={() => {
+                  currentMeal > 0 && setCurrentMeal(currentMeal - 1)
+                }}
+              />
+              <Sheet.Title className='text-xl mt-[2px] font-semibold'>
                 Meal {currentMeal + 1}
               </Sheet.Title>
+              <ArrowBigRightDash
+                size={28}
+                className='active:scale-90 transition-transform cursor-pointer active:text-muted-foreground'
+                onClick={() => {
+                  setCurrentMeal(currentMeal + 1)
+                }}
+              />
+
               <Sheet.Description className='hidden'>Meal Log</Sheet.Description>
             </div>
             <div className='flex items-baseline'>
@@ -389,7 +407,6 @@ const MealLog = ({
               currentMeal={currentMeal}
               todaysLog={todaysLog}
               currentUser={currentUser}
-              dailyLogs={dailyLogs}
               today={today}
             />
           </Sheet.View>

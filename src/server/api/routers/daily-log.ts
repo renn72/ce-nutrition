@@ -1164,6 +1164,7 @@ export const dailyLogRouter = createTRPCRouter({
             mealIndex: input.mealIndex,
             dailyMealId: dailyMealId,
             dailyLogId: logId,
+            parentId: input.recipeId,
             isLog: true,
           })
           .returning({ id: userRecipe.id })
@@ -1248,6 +1249,7 @@ export const dailyLogRouter = createTRPCRouter({
             recipeIndex: input.recipeIndex,
             dailyMealId: dailyMealId,
             dailyLogId: input.logId,
+            parentId: input.recipeId,
             isLog: true,
           })
           .returning({ id: userRecipe.id })
