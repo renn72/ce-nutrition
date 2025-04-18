@@ -17,7 +17,12 @@ import {
 } from '@/types'
 import NumberFlow from '@number-flow/react'
 import { Sheet } from '@silk-hq/components'
-import { ArrowBigLeftDash, ArrowBigRightDash, ChevronDown, Salad } from 'lucide-react'
+import {
+  ArrowBigLeftDash,
+  ArrowBigRightDash,
+  ChevronDown,
+  Salad,
+} from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -48,7 +53,9 @@ const Meal = ({
 
   useEffect(() => {
     setRecipeName(todaysLog?.dailyMeals[index]?.recipe?.[0]?.name ?? '')
-    setSelectValue(todaysLog?.dailyMeals[index]?.recipe?.[0]?.parentId?.toString() ?? '')
+    setSelectValue(
+      todaysLog?.dailyMeals[index]?.recipe?.[0]?.parentId?.toString() ?? '',
+    )
   }, [index])
 
   const [selectedPlans, setSelectedPlans] = useState<string[]>(() => {
@@ -157,7 +164,6 @@ const Meal = ({
                             'data-[state=on]:text-slate-100 data-[state=on]:shadow-none',
                             'h-full shadow-md flex flex-col w-[calc(100vw-2rem)]',
                             'hover:text-primary hover:bg-background',
-
                           )}
                         >
                           <div className=' flex'>
@@ -188,7 +194,7 @@ const Meal = ({
 }
 
 const MealList = ({
-  currentMeal : _currentMeal,
+  currentMeal: _currentMeal,
   todaysLog,
   currentUser,
   today,
@@ -198,9 +204,7 @@ const MealList = ({
   todaysLog: GetDailyLogById | null | undefined
   today: Date
 }) => {
-  const [currentMeal, setCurrentMeal] = useState(
-    () => _currentMeal,
-  )
+  const [currentMeal, setCurrentMeal] = useState(() => _currentMeal)
   const isAll =
     currentUser.id === 'f3feb152-06de-4a1e-8c9f-19d5c96c6788' ||
     currentUser.id === 'f19482e2-a009-4dd4-801d-4aff3911924a'
@@ -371,9 +375,8 @@ const MealLog = ({
     (dailyLog) => dailyLog.date === today.toDateString(),
   )
 
-  const currentMeal = todaysLog?.dailyMeals?.length ?? 0
-  const lastMeal = todaysLog?.dailyMeals?.[todaysLog?.dailyMeals?.length ?? 0]
-  console.log('lastMeal', lastMeal?.mealIndex)
+  const currentMeal =
+    (Number(todaysLog?.dailyMeals?.[Number(todaysLog?.dailyMeals?.length) - 1]?.mealIndex) + 1) || 0
 
   return (
     <div className='flex flex-col gap-0 w-full items-center'>
