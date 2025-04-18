@@ -52,9 +52,23 @@ const Meal = ({
   const [recipeName, setRecipeName] = useState<string>('')
 
   useEffect(() => {
-    setRecipeName(todaysLog?.dailyMeals[index]?.recipe?.[0]?.name ?? '')
+    setRecipeName(
+      () => {
+        const meal = todaysLog?.dailyMeals.find(
+          (meal) => meal.mealIndex === index,
+        )
+        if (!meal) return ''
+        return meal.recipe?.[0]?.name ?? ''
+      }
+    )
     setSelectValue(
-      todaysLog?.dailyMeals[index]?.recipe?.[0]?.parentId?.toString() ?? '',
+      () => {
+        const meal = todaysLog?.dailyMeals.find(
+          (meal) => meal.mealIndex === index,
+        )
+        if (!meal) return ''
+        return meal.recipe?.[0]?.parentId?.toString() ?? ''
+      }
     )
   }, [index])
 
