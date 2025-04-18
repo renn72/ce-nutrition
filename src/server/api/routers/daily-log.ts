@@ -137,11 +137,8 @@ export const dailyLogRouter = createTRPCRouter({
   deleteMeal: protectedProcedure
     .input(
       z.object({
-        userId: z.string(),
-        mealIndex: z.number().nullable(),
-        recipeId: z.number().nullable().optional(),
-        date: z.date(),
-        logId: z.number().nullable(),
+        mealIndex: z.number(),
+        logId: z.number(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -149,8 +146,8 @@ export const dailyLogRouter = createTRPCRouter({
         .delete(userIngredient)
         .where(
           and(
-            eq(userIngredient.dailyLogId, input.logId ?? -1),
-            eq(userIngredient.mealIndex, input.mealIndex ?? -1),
+            eq(userIngredient.dailyLogId, input.logId),
+            eq(userIngredient.mealIndex, input.mealIndex),
           ),
         )
 
@@ -158,8 +155,8 @@ export const dailyLogRouter = createTRPCRouter({
         .delete(userRecipe)
         .where(
           and(
-            eq(userRecipe.dailyLogId, input.logId ?? -1),
-            eq(userRecipe.mealIndex, input.mealIndex ?? -1),
+            eq(userRecipe.dailyLogId, input.logId),
+            eq(userRecipe.mealIndex, input.mealIndex),
           ),
         )
 
@@ -167,8 +164,8 @@ export const dailyLogRouter = createTRPCRouter({
         .delete(dailyMeal)
         .where(
           and(
-            eq(dailyMeal.dailyLogId, input.logId ?? -1),
-            eq(dailyMeal.mealIndex, input.mealIndex ?? -1),
+            eq(dailyMeal.dailyLogId, input.logId),
+            eq(dailyMeal.mealIndex, input.mealIndex),
           ),
         )
       return true

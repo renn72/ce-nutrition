@@ -1,5 +1,7 @@
 'use client'
 
+import { api } from '@/trpc/react'
+
 import { getRecipeDetailsFromDailyLog } from '@/lib/utils'
 import { GetDailyLogById } from '@/types'
 import NumberFlow from '@number-flow/react'
@@ -13,7 +15,12 @@ const MealBottomSheet = ({
 }: {
   todaysDailyLog: GetDailyLogById | null | undefined
 }) => {
-
+  const ctx = api.useUtils()
+  const { mutate: deleteMeal } = api.dailyLog.deleteMeal.useMutation({
+    onSuccess: () => {
+      ctx.dailyLog.invalidate()
+    },
+  })
   const mealsMacros = todaysDailyLog?.dailyMeals
     .map((meal) => {
       const { cals, protein, carbs, fat } = getRecipeDetailsFromDailyLog(
@@ -133,21 +140,35 @@ const MealBottomSheet = ({
                               key={meal.id}
                               className='flex flex-col gap-2 bg-secondary rounded-full w-full px-4 py-2'
                             >
-                              <div className='grid grid-cols-7 gap-2 text-sm w-full  items-baseline'>
+                              <div className='grid grid-cols-9 gap-0 text-sm w-full  items-baseline'>
                                 <div className='text-primary font-normal col-span-1'>
                                   <div className='rounded-full h-6 w-6 bg-primary/20 flex justify-center items-center pt-[1px]'>
-                                    {i + 1}
+                                    {Number(meal.mealIndex) + 1}
                                   </div>
                                 </div>
-                                <div>
+                                <div className='text-[0.7rem] font-light col-span-2 '>
                                   {meal.createdAt.toLocaleTimeString('en-AU', {
                                     hour: 'numeric',
                                     minute: 'numeric',
-                                    hour12: false,
+                                    hour12: true,
                                   })}
                                 </div>
                                 <div className='col-span-5 truncate font-medium  '>
                                   {meal.recipe?.[0]?.name}
+                                </div>
+                                <div
+                                  onClick={() => {
+                                    deleteMeal({
+                                      mealIndex: meal.mealIndex,
+                                      logId: todaysDailyLog.id,
+                                    })
+                                  }}
+                                  className='px-1 items-center flex justify-end '
+                                >
+                                  <Trash2
+                                    size={12}
+                                    className='text-destructive/70 active:scale-95'
+                                  />
                                 </div>
                               </div>
                               <div className='grid grid-cols-4 gap-2 text-xs w-full place-items-center px-4'>

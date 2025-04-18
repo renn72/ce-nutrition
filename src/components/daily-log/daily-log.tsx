@@ -74,8 +74,6 @@ const Logs = ({
   isAdmin?: boolean
   isLogPage?: boolean
 }) => {
-  console.log(currentUser)
-
   const isSleep = isAdmin || currentUser?.settings?.isSleep
   const isSleepQuality = isAdmin || currentUser?.settings?.isSleepQuality
   const isNap = isAdmin || currentUser?.settings?.isNap

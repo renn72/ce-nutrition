@@ -372,6 +372,8 @@ const MealLog = ({
   )
 
   const currentMeal = todaysLog?.dailyMeals?.length ?? 0
+  const lastMeal = todaysLog?.dailyMeals?.[todaysLog?.dailyMeals?.length ?? 0]
+  console.log('lastMeal', lastMeal?.mealIndex)
 
   return (
     <div className='flex flex-col gap-0 w-full items-center'>
