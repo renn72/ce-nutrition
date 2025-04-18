@@ -389,8 +389,8 @@ const MealLog = ({
     (dailyLog) => dailyLog.date === today.toDateString(),
   )
 
-  const currentMeal =
-    (Number(todaysLog?.dailyMeals?.[Number(todaysLog?.dailyMeals?.length) - 1]?.mealIndex) + 1) || 0
+  const lastMeal = todaysLog?.dailyMeals?.map((meal) => meal.mealIndex).reduce((acc, curr) => Math.max(acc ?? 0, curr ?? 0), 0)
+  const currentMeal = lastMeal ? lastMeal + 1 : 0
 
   return (
     <div className='flex flex-col gap-0 w-full items-center'>
