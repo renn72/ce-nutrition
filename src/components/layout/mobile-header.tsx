@@ -227,22 +227,23 @@ const MobileHeader = ({ isDesktop = false }: { isDesktop?: boolean }) => {
         </Link>
         <Label className='text-xs text-muted-foreground'>Program</Label>
       </div>
-      <Link
-        className='hover:opacity-100 opacity-80 transition-all py-2'
-        href='/'
-      >
-        <Image
-          src='/logo/ce.png'
-          alt='logo'
-          width={36}
-          height={36}
-          priority
-          style={{
-            width: '90%',
-            height: 'auto',
-          }}
-        />
-      </Link>
+      <div className='flex items-center justify-center rounded-full border border-primary/50 m-1'>
+        <Link
+          className='hover:opacity-100 opacity-80 transition-all active:scale-90 p-[2px]'
+          href='/'
+        >
+          <Image
+            src='/logo/ce.png'
+            alt='logo'
+            width={42}
+            height={42}
+            priority
+            style={{
+              height: 'auto',
+            }}
+          />
+        </Link>
+      </div>
       <div className='flex flex-col gap-0 items-center justify-center'>
         <Notifications
           currentUser={currentUser}
