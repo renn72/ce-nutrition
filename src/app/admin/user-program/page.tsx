@@ -32,6 +32,51 @@ const UserInfo = ({ userId }: { userId: string }) => {
     .filter((_plan) => true)
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 
+  console.log('plans', plans)
+
+  const { mutate: saveAsPlan } = api.plan.saveAsPlan.useMutation({
+    onSuccess: () => {
+      toast.success('Saved as Plan')
+      ctx.invalidate()
+    },
+  })
+
+  const onSaveAsPlan = (id: number) => {
+    const plan = plans?.find((plan) => plan.id === id)
+    if (!plan) return
+    saveAsPlan({
+      name: plan.name + '-copy',
+      description: plan.description,
+      image: plan.image,
+      notes: plan.notes,
+      planCategory: '',
+      numberOfMeals: plan.numberOfMeals || plan.userMeals.length,
+      meals: plan.userMeals.map((meal) => ({
+        mealIndex: meal.mealIndex || 0,
+        mealTitle: meal.mealTitle || '',
+        calories: meal.calories || '',
+        vegeCalories: meal.vegeCalories || '',
+        vegeNotes: meal.vegeNotes || '',
+        vege: meal.veges || '',
+        note: meal.note || '',
+        recipes: plan.userRecipes.filter((recipe) => recipe.mealIndex === meal.mealIndex).map((recipe) => ({
+          id: recipe.id,
+          name: recipe.name || '',
+          calories: meal.calories || '',
+          note: recipe.note || '',
+          ingredients: plan.userIngredients.filter((ingredient) => ingredient.recipeIndex === recipe.recipeIndex && ingredient.mealIndex === recipe.mealIndex).map((ingredient) => ({
+            ingredientId: ingredient.ingredientId || -1,
+            alternateId: ingredient.alternateId,
+            name: ingredient.name || '',
+            serve: ingredient.serve || '',
+            serveUnit: ingredient.serveUnit || '',
+            note: ingredient.note || '',
+          })),
+        })),
+      })),
+    })
+  }
+
   if (!plans) return null
 
   return (
@@ -40,7 +85,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
         <Card
           key={plan.id}
           className={cn(
-            'w-full max-w-screen-xl',
+            'w-full max-w-screen-xl rounded-lg',
             plan.isActive ? ' border-green-500/90' : '',
           )}
         >
@@ -90,6 +135,15 @@ const UserInfo = ({ userId }: { userId: string }) => {
                     Edit Plan
                   </Button>
                 </Link>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  onClick={() => {
+                    onSaveAsPlan(plan.id)
+                  }}
+                >
+                  Save As Plan
+                </Button>
                 <Button
                   variant='destructive'
                   size='sm'
