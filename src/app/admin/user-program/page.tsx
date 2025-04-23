@@ -102,6 +102,15 @@ const UserInfo = ({ userId }: { userId: string }) => {
 
               <div className='flex gap-2 items-center'>
                 <Button
+                  variant='outline'
+                  size='sm'
+                  onClick={() => {
+                    onSaveAsPlan(plan.id)
+                  }}
+                >
+                  Save As Plan
+                </Button>
+                <Button
                   variant='default'
                   size='sm'
                   onClick={() => {
