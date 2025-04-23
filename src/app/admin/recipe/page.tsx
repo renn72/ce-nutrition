@@ -21,7 +21,7 @@ export default function Home() {
       ) : null}
       {data ? (
         <div className='max-w-screen-2xl min-w-screen-xl py-6'>
-          <DataTable recipe={data} />
+          <DataTable recipe={data.filter((recipe) => !recipe.hiddenAt)} />
         </div>
       ) : null}
     </div>
