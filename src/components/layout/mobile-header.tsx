@@ -227,7 +227,7 @@ const MobileHeader = ({ isDesktop = false }: { isDesktop?: boolean }) => {
         </Link>
         <Label className='text-xs text-muted-foreground'>Program</Label>
       </div>
-      <div className='flex items-center justify-center rounded-full border border-primary/50 m-1'>
+      <div className='flex items-center justify-center rounded-full border-2 border-primary/50 m-1'>
         <Link
           className='hover:opacity-100 opacity-80 transition-all active:scale-90 p-[2px]'
           href='/'
