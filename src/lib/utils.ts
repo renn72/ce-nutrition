@@ -77,7 +77,7 @@ export function getRecipeDetailsFromDailyLog(
   }, 0) || 0
 
   const carbs = ingredients?.reduce((acc, curr) => {
-    const cal = Number(curr?.ingredient?.availableCarbohydrateWithoutSugarAlcohols) || 0
+    const cal = Number(curr?.ingredient?.availableCarbohydrateWithSugarAlcohols) || 0
     const size = Number(curr.serve) || 100
     const scale = size / Number(curr?.ingredient?.serveSize) || 0
     return acc + cal * scale || 0
@@ -132,7 +132,7 @@ export function getRecipeDetailsForDailyLog(
   }, 0) || 0
 
   const carbs = ingredients?.reduce((acc, curr) => {
-    const cal = Number(curr?.ingredient?.availableCarbohydrateWithoutSugarAlcohols) || 0
+    const cal = Number(curr?.ingredient?.availableCarbohydrateWithSugarAlcohols) || 0
     const size = Number(curr.serve) || 100
     const scale = size / Number(curr?.ingredient?.serveSize) || 0
     return acc + cal * scale || 0
@@ -188,7 +188,7 @@ export function getRecipeDetailsForUserPlan(
 
   const carbs = recipe?.recipeToIngredient.reduce((acc, curr, i) => {
     const cal = Number(
-      curr?.ingredient?.availableCarbohydrateWithoutSugarAlcohols,
+      curr?.ingredient?.availableCarbohydrateWithSugarAlcohols,
     )
     const size = ingredientsSize[i] || 100
     const scale = size / Number(curr?.ingredient?.serveSize)
@@ -243,7 +243,7 @@ export function getRecipeDetailsByCals(
 
   const carbs = recipe?.recipeToIngredient.reduce((acc, curr) => {
     const cal = Number(
-      curr?.ingredient?.availableCarbohydrateWithoutSugarAlcohols,
+      curr?.ingredient?.availableCarbohydrateWithSugarAlcohols,
     )
     const scale = Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
     return acc + cal * scale
@@ -296,7 +296,7 @@ export function getRecipeDetails(recipe: GetRecipeById) {
 
   const carbs = recipe?.recipeToIngredient.reduce((acc, curr) => {
     const cal = Number(
-      curr?.ingredient?.availableCarbohydrateWithoutSugarAlcohols,
+      curr?.ingredient?.availableCarbohydrateWithSugarAlcohols,
     )
     const scale = Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
     return acc + cal * scale
