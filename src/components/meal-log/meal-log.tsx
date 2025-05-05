@@ -221,11 +221,13 @@ const MealList = ({
   const [currentMeal, setCurrentMeal] = useState(() => _currentMeal)
   const isAll =
     currentUser.id === 'f3feb152-06de-4a1e-8c9f-19d5c96c6788' ||
-    currentUser.id === 'f19482e2-a009-4dd4-801d-4aff3911924a'
+    currentUser.id === 'f19482e2-a009-4dd4-801d-4aff3911924a' ||
+    currentUser.id === '1a7bbaf3-2aca-4541-b249-722eb817b1f3'
   const [isAllMeals, setIsAllMeals] = useState<boolean>(() => {
     return (
       currentUser.id === 'f3feb152-06de-4a1e-8c9f-19d5c96c6788' ||
-      currentUser.id === 'f19482e2-a009-4dd4-801d-4aff3911924a'
+      currentUser.id === 'f19482e2-a009-4dd4-801d-4aff3911924a' ||
+      currentUser.id === '1a7bbaf3-2aca-4541-b249-722eb817b1f3'
     )
   })
 

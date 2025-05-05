@@ -158,6 +158,7 @@ const MealBottomSheet = ({
                                 </div>
                                 <div
                                   onClick={() => {
+                                    if (!meal.mealIndex) return
                                     deleteMeal({
                                       mealIndex: meal.mealIndex,
                                       logId: todaysDailyLog.id,
