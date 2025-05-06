@@ -104,6 +104,8 @@ const User = () => {
     ctx.user.isUser.refetch()
   }
 
+
+
   // @ts-ignore
   if (isLoading) return <div className='w-8' />
   if (!user) return <SignInUp />
@@ -162,7 +164,7 @@ const User = () => {
             >
               <UserRoundCog size={20} />
 
-              <Link href='/admin'>Admin</Link>
+              <Link href={`/admin/user-info?user=${user.id}`}>Admin</Link>
             </DropdownMenuItem>
           </>
         )}

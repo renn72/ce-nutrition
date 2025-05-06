@@ -2,8 +2,7 @@
 
 import { useSearchParams } from 'next/navigation'
 
-import { UserInfo } from './user-info'
-
+import { UserLogs } from '@/components/user-logs/user-logs'
 
 export default function Home() {
   const searchParams = useSearchParams()
@@ -18,7 +17,8 @@ export default function Home() {
     return <div>Select a user</div>
 
   return (
-    <UserInfo
+    <UserLogs
+      isAdmin={true}
       userId={userId}
     />
   )

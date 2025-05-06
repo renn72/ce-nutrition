@@ -45,6 +45,10 @@ const data = {
           url: '/admin/user-info',
         },
         {
+          title: 'Logs',
+          url: '/admin/user-logs',
+        },
+        {
           title: 'Skinfolds',
           url: '/admin/user-skinfolds',
         },

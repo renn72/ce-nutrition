@@ -113,6 +113,7 @@ const UserLogs = ({
     <div className='flex flex-col gap-4 items-center my-10 '>
       <div className='flex gap-4 items-center'>
         <DailyLogs
+          user={user}
           isAdmin={isAdmin}
           userId={userId}
         />
