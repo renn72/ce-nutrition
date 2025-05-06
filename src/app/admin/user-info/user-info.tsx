@@ -105,8 +105,6 @@ const UserWeight = ({
   user: GetUserById
   dailyLogs: GetAllDailyLogs
 }) => {
-  console.log('user', user)
-
   const logs = dailyLogs
     .filter((dailyLog) => dailyLog.morningWeight !== '')
     .filter((dailyLog) => dailyLog.morningWeight)
@@ -119,8 +117,6 @@ const UserWeight = ({
     })
     .sort((a, b) => b.date.getTime() - a.date.getTime())
     .slice(0, 7)
-
-  console.log('logs', logs)
 
   const weight: number | null = logs.reduce<number | null>((acc, cur) => {
     if (cur.weight && acc === null) {
