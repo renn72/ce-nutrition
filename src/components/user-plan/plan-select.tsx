@@ -47,11 +47,13 @@ const PlanSelect = ({
           variant='outline'
           role='combobox'
           aria-expanded={open}
-          className='w-[200px] justify-between my-2 capitalize'
+          className='w-[350px] justify-between my-2 capitalize flex gap-1 items-center'
         >
+          <span className='truncate'>
           {selectedPlan
             ? allPlans.find((plan) => plan.id.toString() === selectedPlan)?.name
             : 'Select plan...'}
+            </span>
           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>

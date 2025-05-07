@@ -2,6 +2,7 @@
 
 import { api } from '@/trpc/react'
 
+
 import { useSearchParams } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
@@ -133,7 +134,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
 
               <div className='flex gap-2 items-center'>
                 <Link
-                  className='hidden'
+                  className=''
                   href={`/admin/user-program-edit?user=${userId}&plan=${plan.id}`}
                   prefetch={false}
                 >

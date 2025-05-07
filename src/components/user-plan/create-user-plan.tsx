@@ -2,12 +2,14 @@
 
 import { api } from '@/trpc/react'
 
-import { useState } from 'react'
+import { cn } from '@/lib/utils'
+
+import { useState, useEffect } from 'react'
 
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { userAtom } from '@/app/admin/_sidebar/sidebar'
-import type { GetPlanById } from '@/types'
+import type { GetPlanById, UserPlan } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAtom } from 'jotai'
 import { useFieldArray, useForm } from 'react-hook-form'
@@ -24,8 +26,6 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
 
 import { Meal } from '@/components/user-plan/meal'
 import { PlanSelect } from '@/components/user-plan/plan-select'
@@ -72,7 +72,7 @@ export const formSchema = z.object({
   ),
 })
 
-const CreateUserPlan = () => {
+const CreateUserPlan = ({ userPlan = null }: { userPlan?: UserPlan | null }) => {
   const searchParams = useSearchParams()
   const user = searchParams.get('user') ?? ''
   const router = useRouter()
@@ -111,6 +111,50 @@ const CreateUserPlan = () => {
     control: form.control,
     name: 'meals',
   })
+
+  useEffect(() => {
+    if (userPlan) {
+      form.reset({
+        name: userPlan?.name || '',
+        description: userPlan?.description || '',
+        image: userPlan?.image || '',
+        notes: userPlan?.notes || '',
+        meals: userPlan?.userMeals.map((meal, mealIndex) => ({
+          mealId: mealIndex.toString(),
+          mealTitle: meal.mealTitle || '',
+          calories: meal.calories || '',
+          targetCalories:
+            (Number(meal.calories) + Number(meal.vegeCalories)).toString() ||
+            '',
+          targetProtein: '',
+          vegeCalories: meal.vegeCalories || '',
+          vege: meal.veges || '',
+          vegeNotes: meal.vegeNotes || '',
+          protein: '',
+          note: '',
+          recipes: userPlan?.userRecipes.filter((recipe) => recipe.mealIndex === mealIndex).map((recipe) => ({
+            recipeId: recipe.id.toString(),
+            name: recipe.name || '',
+            note: recipe.note || '',
+            description: '',
+            index: recipe.index || 0,
+            ingredients: userPlan?.userIngredients.filter((ingredient) => ingredient.recipeIndex === recipe.recipeIndex && ingredient.mealIndex === recipe.mealIndex).map((ingredient) => ({
+              ingredientId: ingredient.ingredientId?.toString() || '',
+              recipeIndex: recipe.recipeIndex,
+              mealIndex: recipe.mealIndex,
+              alternateId: ingredient.alternateId?.toString() || null,
+              name: ingredient.name || '',
+              serve: ingredient.serve || '',
+              serveUnit: ingredient.serveUnit || '',
+              note: ingredient.note || '',
+            })),
+          })),
+        })) || [],
+      })
+    }
+  }, [userPlan])
+
+  console.log('form', form.getValues())
 
   const onSetPlan = (planId: string) => {
     setSelectedPlanId(planId)
@@ -215,13 +259,15 @@ const CreateUserPlan = () => {
 
   return (
     <div className='flex flex-col max-w-screen-lg w-full my-12'>
-      <div className='flex gap-8 items-center'>
+      <div className={cn('flex gap-8 items-center',
+        userPlan ? 'hidden' : ''
+      )}>
         <PlanSelect
           selectedPlan={selectedPlanId}
           onSetPlan={onSetPlan}
         />
       </div>
-      {selectedPlanId === '' ? null : (
+      {selectedPlanId === '' && userPlan === null ? null : (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className='flex flex-col lg:gap-2 '>
