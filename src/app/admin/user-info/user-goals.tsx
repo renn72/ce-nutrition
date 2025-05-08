@@ -5,7 +5,7 @@ import { api } from '@/trpc/react'
 import { useState } from 'react'
 
 import { cn } from '@/lib/utils'
-import { GetUserById, GetUserGoals } from '@/types'
+import { GetUserById, GetGoal, GetUserGoals } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { EllipsisVertical, XCircleIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -53,6 +53,89 @@ export const formSchema = z.object({
   description: z.string(),
   state: z.string(),
 })
+
+const Goal = ({
+  goal,
+  setGoalId,
+  form,
+  setIsEdit,
+  setIsOpen,
+  deleteGoal,
+}: {
+  goal: GetGoal
+  setGoalId: React.Dispatch<React.SetStateAction<number | null>>
+  form: any
+  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  deleteGoal: any
+}) => {
+  if (!goal) return null
+
+  return (
+    <div className='flex gap-0 w-full flex-col leading-none'>
+      <div
+        className={cn(
+          'flex gap-2 items-center justify-between w-full',
+          goal.state === 'created' ? '' : 'line-through opacity-50',
+        )}
+      >
+        <div className='text-base font-medium'>{goal.title}</div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant='ghost'
+              className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'
+            >
+              <EllipsisVertical className='h-4 w-4' />
+              <span className='sr-only'>Open menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align='end'
+            className='w-[160px]'
+          >
+            <DropdownMenuItem
+              onSelect={() => {
+                setGoalId(goal.id)
+                form.reset({
+                  title: goal.title || '',
+                  description: goal.description || '',
+                  state: goal.state || '',
+                })
+                setIsEdit(true)
+                setIsOpen(true)
+              }}
+            >
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={() => {
+                deleteGoal({ id: goal.id })
+              }}
+            >
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className='text-[0.6rem] rounded-full bg-muted px-2 py-1 w-fit'>
+        {goal.updatedAt?.toLocaleDateString('en-AU', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+        })}
+      </div>
+      <div
+        className={cn(
+          'text-sm text-muted-foreground',
+          goal.state === 'created' ? '' : 'hidden',
+        )}
+      >
+        {goal.description}
+      </div>
+    </div>
+  )
+}
 
 const UserGoals = ({
   user,
@@ -126,73 +209,45 @@ const UserGoals = ({
   }
 
   return (
-    <div className='border rounded-lg p-4 flex flex-col w-[300px] items-center justify-between gap-2 max-h-[400px]'>
+    <div className='border rounded-lg p-4 flex flex-col w-[300px] items-center justify-between gap-2 max-h-[400px] min-h-[300px]'>
       <div className='flex gap-2 flex-col w-full'>
         <h2 className='text-xl font-semibold'>Goals</h2>
         <div className='flex gap-2 flex-col'>
-          <ScrollArea
-            className='max-h-[284px]'
-          >
-            {userGoals.map((goal) => (
-              <div
-                key={goal.id}
-                className='flex gap-0 w-full flex-col leading-none'
-              >
-                <div
-                  className={cn(
-                    'flex gap-2 items-center justify-between w-full',
-                    goal.state === 'created' ? '' : 'line-through opacity-50',
-                  )}
-                >
-                  <div className='text-base font-medium'>{goal.title}</div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant='ghost'
-                        className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'
-                      >
-                        <EllipsisVertical className='h-4 w-4' />
-                        <span className='sr-only'>Open menu</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align='end'
-                      className='w-[160px]'
-                    >
-                      <DropdownMenuItem
-                        onSelect={() => {
-                          setGoalId(goal.id)
-                          form.reset({
-                            title: goal.title || '',
-                            description: goal.description || '',
-                            state: goal.state || '',
-                          })
-                          setIsEdit(true)
-                          setIsOpen(true)
-                        }}
-                      >
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onSelect={() => {
-                          deleteGoal({ id: goal.id })
-                        }}
-                      >
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-                <div
-                  className={cn(
-                    'text-sm text-muted-foreground',
-                    goal.state === 'created' ? '' : 'hidden',
-                  )}
-                >
-                  {goal.description}
-                </div>
-              </div>
-            ))}
+          <ScrollArea className='max-h-[284px]'>
+            {userGoals
+              .filter((goal) => goal.state === 'created')
+              .sort(
+                (a, b) =>
+                  (b.updatedAt?.getTime() || 0) - (a.updatedAt?.getTime() || 0),
+              )
+              .map((goal) => (
+                <Goal
+                  key={goal.id}
+                  goal={goal}
+                  setGoalId={setGoalId}
+                  form={form}
+                  setIsEdit={setIsEdit}
+                  setIsOpen={setIsOpen}
+                  deleteGoal={deleteGoal}
+                />
+              ))}
+            {userGoals
+              .filter((goal) => goal.state !== 'created')
+              .sort(
+                (a, b) =>
+                  (b.updatedAt?.getTime() || 0) - (a.updatedAt?.getTime() || 0),
+              )
+              .map((goal) => (
+                <Goal
+                  key={goal.id}
+                  goal={goal}
+                  setGoalId={setGoalId}
+                  form={form}
+                  setIsEdit={setIsEdit}
+                  setIsOpen={setIsOpen}
+                  deleteGoal={deleteGoal}
+                />
+              ))}
           </ScrollArea>
         </div>
       </div>

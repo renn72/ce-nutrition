@@ -17,7 +17,7 @@ export const goalsRouter = createTRPCRouter({
   get: protectedProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
-      const res = await ctx.db.query.goals.findMany({
+      const res = await ctx.db.query.goals.findFirst({
         where: (goal, { eq }) => eq(goal.id, input.id),
       })
       return res

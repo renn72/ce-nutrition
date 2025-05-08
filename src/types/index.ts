@@ -62,6 +62,7 @@ export type GetPlanById = RouterOutputs['plan']['get']
 export type UserPlan = RouterOutputs['userPlan']['get']
 
 export type GetUserGoals = RouterOutputs['goal']['getUser']
+export type GetGoal = RouterOutputs['goal']['get']
 
 export type UserMeal = RouterOutputs['userPlan']['getMeal']
 export type UserRecipe = RouterOutputs['userPlan']['getRecipe']
