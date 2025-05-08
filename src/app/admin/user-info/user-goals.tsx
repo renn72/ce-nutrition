@@ -1,0 +1,311 @@
+'use client'
+
+import { api } from '@/trpc/react'
+
+import { useState } from 'react'
+
+import { cn } from '@/lib/utils'
+import { GetUserById, GetUserGoals } from '@/types'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { EllipsisVertical, XCircleIcon } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+
+export const formSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  state: z.string(),
+})
+
+const UserGoals = ({
+  user,
+  userGoals,
+}: {
+  user: GetUserById
+  userGoals: GetUserGoals
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [isEdit, setIsEdit] = useState(false)
+  const [goalId, setGoalId] = useState<number | null>(null)
+
+  const ctx = api.useUtils()
+  const { mutate: createGoal } = api.goal.create.useMutation({
+    onSuccess: () => {
+      toast.success('Goal created')
+      ctx.invalidate()
+      setIsOpen(false)
+      form.reset({
+        title: '',
+        description: '',
+        state: 'created',
+      })
+    },
+  })
+  const { mutate: deleteGoal } = api.goal.delete.useMutation({
+    onSuccess: () => {
+      toast.success('Goal deleted')
+      ctx.invalidate()
+    },
+  })
+  const { mutate: updateGoal } = api.goal.update.useMutation({
+    onSuccess: () => {
+      toast.success('Goal updated successfully')
+      ctx.invalidate()
+      setIsOpen(false)
+      form.reset({
+        title: '',
+        description: '',
+        state: 'created',
+      })
+    },
+  })
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: '',
+      description: '',
+      state: 'created',
+    },
+  })
+
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    if (isEdit) {
+      if (!goalId) return
+      updateGoal({
+        id: goalId,
+        title: data.title,
+        description: data.description,
+        state: data.state,
+      })
+    } else {
+      createGoal({
+        title: data.title,
+        description: data.description,
+        state: data.state,
+        userId: user.id,
+      })
+    }
+  }
+
+  return (
+    <div className='border rounded-lg p-4 flex flex-col w-[300px] items-center justify-between gap-2 max-h-[400px]'>
+      <div className='flex gap-2 flex-col w-full'>
+        <h2 className='text-xl font-semibold'>Goals</h2>
+        <div className='flex gap-2 flex-col'>
+          <ScrollArea
+            className='max-h-[284px]'
+          >
+            {userGoals.map((goal) => (
+              <div
+                key={goal.id}
+                className='flex gap-0 w-full flex-col leading-none'
+              >
+                <div
+                  className={cn(
+                    'flex gap-2 items-center justify-between w-full',
+                    goal.state === 'created' ? '' : 'line-through opacity-50',
+                  )}
+                >
+                  <div className='text-base font-medium'>{goal.title}</div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant='ghost'
+                        className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'
+                      >
+                        <EllipsisVertical className='h-4 w-4' />
+                        <span className='sr-only'>Open menu</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align='end'
+                      className='w-[160px]'
+                    >
+                      <DropdownMenuItem
+                        onSelect={() => {
+                          setGoalId(goal.id)
+                          form.reset({
+                            title: goal.title || '',
+                            description: goal.description || '',
+                            state: goal.state || '',
+                          })
+                          setIsEdit(true)
+                          setIsOpen(true)
+                        }}
+                      >
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onSelect={() => {
+                          deleteGoal({ id: goal.id })
+                        }}
+                      >
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+                <div
+                  className={cn(
+                    'text-sm text-muted-foreground',
+                    goal.state === 'created' ? '' : 'hidden',
+                  )}
+                >
+                  {goal.description}
+                </div>
+              </div>
+            ))}
+          </ScrollArea>
+        </div>
+      </div>
+      <Dialog
+        open={isOpen}
+        onOpenChange={setIsOpen}
+      >
+        <DialogTrigger asChild>
+          <Button
+            onClick={() => {
+              setIsEdit(false)
+            }}
+          >
+            Add Goal
+          </Button>
+        </DialogTrigger>
+        <DialogContent className='p-8'>
+          <DialogHeader>
+            <DialogTitle>Add Goal</DialogTitle>
+            <DialogDescription>Add a new goal for this user</DialogDescription>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <div className='flex flex-col gap-4 w-full'>
+                <FormField
+                  control={form.control}
+                  name='title'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='Title'
+                          {...field}
+                          type='text'
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name='description'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          rows={4}
+                          placeholder='Description'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name='state'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder='...' />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value='created'>Created</SelectItem>
+                          <SelectItem value='achieved'>Achieved</SelectItem>
+                          <SelectItem value='failed'>Failed</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className='flex w-full gap-4'>
+                  <Button
+                    className='w-full'
+                    type='submit'
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    variant='outline'
+                    className='w-full'
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      form.reset({
+                        title: '',
+                        description: '',
+                        state: 'created',
+                      })
+                    }}
+                  >
+                    Clear
+                  </Button>
+                </div>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}
+
+export { UserGoals }
