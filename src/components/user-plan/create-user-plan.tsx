@@ -196,10 +196,11 @@ const CreateUserPlan = ({
                 recipe: {
                   id: -1,
                   createdAt: new Date(),
-                  calories: meal.calories || '',
+                  calories: Number(meal.calories) || 0,
                   creatorId: userPlan.creatorId,
                   deletedAt: null,
-                  favoriteAt: null,
+                  favouriteAt: null,
+                  notes: '',
                   hiddenAt: null,
                   updatedAt: new Date(),
                   image: '',
@@ -222,7 +223,7 @@ const CreateUserPlan = ({
                       recipeId: -1,
                       alternateId: ingredient.alternateId,
                       alternateIngredient: { ...ingredient.alternateIngredient },
-                      ingredientId: ingredient.ingredientId,
+                      ingredientId: ingredient.ingredientId || -1,
                       ingredient: {
                         ...ingredient.ingredient,
                       },

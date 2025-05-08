@@ -55,6 +55,7 @@ const Meal = ({
   const resetMeal = () => {
     form.resetField(`meals.${index}`)
   }
+
   const balanceCals = () => {
     const meal = plan?.meals[index]
     if (!meal) return
@@ -214,12 +215,22 @@ const Meal = ({
     <Card>
       <CardHeader className='pb-0 flex flex-row justify-between bg-background'>
         <CardTitle className='text-xl font-medium'>Meal {index + 1}</CardTitle>
+        <div className='flex gap-2 items-center'>
         <Button
           variant='secondary'
           onClick={resetMeal}
         >
           Reset
         </Button>
+        <Button
+          variant='destructive'
+          onClick={() => {
+            mealsField.remove(index)
+          }}
+        >
+            Delete Meal
+        </Button>
+        </div>
       </CardHeader>
       <CardContent className='flex flex-col gap-2 w-full lg:py-4 px-1 lg:px-4 bg-background'>
         <div className='flex lg:gap-2 lg:items-center flex-col lg:flex-row'>
