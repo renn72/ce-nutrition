@@ -1,24 +1,24 @@
 'use client'
 
 import { api } from '@/trpc/react'
+
+import { useState } from 'react'
+
+import { useSearchParams } from 'next/navigation'
+
+import { Input } from '@/components/ui/input'
+import { NumberInput } from '@/components/ui/number-input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from '@/components/ui/select'
 
-import { useState } from 'react'
-
-import { useSearchParams } from 'next/navigation'
-
-import { DataTable } from '@/components/skinfolds-table/data-table'
-
+import { DataTable } from './_skinfolds-table/data-table'
 import { SkinfoldChart } from './chart'
-import SkinfoldForm from './form'
-import {Input} from '@/components/ui/input'
-import { NumberInput } from '@/components/ui/number-input'
+import { SkinfoldForm } from './form'
 
 export const dynamic = 'force-dynamic'
 
@@ -45,36 +45,38 @@ const Chart = ({ userId }: { userId: string }) => {
 
   const data = userSkinfolds
     .map((skinfold) => {
-    let value = null
-    if (selectValue === 'bodyWeight') value = skinfold.bodyWeight?.[0]?.bodyWeight
-    if (selectValue === 'leanMass') value = skinfold.leanMass?.[0]?.leanMass
-    if (selectValue === 'bodyFat') value = skinfold.bodyFat?.[0]?.bodyFat
-    if (selectValue === 'chin') value = skinfold.chin
-    if (selectValue === 'cheek') value = skinfold.cheek
-    if (selectValue === 'lowerAbdominal') value = skinfold.lowerAbdominal
-    if (selectValue === 'pectoral') value = skinfold.pectoral
-    if (selectValue === 'biceps') value = skinfold.biceps
-    if (selectValue === 'triceps') value = skinfold.triceps
-    if (selectValue === 'subscapular') value = skinfold.subscapular
-    if (selectValue === 'midAxillary') value = skinfold.midAxillary
-    if (selectValue === 'suprailiac') value = skinfold.suprailiac
-    if (selectValue === 'umbilical') value = skinfold.umbilical
-    if (selectValue === 'lowerBack') value = skinfold.lowerBack
-    if (selectValue === 'quadriceps') value = skinfold.quadriceps
-    if (selectValue === 'hamstrings') value = skinfold.hamstrings
-    if (selectValue === 'medialCalf') value = skinfold.medialCalf
-    if (selectValue === 'knee') value = skinfold.knee
-    if (selectValue === 'shoulder') value = skinfold.shoulder
-    return {
-      value: value,
-      date: skinfold.date,
-    }
+      let value = null
+      if (selectValue === 'bodyWeight')
+        value = skinfold.bodyWeight?.[0]?.bodyWeight
+      if (selectValue === 'leanMass') value = skinfold.leanMass?.[0]?.leanMass
+      if (selectValue === 'bodyFat') value = skinfold.bodyFat?.[0]?.bodyFat
+      if (selectValue === 'chin') value = skinfold.chin
+      if (selectValue === 'cheek') value = skinfold.cheek
+      if (selectValue === 'lowerAbdominal') value = skinfold.lowerAbdominal
+      if (selectValue === 'pectoral') value = skinfold.pectoral
+      if (selectValue === 'biceps') value = skinfold.biceps
+      if (selectValue === 'triceps') value = skinfold.triceps
+      if (selectValue === 'subscapular') value = skinfold.subscapular
+      if (selectValue === 'midAxillary') value = skinfold.midAxillary
+      if (selectValue === 'suprailiac') value = skinfold.suprailiac
+      if (selectValue === 'umbilical') value = skinfold.umbilical
+      if (selectValue === 'lowerBack') value = skinfold.lowerBack
+      if (selectValue === 'quadriceps') value = skinfold.quadriceps
+      if (selectValue === 'hamstrings') value = skinfold.hamstrings
+      if (selectValue === 'medialCalf') value = skinfold.medialCalf
+      if (selectValue === 'knee') value = skinfold.knee
+      if (selectValue === 'shoulder') value = skinfold.shoulder
+      return {
+        value: value,
+        date: skinfold.date,
+      }
     })
     .map((skinfold) => ({
       value: Number(skinfold.value),
       date: skinfold.date,
     }))
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).slice(0, range)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .slice(0, range)
 
   console.log('data', data)
 
@@ -85,7 +87,6 @@ const Chart = ({ userId }: { userId: string }) => {
         label='label'
       />
       <div className='flex gap-2 justify-center w-full'>
-
         <NumberInput
           value={range}
           setValue={setRange}
@@ -125,7 +126,7 @@ const Chart = ({ userId }: { userId: string }) => {
             <SelectItem value='shoulder'>Shoulder</SelectItem>
           </SelectContent>
         </Select>
-    </div>
+      </div>
     </div>
   )
 }

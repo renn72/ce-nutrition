@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+
 import { useRouter } from 'next/navigation'
 
 import type { GetUserSkinfolds } from '@/types'
@@ -32,7 +33,11 @@ import { DataTablePagination } from '@/components/table/data-table-pagination'
 import { columns } from './columns'
 import { DataTableToolbar } from './data-table-toolbar'
 
-const DataTable = ({ data }: { data: GetUserSkinfolds }) => {
+const DataTable = ({
+  data,
+}: {
+  data: GetUserSkinfolds
+}) => {
   const router = useRouter()
 
   const [rowSelection, setRowSelection] = React.useState({})
@@ -43,8 +48,7 @@ const DataTable = ({ data }: { data: GetUserSkinfolds }) => {
     })
 
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [
-    ],
+    [],
   )
   const [sorting, setSorting] = React.useState<SortingState>([
     {
@@ -87,7 +91,6 @@ const DataTable = ({ data }: { data: GetUserSkinfolds }) => {
 
   return (
     <div className='space-y-4'>
-
       <DataTableToolbar table={table} />
       <div className='rounded-md border'>
         <Table>

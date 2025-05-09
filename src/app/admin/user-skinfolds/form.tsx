@@ -4,33 +4,20 @@ import { api } from '@/trpc/react'
 
 import { useState } from 'react'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
 import { GetSkinfoldById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  CalendarIcon,
-  CircleX,
-  XIcon,
-} from 'lucide-react'
+import { useAtom } from 'jotai'
+import { CalendarIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import {
   Dialog,
   DialogClose,
@@ -58,7 +45,7 @@ import {
 import { SaveButton } from '@/components/ui/save-button'
 import { Textarea } from '@/components/ui/textarea'
 
-import { DataTable } from '@/components/skinfolds-table/data-table'
+import { isFormOpenAtom } from './atom'
 
 export const dynamic = 'force-dynamic'
 
@@ -149,14 +136,21 @@ const SkinFoldsForm = ({
   date,
   bodyWeight: _bodyWeight,
   setIsOpen,
+  skinfold,
 }: {
   userId: string
   date: Date
   bodyWeight: string
-    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  skinfold: GetSkinfoldById | null
 }) => {
   const router = useRouter()
   const ctx = api.useUtils()
+
+  const [skinfoldId, setSkinfoldId] = useState<number | null>(() => {
+    if (skinfold) return skinfold.id
+    return null
+  })
 
   const [isMutating, setIsMutating] = useState(false)
 
@@ -176,6 +170,8 @@ const SkinFoldsForm = ({
     },
   })
 
+  const { mutate: deleteSkinfold } = api.metrics.deleteSkinfold.useMutation()
+
   const [bodyWeight, setBodyWeight] = useState<number>(() =>
     Number(_bodyWeight),
   )
@@ -183,23 +179,23 @@ const SkinFoldsForm = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      chin: '',
-      cheek: '',
-      lowerAbdominal: '',
-      pectoral: '',
-      biceps: '',
-      triceps: '',
-      subscapular: '',
-      midAxillary: '',
-      suprailiac: '',
-      umbilical: '',
-      lowerBack: '',
-      quadriceps: '',
-      hamstrings: '',
-      medialCalf: '',
-      knee: '',
-      shoulder: '',
-      notes: '',
+      chin: skinfold?.chin ?? '',
+      cheek: skinfold?.cheek ?? '',
+      lowerAbdominal: skinfold?.lowerAbdominal ?? '',
+      pectoral: skinfold?.pectoral ?? '',
+      biceps: skinfold?.biceps ?? '',
+      triceps: skinfold?.triceps ?? '',
+      subscapular: skinfold?.subscapular ?? '',
+      midAxillary: skinfold?.midAxillary ?? '',
+      suprailiac: skinfold?.suprailiac ?? '',
+      umbilical: skinfold?.umbilical ?? '',
+      lowerBack: skinfold?.lowerBack ?? '',
+      quadriceps: skinfold?.quadriceps ?? '',
+      hamstrings: skinfold?.hamstrings ?? '',
+      medialCalf: skinfold?.medialCalf ?? '',
+      knee: skinfold?.knee ?? '',
+      shoulder: skinfold?.shoulder ?? '',
+      notes: skinfold?.notes ?? '',
     },
   })
 
@@ -260,6 +256,10 @@ const SkinFoldsForm = ({
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     console.log('data', data, bodyWeight, leanMass, bodyFat)
+    if (skinfoldId) {
+      deleteSkinfold(skinfoldId)
+    }
+    setSkinfoldId(null)
     createSkinfold({
       date: date.toDateString(),
       chin: data.chin,
@@ -301,7 +301,7 @@ const SkinFoldsForm = ({
             </div>
             <div className='flex gap-2 items-center justify-around flex-col bg-secondary px-4 py-2 rounded-md shadow-sm'>
               <div className='text-muted-foreground text-center'>Lean Mass</div>
-              <div>{leanMass.toFixed(2)}</div>
+              <div>{leanMass.toFixed(2)}kg</div>
             </div>
           </div>
 
@@ -641,25 +641,31 @@ const SkinFoldsForm = ({
   )
 }
 
-const SkinfoldForm = ({ userId, bodyWeight }: { userId: string, bodyWeight: string }) => {
+const SkinfoldFormContent = ({
+  userId,
+  bodyWeight,
+  setIsOpen,
+  skinfold = null,
+}: {
+  userId: string
+  bodyWeight: string
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  skinfold?: GetSkinfoldById | null
+}) => {
+  const [date, setDate] = useState<Date | undefined>(() => {
+    if (skinfold) return new Date(skinfold.date)
+    return new Date()
+  })
 
-  const [isOpen, setIsOpen] = useState(false)
-  const [date, setDate] = useState<Date | undefined>(new Date())
+  const _bodyWeight = skinfold
+    ? skinfold.bodyWeight?.[0]?.bodyWeight
+    : bodyWeight
 
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={setIsOpen}
-    >
-      <DialogTrigger asChild>
-        <Button>Create Skinfold</Button>
-      </DialogTrigger>
-      <DialogContent
-        className='w-full max-w-2xl'
-      >
-        <DialogHeader>
-          <DialogTitle>Create Skinfold</DialogTitle>
-        </DialogHeader>
+    <>
+      <DialogHeader>
+        <DialogTitle>Create Skinfold</DialogTitle>
+      </DialogHeader>
 
       <Popover>
         <PopoverTrigger asChild>
@@ -694,11 +700,39 @@ const SkinfoldForm = ({ userId, bodyWeight }: { userId: string, bodyWeight: stri
         setIsOpen={setIsOpen}
         userId={userId}
         date={date ?? new Date()}
-        bodyWeight={bodyWeight ?? ''}
+        bodyWeight={_bodyWeight ?? ''}
+        skinfold={skinfold}
       />
+    </>
+  )
+}
+
+const SkinfoldForm = ({
+  userId,
+  bodyWeight,
+}: {
+  userId: string
+  bodyWeight: string
+}) => {
+  const [isOpen, setIsOpen] = useAtom(isFormOpenAtom)
+
+  return (
+    <Dialog
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
+      <DialogTrigger asChild>
+        <Button>Create Skinfold</Button>
+      </DialogTrigger>
+      <DialogContent className='w-full max-w-2xl'>
+        <SkinfoldFormContent
+          userId={userId}
+          bodyWeight={bodyWeight}
+          setIsOpen={setIsOpen}
+        />
       </DialogContent>
     </Dialog>
   )
 }
 
-export default SkinfoldForm
+export  { SkinfoldForm, SkinfoldFormContent }

@@ -147,7 +147,7 @@ export const columns: ColumnDef<GetSkinfoldById>[] = [
       return (
         <div className='flex space-x-2'>
           <span className='max-w-[50px] font-medium'>
-            {value}%
+            {value}kg
           </span>
         </div>
       )
@@ -172,7 +172,7 @@ export const columns: ColumnDef<GetSkinfoldById>[] = [
       return (
         <div className='flex space-x-2'>
           <span className='max-w-[50px] font-medium'>
-            {value}kg
+            {value}%
           </span>
         </div>
       )
