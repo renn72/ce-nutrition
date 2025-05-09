@@ -11,7 +11,7 @@ const View = ({ userId }: { userId: string }) => {
 
   const data = skinfolds
     ?.map((skinfold) => ({
-      value: Number(skinfold.bodyWeight?.[0]?.bodyWeight || 0),
+      value: Number(skinfold.leanMass?.[0]?.leanMass || 0),
       date: skinfold.date,
     }))
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -38,7 +38,7 @@ const View = ({ userId }: { userId: string }) => {
         {Math.abs(value).toFixed(1)}kg
       </div>
       <div className='text-[4rem] w-full uppercase text-center font-bold -mt-36'>
-        Body Weight
+        Lean Mass
       </div>
     </div>
   )

@@ -78,16 +78,12 @@ const data = {
               url: '/user-weight-view',
             },
             {
-              title: 'Blood Glucose',
-              url: '/admin/user-blood-glucose-view',
-            },
-            {
               title: 'Lean Mass',
-              url: '/admin/user-lean-mass-view',
+              url: '/user-lean-mass-view',
             },
             {
               title: 'Body Fat',
-              url: '/admin/user-body-fat-view',
+              url: '/user-body-fat-view',
             },
           ]
         },
