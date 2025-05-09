@@ -148,10 +148,12 @@ const SkinFoldsForm = ({
   userId,
   date,
   bodyWeight: _bodyWeight,
+  setIsOpen,
 }: {
   userId: string
   date: Date
   bodyWeight: string
+    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const router = useRouter()
   const ctx = api.useUtils()
@@ -166,6 +168,7 @@ const SkinFoldsForm = ({
     },
     onSuccess: () => {
       toast.success('Skinfold saved')
+      setIsOpen(false)
     },
     onSettled: () => {
       setIsMutating(false)
@@ -640,10 +643,14 @@ const SkinFoldsForm = ({
 
 const SkinfoldForm = ({ userId, bodyWeight }: { userId: string, bodyWeight: string }) => {
 
+  const [isOpen, setIsOpen] = useState(false)
   const [date, setDate] = useState<Date | undefined>(new Date())
 
   return (
-    <Dialog>
+    <Dialog
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
       <DialogTrigger asChild>
         <Button>Create Skinfold</Button>
       </DialogTrigger>
@@ -684,6 +691,7 @@ const SkinfoldForm = ({ userId, bodyWeight }: { userId: string, bodyWeight: stri
         </PopoverContent>
       </Popover>
       <SkinFoldsForm
+        setIsOpen={setIsOpen}
         userId={userId}
         date={date ?? new Date()}
         bodyWeight={bodyWeight ?? ''}

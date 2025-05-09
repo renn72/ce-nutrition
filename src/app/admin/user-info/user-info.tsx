@@ -2,10 +2,10 @@
 
 import { api } from '@/trpc/react'
 
-import { cn } from '@/lib/utils'
-
 import { UserGoals } from './user-goals'
 import { UserWeight } from './user-weight'
+
+import { UserCharts } from './user-charts'
 
 const UserInfo = ({ userId }: { userId: string }) => {
   const { data: user } = api.user.get.useQuery(userId)
@@ -25,6 +25,9 @@ const UserInfo = ({ userId }: { userId: string }) => {
       <UserGoals
         user={user}
         userGoals={userGoals}
+      />
+      <UserCharts
+        dailyLogs={dailyLogs}
       />
     </div>
   )

@@ -209,7 +209,7 @@ const UserGoals = ({
   }
 
   return (
-    <div className='border rounded-lg p-4 flex flex-col w-[300px] items-center justify-between gap-2 max-h-[400px] min-h-[300px]'>
+    <div className='border rounded-lg p-4 flex flex-col w-[300px] items-center justify-between gap-2 max-h-[450px] min-h-[300px]'>
       <div className='flex gap-2 flex-col w-full'>
         <h2 className='text-xl font-semibold'>Goals</h2>
         <div className='flex gap-2 flex-col'>
