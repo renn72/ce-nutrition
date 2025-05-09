@@ -18,12 +18,12 @@ const View = ({ userId }: { userId: string }) => {
   return (
     <div className='w-screen h-screen flex flex-col items-center justify-center w-full'>
     <div
-    className='flex text-[32rem] justify-center items-center text-green-600'
+    className='flex text-[28rem] justify-center items-center text-green-600 font-bold'
   >
-      <MoveDown className='text-black mb-16' size={412} />
-    { (1.2).toFixed(1) }kg
+      <MoveDown className='text-black mb-16' size={340} />
+    { (1.7).toFixed(1) }kg
   </div>
-      <div className='text-[7rem] w-full uppercase text-center font-bold -mt-48'>
+      <div className='text-[6rem] w-full uppercase text-center font-bold -mt-48'>
       Body Weight
     </div>
     </div>
