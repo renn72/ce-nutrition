@@ -6,16 +6,8 @@ import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { formatDate } from '@/lib/utils'
 import type { GetIngredientById } from '@/types'
 import {
-  compareItems,
-  RankingInfo,
-  rankings,
-  rankItem,
-} from '@tanstack/match-sorter-utils'
-import {
   ColumnDef,
-  FilterFn,
   SortingFn,
-  sortingFns,
 } from '@tanstack/react-table'
 import { Bookmark } from 'lucide-react'
 

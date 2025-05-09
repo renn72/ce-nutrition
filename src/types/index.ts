@@ -76,3 +76,4 @@ export type GetAllWeighIns = RouterOutputs['weighIn']['getAllUser']
 export type GetWeighInById = RouterOutputs['weighIn']['get']
 
 export type GetSkinfoldById = RouterOutputs['metrics']['getSkinfold']
+export type GetUserSkinfolds = RouterOutputs['metrics']['getUserSkinfolds']

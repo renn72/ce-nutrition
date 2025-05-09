@@ -58,6 +58,8 @@ import {
 import { SaveButton } from '@/components/ui/save-button'
 import { Textarea } from '@/components/ui/textarea'
 
+import { DataTable } from '@/components/skinfolds-table/data-table'
+
 export const dynamic = 'force-dynamic'
 
 const formSchema = z.object({
@@ -233,18 +235,11 @@ const SkinFolds = ({ userId }: { userId: string }) => {
 
   console.log('userSkinfolds', userSkinfolds)
 
-  if (isLoading) return null
 
-  return (
-    <div className='flex flex-col gap-4 w-full '>
-      {userSkinfolds?.map((skinfold) => (
-        <SkinFold
-          key={skinfold.id}
-          skinfold={skinfold}
-        />
-      ))}
-    </div>
-  )
+  if (isLoading) return null
+  if (!userSkinfolds) return null
+
+  return <DataTable data={userSkinfolds} />
 }
 
 const BodyWeight = ({
@@ -442,9 +437,9 @@ const SkinFoldsForm = ({
       shoulder: data.shoulder,
       notes: data.notes,
       userId: userId,
-      bodyWeight: bodyWeight.toFixed(2),
-      leanMass: leanMass.toFixed(2),
-      bodyFat: bodyFat.toFixed(2),
+      bodyWeight: bodyWeight.toFixed(1),
+      leanMass: leanMass.toFixed(1),
+      bodyFat: bodyFat.toFixed(1),
     })
   }
 
@@ -827,7 +822,7 @@ export default function Home() {
   )[0]?.morningWeight
 
   return (
-    <div className='max-w-4xl mx-auto my-10'>
+    <div className='max-w-[1400px] mx-auto my-10'>
       <Popover>
         <PopoverTrigger asChild>
           <Button
