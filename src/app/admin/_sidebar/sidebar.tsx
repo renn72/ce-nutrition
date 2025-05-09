@@ -53,10 +53,6 @@ const data = {
           url: '/admin/user-skinfolds',
         },
         {
-          title: 'Check-in',
-          url: '/admin/user-check-in',
-        },
-        {
           title: 'Program',
           url: '/admin/user-program',
         },

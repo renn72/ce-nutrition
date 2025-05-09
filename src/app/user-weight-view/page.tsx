@@ -19,14 +19,14 @@ const View = ({ userId }: { userId: string }) => {
   console.log('data', data?.slice(-2))
   return (
     <div className='w-screen h-screen flex flex-col items-center justify-center w-full'>
-      <div className='flex text-[24rem] justify-center items-center text-green-600 font-bold -ml-8'>
+      <div className='flex text-[20rem] justify-center items-center text-green-600 font-bold -ml-8'>
         <MoveDown
-          className='text-black mb-16 -mr-36'
-          size={340}
+          className='text-black mb-16 -mr-20'
+          size={250}
         />
-        {(1.7).toFixed(1)}kg
+        {(2.4).toFixed(1)}kg
       </div>
-      <div className='text-[6rem] w-full uppercase text-center font-bold -mt-48'>
+      <div className='text-[4rem] w-full uppercase text-center font-bold -mt-36'>
         Body Weight
       </div>
     </div>
