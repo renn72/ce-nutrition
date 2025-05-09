@@ -2,18 +2,17 @@
 
 import { useEffect, useState } from 'react'
 
+import {Button} from '@/components/ui/button'
 import { cn, getRecipeDetailsForUserPlan } from '@/lib/utils'
 import type { GetPlanById } from '@/types'
 import { CircleMinus, CirclePlus } from 'lucide-react'
-import { useFieldArray, UseFormReturn } from 'react-hook-form'
+import { useFieldArray, UseFormReturn, UseFieldArrayReturn } from 'react-hook-form'
 import { z } from 'zod'
 
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -23,25 +22,25 @@ import { formSchema } from './create-user-plan'
 export const dynamic = 'force-dynamic'
 
 const Ingredient = ({
+  ingredient,
   form,
   ingredientIndex,
   recipeIndex,
   mealIndex,
   plan,
   setIngredientsSize,
+  ingredientsField,
 }: {
+  ingredient: any
   form: UseFormReturn<z.infer<typeof formSchema>>
   ingredientIndex: number
   recipeIndex: number
   mealIndex: number
   plan: GetPlanById
   setIngredientsSize: React.Dispatch<React.SetStateAction<number[]>>
+  ingredientsField: UseFieldArrayReturn<z.infer<typeof formSchema>['meals']>
 }) => {
-  const ingredientsField = useFieldArray({
-    control: form.control,
-    name: `meals.${mealIndex}.recipes.${recipeIndex}.ingredients`,
-  })
-  const field = ingredientsField.fields[ingredientIndex]
+
   const size = form.watch(
     `meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.serveSize`,
   )
@@ -55,13 +54,6 @@ const Ingredient = ({
       })
     })
   }, [size])
-  if (!field) return null
-
-  if (!plan) return null
-  const ingredient =
-    plan.meals[mealIndex]?.mealToRecipe[recipeIndex]?.recipe
-      ?.recipeToIngredient[ingredientIndex]
-  if (!ingredient) return null
 
   const ratio = Number(size) / Number(ingredient?.ingredient?.serveSize)
 
@@ -121,7 +113,7 @@ const Ingredient = ({
         </div>
         <div>{(Number(ingredient.ingredient.fatTotal) * ratio).toFixed(1)}</div>
       </div>
-      {ingredient.alternateId ? (
+      {ingredient.alternateId && ingredient.alternateIngredient ? (
         <div className='grid grid-cols-10 gap-1 text-muted-foreground items-center text-sm'>
           <div className='col-span-4 truncate ml-4'>
             or {ingredient.alternateIngredient?.name}
@@ -146,61 +138,85 @@ const Recipe = ({
   recipeIndex,
   plan,
   calories,
+  recipesField,
+  recipe,
 }: {
   form: UseFormReturn<z.infer<typeof formSchema>>
   mealIndex: number
   recipeIndex: number
   plan: GetPlanById
   calories: string
+  recipesField: UseFieldArrayReturn
+  recipe: any
 }) => {
-  const recipesField = useFieldArray({
+
+  const ingredientsField = useFieldArray({
     control: form.control,
-    name: `meals.${mealIndex}.recipes`,
+    name: `meals.${mealIndex}.recipes.${recipeIndex}.ingredients`,
   })
-  const field = recipesField.fields[recipeIndex]
 
-  if (!field) return null
-  if (!plan) return null
 
-  const recipe =
-    plan.meals[mealIndex]?.mealToRecipe[recipeIndex]?.recipe
-  if (!recipe) return null
   const [ingredientsSize, setIngredientsSize] = useState<number[]>(() =>
-    recipe?.recipeToIngredient.map((ingredient) =>
+    recipe.ingredients.map((ingredient) =>
       Number(ingredient?.serveSize),
-    ),
+    ) || [],
   )
   const recipeDetails = getRecipeDetailsForUserPlan(recipe, ingredientsSize)
 
   return (
-    <div className='flex flex-col gap-1'>
-      <div className='grid md:grid-cols-10 grid-cols-8 md:gap-1 capitalize'>
+    <div className='flex flex-col gap-1 border rounded-md p-2'>
+      <div className='grid md:grid-cols-10 grid-cols-8 md:gap-1 capitalize place-items-center'>
         <div className='md:col-span-4 col-span-2 ' />
         <div className='col-span-2 place-self-center'>size</div>
         <div>cals</div>
-        <div>pro.</div>
+        <div>protein</div>
         <div>carbs</div>
         <div>fat</div>
       </div>
       <div className='grid md:grid-cols-10 grid-cols-8 md:gap-1 font-bold'>
-        <div className='md:col-span-4 col-span-2'>{recipe.name}</div>
-        <div className='col-span-2 place-self-center'>
-          {recipeDetails.size} {recipeDetails.unit?.slice(0, 1)}
+        <div className='md:col-span-4 col-span-2 flex gap-2 justify-between'>
+          <div>
+          {recipe?.name}
+          </div>
+          <Button
+            variant='destructive'
+            size='icon'
+            className='rounded-full shrink-0 text-[0.7rem] h-5 w-6'
+            onClick={(e) => {
+              e.preventDefault()
+              recipesField.remove(recipeIndex)
+            }}
+          >
+            Del
+          </Button>
         </div>
-        <div>{recipeDetails.cals}</div>
-        <div>{recipeDetails.protein}</div>
-        <div>{recipeDetails.carbs}</div>
-        <div>{recipeDetails.fat} </div>
+        <div className='col-span-2 place-self-center'>
+        </div>
+        <div
+          className='text-center bg-secondary rounded-full'
+        >{recipeDetails.cals}</div>
+        <div
+
+          className='text-center bg-secondary rounded-full'
+        >{recipeDetails.protein}</div>
+        <div
+          className='text-center bg-secondary rounded-full'
+        >{recipeDetails.carbs}</div>
+        <div
+          className='text-center bg-secondary rounded-full'
+        >{recipeDetails.fat} </div>
       </div>
-      {field.ingredients.map((ingredient, ingredientIndex) => (
+      {ingredientsField.fields.map((ingredient, ingredientIndex) => (
         <Ingredient
           key={ingredient.ingredientId}
           form={form}
           ingredientIndex={ingredientIndex}
+          ingredient={ingredient}
           recipeIndex={recipeIndex}
           mealIndex={mealIndex}
           plan={plan}
           setIngredientsSize={setIngredientsSize}
+          ingredientsField={ingredientsField}
         />
       ))}
     </div>

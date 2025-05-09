@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils'
 import type { GetPlanById, UserPlan } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAtom } from 'jotai'
+import { PlusCircle } from 'lucide-react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -86,7 +87,6 @@ const CreateUserPlan = ({
   const [userId] = useAtom(userAtom)
 
   const { data: allPlans } = api.plan.getAll.useQuery()
-  const { data: currentUser } = api.user.get.useQuery(user)
 
   const ctx = api.useUtils()
 
@@ -146,6 +146,12 @@ const CreateUserPlan = ({
                   serveSize: ingredient.serve || '',
                   serveUnit: ingredient.serveUnit || '',
                   note: ingredient.note || '',
+                  ingredient: {
+                    ...ingredient.ingredient,
+                  },
+                  alternateIngredient: {
+                    ...ingredient.alternateIngredient,
+                  },
                 })),
             })),
         })) || [],
@@ -222,10 +228,15 @@ const CreateUserPlan = ({
                       serveUnit: ingredient.serveUnit || '',
                       recipeId: -1,
                       alternateId: ingredient.alternateId,
-                      alternateIngredient: { ...ingredient.alternateIngredient },
+                      alternateIngredient: {
+                        ...ingredient.alternateIngredient,
+                      },
                       ingredientId: ingredient.ingredientId || -1,
                       ingredient: {
                         ...ingredient.ingredient,
+                      },
+                      alternateIngredient: {
+                        ...ingredient.alternateIngredient,
                       },
                     })),
                 },
@@ -234,10 +245,6 @@ const CreateUserPlan = ({
       })
     }
   }, [userPlan])
-
-  console.log('selectedPlan', selectedPlan)
-
-  console.log('form', form.getValues())
 
   const onSetPlan = (planId: string) => {
     setSelectedPlanId(planId)
@@ -285,6 +292,12 @@ const CreateUserPlan = ({
                       serveSize: serve,
                       serveUnit: ingredient.serveUnit,
                       note: ingredient.note || '',
+                      ingredient: {
+                        ...ingredient.ingredient,
+                      },
+                      alternateIngredient: {
+                        ...ingredient.alternateIngredient,
+                      },
                     }
                   },
                 ) || [],
@@ -341,7 +354,7 @@ const CreateUserPlan = ({
   }
 
   return (
-    <div className='flex flex-col max-w-screen-lg w-full my-12'>
+    <div className='flex flex-col max-w-screen-xl w-full my-12'>
       <div className={cn('flex gap-8 items-center', userPlan ? 'hidden' : '')}>
         <PlanSelect
           selectedPlan={selectedPlanId}
@@ -414,18 +427,45 @@ const CreateUserPlan = ({
                       index={index}
                       form={form}
                       plan={selectedPlan}
+                      mealsField={mealsField}
                     />
                   ))}
                 </div>
               </div>
-              <div>
+              <div className='my-8 flex w-full justify-center'>
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    mealsField.append({
+                      mealId: (mealsField.fields.length + 1).toString(),
+                      mealTitle: (mealsField.fields.length + 1).toString(),
+                      calories: '500',
+                      targetCalories: '',
+                      targetProtein: '',
+                      vege: '',
+                      vegeCalories: '',
+                      vegeNotes: '',
+                      protein: '',
+                      note: '',
+                      recipes: [],
+                    })
+                  }}
+                >
+                  Add Meal
+                  <PlusCircle
+                    size={20}
+                    className='ml-4 mb-1'
+                  />
+                </Button>
+              </div>
+              <div className='my-8'>
                 <Button
                   type='submit'
                   onClick={() => {
                     console.log('form', form.getValues())
                   }}
                 >
-                  Create
+                  Save
                 </Button>
               </div>
             </div>

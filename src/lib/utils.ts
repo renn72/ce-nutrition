@@ -163,30 +163,30 @@ export function getRecipeDetailsForUserPlan(
     return acc + curr
   }, 0)
 
-  const unit = recipe?.recipeToIngredient[0]?.ingredient?.serveUnit
+  const unit = recipe?.ingredients[0]?.ingredient?.serveUnit
 
-  const cals = recipe?.recipeToIngredient.reduce((acc, curr, i) => {
+  const cals = recipe?.ingredients.reduce((acc, curr, i) => {
     const cal = Number(curr?.ingredient?.caloriesWFibre)
     const size = ingredientsSize[i] || 100
     const scale = size / Number(curr?.ingredient?.serveSize)
     return acc + cal * scale
   }, 0)
 
-  const calsWOFibre = recipe?.recipeToIngredient.reduce((acc, curr, i) => {
+  const calsWOFibre = recipe?.ingredients.reduce((acc, curr, i) => {
     const cal = Number(curr?.ingredient?.caloriesWOFibre)
     const size = ingredientsSize[i] || 100
     const scale = size / Number(curr?.ingredient?.serveSize)
     return acc + cal * scale
   }, 0)
 
-  const protein = recipe?.recipeToIngredient.reduce((acc, curr, i) => {
+  const protein = recipe?.ingredients.reduce((acc, curr, i) => {
     const cal = Number(curr?.ingredient?.protein)
     const size = ingredientsSize[i] || 100
     const scale = size / Number(curr?.ingredient?.serveSize)
     return acc + cal * scale
   }, 0)
 
-  const carbs = recipe?.recipeToIngredient.reduce((acc, curr, i) => {
+  const carbs = recipe?.ingredients.reduce((acc, curr, i) => {
     const cal = Number(
       curr?.ingredient?.availableCarbohydrateWithSugarAlcohols,
     )
@@ -195,7 +195,7 @@ export function getRecipeDetailsForUserPlan(
     return acc + cal * scale
   }, 0)
 
-  const fat = recipe?.recipeToIngredient.reduce((acc, curr, i) => {
+  const fat = recipe?.ingredients.reduce((acc, curr, i) => {
     const cal = Number(curr?.ingredient?.fatTotal)
     const size = ingredientsSize[i] || 100
     const scale = size / Number(curr?.ingredient?.serveSize)
@@ -205,10 +205,10 @@ export function getRecipeDetailsForUserPlan(
   return {
     size: size.toFixed(0),
     unit: unit,
-    calsWFibre: cals?.toFixed(1),
-    cals: Number(calsWOFibre).toFixed(1),
-    protein: Number(protein).toFixed(1),
-    carbs: Number(carbs).toFixed(1),
+    calsWFibre: cals?.toFixed(0),
+    cals: Number(calsWOFibre).toFixed(0),
+    protein: Number(protein).toFixed(0),
+    carbs: Number(carbs).toFixed(0),
     fat: Number(fat).toFixed(1),
   }
 }
