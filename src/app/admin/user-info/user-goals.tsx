@@ -5,7 +5,7 @@ import { api } from '@/trpc/react'
 import { useState } from 'react'
 
 import { cn } from '@/lib/utils'
-import { GetUserById, GetGoal, GetUserGoals } from '@/types'
+import { GetGoal, GetUserById, GetUserGoals } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { EllipsisVertical, XCircleIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -142,7 +142,7 @@ const UserGoals = ({
   userGoals,
 }: {
   user: GetUserById
-  userGoals: GetUserGoals
+  userGoals: GetUserGoals | undefined
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
@@ -215,7 +215,7 @@ const UserGoals = ({
         <div className='flex gap-2 flex-col'>
           <ScrollArea className='max-h-[284px]'>
             {userGoals
-              .filter((goal) => goal.state === 'created')
+              ?.filter((goal) => goal.state === 'created')
               .sort(
                 (a, b) =>
                   (b.updatedAt?.getTime() || 0) - (a.updatedAt?.getTime() || 0),
@@ -232,7 +232,7 @@ const UserGoals = ({
                 />
               ))}
             {userGoals
-              .filter((goal) => goal.state !== 'created')
+              ?.filter((goal) => goal.state !== 'created')
               .sort(
                 (a, b) =>
                   (b.updatedAt?.getTime() || 0) - (a.updatedAt?.getTime() || 0),
