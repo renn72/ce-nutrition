@@ -117,7 +117,6 @@ export const columns: ColumnDef<GetSkinfoldById>[] = [
     },
     // @ts-ignore
     cell: ({ row }) => {
-      console.log('row', row.getValue('bodyWeight'))
       // @ts-ignore
       const value = Number(row.getValue('bodyWeight')?.[0]?.bodyWeight).toFixed(1)
       return (
@@ -143,7 +142,6 @@ export const columns: ColumnDef<GetSkinfoldById>[] = [
     },
     // @ts-ignore
     cell: ({ row }) => {
-      console.log('row', row.getValue('leanMass'))
       // @ts-ignore
       const value = Number(row.getValue('leanMass')?.[0]?.leanMass).toFixed(1)
       return (
@@ -169,7 +167,6 @@ export const columns: ColumnDef<GetSkinfoldById>[] = [
     },
     // @ts-ignore
     cell: ({ row }) => {
-      console.log('row', row.getValue('bodyFat'))
       // @ts-ignore
       const value = Number(row.getValue('bodyFat')?.[0]?.bodyFat).toFixed(1)
       return (
