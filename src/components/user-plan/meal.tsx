@@ -52,11 +52,13 @@ const Meal = ({
   index,
   plan,
   mealsField,
+  meal,
 }: {
   form: UseFormReturn<z.infer<typeof formSchema>>
   index: number
   plan: GetPlanById
   mealsField: UseFieldArrayReturn
+  meal: any
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [selectValue, setSelectValue] = useState('')
@@ -71,22 +73,26 @@ const Meal = ({
     form.resetField(`meals.${index}`)
   }
 
-  const balanceCals = () => {
-    const meal = plan?.meals[index]
-    if (!meal) return
+  console.log('meal', meal)
 
-    for (const [recipeIndex, recipe] of meal.mealToRecipe.entries()) {
+  const balanceCals = () => {
+
+    for (const [recipeIndex, recipe] of meal.recipes.entries()) {
       if (
-        recipe.recipe?.recipeToIngredient &&
-        recipe.recipe?.recipeToIngredient?.length > 0
+        recipe.ingredients &&
+        recipe.ingredients?.length > 0
       ) {
+        const cals = recipe.ingredients.reduce((acc, curr) => {
+          const c = (Number(curr.serveSize) / Number(curr.ingredient.serveSize)) * Number(curr.ingredient.caloriesWOFibre)
+          return acc + c
+        }, 0) as number
+        console.log('cals', cals)
         for (const [
           ingredientIndex,
           ingredient,
-        ] of recipe.recipe?.recipeToIngredient.entries()) {
+        ] of recipe.ingredients.entries()) {
           const serve = (
-            (Number(ingredient.serveSize) * Number(calories)) /
-            Number(recipe.recipe?.calories)
+            (Number(ingredient.serveSize) * Number(calories)) / cals
           ).toFixed(2)
           form.setValue(
             `meals.${index}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.serveSize`,
@@ -97,22 +103,20 @@ const Meal = ({
     }
   }
   const balanceCalsProtien = () => {
-    const meal = plan?.meals[index]
-    if (!meal) return
     if (Number(formProtien) == 0) return
 
-    for (const [recipeIndex, recipe] of meal.mealToRecipe.entries()) {
-      const calsPerGram = recipe.recipe?.recipeToIngredient.map(
+    for (const [recipeIndex, recipe] of meal.recipes.entries()) {
+      const calsPerGram = recipe.ingredients.map(
         (ingredient) =>
           Number(ingredient.ingredient.caloriesWOFibre) /
           Number(ingredient.ingredient.serveSize),
       )
-      const proteinPerGram = recipe.recipe?.recipeToIngredient.map(
+      const proteinPerGram = recipe.ingredients.map(
         (ingredient) =>
           Number(ingredient.ingredient.protein) /
           Number(ingredient.ingredient.serveSize),
       )
-      const carbsPerGram = recipe.recipe?.recipeToIngredient.map(
+      const carbsPerGram = recipe.ingredients.map(
         (ingredient) =>
           Number(ingredient.ingredient.availableCarbohydrateWithSugarAlcohols) /
           Number(ingredient.ingredient.serveSize),

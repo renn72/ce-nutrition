@@ -426,6 +426,7 @@ const CreateUserPlan = ({
                       key={field.mealId}
                       index={index}
                       form={form}
+                      meal={field}
                       plan={selectedPlan}
                       mealsField={mealsField}
                     />

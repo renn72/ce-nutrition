@@ -193,17 +193,17 @@ const Recipe = ({
         <div className='col-span-2 place-self-center'>
         </div>
         <div
-          className='text-center bg-secondary rounded-full'
+          className='text-center bg-secondary rounded-full place-self-center px-6'
         >{recipeDetails.cals}</div>
         <div
 
-          className='text-center bg-secondary rounded-full'
+          className='text-center bg-secondary rounded-full place-self-center px-6'
         >{recipeDetails.protein}</div>
         <div
-          className='text-center bg-secondary rounded-full'
+          className='text-center bg-secondary rounded-full place-self-center px-6'
         >{recipeDetails.carbs}</div>
         <div
-          className='text-center bg-secondary rounded-full'
+          className='text-center bg-secondary rounded-full place-self-center px-6'
         >{recipeDetails.fat} </div>
       </div>
       {ingredientsField.fields.map((ingredient, ingredientIndex) => (
