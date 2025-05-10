@@ -35,6 +35,18 @@ import { MealBottomSheet } from './meal-bottom-sheet'
 
 export const dynamic = 'force-dynamic'
 
+
+const mealColourMap = {
+  0 : 'text-blue-700/70',
+  1 : 'text-green-700/70',
+  2 : 'text-yellow-700/70',
+  3 : 'text-red-700/70',
+  4 : 'text-purple-700/70',
+  5 : 'text-pink-700/70',
+  6 : 'text-cyan-700/70',
+  7 : 'text-sky-700/70',
+}
+
 const Meal = ({
   date,
   allPlans,
@@ -167,16 +179,20 @@ const Meal = ({
                   </div>
                   <div className='flex gap-2 flex-col items-center py-2 w-full'>
                     {plan.userRecipes?.map((recipe) => {
+                      const meal = plan.userMeals.find((meal) => meal.mealIndex === recipe.mealIndex)?.mealTitle ?? ''
                       const { cals, protein, carbs, fat } =
                         getRecipeDetailsForDailyLog(plan, recipe.id)
+
+                      // @ts-ignore
+                      const mealColour = mealColourMap[recipe.mealIndex ?? 0] ?? 'text-muted-foreground'
                       return (
                         <ToggleGroupItem
                           key={recipe?.id}
                           value={recipe?.id.toString() ?? ''}
                           className={cn(
-                            'text-sm truncate max-w-[600px]  py-2 px-4 data-[state=on]:bg-blue-900/70 relative',
+                            'text-sm truncate max-w-[600px]  py-3 px-4 data-[state=on]:bg-blue-900/70 relative',
                             'data-[state=on]:text-slate-100 data-[state=on]:shadow-none',
-                            'h-full shadow-md flex flex-col w-[calc(100vw-2rem)]',
+                            'h-full shadow-sm flex flex-col w-[calc(100vw-2rem)] gap-0',
                             'hover:text-primary hover:bg-background',
                           )}
                         >
@@ -186,10 +202,17 @@ const Meal = ({
                                 ? recipe?.name?.slice(0, 43) + '...'
                                 : recipe?.name}
                             </div>
-                            <div className='absolute -top-1 right-1 text-[0.6rem] data-[state=off]:text-muted-foreground font-light'>{`${cals} cals`}</div>
+                            <div className={cn('absolute -top-1 right-1 text-[0.6rem] font-light',
+                              selectValue === recipe?.id.toString() ? 'text-white/60' : 'text-muted-foreground',
+                            )}>{`${cals} cals`}</div>
+                            <div className={cn('absolute -top-1 left-1 text-[0.6rem] font-medium',
+                              selectValue === recipe?.id.toString() ? 'text-white/60' : mealColour,
+                            )}>{`${meal}`}</div>
                           </div>
 
-                          <div className='text-xs data-[state=off]:text-muted-foreground flex gap-4 font-medium'>
+                          <div className={cn('text-xs flex gap-4 font-medium',
+                            selectValue === recipe?.id.toString() ? 'text-white/60' : 'text-muted-foreground',
+                          )}>
                             <div>{`C:${carbs}g`}</div>
                             <div>{`P:${protein}g`}</div>
                             <div>{`F:${fat}g`}</div>
@@ -219,10 +242,6 @@ const MealList = ({
   today: Date
 }) => {
   const [currentMeal, setCurrentMeal] = useState(() => _currentMeal)
-  const isAll =
-    currentUser.id === 'f3feb152-06de-4a1e-8c9f-19d5c96c6788' ||
-    currentUser.id === 'f19482e2-a009-4dd4-801d-4aff3911924a' ||
-    currentUser.id === '1a7bbaf3-2aca-4541-b249-722eb817b1f3'
   const [isAllMeals, setIsAllMeals] = useState<boolean>(() => {
     return (
       currentUser.id === 'f3feb152-06de-4a1e-8c9f-19d5c96c6788' ||
@@ -335,7 +354,6 @@ const MealList = ({
                 <span className='text-xs text-primary/50 ml-[1px]'>fat</span>
               </div>
             </div>
-            {isAll ? (
               <div className='flex items-center gap-2 absolute top-1 right-2'>
                 <Label className='text-xs mt-1'>All Meals</Label>
                 <Checkbox
@@ -345,7 +363,6 @@ const MealList = ({
                   }}
                 />
               </div>
-            ) : null}
           </div>
           <ScrollArea className='pt-4 px-2 h-[calc(90vh-130px)]'>
             <div className='flex flex-col gap-2 '>
@@ -391,8 +408,12 @@ const MealLog = ({
     (dailyLog) => dailyLog.date === today.toDateString(),
   )
 
-  const lastMeal = todaysLog?.dailyMeals?.map((meal) => meal.mealIndex).reduce((acc, curr) => Math.max(acc ?? 0, curr ?? 0), 0)
-  const currentMeal = lastMeal ? lastMeal + 1 : 0
+  const lastMeal = todaysLog?.dailyMeals?.map((meal) => meal.mealIndex).reduce((acc, curr) => Math.max(acc ?? 0, curr ?? 0), -1) ?? -1
+  const currentMeal = lastMeal + 1
+
+  console.log(todaysLog)
+  console.log(lastMeal)
+  console.log(currentMeal)
 
   return (
     <div className='flex flex-col gap-0 w-full items-center'>
