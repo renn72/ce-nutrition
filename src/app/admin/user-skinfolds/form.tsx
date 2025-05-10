@@ -216,42 +216,61 @@ const SkinFoldsForm = ({
   const knee = Number(form.watch('knee'))
   const shoulder = Number(form.watch('shoulder'))
 
-  const constOne = 0.291
-  const constTwo = 0.3427
-  const constThree = 0.4078
-  const constFour = 0.4245
-  const constFive = 0.3785
-  const constSix = 0.2887
-  const constSeven = 0.3699
-  const constEight = 0.3622
-  const constNine = 0.4222
-  const constTen = 0.3449
-  const constEleven = 0.4016
-  const constTwelve = 0.3789
-  const constThirteen = 0.3431
-  const constFourteen = 0.3573
-  const constFifteen = 0.2986
-  const constSixteen = 0.039
+  // const constOne = 0.291
+  // const constTwo = 0.3427
+  // const constThree = 0.4078
+  // const constFour = 0.4245
+  // const constFive = 0.3785
+  // const constSix = 0.2887
+  // const constSeven = 0.3699
+  // const constEight = 0.3622
+  // const constNine = 0.4222
+  // const constTen = 0.3449
+  // const constEleven = 0.4016
+  // const constTwelve = 0.3789
+  // const constThirteen = 0.3431
+  // const constFourteen = 0.3573
+  // const constFifteen = 0.2986
+  // const constSixteen = 0.039
+  //
+  // const bodyFat =
+  //   0.3 +
+  //   constOne * chin +
+  //   constTwo * cheek +
+  //   constThree * lowerAbdominal +
+  //   constFour * pectoral +
+  //   constFive * biceps +
+  //   constSix * triceps +
+  //   constSeven * subscapular +
+  //   constEight * midAxillary +
+  //   constNine * suprailiac +
+  //   constTen * umbilical +
+  //   constEleven * lowerBack +
+  //   constTwelve * quadriceps +
+  //   constThirteen * hamstrings +
+  //   constFourteen * medialCalf +
+  //   constFifteen * knee +
+  //   constSixteen * shoulder
 
-  const bodyFat =
-    0.3 +
-    constOne * chin +
-    constTwo * cheek +
-    constThree * lowerAbdominal +
-    constFour * pectoral +
-    constFive * biceps +
-    constSix * triceps +
-    constSeven * subscapular +
-    constEight * midAxillary +
-    constNine * suprailiac +
-    constTen * umbilical +
-    constEleven * lowerBack +
-    constTwelve * quadriceps +
-    constThirteen * hamstrings +
-    constFourteen * medialCalf +
-    constFifteen * knee +
-    constSixteen * shoulder
+  const skinfoldSum =
+    chin +
+    cheek +
+    lowerAbdominal +
+    pectoral +
+    biceps +
+    triceps +
+    subscapular +
+    midAxillary +
+    suprailiac +
+    umbilical +
+    lowerBack +
+    quadriceps +
+    hamstrings +
+    medialCalf +
+    knee +
+    shoulder
 
+  const bodyFat = -7.2 + 3.935 * Math.log(skinfoldSum)
   const leanMass = bodyWeight * (1 - bodyFat / 100)
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
@@ -666,6 +685,7 @@ const SkinfoldFormContent = ({
       <DialogHeader>
         <DialogTitle>Create Skinfold</DialogTitle>
       </DialogHeader>
+      <DialogDescription>Enter your skinfold data</DialogDescription>
 
       <Popover>
         <PopoverTrigger asChild>
@@ -735,4 +755,4 @@ const SkinfoldForm = ({
   )
 }
 
-export  { SkinfoldForm, SkinfoldFormContent }
+export { SkinfoldForm, SkinfoldFormContent }
