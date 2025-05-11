@@ -3,9 +3,6 @@
 import { api } from '@/trpc/react'
 
 import { useEffect, useState } from 'react'
-import { useAtom } from 'jotai'
-
-import { isAllMealsAtom, selectedPlansAtom } from './atoms'
 
 import {
   cn,
@@ -20,6 +17,7 @@ import {
 } from '@/types'
 import NumberFlow from '@number-flow/react'
 import { Sheet } from '@silk-hq/components'
+import { useAtom } from 'jotai'
 import {
   ArrowBigLeftDash,
   ArrowBigRightDash,
@@ -34,20 +32,20 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 import { Label } from '../ui/label'
+import { isAllMealsAtom, selectedPlansAtom } from './atoms'
 import { MealBottomSheet } from './meal-bottom-sheet'
 
 export const dynamic = 'force-dynamic'
 
-
 const mealColourMap = {
-  0 : 'text-blue-700/70',
-  1 : 'text-green-700/70',
-  2 : 'text-yellow-700/70',
-  3 : 'text-red-700/70',
-  4 : 'text-purple-700/70',
-  5 : 'text-pink-700/70',
-  6 : 'text-cyan-700/70',
-  7 : 'text-sky-700/70',
+  0: 'text-blue-700/70',
+  1: 'text-green-700/70',
+  2: 'text-yellow-700/70',
+  3: 'text-red-700/70',
+  4: 'text-purple-700/70',
+  5: 'text-pink-700/70',
+  6: 'text-cyan-700/70',
+  7: 'text-sky-700/70',
 }
 
 const Meal = ({
@@ -67,24 +65,20 @@ const Meal = ({
   const [recipeName, setRecipeName] = useState<string>('')
 
   useEffect(() => {
-    setRecipeName(
-      () => {
-        const meal = todaysLog?.dailyMeals.find(
-          (meal) => meal.mealIndex === index,
-        )
-        if (!meal) return ''
-        return meal.recipe?.[0]?.name ?? ''
-      }
-    )
-    setSelectValue(
-      () => {
-        const meal = todaysLog?.dailyMeals.find(
-          (meal) => meal.mealIndex === index,
-        )
-        if (!meal) return ''
-        return meal.recipe?.[0]?.parentId?.toString() ?? ''
-      }
-    )
+    setRecipeName(() => {
+      const meal = todaysLog?.dailyMeals.find(
+        (meal) => meal.mealIndex === index,
+      )
+      if (!meal) return ''
+      return meal.recipe?.[0]?.name ?? ''
+    })
+    setSelectValue(() => {
+      const meal = todaysLog?.dailyMeals.find(
+        (meal) => meal.mealIndex === index,
+      )
+      if (!meal) return ''
+      return meal.recipe?.[0]?.parentId?.toString() ?? ''
+    })
   }, [index])
 
   const [selectedPlans, setSelectedPlans] = useAtom(selectedPlansAtom)
@@ -103,8 +97,21 @@ const Meal = ({
       toast.success(`${recipeName} Added`)
     },
   })
+  const { mutate: deleteMeal } = api.dailyLog.deleteMeal.useMutation({
+    onSuccess: () => {
+      ctx.dailyLog.invalidate()
+    },
+  })
 
   const recipes = allPlans.map((plan) => plan?.userRecipes).flat()
+
+  const isSelectedInRecipes = recipes.find(
+    (recipe) => recipe?.id == Number(selectValue),
+  )
+    ? true
+    : false
+
+
 
   return (
     <div className='flex gap-0 flex flex-col items-start w-full'>
@@ -144,6 +151,18 @@ const Meal = ({
         className='w-full justify-start'
         value={selectValue}
         onValueChange={(value) => {
+          console.log({value, selectValue})
+          if (value === '' && selectValue !== '') {
+            if (!todaysLog) return
+            deleteMeal({
+              mealIndex: Number(index),
+              logId: todaysLog.id,
+            })
+            setSelectValue('')
+            setRecipeName('')
+            return
+          }
+
           setSelectValue(value)
           const recipe = recipes.find((recipe) => recipe?.id == Number(value))
           setRecipeName(recipe?.name ?? '')
@@ -163,6 +182,32 @@ const Meal = ({
         }}
       >
         <div className='flex flex-col ml-2 gap-2'>
+          {!isSelectedInRecipes && selectValue !== '' ? (
+            <ToggleGroupItem
+              value={selectValue}
+              className={cn(
+                'text-sm truncate max-w-[600px]  py-3 px-4 data-[state=on]:bg-blue-900/70 relative',
+                'data-[state=on]:text-slate-100 data-[state=on]:shadow-none',
+                'h-full shadow-sm flex flex-col w-[calc(100vw-2rem)] gap-0',
+                'hover:text-primary hover:bg-background',
+              )}
+            >
+              <div className=' flex'>
+                <div className='truncate font-semibold'>
+                  {recipeName?.length > 41
+                    ? recipeName?.slice(0, 43) + '...'
+                    : recipeName}
+                </div>
+              </div>
+
+              <div
+                className={cn(
+                  'text-xs flex gap-4 font-medium h-4',
+                )}
+              >
+              </div>
+            </ToggleGroupItem>
+          ) : null}
           {allPlans
             ?.filter((plan) =>
               selectedPlans.includes(plan?.id.toString() ?? 'aabb'),
@@ -183,12 +228,17 @@ const Meal = ({
                   </div>
                   <div className='flex gap-2 flex-col items-center py-2 w-full'>
                     {plan.userRecipes?.map((recipe) => {
-                      const meal = plan.userMeals.find((meal) => meal.mealIndex === recipe.mealIndex)?.mealTitle ?? ''
+                      const meal =
+                        plan.userMeals.find(
+                          (meal) => meal.mealIndex === recipe.mealIndex,
+                        )?.mealTitle ?? ''
                       const { cals, protein, carbs, fat } =
                         getRecipeDetailsForDailyLog(plan, recipe.id)
 
                       // @ts-ignore
-                      const mealColour = mealColourMap[recipe.mealIndex ?? 0] ?? 'text-muted-foreground'
+                      const mealColour =
+                        mealColourMap[recipe.mealIndex ?? 0] ??
+                        'text-muted-foreground'
                       return (
                         <ToggleGroupItem
                           key={recipe?.id}
@@ -206,17 +256,32 @@ const Meal = ({
                                 ? recipe?.name?.slice(0, 43) + '...'
                                 : recipe?.name}
                             </div>
-                            <div className={cn('absolute -top-1 right-1 text-[0.6rem] font-light',
-                              selectValue === recipe?.id.toString() ? 'text-white/60' : 'text-muted-foreground',
-                            )}>{`${cals} cals`}</div>
-                            <div className={cn('absolute -top-1 left-1 text-[0.6rem] font-medium',
-                              selectValue === recipe?.id.toString() ? 'text-white/60' : mealColour,
-                            )}>{`${meal}`}</div>
+                            <div
+                              className={cn(
+                                'absolute -top-1 right-1 text-[0.6rem] font-light',
+                                selectValue === recipe?.id.toString()
+                                  ? 'text-white/60'
+                                  : 'text-muted-foreground',
+                              )}
+                            >{`${cals} cals`}</div>
+                            <div
+                              className={cn(
+                                'absolute -top-1 left-1 text-[0.6rem] font-medium',
+                                selectValue === recipe?.id.toString()
+                                  ? 'text-white/60'
+                                  : mealColour,
+                              )}
+                            >{`${meal}`}</div>
                           </div>
 
-                          <div className={cn('text-xs flex gap-4 font-medium',
-                            selectValue === recipe?.id.toString() ? 'text-white/60' : 'text-muted-foreground',
-                          )}>
+                          <div
+                            className={cn(
+                              'text-xs flex gap-4 font-medium',
+                              selectValue === recipe?.id.toString()
+                                ? 'text-white/60'
+                                : 'text-muted-foreground',
+                            )}
+                          >
                             <div>{`C:${carbs}g`}</div>
                             <div>{`P:${protein}g`}</div>
                             <div>{`F:${fat}g`}</div>
@@ -352,15 +417,15 @@ const MealList = ({
                 <span className='text-xs text-primary/50 ml-[1px]'>fat</span>
               </div>
             </div>
-              <div className='flex items-center gap-2 absolute top-1 right-2'>
-                <Label className='text-xs mt-1'>All Meals</Label>
-                <Checkbox
-                  checked={isAllMeals}
-                  onCheckedChange={(checked) => {
-                    setIsAllMeals(checked === true)
-                  }}
-                />
-              </div>
+            <div className='flex items-center gap-2 absolute top-1 right-2'>
+              <Label className='text-xs mt-1'>All Meals</Label>
+              <Checkbox
+                checked={isAllMeals}
+                onCheckedChange={(checked) => {
+                  setIsAllMeals(checked === true)
+                }}
+              />
+            </div>
           </div>
           <ScrollArea className='pt-4 px-2 h-[calc(90vh-130px)]'>
             <div className='flex flex-col gap-2 '>
@@ -406,7 +471,10 @@ const MealLog = ({
     (dailyLog) => dailyLog.date === today.toDateString(),
   )
 
-  const lastMeal = todaysLog?.dailyMeals?.map((meal) => meal.mealIndex).reduce((acc, curr) => Math.max(acc ?? 0, curr ?? 0), -1) ?? -1
+  const lastMeal =
+    todaysLog?.dailyMeals
+      ?.map((meal) => meal.mealIndex)
+      .reduce((acc, curr) => Math.max(acc ?? 0, curr ?? 0), -1) ?? -1
   const currentMeal = lastMeal + 1
 
   return (
