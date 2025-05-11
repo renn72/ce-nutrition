@@ -73,8 +73,10 @@ const Meal = ({
     form.resetField(`meals.${index}`)
   }
 
+  const formMeal = form.watch(`meals.${index}`)
+
   const balanceCals = () => {
-    for (const [recipeIndex, recipe] of meal.recipes.entries()) {
+    for (const [recipeIndex, recipe] of formMeal.recipes.entries()) {
       if (recipe.ingredients && recipe.ingredients?.length > 0) {
         const cals = recipe.ingredients.reduce((acc, curr) => {
           const c =
@@ -99,7 +101,6 @@ const Meal = ({
       }
     }
   }
-  const formMeal = form.watch(`meals.${index}`)
   const balanceCalsProtien = () => {
     if (Number(formProtien) == 0) return
 
