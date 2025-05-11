@@ -225,7 +225,7 @@ const MobileHeader = ({ isDesktop = false }: { isDesktop?: boolean }) => {
             className='bg-accentt cursor-pointer rounded-full p-1'
           />
         </Link>
-        <Label className='text-xs text-muted-foreground'>Program</Label>
+        <Label className='text-xs text-muted-foreground'>Plans</Label>
       </div>
       <div className='flex items-center justify-center rounded-full border-2 border-primary/50 m-1'>
         <Link

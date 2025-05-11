@@ -109,7 +109,7 @@ const Mobile = ({
   return (
     <div
       className={cn(
-        'flex flex-col gap-2 w-full min-h-screen my-16 items-center ',
+        'flex flex-col gap-2 w-full mt-16 items-center ',
       )}
     >
       <MobileHeader isDesktop={false} />
@@ -267,7 +267,6 @@ const Mobile = ({
         <DailyLogCarousel
           currentUser={currentUser}
           dailyLogs={dailyLogs} />
-        <PlanPreview user={currentUser} />
       </div>
       <MobileFooter />
     </div>
