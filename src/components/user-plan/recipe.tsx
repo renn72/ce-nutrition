@@ -164,7 +164,10 @@ const Recipe = ({
   const recipeDetails = getRecipeDetailsForUserPlan(recipe, ingredientsSize)
 
   return (
-    <div className='flex flex-col gap-1 border rounded-md p-2'>
+    <div className='flex flex-col gap-1 border rounded-md p-2 relative'>
+      <div className='absolute top-1 left-2 text-xs text-muted-foreground'>
+        {recipeIndex + 1}
+      </div>
       <div className='grid md:grid-cols-10 grid-cols-8 md:gap-1 capitalize place-items-center'>
         <div className='md:col-span-4 col-span-2 ' />
         <div className='col-span-2 place-self-center'>size</div>

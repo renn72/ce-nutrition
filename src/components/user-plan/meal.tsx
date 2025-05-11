@@ -73,17 +73,13 @@ const Meal = ({
     form.resetField(`meals.${index}`)
   }
 
-  console.log('meal', meal)
-
   const balanceCals = () => {
-
     for (const [recipeIndex, recipe] of meal.recipes.entries()) {
-      if (
-        recipe.ingredients &&
-        recipe.ingredients?.length > 0
-      ) {
+      if (recipe.ingredients && recipe.ingredients?.length > 0) {
         const cals = recipe.ingredients.reduce((acc, curr) => {
-          const c = (Number(curr.serveSize) / Number(curr.ingredient.serveSize)) * Number(curr.ingredient.caloriesWOFibre)
+          const c =
+            (Number(curr.serveSize) / Number(curr.ingredient.serveSize)) *
+            Number(curr.ingredient.caloriesWOFibre)
           return acc + c
         }, 0) as number
         console.log('cals', cals)
@@ -92,7 +88,8 @@ const Meal = ({
           ingredient,
         ] of recipe.ingredients.entries()) {
           const serve = (
-            (Number(ingredient.serveSize) * Number(calories)) / cals
+            (Number(ingredient.serveSize) * Number(calories)) /
+            cals
           ).toFixed(2)
           form.setValue(
             `meals.${index}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.serveSize`,
@@ -102,10 +99,14 @@ const Meal = ({
       }
     }
   }
+  const formMeal = form.watch(`meals.${index}`)
   const balanceCalsProtien = () => {
     if (Number(formProtien) == 0) return
 
-    for (const [recipeIndex, recipe] of meal.recipes.entries()) {
+    console.log('meal', meal)
+    console.log('formMeal', formMeal)
+    for (const [recipeIndex, recipe] of formMeal.recipes.entries()) {
+      console.log('recipe', recipeIndex, recipe)
       const calsPerGram = recipe.ingredients.map(
         (ingredient) =>
           Number(ingredient.ingredient.caloriesWOFibre) /
@@ -121,8 +122,12 @@ const Meal = ({
           Number(ingredient.ingredient.availableCarbohydrateWithSugarAlcohols) /
           Number(ingredient.ingredient.serveSize),
       )
-      if (!calsPerGram || !proteinPerGram || !carbsPerGram) return
+      if (!calsPerGram || !proteinPerGram || !carbsPerGram) {
+        console.log('calsPerGram, proteinPerGram, carbsPerGram is null')
+        continue
+      }
       if (calsPerGram.length == 2 && proteinPerGram.length == 2) {
+        console.log('length is 2')
         try {
           const serve = balanceRecipe(
             proteinPerGram,
@@ -130,8 +135,14 @@ const Meal = ({
             Number(formProtien),
             Number(formCals),
           )
-          if (!serve) return
-          if (serve.length != 2) return
+          if (!serve) {
+            console.log('serve is null')
+            continue
+          }
+          if (serve.length != 2) {
+            console.log('serve length is not 2')
+            continue
+          }
           const value1 = Number(serve[0]).toFixed(2)
           const value2 = Number(serve[1]).toFixed(2)
           form.setValue(
@@ -148,8 +159,8 @@ const Meal = ({
           console.log('error', error)
         }
       } else {
-        if (calsPerGram.length == 1) return
-        if (proteinPerGram.length == 1) return
+        if (calsPerGram.length == 1) continue
+        if (proteinPerGram.length == 1) continue
 
         const indexCals = carbsPerGram.findIndex(
           (cals) => cals == Math.max(...carbsPerGram),
@@ -584,32 +595,31 @@ const Meal = ({
                         note: '',
                         description: r?.description || '',
                         index: recipeField.fields.length,
-                        ingredients:
-                          r?.recipeToIngredient.map(
-                            (ingredient, _ingredientIndex) => {
-                              const serve = (
-                                (Number(ingredient.serveSize) *
-                                  Number(formCals)) /
-                                Number(r?.calories)
-                              ).toFixed(2)
-                              return {
-                                ingredientId:
-                                  ingredient.ingredient?.id.toString(),
-                                alternateId:
-                                  ingredient.alternateId?.toString() || null,
-                                name: ingredient.ingredient?.name || '',
-                                serveSize: serve,
-                                serveUnit: ingredient.serveUnit,
-                                note: ingredient.note || '',
-                                ingredient: {
-                                  ...ingredient.ingredient,
-                                },
-                                alternateIngredient: {
-                                  ...ingredient.alternateIngredient,
-                                },
-                              }
-                            },
-                          ),
+                        ingredients: r?.recipeToIngredient.map(
+                          (ingredient, _ingredientIndex) => {
+                            const serve = (
+                              (Number(ingredient.serveSize) *
+                                Number(formCals)) /
+                              Number(r?.calories)
+                            ).toFixed(2)
+                            return {
+                              ingredientId:
+                                ingredient.ingredient?.id.toString(),
+                              alternateId:
+                                ingredient.alternateId?.toString() || null,
+                              name: ingredient.ingredient?.name || '',
+                              serveSize: serve,
+                              serveUnit: ingredient.serveUnit,
+                              note: ingredient.note || '',
+                              ingredient: {
+                                ...ingredient.ingredient,
+                              },
+                              alternateIngredient: {
+                                ...ingredient.alternateIngredient,
+                              },
+                            }
+                          },
+                        ),
                       })
 
                       setIsOpen(false)
