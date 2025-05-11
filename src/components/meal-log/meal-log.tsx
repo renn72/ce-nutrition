@@ -3,6 +3,9 @@
 import { api } from '@/trpc/react'
 
 import { useEffect, useState } from 'react'
+import { useAtom } from 'jotai'
+
+import { isAllMealsAtom, selectedPlansAtom } from './atoms'
 
 import {
   cn,
@@ -84,11 +87,12 @@ const Meal = ({
     )
   }, [index])
 
-  const [selectedPlans, setSelectedPlans] = useState<string[]>(() => {
+  const [selectedPlans, setSelectedPlans] = useAtom(selectedPlansAtom)
+
+  useEffect(() => {
     if (allPlans.length === 1)
-      return [...allPlans.map((plan) => plan?.id.toString() ?? '')]
-    return ['']
-  })
+      setSelectedPlans([allPlans[0]?.id.toString() ?? ''])
+  }, [])
 
   const ctx = api.useUtils()
   const { mutate: addMeal } = api.dailyLog.addMeal.useMutation({
@@ -242,13 +246,7 @@ const MealList = ({
   today: Date
 }) => {
   const [currentMeal, setCurrentMeal] = useState(() => _currentMeal)
-  const [isAllMeals, setIsAllMeals] = useState<boolean>(() => {
-    return (
-      currentUser.id === 'f3feb152-06de-4a1e-8c9f-19d5c96c6788' ||
-      currentUser.id === 'f19482e2-a009-4dd4-801d-4aff3911924a' ||
-      currentUser.id === '1a7bbaf3-2aca-4541-b249-722eb817b1f3'
-    )
-  })
+  const [isAllMeals, setIsAllMeals] = useAtom(isAllMealsAtom)
 
   const activePlans = currentUser?.userPlans.filter((plan) => plan.isActive)
   const refinedPlans = activePlans.map((plan) => {
@@ -410,10 +408,6 @@ const MealLog = ({
 
   const lastMeal = todaysLog?.dailyMeals?.map((meal) => meal.mealIndex).reduce((acc, curr) => Math.max(acc ?? 0, curr ?? 0), -1) ?? -1
   const currentMeal = lastMeal + 1
-
-  console.log(todaysLog)
-  console.log(lastMeal)
-  console.log(currentMeal)
 
   return (
     <div className='flex flex-col gap-0 w-full items-center'>
