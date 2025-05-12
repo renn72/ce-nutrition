@@ -83,6 +83,7 @@ export const userRecipe = createTable('user_recipe', {
   note: text('note'),
   isLog: int('is_log', { mode: 'boolean' }),
   dailyLogId: int('daily_log_id').references(() => dailyLog.id),
+  isUserCreated: int('is_user_created', { mode: 'boolean' }).default(false),
 })
 
 export const userIngredient = createTable('user_ingredient', {
@@ -110,6 +111,7 @@ export const userIngredient = createTable('user_ingredient', {
   serveUnit: text('serve_unit'),
   note: text('note'),
   dailyLogId: int('daily_log_id').references(() => dailyLog.id),
+  isUserCreated: int('is_user_created', { mode: 'boolean' }).default(false),
 })
 
 export const userPlanRelations = relations(userPlan, ({ one, many }) => ({

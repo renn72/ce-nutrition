@@ -49,6 +49,7 @@ export const recipeToIngredient = createTable('recipe_to_ingredient', {
   serveSize: text('serve').notNull(),
   serveUnit: text('serve_unit').notNull(),
   note: text('note'),
+  isUserCreated: int('is_user_created', { mode: 'boolean' }).default(false),
 })
 
 export const recipeToIngredientRelations = relations(
