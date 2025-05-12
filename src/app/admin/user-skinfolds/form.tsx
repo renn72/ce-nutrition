@@ -216,41 +216,7 @@ const SkinFoldsForm = ({
   const knee = Number(form.watch('knee'))
   const shoulder = Number(form.watch('shoulder'))
 
-  // const constOne = 0.291
-  // const constTwo = 0.3427
-  // const constThree = 0.4078
-  // const constFour = 0.4245
-  // const constFive = 0.3785
-  // const constSix = 0.2887
-  // const constSeven = 0.3699
-  // const constEight = 0.3622
-  // const constNine = 0.4222
-  // const constTen = 0.3449
-  // const constEleven = 0.4016
-  // const constTwelve = 0.3789
-  // const constThirteen = 0.3431
-  // const constFourteen = 0.3573
-  // const constFifteen = 0.2986
-  // const constSixteen = 0.039
-  //
-  // const bodyFat =
-  //   0.3 +
-  //   constOne * chin +
-  //   constTwo * cheek +
-  //   constThree * lowerAbdominal +
-  //   constFour * pectoral +
-  //   constFive * biceps +
-  //   constSix * triceps +
-  //   constSeven * subscapular +
-  //   constEight * midAxillary +
-  //   constNine * suprailiac +
-  //   constTen * umbilical +
-  //   constEleven * lowerBack +
-  //   constTwelve * quadriceps +
-  //   constThirteen * hamstrings +
-  //   constFourteen * medialCalf +
-  //   constFifteen * knee +
-  //   constSixteen * shoulder
+  console.log({ chin, cheek, lowerAbdominal, pectoral, biceps, triceps, subscapular, midAxillary, suprailiac, umbilical, lowerBack, quadriceps, hamstrings, medialCalf, knee, shoulder, })
 
   const skinfoldSum =
     chin +
@@ -270,8 +236,48 @@ const SkinFoldsForm = ({
     knee +
     shoulder
 
-  const bodyFat = -7.2 + 3.935 * Math.log(skinfoldSum)
-  const leanMass = bodyWeight * (1 - bodyFat / 100)
+  const constOne = 0.291
+  const constTwo = 0.3427
+  const constThree = 0.4078
+  const constFour = 0.4245
+  const constFive = 0.3785
+  const constSix = 0.2887
+  const constSeven = 0.3699
+  const constEight = 0.3622
+  const constNine = 0.4222
+  const constTen = 0.3449
+  const constEleven = 0.4016
+  const constTwelve = 0.3789
+  const constThirteen = 0.4431
+  const constFourteen = 0.3573
+  const constFifteen = 0.2986
+  const constSixteen = 0.139
+
+  const _bodyFat =
+    constOne * chin +
+    constTwo * cheek +
+    constThree * lowerAbdominal +
+    constFour * pectoral +
+    constFive * biceps +
+    constSix * triceps +
+    constSeven * subscapular +
+    constEight * midAxillary +
+    constNine * suprailiac +
+    constTen * umbilical +
+    constEleven * lowerBack +
+    constTwelve * quadriceps +
+    constThirteen * hamstrings +
+    constFourteen * medialCalf +
+    constFifteen * knee +
+    constSixteen * shoulder
+
+  console.log({ _bodyFat })
+
+  let bodyFat = -3 + 0.935 * Math.pow(_bodyFat, 0.69)
+  let leanMass = bodyWeight * (1 - bodyFat / 100)
+
+  let bodyFatOutput = bodyFat < 0 ? '...' : `${bodyFat.toFixed(2)}%`
+  let leanMassOutput = bodyFat < 0 ? '...' : `${leanMass.toFixed(2)}kg`
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     console.log('data', data, bodyWeight, leanMass, bodyFat)
@@ -316,11 +322,11 @@ const SkinFoldsForm = ({
             />
             <div className='flex gap-2 items-center justify-around flex-col bg-secondary px-4 py-2 rounded-md shadow-sm'>
               <div className='text-muted-foreground text-center'>Body Fat</div>
-              <div>{bodyFat === 0.3 ? 0 : bodyFat.toFixed(2)}%</div>
+              <div>{bodyFatOutput}</div>
             </div>
             <div className='flex gap-2 items-center justify-around flex-col bg-secondary px-4 py-2 rounded-md shadow-sm'>
               <div className='text-muted-foreground text-center'>Lean Mass</div>
-              <div>{leanMass.toFixed(2)}kg</div>
+              <div>{leanMassOutput}</div>
             </div>
           </div>
 
