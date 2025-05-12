@@ -117,30 +117,6 @@ const FormRecipeIngredient = ({
             return 0
           })
 
-  const filteredIngredientsAlt =
-    queryAlt === ''
-      ? allIngredients.sort((a, b) => {
-          if (a?.favouriteAt && b?.favouriteAt) {
-            return Number(a?.favouriteAt) - Number(b?.favouriteAt)
-          }
-          if (a?.favouriteAt) return -1
-          if (b?.favouriteAt) return 1
-          return 0
-        })
-      : allIngredients
-          .filter((i) => {
-            const name = i?.name?.toLowerCase().replace(',', '') ?? ''
-            return name.includes(query.toLowerCase())
-          })
-          .sort((a, b) => {
-            if (a?.favouriteAt && b?.favouriteAt) {
-              return Number(a?.favouriteAt) - Number(b?.favouriteAt)
-            }
-            if (a?.favouriteAt) return -1
-            if (b?.favouriteAt) return 1
-            return 0
-          })
-
   const serveSize = form.watch(`ingredients.${index}.serveSize`)
   return (
     <div
@@ -192,6 +168,7 @@ const FormRecipeIngredient = ({
                     anchor='bottom'
                     transition
                     className={cn(
+                      'z-[1001]',
                       'w-[calc(var(--input-width)+200px)] max-h-[300px] rounded-xl border border-border bg-secondary p-1 [--anchor-gap:var(--spacing-1)] empty:invisible',
                       'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0',
                     )}
@@ -223,82 +200,6 @@ const FormRecipeIngredient = ({
                   onClick={() => {
                     field.onChange('')
                     setSelected(null)
-                  }}
-                />
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </GridWrapper>
-      <GridWrapper className='col-span-4 lg:col-span-3'>
-        <FormField
-          control={form.control}
-          name={`ingredients.${index}.alternateId`}
-          render={({ field }) => (
-            <FormItem className='grid grid-cols-4 lg:flex lg:flex-col w-full items-center gap-2 lg:gap-0'>
-              <FormLabel className='block lg:hidden mt-2 text-muted-foreground'>
-                Alternate
-              </FormLabel>
-              <div className='flex gap-2 items-center w-full col-span-3'>
-                <Combobox
-                  value={selectedAlt}
-                  onChange={(value) => {
-                    field.onChange(value?.id.toString())
-                    setSelectedAlt(value)
-                  }}
-                  onClose={() => setQueryAlt('')}
-                  virtual={{ options: filteredIngredientsAlt }}
-                  immediate
-                >
-                  <div className='relative w-full'>
-                    <ComboboxInput
-                      className={cn(
-                        'w-full rounded-lg text-sm font-semibold border bg-background py-1.5 pr-6 pl-3 cursor-pointer',
-                        'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25',
-                      )}
-                      // @ts-ignore
-                      displayValue={(i) => i?.name.slice(0, 22)}
-                      onChange={(event) => setQueryAlt(event.target.value)}
-                    />
-                    <ChevronDownIcon className='absolute top-1/2 -translate-y-1/2 right-2 text-secondary-foreground group-data-[hover]:text-black' />
-                  </div>
-
-                  <ComboboxOptions
-                    anchor='bottom'
-                    transition
-                    className={cn(
-                      'w-[calc(var(--input-width)+200px)]  max-h-[300px] rounded-xl border border-border bg-secondary p-1 [--anchor-gap:var(--spacing-1)] empty:invisible',
-                      'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0',
-                    )}
-                  >
-                    {({ option: i }) => (
-                      <ComboboxOption
-                        key={i.id}
-                        value={i}
-                        className='group relative w-full flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none hover:bg-card hover:font-medium'
-                      >
-                        <CheckIcon className='invisible size-4 group-data-[selected]:visible' />
-                        <div className='text-sm text-secondary-foreground'>
-                          {i.name.slice(0, 60)}
-                        </div>
-                        {i.favouriteAt && (
-                          <Star
-                            size={12}
-                            fill='#FFB500'
-                            className='absolute top-1/2 -translate-y-1/2 right-2 text-[#FFB500]'
-                          />
-                        )}
-                      </ComboboxOption>
-                    )}
-                  </ComboboxOptions>
-                </Combobox>
-                <XCircle
-                  size={18}
-                  className='text-secondary-foreground'
-                  onClick={() => {
-                    field.onChange('')
-                    setSelectedAlt(null)
                   }}
                 />
               </div>

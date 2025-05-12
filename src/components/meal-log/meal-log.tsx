@@ -34,6 +34,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Label } from '../ui/label'
 import { isAllMealsAtom, selectedPlansAtom } from './atoms'
 import { MealBottomSheet } from './meal-bottom-sheet'
+import { MealLogCreate } from './meal-log-create'
 
 export const dynamic = 'force-dynamic'
 
@@ -236,8 +237,7 @@ const Meal = ({
                         getRecipeDetailsForDailyLog(plan, recipe.id)
 
                       // @ts-ignore
-                      const mealColour =
-                        mealColourMap[recipe.mealIndex ?? 0] ??
+                      const mealColour = mealColourMap[recipe.mealIndex ?? 0] ??
                         'text-muted-foreground'
                       return (
                         <ToggleGroupItem
@@ -428,7 +428,7 @@ const MealList = ({
             </div>
           </div>
           <ScrollArea className='pt-4 px-2 h-[calc(90vh-130px)]'>
-            <div className='flex flex-col gap-2 '>
+            <div className='flex flex-col gap-2 mb-2 '>
               <Meal
                 allPlans={refinedPlans}
                 date={today}
