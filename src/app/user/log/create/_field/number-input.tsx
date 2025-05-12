@@ -41,7 +41,7 @@ const NumberInput = ({
             setValue(scale)
             return
           }
-          setValue(value + scale)
+          setValue(Number((value + scale).toFixed(fixed)))
         }}
         className='absolute right-0 top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start border-l active:bg-primary/60 rounded-r-lg'
       >
@@ -52,7 +52,7 @@ const NumberInput = ({
       <div
         onClick={() => {
           if (!value) return
-          setValue(value - scale)
+          setValue(Number((value - scale).toFixed(fixed)))
         }}
         className='absolute left-0 top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start border-r active:bg-primary/30 rounded-l-lg'
       >

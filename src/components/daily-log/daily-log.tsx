@@ -14,15 +14,24 @@ import { Badge } from '@/components/ui/badge'
 
 const Text = ({
   title,
-  text,
+  text: textRaw,
   suffix = '',
   isWidthFull = false,
+  isNumber = false,
+  fixed = 1,
 }: {
   suffix?: string
   title: string
   text: string | undefined | null
   isWidthFull?: boolean
+  isNumber?: boolean
+  fixed?: number
 }) => {
+  const text = isNumber
+    ? textRaw && textRaw !== ''
+      ? Number(textRaw).toFixed(fixed)
+      : ''
+    : textRaw
   return (
     <div
       className={cn(
@@ -93,38 +102,48 @@ const Logs = ({
           title='Weight'
           text={todaysDailyLog?.morningWeight}
           suffix='kg'
+          isNumber={true}
+          fixed={2}
         />
         {isSleep && (
           <Text
             title='Sleep'
             text={todaysDailyLog?.sleep}
+            isNumber={true}
+            fixed={1}
           />
         )}
         {isNap && (
           <Text
             title='Nap'
             text={todaysDailyLog?.nap}
+            isNumber={true}
+            fixed={1}
           />
         )}
         {isSleepQuality && (
           <Text
             title='Sleep Score'
             text={todaysDailyLog?.sleepQuality}
+            isNumber={true}
+            fixed={0}
           />
         )}
-        {
-          isSteps && (
-            <Text
-              title='Steps'
-              text={todaysDailyLog?.steps}
-            />
-          )
-        }
+        {isSteps && (
+          <Text
+            title='Steps'
+            text={todaysDailyLog?.steps}
+            isNumber={true}
+            fixed={0}
+          />
+        )}
         {isBloodGlucose && (
           <Text
             title='Blood Glucose'
             text={todaysDailyLog?.fastedBloodGlucose}
             suffix=''
+            isNumber={true}
+            fixed={1}
           />
         )}
         {(isAdmin || isLogPage) && (
@@ -148,30 +167,40 @@ const Logs = ({
           <Text
             title='HIIT'
             text={todaysDailyLog?.hiit}
+            isNumber={true}
+            fixed={0}
           />
         )}
         {isLiss && (
           <Text
             title='LISS'
             text={todaysDailyLog?.liss}
+            isNumber={true}
+            fixed={0}
           />
         )}
         {isWeightTraining && (
           <Text
             title='Weight Training'
             text={todaysDailyLog?.weight}
+            isNumber={true}
+            fixed={0}
           />
         )}
         {isSauna && (
           <Text
             title='Sauna'
             text={todaysDailyLog?.sauna}
+            isNumber={true}
+            fixed={0}
           />
         )}
         {isColdPlunge && (
           <Text
             title='Cold Plunge'
             text={todaysDailyLog?.coldPlunge}
+            isNumber={true}
+            fixed={0}
           />
         )}
         {isNotes && (
@@ -182,7 +211,7 @@ const Logs = ({
           />
         )}
       </div>
-      <div className='flex gap-2 justify-center'>
+      <div className='flex gap-2 justify-center flex-wrap'>
         <Icon
           title='HIIT'
           text={todaysDailyLog?.hiit}
