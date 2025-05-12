@@ -31,6 +31,7 @@ export const skinfold = createTable('skinfold', {
   knee: text('knee'),
   shoulder: text('shoulder'),
   notes: text('notes'),
+  formula: text('formula'),
 })
 
 export const girthMeasurement = createTable('girth_measurement', {
@@ -89,6 +90,7 @@ export const bodyFat = createTable('body_fat', {
   date: text('date').notNull(),
   bodyFat: text('body_fat'),
   notes: text('notes'),
+  formula: text('formula'),
   skinfoldId: int('skinfold_id').references(() => skinfold.id, {
     onDelete: 'cascade',
   }),
@@ -116,6 +118,7 @@ export const leanMass = createTable('lean_mass', {
   date: text('date').notNull(),
   leanMass: text('lean_mass'),
   notes: text('notes'),
+  formula: text('formula'),
   skinfoldId: int('skinfold_id').references(() => skinfold.id, {
     onDelete: 'cascade',
   }),
