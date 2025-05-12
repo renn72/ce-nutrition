@@ -436,6 +436,11 @@ const MealList = ({
                 userId={currentUser.id}
                 index={currentMeal}
               />
+              {
+                currentUser.id === 'f3feb152-06de-4a1e-8c9f-19d5c96c6788' ?
+                  <MealLogCreate currentUser={currentUser} />
+                  : null
+              }
             </div>
           </ScrollArea>
         </div>
