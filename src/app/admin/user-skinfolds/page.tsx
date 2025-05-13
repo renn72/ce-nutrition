@@ -78,8 +78,6 @@ const Chart = ({ userId }: { userId: string }) => {
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     .slice(0, range)
 
-  console.log('data', data)
-
   return (
     <div className='flex flex-col gap-4'>
       <SkinfoldChart

@@ -1,4 +1,9 @@
 'use client'
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card"
 
 import { formatDate } from '@/lib/utils'
 import type { GetSkinfoldById } from '@/types'
@@ -235,6 +240,39 @@ export const columns: ColumnDef<GetSkinfoldById>[] = [
   cell('medialCalf'),
   cell('knee'),
   cell('shoulder'),
+  {
+    accessorKey: 'notes',
+    // @ts-ignore
+    header: ({ column }) => {
+      return (
+        <DataTableColumnHeader
+          column={column}
+          title={'Notes'}
+          className='text-xs tracking-tighter'
+        />
+      )
+    },
+    // @ts-ignore
+    cell: ({ row }) => {
+      return (
+        <div className='flex space-x-2'>
+          <HoverCard>
+            <HoverCardTrigger asChild>
+          <span className='max-w-[50px] font-medium truncate'>
+
+            {row.getValue('notes')}
+          </span>
+            </HoverCardTrigger>
+            <HoverCardContent className=''>
+              <div className='flex flex-col gap-2'>
+                <div className='text-sm'>{row.getValue('notes')}</div>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+        </div>
+      )
+    },
+  },
   {
     id: 'actions',
     cell: ({ row }) => <DataTableRowActions row={row} />,
