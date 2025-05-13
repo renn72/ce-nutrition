@@ -4,6 +4,8 @@ import { formatDate } from '@/lib/utils'
 import type { GetSkinfoldById } from '@/types'
 import { ColumnDef, SortingFn } from '@tanstack/react-table'
 
+import { formulaOne } from '../utils'
+
 import { Checkbox } from '@/components/ui/checkbox'
 
 import { DataTableColumnHeader } from './data-table-column-header'
@@ -167,6 +169,45 @@ export const columns: ColumnDef<GetSkinfoldById>[] = [
     },
     // @ts-ignore
     cell: ({ row }) => {
+      const chin = Number(row.getValue('chin'))
+      const cheek = Number(row.getValue('cheek'))
+      const lowerAbdominal = Number(row.getValue('lowerAbdominal'))
+      const pectoral = Number(row.getValue('pectoral'))
+      const biceps = Number(row.getValue('biceps'))
+      const triceps = Number(row.getValue('triceps'))
+      const subscapular = Number(row.getValue('subscapular'))
+      const midAxillary = Number(row.getValue('midAxillary'))
+      const suprailiac = Number(row.getValue('suprailiac'))
+      const umbilical = Number(row.getValue('umbilical'))
+      const lowerBack = Number(row.getValue('lowerBack'))
+      const quadriceps = Number(row.getValue('quadriceps'))
+      const hamstrings = Number(row.getValue('hamstrings'))
+      const medialCalf = Number(row.getValue('medialCalf'))
+      const knee = Number(row.getValue('knee'))
+      const shoulder = Number(row.getValue('shoulder'))
+      // @ts-ignore
+      const bodyWeight = Number(row.getValue('bodyWeight')?.[0]?.bodyWeight)
+
+      const { bodyFat, leanMass, } =
+        formulaOne({
+          chin,
+          cheek,
+          lowerAbdominal,
+          pectoral,
+          biceps,
+          triceps,
+          subscapular,
+          midAxillary,
+          suprailiac,
+          umbilical,
+          lowerBack,
+          quadriceps,
+          hamstrings,
+          medialCalf,
+          knee,
+          shoulder,
+          bodyWeight,
+        })
       // @ts-ignore
       const value = Number(row.getValue('bodyFat')?.[0]?.bodyFat).toFixed(1)
       return (
