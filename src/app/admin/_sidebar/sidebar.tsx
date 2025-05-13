@@ -129,6 +129,10 @@ const data = {
           title: 'Super',
           url: '/admin/super',
         },
+        {
+          title: 'All Skinfolds',
+          url: '/admin/skinfolds',
+        },
       ],
     },
   ],
@@ -210,6 +214,7 @@ const AdminSidebar = ({
                   {item.items
                     .filter((item) => item.title !== 'Super' || isRoot?.isRoot)
                     .filter((item) => item.title !== 'User Super' || isRoot?.isRoot)
+                    .filter((item) => item.title !== 'All Skinfolds' || isRoot?.isRoot)
                     .map((item) => (
                       <div key={item.title}>
                         <SidebarMenuItem key={item.title}>

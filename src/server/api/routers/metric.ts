@@ -47,6 +47,17 @@ export const metricsRouter = createTRPCRouter({
       })
       return res
     }),
+  getAllSkinfolds: protectedProcedure.query(async ({ ctx }) => {
+    const res = await ctx.db.query.skinfold.findMany({
+      with: {
+        bodyFat: true,
+        leanMass: true,
+        bodyWeight: true,
+        user: true,
+      },
+    })
+    return res
+  }),
   getSkinfold: protectedProcedure
     .input(z.number())
     .query(async ({ input, ctx }) => {
@@ -63,9 +74,7 @@ export const metricsRouter = createTRPCRouter({
   deleteSkinfold: protectedProcedure
     .input(z.number())
     .mutation(async ({ input, ctx }) => {
-      const res = await ctx.db
-        .delete(skinfold)
-        .where(eq(skinfold.id, input))
+      const res = await ctx.db.delete(skinfold).where(eq(skinfold.id, input))
       return res
     }),
   createSkinfold: protectedProcedure
