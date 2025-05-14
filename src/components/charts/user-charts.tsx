@@ -27,7 +27,10 @@ import {
 	chartRangeAtom,
 	chartSelectValueLeftAtom,
 	chartSelectValueRightAtom,
+  leftChartZoomAtom,
+  rightChartZoomAtom,
 } from './atoms'
+import { CircleMinus, CirclePlus } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -41,6 +44,17 @@ const chartConfig = {
 const selectChoices = [
 	{ value: 'morningWeight', label: 'Body Weight' },
 	{ value: 'bloodGlucose', label: 'Blood Glucose' },
+  { value: 'sleep', label: 'Sleep' },
+  { value: 'sleepQuality', label: 'Sleep Quality' },
+  { value: 'hiit', label: 'HIIT' },
+  { value: 'cardio', label: 'Cardio' },
+  { value: 'weight', label: 'Weight' },
+  { value: 'liss', label: 'LISS' },
+  { value: 'posing', label: 'Posing' },
+  { value: 'steps', label: 'Steps' },
+  { value: 'sauna', label: 'Sauna' },
+  { value: 'coldPlunge', label: 'Cold Plunge' },
+  { value: 'nap', label: 'Nap' },
 ]
 
 const Chart = ({
@@ -48,12 +62,27 @@ const Chart = ({
 }: {
 	data: {
 		date: string
-		bodyWeight: number | null
+		morningWeight: number | null
 		bloodGlucose: number | null
-	}[]
+    sleep: number | null
+    sleepQuality: number | null
+    hiit: number | null
+    cardio: number | null
+    weight: number | null
+    liss: number | null
+    posing: number | null
+    steps: number | null
+    sauna: number | null
+    coldPlunge: number | null
+    nap: number | null
+	}[] | undefined
 }) => {
 	const leftValue = useAtomValue(chartSelectValueLeftAtom)
 	const rightValue = useAtomValue(chartSelectValueRightAtom)
+
+  const leftChartZoom = useAtomValue(leftChartZoomAtom)
+  const rightChartZoom = useAtomValue(rightChartZoomAtom)
+
 	const dataMinLeft =
 		Math.floor(
 			Math.min(
@@ -63,7 +92,7 @@ const Chart = ({
 					// @ts-ignore
 					.map((d) => Number(d?.[leftValue])),
 			),
-		) - 1
+		) - leftChartZoom
 	const dataMaxLeft =
 		Math.ceil(
 			Math.max(
@@ -73,7 +102,7 @@ const Chart = ({
 					// @ts-ignore
 					.map((d) => Number(d?.[leftValue])),
 			),
-		) + 1
+		) + leftChartZoom
 
 	const dataMinRight =
 		Math.floor(
@@ -84,7 +113,7 @@ const Chart = ({
 					// @ts-ignore
 					.map((d) => Number(d?.[rightValue])),
 			),
-		) - 1
+		) - rightChartZoom
 	const dataMaxRight =
 		Math.ceil(
 			Math.max(
@@ -94,7 +123,7 @@ const Chart = ({
 					// @ts-ignore
 					.map((d) => Number(d?.[rightValue])),
 			),
-		) + 1
+		) + rightChartZoom
 
 	return (
 		<ChartContainer
@@ -198,6 +227,9 @@ const UserCharts = ({
 		chartSelectValueRightAtom,
 	)
 
+  const [leftChartZoom, setLeftChartZoom] = useAtom(leftChartZoomAtom)
+  const [rightChartZoom, setRightChartZoom] = useAtom(rightChartZoomAtom)
+
 	console.log('dailyLogs', dailyLogs)
 
 	const data = dailyLogs
@@ -205,14 +237,36 @@ const UserCharts = ({
 			return {
 				morningWeight: log.morningWeight,
 				bloodGlucose: log.fastedBloodGlucose,
+        sleep: log.sleep,
+        sleepQuality: log.sleepQuality,
+        hiit: log.isHiit,
+        cardio: log.isCardio,
+        weight: log.isLift,
+        liss: log.isLiss,
+        posing: log.isStarred,
+        steps: log.steps,
+        sauna: log.sauna,
+        coldPlunge: log.coldPlunge,
+        nap: log.nap,
 				date: log.date,
 			}
 		})
 		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 		.map((log) => ({
 			morningWeight:
-				log.morningWeight === null ? null : Number(log.morningWeight),
+			  log.morningWeight === null ? null : Number(log.morningWeight),
 			bloodGlucose: log.bloodGlucose === null ? null : Number(log.bloodGlucose),
+      sleep: log.sleep === null ? null : Number(log.sleep),
+      sleepQuality: log.sleepQuality === null ? null : Number(log.sleepQuality),
+      hiit: log.hiit === null ? null : Number(log.hiit),
+      cardio: log.cardio === null ? null : Number(log.cardio),
+      weight: log.weight === null ? null : Number(log.weight),
+      liss: log.liss === null ? null : Number(log.liss),
+      posing: log.posing === null ? null : Number(log.posing),
+      steps: log.steps === null ? null : Number(log.steps),
+      sauna: log.sauna === null ? null : Number(log.sauna),
+      coldPlunge: log.coldPlunge === null ? null : Number(log.coldPlunge),
+      nap: log.nap === null ? null : Number(log.nap),
 			date: new Date(log.date).toLocaleDateString('en-AU', {
 				year: '2-digit',
 				month: 'numeric',
@@ -227,7 +281,7 @@ const UserCharts = ({
 		<div
 			className={cn(
 				'flex flex-col gap-2 p-2',
-				isMoblie ? '' : 'rounded-lg border',
+				isMoblie ? 'bg-card' : 'rounded-lg border',
 			)}
 		>
 			<div className={cn('flex justify-between w-full', isMoblie ? 'gap-2' : '')}>
@@ -270,7 +324,27 @@ const UserCharts = ({
 				</Select>
 			</div>
 			<Chart data={data} />
-			<div className='flex gap-2 justify-center w-full'>
+			<div className='flex gap-2 justify-between w-full'>
+        <div className='flex gap-2 items-center'>
+          <CirclePlus
+            size={20}
+            strokeWidth={1}
+            className='cursor-pointer text-secondary-foreground'
+            onClick={() => {
+              if (leftChartZoom === 0) return
+              setLeftChartZoom(leftChartZoom - 1)
+            }}
+            />
+          <CircleMinus
+            size={20}
+            strokeWidth={1}
+            className='cursor-pointer text-secondary-foreground'
+            onClick={() => {
+              setLeftChartZoom(leftChartZoom + 1)
+            }}
+            />
+
+        </div>
 				<NumberInput
 					value={range}
 					setValue={setRange}
@@ -279,6 +353,25 @@ const UserCharts = ({
 					postfix=''
 					isSmall={true}
 				/>
+        <div className='flex gap-2 items-center'>
+          <CirclePlus
+            size={20}
+            strokeWidth={1}
+            className='cursor-pointer text-secondary-foreground'
+            onClick={() => {
+              if (leftChartZoom === 0) return
+              setRightChartZoom(rightChartZoom - 1)
+            }}
+            />
+          <CircleMinus
+            size={20}
+            strokeWidth={1}
+            className='cursor-pointer text-secondary-foreground'
+            onClick={() => {
+              setRightChartZoom(rightChartZoom + 1)
+            }}
+            />
+        </div>
 			</div>
 		</div>
 	)
