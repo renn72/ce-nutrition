@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.2",
+    "@biomejs/biome": "^1.9.4",
     "@headlessui/react": "^2.2.0",
     "@headlessui/tailwindcss": "^0.2.1",
     "@heroui/number-input": "^2.0.3",
@@ -117,7 +118,6 @@
     "@typescript-eslint/parser": "^8.11.0",
     "drizzle-dbml-generator": "^0.10.0",
     "drizzle-kit": "^0.30.6",
-    "eslint": "^8.57.0",
     "eslint-config-next": "^15.0.1",
     "eslint-plugin-drizzle": "^0.2.3",
     "postcss": "^8.4.47",

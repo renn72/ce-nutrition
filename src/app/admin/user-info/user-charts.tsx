@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import { GetAllDailyLogs } from '@/types'
+import type { GetAllDailyLogs } from '@/types'
 import {
   Area,
   AreaChart,
@@ -90,7 +90,8 @@ const Chart = ({
 }
 const UserCharts = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
   const [range, setRange] = useState(7)
-  const [selectValue, setSelectValue] = useState('bodyWeight')
+  const [selectValueLeft, setSelectValueLeft] = useState('bodyWeight')
+  const [selectValueRight, setSelectValueRight] = useState('bloodGlucose')
 
   console.log('dailyLogs', dailyLogs)
 

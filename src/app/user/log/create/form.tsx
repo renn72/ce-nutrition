@@ -3,8 +3,8 @@
 import { api } from '@/trpc/react'
 
 import { UploadButton } from '@/lib/uploadthing'
-import { GetDailyLogById, GetUserById } from '@/types'
-import { Image } from 'lucide-react'
+import type { GetDailyLogById, GetUserById } from '@/types'
+import { Cog, Image, Settings } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 
@@ -23,6 +23,7 @@ import { Weight } from './_field/weight'
 import { WeightTraining } from './_field/weight-training'
 import { Sauna } from './_field/sauna'
 import { ColdPlunge } from './_field/cold-plunge'
+import { Link } from 'next-view-transitions'
 
 export const dynamic = 'force-dynamic'
 
@@ -53,7 +54,15 @@ const DailyLogForm = ({
   }
 
   return (
-    <div className='flex flex-col gap-3 px-1'>
+    <div className='flex flex-col gap-3 px-1 relative mt-2'>
+      <Link
+        href='/user/settings#settings-water-defaults'
+        className='absolute -top-8 right-8'>
+        <Settings
+          size={24}
+          className='cursor-pointer'
+        />
+      </Link>
       <div className='flex gap-2 w-full justify-around flex-wrap'>
         <Weight
           todaysLog={todaysLog}

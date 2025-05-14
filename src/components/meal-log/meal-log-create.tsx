@@ -85,7 +85,7 @@ const MealLogCreate = ({
                     </div>
                     <div className='flex items-baseline h-12'></div>
                   </div>
-                  <ScrollArea className='pt-4 px-2 h-[calc(90vh-145px)]'>
+                  <ScrollArea className='pt-4 px-2'>
                     <FormRecipe
                       recipe={null}
                     />
