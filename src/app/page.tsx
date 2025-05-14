@@ -82,7 +82,7 @@ const Mobile = ({
 					'flex flex-col gap-4 w-full max-w-screen-xl main-content',
 				)}
 			>
-				<UserCharts dailyLogs={dailyLogs} isMoblie={true} />
+				<UserCharts dailyLogs={dailyLogs} isMoblie={true} currentUser={currentUser}  />
 
 				<Card className='py-2 '>
 					<CardContent className='px-0 py-0'>

@@ -22,7 +22,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
 			<UserWeight user={user} dailyLogs={dailyLogs} />
 			<UserGoals user={user} userGoals={userGoals} />
 			<div className="w-[600px]">
-				<UserCharts dailyLogs={dailyLogs} />
+				<UserCharts dailyLogs={dailyLogs} currentUser={user} />
 			</div>
 		</div>
 	)

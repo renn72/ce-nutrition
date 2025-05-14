@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import { cn } from '@/lib/utils'
 
-import type { GetAllDailyLogs } from '@/types'
+import type { GetAllDailyLogs, GetUserById } from '@/types'
 import { useAtom, useAtomValue } from 'jotai'
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts'
 
@@ -226,11 +226,13 @@ const Chart = ({
 }
 
 const UserCharts = ({
+  currentUser,
 	dailyLogs,
 	isMoblie = false,
 }: {
 	dailyLogs: GetAllDailyLogs | undefined
 	isMoblie?: boolean
+  currentUser: GetUserById
 }) => {
 	const [range, setRange] = useAtom(chartRangeAtom)
 	const [selectValueLeft, setSelectValueLeft] = useAtom(
@@ -291,6 +293,21 @@ const UserCharts = ({
 			}),
 		}))
 		.slice(-range)
+
+  const filteredSelectChoices = selectChoices.filter((choice) => {
+    if (currentUser?.settings?.isBloodGlucose && choice.value === 'bloodGlucose' && isMoblie) return true
+    if (currentUser?.settings?.isSleep && choice.value === 'sleep' && isMoblie) return true
+    if (currentUser?.settings?.isSleepQuality && choice.value === 'sleepQuality' && isMoblie) return true
+    if (currentUser?.settings?.isNap && choice.value === 'nap' && isMoblie) return true
+    if (currentUser?.settings?.isSteps && choice.value === 'steps' && isMoblie) return true
+    if (currentUser?.settings?.isWeightTraining && choice.value === 'weightTraining' && isMoblie) return true
+    if (currentUser?.settings?.isHiit && choice.value === 'hiit' && isMoblie) return true
+    if (currentUser?.settings?.isLiss && choice.value === 'liss' && isMoblie) return true
+    if (currentUser?.settings?.isPosing && choice.value === 'posing' && isMoblie) return true
+    if (currentUser?.settings?.isSauna && choice.value === 'sauna' && isMoblie) return true
+    if (currentUser?.settings?.isColdPlunge && choice.value === 'coldPlunge' && isMoblie) return true
+    return false
+  })
 
 	console.log('data', data)
 
