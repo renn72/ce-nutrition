@@ -3,7 +3,7 @@
 import { api } from '@/trpc/react'
 
 import { getRecipeDetailsFromDailyLog } from '@/lib/utils'
-import { GetDailyLogById } from '@/types'
+import type { GetDailyLogById } from '@/types'
 import NumberFlow from '@number-flow/react'
 import { Sheet } from '@silk-hq/components'
 import { ChevronDown, ListCollapse, Shuffle, Trash2 } from 'lucide-react'
