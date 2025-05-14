@@ -4,7 +4,7 @@ import { api } from '@/trpc/react'
 
 import { useState } from 'react'
 
-import { GetDailyLogById } from '@/types'
+import type { GetDailyLogById } from '@/types'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -30,7 +30,7 @@ const Nap = ({
     todaysLog?.nap
       ? Number(todaysLog?.nap)
       : prevLog?.nap
-        ? Number(prevLog?.nap)
+        ? Number(Number(prevLog?.nap).toFixed(0))
         : null,
   )
 

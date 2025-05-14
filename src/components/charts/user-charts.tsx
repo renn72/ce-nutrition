@@ -43,6 +43,7 @@ const chartConfig = {
 
 const selectChoices = [
 	{ value: 'morningWeight', label: 'Body Weight' },
+  { value: 'calories', label: 'Calories' },
   { value: 'water', label: 'Water' },
   { value: 'toilet', label: 'Toilet' },
 	{ value: 'bloodGlucose', label: 'Blood Glucose' },
@@ -65,6 +66,7 @@ const Chart = ({
 	data: {
 		date: string
 		morningWeight: number | null
+    calories: number | null
 		bloodGlucose: number | null
     sleep: number | null
     sleepQuality: number | null
@@ -245,7 +247,7 @@ const UserCharts = ({
   const [leftChartZoom, setLeftChartZoom] = useAtom(leftChartZoomAtom)
   const [rightChartZoom, setRightChartZoom] = useAtom(rightChartZoomAtom)
 
-	console.log('dailyLogs', dailyLogs)
+	console.log('dailyLogs', dailyLogs?.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()))
 
 	const data = dailyLogs
 		?.map((log) => {
