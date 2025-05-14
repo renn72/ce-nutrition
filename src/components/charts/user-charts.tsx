@@ -404,7 +404,7 @@ const UserCharts = ({
 		<div
 			className={cn(
 				'flex flex-col gap-2 p-2',
-				isMoblie ? 'bg-card' : 'rounded-lg border',
+				isMoblie ? 'bg-card shadow-md' : 'rounded-lg border',
 			)}
 		>
 			<div
