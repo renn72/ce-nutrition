@@ -2,7 +2,7 @@ import { atomWithStorage } from 'jotai/utils'
 
 export const chartRangeAtom = atomWithStorage('chartRange', 7)
 
-export const chartSelectValueLeftAtom = atomWithStorage('chartSelectValueLeft', 'bodyWeight')
+export const chartSelectValueLeftAtom = atomWithStorage('chartSelectValueLeft', 'morningWeight')
 export const chartSelectValueRightAtom = atomWithStorage('chartSelectValueRight', '')
 
 export const leftChartZoomAtom = atomWithStorage('leftChartZoom', 1)
