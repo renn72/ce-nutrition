@@ -43,6 +43,8 @@ const chartConfig = {
 
 const selectChoices = [
 	{ value: 'morningWeight', label: 'Body Weight' },
+  { value: 'water', label: 'Water' },
+  { value: 'toilet', label: 'Toilet' },
 	{ value: 'bloodGlucose', label: 'Blood Glucose' },
   { value: 'sleep', label: 'Sleep' },
   { value: 'sleepQuality', label: 'Sleep Quality' },
@@ -75,6 +77,8 @@ const Chart = ({
     sauna: number | null
     coldPlunge: number | null
     nap: number | null
+    water: number | null
+    toilet: number | null
 	}[] | undefined
 }) => {
 	const leftValue = useAtomValue(chartSelectValueLeftAtom)
@@ -83,28 +87,33 @@ const Chart = ({
   const leftChartZoom = useAtomValue(leftChartZoomAtom)
   const rightChartZoom = useAtomValue(rightChartZoomAtom)
 
-	const dataMinLeft =
-		Math.floor(
-			Math.min(
-				...data
-					// @ts-ignore
-					.filter((d) => d[leftValue] !== null)
-					// @ts-ignore
-					.map((d) => Number(d?.[leftValue])),
-			),
-		) - leftChartZoom
-	const dataMaxLeft =
-		Math.ceil(
-			Math.max(
-				...data
-					// @ts-ignore
-					.filter((d) => d[leftValue] !== null)
-					// @ts-ignore
-					.map((d) => Number(d?.[leftValue])),
-			),
-		) + leftChartZoom
+  const leftChartZoomConst = leftValue === 'water' ? 50 : 1
+  const rightChartZoomConst = rightValue === 'water' ? 50 : 1
 
-	const dataMinRight =
+  if (!data) return null
+
+	let dataMinLeft =
+		Math.floor(
+			Math.min(
+				...data
+					// @ts-ignore
+					.filter((d) => d[leftValue] !== null)
+					// @ts-ignore
+					.map((d) => Number(d?.[leftValue])),
+			),
+		) - leftChartZoom * leftChartZoomConst
+	let dataMaxLeft =
+		Math.ceil(
+			Math.max(
+				...data
+					// @ts-ignore
+					.filter((d) => d[leftValue] !== null)
+					// @ts-ignore
+					.map((d) => Number(d?.[leftValue])),
+			),
+		) + leftChartZoom * leftChartZoomConst
+
+	let dataMinRight =
 		Math.floor(
 			Math.min(
 				...data
@@ -113,8 +122,8 @@ const Chart = ({
 					// @ts-ignore
 					.map((d) => Number(d?.[rightValue])),
 			),
-		) - rightChartZoom
-	const dataMaxRight =
+		) - rightChartZoom * rightChartZoomConst
+	let dataMaxRight =
 		Math.ceil(
 			Math.max(
 				...data
@@ -123,7 +132,10 @@ const Chart = ({
 					// @ts-ignore
 					.map((d) => Number(d?.[rightValue])),
 			),
-		) + rightChartZoom
+		) + rightChartZoom * rightChartZoomConst
+
+  dataMinLeft = dataMinLeft < 0 ? 0 : dataMinLeft
+  dataMinRight = dataMinRight < 0 ? 0 : dataMinRight
 
 	return (
 		<ChartContainer
@@ -141,7 +153,7 @@ const Chart = ({
 				<YAxis
 					yAxisId='left'
 					orientation='left'
-					width={20}
+					width={30}
 					allowDecimals={false}
 					padding={{ top: 5, bottom: 0 }}
 					interval='preserveStartEnd'
@@ -153,6 +165,7 @@ const Chart = ({
 						stroke: '#8884d8',
 						strokeWidth: 1,
 						fontWeight: 200,
+            direction: 'horizontal',
 					}}
 					axisLine={true}
 					type='number'
@@ -163,7 +176,7 @@ const Chart = ({
 					<YAxis
 						yAxisId='right'
 						orientation='right'
-						width={20}
+						width={30}
 						allowDecimals={false}
 						padding={{ top: 5, bottom: 0 }}
 						interval='preserveStartEnd'
@@ -249,6 +262,8 @@ const UserCharts = ({
         coldPlunge: log.coldPlunge,
         nap: log.nap,
 				date: log.date,
+        toilet: log.poopLogs.length,
+        water: log.waterLogs.reduce((acc, log) => acc + Number(log.amount), 0),
 			}
 		})
 		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -267,6 +282,8 @@ const UserCharts = ({
       sauna: log.sauna === null ? null : Number(log.sauna),
       coldPlunge: log.coldPlunge === null ? null : Number(log.coldPlunge),
       nap: log.nap === null ? null : Number(log.nap),
+      toilet: log.toilet === 0 ? null : Number(log.toilet),
+      water: log.water === 0 ? null : Number(log.water),
 			date: new Date(log.date).toLocaleDateString('en-AU', {
 				year: '2-digit',
 				month: 'numeric',

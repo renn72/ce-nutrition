@@ -29,9 +29,12 @@
 		"enabled": true,
 		"rules": {
 			"recommended": true,
-      "a11y": {
-        "useKeyWithClickEvents": "off"
-      },
+			"style": {
+				"useConst": "off"
+			},
+			"a11y": {
+				"useKeyWithClickEvents": "off"
+			},
 			"correctness": {
 				"useExhaustiveDependencies": "off"
 			}
@@ -40,9 +43,9 @@
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "single",
-      "jsxQuoteStyle": "single",
-      "semicolons": "asNeeded",
-      "trailingCommas": "all"
+			"jsxQuoteStyle": "single",
+			"semicolons": "asNeeded",
+			"trailingCommas": "all"
 		}
 	}
 }
