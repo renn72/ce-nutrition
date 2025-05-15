@@ -9,7 +9,7 @@ import {
   getRecipeDetailsForDailyLog,
   getRecipeDetailsFromDailyLog,
 } from '@/lib/utils'
-import {
+import type {
   GetAllDailyLogs,
   GetDailyLogById,
   GetUserById,
@@ -104,13 +104,11 @@ const Meal = ({
     },
   })
 
-  const recipes = allPlans.map((plan) => plan?.userRecipes).flat()
+  const recipes = allPlans.flatMap((plan) => plan?.userRecipes)
 
-  const isSelectedInRecipes = recipes.find(
-    (recipe) => recipe?.id == Number(selectValue),
+  const isSelectedInRecipes = !!recipes.find(
+    (recipe) => recipe?.id === Number(selectValue),
   )
-    ? true
-    : false
 
 
 

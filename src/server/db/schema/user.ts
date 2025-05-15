@@ -1,12 +1,11 @@
 import { relations, sql } from 'drizzle-orm'
 import {
-  index,
   int,
   primaryKey,
   sqliteTable,
   text,
 } from 'drizzle-orm/sqlite-core'
-import { type AdapterAccount } from 'next-auth/adapters'
+import type {  AdapterAccount } from 'next-auth/adapters'
 
 import { dailyLog, tag } from './daily-logs'
 import { message } from './message'

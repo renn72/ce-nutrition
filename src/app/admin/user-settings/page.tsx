@@ -6,11 +6,13 @@ import { useState } from 'react'
 
 import { useSearchParams } from 'next/navigation'
 
-import { GetUserById } from '@/types'
+import type { GetUserById } from '@/types'
 import { toast } from 'sonner'
 
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+
+export const dynamic = 'force-dynamic'
 
 const Posing = ({ currentUser }: { currentUser: GetUserById }) => {
   const ctx = api.useUtils()
@@ -339,11 +341,54 @@ const Notes = ({ currentUser }: { currentUser: GetUserById }) => {
   )
 }
 
+const CreateMeals = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isCreateMeals, setIsCreateMeals] = useState<boolean>(!!currentUser.roles.find((role) => role.name === 'Create Meals'))
+  const { mutate: updateRoleCreateMeals } = api.user.updateRoleCreateMeals.useMutation({
+    onSuccess: () => {
+      toast.success('Updated')
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error')
+      ctx.user.invalidate()
+    },
+  })
+  return (
+    <div className='flex flex-row items-center justify-between rounded-lg border p-3 gap-4 shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>Create Meals</Label>
+        <div className='text-sm text-muted-foreground'>
+          Enables the client to create meals.
+        </div>
+      </div>
+      <Switch
+        checked={isCreateMeals === true}
+        onCheckedChange={(checked) => {
+          setIsCreateMeals(checked)
+          updateRoleCreateMeals({
+            userId: currentUser.id,
+            isCreateMeals: checked,
+          })
+        }}
+      />
+    </div>
+  )
+}
+
 const Settings = ({ user }: { user: GetUserById }) => {
 
   return (
-    <div className='flex flex-col items-center w-full mt-10'>
-      <h2> User Settings</h2>
+    <div className='flex flex-col gap-2 items-center w-full mt-10'>
+      <h2
+        className='text-xl font-semibold'
+      > User Settings</h2>
+      <div className='flex flex-col gap-2 w-full p-4 border rounded-lg max-w-lg'>
+        <h2 className='text-base font-semibold'>Plans</h2>
+        <CreateMeals currentUser={user} />
+      </div>
       <div className='flex flex-col gap-2 w-full p-4 border rounded-lg max-w-lg'>
         <h2 className='text-base font-semibold'>Daily Log</h2>
         <Sleep currentUser={user} />
