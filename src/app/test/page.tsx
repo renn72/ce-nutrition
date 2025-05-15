@@ -4,6 +4,7 @@ import { api } from '@/trpc/react'
 
 import { useEffect, useState } from 'react'
 
+import DailyLogCarousel from '@/app/_components/dailylog-carousel'
 import { impersonatedUserAtom } from '@/atoms'
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
@@ -14,8 +15,8 @@ import { FullScreen, useFullScreenHandle } from 'react-full-screen'
 import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 
 import { UserCharts } from '@/components/charts/user-charts'
 import { MobileFooter } from '@/components/layout/mobile-footer'
@@ -23,8 +24,6 @@ import { MobileHeader } from '@/components/layout/mobile-header'
 import { MealLog } from '@/components/meal-log/meal-log'
 import { PoopLog } from '@/components/poop-log/poop-log'
 import { WaterLog } from '@/components/water-log/water-log'
-
-import DailyLogCarousel from '@/app/_components/dailylog-carousel'
 
 export const dynamic = 'force-dynamic'
 
@@ -85,7 +84,13 @@ const Mobile = ({
 					'flex flex-col gap-4 w-full max-w-screen-xl main-content',
 				)}
 			>
-				<div className='w-full' onClick={handleFullScreen.enter}>
+				<div
+					className='w-full'
+					onClick={() => {
+						window.screen.orientation.lock('landscape')
+						handleFullScreen.enter()
+					}}
+				>
 					<UserCharts
 						dailyLogs={dailyLogs}
 						isMoblie={true}
@@ -94,20 +99,23 @@ const Mobile = ({
 				</div>
 				<FullScreen handle={handleFullScreen}>
 					{handleFullScreen.active ? (
-            <div className='w-full relative'>
-						<UserCharts
-							dailyLogs={dailyLogs}
-							isMoblie={true}
-							currentUser={currentUser}
-						/>
-              <Button
-                onClick={handleFullScreen.exit}
-                variant='outline'
-                className='absolute right-2 top-2'
-              >
-                Exit
-              </Button>
-            </div>
+						<div className='w-full relative'>
+							<UserCharts
+								dailyLogs={dailyLogs}
+								isMoblie={true}
+								currentUser={currentUser}
+							/>
+							<Button
+								onClick={() => {
+									window.screen.orientation.unlock()
+									handleFullScreen.exit()
+								}}
+								variant='outline'
+								className='absolute right-2 top-2'
+							>
+								Exit
+							</Button>
+						</div>
 					) : null}
 				</FullScreen>
 
