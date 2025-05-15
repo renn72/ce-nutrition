@@ -163,10 +163,10 @@ const Meal = ({
           }
 
           setSelectValue(value)
-          const recipe = recipes.find((recipe) => recipe?.id == Number(value))
+          const recipe = recipes.find((recipe) => recipe?.id === Number(value))
           setRecipeName(recipe?.name ?? '')
           const plan = allPlans.find((plan) =>
-            plan?.userRecipes?.find((recipe) => recipe?.id == Number(value)),
+            plan?.userRecipes?.find((recipe) => recipe?.id === Number(value)),
           )
           if (!recipe || !plan) return
           addMeal({
@@ -194,7 +194,7 @@ const Meal = ({
               <div className=' flex'>
                 <div className='truncate font-semibold'>
                   {recipeName?.length > 41
-                    ? recipeName?.slice(0, 43) + '...'
+                    ? `${recipeName.slice(0, 41)}...`
                     : recipeName}
                 </div>
               </div>
@@ -251,7 +251,7 @@ const Meal = ({
                           <div className=' flex'>
                             <div className='truncate font-semibold'>
                               {recipe?.name && recipe?.name?.length > 41
-                                ? recipe?.name?.slice(0, 43) + '...'
+                                ? `${recipe?.name.slice(0, 41)}...`
                                 : recipe?.name}
                             </div>
                             <div

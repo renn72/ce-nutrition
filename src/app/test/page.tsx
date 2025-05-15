@@ -24,7 +24,7 @@ import { MealLog } from '@/components/meal-log/meal-log'
 import { PoopLog } from '@/components/poop-log/poop-log'
 import { WaterLog } from '@/components/water-log/water-log'
 
-import DailyLogCarousel from './_components/dailylog-carousel'
+import DailyLogCarousel from '@/app/_components/dailylog-carousel'
 
 export const dynamic = 'force-dynamic'
 
@@ -56,6 +56,8 @@ const Mobile = ({
 		(dailyLog) => dailyLog.date === new Date().toDateString(),
 	)
 
+	const handleFullScreen = useFullScreenHandle()
+
 	useEffect(() => {
 		if (dailyLogsLoading) return
 		if (isCreatingLog) return
@@ -83,11 +85,31 @@ const Mobile = ({
 					'flex flex-col gap-4 w-full max-w-screen-xl main-content',
 				)}
 			>
+				<div className='w-full' onClick={handleFullScreen.enter}>
 					<UserCharts
 						dailyLogs={dailyLogs}
 						isMoblie={true}
 						currentUser={currentUser}
 					/>
+				</div>
+				<FullScreen handle={handleFullScreen}>
+					{handleFullScreen.active ? (
+            <div className='w-full relative'>
+						<UserCharts
+							dailyLogs={dailyLogs}
+							isMoblie={true}
+							currentUser={currentUser}
+						/>
+              <Button
+                onClick={handleFullScreen.exit}
+                variant='outline'
+                className='absolute right-2 top-2'
+              >
+                Exit
+              </Button>
+            </div>
+					) : null}
+				</FullScreen>
 
 				<Card className='py-2 '>
 					<CardContent className='px-0 py-0'>
