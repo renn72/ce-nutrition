@@ -97,74 +97,34 @@ const Mobile = ({
 	}, [isIOS])
 
 	const enterFullscreenAndLock = async () => {
-		const elem = document.documentElement
-
-		if (isIOS) {
-			// Show prompt for manual rotation
-			const isLandscape = window.innerWidth > window.innerHeight
-			setShowRotatePrompt(!isLandscape)
-			return
-		}
-
-		try {
-			// Request fullscreen
-			if (elem.requestFullscreen) {
-				await elem.requestFullscreen()
-			} else if ((elem as any).webkitRequestFullscreen) {
-				await (elem as any).webkitRequestFullscreen()
-			}
-
-			// Lock orientation
-			if (screen.orientation?.lock) {
-				await screen.orientation.lock('landscape')
-				setIsLocked(true)
-			} else {
-				console.warn('Orientation lock not supported.')
-			}
-		} catch (err) {
-			console.error('Failed to enter fullscreen or lock orientation:', err)
-		}
+		await screen.orientation.lock('landscape')
+		setIsLocked(true)
 	}
 
 	const exitFullscreenAndUnlock = async () => {
-		try {
-			if (screen.orientation?.unlock) {
-				screen.orientation.unlock() // Not always necessary
-			}
-
-			if (document.fullscreenElement) {
-				await document.exitFullscreen()
-			} else if ((document as any).webkitExitFullscreen) {
-				await (document as any).webkitExitFullscreen()
-			}
-
-			setIsLocked(false)
-		} catch (err) {
-			console.error('Error exiting fullscreen/unlocking:', err)
-		}
+		screen.orientation.unlock() // Not always necessary
+		setIsLocked(false)
 	}
 
 	if (dailyLogsLoading) return null
 
-  if (isLocked) return (
-				<div
-					className='w-full relative'
+	if (isLocked)
+		return (
+			<div className='w-full relative'>
+				<Button
+					onClick={exitFullscreenAndUnlock}
+					variant='outline'
+					className='absolute right-1/2 transform -translate-x-1/2 top-2'
 				>
-          <Button
-            onClick={exitFullscreenAndUnlock}
-            variant='outline'
-            className='absolute right-1/2 transform -translate-x-1/2 top-2'
-          >
-            Exit
-          </Button>
-					<UserCharts
-						dailyLogs={dailyLogs}
-						isMoblie={true}
-						currentUser={currentUser}
-					/>
-				</div>
-
-  )
+					Exit
+				</Button>
+				<UserCharts
+					dailyLogs={dailyLogs}
+					isMoblie={true}
+					currentUser={currentUser}
+				/>
+			</div>
+		)
 
 	return (
 		<div className={cn('flex flex-col gap-2 w-full mt-16 items-center ')}>
@@ -175,10 +135,7 @@ const Mobile = ({
 					'flex flex-col gap-4 w-full max-w-screen-xl main-content',
 				)}
 			>
-				<div
-					className='w-full'
-					onClick={enterFullscreenAndLock}
-				>
+				<div className='w-full' onClick={enterFullscreenAndLock}>
 					<UserCharts
 						dailyLogs={dailyLogs}
 						isMoblie={true}
