@@ -153,7 +153,7 @@ const Mobile = ({
           <Button
             onClick={exitFullscreenAndUnlock}
             variant='outline'
-            className='absolute -right-1/2 transform -translate-x-1/2 top-2'
+            className='absolute right-1/2 transform -translate-x-1/2 top-2'
           >
             Exit
           </Button>
