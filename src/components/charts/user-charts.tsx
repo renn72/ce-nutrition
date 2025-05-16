@@ -269,13 +269,6 @@ const UserCharts = ({
 	const [leftChartZoom, setLeftChartZoom] = useAtom(leftChartZoomAtom)
 	const [rightChartZoom, setRightChartZoom] = useAtom(rightChartZoomAtom)
 
-	console.log(
-		'dailyLogs',
-		dailyLogs?.sort(
-			(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-		),
-	)
-
 	const data = dailyLogs
 		?.map((log) => {
 			return {
@@ -397,8 +390,6 @@ const UserCharts = ({
 			return true
 		return false
 	})
-
-	console.log('data', data)
 
 	return (
 		<div

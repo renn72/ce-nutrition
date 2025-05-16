@@ -87,8 +87,8 @@ const Mobile = ({
 				<div
 					className='w-full'
 					onClick={() => {
-						window.screen.orientation.lock('landscape')
 						handleFullScreen.enter()
+						window.screen.orientation.lock('landscape')
 					}}
 				>
 					<UserCharts

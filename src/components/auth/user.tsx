@@ -168,6 +168,20 @@ const User = () => {
             </DropdownMenuItem>
           </>
         )}
+        {
+          isCreator && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => setIsOpen(false)}
+                className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'
+              >
+                <Warehouse size={20} />
+                <Link href='/test'>Test</Link>
+              </DropdownMenuItem>
+            </>
+          )
+        }
         {isCreator && (
           <>
             <DropdownMenuSeparator />
