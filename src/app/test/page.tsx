@@ -55,8 +55,6 @@ const Mobile = ({
 		(dailyLog) => dailyLog.date === new Date().toDateString(),
 	)
 
-	const handleFullScreen = useFullScreenHandle()
-
 	useEffect(() => {
 		if (dailyLogsLoading) return
 		if (isCreatingLog) return
@@ -73,7 +71,100 @@ const Mobile = ({
 		}
 	}, [dailyLogs])
 
+	const [isLocked, setIsLocked] = useState(false)
+	const [showRotatePrompt, setShowRotatePrompt] = useState(false)
+	const [isIOS, setIsIOS] = useState(false)
+
+	useEffect(() => {
+		// Detect iOS
+		const ua = window.navigator.userAgent
+		setIsIOS(/iPad|iPhone|iPod/.test(ua) && !window.MSStream)
+	}, [])
+
+	// Detect current orientation
+	useEffect(() => {
+		const handleOrientationChange = () => {
+			const isLandscape = window.innerWidth > window.innerHeight
+			setShowRotatePrompt(isIOS && !isLandscape)
+		}
+
+		window.addEventListener('resize', handleOrientationChange)
+		handleOrientationChange() // Run once on mount
+
+		return () => {
+			window.removeEventListener('resize', handleOrientationChange)
+		}
+	}, [isIOS])
+
+	const enterFullscreenAndLock = async () => {
+		const elem = document.documentElement
+
+		if (isIOS) {
+			// Show prompt for manual rotation
+			const isLandscape = window.innerWidth > window.innerHeight
+			setShowRotatePrompt(!isLandscape)
+			return
+		}
+
+		try {
+			// Request fullscreen
+			if (elem.requestFullscreen) {
+				await elem.requestFullscreen()
+			} else if ((elem as any).webkitRequestFullscreen) {
+				await (elem as any).webkitRequestFullscreen()
+			}
+
+			// Lock orientation
+			if (screen.orientation?.lock) {
+				await screen.orientation.lock('landscape')
+				setIsLocked(true)
+			} else {
+				console.warn('Orientation lock not supported.')
+			}
+		} catch (err) {
+			console.error('Failed to enter fullscreen or lock orientation:', err)
+		}
+	}
+
+	const exitFullscreenAndUnlock = async () => {
+		try {
+			if (screen.orientation?.unlock) {
+				screen.orientation.unlock() // Not always necessary
+			}
+
+			if (document.fullscreenElement) {
+				await document.exitFullscreen()
+			} else if ((document as any).webkitExitFullscreen) {
+				await (document as any).webkitExitFullscreen()
+			}
+
+			setIsLocked(false)
+		} catch (err) {
+			console.error('Error exiting fullscreen/unlocking:', err)
+		}
+	}
+
 	if (dailyLogsLoading) return null
+
+  if (isLocked) return (
+				<div
+					className='w-full relative'
+				>
+          <Button
+            onClick={exitFullscreenAndUnlock}
+            variant='outline'
+            className='absolute -right-1/2 transform -translate-x-1/2 top-2'
+          >
+            Exit
+          </Button>
+					<UserCharts
+						dailyLogs={dailyLogs}
+						isMoblie={true}
+						currentUser={currentUser}
+					/>
+				</div>
+
+  )
 
 	return (
 		<div className={cn('flex flex-col gap-2 w-full mt-16 items-center ')}>
@@ -86,10 +177,7 @@ const Mobile = ({
 			>
 				<div
 					className='w-full'
-					onClick={async () => {
-						await handleFullScreen.enter()
-						window.screen.orientation.lock('landscape')
-					}}
+					onClick={enterFullscreenAndLock}
 				>
 					<UserCharts
 						dailyLogs={dailyLogs}
@@ -97,28 +185,6 @@ const Mobile = ({
 						currentUser={currentUser}
 					/>
 				</div>
-				<FullScreen handle={handleFullScreen}>
-					{handleFullScreen.active ? (
-						<div className='w-full relative'>
-							<UserCharts
-								dailyLogs={dailyLogs}
-								isMoblie={true}
-								currentUser={currentUser}
-							/>
-							<Button
-								onClick={() => {
-									window.screen.orientation.unlock()
-									handleFullScreen.exit()
-								}}
-								variant='outline'
-								className='absolute right-2 top-2'
-							>
-								Exit
-							</Button>
-						</div>
-					) : null}
-				</FullScreen>
-
 				<Card className='py-2 '>
 					<CardContent className='px-0 py-0'>
 						<div className='flex justify-between w-full'>
