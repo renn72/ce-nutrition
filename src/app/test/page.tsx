@@ -142,6 +142,7 @@ const Mobile = ({
 						currentUser={currentUser}
 					/>
 				</div>
+        test
 				<Card className='py-2 '>
 					<CardContent className='px-0 py-0'>
 						<div className='flex justify-between w-full'>
@@ -184,6 +185,7 @@ export default function Home() {
 		id: impersonatedUser.id,
 	})
 	const isMobile = useClientMediaQuery('(max-width: 600px)')
+
 
 	if (isLoading) return null
 	if (!currentUser) return null
