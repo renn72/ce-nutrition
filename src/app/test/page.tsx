@@ -86,8 +86,8 @@ const Mobile = ({
 			>
 				<div
 					className='w-full'
-					onClick={() => {
-						handleFullScreen.enter()
+					onClick={async () => {
+						await handleFullScreen.enter()
 						window.screen.orientation.lock('landscape')
 					}}
 				>
