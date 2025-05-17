@@ -343,7 +343,7 @@ const Notes = ({ currentUser }: { currentUser: GetUserById }) => {
 
 const CreateMeals = ({ currentUser }: { currentUser: GetUserById }) => {
   const ctx = api.useUtils()
-  const [isCreateMeals, setIsCreateMeals] = useState<boolean>(!!currentUser.roles.find((role) => role.name === 'Create Meals'))
+  const [isCreateMeals, setIsCreateMeals] = useState<boolean>(!!currentUser.roles.find((role) => role.name === 'create-meals'))
   const { mutate: updateRoleCreateMeals } = api.user.updateRoleCreateMeals.useMutation({
     onSuccess: () => {
       toast.success('Updated')
