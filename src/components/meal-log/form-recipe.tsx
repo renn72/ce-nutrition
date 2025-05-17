@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 
 import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/lib/utils'
-import { GetRecipeById } from '@/types'
+import type { GetRecipeById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusCircle } from 'lucide-react'
 import { useFieldArray, useForm } from 'react-hook-form'
@@ -30,7 +30,7 @@ import { FormRecipeIngredient } from './form-recipe-ingredient'
 export const dynamic = 'force-dynamic'
 
 export const formSchema = z.object({
-  name: z.string().min(1),
+  name: z.string().min(2, 'Name is required'),
   description: z.string(),
   image: z.string(),
   notes: z.string(),
@@ -59,8 +59,6 @@ const FormRecipe = ({ recipe }: { recipe: GetRecipeById | null }) => {
       const savedForm = localStorage.getItem('ce-recipe-formValues') as z.infer<
         typeof formSchema
       > | null
-
-      console.log('savedForm', savedForm)
 
       // @ts-ignore
       if (savedForm === null || savedForm === '') {
@@ -91,7 +89,6 @@ const MainForm = ({
   recipe: GetRecipeById | null
   initialData: z.infer<typeof formSchema> | null
 }) => {
-  console.log('initialData', initialData)
   const [reset, setReset] = useState(0)
   const isMobile = useIsMobile()
 
@@ -151,7 +148,6 @@ const MainForm = ({
   })
 
   const formData = form.watch()
-  console.log('formData', formData)
 
   const onChange = () => {
     window.localStorage.setItem(
@@ -258,6 +254,49 @@ const MainForm = ({
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     console.log('input', data)
+    if (recipe) {
+      updateRecipe({
+        id: recipe.id,
+        name: data.name,
+        description: data.description,
+        image: data.image,
+        notes: data.notes,
+        recipeCategory: data.recipeCategory,
+        calories: Number(calorieTotal),
+        isUserRecipe: true,
+        ingredients: data.ingredients.map((i) => {
+          return {
+            index: i.index,
+            ingredientId: Number(i.ingredientId),
+            note: i.note,
+            serveSize: i.serveSize,
+            serveUnit: i.serveUnit,
+            alternateId: i.alternateId,
+          }
+        }),
+      })
+    } else {
+      createRecipe({
+        name: data.name,
+        description: data.description,
+        image: data.image,
+        notes: data.notes,
+        recipeCategory: data.recipeCategory,
+        calories: Number(calorieTotal),
+        isUserRecipe: true,
+        ingredients: data.ingredients.map((i) => {
+          return {
+            index: i.index,
+            ingredientId: Number(i.ingredientId),
+            note: i.note,
+            serveSize: i.serveSize,
+            serveUnit: i.serveUnit,
+            alternateId: i.alternateId,
+          }
+        }),
+      })
+    }
+
   }
 
   if (isLoadingAllIngredients) return null

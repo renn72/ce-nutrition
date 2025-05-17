@@ -24,6 +24,7 @@ export const recipe = createTable('recipe', {
     .references(() => user.id)
     .notNull(),
   isUserRecipe: int('is_user_recipe', { mode: 'boolean' }).default(false),
+  isGlobal: int('is_global', { mode: 'boolean' }).default(false),
   recipeCategory: text('recipe_category').notNull(),
   favouriteAt: int('favourite_at', { mode: 'timestamp' }),
   deletedAt: int('deleted_at', { mode: 'timestamp' }),

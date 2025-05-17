@@ -78,7 +78,7 @@ const MealLogCreate = ({
 											action='dismiss'
 										/>
 									</div>
-									<div className='flex gap-0 pt-2 flex-col border-b-[1px] border-primary pb-4 relative font-medium'>
+									<div className=''>
 										<div className='flex justify-center items-center gap-6'>
 											<Sheet.Title className='text-xl mt-[2px] font-semibold'>
 												Create Meal
@@ -87,19 +87,8 @@ const MealLogCreate = ({
 												create a new meal
 											</Sheet.Description>
 										</div>
-										<div className='flex items-baseline h-12' />
 									</div>
-									<ScrollArea className='pt-4 px-2'>
 										<FormRecipe recipe={null} />
-										<Button
-											className='w-full'
-											onClick={() => {
-												setIsOpen(false)
-											}}
-										>
-											close me
-										</Button>
-									</ScrollArea>
 								</div>
 								<Sheet.Trigger
 									className='w-full flex justify-center'

@@ -6,8 +6,10 @@ import { z } from 'zod'
 export const recipeRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.recipe.findMany({
+      where: (recipe, { eq }) => eq(recipe.isUserRecipe, false),
       orderBy: [desc(recipe.createdAt)],
       with: {
+        creator: true,
         recipeToIngredient: {
           with: {
             alternateIngredient: true,
@@ -59,6 +61,7 @@ export const recipeRouter = createTRPCRouter({
         notes: z.string(),
         recipeCategory: z.string(),
         calories: z.number(),
+        isUserRecipe: z.boolean().optional(),
         ingredients: z.array(
           z.object({
             ingredientId: z.number(),
@@ -122,7 +125,7 @@ export const recipeRouter = createTRPCRouter({
         .insert(recipe)
         .values({
           ...data,
-          name: data.name + '-copy',
+          name: `${data.name}-copy`,
           creatorId: userId,
         })
         .returning({ id: recipe.id })
@@ -155,6 +158,7 @@ export const recipeRouter = createTRPCRouter({
         notes: z.string(),
         recipeCategory: z.string(),
         calories: z.number(),
+        isUserRecipe: z.boolean().optional(),
         ingredients: z.array(
           z.object({
             ingredientId: z.number(),
