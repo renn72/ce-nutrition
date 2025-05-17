@@ -311,6 +311,8 @@ const MealList = ({
   const [currentMeal, setCurrentMeal] = useState(() => _currentMeal)
   const [isAllMeals, setIsAllMeals] = useAtom(isAllMealsAtom)
 
+  const [selectedPlansId ]= useAtom(selectedPlansAtom)
+
   const activePlans = currentUser?.userPlans.filter((plan) => plan.isActive)
   const refinedPlans = activePlans.map((plan) => {
     return {
@@ -350,6 +352,28 @@ const MealList = ({
         fat: 0,
       },
     )
+
+  const selectedPlans = refinedPlans.filter((plan) => selectedPlansId.includes(plan.id.toString()))
+
+  const calories = selectedPlans.reduce((acc, curr) => {
+    let cals = 0
+    if (isAllMeals && selectedPlans?.[0] && selectedPlans[0].userMeals?.[0]) cals =  Number(selectedPlans[0].userMeals[0].targetCalories)
+    return acc === 0 ? cals : acc
+  }, 0)
+
+  const protein = selectedPlans.reduce((acc, curr) => {
+    let protein = 0
+    if (isAllMeals && selectedPlans?.[0] && selectedPlans[0].userMeals?.[0]) protein =  Number(selectedPlans[0].userMeals[0].targetProtein)
+    return acc === 0 ? protein : acc
+  }, 0)
+
+  console.log('refinedPlans', refinedPlans)
+  console.log('selectedPlans', selectedPlans)
+
+  console.log('calories', calories)
+  console.log('protein', protein)
+
+
 
   return (
     <Sheet.Content className='min-h-[200px] max-h-[90vh] h-full rounded-t-3xl bg-background relative'>
@@ -436,7 +460,10 @@ const MealList = ({
               />
               {
                 currentUser.id === 'f3feb152-06de-4a1e-8c9f-19d5c96c6788' ?
-                  <MealLogCreate currentUser={currentUser} />
+                  <MealLogCreate
+                    calories={0}
+                    protein={0}
+                    currentUser={currentUser} />
                   : null
               }
             </div>

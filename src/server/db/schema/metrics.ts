@@ -13,6 +13,8 @@ export const skinfold = createTable('skinfold', {
   userId: text('user_id')
     .notNull()
     .references(() => user.id),
+  creatorId: text('creator_id')
+    .references(() => user.id),
   date: text('date').notNull(),
   chin: text('chin'),
   cheek: text('cheek'),
@@ -73,6 +75,12 @@ export const skinfoldRelations = relations(skinfold, ({ one, many }) => ({
   user: one(user, {
     fields: [skinfold.userId],
     references: [user.id],
+    relationName: 'user',
+  }),
+  creator: one(user, {
+    fields: [skinfold.creatorId],
+    references: [user.id],
+    relationName: 'creator',
   }),
   bodyFat: many(bodyFat),
   leanMass: many(leanMass),

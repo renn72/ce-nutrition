@@ -23,6 +23,7 @@ export const recipe = createTable('recipe', {
   creatorId: text('creator_id')
     .references(() => user.id)
     .notNull(),
+  isUserRecipe: int('is_user_recipe', { mode: 'boolean' }).default(false),
   recipeCategory: text('recipe_category').notNull(),
   favouriteAt: int('favourite_at', { mode: 'timestamp' }),
   deletedAt: int('deleted_at', { mode: 'timestamp' }),

@@ -9,10 +9,10 @@ import type { GetPlanById } from '@/types'
 import { CircleMinus, CirclePlus } from 'lucide-react'
 import {
   useFieldArray,
-  UseFieldArrayReturn,
-  UseFormReturn,
+  type UseFieldArrayReturn,
+  type UseFormReturn,
 } from 'react-hook-form'
-import { z } from 'zod'
+import type { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -42,7 +42,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-import { formSchema } from './create-user-plan'
+import type { formSchema } from './create-user-plan'
 import { Recipe } from './recipe'
 
 export const dynamic = 'force-dynamic'
@@ -103,7 +103,7 @@ const Meal = ({
     }
   }
   const balanceCalsProtien = () => {
-    if (Number(formProtien) == 0) return
+    if (Number(formProtien) === 0) return
     form.setValue(`meals.${index}.targetCalories`, formCals)
     form.setValue(`meals.${index}.targetProtein`, formProtien || '')
 
@@ -130,7 +130,7 @@ const Meal = ({
         console.log('calsPerGram, proteinPerGram, carbsPerGram is null')
         continue
       }
-      if (calsPerGram.length == 2 && proteinPerGram.length == 2) {
+      if (calsPerGram.length === 2 && proteinPerGram.length === 2) {
         console.log('length is 2')
         try {
           const serve = balanceRecipe(
@@ -143,7 +143,7 @@ const Meal = ({
             console.log('serve is null')
             continue
           }
-          if (serve.length != 2) {
+          if (serve.length !== 2) {
             console.log('serve length is not 2')
             continue
           }
@@ -163,18 +163,18 @@ const Meal = ({
           console.log('error', error)
         }
       } else {
-        if (calsPerGram.length == 1) continue
-        if (proteinPerGram.length == 1) continue
+        if (calsPerGram.length === 1) continue
+        if (proteinPerGram.length === 1) continue
 
         const indexCals = carbsPerGram.findIndex(
-          (cals) => cals == Math.max(...carbsPerGram),
+          (cals) => cals === Math.max(...carbsPerGram),
         )
         const indexProtein = proteinPerGram.findIndex(
-          (protein) => protein == Math.max(...proteinPerGram),
+          (protein) => protein === Math.max(...proteinPerGram),
         )
         const indexs = calsPerGram
           .map((_, i) => i)
-          .filter((i) => !(i == indexCals || i == indexProtein))
+          .filter((i) => !(i === indexCals || i === indexProtein))
 
         const calsToRemove = calsPerGram.reduce((acc, curr, i) => {
           if (indexs.includes(i)) {
@@ -205,24 +205,24 @@ const Meal = ({
           return acc
         }, 0)
 
-        if (indexCals == -1 || indexProtein == -1) return
+        if (indexCals === -1 || indexProtein === -1) return
         if (indexCals === indexProtein) return
         try {
           const serve = balanceRecipe(
             proteinPerGram.filter(
-              (_, i) => i == indexProtein || i == indexCals,
+              (_, i) => i === indexProtein || i === indexCals,
             ),
-            calsPerGram.filter((_, i) => i == indexProtein || i == indexCals),
+            calsPerGram.filter((_, i) => i === indexProtein || i === indexCals),
             Number(formProtien) - proteinToRemove,
             Number(formCals) - calsToRemove,
           )
           if (!serve) return
-          if (serve.length != 2) return
+          if (serve.length !== 2) return
           const value1 = Number(serve[0]).toFixed(2)
           const value2 = Number(serve[1]).toFixed(2)
           const i = calsPerGram
             .map((_, i) => i)
-            .filter((i) => i == indexCals || i == indexProtein)
+            .filter((i) => i === indexCals || i === indexProtein)
           const index1 = i[0] as number
           const index2 = i[1] as number
           form.setValue(

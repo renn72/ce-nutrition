@@ -1,0 +1,1 @@
+ALTER TABLE `recipe` ADD `is_user_recipe` integer DEFAULT false;

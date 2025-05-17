@@ -117,6 +117,24 @@ export const columns: ColumnDef<GetRecipeById>[] = [
     },
   },
   {
+    accessorKey: 'recipeDescription',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title='Description'
+      />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className='flex space-x-2'>
+          <span className='max-w-[300px] truncate font-medium'>
+            {row.getValue('recipeDescription')}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
     accessorKey: 'size',
     header: ({ column }) => (
       <DataTableColumnHeader

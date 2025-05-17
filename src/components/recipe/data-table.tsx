@@ -4,7 +4,7 @@ import * as React from 'react'
 
 import type { GetAllRecipes } from '@/types'
 import {
-  ColumnFiltersState,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -12,9 +12,9 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
+  type SortingState,
   useReactTable,
-  VisibilityState,
+  type VisibilityState,
 } from '@tanstack/react-table'
 
 import {
@@ -41,6 +41,7 @@ const DataTable = ({ recipe: data }: { recipe: GetAllRecipes }) => {
       caloriesWFibre: false,
       size: false,
       notes: false,
+      recipeDescription: false,
     })
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],

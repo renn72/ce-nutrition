@@ -23,6 +23,7 @@ const columMap = {
   name: 'Name',
   notes: 'Notes',
   recipeCategory: 'Category',
+  recipeDescription: 'Description',
   size: 'Size',
   caloriesWFibre: 'Calories w Fibre',
   caloriesWOFibre: 'Calories',

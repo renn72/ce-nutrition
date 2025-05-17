@@ -1,0 +1,1 @@
+ALTER TABLE `skinfold` ADD `creator_id` text REFERENCES user(id);
