@@ -313,6 +313,7 @@ const MealList = ({
 
   const [selectedPlansId ]= useAtom(selectedPlansAtom)
 
+  const isUserCreateRecipe = currentUser.roles.find((role) => role.name === 'create-meals')
   const activePlans = currentUser?.userPlans.filter((plan) => plan.isActive)
   const refinedPlans = activePlans.map((plan) => {
     return {
@@ -385,7 +386,7 @@ const MealList = ({
               action='dismiss'
             />
           </div>
-          <div className='flex gap-0 pt-2 flex-col border-b-[1px] border-primary pb-4 relative font-medium'>
+          <div className='flex gap-0 pt-2 flex-col border-b-[1px] border-primary pb-2 relative font-medium'>
             <div className='flex justify-center items-center gap-6'>
               <ArrowBigLeftDash
                 size={28}
@@ -407,25 +408,25 @@ const MealList = ({
 
               <Sheet.Description className='hidden'>Meal Log</Sheet.Description>
             </div>
-            <div className='flex items-baseline'>
+            <div className='flex items-baseline justify-center'>
               <div className='flex items-center gap-2'>
                 <NumberFlow
                   value={mealsMacros?.cals ?? 0}
-                  className='text-lg text-primary ml-2 '
+                  className='text-xl font-semibold text-primary ml-2 '
                 />
                 <span className='text-xs text-primary/50 ml-[1px]'>cals</span>
               </div>
               <div className='flex items-center gap-2'>
                 <NumberFlow
                   value={mealsMacros?.carbs ?? 0}
-                  className='text-lg text-primary ml-2 '
+                  className='text-xl font-semibold text-primary ml-2 '
                 />
                 <span className='text-xs text-primary/50 ml-[1px]'>carbs</span>
               </div>
               <div className='flex items-center gap-2'>
                 <NumberFlow
                   value={mealsMacros?.protein ?? 0}
-                  className='text-lg text-primary ml-2 '
+                  className='text-xl font-semibold text-primary ml-2 '
                 />
                 <span className='text-xs text-primary/50 ml-[1px]'>
                   protein
@@ -434,7 +435,7 @@ const MealList = ({
               <div className='flex items-center gap-2'>
                 <NumberFlow
                   value={mealsMacros?.fat ?? 0}
-                  className='text-lg text-primary ml-2 '
+                  className='text-xl font-semibold text-primary ml-2 '
                 />
                 <span className='text-xs text-primary/50 ml-[1px]'>fat</span>
               </div>
@@ -458,11 +459,10 @@ const MealList = ({
                 userId={currentUser.id}
                 index={currentMeal}
               />
-              {
-                currentUser.id === 'f3feb152-06de-4a1e-8c9f-19d5c96c6788' ?
+              {isUserCreateRecipe ?
                   <MealLogCreate
-                    calories={0}
-                    protein={0}
+                    calories={calories}
+                    protein={protein}
                     currentUser={currentUser} />
                   : null
               }

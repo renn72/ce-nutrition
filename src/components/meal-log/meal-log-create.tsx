@@ -38,6 +38,89 @@ import { MealBottomSheet } from './meal-bottom-sheet'
 
 export const dynamic = 'force-dynamic'
 
+const UserCreatedRecipes = ({
+	currentUser,
+	calories,
+	protein,
+}: {
+	currentUser: GetUserById
+	calories: number
+	protein: number
+}) => {
+	const { data: userRecipes, isLoading: isLoadingUserRecipes } =
+		api.recipe.getAllUserCreated.useQuery({
+			userId: currentUser.id,
+		})
+
+	const [isFormOpen, setIsFormOpen] = useState(false)
+
+	console.log('userRecipes', userRecipes)
+
+	return (
+		<div className='flex flex-col w-full items-center'>
+			<div className='h-16 w-full border-b-[1px] border-primary/20' />
+			{isFormOpen ? (
+				<FormRecipe recipe={null} />
+			) : (
+				<div className='flex flex-col gap-4 w-full items-center mt-6'>
+					{userRecipes?.map((recipe) => {
+						const cals = 100
+						const protein = 100
+						const carbs = 100
+						const fat = 100
+						return (
+							<div
+								key={recipe?.id}
+								className={cn(
+									'text-sm truncate max-w-[600px]  py-3 px-4 relative border rounded-md',
+									'h-full shadow-sm flex flex-col w-[calc(100vw-2rem)] gap-0',
+									'hover:text-primary hover:bg-background items-center justify-center',
+								)}
+							>
+								<div className=' flex'>
+									<div className='truncate font-semibold'>
+										{recipe?.name && recipe?.name?.length > 41
+											? `${recipe?.name.slice(0, 41)}...`
+											: recipe?.name}
+									</div>
+									<div
+										className={cn(
+											'absolute -top-1 right-1 text-[0.6rem] font-light',
+											'text-muted-foreground',
+										)}
+									>{`${cals} cals`}</div>
+								</div>
+
+								<div
+									className={cn(
+										'text-xs flex gap-4 font-medium',
+										'text-muted-foreground',
+									)}
+								>
+									<div>{`C:${carbs}g`}</div>
+									<div>{`P:${protein}g`}</div>
+									<div>{`F:${fat}g`}</div>
+								</div>
+							</div>
+						)
+					})}
+            <Button
+              onClick={(e) => {
+                e.preventDefault()
+                setIsFormOpen(true)
+              }}
+              variant='outline'
+              size='lg'
+              className='w-[calc(100vw-2rem)] h-16'
+            >
+              Create New
+            </Button>
+				</div>
+			)}
+		</div>
+	)
+}
+
 const MealLogCreate = ({
 	currentUser,
 	calories,
@@ -59,12 +142,12 @@ const MealLogCreate = ({
 				<Sheet.Trigger>
 					<div
 						className={cn(
-							'text-sm truncate max-w-[600px]  py-3 px-4 border font-bold h-[62px] rounded-md ',
+							'text-sm truncate max-w-[600px]  py-3 px-4 border font-bold h-[40px] rounded-md ',
 							'shadow-sm flex flex-col w-[calc(100vw-2rem)] gap-0 items-center justify-center',
 							'hover:text-primary hover:bg-background',
 						)}
 					>
-						Create
+						Your Recipes
 					</div>
 				</Sheet.Trigger>
 				<Sheet.Portal>
@@ -79,16 +162,40 @@ const MealLogCreate = ({
 										/>
 									</div>
 									<div className=''>
-										<div className='flex justify-center items-center gap-6'>
+										<div className='flex justify-center items-center flex-col '>
 											<Sheet.Title className='text-xl mt-[2px] font-semibold'>
-												Create Meal
+												Recipes
 											</Sheet.Title>
 											<Sheet.Description className='hidden'>
 												create a new meal
 											</Sheet.Description>
+											<div className='flex gap-4 w-full items-baseline justify-center'>
+												<div className='flex items-center  gap-2'>
+													<NumberFlow
+														value={calories}
+														className='text-lg text-primary ml-2 '
+													/>
+													<span className='text-xs text-primary/50 ml-[1px]'>
+														cals
+													</span>
+												</div>
+												<div className='flex items-center gap-2'>
+													<NumberFlow
+														value={protein}
+														className='text-lg text-primary ml-2 '
+													/>
+													<span className='text-xs text-primary/50 ml-[1px]'>
+														protein
+													</span>
+												</div>
+											</div>
 										</div>
 									</div>
-										<FormRecipe recipe={null} />
+									<UserCreatedRecipes
+										currentUser={currentUser}
+										calories={calories}
+										protein={protein}
+									/>
 								</div>
 								<Sheet.Trigger
 									className='w-full flex justify-center'
