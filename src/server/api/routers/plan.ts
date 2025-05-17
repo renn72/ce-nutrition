@@ -17,6 +17,7 @@ export const planRouter = createTRPCRouter({
     const res = await ctx.db.query.plan.findMany({
       orderBy: [desc(plan.createdAt)],
       with: {
+        creator: true,
         meals: {
           with: {
             mealToRecipe: {
@@ -48,6 +49,7 @@ export const planRouter = createTRPCRouter({
     const res = await ctx.db.query.plan.findFirst({
       where: (plan, { eq }) => eq(plan.id, input),
       with: {
+        creator: true,
         meals: {
           with: {
             mealToRecipe: {
