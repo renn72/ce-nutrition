@@ -34,7 +34,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Label } from '../ui/label'
 import { isAllMealsAtom, selectedPlansAtom } from './atoms'
 import { MealBottomSheet } from './meal-bottom-sheet'
-import { MealLogCreate } from './meal-log-create'
+import { MealLogUserRecipes } from './meal-log-user-recipes'
 
 export const dynamic = 'force-dynamic'
 
@@ -368,14 +368,6 @@ const MealList = ({
     return acc === 0 ? protein : acc
   }, 0)
 
-  console.log('refinedPlans', refinedPlans)
-  console.log('selectedPlans', selectedPlans)
-
-  console.log('calories', calories)
-  console.log('protein', protein)
-
-
-
   return (
     <Sheet.Content className='min-h-[200px] max-h-[90vh] h-full rounded-t-3xl bg-background relative'>
       <div className='flex flex-col justify-between h-full'>
@@ -459,11 +451,14 @@ const MealList = ({
                 userId={currentUser.id}
                 index={currentMeal}
               />
-              {isUserCreateRecipe ?
-                  <MealLogCreate
+              {isUserCreateRecipe && todaysLog ?
+                  <MealLogUserRecipes
                     calories={calories}
                     protein={protein}
-                    currentUser={currentUser} />
+                    currentUser={currentUser}
+                    logId={todaysLog.id}
+                    mealIndex={currentMeal}
+                />
                   : null
               }
             </div>
