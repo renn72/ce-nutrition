@@ -23,7 +23,7 @@ import {
 	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { NumberInput } from '@/components/ui/number-input'
+import { NumberInputForm } from '@/components/ui/number-input-form'
 
 import type { formSchema } from './form-recipe'
 
@@ -202,10 +202,9 @@ const FormRecipeIngredient = ({
 								Size
 							</FormLabel>
 							<FormControl className='col-span-3'>
-								<NumberInput
+								<NumberInputForm
                   placeholder='Serve Size'
-                  isSmall={true}
-                  value={Number(field.value)}
+                  value={field.value}
                   setValue={field.onChange}
                   scale={1}
                 />
