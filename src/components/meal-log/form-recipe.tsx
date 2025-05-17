@@ -137,6 +137,7 @@ const MainForm = ({
 		api.dailyLog.addUserCreatedRecipe.useMutation({
 			onSuccess: () => {
 				ctx.dailyLog.invalidate()
+        ctx.user.invalidate()
 			},
 		})
 
