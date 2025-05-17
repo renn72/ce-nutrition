@@ -16,7 +16,7 @@ import type {
 	UserPlan,
 } from '@/types'
 import NumberFlow from '@number-flow/react'
-import { Sheet } from '@silk-hq/components'
+import { Sheet, SheetStack } from '@silk-hq/components'
 import { useAtom } from 'jotai'
 import {
 	ArrowBigLeftDash,
@@ -507,6 +507,10 @@ const MealLog = ({
 
 	const isNotActivePlan = activePlans.length === 0
 
+	const { data: _userRecipes, } =
+		api.recipe.getAllUserCreated.useQuery({
+			userId: currentUser.id,
+		})
 	const todaysLog = dailyLogs?.find(
 		(dailyLog) => dailyLog.date === today.toDateString(),
 	)
@@ -519,38 +523,40 @@ const MealLog = ({
 
 	return (
 		<div className='flex flex-col gap-0 w-full items-center'>
-			<Sheet.Root license='non-commercial'>
-				<div className='flex flex-col gap-0 items-center justify-start w-full'>
-					<div className={cn('text-lg font-semibold')}>
-						Meal {currentMeal + 1}
+			<SheetStack.Root>
+				<Sheet.Root license='non-commercial'>
+					<div className='flex flex-col gap-0 items-center justify-start w-full'>
+						<div className={cn('text-lg font-semibold')}>
+							Meal {currentMeal + 1}
+						</div>
+						<div
+							className={cn(
+								'rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center',
+								'justify-center active:scale-75 transition-transform cursor-pointer',
+							)}
+						>
+							<Sheet.Trigger disabled={isNotActivePlan}>
+								<Salad
+									size={28}
+									className={cn(
+										'text-primary/80 hover:text-primary active:scale-90 transition-transform cursor-pointer',
+									)}
+								/>
+							</Sheet.Trigger>
+						</div>
 					</div>
-					<div
-						className={cn(
-							'rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center',
-							'justify-center active:scale-75 transition-transform cursor-pointer',
-						)}
-					>
-						<Sheet.Trigger disabled={isNotActivePlan}>
-							<Salad
-								size={28}
-								className={cn(
-									'text-primary/80 hover:text-primary active:scale-90 transition-transform cursor-pointer',
-								)}
+					<Sheet.Portal>
+						<Sheet.View className='z-[999] h-[100vh] bg-black/50 '>
+							<MealList
+								currentMeal={currentMeal}
+								todaysLog={todaysLog}
+								currentUser={currentUser}
+								today={today}
 							/>
-						</Sheet.Trigger>
-					</div>
-				</div>
-				<Sheet.Portal>
-					<Sheet.View className='z-[999] h-[100vh] bg-black/50 '>
-						<MealList
-							currentMeal={currentMeal}
-							todaysLog={todaysLog}
-							currentUser={currentUser}
-							today={today}
-						/>
-					</Sheet.View>
-				</Sheet.Portal>
-			</Sheet.Root>
+						</Sheet.View>
+					</Sheet.Portal>
+				</Sheet.Root>
+			</SheetStack.Root>
 			<MealBottomSheet todaysDailyLog={todaysLog} />
 		</div>
 	)

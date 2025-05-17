@@ -84,7 +84,11 @@ const CreateRecipe = ({
 				</div>
 			</Sheet.Trigger>
 			<Sheet.Portal>
-				<Sheet.View className='z-[1000] h-[100vh] bg-black/50 '>
+				<Sheet.View
+          onClickOutside={(e) => {
+            e.changeDefault({ dismiss: false})
+          }}
+          className='z-[1002] h-[100vh] bg-black/50 '>
 					<Sheet.Content className='min-h-[200px] max-h-[90vh] h-full rounded-t-3xl bg-background relative'>
 						<div className='flex flex-col justify-between h-full'>
 							<div className='flex flex-col '>
@@ -102,26 +106,29 @@ const CreateRecipe = ({
 										<Sheet.Description className='hidden'>
 											create a new meal
 										</Sheet.Description>
-										<div className='flex gap-4 w-full items-baseline justify-center'>
-											<div className='flex items-center  gap-2'>
-												<NumberFlow
-													value={calories}
-													className='text-lg text-primary ml-2 '
-												/>
-												<span className='text-xs text-primary/50 ml-[1px]'>
-													cals
-												</span>
+									  <div className='flex gap-4 w-[calc(100vw-5rem)] items-baseline justify-center rounded-full bg-secondary'>
+												<div className='flex items-center  gap-2 text-lg font-bold'>
+                          {`Meal ${mealIndex + 1}`}
+												</div>
+												<div className='flex items-center  gap-2'>
+													<NumberFlow
+														value={calories}
+														className='text-lg font-bold text-primary ml-2 '
+													/>
+													<span className='text-xs text-primary/50 ml-[1px]'>
+														cals
+													</span>
+												</div>
+												<div className='flex items-center gap-2'>
+													<NumberFlow
+														value={protein}
+														className='text-lg font-bold text-primary ml-2 '
+													/>
+													<span className='text-xs text-primary/50 ml-[1px]'>
+														protein
+													</span>
+												</div>
 											</div>
-											<div className='flex items-center gap-2'>
-												<NumberFlow
-													value={protein}
-													className='text-lg text-primary ml-2 '
-												/>
-												<span className='text-xs text-primary/50 ml-[1px]'>
-													protein
-												</span>
-											</div>
-										</div>
 									</div>
 								</div>
 								<FormRecipe
@@ -130,6 +137,8 @@ const CreateRecipe = ({
 									setIsRecipeListOpen={setIsRecipeListOpen}
                   logId={logId}
                   mealIndex={mealIndex}
+                  protein={protein}
+                  calories={calories}
 								/>
 							</div>
 							<Sheet.Trigger
@@ -173,8 +182,6 @@ const UserCreatedRecipes = ({
 		null,
 	)
 	const [isRecipeFormOpen, setIsRecipeFormOpen] = useState(false)
-
-	console.log('userRecipes', userRecipes)
 
 	return (
 		<div className='flex flex-col w-full items-center'>
@@ -320,11 +327,14 @@ const MealLogUserRecipes = ({
 											<Sheet.Description className='hidden'>
 												create a new meal
 											</Sheet.Description>
-											<div className='flex gap-4 w-full items-baseline justify-center'>
+											<div className='flex gap-4 w-[calc(100vw-5rem)] items-baseline justify-center rounded-full bg-secondary'>
+												<div className='flex items-center  gap-2 text-lg font-bold'>
+                          {`Meal ${mealIndex + 1}`}
+												</div>
 												<div className='flex items-center  gap-2'>
 													<NumberFlow
 														value={calories}
-														className='text-lg text-primary ml-2 '
+														className='text-lg font-bold text-primary ml-2 '
 													/>
 													<span className='text-xs text-primary/50 ml-[1px]'>
 														cals
@@ -333,7 +343,7 @@ const MealLogUserRecipes = ({
 												<div className='flex items-center gap-2'>
 													<NumberFlow
 														value={protein}
-														className='text-lg text-primary ml-2 '
+														className='text-lg font-bold text-primary ml-2 '
 													/>
 													<span className='text-xs text-primary/50 ml-[1px]'>
 														protein

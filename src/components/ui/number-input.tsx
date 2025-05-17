@@ -12,6 +12,7 @@ const NumberInput = ({
   scale,
   postfix = '',
   isSmall = false,
+  placeholder = '',
 }: {
   value: number | null
   setValue: (value: number) => void
@@ -19,13 +20,14 @@ const NumberInput = ({
   scale: number
   postfix?: string
   isSmall?: boolean
+  placeholder?: string
 }) => {
   return (
     <div className={cn('w-60 relative border rounded-lg h-16 flex items-center shadow-sm',
       isSmall ? 'h-10 w-32' : '',
     )}>
       <Input
-        placeholder=''
+        placeholder={placeholder}
         className={cn('relative w-full text-xl font-medium rounded-lg text-center h-min border-none',
           ' focus-visible:ring-0 focus:border-none shadow-none py-0 active:border-none',
           isSmall ? 'text-sm' : '',

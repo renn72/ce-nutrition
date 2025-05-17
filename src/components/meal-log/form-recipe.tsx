@@ -24,6 +24,7 @@ import {
 	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 import { FormRecipeIngredient } from './form-recipe-ingredient'
 
@@ -53,47 +54,30 @@ const FormRecipe = ({
 	setIsOpen,
 	setIsRecipeListOpen,
 	recipe,
-  logId,
-  mealIndex,
+	logId,
+	mealIndex,
+  protein,
+  calories,
 }: {
 	recipe: GetRecipeById | null
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 	setIsRecipeListOpen: React.Dispatch<React.SetStateAction<boolean>>
-  logId: number
-  mealIndex: number
+	logId: number
+	mealIndex: number
+  protein: number
+  calories: number
 }) => {
-	const [initialData, setInitialData] = useState<z.infer<
-		typeof formSchema
-	> | null>()
-
-	useEffect(() => {
-		const loadFormData = () => {
-			const savedForm = localStorage.getItem('ce-recipe-formValues') as z.infer<
-				typeof formSchema
-			> | null
-
-			// @ts-ignore
-			if (savedForm === null || savedForm === '') {
-				setInitialData(null)
-				return
-			}
-			// @ts-ignore
-			setInitialData(JSON.parse(savedForm))
-		}
-
-		loadFormData()
-	}, [])
-
-	if (initialData === undefined) return null
 
 	return (
 		<MainForm
 			recipe={recipe}
-			initialData={initialData}
+			initialData={null}
 			setIsOpen={setIsOpen}
 			setIsRecipeListOpen={setIsRecipeListOpen}
-      logId={logId}
-      mealIndex={mealIndex}
+			logId={logId}
+			mealIndex={mealIndex}
+      protein={protein}
+      calories={calories}
 		/>
 	)
 }
@@ -105,6 +89,8 @@ const MainForm = ({
 	setIsRecipeListOpen,
 	logId,
 	mealIndex,
+  protein,
+  calories,
 }: {
 	recipe: GetRecipeById | null
 	initialData: z.infer<typeof formSchema> | null
@@ -112,8 +98,9 @@ const MainForm = ({
 	setIsRecipeListOpen: React.Dispatch<React.SetStateAction<boolean>>
 	logId: number
 	mealIndex: number
+  protein: number
+  calories: number
 }) => {
-	const [reset, setReset] = useState(0)
 	const isMobile = useIsMobile()
 
 	const ctx = api.useUtils()
@@ -137,7 +124,7 @@ const MainForm = ({
 		api.dailyLog.addUserCreatedRecipe.useMutation({
 			onSuccess: () => {
 				ctx.dailyLog.invalidate()
-        ctx.user.invalidate()
+				ctx.user.invalidate()
 			},
 		})
 
@@ -179,47 +166,11 @@ const MainForm = ({
 		defaultValues: initValues,
 	})
 
-	const formData = form.watch()
-
-	const onChange = () => {
-		window.localStorage.setItem(
-			'ce-recipe-formValues',
-			JSON.stringify(formData),
-		)
-	}
-
-	const onClear = () => {
-		const clearedValues = {
-			name: '',
-			description: '',
-			image: '',
-			notes: '',
-			recipeCategory: '',
-			ingredients: [
-				{
-					index: 1,
-					ingredientId: '',
-					note: '',
-					serveSize: '',
-					serveUnit: '',
-					alternateId: '',
-				},
-			],
-		}
-		form.reset(clearedValues)
-		setReset(reset + 1)
-		window.localStorage.setItem('ce-recipe-formValues', '')
-	}
-
 	const { fields, append, remove } = useFieldArray({
 		control: form.control,
 		name: 'ingredients',
 	})
 	const ingredients = form.watch('ingredients')
-
-	const sizeTotal = ingredients.reduce((acc, ingredient) => {
-		return acc + Number(ingredient.serveSize)
-	}, 0)
 
 	const calorieTotal = ingredients
 		.reduce((acc, ingredient) => {
@@ -375,6 +326,20 @@ const MainForm = ({
 		setIsRecipeListOpen(false)
 	}
 
+  const isBigCalories = Math.abs(calories - Number(calorieTotal)) / calories > 0.5
+  const isMediumCalories = Math.abs(calories - Number(calorieTotal)) / calories > 0.25
+  const isSmallCalories = Math.abs(calories - Number(calorieTotal)) / calories > 0.1
+  const isTinyCalories = Math.abs(calories - Number(calorieTotal)) / calories > 0.02
+
+  const isBigProtein = Math.abs(protein - Number(proteinTotal)) / protein > 0.5
+  const isMediumProtein = Math.abs(protein - Number(proteinTotal)) / protein > 0.25
+  const isSmallProtein = Math.abs(protein - Number(proteinTotal)) / protein > 0.1
+  const isTinyProtein = Math.abs(protein - Number(proteinTotal)) / protein > 0.02
+
+  console.log({ isBigCalories, isMediumCalories, isSmallCalories })
+
+  console.log(Math.abs(calories - Number(calorieTotal)) / calories)
+
 	if (isLoadingAllIngredients) return null
 
 	return (
@@ -383,7 +348,12 @@ const MainForm = ({
 				<div className='flex items-center gap-2'>
 					<NumberFlow
 						value={Number(calorieTotal)}
-						className='text-xl font-semibold text-primary ml-2 '
+						className={cn('text-xl font-semibold text-primary ml-2 ',
+              isTinyCalories ? 'text-red-900 font-black' : '',
+              isSmallCalories ? 'text-red-800 font-black' : '',
+              isMediumCalories ? 'text-red-700 font-black' : '',
+              isBigCalories ? 'text-red-500 font-black' : '',
+            )}
 					/>
 					<span className='text-xs text-primary/50 ml-[1px]'>cals</span>
 				</div>
@@ -397,7 +367,12 @@ const MainForm = ({
 				<div className='flex items-center gap-2'>
 					<NumberFlow
 						value={Number(proteinTotal)}
-						className='text-xl font-semibold text-primary ml-2 '
+						className={cn('text-xl font-semibold text-primary ml-2 ',
+              isTinyProtein ? 'text-red-900 font-black' : '',
+              isSmallProtein ? 'text-red-800 font-black' : '',
+              isMediumProtein ? 'text-red-700 font-black' : '',
+              isBigProtein ? 'text-red-500 font-black' : '',
+            )}
 					/>
 					<span className='text-xs text-primary/50 ml-[1px]'>protein</span>
 				</div>
@@ -409,107 +384,71 @@ const MainForm = ({
 					<span className='text-xs text-primary/50 ml-[1px]'>fat</span>
 				</div>
 			</div>
-			<Form {...form}>
-				<form
-					onSubmit={form.handleSubmit(onSubmit)}
-					onKeyUp={onChange}
-					onClick={onChange}
-					onChange={onChange}
-				>
-					<div className='flex flex-col gap-4 px-4'>
-						<FormField
-							control={form.control}
-							name='name'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Name</FormLabel>
-									<FormControl>
-										<Input placeholder='Name' {...field} type='text' />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<div className='flex flex-col gap-4'>
-							<h2>Ingredients</h2>
-							<div className='flex flex-col divide-y divide-border border rounded-md shadow-md'>
-								<div
-									className={cn(
-										'hidden lg:grid grid-cols-15 w-full divide-x divide-border text-sm font-medium capitalize',
-										'items-center tracking-tighter ',
-									)}
-								>
-									<div className={cn('col-span-4', 'px-2 py-2')}>
-										ingredient
-									</div>
-									<div className='pl-2 py-2 col-span-3'>Alternate</div>
-									<div className='pl-2 py-2 col-span-2'>size</div>
-									<div className='pl-2 py-2'>serve unit</div>
-									<div className='pl-2 py-2'>calories</div>
-									<div className='pl-2 py-2'>protein</div>
-									<div className='pl-2 py-2'>carb</div>
-									<div className='pl-2 py-2'>fat</div>
-									<div className='pl-2 py-2 col-span-3 hidden'>
-										core attributes
-									</div>
-									<div className='pl-2 py-2'>&#8192;</div>
+			<ScrollArea className='pt-4 px-2 h-[calc(90vh-160px)]'>
+				<Form {...form}>
+					<form
+						onSubmit={form.handleSubmit(onSubmit)}
+					>
+						<div className='flex flex-col gap-4 px-4'>
+							<FormField
+								control={form.control}
+								name='name'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Name</FormLabel>
+										<FormControl>
+											<Input placeholder='Name' {...field} type='text' />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<div className='flex flex-col gap-4'>
+								<div className='flex flex-col divide-y divide-border border rounded-md shadow-md'>
+										{fields.map((_ingredient, index) => (
+											<FormRecipeIngredient
+												key={_ingredient.id}
+												index={index}
+												form={form}
+												remove={remove}
+												allIngredients={allIngredients}
+											/>
+										))}
 								</div>
-								{fields.map((_ingredient, index) => (
-									<FormRecipeIngredient
-										key={index}
-										index={index}
-										form={form}
-										remove={remove}
-										allIngredients={allIngredients}
-										reset={reset}
+								<div className='flex justify-center w-full'>
+									<PlusCircle
+										size={36}
+										className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
+										onClick={() =>
+											append({
+												ingredientId: '',
+												serveSize: '',
+												serveUnit: '',
+												index: fields.length + 1,
+												note: '',
+												alternateId: '',
+											})
+										}
 									/>
-								))}
+								</div>
 							</div>
-							<div className='flex justify-center w-full'>
-								<PlusCircle
-									size={36}
-									className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
-									onClick={() =>
-										append({
-											ingredientId: '',
-											serveSize: '',
-											serveUnit: '',
-											index: fields.length + 1,
-											note: '',
-											alternateId: '',
-										})
-									}
-								/>
+							<div className='flex gap-4 justify-center mt-4'>
+								<Button type='submit'>Save</Button>
+								<Button
+									onClick={(e) => {
+										e.preventDefault()
+										e.stopPropagation()
+										setIsOpen(false)
+									}}
+									variant='secondary'
+								>
+									Cancel
+								</Button>
 							</div>
 						</div>
-						<div className='flex gap-4 justify-center'>
-							<Button type='submit'>Save</Button>
-							<Button
-								onClick={(e) => {
-									e.preventDefault()
-									e.stopPropagation()
-									onClear()
-								}}
-								variant='outline'
-							>
-								Clear
-							</Button>
-							<Button
-								onClick={(e) => {
-									e.preventDefault()
-									e.stopPropagation()
-									onClear()
-									setIsOpen(false)
-									setIsRecipeListOpen(false)
-								}}
-								variant='secondary'
-							>
-								Cancel
-							</Button>
-						</div>
-					</div>
-				</form>
-			</Form>
+					</form>
+				</Form>
+			</ScrollArea>
 		</div>
 	)
 }
