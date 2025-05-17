@@ -1,0 +1,1 @@
+ALTER TABLE `plan` ADD `is_global` integer DEFAULT false;

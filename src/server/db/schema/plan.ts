@@ -1,8 +1,7 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
-import { z } from 'zod'
+import { int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
-import { meal, mealToVegeStack } from './meal'
+import { meal, } from './meal'
 import { user } from './user'
 
 const createTable = sqliteTable
@@ -21,6 +20,7 @@ export const plan = createTable('plan', {
   notes: text('notes'),
   numberOfMeals: int('number_of_meals', { mode: 'number' }),
   creatorId: text('creator_id').references(() => user.id),
+  isGlobal: int('is_global', { mode: 'boolean' }).default(false),
   planCategory: text('recipe_category'),
   favouriteAt: int('favourite_at', { mode: 'timestamp' }),
   deletedAt: int('deleted_at', { mode: 'timestamp' }),

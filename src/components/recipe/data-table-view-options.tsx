@@ -2,7 +2,7 @@
 
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
 import { MixerHorizontalIcon } from '@radix-ui/react-icons'
-import { Table } from '@tanstack/react-table'
+import type { Table } from '@tanstack/react-table'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -30,6 +30,8 @@ const columMap = {
   protein: 'Protein',
   fat: 'Fat',
   carbs: 'Carbs',
+  creator: 'Creator',
+  isGlobal: 'Global',
 }
 
 export function DataTableViewOptions<TData>({
