@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 
 import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/lib/utils'
-import { GetRecipeById } from '@/types'
+import type { GetRecipeById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusCircle } from 'lucide-react'
 import { useFieldArray, useForm } from 'react-hook-form'

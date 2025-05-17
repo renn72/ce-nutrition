@@ -34,6 +34,7 @@ export const recipeRouter = createTRPCRouter({
       const res = await ctx.db.query.recipe.findFirst({
         where: (recipe, { eq }) => eq(recipe.id, input.id),
         with: {
+          creator: true,
           recipeToIngredient: {
             with: {
               ingredient: {
