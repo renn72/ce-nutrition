@@ -93,7 +93,13 @@ const FormRecipeIngredient = ({
 							</FormLabel>
 							<div className='flex gap-2 items-center w-full lg:w-content col-span-3'>
 								<VirtualizedCombobox
-									options={allIngredients?.map((i) => {
+									options={allIngredients
+                    ?.sort((a, b) => {
+                      if (a.favouriteAt) return -1
+                      if (b.favouriteAt) return 1
+                      return 0
+                    })
+                    ?.map((i) => {
 										return {
 											value: i.id.toString(),
 											label: i.name ?? '',
