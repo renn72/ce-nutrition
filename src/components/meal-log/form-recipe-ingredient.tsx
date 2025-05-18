@@ -24,8 +24,8 @@ import {
 } from '@/components/ui/form'
 import { NumberInputForm } from '@/components/ui/number-input-form'
 
-import type { formSchema } from './form-recipe'
 import { VirtualizedCombobox } from '../ui/virtualized-combobox'
+import type { formSchema } from './form-recipe'
 
 export const dynamic = 'force-dynamic'
 
@@ -63,7 +63,6 @@ const FormRecipeIngredient = ({
 
 	const [selected, setSelected] = useState<GetIngredientById | null>(null)
 
-
 	useEffect(() => {
 		if (ingredientId) {
 			setSelected(allIngredients?.find((i) => i.id === Number(ingredientId)))
@@ -75,30 +74,6 @@ const FormRecipeIngredient = ({
 	if (!allIngredients) return null
 
 	if (!allIngredients) return <div />
-
-	const filteredIngredients =
-		query === ''
-			? allIngredients.sort((a, b) => {
-					if (a?.favouriteAt && b?.favouriteAt) {
-						return Number(a?.favouriteAt) - Number(b?.favouriteAt)
-					}
-					if (a?.favouriteAt) return -1
-					if (b?.favouriteAt) return 1
-					return 0
-				})
-			: allIngredients
-					.filter((i) => {
-						const name = i?.name?.toLowerCase().replace(',', '') ?? ''
-						return name.includes(query.toLowerCase())
-					})
-					.sort((a, b) => {
-						if (a?.favouriteAt && b?.favouriteAt) {
-							return Number(a?.favouriteAt) - Number(b?.favouriteAt)
-						}
-						if (a?.favouriteAt) return -1
-						if (b?.favouriteAt) return 1
-						return 0
-					})
 
 	const serveSize = form.watch(`ingredients.${index}.serveSize`)
 
@@ -117,26 +92,28 @@ const FormRecipeIngredient = ({
 								Ingredient
 							</FormLabel>
 							<div className='flex gap-2 items-center w-full lg:w-content col-span-3'>
-                <VirtualizedCombobox
-                  options={allIngredients?.map((i) => {
-                    return {
-                      value: i.id.toString(),
-                      label: i.name ?? '',
-                    }
-                  })}
-                  selectedOption={field.value}
-                  onSelectOption={(value) => {
-                    field.onChange(value)
-                    form.setValue(
-                      `ingredients.${index}.serveSize`,
-                      selected?.serveSize ?? '',
-                    )
-                    form.setValue(
-                      `ingredients.${index}.serveUnit`,
-                      selected?.serveUnit ?? '',
-                    )
-                  }}
-                />
+								<VirtualizedCombobox
+									options={allIngredients?.map((i) => {
+										return {
+											value: i.id.toString(),
+											label: i.name ?? '',
+										}
+									})}
+									selectedOption={field.value}
+									onSelectOption={(value) => {
+										field.onChange(value)
+										form.setValue(
+											`ingredients.${index}.serveSize`,
+											allIngredients?.find((i) => i.id === Number(value))
+												?.serveSize ?? '',
+										)
+										form.setValue(
+											`ingredients.${index}.serveUnit`,
+											allIngredients?.find((i) => i.id === Number(value))
+												?.serveUnit ?? '',
+										)
+									}}
+								/>
 
 								<XCircle
 									size={18}
@@ -163,68 +140,68 @@ const FormRecipeIngredient = ({
 							</FormLabel>
 							<FormControl className='col-span-3'>
 								<NumberInputForm
-                  placeholder='Serve Size'
-                  value={field.value}
-                  setValue={field.onChange}
-                  scale={1}
-                />
+									placeholder='Serve Size'
+									value={field.value}
+									setValue={field.onChange}
+									scale={1}
+								/>
 							</FormControl>
 							<FormMessage />
-								<div className='absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pb-1'>
-									{selected?.serveUnit}
-								</div>
+							<div className='absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pb-1'>
+								{selected?.serveUnit}
+							</div>
 						</FormItem>
 					)}
 				/>
 			</GridWrapper>
-					<div className='col-span-4 px-2 mt-2'>
-						<div className='grid grid-cols-4 w-full border divide-x divide-border col-span-4 text-muted-foreground text-sm'>
-							<div className='text-center py-1'>Cals</div>
-							<div className='text-center py-1'>Protein</div>
-							<div className='text-center py-1'>Carbs</div>
-							<div className='text-center py-1'>Fat</div>
-						</div>
+			<div className='col-span-4 px-2 mt-2'>
+				<div className='grid grid-cols-4 w-full border divide-x divide-border col-span-4 text-muted-foreground text-sm'>
+					<div className='text-center py-1'>Cals</div>
+					<div className='text-center py-1'>Protein</div>
+					<div className='text-center py-1'>Carbs</div>
+					<div className='text-center py-1'>Fat</div>
+				</div>
+			</div>
+			<div className='col-span-4 px-2 mb-1'>
+				{selected && (
+					<div className='grid grid-cols-4 w-full border-l border-r border-b divide-x divide-border'>
+						<GridWrapper className={cn('text-sm')}>
+							{selected &&
+								(
+									Number(selected.caloriesWFibre) *
+									(Number(serveSize) / Number(selected.serveSize))
+								).toFixed(1)}
+						</GridWrapper>
+						<GridWrapper className={cn('text-sm')}>
+							{selected &&
+								(
+									Number(selected.protein) *
+									(Number(serveSize) / Number(selected.serveSize))
+								).toFixed(1)}
+						</GridWrapper>
+						<GridWrapper className={cn('text-sm')}>
+							{selected &&
+								(
+									Number(selected.availableCarbohydrateWithSugarAlcohols) *
+									(Number(serveSize) / Number(selected.serveSize))
+								).toFixed(1)}
+						</GridWrapper>
+						<GridWrapper className={cn('text-sm')}>
+							{selected &&
+								(
+									Number(selected.fatTotal) *
+									(Number(serveSize) / Number(selected.serveSize))
+								).toFixed(1)}
+						</GridWrapper>
 					</div>
-					<div className='col-span-4 px-2 mb-1'>
-						{selected && (
-							<div className='grid grid-cols-4 w-full border-l border-r border-b divide-x divide-border'>
-								<GridWrapper className={cn('text-sm')}>
-									{selected &&
-										(
-											Number(selected.caloriesWFibre) *
-											(Number(serveSize) / Number(selected.serveSize))
-										).toFixed(1)}
-								</GridWrapper>
-								<GridWrapper className={cn('text-sm')}>
-									{selected &&
-										(
-											Number(selected.protein) *
-											(Number(serveSize) / Number(selected.serveSize))
-										).toFixed(1)}
-								</GridWrapper>
-								<GridWrapper className={cn('text-sm')}>
-									{selected &&
-										(
-											Number(selected.availableCarbohydrateWithSugarAlcohols) *
-											(Number(serveSize) / Number(selected.serveSize))
-										).toFixed(1)}
-								</GridWrapper>
-								<GridWrapper className={cn('text-sm')}>
-									{selected &&
-										(
-											Number(selected.fatTotal) *
-											(Number(serveSize) / Number(selected.serveSize))
-										).toFixed(1)}
-								</GridWrapper>
-							</div>
-						)}
-					</div>
+				)}
+			</div>
 			<GridWrapper className='col-span-4 lg:col-span-1 pb-1'>
 				<Badge
 					variant='destructive'
 					className='active:scale-90'
 					onClick={(e) => {
-            e.preventDefault()
+						e.preventDefault()
 						remove(index)
 					}}
 				>

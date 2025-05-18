@@ -44,7 +44,10 @@ const NumberInputForm = ({
 			/>
 			<div
 				onClick={() => {
-					if (!value) return
+					if (!value) {
+            setValue(scale.toFixed(fixed))
+            return
+          }
 					setValue((Number(value) + scale).toFixed(fixed))
 				}}
 				className='absolute right-8 top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start border-l active:bg-primary/60 rounded-r-lg'
@@ -60,7 +63,10 @@ const NumberInputForm = ({
 			</div>
 			<div
 				onClick={() => {
-					if (!value) return
+					if (!value) {
+            setValue(bigScale.toFixed(fixed))
+            return
+          }
 					setValue((Number(value) + bigScale).toFixed(fixed))
 				}}
 				className='absolute right-0 top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start border-l active:bg-primary/60 rounded-r-lg'
