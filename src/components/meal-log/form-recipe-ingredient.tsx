@@ -11,7 +11,7 @@ import {
 	ComboboxOptions,
 } from '@headlessui/react'
 import { CheckIcon, ChevronDownIcon, Star, XCircle } from 'lucide-react'
-import { useForm, type UseFormReturn } from 'react-hook-form'
+import type { UseFormReturn } from 'react-hook-form'
 import type { z } from 'zod'
 
 import { Badge } from '@/components/ui/badge'
@@ -22,10 +22,10 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
 import { NumberInputForm } from '@/components/ui/number-input-form'
 
 import type { formSchema } from './form-recipe'
+import { VirtualizedCombobox } from '../ui/virtualized-combobox'
 
 export const dynamic = 'force-dynamic'
 
@@ -117,67 +117,27 @@ const FormRecipeIngredient = ({
 								Ingredient
 							</FormLabel>
 							<div className='flex gap-2 items-center w-full lg:w-content col-span-3'>
-								<Combobox
-									value={selected}
-									onChange={(value) => {
-										field.onChange(value?.id.toString())
-										form.setValue(
-											`ingredients.${index}.serveSize`,
-											value?.serveSize ?? '',
-										)
-										form.setValue(
-											`ingredients.${index}.serveUnit`,
-											value?.serveUnit ?? '',
-										)
-										setSelected(value)
-									}}
-									onClose={() => setQuery('')}
-									virtual={{ options: filteredIngredients }}
-									immediate
-								>
-									<div className='relative w-full lg:w-content'>
-										<ComboboxInput
-											className={cn(
-												'w-full rounded-lg text-sm font-semibold border bg-background py-1.5 pr-6 pl-3 cursor-pointer',
-												'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25',
-											)}
-											// @ts-ignore
-											displayValue={(i) => i?.name.slice(0, 33)}
-											onChange={(event) => setQuery(event.target.value)}
-										/>
-										<ChevronDownIcon className='absolute top-1/2 -translate-y-1/2 right-2 text-secondary-foreground group-data-[hover]:text-black' />
-									</div>
+                <VirtualizedCombobox
+                  options={allIngredients?.map((i) => {
+                    return {
+                      value: i.id.toString(),
+                      label: i.name ?? '',
+                    }
+                  })}
+                  selectedOption={field.value}
+                  onSelectOption={(value) => {
+                    field.onChange(value)
+                    form.setValue(
+                      `ingredients.${index}.serveSize`,
+                      selected?.serveSize ?? '',
+                    )
+                    form.setValue(
+                      `ingredients.${index}.serveUnit`,
+                      selected?.serveUnit ?? '',
+                    )
+                  }}
+                />
 
-									<ComboboxOptions
-										anchor='bottom'
-										transition
-										className={cn(
-											'z-[1003]',
-											'w-[calc(var(--input-width)+200px)] max-h-[300px] rounded-xl border border-border bg-secondary p-1 [--anchor-gap:var(--spacing-1)] empty:invisible',
-											'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0',
-										)}
-									>
-										{({ option: i }) => (
-											<ComboboxOption
-												key={i.id}
-												value={i}
-												className='group relative w-full flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none hover:bg-card hover:font-medium'
-											>
-												<CheckIcon className='invisible size-4 group-data-[selected]:visible' />
-												<div className='text-sm text-secondary-foreground'>
-													{i.name.slice(0, 60)}
-												</div>
-												{i.favouriteAt && (
-													<Star
-														size={12}
-														fill='#FFB500'
-														className='absolute top-1/2 -translate-y-1/2 right-2 text-[#FFB500]'
-													/>
-												)}
-											</ComboboxOption>
-										)}
-									</ComboboxOptions>
-								</Combobox>
 								<XCircle
 									size={18}
 									className='text-secondary-foreground'

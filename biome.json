@@ -33,7 +33,8 @@
 				"useConst": "off"
 			},
 			"a11y": {
-				"useKeyWithClickEvents": "off"
+				"useKeyWithClickEvents": "off",
+        "useSemanticElements": "off"
 			},
 			"correctness": {
 				"useExhaustiveDependencies": "off"
