@@ -166,7 +166,7 @@ const AdminSidebar = ({
 	const { data: _allUsers, isLoading } = api.user.getAll.useQuery()
 	const { data: isRoot } = api.user.isRoot.useQuery()
 
-	const allUsers = _allUsers?.filter((user) => true) //!user.isRoot || isRoot?.isRoot)
+	const allUsers = _allUsers?.filter((user) => true).sort((a, b) => a.name?.localeCompare(b.name ?? '') ?? 0)
 	const userName = allUsers?.find((user) => user.id === selectedUser)?.name
 
 	React.useEffect(() => {
