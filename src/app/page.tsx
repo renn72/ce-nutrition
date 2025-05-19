@@ -10,12 +10,10 @@ import { cn } from '@/lib/utils'
 import type { GetUserById } from '@/types'
 import { useAtom } from 'jotai'
 import { XIcon } from 'lucide-react'
-import { FullScreen, useFullScreenHandle } from 'react-full-screen'
 import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 
 import { UserCharts } from '@/components/charts/user-charts'
 import { MobileFooter } from '@/components/layout/mobile-footer'

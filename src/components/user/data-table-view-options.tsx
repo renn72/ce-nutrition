@@ -25,7 +25,7 @@ const columMap = {
   lastName: 'Last Name',
   email: 'Email',
   isTrainer: 'Trainer',
-
+  isAdmin: 'Admin',
 }
 
 export function DataTableViewOptions<TData>({

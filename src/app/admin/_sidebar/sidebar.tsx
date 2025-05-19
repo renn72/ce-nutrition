@@ -4,241 +4,283 @@ import { api } from '@/trpc/react'
 
 import * as React from 'react'
 
-// import Link from 'next/link'
-import { Link, useTransitionRouter } from 'next-view-transitions'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
+import { cn } from '@/lib/utils'
 import { atom, useAtom } from 'jotai'
 import { Check, ChevronsUpDown, User } from 'lucide-react'
+// import Link from 'next/link'
+import { Link, useTransitionRouter } from 'next-view-transitions'
 
+import { Button } from '@/components/ui/button'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+	Command,
+	CommandEmpty,
+	CommandGroup,
+	CommandInput,
+	CommandItem,
+	CommandList,
+} from '@/components/ui/command'
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarInset,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarRail,
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/popover'
+import {
+	Sidebar,
+	SidebarContent,
+	SidebarGroup,
+	SidebarGroupContent,
+	SidebarGroupLabel,
+	SidebarHeader,
+	SidebarInset,
+	SidebarMenu,
+	SidebarMenuButton,
+	SidebarMenuItem,
+	SidebarProvider,
+	SidebarRail,
 } from '@/components/ui/sidebar'
+
+import WhistleIcon from '@/components/icons/whistle-icon'
 
 export const userAtom = atom<string>('')
 
 const data = {
-  navMain: [
-    {
-      title: 'User',
-      url: '#',
-      items: [
-        {
-          title: 'Info',
-          url: '/admin/user-info',
-        },
-        {
-          title: 'Logs',
-          url: '/admin/user-logs',
-        },
-        {
-          title: 'Skinfolds',
-          url: '/admin/user-skinfolds',
-        },
-        {
-          title: 'Program',
-          url: '/admin/user-program',
-        },
-        {
-          title: 'Create',
-          url: '/admin/user-create-plan',
-        },
-        {
-          title: 'Settings',
-          url: '/admin/user-settings',
-        },
-        {
-          title: 'User Super',
-          url: '/admin/user-super',
-        },
-      ],
-    },
-        {
-          title: 'Views',
-          items: [
-            {
-              title: 'Weight',
-              url: '/user-weight-view',
-            },
-            {
-              title: 'Lean Mass',
-              url: '/user-lean-mass-view',
-            },
-            {
-              title: 'Body Fat',
-              url: '/user-body-fat-view',
-            },
-          ]
-        },
-    {
-      title: 'Building Blocks',
-      url: '#',
-      items: [
-        {
-          title: 'Plans',
-          url: '/admin/plan',
-        },
-        // {
-        //   title: 'Meals',
-        //   url: '/admin/meal',
-        // },
-        {
-          title: 'Recipes',
-          url: '/admin/recipe',
-        },
-        {
-          title: 'Ingredients',
-          url: '/admin/ingredient',
-        },
-        // {
-        //   title: 'Store',
-        //   url: '/admin/store',
-        // },
-        {
-          title: 'Users',
-          url: '/admin/users',
-        },
-      ],
-    },
-    {
-      title: 'Admin',
-      url: '#',
-      items: [
-        // {
-        //   title: 'Settings',
-        //   url: '/admin/settings',
-        // },
-        {
-          title: 'Super',
-          url: '/admin/super',
-        },
-        {
-          title: 'All Skinfolds',
-          url: '/admin/skinfolds',
-        },
-      ],
-    },
-  ],
+	navMain: [
+		{
+			title: 'User',
+			url: '#',
+			items: [
+				{
+					title: 'Info',
+					url: '/admin/user-info',
+				},
+				{
+					title: 'Logs',
+					url: '/admin/user-logs',
+				},
+				{
+					title: 'Skinfolds',
+					url: '/admin/user-skinfolds',
+				},
+				{
+					title: 'Program',
+					url: '/admin/user-program',
+				},
+				{
+					title: 'Create',
+					url: '/admin/user-create-plan',
+				},
+				{
+					title: 'Settings',
+					url: '/admin/user-settings',
+				},
+				{
+					title: 'User Super',
+					url: '/admin/user-super',
+				},
+			],
+		},
+		{
+			title: 'Views',
+			items: [
+				{
+					title: 'Weight',
+					url: '/user-weight-view',
+				},
+				{
+					title: 'Lean Mass',
+					url: '/user-lean-mass-view',
+				},
+				{
+					title: 'Body Fat',
+					url: '/user-body-fat-view',
+				},
+			],
+		},
+		{
+			title: 'Building Blocks',
+			url: '#',
+			items: [
+				{
+					title: 'Plans',
+					url: '/admin/plan',
+				},
+				// {
+				//   title: 'Meals',
+				//   url: '/admin/meal',
+				// },
+				{
+					title: 'Recipes',
+					url: '/admin/recipe',
+				},
+				{
+					title: 'Ingredients',
+					url: '/admin/ingredient',
+				},
+				// {
+				//   title: 'Store',
+				//   url: '/admin/store',
+				// },
+				{
+					title: 'Users',
+					url: '/admin/users',
+				},
+			],
+		},
+		{
+			title: 'Admin',
+			url: '#',
+			items: [
+				// {
+				//   title: 'Settings',
+				//   url: '/admin/settings',
+				// },
+				{
+					title: 'Super',
+					url: '/admin/super',
+				},
+				{
+					title: 'All Skinfolds',
+					url: '/admin/skinfolds',
+				},
+			],
+		},
+	],
 }
 
 const AdminSidebar = ({
-  children,
+	children,
 }: Readonly<{ children: React.ReactNode }>) => {
-  const router = useRouter()
-  const router2 = useTransitionRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const user = searchParams.get('user')
-  const [selectedUser, setSelectedUser] = useAtom(userAtom)
-  const { data: _allUsers } = api.user.getAll.useQuery()
-  const { data: isRoot } = api.user.isRoot.useQuery()
-  const allUsers = _allUsers?.filter((user) => true) //!user.isRoot || isRoot?.isRoot)
-  const userName = allUsers?.find((user) => user.id === selectedUser)?.name
+	const [isOpen, setIsOpen] = React.useState(false)
 
-  React.useEffect(() => {
-    if (user) {
-      setSelectedUser(user)
-    }
-  }, [user])
+	const router = useRouter()
+	const router2 = useTransitionRouter()
+	const pathname = usePathname()
+	const searchParams = useSearchParams()
+	const user = searchParams.get('user')
 
-  return (
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton
-                    size='lg'
-                    className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
-                  >
-                    <div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
-                      <User className='size-4' />
-                    </div>
-                    <div className='flex flex-col gap-0.5 leading-none'>
-                      <span className='font-semibold'>User</span>
-                      <span className=''>{userName}</span>
-                    </div>
-                    <ChevronsUpDown className='ml-auto' />
-                  </SidebarMenuButton>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className='w-[--radix-dropdown-menu-trigger-width]'
-                  align='start'
-                >
-                  {allUsers?.map((user) => (
-                    <DropdownMenuItem
-                      key={user.id}
-                      onSelect={() => {
-                        console.log(pathname)
-                        router.push(`${pathname}?user=${user.id}`)
-                        setSelectedUser(user.id)
-                      }}
-                    >
-                      {user.name}
-                      {user.id === selectedUser && (
-                        <Check className='ml-auto' />
-                      )}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarHeader>
-        <SidebarContent>
-          {/* We create a SidebarGroup for each parent. */}
-          {data.navMain.map((item) => (
-            <SidebarGroup key={item.title}>
-              <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {item.items
-                    .filter((item) => item.title !== 'Super' || isRoot?.isRoot)
-                    .filter((item) => item.title !== 'User Super' || isRoot?.isRoot)
-                    .filter((item) => item.title !== 'All Skinfolds' || isRoot?.isRoot)
-                    .map((item) => (
-                      <div key={item.title}>
-                        <SidebarMenuItem key={item.title}>
-                          <SidebarMenuButton
-                            asChild
-                            isActive={pathname === item.url}
-                          >
-                            <Link href={item.url + '?user=' + user}>
-                              {item.title}
-                            </Link>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      </div>
-                    ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          ))}
-        </SidebarContent>
-        <SidebarRail />
-      </Sidebar>
-      <SidebarInset className=''>{children}</SidebarInset>
-    </SidebarProvider>
-  )
+	const [selectedUser, setSelectedUser] = useAtom(userAtom)
+
+	const { data: _allUsers, isLoading } = api.user.getAll.useQuery()
+	const { data: isRoot } = api.user.isRoot.useQuery()
+
+	const allUsers = _allUsers?.filter((user) => true) //!user.isRoot || isRoot?.isRoot)
+	const userName = allUsers?.find((user) => user.id === selectedUser)?.name
+
+	React.useEffect(() => {
+		if (user) {
+			setSelectedUser(user)
+		}
+	}, [user])
+
+	if (isLoading) return null
+
+	return (
+		<SidebarProvider>
+			<Sidebar>
+				<SidebarHeader>
+					<SidebarMenu>
+						<SidebarMenuItem>
+							<Popover open={isOpen} onOpenChange={setIsOpen}>
+								<PopoverTrigger asChild>
+									<Button
+										variant='outline'
+										role='combobox'
+										className='w-[200px] justify-between bg-sidebar-background text-sidebar-foreground'
+									>
+										{selectedUser
+											? allUsers?.find((user) => user.id === selectedUser)?.name
+											: 'Select user...'}
+										<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+									</Button>
+								</PopoverTrigger>
+								<PopoverContent className='w-[400px] max-w-[100vw] p-0'>
+									<Command>
+										<CommandInput placeholder='Search users...' />
+										<CommandList className='max-h-[80vh]'>
+											<CommandEmpty>No user found.</CommandEmpty>
+											<CommandGroup>
+												{allUsers?.map((user) => (
+													<CommandItem
+														key={user.id}
+														value={user.id}
+														onSelect={(currentValue) => {
+															setSelectedUser(currentValue)
+															setIsOpen(false)
+														}}
+														className='grid grid-cols-3'
+													>
+														<Check
+															className={cn(
+																'mr-2 h-4 w-4',
+																selectedUser === user.id
+																	? 'opacity-100'
+																	: 'opacity-0',
+															)}
+														/>
+														<span>{user.name}</span>
+														<span
+															className={cn(
+																user.isTrainer
+																	? 'rounded-full  w-min'
+																	: '',
+															)}
+														>
+															{user.isTrainer ? (
+																<WhistleIcon size={24} strokeWidth={40} />
+															) : null}
+														</span>
+													</CommandItem>
+												))}
+											</CommandGroup>
+										</CommandList>
+									</Command>
+								</PopoverContent>
+							</Popover>
+						</SidebarMenuItem>
+					</SidebarMenu>
+				</SidebarHeader>
+				<SidebarContent>
+					{/* We create a SidebarGroup for each parent. */}
+					{data.navMain.map((item) => (
+						<SidebarGroup key={item.title}>
+							<SidebarGroupLabel>{item.title}</SidebarGroupLabel>
+							<SidebarGroupContent>
+								<SidebarMenu>
+									{item.items
+										.filter((item) => item.title !== 'Super' || isRoot?.isRoot)
+										.filter(
+											(item) => item.title !== 'User Super' || isRoot?.isRoot,
+										)
+										.filter(
+											(item) =>
+												item.title !== 'All Skinfolds' || isRoot?.isRoot,
+										)
+										.map((item) => (
+											<div key={item.title}>
+												<SidebarMenuItem key={item.title}>
+													<SidebarMenuButton
+														asChild
+														isActive={pathname === item.url}
+													>
+														<Link href={`${item.url}?user=${user}`}>
+															{item.title}
+														</Link>
+													</SidebarMenuButton>
+												</SidebarMenuItem>
+											</div>
+										))}
+								</SidebarMenu>
+							</SidebarGroupContent>
+						</SidebarGroup>
+					))}
+				</SidebarContent>
+				<SidebarRail />
+			</Sidebar>
+			<SidebarInset className=''>{children}</SidebarInset>
+		</SidebarProvider>
+	)
 }
 
 export { AdminSidebar }

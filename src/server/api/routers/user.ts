@@ -377,9 +377,7 @@ export const userRouter = createTRPCRouter({
 			return res
 		}),
 	isUser: publicProcedure.query(async () => {
-		console.log('isUser')
 		const session = await auth()
-		console.log('session')
 		if (!session?.user) return null
 		if (!session?.user?.id) return null
 		return session.user
@@ -424,6 +422,22 @@ export const userRouter = createTRPCRouter({
 		})
 		return res
 	}),
+  isAdmin: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session?.user.id
+
+    if (!userId) return null
+
+    const res = await ctx.db.query.user.findFirst({
+      where: (user, { eq }) => eq(user.id, userId),
+      with: {
+        roles: true,
+      },
+    })
+
+    if (!res) return false
+    const isAdmin = res?.roles?.find((role) => role.name === 'admin') ? true : false
+    return isAdmin
+  }),
 	updateRoot: rootProtectedProcedure
 		.input(z.object({ isRoot: z.boolean(), id: z.string() }))
 		.mutation(async ({ ctx, input }) => {
@@ -582,6 +596,33 @@ export const userRouter = createTRPCRouter({
 
 			return res
 		}),
+	updateRoleAdmin: protectedProcedure
+		.input(z.object({ userId: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db.query.role.findFirst({
+				where: (role, { eq, and }) =>
+					and(eq(role.userId, input.userId), eq(role.name, 'admin')),
+			})
+
+			if (res) {
+				await ctx.db.delete(role).where(eq(role.id, res.id))
+			} else {
+				await ctx.db.insert(role).values({
+					userId: input.userId,
+					name: 'admin',
+				})
+			}
+
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				objectId: null,
+				task: 'toggle admin',
+				notes: JSON.stringify(input),
+			})
+
+			return res
+		}),
 	updateChartRange: protectedProcedure
 		.input(z.object({ range: z.number(), id: z.number() }))
 		.mutation(async ({ ctx, input }) => {
@@ -610,7 +651,11 @@ export const userRouter = createTRPCRouter({
 		return res
 	}),
 	getAll: protectedProcedure.query(async ({ ctx }) => {
-		const res = await ctx.db.query.user.findMany()
+		const res = await ctx.db.query.user.findMany({
+      with: {
+        roles: true,
+      },
+    })
 		return res
 	}),
 	getGaurenteed: protectedProcedure

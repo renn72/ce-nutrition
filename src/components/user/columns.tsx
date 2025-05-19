@@ -175,6 +175,33 @@ export const columns: ColumnDef<GetUserById>[] = [
     },
   },
   {
+    accessorKey: 'isAdmin',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title='Admin'
+      />
+    ),
+    cell: ({ row }) => {
+      const isAdmin = row.original?.roles?.find(
+        (role) => role.name === 'admin',
+      )
+      return (
+        <div className='flex space-x-2'>
+          <span className='w-[50px] truncate font-medium flex items-center justify-center'>
+            {isAdmin ? (
+              <Star
+                size={18}
+              />
+            ) : (
+              ''
+            )}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
     id: 'actions',
     cell: ({ row }) => <DataTableRowActions row={row} />,
   },

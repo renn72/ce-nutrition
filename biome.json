@@ -38,7 +38,10 @@
 			},
 			"correctness": {
 				"useExhaustiveDependencies": "off"
-			}
+			},
+      "complexity": {
+        "noUselessTernary": "off"
+      }
 		}
 	},
 	"javascript": {

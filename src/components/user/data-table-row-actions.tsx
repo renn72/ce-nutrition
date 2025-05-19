@@ -193,8 +193,16 @@ export function DataTableRowActions<TData>({
       toast.success('Updated successfully')
     },
   })
+  const { mutate: updateAdmin } = api.user.updateRoleAdmin.useMutation({
+    onSuccess: () => {
+      ctx.user.invalidate()
+      toast.success('Updated successfully')
+    },
+  })
   const { data: isUser } = api.user.isUser.useQuery()
-  console.log(data)
+  const { data: isAdmin } = api.user.isAdmin.useQuery()
+
+  console.log(isAdmin)
 
   return (
     <DropdownMenu>
@@ -209,8 +217,27 @@ export function DataTableRowActions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align='end'
-        className='w-[160px]'
+        className='w-[200px]'
       >
+        <DropdownMenuItem
+          onClick={(e) => {
+            e.stopPropagation()
+          }}
+          onSelect={(e) => {
+            e.stopPropagation()
+            if (!data) return
+            if (isUser?.id === data?.id) {
+              toast.error('You cannot toggle yourself as an admin')
+              return
+            }
+
+            updateAdmin({
+              userId: data.id,
+            })
+          }}
+        >
+          <Button variant='ghost'>Toggle Admin</Button>
+        </DropdownMenuItem>
         <DropdownMenuItem
           onClick={(e) => {
             e.stopPropagation()
