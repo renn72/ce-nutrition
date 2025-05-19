@@ -36,7 +36,7 @@ export type DrizzleWhere<T> =
 
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server'
 
-import { appRouter } from '~/server/api/root'
+import type { appRouter } from '~/server/api/root'
 
 type RouterInputs = inferRouterInputs<typeof appRouter>
 type RouterOutputs = inferRouterOutputs<typeof appRouter>
@@ -48,6 +48,7 @@ export type GetAllGroceryStores = RouterOutputs['groceryStore']['getAll']
 export type GetGroceryStoreById = RouterOutputs['groceryStore']['get']
 
 export type GetAllUsers = RouterOutputs['user']['getAll']
+export type GetUserBasic = RouterOutputs['user']['getBasic']
 export type GetUserById = RouterOutputs['user']['getGaurenteed']
 
 export type GetAllRecipes = RouterOutputs['recipe']['getAll']

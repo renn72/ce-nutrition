@@ -1,10 +1,11 @@
 'use client'
 
 import { formatDate } from '@/lib/utils'
-import type { GetUserById, GetAllUsers } from '@/types'
-import { ColumnDef } from '@tanstack/react-table'
-import { CircleCheck, Star } from 'lucide-react'
+import type {GetUserBasic} from '@/types'
+import type { ColumnDef } from '@tanstack/react-table'
+import { CircleCheck, ShieldUser } from 'lucide-react'
 
+import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   HoverCard,
@@ -14,8 +15,9 @@ import {
 
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
+import WhistleIcon from '../icons/whistle-icon'
 
-export const columns: ColumnDef<GetUserById>[] = [
+export const columns: ColumnDef<GetUserBasic>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -155,7 +157,7 @@ export const columns: ColumnDef<GetUserById>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Trainer'
+        title='Trainers'
       />
     ),
     cell: ({ row }) => {
@@ -163,8 +165,9 @@ export const columns: ColumnDef<GetUserById>[] = [
         <div className='flex space-x-2'>
           <span className='w-[50px] truncate font-medium flex items-center justify-center'>
             {row.getValue('isTrainer') ? (
-              <CircleCheck
-                size={18}
+              <WhistleIcon
+                size={20}
+                strokeWidth={8}
               />
             ) : (
               ''
@@ -190,9 +193,7 @@ export const columns: ColumnDef<GetUserById>[] = [
         <div className='flex space-x-2'>
           <span className='w-[50px] truncate font-medium flex items-center justify-center'>
             {isAdmin ? (
-              <Star
-                size={18}
-              />
+              <ShieldUser size={18} />
             ) : (
               ''
             )}

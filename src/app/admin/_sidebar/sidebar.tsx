@@ -8,10 +8,11 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
 import { atom, useAtom } from 'jotai'
-import { Check, ChevronsUpDown, User } from 'lucide-react'
+import { Check, ChevronsUpDown, ShieldUser, User } from 'lucide-react'
 // import Link from 'next/link'
 import { Link, useTransitionRouter } from 'next-view-transitions'
 
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
 	Command,
@@ -201,38 +202,56 @@ const AdminSidebar = ({
 										<CommandList className='max-h-[80vh]'>
 											<CommandEmpty>No user found.</CommandEmpty>
 											<CommandGroup>
-												{allUsers?.map((user) => (
-													<CommandItem
-														key={user.id}
-														value={user.id}
-														onSelect={(currentValue) => {
-															setSelectedUser(currentValue)
-															setIsOpen(false)
-														}}
-														className='grid grid-cols-3'
-													>
-														<Check
-															className={cn(
-																'mr-2 h-4 w-4',
-																selectedUser === user.id
-																	? 'opacity-100'
-																	: 'opacity-0',
-															)}
-														/>
-														<span>{user.name}</span>
-														<span
-															className={cn(
-																user.isTrainer
-																	? 'rounded-full  w-min'
-																	: '',
-															)}
+												{allUsers?.map((user) => {
+													const isTrainer = user.isTrainer
+													const isAdmin = user.roles?.find(
+														(role) => role.name === 'admin',
+													)
+														? true
+														: false
+													return (
+														<CommandItem
+															key={user.id}
+															value={user.id}
+															onSelect={(currentValue) => {
+																setSelectedUser(currentValue)
+																setIsOpen(false)
+															}}
+															className='grid grid-cols-13'
 														>
-															{user.isTrainer ? (
-																<WhistleIcon size={24} strokeWidth={40} />
-															) : null}
-														</span>
-													</CommandItem>
-												))}
+															<Check
+																className={cn(
+																	'mr-2 h-4 w-4',
+																	selectedUser === user.id
+																		? 'opacity-100'
+																		: 'opacity-0',
+																)}
+															/>
+															<span className='col-span-6 truncate'>{user.name}</span>
+															<span className='col-span-4'>
+																{user.trainers.map((trainer) => (
+																	<Badge key={trainer.trainer.id}>
+                                    {trainer.trainer?.firstName}
+																	</Badge>
+																))}
+															</span>
+															<span
+																className={cn(isTrainer ? 'text-blue-600' : '')}
+															>
+																{isTrainer ? (
+																	<WhistleIcon size={20} strokeWidth={6} className='-rotate-[15deg]' />
+																) : null}
+															</span>
+															<span
+																className={cn(isAdmin ? 'text-red-900/80' : '')}
+															>
+																{isAdmin ? (
+																	<ShieldUser size={20} strokeWidth={2} />
+																) : null}
+															</span>
+														</CommandItem>
+													)
+												})}
 											</CommandGroup>
 										</CommandList>
 									</Command>

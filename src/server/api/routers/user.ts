@@ -327,6 +327,7 @@ export const userRouter = createTRPCRouter({
 			with: {
 				settings: true,
 				roles: true,
+        trainers: true,
 				userPlans: {
 					with: {
 						userMeals: true,
@@ -650,10 +651,36 @@ export const userRouter = createTRPCRouter({
 		})
 		return res
 	}),
-	getAll: protectedProcedure.query(async ({ ctx }) => {
-		const res = await ctx.db.query.user.findMany({
+	getBasic: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
+		if (input === '') throw new TRPCError({ code: 'BAD_REQUEST' })
+		const res = await ctx.db.query.user.findFirst({
+			where: (user, { eq }) => eq(user.id, input),
+			columns: {
+				password: false,
+			},
       with: {
         roles: true,
+        trainers: {
+          with: {
+            trainer: true,
+          },
+        },
+      },
+		})
+		return res
+	}),
+	getAll: protectedProcedure.query(async ({ ctx }) => {
+		const res = await ctx.db.query.user.findMany({
+			columns: {
+				password: false,
+			},
+      with: {
+        roles: true,
+        trainers: {
+          with: {
+            trainer: true,
+          },
+        },
       },
     })
 		return res
