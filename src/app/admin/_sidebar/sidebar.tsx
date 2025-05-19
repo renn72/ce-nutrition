@@ -214,6 +214,8 @@ const AdminSidebar = ({
 															key={user.id}
 															value={user.name ?? user.id}
 															onSelect={(currentValue) => {
+                                router.push(`${pathname}?user=${user.id}`)
+
 																setSelectedUser(currentValue)
 																setIsOpen(false)
 															}}
