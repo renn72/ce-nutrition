@@ -212,7 +212,7 @@ const AdminSidebar = ({
 													return (
 														<CommandItem
 															key={user.id}
-															value={user.id}
+															value={user.name ?? user.id}
 															onSelect={(currentValue) => {
 																setSelectedUser(currentValue)
 																setIsOpen(false)
