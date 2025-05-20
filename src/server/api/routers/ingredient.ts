@@ -16,6 +16,12 @@ export const ingredientRouter = createTRPCRouter({
       where: (ingredient, { isNull, and }) =>
         and(isNull(ingredient.hiddenAt), isNull(ingredient.deletedAt)),
       with: {
+        user: {
+          columns: {
+            id: true,
+            name: true,
+          },
+        },
         ingredientToGroceryStore: {
           with: {
             groceryStore: true,
@@ -47,6 +53,12 @@ export const ingredientRouter = createTRPCRouter({
       const res = await ctx.db.query.ingredient.findFirst({
         where: (ingredient, { eq }) => eq(ingredient.id, input.id),
         with: {
+        user: {
+          columns: {
+            id: true,
+            name: true,
+          },
+        },
           ingredientToGroceryStore: {
             with: {
               groceryStore: true,

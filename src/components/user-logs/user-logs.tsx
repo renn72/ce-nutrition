@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { CheckIn } from '@/components/check-in/check-in'
 import { DailyLog } from '@/components/daily-log/daily-log'
-import { GetUserById } from '@/types'
+import type { GetUserById } from '@/types'
 
 const DailyLogs = ({
   userId,

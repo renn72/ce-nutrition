@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 
 import type { GetAllIngredients } from '@/types'
 import {
-  ColumnFiltersState,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -14,9 +14,9 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
+  type SortingState,
   useReactTable,
-  VisibilityState,
+  type VisibilityState,
 } from '@tanstack/react-table'
 
 import {
@@ -35,6 +35,8 @@ import { DataTableToolbar } from './data-table-toolbar'
 
 const DataTable = ({ ingredients : data }: { ingredients: GetAllIngredients }) => {
   const router = useRouter()
+
+  console.log('data', data)
 
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
