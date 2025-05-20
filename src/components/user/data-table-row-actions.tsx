@@ -208,26 +208,29 @@ export function DataTableRowActions<TData>({
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align='end' className='w-[200px]'>
-				{isAdmin || true ? (
-					<DropdownMenuItem
-						onClick={(e) => {
-							e.stopPropagation()
-						}}
-						onSelect={(e) => {
-							e.stopPropagation()
-							if (!data) return
-							if (isUser?.id === data?.id) {
-								toast.error('You cannot toggle yourself as an admin')
-								// return
-							}
+				{isAdmin ? (
+					<>
+						<DropdownMenuItem
+							onClick={(e) => {
+								e.stopPropagation()
+							}}
+							onSelect={(e) => {
+								e.stopPropagation()
+								if (!data) return
+								if (isUser?.id === data?.id) {
+									toast.error('You cannot toggle yourself as an admin')
+									// return
+								}
 
-							updateAdmin({
-								userId: data.id,
-							})
-						}}
-					>
-						<Button variant='ghost'>Toggle Admin</Button>
-					</DropdownMenuItem>
+								updateAdmin({
+									userId: data.id,
+								})
+							}}
+						>
+							<Button variant='ghost'>Toggle Admin</Button>
+						</DropdownMenuItem>
+						<DropdownMenuSeparator />
+					</>
 				) : null}
 
 				<DropdownMenuItem
