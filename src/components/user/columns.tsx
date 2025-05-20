@@ -220,7 +220,7 @@ export const columns: ColumnDef<GetUserBasic>[] = [
           </div>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-              <CirclePlus size={20} strokeWidth={2} className='text-secondary-foreground hover:text-primary active:text-primary active:scale-90' />
+              <CirclePlus size={16} strokeWidth={2} className='text-secondary-foreground hover:text-primary active:text-primary active:scale-90' />
             </DropdownMenuTrigger>
 						<DropdownMenuContent>
 							<DropdownMenuLabel>Add Trainer</DropdownMenuLabel>
