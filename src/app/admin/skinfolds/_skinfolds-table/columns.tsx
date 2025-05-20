@@ -23,7 +23,7 @@ const cell = (value: string) => {
     // @ts-ignore
     header: ({ column }) => {
       let title = value.slice(0, 1).toUpperCase() + value.slice(1)
-      if (title === 'LowerAbdominal') title = 'L.Ab'
+      if (title === 'LowerAbdominal') title = 'U.Ab'
       if (title === 'Quadriceps') title = 'Quad'
       if (title === 'LowerBack') title = 'L.Back'
       if (title === 'Pectoral') title = 'Pec'

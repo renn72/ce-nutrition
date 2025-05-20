@@ -332,10 +332,10 @@ const SkinFoldsForm = ({
               name='lowerAbdominal'
               render={({ field }) => (
                 <FormItem className='flex flex-col'>
-                  <FormLabel className='truncate'>Lower Abdominal</FormLabel>
+                  <FormLabel className='truncate'>Upper Abdominal</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder='Lower Abdominal'
+                      placeholder='Upper Abdominal'
                       {...field}
                       type='number'
                     />
