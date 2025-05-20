@@ -2,6 +2,7 @@
 
 import { api } from '@/trpc/react'
 
+import { useState } from 'react'
 import * as React from 'react'
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -22,6 +23,7 @@ import {
 	CommandItem,
 	CommandList,
 } from '@/components/ui/command'
+import { Label } from '@/components/ui/label'
 import {
 	Popover,
 	PopoverContent,
@@ -41,6 +43,7 @@ import {
 	SidebarProvider,
 	SidebarRail,
 } from '@/components/ui/sidebar'
+import { Switch } from '@/components/ui/switch'
 
 import WhistleIcon from '@/components/icons/whistle-icon'
 
@@ -155,22 +158,31 @@ const AdminSidebar = ({
 }: Readonly<{ children: React.ReactNode }>) => {
 	const [isOpen, setIsOpen] = React.useState(false)
 
+	const [isOnlyYourClients, setIsOnlyYourClients] = useState(false)
+
 	const router = useRouter()
-	const router2 = useTransitionRouter()
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
 	const user = searchParams.get('user')
 
 	const [selectedUser, setSelectedUser] = useAtom(userAtom)
 
-	const { data: _allUsers, isLoading } = api.user.getAll.useQuery()
-	const { data: isRoot } = api.user.isRoot.useQuery()
+	const { data: yourUsers, isLoading } = api.user.getAllYour.useQuery()
 
-	const allUsers = _allUsers
-		?.filter((user) => true)
-		.sort((a, b) => a.name?.localeCompare(b.name ?? '') ?? 0)
+	const { data: isUser } = api.user.isUser.useQuery()
 
-	const userName = allUsers?.find((user) => user.id === selectedUser)?.name
+	const allUsers = yourUsers
+		?.filter((user) => {
+			if (!isUser?.isAdmin) return true
+			if (user.id === isUser?.id) return true
+			if (isOnlyYourClients) {
+				return user.trainers.find(
+					(trainer) => trainer.trainer.id === isUser?.id,
+				)
+			}
+			return true
+		})
+		?.sort((a, b) => a.name?.localeCompare(b.name ?? '') ?? 0)
 
 	React.useEffect(() => {
 		if (user) {
@@ -201,8 +213,20 @@ const AdminSidebar = ({
 								</PopoverTrigger>
 								<PopoverContent className='w-[400px] max-w-[100vw] p-0'>
 									<Command>
-										<div className='flex gap-2 '>
-											<CommandInput placeholder='Search users...' />
+										<div className='flex gap-2 w-full '>
+											<CommandInput
+												className='w-full'
+												placeholder='Search users...'
+											/>
+											{}
+											<div className='flex gap-2 items-center'>
+												<Label>Only your clients</Label>
+												<Switch
+													checked={isOnlyYourClients}
+													onCheckedChange={setIsOnlyYourClients}
+													className=''
+												/>
+											</div>
 										</div>
 										<CommandList className='max-h-[80vh]'>
 											<CommandEmpty>No user found.</CommandEmpty>
@@ -237,9 +261,13 @@ const AdminSidebar = ({
 															<span className='col-span-6 truncate'>
 																{user.name}
 															</span>
-															<span className='col-span-4'>
+															<span className='col-span-4 flex gap-[1px] flex-wrap'>
 																{user.trainers.map((trainer) => (
-																	<Badge key={trainer.trainer.id}>
+																	<Badge
+																		key={trainer.trainer.id}
+																		variant='secondary'
+																		className='text-[0.7rem] py-[3px] px-1 h-min leading-none cursor-pointer hover:text-background hover:bg-foreground tracking-tighter'
+																	>
 																		{trainer.trainer?.firstName}
 																	</Badge>
 																))}
@@ -281,13 +309,16 @@ const AdminSidebar = ({
 							<SidebarGroupContent>
 								<SidebarMenu>
 									{item.items
-										.filter((item) => item.title !== 'Super' || isRoot?.isRoot)
 										.filter(
-											(item) => item.title !== 'User Super' || isRoot?.isRoot,
+											(item) => item.title !== 'Super' || isUser?.isCreator,
 										)
 										.filter(
 											(item) =>
-												item.title !== 'All Skinfolds' || isRoot?.isRoot,
+												item.title !== 'User Super' || isUser?.isCreator,
+										)
+										.filter(
+											(item) =>
+												item.title !== 'All Skinfolds' || isUser?.isCreator,
 										)
 										.map((item) => (
 											<div key={item.title}>

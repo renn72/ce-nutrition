@@ -228,7 +228,7 @@ export const columns: ColumnDef<GetUserBasic>[] = [
               {
                 trainers
                 ?.filter((trainer) => trainer.id !== 'f3feb152-06de-4a1e-8c9f-19d5c96c6788')
-                .map((trainer) => {
+                ?.map((trainer) => {
                   return (
                     <DropdownMenuItem key={trainer.id}
                       onSelect={(e) => {

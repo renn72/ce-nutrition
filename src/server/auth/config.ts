@@ -8,10 +8,9 @@ import {
 } from '@/server/db/schema/user'
 import { DrizzleAdapter } from '@auth/drizzle-adapter'
 import { compare } from 'bcryptjs'
-import { type DefaultSession, type NextAuthConfig } from 'next-auth'
-import { type Adapter } from 'next-auth/adapters'
+import type{  DefaultSession,  NextAuthConfig } from 'next-auth'
+import type {  Adapter } from 'next-auth/adapters'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import EmailProvider from 'next-auth/providers/email'
 import Resend from 'next-auth/providers/resend'
 
 /**
@@ -28,6 +27,7 @@ declare module 'next-auth' {
       email: string
       isTrainer: boolean
       isCreator: boolean
+      isAdmin: boolean
       // ...other properties
       // role: UserRole;
     } & DefaultSession['user']
@@ -71,6 +71,9 @@ export const authConfig = {
             isTrainer: true,
             isCreator: true,
           },
+          with: {
+            roles: true,
+          },
         })
         if (dbUser) {
           session.user = {
@@ -78,6 +81,9 @@ export const authConfig = {
             id: dbUser.id,
             isTrainer: dbUser.isTrainer || false,
             isCreator: dbUser.isCreator || false,
+            isAdmin: dbUser.roles?.find((role) => role.name === 'admin')
+              ? true
+              : false,
           }
         }
       }
@@ -140,7 +146,7 @@ export const authConfig = {
           return {
             id: maybeUser.id,
             email: maybeUser.email,
-            name: maybeUser.firstName + ' ' + maybeUser.lastName,
+            name: `${maybeUser.firstName} ${maybeUser.lastName}`,
             isCreator: maybeUser.isCreator,
           }
         } else {

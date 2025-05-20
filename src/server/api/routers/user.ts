@@ -9,7 +9,7 @@ import {
 } from '~/server/api/trpc'
 import { client, db } from '~/server/db'
 import { log } from '~/server/db/schema/log'
-import { user, userSettings, role } from '~/server/db/schema/user'
+import { role, user, userSettings } from '~/server/db/schema/user'
 import { hash } from 'bcryptjs'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
@@ -327,7 +327,7 @@ export const userRouter = createTRPCRouter({
 			with: {
 				settings: true,
 				roles: true,
-        trainers: true,
+				trainers: true,
 				userPlans: {
 					with: {
 						userMeals: true,
@@ -423,22 +423,24 @@ export const userRouter = createTRPCRouter({
 		})
 		return res
 	}),
-  isAdmin: protectedProcedure.query(async ({ ctx }) => {
-    const userId = ctx.session?.user.id
+	isAdmin: protectedProcedure.query(async ({ ctx }) => {
+		const userId = ctx.session?.user.id
 
-    if (!userId) return null
+		if (!userId) return null
 
-    const res = await ctx.db.query.user.findFirst({
-      where: (user, { eq }) => eq(user.id, userId),
-      with: {
-        roles: true,
-      },
-    })
+		const res = await ctx.db.query.user.findFirst({
+			where: (user, { eq }) => eq(user.id, userId),
+			with: {
+				roles: true,
+			},
+		})
 
-    if (!res) return false
-    const isAdmin = res?.roles?.find((role) => role.name === 'admin') ? true : false
-    return isAdmin
-  }),
+		if (!res) return false
+		const isAdmin = res?.roles?.find((role) => role.name === 'admin')
+			? true
+			: false
+		return isAdmin
+	}),
 	updateRoot: rootProtectedProcedure
 		.input(z.object({ isRoot: z.boolean(), id: z.string() }))
 		.mutation(async ({ ctx, input }) => {
@@ -651,38 +653,69 @@ export const userRouter = createTRPCRouter({
 		})
 		return res
 	}),
-	getBasic: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
-		if (input === '') throw new TRPCError({ code: 'BAD_REQUEST' })
-		const res = await ctx.db.query.user.findFirst({
-			where: (user, { eq }) => eq(user.id, input),
-			columns: {
-				password: false,
-			},
-      with: {
-        roles: true,
-        trainers: {
-          with: {
-            trainer: true,
-          },
-        },
-      },
-		})
-		return res
-	}),
+	getBasic: protectedProcedure
+		.input(z.string())
+		.query(async ({ ctx, input }) => {
+			if (input === '') throw new TRPCError({ code: 'BAD_REQUEST' })
+			const res = await ctx.db.query.user.findFirst({
+				where: (user, { eq }) => eq(user.id, input),
+				columns: {
+					password: false
+				},
+				with: {
+					roles: true,
+					trainers: {
+						with: {
+							trainer: true,
+						},
+					},
+				},
+			})
+			return res
+		}),
+	getAllYour: protectedProcedure
+		.query(async ({ ctx,  }) => {
+      const userId = ctx.session?.user.id
+
+      console.log('user', ctx.session.user)
+
+			const res = await ctx.db.query.user.findMany({
+				columns: {
+					password: false,
+				},
+				with: {
+					roles: true,
+					trainers: {
+						with: {
+							trainer: true,
+						},
+					},
+				},
+			})
+
+      const users = res.filter((user) => {
+        if (user.id === userId) return true
+        if (ctx.session.user.isAdmin) return true
+        if (user.trainers.find((trainer) => trainer.trainer.id === userId)) return true
+        return false
+    })
+
+			return users
+		}),
 	getAll: protectedProcedure.query(async ({ ctx }) => {
 		const res = await ctx.db.query.user.findMany({
 			columns: {
 				password: false,
 			},
-      with: {
-        roles: true,
-        trainers: {
-          with: {
-            trainer: true,
-          },
-        },
-      },
-    })
+			with: {
+				roles: true,
+				trainers: {
+					with: {
+						trainer: true,
+					},
+				},
+			},
+		})
 		return res
 	}),
 	getGaurenteed: protectedProcedure
