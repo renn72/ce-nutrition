@@ -316,16 +316,16 @@ export const roleRelations = relations(role, ({ one }) => ({
 
 export const userToTrainerRelations = relations(
   userToTrainer,
-  ({ one, many }) => ({
+  ({ one, }) => ({
     user: one(user, {
       fields: [userToTrainer.userId],
       references: [user.id],
-      relationName: 'clients',
+      relationName: 'trainers',
     }),
     trainer: one(user, {
       fields: [userToTrainer.trainerId],
       references: [user.id],
-      relationName: 'trainers',
+      relationName: 'clients',
     }),
   }),
 )

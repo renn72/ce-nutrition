@@ -166,7 +166,10 @@ const AdminSidebar = ({
 	const { data: _allUsers, isLoading } = api.user.getAll.useQuery()
 	const { data: isRoot } = api.user.isRoot.useQuery()
 
-	const allUsers = _allUsers?.filter((user) => true).sort((a, b) => a.name?.localeCompare(b.name ?? '') ?? 0)
+	const allUsers = _allUsers
+		?.filter((user) => true)
+		.sort((a, b) => a.name?.localeCompare(b.name ?? '') ?? 0)
+
 	const userName = allUsers?.find((user) => user.id === selectedUser)?.name
 
 	React.useEffect(() => {
@@ -198,7 +201,9 @@ const AdminSidebar = ({
 								</PopoverTrigger>
 								<PopoverContent className='w-[400px] max-w-[100vw] p-0'>
 									<Command>
-										<CommandInput placeholder='Search users...' />
+										<div className='flex gap-2 '>
+											<CommandInput placeholder='Search users...' />
+										</div>
 										<CommandList className='max-h-[80vh]'>
 											<CommandEmpty>No user found.</CommandEmpty>
 											<CommandGroup>
@@ -214,7 +219,7 @@ const AdminSidebar = ({
 															key={user.id}
 															value={user.name ?? user.id}
 															onSelect={(currentValue) => {
-                                router.push(`${pathname}?user=${user.id}`)
+																router.push(`${pathname}?user=${user.id}`)
 
 																setSelectedUser(currentValue)
 																setIsOpen(false)
@@ -229,11 +234,13 @@ const AdminSidebar = ({
 																		: 'opacity-0',
 																)}
 															/>
-															<span className='col-span-6 truncate'>{user.name}</span>
+															<span className='col-span-6 truncate'>
+																{user.name}
+															</span>
 															<span className='col-span-4'>
 																{user.trainers.map((trainer) => (
 																	<Badge key={trainer.trainer.id}>
-                                    {trainer.trainer?.firstName}
+																		{trainer.trainer?.firstName}
 																	</Badge>
 																))}
 															</span>
@@ -241,7 +248,11 @@ const AdminSidebar = ({
 																className={cn(isTrainer ? 'text-blue-600' : '')}
 															>
 																{isTrainer ? (
-																	<WhistleIcon size={20} strokeWidth={6} className='-rotate-[15deg]' />
+																	<WhistleIcon
+																		size={20}
+																		strokeWidth={6}
+																		className='-rotate-[15deg]'
+																	/>
 																) : null}
 															</span>
 															<span
