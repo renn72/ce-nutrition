@@ -15,6 +15,7 @@ import {
   girthMeasurement,
   leanMass,
   skinfold,
+  images,
 } from './metrics'
 import { notification } from './notification'
 import { userPlan } from './user-plan'
@@ -75,6 +76,7 @@ export const userRelations = relations(user, ({ one, many }) => ({
   bodyFat: many(bodyFat),
   leanMass: many(leanMass),
   bodyWeight: many(bodyWeight),
+  images: many(images),
   settings: one(userSettings, {
     fields: [user.id],
     references: [userSettings.userId],
@@ -85,6 +87,7 @@ export const userRelations = relations(user, ({ one, many }) => ({
   goalsTrainer: many(goals, { relationName: 'trainer' }),
   trainerNotes: many(trainerNotes, { relationName: 'user' }),
   trainerNotesTrainer: many(trainerNotes, { relationName: 'trainer' }),
+
 }))
 
 export const trainerNotes = createTable('trainer_notes', {
