@@ -92,7 +92,7 @@ export function getRecipeDetailsFromDailyLog(
 
 
   return {
-    calsWFibre: cals?.toFixed(1),
+    calsWFibre: cals?.toFixed(0),
     cals: Number(calsWOFibre).toFixed(1),
     protein: Number(protein).toFixed(1),
     carbs: Number(carbs).toFixed(1),

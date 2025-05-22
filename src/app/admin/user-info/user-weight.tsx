@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { GetAllDailyLogs, GetUserById } from '@/types'
+import type { GetAllDailyLogs, GetUserById } from '@/types'
 import { ArrowDown, ArrowUp } from 'lucide-react'
 import {
   CartesianGrid,

@@ -6,6 +6,7 @@ import { UserCharts } from '@/components/charts/user-charts'
 
 import { UserGoals } from './user-goals'
 import { UserWeight } from './user-weight'
+import { UserMeals } from './user-meals'
 
 const UserInfo = ({ userId }: { userId: string }) => {
 	const { data: user } = api.user.get.useQuery(userId)
@@ -23,6 +24,9 @@ const UserInfo = ({ userId }: { userId: string }) => {
 			<UserGoals user={user} userGoals={userGoals} />
 			<div className="w-[616px]">
 				<UserCharts dailyLogs={dailyLogs} currentUser={user} />
+			</div>
+			<div className="w-[616px]">
+				<UserMeals dailyLogs={dailyLogs} currentUser={user} />
 			</div>
 		</div>
 	)
