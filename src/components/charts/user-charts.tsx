@@ -164,7 +164,7 @@ const Chart = ({
 	return (
 		<ChartContainer
 			config={chartConfig}
-			className='w-full min-h-[200px] max-h-[300px]'
+			className='w-full min-h-[200px] max-h-[340px]'
 		>
 			<LineChart data={data}>
 				<CartesianGrid vertical={false} />
