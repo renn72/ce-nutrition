@@ -4,7 +4,7 @@ import { api } from '@/trpc/react'
 
 import { useEffect, useState } from 'react'
 
-import { GetPlanById } from '@/types'
+import type { GetPlanById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusCircle } from 'lucide-react'
 import { useFieldArray, useForm } from 'react-hook-form'
@@ -55,11 +55,12 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
   const [initialData, setInitialData] = useState<z.infer<
     typeof formSchema
   > | null>()
+  const { data: _recipes, isLoading: isLoadingRecipes } =
+    api.recipe.getAll.useQuery()
 
   useEffect(() => {
     const loadFormData = () => {
       const savedForm = localStorage.getItem('ce-plan-formValues')
-      console.log('savedForm', savedForm)
 
       // @ts-ignore
       if (savedForm === null || savedForm === '') {
@@ -79,6 +80,8 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
 
   if (initialData === undefined) return null
 
+  if (isLoadingRecipes) return null
+
   return (
     <MainForm
       plan={plan}
@@ -94,7 +97,6 @@ const MainForm = ({
   plan: GetPlanById | null
   initialData: z.infer<typeof formSchema> | null
 }) => {
-  console.log('initialData', initialData)
   const ctx = api.useUtils()
 
   const { mutate: createPlan } = api.plan.create.useMutation({

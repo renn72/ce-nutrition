@@ -95,6 +95,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
 			<DataTableColumnHeader column={column} title='Category' />
 		),
 		cell: ({ row }) => {
+      console.log('row', row.original)
 			return (
 				<div className='flex space-x-2'>
 					<span className='max-w-[300px] truncate font-medium'>
