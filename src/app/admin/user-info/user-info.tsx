@@ -21,7 +21,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
 		<div className="p-4 flex flex-wrap gap-4 w-full">
 			<UserWeight user={user} dailyLogs={dailyLogs} />
 			<UserGoals user={user} userGoals={userGoals} />
-			<div className="w-[600px]">
+			<div className="w-[616px]">
 				<UserCharts dailyLogs={dailyLogs} currentUser={user} />
 			</div>
 		</div>
