@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/form'
 import { NumberInputForm } from '@/components/ui/number-input-form'
 
-import { VirtualizedCombobox } from '../ui/virtualized-combobox'
+import { VirtualizedCombobox } from '@/components/ui/virtualized-combobox'
 import type { formSchema } from './form-recipe'
 
 export const dynamic = 'force-dynamic'

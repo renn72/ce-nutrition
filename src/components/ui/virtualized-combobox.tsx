@@ -51,7 +51,7 @@ const VirtualizedCommand = ({
 	const virtualizer = useVirtualizer({
 		count: filteredOptions.length,
 		getScrollElement: () => parentRef.current,
-		estimateSize: () => 35,
+		estimateSize: () => 45,
 	})
 
 	const virtualOptions = virtualizer.getVirtualItems()
@@ -150,7 +150,7 @@ const VirtualizedCommand = ({
 								key={filteredOptions[virtualOption.index].value}
 								disabled={isKeyboardNavActive}
 								className={cn(
-									'absolute left-0 top-0 w-full bg-transparent',
+									'absolute left-0 top-0 w-full bg-transparent ',
 									focusedIndex === virtualOption.index &&
 										'bg-accent text-accent-foreground',
 									isKeyboardNavActive &&
@@ -158,7 +158,7 @@ const VirtualizedCommand = ({
 										'aria-selected:bg-transparent aria-selected:text-primary',
 								)}
 								style={{
-									height: `${virtualOption.size}px`,
+                  height: (filteredOptions[virtualOption.index]?.value?.length ?? 0) > 90 ? `${virtualOption.size}px` : `${virtualOption.size}px` ,
 									transform: `translateY(${virtualOption.start}px)`,
 								}}
 								value={filteredOptions[virtualOption.index].value}
@@ -177,7 +177,7 @@ const VirtualizedCommand = ({
 											: 'opacity-0',
 									)}
 								/>
-								{filteredOptions[virtualOption.index].label}
+								{filteredOptions[virtualOption.index].label.slice(0, 80)}
 							</CommandItem>
 						))}
 					</div>
@@ -205,8 +205,6 @@ function VirtualizedCombobox({
   onSelectOption,
 }: VirtualizedComboboxProps) {
 	const [open, setOpen] = React.useState(false)
-
-  console.log('poen', open)
 
 	return (
 		<Popover open={open} onOpenChange={setOpen}>

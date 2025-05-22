@@ -16,7 +16,7 @@ export default function Home() {
   if (isLoading) return null
 
   return (
-    <div className='flex flex-col max-w-screen-lg w-full mx-auto lg:mt-10'>
+    <div className='flex flex-col max-w-screen-2xl w-full mx-auto lg:mt-10'>
       <FormRecipe recipe={recipe} />
     </div>
   )
