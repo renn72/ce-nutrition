@@ -6,8 +6,8 @@ import {Button} from '@/components/ui/button'
 import { cn, getRecipeDetailsForUserPlan } from '@/lib/utils'
 import type { GetPlanById } from '@/types'
 import { CircleMinus, CirclePlus } from 'lucide-react'
-import { useFieldArray, UseFormReturn, UseFieldArrayReturn } from 'react-hook-form'
-import { z } from 'zod'
+import { useFieldArray, type UseFormReturn, type UseFieldArrayReturn } from 'react-hook-form'
+import type { z } from 'zod'
 
 import {
   FormControl,
@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 
-import { formSchema } from './create-user-plan'
+import type { formSchema } from './create-user-plan'
 
 export const dynamic = 'force-dynamic'
 
