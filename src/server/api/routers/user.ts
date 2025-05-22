@@ -677,8 +677,6 @@ export const userRouter = createTRPCRouter({
 		.query(async ({ ctx,  }) => {
       const userId = ctx.session?.user.id
 
-      console.log('user', ctx.session.user)
-
 			const res = await ctx.db.query.user.findMany({
 				columns: {
 					password: false,
