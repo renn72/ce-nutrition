@@ -870,7 +870,7 @@ export const dailyLogRouter = createTRPCRouter({
 			createLog({
 				user: ctx.session.user.name,
 				userId: ctx.session.user.id,
-				task: 'Update Blood Glucose' + log ? '' : ' and Create Log',
+				task: `Update Blood Glucose' + ${log ? '' : ' and Create Log'}`,
 				notes: JSON.stringify(input),
 				objectId: null,
 			})
@@ -896,6 +896,79 @@ export const dailyLogRouter = createTRPCRouter({
 
 			return res
 		}),
+	updateFrontImage: protectedProcedure
+		.input(
+			z.object({
+				logId: z.number(),
+				image: z.string(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				task: 'Update Front Image',
+				notes: JSON.stringify(input),
+				objectId: null,
+			})
+
+			const res = await ctx.db
+				.update(dailyLog)
+				.set({ frontImage: input.image })
+				.where(eq(dailyLog.id, input.logId))
+
+			return true
+		}),
+	updateSideImage: protectedProcedure
+		.input(
+			z.object({
+				logId: z.number(),
+				image: z.string(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				task: 'Update side Image',
+				notes: JSON.stringify(input),
+				objectId: null,
+			})
+
+			const res = await ctx.db
+				.update(dailyLog)
+				.set({ sideImage: input.image })
+				.where(
+						eq(dailyLog.id, input.logId),
+				)
+
+			return true
+		}),
+	updateBackImage: protectedProcedure
+		.input(
+			z.object({
+				logId: z.number(),
+				image: z.string(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				task: 'Update  Back Image',
+				notes: JSON.stringify(input),
+				objectId: null,
+			})
+
+			const res = await ctx.db
+				.update(dailyLog)
+				.set({ image: input.image })
+				.where(
+						eq(dailyLog.id, input.logId),
+				)
+
+			return true
+		}),
 	updateImage: protectedProcedure
 		.input(
 			z.object({
@@ -910,21 +983,17 @@ export const dailyLogRouter = createTRPCRouter({
 					eq(dailyLog.userId, ctx.session.user.id),
 				),
 			})
+
 			createLog({
 				user: ctx.session.user.name,
 				userId: ctx.session.user.id,
-				task: 'Update Image' + log ? '' : ' and Create Log',
+				task: `Update Image' + ${log ? '' : ' and Create Log'}`,
 				notes: JSON.stringify(input),
 				objectId: null,
 			})
 
 			if (!log) {
-				const res = await ctx.db.insert(dailyLog).values({
-					date: input.date,
-					image: input.image,
-					userId: ctx.session.user.id,
-				})
-				return res
+				throw new Error('Log not found')
 			}
 
 			const res = await ctx.db
@@ -1075,25 +1144,25 @@ export const dailyLogRouter = createTRPCRouter({
 			z.object({
 				mealIndex: z.number(),
 				logId: z.number(),
-        recipe: z.object({
-          name: z.string(),
-          description: z.string(),
-          image: z.string(),
-          notes: z.string(),
-          recipeCategory: z.string(),
-          calories: z.number(),
-          ingredients: z.array(
-            z.object({
-              ingredientId: z.number(),
-              alternateId: z.string(),
-              note: z.string(),
-              serveSize: z.string(),
-              serveUnit: z.string(),
-              index: z.number(),
-              isAlternate: z.boolean().optional(),
-            }),
-          ),
-        }),
+				recipe: z.object({
+					name: z.string(),
+					description: z.string(),
+					image: z.string(),
+					notes: z.string(),
+					recipeCategory: z.string(),
+					calories: z.number(),
+					ingredients: z.array(
+						z.object({
+							ingredientId: z.number(),
+							alternateId: z.string(),
+							note: z.string(),
+							serveSize: z.string(),
+							serveUnit: z.string(),
+							index: z.number(),
+							isAlternate: z.boolean().optional(),
+						}),
+					),
+				}),
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
@@ -1150,14 +1219,13 @@ export const dailyLogRouter = createTRPCRouter({
 			const recipeInsert = await ctx.db
 				.insert(userRecipe)
 				.values({
-          name: input.recipe.name,
+					name: input.recipe.name,
 					mealIndex: input.mealIndex,
 					recipeIndex: 0,
 					dailyMealId: dailyMealId,
 					dailyLogId: input.logId,
 					isLog: true,
-          isUserCreated: true,
-
+					isUserCreated: true,
 				})
 				.returning({ id: userRecipe.id })
 
@@ -1170,13 +1238,15 @@ export const dailyLogRouter = createTRPCRouter({
 							recipeId: recipeInsert?.[0]?.id,
 							mealIndex: input.mealIndex,
 							recipeIndex: 0,
-							alternateId: ingredient.alternateId ? Number(ingredient.alternateId) : null,
+							alternateId: ingredient.alternateId
+								? Number(ingredient.alternateId)
+								: null,
 							dailyMealId: dailyMealId,
 							dailyLogId: input.logId,
 							isLog: true,
 							serve: ingredient.serveSize,
 							serveUnit: ingredient.serveUnit,
-              isUserCreated: true,
+							isUserCreated: true,
 						}
 					}),
 				)

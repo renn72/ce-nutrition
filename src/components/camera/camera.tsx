@@ -111,11 +111,9 @@ const Camera = ({ onUpload }: { onUpload: (url: string) => void }) => {
       <DialogTrigger asChild>
         <Button
           variant='secondary'
-          size='lg'
-          className='flex items-center gap-2'
+          className='h-10 w-10'
         >
-          <CameraIcon size={20} />
-          <span className=''>Use Camera</span>
+          <CameraIcon size={20} className='shrink-0'/>
         </Button>
       </DialogTrigger>
       <DialogContent className='w-screen h-screen p-0'>
@@ -153,7 +151,7 @@ const Camera = ({ onUpload }: { onUpload: (url: string) => void }) => {
               <RefreshCw size={32} />
             </div>
           </div>
-          <DialogDescription></DialogDescription>
+          <DialogDescription/>
           <div
             className={cn(
               'absolute top-0 right-0 bottom-0 left-0 bg-black/50 z-[999] ',
