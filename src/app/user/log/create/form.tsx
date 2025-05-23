@@ -15,6 +15,7 @@ import { BloodGlucose } from './_field/blood-glucose'
 import { ColdPlunge } from './_field/cold-plunge'
 import { Hiit } from './_field/hiit'
 import { ImageBox } from './_field/image-box'
+import { ImageBoxBodyBuilder } from './_field/image-box-bodybuilder'
 import { Liss } from './_field/liss'
 import { Nap } from './_field/nap'
 import { Notes } from './_field/notes'
@@ -53,6 +54,8 @@ const DailyLogForm = ({
 			image: url,
 		})
 	}
+
+  const isBodyBuilderImages = currentUser.roles.find((role) => role.name === 'body-builder-images') ? true : false
 
   if (!todaysLog) return null
 
@@ -116,6 +119,47 @@ const DailyLogForm = ({
 					todaysLog={todaysLog}
 					position='back'
 				/>
+        {
+          isBodyBuilderImages ? (
+            <>
+              <ImageBoxBodyBuilder
+                todaysLog={todaysLog}
+                position='frontDouble'
+                currentUser={currentUser}
+              />
+              <ImageBoxBodyBuilder
+                todaysLog={todaysLog}
+                position='sideChest'
+                currentUser={currentUser}
+              />
+              <ImageBoxBodyBuilder
+                todaysLog={todaysLog}
+                position='sideTri'
+                currentUser={currentUser}
+              />
+              <ImageBoxBodyBuilder
+                todaysLog={todaysLog}
+                position='rearDouble'
+                currentUser={currentUser}
+              />
+              <ImageBoxBodyBuilder
+                todaysLog={todaysLog}
+                position='absThighs'
+                currentUser={currentUser}
+              />
+              <ImageBoxBodyBuilder
+                todaysLog={todaysLog}
+                position='frontVacum'
+                currentUser={currentUser}
+              />
+              <ImageBoxBodyBuilder
+                todaysLog={todaysLog}
+                position='favourite'
+                currentUser={currentUser}
+              />
+            </>
+          ) : null
+        }
 			</div>
 		</div>
 	)

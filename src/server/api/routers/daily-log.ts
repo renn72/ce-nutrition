@@ -7,6 +7,7 @@ import {
 	waterLog,
 } from '@/server/db/schema/daily-logs'
 import { log } from '@/server/db/schema/log'
+import { images } from '@/server/db/schema/metrics'
 import {
 	userIngredient,
 	userPlan,
@@ -938,9 +939,7 @@ export const dailyLogRouter = createTRPCRouter({
 			const res = await ctx.db
 				.update(dailyLog)
 				.set({ sideImage: input.image })
-				.where(
-						eq(dailyLog.id, input.logId),
-				)
+				.where(eq(dailyLog.id, input.logId))
 
 			return true
 		}),
@@ -963,11 +962,41 @@ export const dailyLogRouter = createTRPCRouter({
 			const res = await ctx.db
 				.update(dailyLog)
 				.set({ backImage: input.image })
-				.where(
-						eq(dailyLog.id, input.logId),
-				)
+				.where(eq(dailyLog.id, input.logId))
 
 			return true
+		}),
+	updateBodyBuilderImage: protectedProcedure
+		.input(
+			z.object({
+				date: z.string(),
+				image: z.string(),
+				name: z.string(),
+				userId: z.string(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const logImage = await ctx.db
+				.delete(images)
+				.where(
+					and(
+						eq(images.date, input.date),
+						eq(images.name, input.name),
+						eq(images.userId, input.userId),
+					),
+				)
+
+			const res = await ctx.db
+				.insert(images)
+        .values({
+          userId: input.userId,
+          name: input.name,
+          date: input.date,
+          image: input.image,
+        })
+        .returning({ id: images.id })
+
+			return res
 		}),
 	updateImage: protectedProcedure
 		.input(

@@ -327,6 +327,7 @@ export const userRouter = createTRPCRouter({
 			with: {
 				settings: true,
 				roles: true,
+        images: true,
 				trainers: true,
 				userPlans: {
 					with: {
@@ -359,6 +360,7 @@ export const userRouter = createTRPCRouter({
 					password: false,
 				},
 				with: {
+          images: true,
 					settings: true,
 					roles: true,
 					userPlans: {
@@ -746,6 +748,7 @@ export const userRouter = createTRPCRouter({
 				},
 				with: {
 					settings: true,
+          images: true,
 					roles: true,
 					userPlans: {
 						with: {
