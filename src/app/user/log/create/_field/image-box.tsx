@@ -248,8 +248,10 @@ const ImageBox = ({
 							/>
 						</div>
 					</DialogTrigger>
-					<DialogContent className='px-0'>
-						<DialogHeader>
+					<DialogContent
+              onOpenAutoFocus={(e) => e.preventDefault()}
+              className='px-0 py-0 bg-background/10 border-none rounded-md shadow-lg'>
+						<DialogHeader className='hidden'>
 							<DialogTitle />
 							<DialogDescription />
 						</DialogHeader>
