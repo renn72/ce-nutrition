@@ -962,7 +962,7 @@ export const dailyLogRouter = createTRPCRouter({
 
 			const res = await ctx.db
 				.update(dailyLog)
-				.set({ image: input.image })
+				.set({ backImage: input.image })
 				.where(
 						eq(dailyLog.id, input.logId),
 				)
