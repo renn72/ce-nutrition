@@ -9,6 +9,7 @@ import Image from 'next/image'
 import { UploadButton } from '@/lib/uploadthing'
 import type { GetDailyLogById } from '@/types'
 import { File, ImageIcon, XSquare } from 'lucide-react'
+import { toast } from 'sonner'
 
 import {
 	AlertDialog,
@@ -46,6 +47,7 @@ const ImageTake = ({
 	todaysLog: GetDailyLogById
 	position: 'front' | 'side' | 'back'
 }) => {
+	const [isOpen, setIsOpen] = useState(false)
 	const ctx = api.useUtils()
 	const { mutate: updateFrontImage } =
 		api.dailyLog.updateFrontImage.useMutation({
@@ -98,37 +100,44 @@ const ImageTake = ({
 				strokeWidth={1}
 			/>
 			<h2 className='text-center text-base font-semibold'>{title}</h2>
-			<div className='flex gap-4 justify-around w-full'>
+			<div className='flex gap-4 justify-around w-full mb-1'>
 				<Camera onUpload={onUpdateImage} />
-				<UploadButton
-					appearance={{
-						button: {
-							background: 'hsl(var(--secondary))',
-							color: 'hsl(var(--secondary-foreground))',
-							fontSize: '14px',
-							fontWeight: '500',
-							width: '40px',
-							height: '40px',
-						},
-						allowedContent: {
-							height: '1px',
-						},
-					}}
-					content={{
-						button() {
-							return <File size={16} className='text-secondary-foreground' />
-						},
-						allowedContent() {
-							return ''
-						},
-					}}
-					endpoint='imageUploader'
-					onClientUploadComplete={(res) => {
-						console.log('onClientUploadComplete', res)
-						const url = res?.[0]?.url
-						onUpdateImage(url ?? '')
-					}}
-				/>
+				<Dialog open={isOpen} onOpenChange={setIsOpen}>
+					<DialogTrigger asChild>
+						<Button variant='secondary' className='h-10 w-10'>
+							<File size={20} className='shrink-0' />
+						</Button>
+					</DialogTrigger>
+					<DialogContent>
+						<DialogHeader>
+							<DialogTitle>Upload Image File</DialogTitle>
+							<DialogDescription className=''>
+                Upload an image file to use as the {title} image.
+							</DialogDescription>
+						</DialogHeader>
+						<UploadButton
+							appearance={{
+								button: {
+									background: 'hsl(var(--secondary))',
+									color: 'hsl(var(--secondary-foreground))',
+									fontSize: '14px',
+									fontWeight: '500',
+								},
+							}}
+							endpoint='imageUploader'
+							onClientUploadComplete={(res) => {
+								console.log('onClientUploadComplete', res)
+								const url = res?.[0]?.url
+								if (!url) {
+									toast.error('error')
+									return
+								}
+								onUpdateImage(url)
+								setIsOpen(false)
+							}}
+						/>
+					</DialogContent>
+				</Dialog>
 			</div>
 		</div>
 	)
@@ -223,10 +232,12 @@ const ImageBox = ({
 									</AlertDialogHeader>
 									<AlertDialogFooter>
 										<AlertDialogCancel
-                        onClick={(e) => {
-                          e.stopPropagation()
-                        }}
-                      >Cancel</AlertDialogCancel>
+											onClick={(e) => {
+												e.stopPropagation()
+											}}
+										>
+											Cancel
+										</AlertDialogCancel>
 										<AlertDialogAction
 											onClick={(e) => {
 												e.stopPropagation()
@@ -249,8 +260,9 @@ const ImageBox = ({
 						</div>
 					</DialogTrigger>
 					<DialogContent
-              onOpenAutoFocus={(e) => e.preventDefault()}
-              className='px-0 py-0 bg-background/10 border-none rounded-md shadow-lg'>
+						onOpenAutoFocus={(e) => e.preventDefault()}
+						className='px-0 py-0 bg-background/10 border-none rounded-md shadow-lg'
+					>
 						<DialogHeader className='hidden'>
 							<DialogTitle />
 							<DialogDescription />
