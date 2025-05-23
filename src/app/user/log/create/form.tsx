@@ -57,7 +57,7 @@ const DailyLogForm = ({
   if (!todaysLog) return null
 
 	return (
-		<div className='flex flex-col gap-3 px-1 relative mt-2'>
+		<div className='flex flex-col gap-3 px-1 relative mt-2 mb-16'>
 			<Link
 				href='/user/settings#settings-water-defaults'
 				className='absolute -top-8 right-8'
