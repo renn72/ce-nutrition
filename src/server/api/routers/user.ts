@@ -572,8 +572,27 @@ export const userRouter = createTRPCRouter({
 				.where(eq(userSettings.id, input.id))
 			return res
 		}),
+	updateRoleBodyBuilderImages: protectedProcedure
+		.input(z.object({ userId: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db.query.role.findFirst({
+				where: (role, { eq, and }) =>
+					and(eq(role.userId, input.userId), eq(role.name, 'body-builder-images')),
+			})
+
+			if (res) {
+				await ctx.db.delete(role).where(eq(role.id, res.id))
+			} else {
+				await ctx.db.insert(role).values({
+					name: 'body-builder-images',
+					userId: input.userId,
+				})
+			}
+
+			return res
+		}),
 	updateRoleCreateMeals: protectedProcedure
-		.input(z.object({ isCreateMeals: z.boolean(), userId: z.string() }))
+		.input(z.object({ userId: z.string() }))
 		.mutation(async ({ ctx, input }) => {
 			const res = await ctx.db.query.role.findFirst({
 				where: (role, { eq, and }) =>

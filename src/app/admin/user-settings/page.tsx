@@ -370,7 +370,42 @@ const CreateMeals = ({ currentUser }: { currentUser: GetUserById }) => {
           setIsCreateMeals(checked)
           updateRoleCreateMeals({
             userId: currentUser.id,
-            isCreateMeals: checked,
+          })
+        }}
+      />
+    </div>
+  )
+}
+
+const BodyBuilderImages = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isBodyBuilderImages, setIsBodyBuilderImages] = useState<boolean>(!!currentUser.roles.find((role) => role.name === 'body-builder-images'))
+  const { mutate: updateRoleBodyBuilderImages } = api.user.updateRoleBodyBuilderImages.useMutation({
+    onSuccess: () => {
+      toast.success('Updated')
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error')
+      ctx.user.invalidate()
+    },
+  })
+  return (
+    <div className='flex flex-row items-center justify-between rounded-lg border p-3 gap-4 shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>Body Builder Images</Label>
+        <div className='text-sm text-muted-foreground'>
+          Enables the full suite of body builder images in the Daily Log.
+        </div>
+      </div>
+      <Switch
+        checked={isBodyBuilderImages === true}
+        onCheckedChange={(checked) => {
+          setIsBodyBuilderImages(checked)
+          updateRoleBodyBuilderImages({
+            userId: currentUser.id,
           })
         }}
       />
@@ -391,6 +426,7 @@ const Settings = ({ user }: { user: GetUserById }) => {
       </div>
       <div className='flex flex-col gap-2 w-full p-4 border rounded-lg max-w-lg'>
         <h2 className='text-base font-semibold'>Daily Log</h2>
+        <BodyBuilderImages currentUser={user} />
         <Sleep currentUser={user} />
         <SleepQuality currentUser={user} />
         <Nap currentUser={user} />
