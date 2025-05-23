@@ -151,6 +151,13 @@ const ImageBoxBodyBuilder = ({
 	const ctx = api.useUtils()
 	const title = titlesMap[position]
 
+	const { mutate: updateImage } =
+		api.dailyLog.updateBodyBuilderImage.useMutation({
+			onSettled: () => {
+				ctx.user.invalidate()
+			},
+		})
+
 	console.log('currentUser', currentUser)
 
 	const image = currentUser?.images?.find(
@@ -159,6 +166,12 @@ const ImageBoxBodyBuilder = ({
 
 	const onDeleteImage = () => {
 		if (!todaysLog) return
+    updateImage({
+      date: todaysLog.date,
+      userId: currentUser.id,
+      image: '',
+      name: position,
+    })
 	}
 
 	return (
