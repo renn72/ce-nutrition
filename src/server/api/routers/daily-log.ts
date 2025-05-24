@@ -986,6 +986,14 @@ export const dailyLogRouter = createTRPCRouter({
 					),
 				)
 
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				task: `Update Image ${name} `,
+				notes: JSON.stringify(input),
+				objectId: null,
+			})
+
 			const res = await ctx.db
 				.insert(images)
         .values({
