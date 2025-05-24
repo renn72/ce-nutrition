@@ -976,7 +976,7 @@ export const dailyLogRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
-			const logImage = await ctx.db
+			await ctx.db
 				.delete(images)
 				.where(
 					and(
@@ -989,7 +989,7 @@ export const dailyLogRouter = createTRPCRouter({
 			createLog({
 				user: ctx.session.user.name,
 				userId: ctx.session.user.id,
-				task: `Update Image ${name} `,
+				task: `Update Image ${input.name} `,
 				notes: JSON.stringify(input),
 				objectId: null,
 			})

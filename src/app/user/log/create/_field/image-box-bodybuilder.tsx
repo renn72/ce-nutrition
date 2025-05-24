@@ -158,10 +158,8 @@ const ImageBoxBodyBuilder = ({
 			},
 		})
 
-	console.log('currentUser', currentUser)
-
 	const image = currentUser?.images?.find(
-		(image) => image.name === position,
+		(image) => image.name === position && image.date === todaysLog?.date
 	)?.image
 
 	const onDeleteImage = () => {
