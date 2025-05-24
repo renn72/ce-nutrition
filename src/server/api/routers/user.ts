@@ -200,6 +200,39 @@ export const userRouter = createTRPCRouter({
 
 			return res
 		}),
+  updateIsSauna: protectedProcedure
+    .input(z.object({ id: z.string(), isSauna: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(userSettings)
+        .set({
+          isSauna: input.isSauna,
+        })
+        .where(eq(userSettings.userId, input.id))
+      return res
+    }),
+  updateIsColdPlunge: protectedProcedure
+    .input(z.object({ id: z.string(), isColdPlunge: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(userSettings)
+        .set({
+          isColdPlunge: input.isColdPlunge,
+        })
+        .where(eq(userSettings.userId, input.id))
+      return res
+    }),
+  updateIsSteps: protectedProcedure
+    .input(z.object({ id: z.string(), isSteps: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(userSettings)
+        .set({
+          isSteps: input.isSteps,
+        })
+        .where(eq(userSettings.userId, input.id))
+      return res
+    }),
 	updateTrainer: protectedProcedure
 		.input(z.object({ id: z.string(), isTrainer: z.boolean() }))
 		.mutation(async ({ ctx, input }) => {

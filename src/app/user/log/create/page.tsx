@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
-import { GetDailyLogById } from '@/types'
+import type { GetDailyLogById } from '@/types'
 import { format } from 'date-fns'
 import {
 	Bone,

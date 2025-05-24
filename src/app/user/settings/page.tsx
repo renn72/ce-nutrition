@@ -255,6 +255,7 @@ const Email = ({ currentUser }: { currentUser: GetUserById }) => {
 	return (
 		<DialogWrapper
 			title='Email'
+      id='settings-user-email'
 			value={currentUser?.email ?? ''}
 			isOpen={isOpen}
 			setIsOpen={setIsOpen}
