@@ -64,6 +64,10 @@ const data = {
 					url: '/admin/user-logs',
 				},
 				{
+					title: 'Images',
+					url: '/admin/user-image',
+				},
+				{
 					title: 'Skinfolds',
 					url: '/admin/user-skinfolds',
 				},

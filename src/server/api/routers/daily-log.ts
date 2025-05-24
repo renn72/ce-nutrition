@@ -1609,9 +1609,8 @@ export const dailyLogRouter = createTRPCRouter({
 					},
 				},
 			},
-			orderBy: (data, { desc }) => desc(data.date),
 		})
-		return res
+		return res.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 	}),
 	delete: protectedProcedure
 		.input(z.number())
