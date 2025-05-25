@@ -8,7 +8,7 @@ import Image from 'next/image'
 
 import { UploadButton } from '@/lib/uploadthing'
 import type { GetDailyLogById, GetUserById } from '@/types'
-import { File, ImageIcon, XSquare } from 'lucide-react'
+import { File, ImageIcon, Loader2, XSquare } from 'lucide-react'
 import { toast } from 'sonner'
 
 import {
