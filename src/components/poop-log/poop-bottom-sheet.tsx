@@ -41,6 +41,45 @@ const toiletPhrases = [
 	'Handling some business',
 	'Unloading the cargo',
 	'Sinking the Titanic',
+	'Dropping the kids off',
+	'Taking the Browns out',
+	'Logging off',
+	'Making a deposit',
+	'Seeing a man about a dog',
+	'Spending a penny',
+	'Launching torpedoes',
+	'Answering nature’s call',
+	'Squeezing the cheese',
+	'Visiting the throne',
+	'Blowing up the bathroom',
+	'Downloading a brownload',
+	'Deploying the payload',
+	'Baking butt brownies',
+	'Opening the floodgates',
+	'Firing the porcelain cannon',
+	'Giving birth to a food baby',
+	'Plopping a stink bomb',
+	'Waging toilet warfare',
+	'Releasing the Kraken',
+	'Cooking a butt stew',
+	'Painting the bowl',
+	'Taking the scenic route',
+	'Calling the commode',
+	'Meeting the porcelain god',
+	'Doing some paperwork',
+	'Popping a squat',
+	'Evacuating the premises',
+	'Blasting off',
+	'Unloading cargo',
+	'Doing number two',
+	'Having a sit-down',
+	'Going full torpedo',
+	'Reading on the throne',
+	'Cracking porcelain',
+	'Commode communion',
+	'Power flushing',
+	'Conducting butt business',
+	'Making stink art',
 ]
 
 const PoopBottomSheet = ({
@@ -58,25 +97,19 @@ const PoopBottomSheet = ({
 	})
 	return (
 		<Sheet.Root license='non-commercial'>
-			<Sheet.Trigger className='flex gap-2 items-center justify-center mt-1'>
+			<Sheet.Trigger
+				onClick={() => {
+					const rnd = Math.floor(Math.random() * toiletPhrases.length)
+					const phrase = toiletPhrases[rnd] ?? 'Toilet Log'
+					setTitle(phrase)
+				}}
+				className='flex gap-2 items-center justify-center mt-1'
+			>
 				<ListCollapse size={20} className='text-muted-foreground' />
 			</Sheet.Trigger>
 			<Sheet.Portal>
 				<Sheet.View className='z-[999] h-[100vh] bg-black/50 '>
 					<Sheet.Content className='min-h-[200px] max-h-[80vh] h-full rounded-t-3xl bg-background relative'>
-						<div className='absolute top-6 right-0 p-2 text-primary'>
-							<Shuffle
-								size={16}
-								className='text-primary/30 active:scale-90 transition-transform cursor-pointer'
-								onClick={(e) => {
-									e.stopPropagation()
-									e.preventDefault()
-									const rnd = Math.floor(Math.random() * toiletPhrases.length)
-									const phrase = toiletPhrases[rnd] ?? 'Toilet Log'
-									setTitle(phrase)
-								}}
-							/>
-						</div>
 						<div className='flex flex-col justify-between h-full'>
 							<div className='flex flex-col '>
 								<div className='flex justify-center pt-1'>
