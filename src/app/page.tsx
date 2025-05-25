@@ -96,6 +96,7 @@ const Mobile = ({
 								defaultAmount={Number(
 									currentUser?.settings?.defaultWater ?? 600,
 								)}
+                settingsId={currentUser.settings.id}
 							/>
 							<MealLog dailyLogs={dailyLogs} currentUser={currentUser} />
 							<PoopLog userId={userId} dailyLogs={dailyLogs} />

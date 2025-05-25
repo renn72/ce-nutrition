@@ -12,6 +12,8 @@ const NumberInputForm = ({
 	scale,
 	bigScale = 10,
 	placeholder = '',
+	isBig = false,
+  postfix = '',
 }: {
 	value: string | null
 	setValue: (value: string) => void
@@ -19,11 +21,14 @@ const NumberInputForm = ({
 	scale: number
 	bigScale?: number
 	placeholder?: string
+	isBig?: boolean
+  postfix?: string
 }) => {
 	return (
 		<div
 			className={cn(
 				'h-10 w-52 relative border rounded-lg flex items-center shadow-sm',
+				isBig ? 'h-16 w-76' : '',
 			)}
 		>
 			<Input
@@ -31,6 +36,7 @@ const NumberInputForm = ({
 				className={cn(
 					'relative w-full text-sm font-medium rounded-lg text-center h-min border-none',
 					' focus-visible:ring-0 focus:border-none shadow-none py-0 active:border-none',
+            isBig ? 'text-2xl' : '',
 				)}
 				type='number'
 				value={
@@ -42,31 +48,41 @@ const NumberInputForm = ({
 					setValue(e.target.value)
 				}}
 			/>
+      {
+        postfix !== '' ? (
+          <div className='absolute right-28 top-1/2 -translate-y-1/2 text-xs text-muted-foreground flex gap-0 items-start pt-[2px]'>
+            {postfix}
+          </div>
+        ) : null
+      }
 			<div
 				onClick={() => {
 					if (!value) {
-            setValue(scale.toFixed(fixed))
-            return
-          }
+						setValue(scale.toFixed(fixed))
+						return
+					}
 					setValue((Number(value) + scale).toFixed(fixed))
 				}}
-				className='absolute right-8 top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start border-l active:bg-primary/60 rounded-r-lg'
+				className={cn('absolute right-8 top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start border-l active:bg-primary/60 rounded-r-lg',
+          isBig ? 'right-12' : '',
+        )}
 			>
 				<div
 					className={cn(
 						'flex items-center justify-center active:scale-75',
-						'w-8 h-10',
+						'w-12 h-10',
+						isBig ? 'h-16' : '',
 					)}
 				>
-					<PlusIcon size={12} />
+					<PlusIcon size={isBig ? 16 : 12} strokeWidth={3} />
 				</div>
 			</div>
 			<div
 				onClick={() => {
 					if (!value) {
-            setValue(bigScale.toFixed(fixed))
-            return
-          }
+						setValue(bigScale.toFixed(fixed))
+						return
+					}
 					setValue((Number(value) + bigScale).toFixed(fixed))
 				}}
 				className='absolute right-0 top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start border-l active:bg-primary/60 rounded-r-lg'
@@ -75,9 +91,10 @@ const NumberInputForm = ({
 					className={cn(
 						'flex items-center justify-center active:scale-75',
 						'w-8 h-10',
+						isBig ? 'h-16 w-12' : '',
 					)}
 				>
-					<PlusIcon size={20} strokeWidth={3} />
+					<PlusIcon size={isBig ? 28 : 20} strokeWidth={3} />
 				</div>
 			</div>
 			<div
@@ -91,9 +108,10 @@ const NumberInputForm = ({
 					className={cn(
 						'flex items-center justify-center active:scale-75',
 						'w-8 h-10',
+						isBig ? 'h-16 w-12' : '',
 					)}
 				>
-					<Minus size={20} strokeWidth={3} />
+					<Minus size={isBig ? 28 : 20} strokeWidth={3} />
 				</div>
 			</div>
 			<div
@@ -101,15 +119,18 @@ const NumberInputForm = ({
 					if (!value) return
 					setValue((Number(value) - scale).toFixed(fixed))
 				}}
-				className='absolute left-8 top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start border-r active:bg-primary/30 rounded-l-lg'
+				className={cn('absolute left-8 top-1/2 -translate-y-1/2 text-xs text-secondary-foreground flex gap-0 items-start border-r active:bg-primary/30 rounded-l-lg',
+          isBig ? 'left-12' : '',
+        )}
 			>
 				<div
 					className={cn(
 						'flex items-center justify-center active:scale-75',
 						'w-8 h-10',
+						isBig ? 'h-16 w-12' : '',
 					)}
 				>
-					<Minus size={12} />
+					<Minus size={isBig ? 16 : 12} />
 				</div>
 			</div>
 		</div>

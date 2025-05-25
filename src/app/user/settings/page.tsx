@@ -5,7 +5,7 @@ import { api } from '@/trpc/react'
 import { useState } from 'react'
 
 import { cn } from '@/lib/utils'
-import { GetUserById } from '@/types'
+import type { GetUserById } from '@/types'
 import { RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 
