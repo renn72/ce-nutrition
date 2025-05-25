@@ -8,7 +8,7 @@ import Image from 'next/image'
 
 import { UploadButton } from '@/lib/uploadthing'
 import type { GetDailyLogById } from '@/types'
-import { File, ImageIcon, XSquare } from 'lucide-react'
+import { File, ImageIcon, Loader2, XSquare } from 'lucide-react'
 import { toast } from 'sonner'
 
 import {
@@ -43,12 +43,15 @@ const titlesMap = {
 const ImageTake = ({
 	todaysLog,
 	position,
+	userName,
 }: {
 	todaysLog: GetDailyLogById
 	position: 'front' | 'side' | 'back'
+	userName: string
 }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const ctx = api.useUtils()
+	const [isUploading, setIsUploading] = useState(false)
 	const { mutate: updateFrontImage } =
 		api.dailyLog.updateFrontImage.useMutation({
 			onSettled: () => {
@@ -92,6 +95,8 @@ const ImageTake = ({
 		}
 	}
 
+	console.log('todaysLog', todaysLog)
+
 	return (
 		<div className='flex gap-4 flex-col w-full items-center justify-between rounded-md shadow-sm border-2 border-dashed border-gray-300 px-2 h-56 relative'>
 			<ImageIcon
@@ -109,10 +114,15 @@ const ImageTake = ({
 						</Button>
 					</DialogTrigger>
 					<DialogContent>
+						{isUploading ? (
+							<div className='absolute top-0 left-0 right-0 z-50 h-full w-full bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center text-white'>
+								<Loader2 size={24} className='animate-spin' />
+							</div>
+						) : null}
 						<DialogHeader>
 							<DialogTitle>Upload Image File</DialogTitle>
 							<DialogDescription className=''>
-                Upload an image file to use as the {title} image.
+								Upload an image file to use as the {title} image.
 							</DialogDescription>
 						</DialogHeader>
 						<UploadButton
@@ -125,6 +135,17 @@ const ImageTake = ({
 								},
 							}}
 							endpoint='imageUploader'
+							onUploadBegin={() => {
+								setIsUploading(true)
+							}}
+							onUploadError={() => {
+								setIsUploading(false)
+								toast.error('error')
+							}}
+							onBeforeUploadBegin={(files) => {
+								setIsUploading(true)
+                return files
+							}}
 							onClientUploadComplete={(res) => {
 								console.log('onClientUploadComplete', res)
 								const url = res?.[0]?.url
@@ -146,9 +167,11 @@ const ImageTake = ({
 const ImageBox = ({
 	todaysLog,
 	position,
+	userName,
 }: {
 	todaysLog: GetDailyLogById
 	position: 'front' | 'side' | 'back'
+	userName: string
 }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const ctx = api.useUtils()
@@ -205,7 +228,11 @@ const ImageBox = ({
 	return (
 		<div>
 			{image === '' || image === undefined || image === null ? (
-				<ImageTake todaysLog={todaysLog} position={position} />
+				<ImageTake
+					todaysLog={todaysLog}
+					position={position}
+					userName={userName}
+				/>
 			) : (
 				<Dialog open={isOpen} onOpenChange={setIsOpen}>
 					<DialogTrigger asChild>
@@ -267,6 +294,9 @@ const ImageBox = ({
 							<DialogTitle />
 							<DialogDescription />
 						</DialogHeader>
+						<div className='absolute -top-10 right-1/2 translate-x-1/2 text-white/80 font-bold text-center capitalize'>
+							{position}
+						</div>
 						<Image
 							src={image}
 							alt='img'

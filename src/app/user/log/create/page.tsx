@@ -16,6 +16,7 @@ import {
 	Fish,
 	Heart,
 	Loader,
+	Loader2,
 	Pencil,
 	Plus,
 	Star,
@@ -435,6 +436,7 @@ export default function Home() {
 	if (!currentUser) return null
 
 	return (
+    <>
 		<div className='mt-16 flex flex-col gap-0'>
 			<div className='w-full flex items-center justify-center text-center text-xl font-semibold gap-2'>
 				<Tags log={log} />
@@ -577,5 +579,6 @@ export default function Home() {
 				date={date.toDateString()}
 			/>
 		</div>
+    </>
 	)
 }

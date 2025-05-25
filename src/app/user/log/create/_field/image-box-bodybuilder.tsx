@@ -61,6 +61,7 @@ const ImageTake = ({
 	currentUser: GetUserById
 }) => {
 	const [isOpen, setIsOpen] = useState(false)
+	const [isUploading, setIsUploading] = useState(false)
 	const ctx = api.useUtils()
 	const title = titlesMap[position]
 	const { mutate: updateImage } =
@@ -97,6 +98,11 @@ const ImageTake = ({
 						</Button>
 					</DialogTrigger>
 					<DialogContent>
+						{isUploading ? (
+							<div className='absolute top-0 left-0 right-0 z-50 h-full w-full bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center text-white'>
+								<Loader2 size={24} className='animate-spin' />
+							</div>
+						) : null}
 						<DialogHeader>
 							<DialogTitle>Upload Image File</DialogTitle>
 							<DialogDescription className=''>
@@ -113,6 +119,17 @@ const ImageTake = ({
 								},
 							}}
 							endpoint='imageUploader'
+							onUploadBegin={() => {
+								setIsUploading(true)
+							}}
+							onUploadError={() => {
+								setIsUploading(false)
+								toast.error('error')
+							}}
+							onBeforeUploadBegin={(files) => {
+								setIsUploading(true)
+                return files
+							}}
 							onClientUploadComplete={(res) => {
 								console.log('onClientUploadComplete', res)
 								const url = res?.[0]?.url
@@ -235,8 +252,11 @@ const ImageBoxBodyBuilder = ({
 					</DialogTrigger>
 					<DialogContent
 						onOpenAutoFocus={(e) => e.preventDefault()}
-						className='px-0 py-0 bg-background/10 border-none rounded-md shadow-lg'
+						className='px-0 py-0 bg-background/10 border-none rounded-md shadow-lg '
 					>
+              <div className='absolute -top-10 right-1/2 translate-x-1/2 text-white/80 font-bold text-center'>
+                {titlesMap[position]}
+              </div>
 						<DialogHeader className='hidden'>
 							<DialogTitle />
 							<DialogDescription />

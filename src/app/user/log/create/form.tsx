@@ -2,7 +2,7 @@
 
 import { api } from '@/trpc/react'
 
-import { UploadButton } from '@/lib/uploadthing'
+import { useState } from 'react'
 import type { GetDailyLogById, GetUserById } from '@/types'
 import { Cog, Image, Settings } from 'lucide-react'
 import { Link } from 'next-view-transitions'
@@ -48,14 +48,9 @@ const DailyLogForm = ({
 		},
 	})
 
-	const onUpdateImage = (url: string) => {
-		updateImage({
-			date: todaysLogDate.toDateString(),
-			image: url,
-		})
-	}
-
   const isBodyBuilderImages = currentUser.roles.find((role) => role.name === 'body-builder-images') ? true : false
+
+  const userName = currentUser.name?.replaceAll(' ', '-') ?? ''
 
   if (!todaysLog) return null
 
@@ -110,14 +105,17 @@ const DailyLogForm = ({
 				<ImageBox
 					todaysLog={todaysLog}
 					position='front'
+          userName={userName}
 				/>
 				<ImageBox
 					todaysLog={todaysLog}
 					position='side'
+          userName={userName}
 				/>
 				<ImageBox
 					todaysLog={todaysLog}
 					position='back'
+          userName={userName}
 				/>
         {
           isBodyBuilderImages ? (
