@@ -50,8 +50,59 @@ const UserImage = ({ userId }: { userId: string }) => {
 
 	if (isLoading) return null
 	if (!user) return null
+
+  const frontDbl = user.images.filter((image) => image.name === 'frontDouble').sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((image) => {
+    return {
+      src: image.image || '',
+      date: image.date || '',
+      alt: 'alt',
+    }
+  })
+  const sideChest = user.images.filter((image) => image.name === 'sideChest').sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((image) => {
+    return {
+      src: image.image || '',
+      date: image.date || '',
+      alt: 'alt',
+    }
+  })
+  const sideTri = user.images.filter((image) => image.name === 'sideTri').sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((image) => {
+    return {
+      src: image.image || '',
+      date: image.date || '',
+      alt: 'alt',
+    }
+  })
+	const rearDbl = user.images.filter((image) => image.name === 'rearDouble').sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((image) => {
+    return {
+      src: image.image || '',
+      date: image.date || '',
+      alt: 'alt',
+    }
+  })
+  const absThigh = user.images.filter((image) => image.name === 'absThighs').sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((image) => {
+    return {
+      src: image.image || '',
+      date: image.date || '',
+      alt: 'alt',
+    }
+  })
+  const frontVac = user.images.filter((image) => image.name === 'frontVacum').sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((image) => {
+    return {
+      src: image.image || '',
+      date: image.date || '',
+      alt: 'alt',
+    }
+  })
+  const favorite = user.images.filter((image) => image.name === 'favourite').sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((image) => {
+    return {
+      src: image.image || '',
+      date: image.date || '',
+      alt: 'alt',
+    }
+  })
+
 	return (
-		<div className='flex flex-col gap-2 w-full my-16 items-center '>
+		<div className='flex flex-col gap-2 w-full mt-2 mb-10 items-center '>
 			<div className='flex flex-col gap-2 w-full'>
 				<h2 className='text-2xl font-medium text-center'>Front Images</h2>
 				<ImageCarousel images={frontImages || []} className='w-full' />
@@ -63,6 +114,34 @@ const UserImage = ({ userId }: { userId: string }) => {
       <div className='flex flex-col gap-2 w-full'>
         <h2 className='text-2xl font-medium text-center'>Back Images</h2>
         <ImageCarousel images={backImages || []} className='w-full' />
+      </div>
+      <div className='flex flex-col gap-2 w-full'>
+        <h2 className='text-2xl font-medium text-center'>Front Double Biceps</h2>
+        <ImageCarousel images={frontDbl || []} className='w-full' />
+      </div>
+      <div className='flex flex-col gap-2 w-full'>
+        <h2 className='text-2xl font-medium text-center'>Side Chest</h2>
+        <ImageCarousel images={sideChest || []} className='w-full' />
+      </div>
+      <div className='flex flex-col gap-2 w-full'>
+        <h2 className='text-2xl font-medium text-center'>Side Triceps</h2>
+        <ImageCarousel images={sideTri || []} className='w-full' />
+      </div>
+      <div className='flex flex-col gap-2 w-full'>
+        <h2 className='text-2xl font-medium text-center'>Rear Double Biceps</h2>
+        <ImageCarousel images={rearDbl || []} className='w-full' />
+      </div>
+      <div className='flex flex-col gap-2 w-full'>
+        <h2 className='text-2xl font-medium text-center'>Abs & Thighs</h2>
+        <ImageCarousel images={absThigh || []} className='w-full' />
+      </div>
+      <div className='flex flex-col gap-2 w-full'>
+        <h2 className='text-2xl font-medium text-center'>Front Vacum</h2>
+        <ImageCarousel images={frontVac || []} className='w-full' />
+      </div>
+      <div className='flex flex-col gap-2 w-full'>
+        <h2 className='text-2xl font-medium text-center'>Favourite Pose</h2>
+        <ImageCarousel images={favorite || []} className='w-full' />
       </div>
 		</div>
 	)

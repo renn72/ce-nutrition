@@ -46,12 +46,16 @@ const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
 		setSelectedImage(null)
 	}
 
+  if (images.length === 0) return <div className='w-full text-center my-2'>nil</div>
+
 	return (
 		<div className={className}>
 			<Carousel className='w-full max-w-screen-xl mx-auto'>
-				<CarouselContent>
+				<CarouselContent
+          className='gap-0'
+        >
 					{images.map((image, index) => (
-						<CarouselItem key={image.src} className='md:basis-1/2 lg:basis-1/5'>
+						<CarouselItem key={image.src} className='md:basis-1/2 lg:basis-1/5 pl-1'>
 							<div className='p-1'>
 								<Card className='cursor-pointer hover:shadow-lg transition-shadow'>
                   <h3 className='text-center text-sm font-medium text-muted-foreground'>{new Date(image.date).toLocaleDateString('en-AU')}</h3>
@@ -88,8 +92,8 @@ const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
 								src={selectedImage.src}
 								alt={selectedImage.alt}
 								fill
+                sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw'
 								className='object-contain w-full'
-
 								priority
 							/>
 						</div>
