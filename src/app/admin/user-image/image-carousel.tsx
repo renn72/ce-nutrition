@@ -48,14 +48,14 @@ const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
 
 	return (
 		<div className={className}>
-			<Carousel className='w-full max-w-4xl mx-auto'>
+			<Carousel className='w-full max-w-screen-xl mx-auto'>
 				<CarouselContent>
 					{images.map((image, index) => (
-						<CarouselItem key={image.src} className='md:basis-1/2 lg:basis-1/3'>
+						<CarouselItem key={image.src} className='md:basis-1/2 lg:basis-1/5'>
 							<div className='p-1'>
 								<Card className='cursor-pointer hover:shadow-lg transition-shadow'>
                   <h3 className='text-center text-sm font-medium text-muted-foreground'>{new Date(image.date).toLocaleDateString('en-AU')}</h3>
-									<CardContent className='flex aspect-[3/4] items-center justify-center p-2'>
+									<CardContent className='flex aspect-[4/7] items-center justify-center p-2'>
 										<div
 											className='relative w-full h-full overflow-hidden rounded-md'
 											onClick={() => handleImageClick(image)}
@@ -65,7 +65,7 @@ const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
 												alt={image.alt}
 												fill
 												className='object-cover hover:scale-105 transition-transform duration-200'
-												sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+												sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw'
 											/>
 										</div>
 									</CardContent>
