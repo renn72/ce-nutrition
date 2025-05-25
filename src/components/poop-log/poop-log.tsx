@@ -2,7 +2,7 @@
 
 import { api } from '@/trpc/react'
 
-import { GetAllDailyLogs } from '@/types'
+import type { GetAllDailyLogs } from '@/types'
 import NumberFlow from '@number-flow/react'
 import { Toilet } from 'lucide-react'
 import { toast } from 'sonner'
@@ -84,6 +84,12 @@ const PoopLog = ({
             className='ml-[1px]'
             size={28}
             onClick={() => {
+              confetti({
+                particleCount: 30 * (totalPoop + 1),
+                spread: 30 * (totalPoop + 1),
+                origin: { x: 0.6, y: 0.7 },
+                disableForReducedMotion: true,
+              })
               addPoopLog({
                 date: today.toDateString(),
               })
