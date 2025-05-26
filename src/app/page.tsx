@@ -65,7 +65,7 @@ const Mobile = ({
             date: new Date().toDateString(),
             userId: currentUser.id,
           })
-        }, 400)
+        }, 200)
 			} catch (err) {
 				// toast.error('error', err.message)
 			}
