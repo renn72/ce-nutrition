@@ -60,10 +60,12 @@ const Mobile = ({
 		if (!dailyLog) {
 			setIsCreatingLog(true)
 			try {
-				createDailyLog({
-					date: new Date().toDateString(),
-					userId: currentUser.id,
-				})
+        setTimeout(() => {
+          createDailyLog({
+            date: new Date().toDateString(),
+            userId: currentUser.id,
+          })
+        }, 400)
 			} catch (err) {
 				// toast.error('error', err.message)
 			}
