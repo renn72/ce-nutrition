@@ -49,9 +49,16 @@ export function formatDate(
 }
 
 export function getRecipeDetailsFromDailyLog(
-  dailyLog: GetDailyLogById,
+  dailyLog: GetDailyLogById | undefined | null,
   mealIndex: number,
 ) {
+
+  if (!dailyLog) return {
+    cals: 0,
+    protein: 0,
+    carbs: 0,
+    fat: 0,
+  }
 
   const ingredients = dailyLog?.dailyMeals.find((meal) => meal.mealIndex === mealIndex)?.ingredients
 
