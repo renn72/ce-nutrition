@@ -617,7 +617,7 @@ const MealLog = ({
 					</Sheet.Portal>
 				</Sheet.Root>
 			</SheetStack.Root>
-			<MealBottomSheet todaysDailyLog={todaysLog} />
+			<MealBottomSheet dailyLogs={dailyLogs} />
 		</div>
 	)
 }
