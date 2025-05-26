@@ -17,16 +17,25 @@ import type {
 } from '@/types'
 import NumberFlow from '@number-flow/react'
 import { Sheet, SheetStack } from '@silk-hq/components'
+import { format } from 'date-fns'
 import { useAtom } from 'jotai'
 import {
 	ArrowBigLeftDash,
 	ArrowBigRightDash,
+	CalendarIcon,
 	ChevronDown,
 	Salad,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar-log'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
@@ -314,14 +323,17 @@ const MealList = ({
 	todaysLog,
 	currentUser,
 	today,
+	setDay,
 }: {
 	currentMeal: number
 	currentUser: GetUserById
 	todaysLog: GetDailyLogById | null | undefined
 	today: Date
+  setDay: React.Dispatch<React.SetStateAction<Date>>
 }) => {
 	const [currentMeal, setCurrentMeal] = useState(() => _currentMeal)
 	const [isAllMeals, setIsAllMeals] = useAtom(isAllMealsAtom)
+	const [isOpen, setIsOpen] = useState(false)
 
 	const [selectedPlansId] = useAtom(selectedPlansAtom)
 
@@ -387,7 +399,7 @@ const MealList = ({
 	}, 0)
 
 	return (
-		<Sheet.Content className='min-h-[200px] max-h-[90vh] h-full rounded-t-3xl bg-background relative'>
+		<Sheet.Content className='min-h-[200px] max-h-[95vh] h-full rounded-t-3xl bg-background relative'>
 			<div className='flex flex-col justify-between h-full'>
 				<div className='flex flex-col '>
 					<div className='flex justify-center pt-1'>
@@ -397,7 +409,52 @@ const MealList = ({
 						/>
 					</div>
 					<div className='flex gap-0 pt-2 flex-col border-b-[1px] border-primary pb-2 relative font-medium'>
-						<div className='flex justify-center items-center gap-6'>
+						<Popover
+              open={isOpen}
+              onOpenChange={setIsOpen}
+            >
+							<PopoverTrigger asChild>
+								<div className='flex items-center justify-center'>
+									<Button
+										variant={'outline'}
+										onClick={(e) => {
+											e.stopPropagation()
+											e.preventDefault()
+											setIsOpen(true)
+										}}
+										className={cn(
+											'w-[220px] font-semibold text-base mt-[2px] flex items-center justify-center shadow-sm',
+											!today && 'text-muted-foreground',
+										)}
+									>
+										<CalendarIcon className='mr-4 h-4 w-4 mt-[0px] shrink-0' />
+										{today ? (
+											<span className='mt-[5px]'>{format(today, 'PPP')}</span>
+										) : (
+											<span>Pick a date</span>
+										)}
+									</Button>
+								</div>
+							</PopoverTrigger>
+							<PopoverContent
+                onFocusOutside={(e) => e.preventDefault()}
+                forceMount
+                className='w-auto p-0 z-[2000]'>
+								<Calendar
+									mode='single'
+                  disabled={{ after: new Date() }}
+									selected={today}
+									onSelect={(date) => {
+										if (!date) return
+										setDay(date)
+										setIsOpen(false)
+                    setCurrentMeal(0)
+									}}
+									initialFocus
+								/>
+							</PopoverContent>
+						</Popover>
+						<div className='flex justify-center items-center gap-6 mt-1'>
 							<ArrowBigLeftDash
 								size={28}
 								className='active:scale-90 transition-transform cursor-pointer active:text-muted-foreground'
@@ -450,7 +507,7 @@ const MealList = ({
 								<span className='text-xs text-primary/50 ml-[1px]'>fat</span>
 							</div>
 						</div>
-						<div className='flex items-center gap-2 absolute top-1 right-2'>
+						<div className='flex items-center gap-2 absolute top-14 right-2'>
 							<Label className='text-xs mt-1'>All Meals</Label>
 							<Checkbox
 								checked={isAllMeals}
@@ -460,7 +517,7 @@ const MealList = ({
 							/>
 						</div>
 					</div>
-					<ScrollArea className='pt-4 px-2 h-[calc(90vh-130px)]'>
+					<ScrollArea className='pt-4 px-2 h-[calc(95vh-130px)]'>
 						<div className='flex flex-col gap-2 mb-2 '>
 							<Meal
 								allPlans={refinedPlans}
@@ -500,18 +557,17 @@ const MealLog = ({
 	currentUser: GetUserById
 	dailyLogs: GetAllDailyLogs | null | undefined
 }) => {
-	const today = new Date()
+	const [day, setDay] = useState<Date>(new Date())
 
 	const activePlans = currentUser?.userPlans.filter((plan) => plan.isActive)
 
 	const isNotActivePlan = activePlans.length === 0
 
-	const { data: _userRecipes, } =
-		api.recipe.getAllUserCreated.useQuery({
-			userId: currentUser.id,
-		})
+	const { data: _userRecipes } = api.recipe.getAllUserCreated.useQuery({
+		userId: currentUser.id,
+	})
 	const todaysLog = dailyLogs?.find(
-		(dailyLog) => dailyLog.date === today.toDateString(),
+		(dailyLog) => dailyLog.date === day.toDateString(),
 	)
 
 	const lastMeal =
@@ -534,7 +590,11 @@ const MealLog = ({
 								'justify-center active:scale-75 transition-transform cursor-pointer',
 							)}
 						>
-							<Sheet.Trigger disabled={isNotActivePlan}>
+							<Sheet.Trigger
+                onClick={(e) => {
+                  setDay(new Date())
+                }}
+                disabled={isNotActivePlan}>
 								<Salad
 									size={28}
 									className={cn(
@@ -550,7 +610,8 @@ const MealLog = ({
 								currentMeal={currentMeal}
 								todaysLog={todaysLog}
 								currentUser={currentUser}
-								today={today}
+								today={day}
+								setDay={setDay}
 							/>
 						</Sheet.View>
 					</Sheet.Portal>
