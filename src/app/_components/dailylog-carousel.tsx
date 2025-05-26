@@ -17,7 +17,7 @@ import { DotButton, useDotButton } from './carousel-dots'
 
 import '~/styles/embla.css'
 
-import { GetDailyLogById, GetUserById } from '@/types'
+import type { GetDailyLogById, GetUserById } from '@/types'
 
 const DailyLogCarousel = ({
   dailyLogs,
@@ -31,8 +31,7 @@ const DailyLogCarousel = ({
   })
 
   // @ts-ignore
-  const { selectedIndex, scrollSnaps, onDotButtonClick } =
-    useDotButton(emblaApi)
+  const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi)
 
   if (!dailyLogs) return null
   const today = new Date()
@@ -42,7 +41,7 @@ const DailyLogCarousel = ({
 
   return (
     <section
-      className='embla relative'
+      className='embla relative h-min'
       dir='rtl'
     >
       <div

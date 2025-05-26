@@ -233,15 +233,6 @@ const Logs = ({
           text={todaysDailyLog?.coldPlunge}
         />
       </div>
-      {
-        todaysDailyLog?.image && todaysDailyLog?.image !== '' &&
-          <Image
-            src={todaysDailyLog?.image}
-            alt='Daily Log'
-            width={200}
-            height={200}
-          />
-      }
     </div>
   )
 }

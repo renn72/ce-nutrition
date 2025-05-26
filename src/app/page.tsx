@@ -73,7 +73,7 @@ const Mobile = ({
 	if (dailyLogsLoading) return null
 
 	return (
-		<div className={cn('flex flex-col gap-2 w-full mt-16 items-center ')}>
+		<div className={cn('flex flex-col gap-2 w-full mt-16 items-center mb-16 ')}>
 			<MobileHeader isDesktop={false} />
 			<div
 				id='main-content'
