@@ -95,8 +95,6 @@ const ImageTake = ({
 		}
 	}
 
-	console.log('todaysLog', todaysLog)
-
 	return (
 		<div className='flex gap-4 flex-col w-full items-center justify-between rounded-md shadow-sm border-2 border-dashed border-gray-300 px-2 h-56 relative'>
 			<ImageIcon

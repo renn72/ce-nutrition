@@ -43,10 +43,12 @@ const Mobile = ({
 	const { mutate: createDailyLog } = api.dailyLog.create.useMutation({
 		onSettled: () => {
 			ctx.dailyLog.invalidate()
+			setTimeout(() => {
+				setIsCreatingLog(false)
+			}, 200)
 		},
 		onError: () => {
 			toast.error('error conflict')
-			ctx.dailyLog.getAllUser.setData(userId, dailyLogs)
 		},
 	})
 
@@ -60,12 +62,12 @@ const Mobile = ({
 		if (!dailyLog) {
 			setIsCreatingLog(true)
 			try {
-        setTimeout(() => {
-          createDailyLog({
-            date: new Date().toDateString(),
-            userId: currentUser.id,
-          })
-        }, 200)
+				setTimeout(() => {
+					createDailyLog({
+						date: new Date().toDateString(),
+						userId: currentUser.id,
+					})
+				}, 200)
 			} catch (err) {
 				// toast.error('error', err.message)
 			}
@@ -83,11 +85,11 @@ const Mobile = ({
 					'flex flex-col gap-4 w-full max-w-screen-xl main-content',
 				)}
 			>
-					<UserCharts
-						dailyLogs={dailyLogs}
-						isMoblie={true}
-						currentUser={currentUser}
-					/>
+				<UserCharts
+					dailyLogs={dailyLogs}
+					isMoblie={true}
+					currentUser={currentUser}
+				/>
 
 				<Card className='py-2 '>
 					<CardContent className='px-0 py-0'>
@@ -98,7 +100,7 @@ const Mobile = ({
 								defaultAmount={Number(
 									currentUser?.settings?.defaultWater ?? 600,
 								)}
-                settingsId={currentUser.settings.id}
+								settingsId={currentUser.settings.id}
 							/>
 							<MealLog dailyLogs={dailyLogs} currentUser={currentUser} />
 							<PoopLog userId={userId} dailyLogs={dailyLogs} />

@@ -2,13 +2,15 @@
 
 import { api } from '@/trpc/react'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useSearchParams } from 'next/navigation'
 
+import { impersonatedUserAtom } from '@/atoms'
 import { cn } from '@/lib/utils'
 import type { GetDailyLogById } from '@/types'
 import { format } from 'date-fns'
+import { useAtom } from 'jotai'
 import {
 	Bone,
 	Bookmark,
@@ -16,15 +18,16 @@ import {
 	Fish,
 	Heart,
 	Loader,
-	Loader2,
 	Pencil,
 	Plus,
 	Star,
 	ThumbsUp,
 	Zap,
+  XIcon,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar-log'
 import {
@@ -393,9 +396,24 @@ export default function Home() {
 		() => new Date(Number(searchParams.get('date'))),
 	)
 	const [isOpen, setIsOpen] = useState(false)
+	const [isCreatingLog, setIsCreatingLog] = useState(false)
+	const [impersonatedUser, setImpersonatedUser] = useAtom(impersonatedUserAtom)
+
 	const { data: dailyLogs, isLoading } =
-		api.dailyLog.getAllCurrentUser.useQuery()
-	const { data: currentUser } = api.user.getCurrentUser.useQuery()
+		api.dailyLog.getAllCurrentUser.useQuery({ id: impersonatedUser.id })
+	const { data: currentUser, isLoading: currentUserLoading } =
+		api.user.getCurrentUser.useQuery({ id: impersonatedUser.id })
+	const { mutate: createDailyLog } = api.dailyLog.create.useMutation({
+		onSettled: () => {
+			ctx.dailyLog.invalidate()
+			setTimeout(() => {
+				setIsCreatingLog(false)
+			}, 200)
+		},
+		onError: () => {
+			toast.error('error conflict')
+		},
+	})
 
 	const { mutate: updateIsStarred } = api.dailyLog.updateIsStarred.useMutation({
 		onMutate: async (data) => {
@@ -424,9 +442,31 @@ export default function Home() {
 		},
 	})
 
+	const log = dailyLogs?.find((log) => log.date === date?.toDateString())
+
+	useEffect(() => {
+		if (isLoading) return
+		if (isCreatingLog) return
+		if (currentUserLoading) return
+		if (!currentUser) return
+		if (!date) return
+		if (!log) {
+			setIsCreatingLog(true)
+			try {
+				setTimeout(() => {
+					createDailyLog({
+						date: new Date(date).toDateString(),
+						userId: currentUser.id,
+					})
+				}, 50)
+			} catch (err) {
+				// toast.error('error', err.message)
+			}
+		}
+	}, [dailyLogs, currentUser, date])
+
 	if (isLoading) return null
 
-	const log = dailyLogs?.find((log) => log.date === date?.toDateString())
 	const prevLog = dailyLogs?.find((log) => {
 		if (!date) return false
 		return log.date === new Date(date?.getTime() - 86400000).toDateString()
@@ -436,149 +476,166 @@ export default function Home() {
 	if (!currentUser) return null
 
 	return (
-    <>
-		<div className='mt-16 flex flex-col gap-0'>
-			<div className='w-full flex items-center justify-center text-center text-xl font-semibold gap-2'>
-				<Tags log={log} />
-				<Popover open={isOpen} onOpenChange={setIsOpen}>
-					<PopoverTrigger asChild>
-						<div className='flex items-center justify-center'>
-							<Button
-								variant={'secondary'}
-								size={'lg'}
+		<>
+			<div className='mt-16 flex flex-col gap-0 relative'>
+				{impersonatedUser.id !== '' ? (
+					<div className='fixed bottom-14 left-1/2 -translate-x-1/2 opacity-80 z-[2009]'>
+						<Badge className='flex gap-4 '>
+							{impersonatedUser.name}
+							<XIcon
+								size={12}
+								className='cursor-pointer'
+								onClick={() => {
+									setImpersonatedUser({
+										id: '',
+										name: '',
+									})
+								}}
+							/>
+						</Badge>
+					</div>
+				) : null}
+				<div className='w-full flex items-center justify-center text-center text-xl font-semibold gap-2'>
+					<Tags log={log} />
+					<Popover open={isOpen} onOpenChange={setIsOpen}>
+						<PopoverTrigger asChild>
+							<div className='flex items-center justify-center'>
+								<Button
+									variant={'secondary'}
+									size={'lg'}
+									className={cn(
+										'w-[280px] font-semibold text-base mt-[2px] flex items-center justify-center shadow-sm',
+										!date && 'text-muted-foreground',
+									)}
+								>
+									<CalendarIcon className='mr-4 h-4 w-4 mt-[0px]' />
+									{date ? (
+										<span className='mt-[5px]'>{format(date, 'PPP')}</span>
+									) : (
+										<span>Pick a date</span>
+									)}
+								</Button>
+							</div>
+						</PopoverTrigger>
+						<PopoverContent className='w-auto p-0'>
+							<Calendar
+								mode='single'
+								selected={date}
+								onSelect={(date) => {
+									setDate(date)
+									setIsOpen(false)
+								}}
+								initialFocus
+								components={{
+									// @ts-ignore
+									DayContent: (props) => {
+										const log = dailyLogs?.find(
+											(log) => log.date === props.date.toDateString(),
+										)
+										const tags = log?.tags?.map((tag) => {
+											return {
+												id: tag.id,
+												name: tag.tag.name,
+												color: tag.tag.color,
+												icon: tag.tag.icon,
+											}
+										})
+										return (
+											<div className='flex flex-col gap-[2px]'>
+												{log ? (
+													<div className='flex items-center justify-center w-full'>
+														<div className='bg-secondary-foreground h-[6px] w-[6px] rounded-full' />
+													</div>
+												) : null}
+												<div className=''>{props.date.getDate()}</div>
+
+												<div className='flex justify-center h-[12px] items-center gap-1'>
+													{log?.isStarred === true ? (
+														<Star
+															className='text-yellow-500'
+															fill='currentColor'
+															size={10}
+														/>
+													) : null}
+													{tags?.map((tag) => {
+														const color = tag.color as
+															| 'black'
+															| 'red'
+															| 'green'
+															| 'blue'
+															| 'purple'
+															| 'orange'
+														const icon = tag.icon
+														return (
+															<Icon
+																key={tag.id}
+																icon={icon}
+																size={10}
+																classnames={textDict[color]}
+															/>
+														)
+													})}
+												</div>
+											</div>
+										)
+									},
+								}}
+							/>
+						</PopoverContent>
+					</Popover>
+					<Star
+						size={20}
+						className={cn(
+							'cursor-pointer active:scale-75 transition-transform',
+							log?.isStarred === true
+								? 'text-yellow-500'
+								: 'text-muted-foreground',
+						)}
+						fill={log?.isStarred === true ? 'currentColor' : 'none'}
+						onClick={() => {
+							updateIsStarred({
+								date: date.toDateString(),
+								isStarred: log?.isStarred === true ? false : true,
+							})
+						}}
+					/>
+				</div>
+				<div className='h-8 flex items-center justify-center'>
+					{log?.tags?.map((tag) => {
+						const color = tag.tag.color as
+							| 'black'
+							| 'red'
+							| 'green'
+							| 'blue'
+							| 'purple'
+							| 'orange'
+						const icon = tag.tag.icon
+						return (
+							<div
+								key={tag.id}
 								className={cn(
-									'w-[280px] font-semibold text-base mt-[2px] flex items-center justify-center shadow-sm',
-									!date && 'text-muted-foreground',
+									'text-xs w-24 h-6 text-white rounded-full border flex items-center justify-center gap-0 cursor-pointer border relative',
+									bgDict[color],
 								)}
 							>
-								<CalendarIcon className='mr-4 h-4 w-4 mt-[0px]' />
-								{date ? (
-									<span className='mt-[5px]'>{format(date, 'PPP')}</span>
-								) : (
-									<span>Pick a date</span>
-								)}
-							</Button>
-						</div>
-					</PopoverTrigger>
-					<PopoverContent className='w-auto p-0'>
-						<Calendar
-							mode='single'
-							selected={date}
-							onSelect={(date) => {
-								setDate(date)
-								setIsOpen(false)
-							}}
-							initialFocus
-							components={{
-								// @ts-ignore
-								DayContent: (props) => {
-									const log = dailyLogs?.find(
-										(log) => log.date === props.date.toDateString(),
-									)
-									const tags = log?.tags?.map((tag) => {
-										return {
-											id: tag.id,
-											name: tag.tag.name,
-											color: tag.tag.color,
-											icon: tag.tag.icon,
-										}
-									})
-									return (
-										<div className='flex flex-col gap-[2px]'>
-											{log ? (
-												<div className='flex items-center justify-center w-full'>
-													<div className='bg-secondary-foreground h-[6px] w-[6px] rounded-full' />
-												</div>
-											) : null}
-											<div className=''>{props.date.getDate()}</div>
-
-											<div className='flex justify-center h-[12px] items-center gap-1'>
-												{log?.isStarred === true ? (
-													<Star
-														className='text-yellow-500'
-														fill='currentColor'
-														size={10}
-													/>
-												) : null}
-												{tags?.map((tag) => {
-													const color = tag.color as
-														| 'black'
-														| 'red'
-														| 'green'
-														| 'blue'
-														| 'purple'
-														| 'orange'
-													const icon = tag.icon
-													return (
-														<Icon
-															key={tag.id}
-															icon={icon}
-															size={10}
-															classnames={textDict[color]}
-														/>
-													)
-												})}
-											</div>
-										</div>
-									)
-								},
-							}}
-						/>
-					</PopoverContent>
-				</Popover>
-				<Star
-					size={20}
-					className={cn(
-						'cursor-pointer active:scale-75 transition-transform',
-						log?.isStarred === true
-							? 'text-yellow-500'
-							: 'text-muted-foreground',
-					)}
-					fill={log?.isStarred === true ? 'currentColor' : 'none'}
-					onClick={() => {
-						updateIsStarred({
-							date: date.toDateString(),
-							isStarred: log?.isStarred === true ? false : true,
-						})
-					}}
+								<Icon
+									icon={icon}
+									classnames={
+										'text-white absolute top-1/2 -translate-y-1/2 left-1'
+									}
+								/>
+								<div className='mt-[2px] ml-3'>{tag.tag.name}</div>
+							</div>
+						)
+					})}
+				</div>
+				<DailyLogForm
+					todaysLog={log}
+					prevLog={prevLog}
+					currentUser={currentUser}
+					date={date.toDateString()}
 				/>
 			</div>
-			<div className='h-8 flex items-center justify-center'>
-				{log?.tags?.map((tag) => {
-					const color = tag.tag.color as
-						| 'black'
-						| 'red'
-						| 'green'
-						| 'blue'
-						| 'purple'
-						| 'orange'
-					const icon = tag.tag.icon
-					return (
-						<div
-							key={tag.id}
-							className={cn(
-								'text-xs w-24 h-6 text-white rounded-full border flex items-center justify-center gap-0 cursor-pointer border relative',
-								bgDict[color],
-							)}
-						>
-							<Icon
-								icon={icon}
-								classnames={
-									'text-white absolute top-1/2 -translate-y-1/2 left-1'
-								}
-							/>
-							<div className='mt-[2px] ml-3'>{tag.tag.name}</div>
-						</div>
-					)
-				})}
-			</div>
-			<DailyLogForm
-				todaysLog={log}
-				prevLog={prevLog}
-				currentUser={currentUser}
-				date={date.toDateString()}
-			/>
-		</div>
-    </>
+		</>
 	)
 }

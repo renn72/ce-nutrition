@@ -2,14 +2,9 @@
 
 import { api } from '@/trpc/react'
 
-import { useState } from 'react'
 import type { GetDailyLogById, GetUserById } from '@/types'
-import { Cog, Image, Settings } from 'lucide-react'
+import {  Settings } from 'lucide-react'
 import { Link } from 'next-view-transitions'
-
-import { Button } from '@/components/ui/button'
-
-import { Camera } from '@/components/camera/camera'
 
 import { BloodGlucose } from './_field/blood-glucose'
 import { ColdPlunge } from './_field/cold-plunge'
@@ -41,14 +36,9 @@ const DailyLogForm = ({
 	currentUser: GetUserById
 }) => {
 	const ctx = api.useUtils()
-	const todaysLogDate = new Date(date ?? '')
-	const { mutate: updateImage } = api.dailyLog.updateImage.useMutation({
-		onSettled: () => {
-			ctx.dailyLog.invalidate()
-		},
-	})
-
   const isBodyBuilderImages = currentUser.roles.find((role) => role.name === 'body-builder-images') ? true : false
+
+  console.log('currentUser', currentUser)
 
   const userName = currentUser.name?.replaceAll(' ', '-') ?? ''
 

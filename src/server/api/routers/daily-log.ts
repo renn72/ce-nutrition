@@ -1587,9 +1587,15 @@ export const dailyLogRouter = createTRPCRouter({
 			})
 			return res
 		}),
-	getAllCurrentUser: protectedProcedure.query(async ({ ctx }) => {
+	getAllCurrentUser: protectedProcedure
+		.input(z.object({ id: z.string() }).optional())
+    .query(async ({ ctx, input }) => {
+			let userId = ctx.session?.user.id
+			if (input?.id && input.id !== '') userId = input.id
+			if (!userId) return null
+
 		const res = await ctx.db.query.dailyLog.findMany({
-			where: eq(dailyLog.userId, ctx.session.user.id),
+			where: eq(dailyLog.userId, userId),
 			with: {
 				poopLogs: true,
 				waterLogs: true,
