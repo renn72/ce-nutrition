@@ -39,6 +39,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
+import { ScrollArea } from '@/components/ui/scroll-area'
+
 import { SignInUp } from '@/components/auth/sign-in-up'
 
 const ImpersonateUser = () => {
@@ -54,9 +56,10 @@ const ImpersonateUser = () => {
       <DropdownMenuSubContent
         sideOffset={-36}
         alignOffset={-180}
-        className='max-h-84 overflow-auto w-48'
+        className='max-h-84'
       >
         <DropdownMenuSub>
+          <ScrollArea className='h-[450px] w-full'>
           {users?.map((user) => (
             <DropdownMenuItem
               key={user.id}
@@ -73,6 +76,7 @@ const ImpersonateUser = () => {
               <span className='truncate'>{user.name}</span>
             </DropdownMenuItem>
           ))}
+          </ScrollArea>
         </DropdownMenuSub>
       </DropdownMenuSubContent>
     </DropdownMenuSub>
