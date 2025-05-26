@@ -84,6 +84,8 @@ const Gallery = ({ userId }: { userId: string }) => {
 	const { data: logs, isLoading: logsLoading } =
 		api.dailyLog.getAllUser.useQuery(userId)
 
+  const { mutate: updateGallery } = api.metrics.updateGallery.useMutation()
+
 	const [select, setSelect] = useState<string>('front')
 
 	const frontImages = logs
@@ -145,6 +147,10 @@ const Gallery = ({ userId }: { userId: string }) => {
 					value={select}
 					onValueChange={(value) => {
 						setSelect(value)
+            updateGallery({
+              image: value,
+              userId: userId,
+            })
 					}}
 				>
 					<SelectTrigger className='w-[180px]'>
