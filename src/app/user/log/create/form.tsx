@@ -35,10 +35,7 @@ const DailyLogForm = ({
 	date?: string | null
 	currentUser: GetUserById
 }) => {
-	const ctx = api.useUtils()
   const isBodyBuilderImages = currentUser.roles.find((role) => role.name === 'body-builder-images') ? true : false
-
-  console.log('currentUser', currentUser)
 
   const userName = currentUser.name?.replaceAll(' ', '-') ?? ''
 
