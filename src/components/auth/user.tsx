@@ -10,12 +10,10 @@ import { MoonIcon, SunIcon } from '@radix-ui/react-icons'
 import { useAtom } from 'jotai'
 import {
   Database,
-  GlassWater,
   House,
   LogOutIcon,
   MessageSquareMore,
   Settings,
-  Toilet,
   UserCircle,
   UserRoundCog,
   VenetianMask,
@@ -26,7 +24,6 @@ import { useTheme } from 'next-themes'
 import { Link } from 'next-view-transitions'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
