@@ -63,7 +63,10 @@ const isUserRoot = async (userId: string) => {
 
 export const userRouter = createTRPCRouter({
 	getAdminLogs: protectedProcedure.query(async ({ ctx }) => {
-		const res = await ctx.db.query.log.findMany({})
+		const res = await ctx.db.query.log.findMany({
+      limit: 200,
+      orderBy: ( log, { desc }) => [desc(log.createdAt)],
+    })
 		return res
 	}),
 	deleteAdminLog: protectedProcedure
