@@ -521,6 +521,7 @@ export default function Home() {
 							<Calendar
 								mode='single'
 								selected={date}
+                disabled={{ after: new Date() }}
 								onSelect={(date) => {
 									setDate(date)
 									setIsOpen(false)
