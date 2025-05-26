@@ -194,7 +194,7 @@ const Meal = ({
 				}}
 			>
 				<div className='flex flex-col ml-2 gap-2'>
-					{!isSelectedInRecipes && selectValue !== '' ? (
+					{selectValue !== '' ? (
 						<ToggleGroupItem
 							value={selectValue}
 							className={cn(
@@ -247,6 +247,7 @@ const Meal = ({
 									</div>
 									<div className='flex gap-2 flex-col items-center py-2 w-full'>
 										{plan.userRecipes?.map((recipe) => {
+                      if (recipe.id === Number(selectValue)) return null
 											const meal =
 												plan.userMeals.find(
 													(meal) => meal.mealIndex === recipe.mealIndex,
