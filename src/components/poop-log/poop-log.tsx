@@ -84,12 +84,12 @@ const PoopLog = ({
             className='ml-[1px]'
             size={28}
             onClick={() => {
-              confetti({
-                particleCount: 30 * (totalPoop + 1),
-                spread: 30 * (totalPoop + 1),
-                origin: { x: 0.6, y: 0.7 },
-                disableForReducedMotion: true,
-              })
+              // confetti({
+              //   particleCount: 30 * (totalPoop + 1),
+              //   spread: 30 * (totalPoop + 1),
+              //   origin: { x: 0.6, y: 0.7 },
+              //   disableForReducedMotion: true,
+              // })
               addPoopLog({
                 date: today.toDateString(),
               })

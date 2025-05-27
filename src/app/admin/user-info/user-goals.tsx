@@ -5,7 +5,7 @@ import { api } from '@/trpc/react'
 import { useState } from 'react'
 
 import { cn } from '@/lib/utils'
-import { GetGoal, GetUserById, GetUserGoals } from '@/types'
+import type { GetGoal, GetUserById, GetUserGoals } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { EllipsisVertical, XCircleIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
