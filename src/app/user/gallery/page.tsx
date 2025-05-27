@@ -66,7 +66,7 @@ const imageTitlesFull = [
 		value: 'absThighs',
 	},
 	{
-		title: 'Front Vacum',
+		title: 'Front Vacuum',
 		value: 'frontVacum',
 	},
 	{
@@ -76,7 +76,6 @@ const imageTitlesFull = [
 ]
 
 const Gallery = ({ userId }: { userId: string }) => {
-
 	const { data: user, isLoading } = api.user.getCurrentUser.useQuery({
 		id: userId,
 	})
@@ -84,7 +83,7 @@ const Gallery = ({ userId }: { userId: string }) => {
 	const { data: logs, isLoading: logsLoading } =
 		api.dailyLog.getAllUser.useQuery(userId)
 
-  const { mutate: updateGallery } = api.metrics.updateGallery.useMutation()
+	const { mutate: updateGallery } = api.metrics.updateGallery.useMutation()
 
 	const [select, setSelect] = useState<string>('front')
 
@@ -132,11 +131,9 @@ const Gallery = ({ userId }: { userId: string }) => {
 			}
 		})
 
-  if (isLoading) return null
+	if (isLoading) return null
 
-	const isBB = user.roles.find(
-		(role) => role.name === 'body-builder-images',
-	)
+	const isBB = user.roles.find((role) => role.name === 'body-builder-images')
 		? true
 		: false
 
@@ -147,10 +144,10 @@ const Gallery = ({ userId }: { userId: string }) => {
 					value={select}
 					onValueChange={(value) => {
 						setSelect(value)
-            updateGallery({
-              image: value,
-              userId: userId,
-            })
+						updateGallery({
+							image: value,
+							userId: userId,
+						})
 					}}
 				>
 					<SelectTrigger className='w-[180px]'>

@@ -54,7 +54,8 @@ const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
 
 	return (
 		<div className='max-w-[100vw]'>
-			<Carousel className='w-full px-2'>
+			<Carousel
+        className='w-full px-2'>
 				<CarouselContent
           className='gap-0'
         >
@@ -99,12 +100,12 @@ const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
 					<DialogTitle className='hidden'>Image</DialogTitle>
 					<DialogDescription className='hidden'>Image</DialogDescription>
 					{selectedImage && (
-						<div className=' w-full h-[80vh]'>
+						<div className=' w-full h-[90vh]'>
 							<Image
 								src={selectedImage.src}
 								alt={selectedImage.alt}
 								fill
-                sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw'
+                sizes=''
 								className='object-contain w-full'
 								priority
 							/>
