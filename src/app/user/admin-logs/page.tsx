@@ -14,11 +14,6 @@ import {
 	CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import { Input } from '@/components/ui/input'
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from '@/components/ui/popover'
 import { Switch } from '@/components/ui/switch'
 
 export default function AdminLogs() {
@@ -27,14 +22,6 @@ export default function AdminLogs() {
 	const ctx = api.useUtils()
 	const { data: logs } = api.user.getAdminLogs.useQuery(undefined, {
 		refetchInterval: 1000 * 60 * 5,
-	})
-	const { mutate: deleteLog } = api.user.deleteAdminLog.useMutation({
-		onSuccess: () => {
-			ctx.user.invalidate()
-		},
-		onSettled: () => {
-			ctx.user.invalidate()
-		},
 	})
 
 	const isMobile = useClientMediaQuery('(max-width: 600px)')
@@ -82,16 +69,19 @@ export default function AdminLogs() {
 										: 'bg-primary/5',
 								)}
 							>
-								<div className='col-span-2 truncate'>
+								<div className='md:col-span-1 col-span-2 truncate'>
 									{log.createdAt.toLocaleString('en-AU', {
 										year: 'numeric',
 										month: 'numeric',
 										day: 'numeric',
+										hour: 'numeric',
+										minute: 'numeric',
+										hour12: false,
 									})}
 								</div>
-								<div className='col-span-2 truncate'>{log.user}</div>
-								<div className='col-span-3 truncate'>{log.task}</div>
-								<div className='truncate col-span-2'>{log.notes}</div>
+								<div className='col-span-2 md:col-span-1 truncate'>{log.user}</div>
+								<div className='col-span-3 md:col-span-1 truncate'>{log.task}</div>
+								<div className='truncate col-span-2 md:col-span-6'>{log.notes}</div>
 							</div>
 						</CollapsibleTrigger>
 						<CollapsibleContent className='p-0 '>
