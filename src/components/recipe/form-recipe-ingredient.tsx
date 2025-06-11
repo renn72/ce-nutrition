@@ -94,54 +94,6 @@ const FormRecipeIngredient = ({
 
 	if (!allIngredients) return <div />
 
-	const filteredIngredients =
-		query === ''
-			? allIngredients.sort((a, b) => {
-					if (a?.favouriteAt && b?.favouriteAt) {
-						return Number(a?.favouriteAt) - Number(b?.favouriteAt)
-					}
-					if (a?.favouriteAt) return -1
-					if (b?.favouriteAt) return 1
-					return 0
-				})
-			: allIngredients
-					.filter((i) => {
-						const name = i?.name?.toLowerCase().replace(',', '') ?? ''
-						return name.includes(query.toLowerCase())
-					})
-					.sort((a, b) => {
-						if (a?.favouriteAt && b?.favouriteAt) {
-							return Number(a?.favouriteAt) - Number(b?.favouriteAt)
-						}
-						if (a?.favouriteAt) return -1
-						if (b?.favouriteAt) return 1
-						return 0
-					})
-
-	const filteredIngredientsAlt =
-		queryAlt === ''
-			? allIngredients.sort((a, b) => {
-					if (a?.favouriteAt && b?.favouriteAt) {
-						return Number(a?.favouriteAt) - Number(b?.favouriteAt)
-					}
-					if (a?.favouriteAt) return -1
-					if (b?.favouriteAt) return 1
-					return 0
-				})
-			: allIngredients
-					.filter((i) => {
-						const name = i?.name?.toLowerCase().replace(',', '') ?? ''
-						return name.includes(query.toLowerCase())
-					})
-					.sort((a, b) => {
-						if (a?.favouriteAt && b?.favouriteAt) {
-							return Number(a?.favouriteAt) - Number(b?.favouriteAt)
-						}
-						if (a?.favouriteAt) return -1
-						if (b?.favouriteAt) return 1
-						return 0
-					})
-
 	const serveSize = form.watch(`ingredients.${index}.serveSize`)
 	return (
 		<div
@@ -175,6 +127,7 @@ const FormRecipeIngredient = ({
 										})}
 									selectedOption={field.value}
 									onSelectOption={(value) => {
+                    setSelected(allIngredients?.find((i) => i.id === Number(value)))
 										field.onChange(value)
 										form.setValue(
 											`ingredients.${index}.serveSize`,
