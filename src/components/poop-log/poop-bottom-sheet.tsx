@@ -202,8 +202,8 @@ const PoopBottomSheet = ({
                           if (props.date > new Date()) return <div>{props.date.getDate()}</div>
 													return (
 														<div className='flex flex-col gap-[2px]'>
-															<div className=''>{props.date.getDate()}</div>
-															<div className='text-[0.7rem] text-muted-foreground font-light'>{totalPoop === 0 ? '.' : totalPoop}</div>
+															<div className='font-semibold '>{props.date.getDate()}</div>
+															<div className='text-[0.7rem] text-muted-foreground font-medium'>{totalPoop === 0 ? '.' : totalPoop}</div>
 														</div>
 													)
 												},

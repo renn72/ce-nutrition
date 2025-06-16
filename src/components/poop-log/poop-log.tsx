@@ -98,7 +98,7 @@ const PoopLog = ({
         </div>
         <div />
       </div>
-      <PoopBottomSheet totalPoop={totalPoop} dailyLogs={dailyLogs} deletePoopLog={deletePoopLog} addPoopLog={addPoopLog} />
+      <PoopBottomSheet dailyLogs={dailyLogs} deletePoopLog={deletePoopLog} addPoopLog={addPoopLog} />
     </div>
   )
 }

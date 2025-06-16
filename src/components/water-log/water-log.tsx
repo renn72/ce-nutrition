@@ -53,7 +53,7 @@ const WaterLog = ({
 								...log.waterLogs,
 								{
 									id: -1,
-									createdAt: new Date(),
+									createdAt: new Date(newWaterLog.date),
 									dailyLogId: log.id,
 									amount: newWaterLog.amount.toString(),
 								},
@@ -169,9 +169,9 @@ const WaterLog = ({
 			</div>
 
 			<WaterBottomSheet
-				todaysDailyLog={todaysDailyLog}
-				totalWater={totalWater}
+        dailyLogs={dailyLogs}
 				deleteWaterLog={deleteWaterLog}
+        addWaterLog={addWaterLog}
 				size={size}
 				setSize={setSize}
 			/>
