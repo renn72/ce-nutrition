@@ -92,10 +92,29 @@ export const columns: ColumnDef<GetPlanById>[] = [
 			<DataTableColumnHeader column={column} title='Meals' />
 		),
 		cell: ({ row }) => {
+      const plan = row.original as GetPlanById
+      const numberOfMeals = plan?.meals?.length
 			return (
 				<div className='flex space-x-2'>
 					<span className='lg:w-[110px] truncate font-medium'>
-						{row.getValue('numberOfMeals')}
+						{numberOfMeals}
+					</span>
+				</div>
+			)
+		},
+	},
+{
+		accessorKey: 'numberOfRecipes',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Recipes' />
+		),
+		cell: ({ row }) => {
+      const plan = row.original as GetPlanById
+      const numberOfRecipes = plan?.meals?.reduce((acc, meal) => acc + meal.mealToRecipe.length, 0)
+			return (
+				<div className='flex space-x-2'>
+					<span className='lg:w-[110px] truncate font-medium'>
+						{numberOfRecipes}
 					</span>
 				</div>
 			)
