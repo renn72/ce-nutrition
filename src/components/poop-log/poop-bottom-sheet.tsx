@@ -128,6 +128,7 @@ const PoopBottomSheet = ({
 		<Sheet.Root license='non-commercial'>
 			<Sheet.Trigger
 				onClick={() => {
+          setToday(new Date())
 					const rnd = Math.floor(Math.random() * toiletPhrases.length)
 					const phrase = toiletPhrases[rnd] ?? 'Toilet Log'
 					setTitle(phrase)
@@ -140,8 +141,8 @@ const PoopBottomSheet = ({
 				<Sheet.View className='z-[999] h-[100vh] bg-black/50 '>
 					<Sheet.Content className='min-h-[200px] max-h-[90vh] h-full rounded-t-3xl bg-background relative'>
 						<div className='flex flex-col justify-between h-full'>
-							<div className='flex flex-col '>
-								<div className='flex justify-center pt-1 mb-2'>
+							<div className='flex flex-col gap-2 '>
+								<div className='flex justify-center pt-1'>
 									<Sheet.Handle
 										className=' w-[50px] h-[6px] border-0 rounded-full bg-primary/20'
 										action='dismiss'
@@ -174,8 +175,9 @@ const PoopBottomSheet = ({
 										</div>
 									</PopoverTrigger>
 									<PopoverContent
+                    onClick={(e) => e.stopPropagation()}
 										onFocusOutside={(e) => e.preventDefault()}
-										forceMount
+                    forceMount
 										className='w-auto p-0 z-[2000]'
 									>
 										<Calendar
