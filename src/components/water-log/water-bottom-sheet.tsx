@@ -56,7 +56,7 @@ const WaterBottomSheet = ({
 			</Sheet.Trigger>
 			<Sheet.Portal>
 				<Sheet.View className='z-[999] h-[100vh] bg-black/50 '>
-					<Sheet.Content className='min-h-[200px] max-h-[80vh] h-full rounded-t-3xl bg-background relative'>
+					<Sheet.Content className='min-h-[200px] max-h-[90vh] h-full rounded-t-3xl bg-background relative'>
 						<div className='flex flex-col justify-between h-full'>
 							<div className='flex flex-col gap-2 '>
 								<div className='flex justify-center pt-1'>
@@ -179,7 +179,7 @@ const WaterBottomSheet = ({
 									</Button>
 								</div>
 
-								<ScrollArea className='p-4 h-[calc(80vh-110px)]'>
+								<ScrollArea className='p-4 h-[calc(80vh-210px)]'>
 									<div className='flex flex-col gap-2 '>
 										{todaysDailyLog?.waterLogs.length === 0 ||
 										!todaysDailyLog ? (
