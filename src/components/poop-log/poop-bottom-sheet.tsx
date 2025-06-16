@@ -2,11 +2,28 @@
 
 import { useState } from 'react'
 
-import { GetDailyLogById } from '@/types'
+import { cn } from '@/lib/utils'
+import type { GetAllDailyLogs } from '@/types'
 import NumberFlow from '@number-flow/react'
 import { Sheet } from '@silk-hq/components'
+import { format } from 'date-fns'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronDown, ListCollapse, Shuffle, Trash2 } from 'lucide-react'
+import {
+	CalendarIcon,
+	ChevronDown,
+	ListCollapse,
+	Shuffle,
+	Toilet,
+	Trash2,
+} from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar-log'
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/popover'
 
 const transition = {
 	duration: 0.15,
@@ -83,18 +100,30 @@ const toiletPhrases = [
 ]
 
 const PoopBottomSheet = ({
-	todaysDailyLog,
-	totalPoop,
+	dailyLogs,
 	deletePoopLog,
+	addPoopLog,
 }: {
-	todaysDailyLog: GetDailyLogById | null | undefined
-	totalPoop: number
+	dailyLogs: GetAllDailyLogs | null | undefined
 	deletePoopLog: ({ id }: { id: number }) => void
+	addPoopLog: ({ date }: { date: string }) => void
 }) => {
 	const [title, setTitle] = useState(() => {
 		const rnd = Math.floor(Math.random() * toiletPhrases.length)
 		return toiletPhrases[rnd] ?? 'Toilet Log'
 	})
+	const [isOpen, setIsOpen] = useState(false)
+	const [today, setToday] = useState<Date>(new Date())
+
+	const todaysDailyLog = dailyLogs?.find((dailyLog) => {
+		return dailyLog.date === today.toDateString()
+	})
+
+	const totalPoop =
+		todaysDailyLog?.poopLogs.reduce((acc, _curr) => {
+			return acc + 1
+		}, 0) ?? 0
+
 	return (
 		<Sheet.Root license='non-commercial'>
 			<Sheet.Trigger
@@ -109,16 +138,79 @@ const PoopBottomSheet = ({
 			</Sheet.Trigger>
 			<Sheet.Portal>
 				<Sheet.View className='z-[999] h-[100vh] bg-black/50 '>
-					<Sheet.Content className='min-h-[200px] max-h-[80vh] h-full rounded-t-3xl bg-background relative'>
+					<Sheet.Content className='min-h-[200px] max-h-[90vh] h-full rounded-t-3xl bg-background relative'>
 						<div className='flex flex-col justify-between h-full'>
 							<div className='flex flex-col '>
-								<div className='flex justify-center pt-1'>
+								<div className='flex justify-center pt-1 mb-2'>
 									<Sheet.Handle
 										className=' w-[50px] h-[6px] border-0 rounded-full bg-primary/20'
 										action='dismiss'
 									/>
 								</div>
-								<div className='flex gap-4 pt-4 border-b-[1px] border-primary pb-4 relative font-medium'>
+								<Popover open={isOpen} onOpenChange={setIsOpen}>
+									<PopoverTrigger asChild>
+										<div className='flex items-center justify-center'>
+											<Button
+												variant={'outline'}
+												onClick={(e) => {
+													e.stopPropagation()
+													e.preventDefault()
+													setIsOpen(true)
+												}}
+												className={cn(
+													'w-[220px] font-semibold text-base mt-[2px] flex items-center justify-center shadow-sm',
+													!today && 'text-muted-foreground',
+												)}
+											>
+												<CalendarIcon className='mr-4 h-4 w-4 mt-[0px] shrink-0' />
+												{today ? (
+													<span className='mt-[5px]'>
+														{format(today, 'PPP')}
+													</span>
+												) : (
+													<span>Pick a date</span>
+												)}
+											</Button>
+										</div>
+									</PopoverTrigger>
+									<PopoverContent
+										onFocusOutside={(e) => e.preventDefault()}
+										forceMount
+										className='w-auto p-0 z-[2000]'
+									>
+										<Calendar
+											mode='single'
+											disabled={{ after: new Date() }}
+											selected={today}
+											onSelect={(date) => {
+												if (!date) return
+												setToday(date)
+												setIsOpen(false)
+											}}
+											components={{
+												// @ts-ignore
+												DayContent: (props) => {
+													const log = dailyLogs?.find(
+														(log) => log.date === props.date.toDateString(),
+													)
+													const totalPoop =
+														log?.poopLogs.reduce((acc, _curr) => {
+															return acc + 1
+														}, 0) ?? 0
+                          if (props.date > new Date()) return <div>{props.date.getDate()}</div>
+													return (
+														<div className='flex flex-col gap-[2px]'>
+															<div className=''>{props.date.getDate()}</div>
+															<div className='text-[0.7rem] text-muted-foreground font-light'>{totalPoop === 0 ? '.' : totalPoop}</div>
+														</div>
+													)
+												},
+											}}
+											initialFocus
+										/>
+									</PopoverContent>
+								</Popover>
+								<div className='flex gap-4 pt-4 border-b-[1px] border-primary pb-4 relative font-medium items-center'>
 									<div className='transition-transform '>
 										<Sheet.Title className='text-lg ml-4 '>
 											<AnimatePresence mode='wait'>
@@ -143,6 +235,18 @@ const PoopBottomSheet = ({
 										value={totalPoop}
 										className='text-lg text-primary ml-2 '
 									/>
+
+									<div className='rounded-full border-[3px] border-primary/80 w-9 h-9 flex items-center justify-center active:scale-90 transition-transform cursor-pointer shadow-sm'>
+										<Toilet
+											className='ml-[1px]'
+											size={22}
+											onClick={() => {
+												addPoopLog({
+													date: today.toDateString(),
+												})
+											}}
+										/>
+									</div>
 								</div>
 								<div className='flex flex-col gap-2 p-4'>
 									{todaysDailyLog?.poopLogs.length === 0 || !todaysDailyLog ? (

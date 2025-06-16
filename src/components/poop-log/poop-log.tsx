@@ -35,7 +35,7 @@ const PoopLog = ({
               ...log,
               poopLogs: [
                 ...log.poopLogs,
-                { id: 9999999, createdAt: new Date(), dailyLogId: log.id },
+                { id: 9999999, createdAt: new Date(newPoopLog.date), dailyLogId: log.id },
               ],
             }
           }
@@ -98,7 +98,7 @@ const PoopLog = ({
         </div>
         <div />
       </div>
-      <PoopBottomSheet totalPoop={totalPoop} todaysDailyLog={todaysDailyLog} deletePoopLog={deletePoopLog} />
+      <PoopBottomSheet totalPoop={totalPoop} dailyLogs={dailyLogs} deletePoopLog={deletePoopLog} addPoopLog={addPoopLog} />
     </div>
   )
 }
