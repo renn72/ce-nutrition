@@ -138,7 +138,7 @@ const Gallery = ({ userId }: { userId: string }) => {
 		: false
 
 	return (
-		<div className='flex flex-col gap-2 w-full mt-16 mb-20'>
+		<div className='flex flex-col gap-2 w-full mt-16 mb-12 h-[calc(100vh-120px)]'>
 			<div className='flex justify-center w-full'>
 				<Select
 					value={select}
@@ -168,18 +168,20 @@ const Gallery = ({ userId }: { userId: string }) => {
 					</SelectContent>
 				</Select>
 			</div>
-			{select === 'front' ? (
-				<ImageCarousel images={frontImages || []} className='w-full' />
-			) : null}
-			{select === 'side' ? (
-				<ImageCarousel images={sideImages || []} className='w-full' />
-			) : null}
-			{select === 'back' ? (
-				<ImageCarousel images={backImages || []} className='w-full' />
-			) : null}
-			{select !== 'front' && select !== 'side' && select !== 'back' ? (
-				<ImageCarousel images={images || []} className='w-full' />
-			) : null}
+			<div className='h-full w-full flex flex-col justify-center'>
+				{select === 'front' ? (
+					<ImageCarousel images={frontImages || []} className='w-full' />
+				) : null}
+				{select === 'side' ? (
+					<ImageCarousel images={sideImages || []} className='w-full' />
+				) : null}
+				{select === 'back' ? (
+					<ImageCarousel images={backImages || []} className='w-full' />
+				) : null}
+				{select !== 'front' && select !== 'side' && select !== 'back' ? (
+					<ImageCarousel images={images || []} className='w-full' />
+				) : null}
+			</div>
 		</div>
 	)
 }
