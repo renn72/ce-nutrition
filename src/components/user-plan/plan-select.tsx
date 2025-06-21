@@ -73,7 +73,7 @@ const PlanSelect = ({
 					<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
 				</Button>
 			</PopoverTrigger>
-			<PopoverContent className='max-w-[600px] p-0 w-full '>
+			<PopoverContent className='max-w-[100vw] md:max-w-[600px] p-0 w-full '>
 				<Command>
 					<div className='flex items-center gap-2 p-1'>
 						<CommandInput
@@ -141,7 +141,7 @@ const PlanSelect = ({
 										{plan.name}
 									</span>
 									<span className='col-span-2 text-right'>
-										<Badge variant='secondary'>{plan.creator?.name}</Badge>
+										<Badge variant='secondary'>{plan.creator?.name.split(' ')[0]}</Badge>
 									</span>
 								</CommandItem>
 							))}
