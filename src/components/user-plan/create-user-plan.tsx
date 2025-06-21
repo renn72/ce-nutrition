@@ -228,9 +228,6 @@ const CreateUserPlan = ({
                       serveUnit: ingredient.serveUnit || '',
                       recipeId: -1,
                       alternateId: ingredient.alternateId,
-                      alternateIngredient: {
-                        ...ingredient.alternateIngredient,
-                      },
                       ingredientId: ingredient.ingredientId || -1,
                       ingredient: {
                         ...ingredient.ingredient,

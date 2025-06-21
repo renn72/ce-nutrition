@@ -10,6 +10,9 @@ export const planRouter = createTRPCRouter({
   getAllSimple: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.plan.findMany({
       orderBy: [desc(plan.createdAt)],
+      with: {
+        creator: true,
+      }
     })
     return res
   }),
