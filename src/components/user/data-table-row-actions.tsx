@@ -39,10 +39,12 @@ const DialogWrapper = ({
 	children,
 	isOpen,
 	setIsOpen,
+  title = 'Update Email',
 }: {
 	children: React.ReactNode
 	isOpen: boolean
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  title?: string
 }) => {
 	return (
 		<Dialog
@@ -52,7 +54,7 @@ const DialogWrapper = ({
 			}}
 		>
 			<DialogTrigger asChild>
-				<Button variant='ghost'>Update Email</Button>
+				<Button variant='ghost'>{title}</Button>
 			</DialogTrigger>
 			<DialogContent
 				onOpenAutoFocus={(e) => {
@@ -112,6 +114,68 @@ const Email = ({ currentUser }: { currentUser: GetUserById }) => {
 					onClick={() => {
 						updateEmail({
 							email: email,
+							id: currentUser?.id ?? '',
+						})
+					}}
+				>
+					{isSaving ? (
+						<RefreshCw className={cn('animate-spin')} size={20} />
+					) : (
+						<span>Save</span>
+					)}
+				</Button>
+			</div>
+		</DialogWrapper>
+	)
+}
+
+const Password = ({ currentUser }: { currentUser: GetUserById }) => {
+	const [password, setPassword] = useState('')
+	const [isOpen, setIsOpen] = useState(false)
+	const [isSaving, setIsSaving] = useState(false)
+	const ctx = api.useUtils()
+	const { mutate: updatePassword } = api.user.updatePassword.useMutation({
+		onSuccess: () => {
+			ctx.user.invalidate()
+			setIsOpen(false)
+			setTimeout(() => {
+				setIsSaving(false)
+			}, 100)
+		},
+		onSettled: () => {
+			ctx.user.invalidate()
+			setIsOpen(false)
+			setTimeout(() => {
+				setIsSaving(false)
+			}, 100)
+		},
+		onMutate: () => {
+			setIsSaving(true)
+		},
+	})
+	return (
+		<DialogWrapper isOpen={isOpen} setIsOpen={setIsOpen} title='Update Password'>
+			<DialogHeader>
+				<DialogTitle>Password</DialogTitle>
+				<DialogDescription>Update your password.</DialogDescription>
+			</DialogHeader>
+			<div className='flex flex-col gap-4 w-full'>
+				<div className='text-sm text-muted-foreground font-medium'>
+					<Input
+						type='text'
+						className='w-full'
+						value={password}
+						onChange={(e) => {
+							setPassword(e.target.value)
+						}}
+					/>
+				</div>
+				<Button
+					disabled={isSaving}
+					className='relative'
+					onClick={() => {
+						updatePassword({
+              password: password,
 							id: currentUser?.id ?? '',
 						})
 					}}
@@ -261,6 +325,16 @@ export function DataTableRowActions<TData>({
 					}}
 				>
 					<Email currentUser={data} />
+				</DropdownMenuItem>
+
+				<DropdownMenuSeparator />
+				<DropdownMenuItem
+					onSelect={(e) => {
+						e.preventDefault()
+						e.stopPropagation()
+					}}
+				>
+					<Password currentUser={data} />
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
