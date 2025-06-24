@@ -7,7 +7,14 @@ import { ReactNode, useState } from 'react'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { cn, getRecipeDetailsByCals } from '@/lib/utils'
 import type { GetIngredientById, GetRecipeById } from '@/types'
-import { Check, ChevronsUpDown, CirclePlus, CircleX } from 'lucide-react'
+import {
+	Check,
+	ChevronsUpDown,
+	CircleChevronDown,
+	CircleChevronUp,
+	CirclePlus,
+	CircleX,
+} from 'lucide-react'
 import { useFieldArray, type UseFormReturn } from 'react-hook-form'
 import type { z } from 'zod'
 
@@ -91,15 +98,14 @@ const Recipe = ({
 		`meals.${mealIndex}.recipes.${recipeIndex}.recipeId`,
 	)
 
-  const recipes = _recipes?.filter((recipe) => {
-    if (recipe.id.toString() === recipeId) return true
-    if (recipe.hiddenAt === null) return true
-    return false
-  })
+	const recipes = _recipes?.filter((recipe) => {
+		if (recipe.id.toString() === recipeId) return true
+		if (recipe.hiddenAt === null) return true
+		return false
+	})
 
 	const recipe = recipes?.find((recipe) => recipe.id === Number(recipeId))
 	const recipeDetails = getRecipeDetailsByCals(recipe, Number(calories))
-
 
 	if (!recipes) return null
 
@@ -110,10 +116,7 @@ const Recipe = ({
 				name={`meals.${mealIndex}.recipes.${recipeIndex}.recipeId`}
 				render={({ field }) => (
 					<FormItem className='w-full col-span-5 flex'>
-						<Popover
-              open={isOpen}
-              onOpenChange={setOpen}
-            >
+						<Popover open={isOpen} onOpenChange={setOpen}>
 							<PopoverTrigger asChild>
 								<FormControl>
 									<Button
@@ -134,33 +137,38 @@ const Recipe = ({
 								</FormControl>
 							</PopoverTrigger>
 							<PopoverContent className='w-[800px] p-0'>
-								<Command
-                >
+								<Command>
 									<CommandInput
 										placeholder='Search recipes...'
 										className='h-9'
 									/>
-									<CommandList
-                    className='w-[800px]'
-                  >
+									<CommandList className='w-[800px]'>
 										<CommandEmpty>...</CommandEmpty>
 										<CommandGroup>
 											{recipes.map((recipe) => (
 												<CommandItem
 													value={`${recipe.name} ${/^\d+$/.test(recipe.recipeCategory) ? '' : recipe.recipeCategory}`}
 													key={recipe.id}
-                          className={cn('grid grid-cols-10',
-                            recipe.id.toString() === field.value
-                              ? 'bg-muted'
-                              : ''
-                          )}
+													className={cn(
+														'grid grid-cols-10',
+														recipe.id.toString() === field.value
+															? 'bg-muted'
+															: '',
+													)}
 													onSelect={() => {
-														form.setValue(`meals.${mealIndex}.recipes.${recipeIndex}.recipeId`, recipe.id.toString())
-                            setOpen(false)
+														form.setValue(
+															`meals.${mealIndex}.recipes.${recipeIndex}.recipeId`,
+															recipe.id.toString(),
+														)
+														setOpen(false)
 													}}
 												>
-                          <div className='col-span-6'>{recipe.name}</div>
-													<div className='col-span-3'>{/^\d+$/.test(recipe.recipeCategory) ? '' : recipe.recipeCategory}</div>
+													<div className='col-span-6'>{recipe.name}</div>
+													<div className='col-span-3'>
+														{/^\d+$/.test(recipe.recipeCategory)
+															? ''
+															: recipe.recipeCategory}
+													</div>
 													<Check
 														className={cn(
 															'ml-auto',
@@ -231,10 +239,15 @@ const FormPlanMeal = ({
 	index,
 	form,
 	remove: removeMeal,
+	insert: insertMeal,
+	move,
 }: {
 	index: number
 	form: UseFormReturn<z.infer<typeof formSchema>>
 	remove: (index: number) => void
+	// biome-ignore lint/suspicious/noExplicitAny: fuck off
+	insert: (index: number, value: any) => void
+	move: (from: number, to: number) => void
 }) => {
 	const isMobile = useIsMobile()
 	const ctx = api.useUtils()
@@ -258,7 +271,35 @@ const FormPlanMeal = ({
 		<Card key={index} className='w-full'>
 			<CardHeader className='pb-2 pt-4 bg-background  w-full'>
 				<div className='flex w-full justify-between'>
-					<CardTitle className='text-2xl'>Meal {index + 1}</CardTitle>
+					<div className='flex gap-0 items-center'>
+						<CardTitle className='text-3xl mr-8'>Meal {index + 1}</CardTitle>
+						<Button
+							variant='ghost'
+							className='w-min'
+							onClick={(e) => {
+                e.stopPropagation()
+                e.preventDefault()
+								if (index === 0) return
+								move(index, index - 1)
+							}}
+						>
+							<CircleChevronUp size={28} />
+						</Button>
+						<Button
+							variant='ghost'
+							className='w-min'
+							onClick={(e) => {
+                e.stopPropagation()
+                e.preventDefault()
+                console.log(index, fields.length, form.watch('meals').length)
+                const length = form.watch('meals').length - 1
+                if (index === length) return
+								move(index, index + 1)
+							}}
+						>
+							<CircleChevronDown size={28} />
+						</Button>
+					</div>
 					<CircleX
 						size={24}
 						className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
@@ -379,7 +420,32 @@ const FormPlanMeal = ({
 								/>
 							</>
 						)}
+						<Button
+							variant='secondary'
+							className='w-min mt-4'
+							onClick={(e) =>{
+                e.stopPropagation()
+                e.preventDefault()
+								insertMeal(index + 1, {
+									mealTitle: 'copy',
+									calories: form.getValues(`meals.${index}.calories`),
+									vegeCalories: form.getValues(`meals.${index}.vegeCalories`),
+									vegeNotes: form.getValues(`meals.${index}.vegeNotes`),
+									vege: form.getValues(`meals.${index}.vege`),
+									note: form.getValues(`meals.${index}.note`),
+									recipes: form
+										.getValues(`meals.${index}.recipes`)
+										.map((recipe) => ({
+											recipeId: recipe.recipeId,
+											note: recipe.note,
+										})),
+								})
+							}}
+						>
+							Duplicate Meal
+						</Button>
 					</div>
+
 					<div className='flex flex-col gap-0 col-span-4 lg:ml-4 divide-y divide-border'>
 						{isMobile ? (
 							<div className='mt-1' />

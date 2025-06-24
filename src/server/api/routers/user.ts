@@ -523,7 +523,7 @@ export const userRouter = createTRPCRouter({
 			return { user: input.email, password: input.password }
 		}),
 
-	createFakeUsers: rootProtectedProcedure.mutation(async ({ ctx }) => {
+createFakeUsers: rootProtectedProcedure.mutation(async ({ ctx }) => {
 		const users = [
 			{
 				firstName: generateName(),

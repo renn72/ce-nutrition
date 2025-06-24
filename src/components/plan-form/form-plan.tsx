@@ -358,6 +358,8 @@ const MainForm = ({
                     index={index}
                     form={form}
                     remove={mealsField.remove}
+                    insert={mealsField.insert}
+                    move={mealsField.move}
                   />
                 ))}
               </div>
