@@ -77,7 +77,6 @@ const SignIn = () => {
 							})
 							console.log('res', res)
 							if (res?.error === null) {
-								toast.success('Logged in')
 								ctx.user.isUser.refetch()
 								router.push('/')
 								router.refresh()
