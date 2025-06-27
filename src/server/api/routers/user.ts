@@ -64,9 +64,9 @@ const isUserRoot = async (userId: string) => {
 export const userRouter = createTRPCRouter({
 	getAdminLogs: protectedProcedure.query(async ({ ctx }) => {
 		const res = await ctx.db.query.log.findMany({
-      limit: 400,
-      orderBy: ( log, { desc }) => [desc(log.createdAt)],
-    })
+			limit: 400,
+			orderBy: (log, { desc }) => [desc(log.createdAt)],
+		})
 		return res
 	}),
 	deleteAdminLog: protectedProcedure
@@ -203,39 +203,39 @@ export const userRouter = createTRPCRouter({
 
 			return res
 		}),
-  updateIsSauna: protectedProcedure
-    .input(z.object({ id: z.string(), isSauna: z.boolean() }))
-    .mutation(async ({ ctx, input }) => {
-      const res = await ctx.db
-        .update(userSettings)
-        .set({
-          isSauna: input.isSauna,
-        })
-        .where(eq(userSettings.userId, input.id))
-      return res
-    }),
-  updateIsColdPlunge: protectedProcedure
-    .input(z.object({ id: z.string(), isColdPlunge: z.boolean() }))
-    .mutation(async ({ ctx, input }) => {
-      const res = await ctx.db
-        .update(userSettings)
-        .set({
-          isColdPlunge: input.isColdPlunge,
-        })
-        .where(eq(userSettings.userId, input.id))
-      return res
-    }),
-  updateIsSteps: protectedProcedure
-    .input(z.object({ id: z.string(), isSteps: z.boolean() }))
-    .mutation(async ({ ctx, input }) => {
-      const res = await ctx.db
-        .update(userSettings)
-        .set({
-          isSteps: input.isSteps,
-        })
-        .where(eq(userSettings.userId, input.id))
-      return res
-    }),
+	updateIsSauna: protectedProcedure
+		.input(z.object({ id: z.string(), isSauna: z.boolean() }))
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(userSettings)
+				.set({
+					isSauna: input.isSauna,
+				})
+				.where(eq(userSettings.userId, input.id))
+			return res
+		}),
+	updateIsColdPlunge: protectedProcedure
+		.input(z.object({ id: z.string(), isColdPlunge: z.boolean() }))
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(userSettings)
+				.set({
+					isColdPlunge: input.isColdPlunge,
+				})
+				.where(eq(userSettings.userId, input.id))
+			return res
+		}),
+	updateIsSteps: protectedProcedure
+		.input(z.object({ id: z.string(), isSteps: z.boolean() }))
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(userSettings)
+				.set({
+					isSteps: input.isSteps,
+				})
+				.where(eq(userSettings.userId, input.id))
+			return res
+		}),
 	updateTrainer: protectedProcedure
 		.input(z.object({ id: z.string(), isTrainer: z.boolean() }))
 		.mutation(async ({ ctx, input }) => {
@@ -363,7 +363,7 @@ export const userRouter = createTRPCRouter({
 			with: {
 				settings: true,
 				roles: true,
-        images: true,
+				images: true,
 				trainers: true,
 				userPlans: {
 					with: {
@@ -396,7 +396,7 @@ export const userRouter = createTRPCRouter({
 					password: false,
 				},
 				with: {
-          images: true,
+					images: true,
 					settings: true,
 					roles: true,
 					userPlans: {
@@ -523,7 +523,7 @@ export const userRouter = createTRPCRouter({
 			return { user: input.email, password: input.password }
 		}),
 
-createFakeUsers: rootProtectedProcedure.mutation(async ({ ctx }) => {
+	createFakeUsers: rootProtectedProcedure.mutation(async ({ ctx }) => {
 		const users = [
 			{
 				firstName: generateName(),
@@ -615,7 +615,10 @@ createFakeUsers: rootProtectedProcedure.mutation(async ({ ctx }) => {
 		.mutation(async ({ ctx, input }) => {
 			const res = await ctx.db.query.role.findFirst({
 				where: (role, { eq, and }) =>
-					and(eq(role.userId, input.userId), eq(role.name, 'body-builder-images')),
+					and(
+						eq(role.userId, input.userId),
+						eq(role.name, 'body-builder-images'),
+					),
 			})
 
 			if (res) {
@@ -717,7 +720,7 @@ createFakeUsers: rootProtectedProcedure.mutation(async ({ ctx }) => {
 			const res = await ctx.db.query.user.findFirst({
 				where: (user, { eq }) => eq(user.id, input),
 				columns: {
-					password: false
+					password: false,
 				},
 				with: {
 					roles: true,
@@ -730,33 +733,33 @@ createFakeUsers: rootProtectedProcedure.mutation(async ({ ctx }) => {
 			})
 			return res
 		}),
-	getAllYour: protectedProcedure
-		.query(async ({ ctx,  }) => {
-      const userId = ctx.session?.user.id
+	getAllYour: protectedProcedure.query(async ({ ctx }) => {
+		const userId = ctx.session?.user.id
 
-			const res = await ctx.db.query.user.findMany({
-				columns: {
-					password: false,
-				},
-				with: {
-					roles: true,
-					trainers: {
-						with: {
-							trainer: true,
-						},
+		const res = await ctx.db.query.user.findMany({
+			columns: {
+				password: false,
+			},
+			with: {
+				roles: true,
+				trainers: {
+					with: {
+						trainer: true,
 					},
 				},
-			})
+			},
+		})
 
-      const users = res.filter((user) => {
-        if (user.id === userId) return true
-        if (ctx.session.user.isAdmin) return true
-        if (user.trainers.find((trainer) => trainer.trainer.id === userId)) return true
-        return false
-    })
+		const users = res.filter((user) => {
+			if (user.id === userId) return true
+			if (ctx.session.user.isAdmin) return true
+			if (user.trainers.find((trainer) => trainer.trainer.id === userId))
+				return true
+			return false
+		})
 
-			return users
-		}),
+		return users
+	}),
 	getAll: protectedProcedure.query(async ({ ctx }) => {
 		const res = await ctx.db.query.user.findMany({
 			columns: {
@@ -773,6 +776,15 @@ createFakeUsers: rootProtectedProcedure.mutation(async ({ ctx }) => {
 		})
 		return res
 	}),
+	checkEmail: publicProcedure
+		.input(z.string())
+		.mutation(async ({ ctx, input }) => {
+			if (input === '') throw new TRPCError({ code: 'BAD_REQUEST' })
+			const res = await ctx.db.query.user.findFirst({
+				where: (user, { eq }) => eq(user.email, input),
+			})
+			return res ? true : false
+		}),
 	getGaurenteed: protectedProcedure
 		.input(z.string())
 		.query(async ({ ctx, input }) => {
@@ -784,7 +796,7 @@ createFakeUsers: rootProtectedProcedure.mutation(async ({ ctx }) => {
 				},
 				with: {
 					settings: true,
-          images: true,
+					images: true,
 					roles: true,
 					userPlans: {
 						with: {

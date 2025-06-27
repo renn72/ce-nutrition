@@ -1,7 +1,8 @@
 import { TRPCReactProvider } from '@/trpc/react'
 
-import { type Metadata } from 'next'
-import { Epilogue } from 'next/font/google'
+import type {  Metadata } from 'next'
+
+import { epilogue } from '@/lib/font'
 
 import { auth } from '@/server/auth'
 import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin'
@@ -15,7 +16,7 @@ import { SignIn } from '@/components/auth/sign-in'
 import { ThemeProvider } from '@/components/misc/theme-provider'
 import { Providers } from '@/components/provider'
 
-import '@/styles/globals.css'
+import '../styles/globals.css'
 
 export const metadata: Metadata = {
   title: 'CE Nutrition',
@@ -24,7 +25,6 @@ export const metadata: Metadata = {
   icons: [{ rel: 'icon', url: '/favicon.ico' }],
 }
 
-const font = Epilogue({ subsets: ['latin'] })
 
 export const dynamic = 'force-dynamic'
 
@@ -36,7 +36,7 @@ export default async function RootLayout({
     <ViewTransitions>
       <html
         lang='en'
-        className={`${font.className} relative`}
+        className={`${epilogue.className} relative`}
         suppressHydrationWarning
       >
         <body>
