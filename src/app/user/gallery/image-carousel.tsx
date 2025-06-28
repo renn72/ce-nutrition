@@ -74,7 +74,7 @@ const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
 												alt={image.alt}
 												fill
 												className='object-cover hover:scale-105 transition-transform duration-200'
-												sizes='(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 20vw'
+												sizes='(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 80vw'
 											/>
 										</div>
 									</CardContent>

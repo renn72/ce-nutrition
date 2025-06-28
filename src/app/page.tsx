@@ -123,7 +123,8 @@ const Desktop = ({
 }) => {
 	return (
 		<div className='flex flex-col items-center gap-2 '>
-			<Mobile userId={userId} currentUser={currentUser} isDesktop={true} />
+			<MobileHeader isDesktop={false} />
+      desktop
 		</div>
 	)
 }
