@@ -125,6 +125,7 @@ const Desktop = ({
 		<div className='flex flex-col items-center gap-2 '>
 			<MobileHeader isDesktop={false} />
       desktop
+			<MobileFooter />
 		</div>
 	)
 }

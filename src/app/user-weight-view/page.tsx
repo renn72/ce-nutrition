@@ -14,7 +14,7 @@ const View = ({ userId }: { userId: string }) => {
       value: Number(skinfold.bodyWeight?.[0]?.bodyWeight || 0),
       date: skinfold.date,
     }))
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   const value = (data?.[1]?.value || 0) - (data?.[0]?.value || 0)
 

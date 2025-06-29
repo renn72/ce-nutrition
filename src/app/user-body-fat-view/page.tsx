@@ -14,7 +14,7 @@ const View = ({ userId }: { userId: string }) => {
       value: Number(skinfold.bodyFat?.[0]?.bodyFat || 0),
       date: skinfold.date,
     }))
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   const value = (data?.[1]?.value || 0) - (data?.[0]?.value || 0)
 
@@ -35,7 +35,7 @@ const View = ({ userId }: { userId: string }) => {
               size={250}
             />
         }
-        {Math.abs(value).toFixed(1)}kg
+        {Math.abs(value).toFixed(1)}%
       </div>
       <div className='text-[4rem] w-full uppercase text-center font-bold -mt-36'>
         Body Fat
