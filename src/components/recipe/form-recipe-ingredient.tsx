@@ -63,12 +63,7 @@ const FormRecipeIngredient = ({
 	allIngredients: GetAllIngredients | null | undefined
 	reset: number
 }) => {
-	const ctx = api.useUtils()
-
 	const isMobile = useIsMobile()
-
-	const [query, setQuery] = useState('')
-	const [queryAlt, setQueryAlt] = useState('')
 
 	const ingredientId = form.watch(`ingredients.${index}.ingredientId`)
 	const alternateId = form.watch(`ingredients.${index}.alternateId`)

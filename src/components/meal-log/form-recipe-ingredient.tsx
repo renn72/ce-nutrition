@@ -57,8 +57,6 @@ const FormRecipeIngredient = ({
 	remove: (index: number) => void
 	allIngredients: GetAllIngredients | null | undefined
 }) => {
-	const [query, setQuery] = useState('')
-
 	const ingredientId = form.watch(`ingredients.${index}.ingredientId`)
 
 	const [selected, setSelected] = useState<GetIngredientById | null>(null)
@@ -107,6 +105,7 @@ const FormRecipeIngredient = ({
 									})}
 									selectedOption={field.value}
 									onSelectOption={(value) => {
+                    setSelected(allIngredients?.find((i) => i.id === Number(value)))
 										field.onChange(value)
 										form.setValue(
 											`ingredients.${index}.serveSize`,
