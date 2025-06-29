@@ -106,9 +106,9 @@ const CreateRecipe = ({
 										<Sheet.Description className='hidden'>
 											create a new meal
 										</Sheet.Description>
-									  <div className='flex gap-4 w-[calc(100vw-5rem)] items-baseline justify-center rounded-full bg-secondary'>
-												<div className='flex items-center  gap-2 text-lg font-bold'>
-                          {`Meal ${mealIndex + 1}`}
+									  <div className='flex gap-4 w-[calc(100vw-2rem)] items-baseline justify-center rounded-full bg-secondary'>
+												<div className='flex items-center  gap-1 text-lg font-bold tracking-tight'>
+                          {`Meal ${mealIndex + 1} Target`}
 												</div>
 												<div className='flex items-center  gap-2'>
 													<NumberFlow
