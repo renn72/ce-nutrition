@@ -1,0 +1,1 @@
+ALTER TABLE `log_new` DROP COLUMN `code`;

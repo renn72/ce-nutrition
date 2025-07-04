@@ -2,8 +2,6 @@
 
 import { api } from '@/trpc/react'
 
-import Image from 'next/image'
-
 import { cn } from '@/lib/utils'
 import type { GetDailyLogById, GetUserById } from '@/types'
 import { CircleX } from 'lucide-react'

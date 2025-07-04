@@ -30,7 +30,8 @@
 		"rules": {
 			"recommended": true,
 			"style": {
-				"useConst": "off"
+				"useConst": "off",
+        "useTemplate": "off"
 			},
 			"a11y": {
 				"useKeyWithClickEvents": "off",
@@ -41,6 +42,9 @@
 			},
       "complexity": {
         "noUselessTernary": "off"
+      },
+      "suspicious": {
+        "noAssignInExpressions": "off"
       }
 		}
 	},

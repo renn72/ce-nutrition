@@ -7,8 +7,10 @@
  * need to use are documented accordingly near the end.
  */
 
+import { env } from '@/env'
 import { auth } from '@/server/auth'
 import { db } from '@/server/db'
+import { logNew } from '@/server/db/schema/log'
 import { initTRPC, TRPCError } from '@trpc/server'
 import superjson from 'superjson'
 import { ZodError } from 'zod'
@@ -26,13 +28,13 @@ import { ZodError } from 'zod'
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const session = await auth()
+	const session = await auth()
 
-  return {
-    db,
-    session,
-    ...opts,
-  }
+	return {
+		db,
+		session,
+		...opts,
+	}
 }
 
 /**
@@ -43,17 +45,17 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
  * errors on the backend.
  */
 const t = initTRPC.context<typeof createTRPCContext>().create({
-  transformer: superjson,
-  errorFormatter({ shape, error }) {
-    return {
-      ...shape,
-      data: {
-        ...shape.data,
-        zodError:
-          error.cause instanceof ZodError ? error.cause.flatten() : null,
-      },
-    }
-  },
+	transformer: superjson,
+	errorFormatter({ shape, error }) {
+		return {
+			...shape,
+			data: {
+				...shape.data,
+				zodError:
+					error.cause instanceof ZodError ? error.cause.flatten() : null,
+			},
+		}
+	},
 })
 
 /**
@@ -83,21 +85,43 @@ export const createTRPCRouter = t.router
  * You can remove this if you don't like it, but it can help catch unwanted waterfalls by simulating
  * network latency that would occur in production but not in local development.
  */
-const timingMiddleware = t.middleware(async ({ next, path }) => {
-  const start = Date.now()
+const timingMiddleware = t.middleware(async (opts) => {
+	// if (t._config.isDev) {
+	//   // artificial delay in dev
+	//   const waitMs = Math.floor(Math.random() * 400) + 100;
+	//   await new Promise((resolve) => setTimeout(resolve, waitMs));
+	// }
 
-  // if (t._config.isDev) {
-  //   // artificial delay in dev
-  //   const waitMs = Math.floor(Math.random() * 400) + 100;
-  //   await new Promise((resolve) => setTimeout(resolve, waitMs));
-  // }
+	const start = Date.now()
+	const result = await opts.next()
+	const input = await opts.getRawInput()
+	const end = Date.now()
 
-  const result = await next()
+	if (env.NODE_ENV === 'development') {
+		console.log({
+			input: JSON.stringify(input),
+			type: opts.type,
+			path: opts.path,
+			duration: end - start,
+			source: opts.ctx.headers.get('referer'),
+			user: opts.ctx.session?.user.name,
+			userId: opts.ctx.session?.user.id,
+		})
+	} else {
+		opts.ctx.db.insert(logNew).values({
+			input: JSON.stringify(input),
+			type: opts.type,
+			path: opts.path,
+			duration: end - start,
+			source: opts.ctx.headers.get('referer'),
+			user: opts.ctx.session?.user.name,
+			userId: opts.ctx.session?.user.id,
+		})
+	}
 
-  const end = Date.now()
-  console.log(`[TRPC] ${path} took ${end - start}ms to execute`)
+	return result
 
-  return result
+	// console.log(`[TRPC] ${path} took ${end - start}ms to execute of type ${type}`)
 })
 
 /**
@@ -118,44 +142,44 @@ export const publicProcedure = t.procedure.use(timingMiddleware)
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure
-  .use(timingMiddleware)
-  .use(({ ctx, next }) => {
-    if (!ctx.session || !ctx.session.user) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'You are a poohead',
-      })
-    }
-    return next({
-      ctx: {
-        // infers the `session` as non-nullable
-        session: { ...ctx.session, user: ctx.session.user },
-      },
-    })
-  })
+	.use(timingMiddleware)
+	.use(({ ctx, next }) => {
+		if (!ctx.session || !ctx.session.user) {
+			throw new TRPCError({
+				code: 'UNAUTHORIZED',
+				message: 'You are a poohead',
+			})
+		}
+		return next({
+			ctx: {
+				// infers the `session` as non-nullable
+				session: { ...ctx.session, user: ctx.session.user },
+			},
+		})
+	})
 
 export const rootProtectedProcedure = t.procedure
-  .use(timingMiddleware)
-  .use(async ({ ctx, next }) => {
-    if (!ctx.session || !ctx.session.user) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'You are a poohead',
-      })
-    }
-    const sessionUser = ctx.session.user
-    if (!sessionUser) return next({ ctx })
-    const user = await ctx.db.query.user.findFirst({
-      where: (user, { eq }) => eq(user.id, sessionUser.id),
-    })
-    console.log('user in protected', user)
-    if (!user?.isRoot) {
-      throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You are not poo' })
-    }
-    return next({
-      ctx: {
-        // infers the `session` as non-nullable
-        session: { ...ctx.session, user: ctx.session.user },
-      },
-    })
-  })
+	.use(timingMiddleware)
+	.use(async ({ ctx, next }) => {
+		if (!ctx.session || !ctx.session.user) {
+			throw new TRPCError({
+				code: 'UNAUTHORIZED',
+				message: 'You are a poohead',
+			})
+		}
+		const sessionUser = ctx.session.user
+		if (!sessionUser) return next({ ctx })
+		const user = await ctx.db.query.user.findFirst({
+			where: (user, { eq }) => eq(user.id, sessionUser.id),
+		})
+		console.log('user in protected', user)
+		if (!user?.isRoot) {
+			throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You are not poo' })
+		}
+		return next({
+			ctx: {
+				// infers the `session` as non-nullable
+				session: { ...ctx.session, user: ctx.session.user },
+			},
+		})
+	})

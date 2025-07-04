@@ -3,7 +3,6 @@ import {
 	dailyLog,
 	dailyMeal,
 	poopLog,
-	tag,
 	waterLog,
 } from '@/server/db/schema/daily-logs'
 import { log } from '@/server/db/schema/log'
@@ -16,7 +15,7 @@ import {
 import type { GetSimpleDailyLogById as DailyLog } from '@/types'
 import { TRPCError } from '@trpc/server'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
-import { and, desc, eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 const createBlankLogs = async (

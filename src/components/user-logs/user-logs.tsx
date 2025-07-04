@@ -6,7 +6,6 @@ import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { getFormattedDate } from '@/lib/utils'
 import type { GetUserById } from '@/types'
 
-import { CheckIn } from '@/components/check-in/check-in'
 import { DailyLog } from '@/components/daily-log/daily-log'
 
 const DailyLogs = ({
@@ -50,23 +49,6 @@ const DailyLogs = ({
 	)
 }
 
-const CheckIns = ({ userId }: { userId: string }) => {
-	const { data: checkIns } = api.weighIn.getAllUser.useQuery(userId || '')
-
-	return (
-		<div className='flex flex-col gap-1 items-center max-w-md'>
-			{checkIns?.slice(0, 7).map((checkIn) => (
-				<div key={checkIn.id} className='flex gap-2 flex-col w-full'>
-					<div className='text-sm text-muted-foreground font-semibold text-center'>
-						{getFormattedDate(checkIn.date)}
-					</div>
-					<CheckIn weighIn={checkIn} />
-				</div>
-			))}
-		</div>
-	)
-}
-
 const UserLogs = ({
 	userId,
 	isAdmin = false,
@@ -76,7 +58,6 @@ const UserLogs = ({
 }) => {
 	const isMobile = useClientMediaQuery('(max-width: 600px)')
 	const { data: user } = api.user.get.useQuery(userId || '')
-	console.log('user', user)
 
 	if (!user) return null
 
@@ -89,10 +70,7 @@ const UserLogs = ({
 	}
 	return (
 		<div className='flex flex-col gap-4 items-center my-10 '>
-			<div className='flex gap-4 items-center'>
 				<DailyLogs user={user} isAdmin={isAdmin} userId={userId} />
-				<CheckIns userId={userId} />
-			</div>
 		</div>
 	)
 }
