@@ -108,15 +108,15 @@ const timingMiddleware = t.middleware(async (opts) => {
 			userId: opts.ctx.session?.user.id,
 		})
 	} else {
-		opts.ctx.db.insert(logNew).values({
-			input: JSON.stringify(input),
-			type: opts.type,
-			path: opts.path,
-			duration: end - start,
-			source: opts.ctx.headers.get('referer'),
-			user: opts.ctx.session?.user.name,
-			userId: opts.ctx.session?.user.id,
-		})
+		// opts.ctx.db.insert(logNew).values({
+		// 	input: JSON.stringify(input),
+		// 	type: opts.type,
+		// 	path: opts.path,
+		// 	duration: end - start,
+		// 	source: opts.ctx.headers.get('referer'),
+		// 	user: opts.ctx.session?.user.name,
+		// 	userId: opts.ctx.session?.user.id,
+		// })
 	}
 
 	return result
