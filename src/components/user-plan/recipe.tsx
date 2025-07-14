@@ -224,7 +224,23 @@ const Recipe = ({
 			</div>
 			<div className='grid md:grid-cols-10 grid-cols-8 md:gap-1 font-bold'>
 				<div className='md:col-span-4 col-span-2 flex gap-2 justify-between'>
-					<div>{recipe?.name}</div>
+				<FormField
+					control={form.control}
+					name={`meals.${mealIndex}.recipes.${recipeIndex}.name`}
+					render={({ field }) => (
+						<FormItem className='w-full col-span-2'>
+							<FormControl>
+									<Input
+										placeholder=''
+										{...field}
+										onChange={(e) => {
+											field.onChange(e)
+										}}/>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
 					<Button
 						variant='destructive'
 						size='icon'
