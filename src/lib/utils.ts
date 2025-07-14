@@ -107,6 +107,60 @@ export function getRecipeDetailsFromDailyLog(
   }
 }
 
+export function getMealCals(
+  userPlan: UserPlan,
+  mealIndex: number,
+) {
+
+  const recipes = userPlan?.userRecipes.filter((recipe) => recipe.mealIndex === mealIndex)
+
+  if (recipes?.length !== 1) return Number(userPlan?.userMeals[mealIndex]?.calories) || 0
+
+  const recipe = recipes[0]
+
+  if (!recipe) return 0
+
+  const ingredients = userPlan?.userIngredients.filter((ingredient) => ingredient.recipeIndex === recipe.recipeIndex && ingredient.mealIndex === mealIndex)
+
+  const cals = ingredients?.reduce((acc, curr) => {
+    const cal = Number(curr?.ingredient?.caloriesWFibre)
+    const size = Number(curr.serve) || 100
+    const scale = size / Number(curr?.ingredient?.serveSize)
+    return acc + cal * scale
+  }, 0)
+
+  const calsWOFibre = ingredients?.reduce((acc, curr) => {
+    const cal = Number(curr?.ingredient?.caloriesWOFibre)
+    const size = Number(curr.serve) || 100
+    const scale = size / Number(curr?.ingredient?.serveSize)
+    return acc + cal * scale
+  }, 0) || 0
+
+  const protein = ingredients?.reduce((acc, curr) => {
+    const cal = Number(curr?.ingredient?.protein) || 0
+    const size = Number(curr.serve) || 100
+    const scale = size / Number(curr?.ingredient?.serveSize) || 0
+    return acc + cal * scale || 0
+  }, 0) || 0
+
+  const carbs = ingredients?.reduce((acc, curr) => {
+    const cal = Number(curr?.ingredient?.availableCarbohydrateWithSugarAlcohols) || 0
+    const size = Number(curr.serve) || 100
+    const scale = size / Number(curr?.ingredient?.serveSize) || 0
+    return acc + cal * scale || 0
+  }, 0) || 0
+
+  const fat = ingredients?.reduce((acc, curr) => {
+    const cal = Number(curr?.ingredient?.fatTotal) || 0
+    const size = Number(curr.serve) || 100
+    const scale = size / Number(curr?.ingredient?.serveSize) || 0
+    return acc + cal * scale || 0
+  }, 0) || 0
+
+
+  return  calsWOFibre
+}
+
 export function getRecipeDetailsForDailyLog(
   userPlan: UserPlan,
   recipeId: number,
