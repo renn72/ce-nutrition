@@ -14,6 +14,7 @@ import {
 } from 'react-hook-form'
 import type { z } from 'zod'
 
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
@@ -43,6 +44,7 @@ const Ingredient = ({
 	recipeIndex,
 	mealIndex,
 	plan,
+  ingredientsSize,
 	setIngredientsSize,
 	ingredientsField,
 }: {
@@ -53,6 +55,7 @@ const Ingredient = ({
 	mealIndex: number
 	plan: GetPlanById
 	setIngredientsSize: React.Dispatch<React.SetStateAction<number[]>>
+  ingredientsSize: number[]
 	ingredientsField: UseFieldArrayReturn<z.infer<typeof formSchema>['meals']>
 }) => {
 	const size = form.watch(
@@ -71,9 +74,11 @@ const Ingredient = ({
 
 	const ratio = Number(size) / Number(ingredient?.ingredient?.serveSize)
 
+  console.log('ingredient', ingredientsSize)
+
 	return (
 		<div className='flex flex-col gap-1'>
-			<div className='grid md:grid-cols-10 grid-cols-8 md:gap-1 text-muted-foreground items-center'>
+			<div className='grid md:grid-cols-10 grid-cols-8 md:gap-1 text-muted-foreground items-center relative'>
 				<div className='md:col-span-4 col-span-2 md:ml-2'>
 					{ingredient.ingredient.name}
 				</div>
@@ -128,6 +133,17 @@ const Ingredient = ({
 					).toFixed(1)}
 				</div>
 				<div>{(Number(ingredient.ingredient.fatTotal) * ratio).toFixed(1)}</div>
+				<Badge
+					variant='destructive'
+					className='cursor-pointer active:scale-90 w-min absolute right-2 h-4 top-1/2 -translate-y-1/2'
+					onClick={(e) => {
+						e.preventDefault()
+						ingredientsField.remove(ingredientIndex)
+						setIngredientsSize(ingredientsSize.filter((_, i) => i !== ingredientIndex))
+					}}
+				>
+					del
+				</Badge>
 			</div>
 			{ingredient.alternateId && ingredient.alternateIngredient ? (
 				<div className='grid grid-cols-10 gap-1 text-muted-foreground items-center text-sm'>
@@ -177,10 +193,21 @@ const Recipe = ({
 			recipe.ingredients.map((ingredient) => Number(ingredient?.serveSize)) ||
 			[],
 	)
-	const recipeDetails = getRecipeDetailsForUserPlan(recipe, ingredientsSize)
-
 	const [selected, setSelected] = useState<string | null>(null)
 	const [isOpen, setIsOpen] = useState(false)
+
+	const formRecipe = form.watch(`meals.${mealIndex}.recipes.${recipeIndex}`)
+
+	// const recipeDetails = getRecipeDetailsForUserPlan(recipe, ingredientsSize)
+	const recipeDetails = getRecipeDetailsForUserPlan(formRecipe, ingredientsSize)
+
+	if (
+		form.watch(`meals.${mealIndex}.recipes.${recipeIndex}`).recipeId === '4829'
+	) {
+		console.log('recipe', formRecipe)
+		console.log('ingredientsSize', ingredientsSize)
+	}
+
 
 	return (
 		<div className='flex flex-col gap-1 border rounded-md p-2 relative'>
@@ -234,6 +261,7 @@ const Recipe = ({
 					mealIndex={mealIndex}
 					plan={plan}
 					setIngredientsSize={setIngredientsSize}
+          ingredientsSize={ingredientsSize}
 					ingredientsField={ingredientsField}
 				/>
 			))}
@@ -305,14 +333,16 @@ const Recipe = ({
 						<div className='flex gap-4 justify-center w-full col-span-3'>
 							<Button
 								onClick={(e) => {
-                  const newIngredient = allIngredients?.find((i) => i.id === Number(selected))
-                  if (!newIngredient) return
+									const newIngredient = allIngredients?.find(
+										(i) => i.id === Number(selected),
+									)
+									if (!newIngredient) return
 									e.preventDefault()
 									ingredientsField.append({
 										ingredientId: newIngredient.id.toString(),
 										alternateId: null,
 										ingredient: {
-                      ...newIngredient,
+											...newIngredient,
 										},
 										name: newIngredient?.name || '',
 										serveSize: '',
@@ -321,6 +351,7 @@ const Recipe = ({
 									})
 									setSelected(null)
 									setIsOpen(false)
+									setIngredientsSize([...ingredientsSize, 0])
 								}}
 							>
 								Add

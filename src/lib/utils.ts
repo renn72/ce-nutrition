@@ -216,7 +216,7 @@ export function getRecipeDetailsForDailyLog(
   }
 }
 
-export function getRecipeDetailsForUserPlan(
+export function getRecipeDetailsForUserPlanNew(
   recipe: GetRecipeById,
   ingredientsSize: number[],
 ) {
@@ -259,6 +259,64 @@ export function getRecipeDetailsForUserPlan(
   const fat = recipe?.ingredients.reduce((acc, curr, i) => {
     const cal = Number(curr?.ingredient?.fatTotal)
     const size = ingredientsSize[i] || 100
+    const scale = size / Number(curr?.ingredient?.serveSize)
+    return acc + cal * scale
+  }, 0)
+
+  return {
+    size: size.toFixed(0),
+    unit: unit,
+    calsWFibre: cals?.toFixed(0),
+    cals: Number(calsWOFibre).toFixed(0),
+    protein: Number(protein).toFixed(0),
+    carbs: Number(carbs).toFixed(0),
+    fat: Number(fat).toFixed(1),
+  }
+}
+
+export function getRecipeDetailsForUserPlan(
+  recipe: GetRecipeById,
+  ingredientsSize: number[],
+) {
+  const size = ingredientsSize.reduce((acc, curr) => {
+    return acc + curr
+  }, 0)
+
+  const unit = recipe?.ingredients[0]?.ingredient?.serveUnit
+
+  const cals = recipe?.ingredients.reduce((acc, curr, i) => {
+    const cal = Number(curr?.ingredient?.caloriesWFibre)
+    const size = ingredientsSize[i] || 0
+    const scale = size / Number(curr?.ingredient?.serveSize)
+    return acc + cal * scale
+  }, 0)
+
+  const calsWOFibre = recipe?.ingredients.reduce((acc, curr, i) => {
+    const cal = Number(curr?.ingredient?.caloriesWOFibre)
+    const size = ingredientsSize[i] || 0
+    const scale = size / Number(curr?.ingredient?.serveSize)
+    return acc + cal * scale
+  }, 0)
+
+  const protein = recipe?.ingredients.reduce((acc, curr, i) => {
+    const cal = Number(curr?.ingredient?.protein)
+    const size = ingredientsSize[i] || 0
+    const scale = size / Number(curr?.ingredient?.serveSize)
+    return acc + cal * scale
+  }, 0)
+
+  const carbs = recipe?.ingredients.reduce((acc, curr, i) => {
+    const cal = Number(
+      curr?.ingredient?.availableCarbohydrateWithSugarAlcohols,
+    )
+    const size = ingredientsSize[i] || 0
+    const scale = size / Number(curr?.ingredient?.serveSize)
+    return acc + cal * scale
+  }, 0)
+
+  const fat = recipe?.ingredients.reduce((acc, curr, i) => {
+    const cal = Number(curr?.ingredient?.fatTotal)
+    const size = ingredientsSize[i] || 0
     const scale = size / Number(curr?.ingredient?.serveSize)
     return acc + cal * scale
   }, 0)
