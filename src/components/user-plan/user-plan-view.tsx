@@ -109,10 +109,10 @@ const UserPlanRecipe = ({
                     {recipe.name}
                   </Sheet.Title>
                   <Sheet.Description className='flex gap-1 items-center justify-between text-xs font-normal bg-primary text-background shadow-md rounded-full py-1 px-4 '>
-                    <div>{`${(Number(cals) * scale).toFixed(0)} cals`}</div>
-                    <div>{`${(Number(protein) * scale).toFixed(0)} protein`}</div>
-                    <div>{`${(Number(carbs) * scale).toFixed(0)} carbs`}</div>
-                    <div>{`${(Number(fat) * scale).toFixed(0)} fat`}</div>
+                    <span>{`${(Number(cals) * scale).toFixed(0)} cals`}</span>
+                    <span>{`${(Number(protein) * scale).toFixed(0)} protein`}</span>
+                    <span>{`${(Number(carbs) * scale).toFixed(0)} carbs`}</span>
+                    <span>{`${(Number(fat) * scale).toFixed(0)} fat`}</span>
                   </Sheet.Description>
                   <div className='grid grid-cols-4 gap-2 place-items-center mt-4'>
                     <Label>Serves</Label>
@@ -149,8 +149,8 @@ const UserPlanRecipe = ({
                 {userPlan.userIngredients
                   .filter(
                     (ingredient) =>
-                      ingredient.mealIndex == mealIndex &&
-                      ingredient.recipeIndex == recipeIndex,
+                      ingredient.mealIndex === mealIndex &&
+                      ingredient.recipeIndex === recipeIndex,
                   )
                   .map((ingredient) => {
                     const serve = scale * Number(ingredient.serve)
