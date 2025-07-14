@@ -235,6 +235,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
 								<div className='font-normal rounded-full bg-accent-foreground/10 px-2 py-1 text-sm'>
 									{plan.userMeals
 										.reduce((acc, meal) => {
+                      if (meal.mealIndex === null) return acc
 											return acc + Number(getMealCals(plan, meal.mealIndex))
 										}, 0)
 										.toFixed(0)}

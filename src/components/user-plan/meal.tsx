@@ -553,7 +553,9 @@ const Meal = ({
 									</DialogHeader>
 
 									<div className='flex gap-2 items-center max-w-md w-full'>
-										<Popover open={cmdIsOpen} onOpenChange={setCmdIsOpen}>
+										<Popover
+                      modal={true}
+                      open={cmdIsOpen} onOpenChange={setCmdIsOpen}>
 											<PopoverTrigger asChild>
 												<FormControl>
 													<Button
@@ -577,8 +579,10 @@ const Meal = ({
 													</Button>
 												</FormControl>
 											</PopoverTrigger>
-											<PopoverContent className='w-[800px] p-0'>
-												<Command>
+											<PopoverContent
+                        className='w-[800px] p-0'>
+												<Command
+                        >
 													<CommandInput
 														placeholder='Search recipes...'
 														className='h-9'
