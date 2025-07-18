@@ -237,10 +237,14 @@ export const weighInRelations = relations(weighIn, ({ one }) => ({
 export const userToTrainer = createTable('user_to_trainer', {
   userId: text('user_id')
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, {
+      onDelete: 'cascade',
+  }),
   trainerId: text('trainer_id')
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, {
+      onDelete: 'cascade',
+  }),
 })
 
 export const role = createTable('role', {

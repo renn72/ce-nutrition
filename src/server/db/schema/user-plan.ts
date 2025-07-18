@@ -24,10 +24,14 @@ export const userPlan = createTable('user_plan', {
   notes: text('notes').notNull(),
   numberOfMeals: int('number_of_meals', { mode: 'number' }),
   creatorId: text('creator_id')
-    .references(() => user.id)
+    .references(() => user.id, {
+      onDelete: 'cascade',
+  })
     .notNull(),
   userId: text('user_id')
-    .references(() => user.id)
+    .references(() => user.id, {
+      onDelete: 'cascade',
+  })
     .notNull(),
   favouriteAt: int('favourite_at', { mode: 'timestamp' }),
   deletedAt: int('deleted_at', { mode: 'timestamp' }),
