@@ -48,6 +48,25 @@ export const ingredientRouter = createTRPCRouter({
 		})
 		return res
 	}),
+	getFullSupplement: protectedProcedure
+		.input(z.object({ id: z.number() }))
+		.query(async ({ input, ctx }) => {
+			const res = await ctx.db.query.ingredient.findFirst({
+				where: (ingredient, { eq }) => eq(ingredient.id, input.id),
+				with: {
+          ingredientAdditionOne: true,
+          ingredientAdditionTwo: true,
+          ingredientAdditionThree: true,
+					user: {
+						columns: {
+							id: true,
+							name: true,
+						},
+					},
+				},
+			})
+			return res
+		}),
 	getSupplement: protectedProcedure
 		.input(z.object({ id: z.number() }))
 		.query(async ({ input, ctx }) => {
