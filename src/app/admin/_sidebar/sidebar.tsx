@@ -126,10 +126,10 @@ const data = {
 					title: 'Ingredients',
 					url: '/admin/ingredient',
 				},
-				{
-					title: 'Supplements',
-					url: '/admin/supplement',
-				},
+				// {
+				// 	title: 'Supplements',
+				// 	url: '/admin/supplement',
+				// },
 				// {
 				//   title: 'Store',
 				//   url: '/admin/store',
