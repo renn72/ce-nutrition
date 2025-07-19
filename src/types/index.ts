@@ -44,6 +44,9 @@ type RouterOutputs = inferRouterOutputs<typeof appRouter>
 export type GetAllIngredients = RouterOutputs['ingredient']['getAll']
 export type GetIngredientById = RouterOutputs['ingredient']['get']
 
+export type GetAllSupplements = RouterOutputs['ingredient']['getAllSupplements']
+export type GetSupplementById = RouterOutputs['ingredient']['getSupplement']
+
 export type GetAllGroceryStores = RouterOutputs['groceryStore']['getAll']
 export type GetGroceryStoreById = RouterOutputs['groceryStore']['get']
 

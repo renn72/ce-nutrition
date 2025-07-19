@@ -1,0 +1,1 @@
+ALTER TABLE `ingredient` ADD `is_supplement` integer DEFAULT false;

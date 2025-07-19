@@ -190,6 +190,20 @@
       "when": 1752825235256,
       "tag": "0026_square_morph",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "6",
+      "when": 1752827258678,
+      "tag": "0027_overrated_hellfire_club",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "6",
+      "when": 1752900740167,
+      "tag": "0028_exotic_chronomancer",
+      "breakpoints": true
     }
   ]
 }

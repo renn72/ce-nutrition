@@ -2,11 +2,11 @@
 
 import { api } from '@/trpc/react'
 
-import { DataTable } from '@/components/ingredients/data-table'
+import { DataTable } from '@/components/supplements/data-table'
 import { DataTableSkeleton } from '@/components/table/data-table-skeleton'
 
 export default function Home() {
-	const { data, isLoading } = api.ingredient.getAll.useQuery()
+	const { data, isLoading } = api.ingredient.getAllSupplements.useQuery()
 	return (
 		<div className='flex min-h-screen flex-col items-center w-full px-2'>
 			{isLoading ? (
@@ -18,7 +18,7 @@ export default function Home() {
 			) : null}
 			{data ? (
 				<div className='max-w-screen-2xl min-w-screen-xl py-6'>
-					<DataTable ingredients={data} />
+					<DataTable supplements={data} />
 				</div>
 			) : null}
 		</div>

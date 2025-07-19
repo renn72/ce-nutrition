@@ -45,6 +45,8 @@ export const ingredient = createTable(
       'available_carbohydrate_with_sugar_alcohols',
     ),
     isUserCreated: int('is_user_created', { mode: 'boolean' }).default(false),
+    isSupplement: int('is_supplement', { mode: 'boolean' }).default(false),
+    notes: text('notes'),
   },
 )
 
