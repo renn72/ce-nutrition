@@ -32,7 +32,7 @@ const SidebarHeader = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem className='hidden md:block'>
-              <BreadcrumbLink href='/admin/base'>
+              <BreadcrumbLink href='/admin/'>
                 <Image
                   src='/logo/ce.png'
                   alt='logo'
