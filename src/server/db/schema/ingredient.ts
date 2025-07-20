@@ -2,6 +2,8 @@ import { relations, sql } from 'drizzle-orm'
 import { index, int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { z } from 'zod'
 
+import { supplementToSupplementStack } from './user'
+import { dailySupplement } from './daily-logs'
 import { recipeToIngredient } from './recipe'
 import { userIngredient } from './user-plan'
 import { user } from './user'
@@ -356,6 +358,8 @@ export const ingredientRelations = relations(ingredient, ({ one, many }) => ({
     references: [ingredientAdditionThree.ingredientId],
   }),
   ingredientToGroceryStore: many(ingredientToGroceryStore),
+  supplementStack: many(supplementToSupplementStack),
+  dailySupplements: many(dailySupplement),
 }))
 
 export const ingredientAdditionOneRelations = relations(

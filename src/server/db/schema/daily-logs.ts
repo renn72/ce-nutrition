@@ -7,6 +7,7 @@ import {
 
 import { user } from './user'
 import { userIngredient, userRecipe } from './user-plan'
+import { ingredient } from './ingredient'
 
 const createTable = sqliteTable
 
@@ -65,6 +66,41 @@ export const dailyLogRelations = relations(dailyLog, ({ one, many }) => ({
   waterLogs: many(waterLog),
   poopLogs: many(poopLog),
   tags: many(tagToDailyLog),
+  supplements: many(dailySupplement),
+}))
+
+export const dailySupplement = createTable('daily_supplement', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  createdAt: int('created_at', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  dailyLogId: int('daily_log_id')
+    .notNull()
+    .references(() => dailyLog.id, {
+      onDelete: 'cascade',
+    }),
+  supplementId: int('supplement_id')
+    .notNull()
+    .references(() => ingredient.id, {
+      onDelete: 'cascade',
+    }),
+  amount: text('amount'),
+  unit: text('unit'),
+  time: text('time'),
+  notes: text('notes'),
+})
+
+export const dailySupplementRelations = relations(dailySupplement, ({ one }) => ({
+  dailyLog: one(dailyLog, {
+    fields: [dailySupplement.dailyLogId],
+    references: [dailyLog.id],
+    relationName: 'dailyLog',
+  }),
+  supplement: one(ingredient, {
+    fields: [dailySupplement.supplementId],
+    references: [ingredient.id],
+    relationName: 'supplement',
+  }),
 }))
 
 export const tag = createTable('tag', {
