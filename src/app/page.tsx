@@ -29,11 +29,9 @@ export const dynamic = 'force-dynamic'
 const Mobile = ({
 	userId,
 	currentUser,
-	isDesktop = false,
 }: {
 	userId: string
 	currentUser: GetUserById
-	isDesktop?: boolean
 }) => {
 	const ctx = api.useUtils()
 	const { data: dailyLogs, isLoading: dailyLogsLoading } =
