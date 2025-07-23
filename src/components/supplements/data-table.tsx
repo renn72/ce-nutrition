@@ -39,7 +39,9 @@ const DataTable = ({ supplements : data }: { supplements: GetAllSupplements }) =
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({
       createdAt: false,
+      favouriteAt: false,
       id: false,
+      notes: false,
     })
 
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -71,10 +73,6 @@ const DataTable = ({ supplements : data }: { supplements: GetAllSupplements }) =
       columnFilters,
     },
     initialState: {
-      columnVisibility: {
-        createdAt: false,
-        id: false,
-      },
       pagination: {
         pageIndex: 0,
         pageSize: 20,

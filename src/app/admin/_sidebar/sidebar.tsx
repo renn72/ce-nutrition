@@ -80,6 +80,14 @@ const data = {
 					url: '/admin/user-create-plan',
 				},
 				{
+					title: 'Supplements',
+					url: '/admin/user-supplement',
+				},
+        {
+          title: 'break-1',
+          url: '',
+        },
+				{
 					title: 'Settings',
 					url: '/admin/user-settings',
 				},
@@ -328,7 +336,9 @@ const AdminSidebar = ({
 											(item) =>
 												item.title !== 'All Skinfolds' || isUser?.isCreator,
 										)
-										.map((item) => (
+										.map((item) => {
+                      if (item.url === '') return <div key={item.title} className='py-1'/>
+                      return (
 											<div key={item.title}>
 												<SidebarMenuItem key={item.title}>
 													<SidebarMenuButton
@@ -341,7 +351,7 @@ const AdminSidebar = ({
 													</SidebarMenuButton>
 												</SidebarMenuItem>
 											</div>
-										))}
+										)})}
 								</SidebarMenu>
 							</SidebarGroupContent>
 						</SidebarGroup>

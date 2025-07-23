@@ -1,6 +1,5 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
-import { z } from 'zod'
+import { int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 import { supplementToSupplementStack } from './user'
 import { dailySupplement } from './daily-logs'

@@ -365,6 +365,11 @@ export const userRouter = createTRPCRouter({
 				roles: true,
 				images: true,
 				trainers: true,
+        supplementStacks: {
+          with: {
+            supplements: true,
+          },
+        },
 				userPlans: {
 					with: {
 						userMeals: true,
@@ -798,6 +803,11 @@ export const userRouter = createTRPCRouter({
 					settings: true,
 					images: true,
 					roles: true,
+        supplementStacks: {
+          with: {
+            supplements: true,
+          },
+        },
 					userPlans: {
 						with: {
 							userMeals: true,

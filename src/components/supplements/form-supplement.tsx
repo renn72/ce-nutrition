@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { toast } from 'sonner'
 
 import { BackButton } from '../back-button'
 import { fieldsMapWUnit as fieldsMap, formSchema } from './store'
@@ -38,12 +39,22 @@ const FormSupplement = ({
 	const ingredient = supplement
 	const ctx = api.useUtils()
 
+  const { mutate: createSupplement } = api.supplement.create.useMutation({
+    onSettled: () => {
+      ctx.supplement.invalidate()
+      form.reset()
+    },
+    onError: () => {
+      toast.error('error conflict')
+    },
+  })
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: ingredient?.name || '',
-			serveSize: Number(ingredient?.serveSize) || 0,
-			serveUnit: ingredient?.serveUnit || '',
+			serveSize: Number(ingredient?.serveSize) || 1,
+			serveUnit: ingredient?.serveUnit || 'gram',
 			caloriesWFibre: Number(ingredient?.caloriesWFibre) || 0,
 			caloriesWOFibre: Number(ingredient?.caloriesWOFibre) || 0,
 			protein: Number(ingredient?.protein) || 0,
@@ -315,7 +326,9 @@ const FormSupplement = ({
 				) || 0,
 		},
 	})
-	const onSubmit = (data: z.infer<typeof formSchema>) => {}
+	const onSubmit = (data: z.infer<typeof formSchema>) => {
+    createSupplement(data)
+  }
 
 	return (
 		<div className='flex flex-col gap-4'>
@@ -323,6 +336,9 @@ const FormSupplement = ({
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)}>
 					<div className='flex flex-col gap-4'>
+						<div>
+							<Button type='submit'>Submit</Button>
+						</div>
 						<FormField
 							control={form.control}
 							name='name'
@@ -425,9 +441,6 @@ const FormSupplement = ({
 								)}
 						</div>
 
-						<div>
-							<Button type='submit'>Submit</Button>
-						</div>
 					</div>
 				</form>
 			</Form>

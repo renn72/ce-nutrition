@@ -64,14 +64,46 @@ export const columns: ColumnDef<GetSupplementById>[] = [
 		),
 		cell: ({ row }) => <div className=''>{row.getValue('id')}</div>,
 	},
+  {
+    accessorKey: 'createdAt',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Created At' />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className='flex space-x-2'>
+          <span className='max-w-[100px] truncate font-medium'>
+            {row.getValue('createdAt')}
+          </span>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'favouriteAt',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Favourite At' />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className='flex space-x-2'>
+          <span className='max-w-[100px] truncate font-medium'>
+            {row.getValue('favouriteAt')}
+          </span>
+        </div>
+      )
+    },
+  },
 	{
 		accessorKey: 'name',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Name' />
 		),
 		filterFn: (row, columnId, filterValue) => {
+      // @ts-ignore
 			const cell = row.getValue(columnId)?.replace(',', '') as string
 
+      // @ts-ignore
 			const values = filterValue.split(' ').filter((v) => v !== '')
 			console.log(values)
 			let res = false
@@ -87,44 +119,19 @@ export const columns: ColumnDef<GetSupplementById>[] = [
 			return res
 		},
 		cell: ({ row }) => {
-			const isMobile = useClientMediaQuery('(max-width: 600px)')
 			return (
-				<div className='flex space-x-2'>
-					{isMobile ? (
-						<Popover>
-							<PopoverTrigger asChild>
-								<span className='w-[200px] lg:w-[400px] truncate font-medium lg:tracking-tighter'>
-									{row.getValue('name')}
-								</span>
-							</PopoverTrigger>
-							<PopoverContent className='w-[280px] p-4 text-xs'>
-								<div className='flex space-x-2'>
-									<span className='font-medium'>{row.getValue('name')}</span>
-								</div>
-							</PopoverContent>
-						</Popover>
-					) : (
-						<HoverCard>
-							<HoverCardTrigger asChild>
-								<span className='w-[200px] lg:w-[400px] truncate font-medium lg:tracking-tighter'>
-									{row.getValue('name')}
-								</span>
-							</HoverCardTrigger>
-							<HoverCardContent>
-								<div className='flex space-x-2'>
-									<span className='font-medium'>{row.getValue('name')}</span>
-								</div>
-							</HoverCardContent>
-						</HoverCard>
-					)}
-				</div>
+        <div className='flex space-x-2'>
+          <span className='w-[200px] truncate font-medium'>
+            {row.getValue('name')}
+          </span>
+        </div>
 			)
 		},
 	},
 	{
 		accessorKey: 'notes',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Carbs' />
+			<DataTableColumnHeader column={column} title='Notes' />
 		),
 		cell: ({ row }) => {
 			return (
@@ -142,10 +149,10 @@ export const columns: ColumnDef<GetSupplementById>[] = [
 			<DataTableColumnHeader column={column} title='Creator' />
 		),
 		cell: ({ row }) => {
-      if (row.original?.user?.id === 'f3feb152-06de-4a1e-8c9f-19d5c96c6788') return null
+      // if (row.original?.user?.id === 'f3feb152-06de-4a1e-8c9f-19d5c96c6788') return null
 			return (
 				<div className='flex space-x-2'>
-					<Badge variant='secondary'>{row.original?.user?.name}</Badge>
+					<Badge variant='secondary'>{row.original?.user?.name?.split(' ')[0]}</Badge>
 				</div>
 			)
 		},
