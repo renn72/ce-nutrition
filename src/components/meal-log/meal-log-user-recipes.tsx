@@ -305,7 +305,7 @@ const MealLogUserRecipes = ({
 							'hover:text-primary hover:bg-background',
 						)}
 					>
-						Your Recipes
+            Create a Meal
 					</div>
 				</Sheet.Trigger>
 				<Sheet.Portal>

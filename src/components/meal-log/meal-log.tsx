@@ -257,6 +257,7 @@ const Meal = ({
 
 											// @ts-ignore
 											const mealColour =
+											// @ts-ignore
 												mealColourMap[recipe.mealIndex ?? 0] ??
 												'text-muted-foreground'
 											return (
