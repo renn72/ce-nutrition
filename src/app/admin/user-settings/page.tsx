@@ -341,6 +341,42 @@ const Notes = ({ currentUser }: { currentUser: GetUserById }) => {
   )
 }
 
+const Supplements = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isCreateMeals, setIsCreateMeals] = useState<boolean>(!!currentUser.roles.find((role) => role.name === 'supplements'))
+  const { mutate: updateRoleCreateMeals } = api.user.updateRoleSupplements.useMutation({
+    onSuccess: () => {
+      toast.success('Updated')
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error')
+      ctx.user.invalidate()
+    },
+  })
+  return (
+    <div className='flex flex-row items-center justify-between rounded-lg border p-3 gap-4 shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>Supplements</Label>
+        <div className='text-sm text-muted-foreground'>
+          Enables the client to log supplements.
+        </div>
+      </div>
+      <Switch
+        checked={isCreateMeals === true}
+        onCheckedChange={(checked) => {
+          setIsCreateMeals(checked)
+          updateRoleCreateMeals({
+            userId: currentUser.id,
+          })
+        }}
+      />
+    </div>
+  )
+}
+
 const CreateMeals = ({ currentUser }: { currentUser: GetUserById }) => {
   const ctx = api.useUtils()
   const [isCreateMeals, setIsCreateMeals] = useState<boolean>(!!currentUser.roles.find((role) => role.name === 'create-meals'))
@@ -423,6 +459,7 @@ const Settings = ({ user }: { user: GetUserById }) => {
       <div className='flex flex-col gap-2 w-full p-4 border rounded-lg max-w-lg'>
         <h2 className='text-base font-semibold'>Plans</h2>
         <CreateMeals currentUser={user} />
+        <Supplements currentUser={user} />
       </div>
       <div className='flex flex-col gap-2 w-full p-4 border rounded-lg max-w-lg'>
         <h2 className='text-base font-semibold'>Daily Log</h2>

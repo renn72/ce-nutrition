@@ -641,6 +641,33 @@ export const userRouter = createTRPCRouter({
 
 			return res
 		}),
+	updateRoleSupplements: protectedProcedure
+		.input(z.object({ userId: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db.query.role.findFirst({
+				where: (role, { eq, and }) =>
+					and(eq(role.userId, input.userId), eq(role.name, 'supplements')),
+			})
+
+			if (res) {
+				await ctx.db.delete(role).where(eq(role.id, res.id))
+			} else {
+				await ctx.db.insert(role).values({
+					userId: input.userId,
+					name: 'supplements',
+				})
+			}
+
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				objectId: null,
+				task: 'toggle user ability to log supplements',
+				notes: JSON.stringify(input),
+			})
+
+			return res
+		}),
 	updateRoleCreateMeals: protectedProcedure
 		.input(z.object({ userId: z.string() }))
 		.mutation(async ({ ctx, input }) => {

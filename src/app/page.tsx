@@ -9,7 +9,7 @@ import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
 import type { GetUserById } from '@/types'
 import { useAtom } from 'jotai'
-import { XIcon } from 'lucide-react'
+import { Pill, XIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
@@ -23,6 +23,7 @@ import { PoopLog } from '@/components/poop-log/poop-log'
 import { WaterLog } from '@/components/water-log/water-log'
 
 import DailyLogCarousel from './_components/dailylog-carousel'
+import { SuppLog } from '@/components/supp-log/supp-log'
 
 export const dynamic = 'force-dynamic'
 
@@ -72,6 +73,10 @@ const Mobile = ({
 		}
 	}, [dailyLogs])
 
+	const isSupplements = currentUser.roles.find(
+		(role) => role.name === 'supplements',
+	)
+
 	if (dailyLogsLoading) return null
 
 	return (
@@ -101,6 +106,7 @@ const Mobile = ({
 								settingsId={currentUser.settings.id}
 							/>
 							<MealLog dailyLogs={dailyLogs} currentUser={currentUser} />
+							{isSupplements ? <SuppLog userId={userId} dailyLogs={dailyLogs} /> : null}
 							<PoopLog userId={userId} dailyLogs={dailyLogs} />
 						</div>
 					</CardContent>
@@ -121,7 +127,7 @@ const Desktop = ({
 }) => {
 	return (
 		<div className='flex flex-col items-center gap-2 '>
-      <Mobile userId={userId} currentUser={currentUser} />
+			<Mobile userId={userId} currentUser={currentUser} />
 		</div>
 	)
 }
