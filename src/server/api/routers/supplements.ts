@@ -6,8 +6,14 @@ import {
 	ingredientAdditionTwo,
 } from '@/server/db/schema/ingredient'
 import { log } from '@/server/db/schema/log'
+import {
+	supplementStack,
+	supplementToSupplementStack,
+} from '@/server/db/schema/user'
+import { TRPCError } from '@trpc/server'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
-import { asc } from 'drizzle-orm'
+import { and, asc, eq } from 'drizzle-orm'
+import { z } from 'zod'
 
 import { formSchema as createSchema } from '@/components/supplements/store'
 
@@ -34,7 +40,7 @@ const createLog = async ({
 }
 
 export const supplementsRouter = createTRPCRouter({
-	getAllSupplements: protectedProcedure.query(async ({ ctx }) => {
+	getAll: protectedProcedure.query(async ({ ctx }) => {
 		const res = await ctx.db.query.ingredient.findMany({
 			where: (ingredient, { isNull, and, eq }) =>
 				and(
@@ -54,6 +60,105 @@ export const supplementsRouter = createTRPCRouter({
 		})
 		return res
 	}),
+	getFullSupplement: protectedProcedure
+		.input(z.object({ id: z.number() }))
+		.query(async ({ input, ctx }) => {
+			const res = await ctx.db.query.ingredient.findFirst({
+				where: (ingredient, { eq }) => eq(ingredient.id, input.id),
+				with: {
+					ingredientAdditionOne: true,
+					ingredientAdditionTwo: true,
+					ingredientAdditionThree: true,
+					user: {
+						columns: {
+							id: true,
+							name: true,
+						},
+					},
+				},
+			})
+			return res
+		}),
+	getSupplement: protectedProcedure
+		.input(z.object({ id: z.number() }))
+		.query(async ({ input, ctx }) => {
+			const res = await ctx.db.query.ingredient.findFirst({
+				where: (ingredient, { eq }) => eq(ingredient.id, input.id),
+				with: {
+					user: {
+						columns: {
+							id: true,
+							name: true,
+						},
+					},
+				},
+			})
+			return res
+		}),
+	addToUser: protectedProcedure
+		.input(
+			z.object({
+				suppId: z.number(),
+				userId: z.string(),
+				time: z.string(),
+				size: z.string(),
+				unit: z.string(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const userTimes = await ctx.db.query.supplementStack.findMany({
+				where: (stack, { eq }) => eq(stack.userId, input.userId),
+			})
+			let timeId =
+				userTimes.find((stack) => stack.time === input.time)?.id || null
+
+			if (!timeId) {
+				const res = await ctx.db
+					.insert(supplementStack)
+					.values({
+						userId: input.userId,
+						time: input.time,
+					})
+					.returning({ id: supplementStack.id })
+				if (!res || res[0]?.id === undefined)
+					throw new TRPCError({ code: 'BAD_REQUEST' })
+				timeId = res[0]?.id
+			}
+
+			await ctx.db.insert(supplementToSupplementStack).values({
+				supplementId: input.suppId,
+				supplementStackId: timeId,
+				size: input.size,
+				unit: input.unit,
+			})
+
+			return true
+		}),
+	deleteFromUser: protectedProcedure
+		.input(z.object({ suppId: z.number(), suppStackId: z.number() }))
+		.mutation(async ({ input, ctx }) => {
+			await ctx.db
+				.delete(supplementToSupplementStack)
+				.where(
+					and(
+						eq(supplementToSupplementStack.supplementId, input.suppId),
+						eq(
+							supplementToSupplementStack.supplementStackId,
+							input.suppStackId,
+						),
+					),
+				)
+
+			return true
+		}),
+  deleteTime: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      await ctx.db
+        .delete(supplementStack)
+        .where(eq(supplementStack.id, input.id))
+      return true
+    }),
 	create: protectedProcedure
 		.input(createSchema)
 		.mutation(async ({ input, ctx }) => {
