@@ -2,6 +2,7 @@ import { db } from '@/server/db'
 import {
 	dailyLog,
 	dailyMeal,
+	dailySupplement,
 	poopLog,
 	waterLog,
 } from '@/server/db/schema/daily-logs'
@@ -294,6 +295,47 @@ export const dailyLogRouter = createTRPCRouter({
 						eq(dailyLog.userId, ctx.session.user.id),
 					),
 				)
+
+			return res
+		}),
+	updateSupplement: protectedProcedure
+		.input(
+			z.object({
+				date: z.string(),
+				suppId: z.number(),
+				amount: z.number(),
+				unit: z.string(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const log = await ctx.db.query.dailyLog.findFirst({
+				where: and(
+					eq(dailyLog.date, input.date),
+					eq(dailyLog.userId, ctx.session.user.id),
+				),
+			})
+
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				task: 'Update Supplement' + log ? '' : ' and Create Log',
+				notes: JSON.stringify(input),
+				objectId: null,
+			})
+
+			if (!log) {
+				throw new TRPCError({ code: 'NOT_FOUND' })
+			}
+
+			const res = await ctx.db
+				.insert(dailySupplement)
+				.values({
+					dailyLogId: log.id,
+					supplementId: input.suppId,
+					amount: input.amount.toString(),
+					unit: input.unit,
+				})
+				.returning({ id: dailySupplement.id })
 
 			return res
 		}),
@@ -995,13 +1037,13 @@ export const dailyLogRouter = createTRPCRouter({
 
 			const res = await ctx.db
 				.insert(images)
-        .values({
-          userId: input.userId,
-          name: input.name,
-          date: input.date,
-          image: input.image,
-        })
-        .returning({ id: images.id })
+				.values({
+					userId: input.userId,
+					name: input.name,
+					date: input.date,
+					image: input.image,
+				})
+				.returning({ id: images.id })
 
 			return res
 		}),
@@ -1588,35 +1630,37 @@ export const dailyLogRouter = createTRPCRouter({
 		}),
 	getAllCurrentUser: protectedProcedure
 		.input(z.object({ id: z.string() }).optional())
-    .query(async ({ ctx, input }) => {
+		.query(async ({ ctx, input }) => {
 			let userId = ctx.session?.user.id
 			if (input?.id && input.id !== '') userId = input.id
 			if (!userId) return null
 
-		const res = await ctx.db.query.dailyLog.findMany({
-			where: eq(dailyLog.userId, userId),
-			with: {
-				poopLogs: true,
-				waterLogs: true,
-				tags: {
-					with: {
-						tag: true,
+			const res = await ctx.db.query.dailyLog.findMany({
+				where: eq(dailyLog.userId, userId),
+				with: {
+					poopLogs: true,
+					waterLogs: true,
+					tags: {
+						with: {
+							tag: true,
+						},
 					},
-				},
-				dailyMeals: {
-					with: {
-						recipe: true,
-						ingredients: {
-							with: {
-								ingredient: true,
+					dailyMeals: {
+						with: {
+							recipe: true,
+							ingredients: {
+								with: {
+									ingredient: true,
+								},
 							},
 						},
 					},
 				},
-			},
-		})
-		return res.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-	}),
+			})
+			return res.sort(
+				(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+			)
+		}),
 	delete: protectedProcedure
 		.input(z.number())
 		.mutation(async ({ input, ctx }) => {

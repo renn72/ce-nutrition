@@ -35,11 +35,7 @@ const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
 			<CardContent>
 				<div
 					className={cn(
-						'flex flex-col divide-y divide-border',
-						user.supplementStacks.find((stack) => stack.time === time)
-							?.supplements.length === 0
-							? ''
-							: 'border-t border-b',
+						'flex flex-col gap-2',
 					)}
 				>
 					{user.supplementStacks
@@ -48,7 +44,7 @@ const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
 							return (
 								<div
 									key={supp.id}
-									className='grid grid-cols-6 gap-2 items-center px-2 text-sm py-1'
+									className='grid grid-cols-6 gap-2 items-center px-2 text-sm py-1 rounded-full border bg-background shadow-sm'
 								>
 									<div className='col-span-3 truncate'>
 										{supp.supplement?.name}
