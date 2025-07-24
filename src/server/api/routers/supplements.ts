@@ -95,6 +95,23 @@ export const supplementsRouter = createTRPCRouter({
 			})
 			return res
 		}),
+	addTime: protectedProcedure
+		.input(
+			z.object({
+				time: z.string(),
+				userId: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.insert(supplementStack)
+				.values({
+					userId: input.userId,
+					time: input.time,
+				})
+				.returning({ id: supplementStack.id })
+			return res
+		}),
 	addToUser: protectedProcedure
 		.input(
 			z.object({
@@ -151,14 +168,14 @@ export const supplementsRouter = createTRPCRouter({
 
 			return true
 		}),
-  deleteTime: protectedProcedure
-    .input(z.object({ id: z.number() }))
-    .mutation(async ({ input, ctx }) => {
-      await ctx.db
-        .delete(supplementStack)
-        .where(eq(supplementStack.id, input.id))
-      return true
-    }),
+	deleteTime: protectedProcedure
+		.input(z.object({ id: z.number() }))
+		.mutation(async ({ input, ctx }) => {
+			await ctx.db
+				.delete(supplementStack)
+				.where(eq(supplementStack.id, input.id))
+			return true
+		}),
 	create: protectedProcedure
 		.input(createSchema)
 		.mutation(async ({ input, ctx }) => {

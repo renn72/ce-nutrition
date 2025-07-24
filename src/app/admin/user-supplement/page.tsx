@@ -8,7 +8,7 @@ import { useSearchParams } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
 import type { GetUserById } from '@/types'
-import { CircleX, XCircle } from 'lucide-react'
+import { CircleX } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -33,7 +33,7 @@ import { VirtualizedCombobox } from '@/components/ui/virtualized-combobox'
 
 export const dynamic = 'force-dynamic'
 
-const SuppTimes = ({ user, time, }: { user: GetUserById; time: string, }) => {
+const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
 	const ctx = api.useUtils()
 	const [isOpen, setIsOpen] = useState(false)
 	const [selected, setSelected] = useState<string | null>(null)
@@ -58,7 +58,6 @@ const SuppTimes = ({ user, time, }: { user: GetUserById; time: string, }) => {
 	const { mutate: deleteTime } = api.supplement.deleteTime.useMutation({
 		onSuccess: () => {
 			ctx.user.invalidate()
-      resetSuppTimes()
 		},
 	})
 
@@ -211,36 +210,31 @@ const SuppTimes = ({ user, time, }: { user: GetUserById; time: string, }) => {
 }
 
 const Supps = ({ user }: { user: GetUserById }) => {
-	const [suppTimes, setSuppTimes] = useState(() => {
-		const timings = user.supplementStacks
-			.map((stack) => {
-				return stack.time
-			})
-			.filter((item, pos, self) => self.indexOf(item) === pos)
-		if (timings.length === 0) return ['morning']
-		return timings
-	})
-
-	const resetSuppTimes = () => {
-		setSuppTimes(() => {
-			const timings = user.supplementStacks
-				.map((stack) => {
-					return stack.time
-				})
-				.filter((item, pos, self) => self.indexOf(item) === pos)
-			if (timings.length === 0) return ['morning']
-			return timings
-		})
-	}
-
+	const ctx = api.useUtils()
 	const [isOpen, setIsOpen] = useState(false)
 	const [isError, setIsError] = useState(false)
 	const [timgingInput, setTimgingInput] = useState('')
 
+	const suppTimes = user.supplementStacks
+		.map((stack) => {
+			return stack.time
+		})
+		.filter((item, pos, self) => self.indexOf(item) === pos)
+
+	const { mutate: addTime } = api.supplement.addTime.useMutation({
+		onSuccess: () => {
+			ctx.user.invalidate()
+		},
+	})
+
 	const handleAdd = () => {
 		if (timgingInput === '') return
 		if (suppTimes.includes(timgingInput)) return setIsError(true)
-		setSuppTimes([...suppTimes, timgingInput])
+		addTime({
+			time: timgingInput,
+			userId: user.id,
+		})
+
 		setTimgingInput('')
 		setIsError(false)
 		setIsOpen(false)
@@ -255,7 +249,7 @@ const Supps = ({ user }: { user: GetUserById }) => {
 	return (
 		<div className='flex flex-col gap-4 items-center '>
 			{suppTimes.map((time) => {
-				return time ? <SuppTimes key={time} user={user} time={time}  /> : null
+				return time ? <SuppTimes key={time} user={user} time={time} /> : null
 			})}
 			<Dialog open={isOpen} onOpenChange={setIsOpen}>
 				<DialogTrigger asChild>
