@@ -99,7 +99,7 @@ const Supp = ({
 		setIsTaken(!isTaken)
 		if (isTaken) {
 			unLogSupplement({
-				id: isTaken.id,
+				id: takenSupplement.id,
 			})
 		} else {
 			logSupplement({

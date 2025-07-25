@@ -173,6 +173,11 @@ const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
 									)?.serveUnit
 									if (!unit) return
 									setUnit(unit)
+                  const amount = supplements?.find(
+										(i) => i.id === Number(value),
+									)?.serveSize
+									if (!amount) return
+									setSize(Number(amount))
 								}}
 							/>
 							<div className='flex gap-2 items-center'>
