@@ -97,7 +97,7 @@ const Supp = ({
 		if (!supp.size) return
 		if (!supp.unit) return
 		setIsTaken(!isTaken)
-		if (isTaken) {
+		if (isTaken && takenSupplement) {
 			unLogSupplement({
 				id: takenSupplement.id,
 			})
@@ -132,7 +132,7 @@ const Supp = ({
 				<div className='col-span-4 truncate'>{supp.supplement?.name}</div>
 				<div className='place-self-end'>{supp.size}</div>
 				<div className='place-self-start'>{supp.unit}</div>
-				{isTaken ? (
+				{isTaken && takenSupplement ? (
 					<div className='absolute -bottom-1 right-1/2 translate-x-1/2 opacity-80 text-[0.6rem]'>
 						{`${new Date(takenSupplement.createdAt).getHours()}:${new Date(takenSupplement.createdAt).getMinutes()}`}
 					</div>
