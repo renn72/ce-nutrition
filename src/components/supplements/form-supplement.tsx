@@ -382,7 +382,6 @@ const FormSupplement = ({
 											<Input
 												placeholder='serving unit'
 												{...field}
-												onChange={(e) => field.onChange(Number(e.target.value))}
 												className='w-full'
 											/>
 										</FormControl>

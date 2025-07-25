@@ -63,9 +63,11 @@ const Supp = ({
 		todaysDailyLog?.supplements.find((s) => {
 			return (
 				s.supplementId === supp?.supplementId &&
-				s.time.toLowerCase() === time.toLowerCase()
+				s.time?.toLowerCase() === time.toLowerCase()
 			)
-		}),
+		})
+			? true
+			: false,
 	)
 
 	useEffect(() => {
@@ -73,11 +75,20 @@ const Supp = ({
 			todaysDailyLog?.supplements.find((s) => {
 				return (
 					s.supplementId === supp?.supplementId &&
-					s.time.toLowerCase() === time.toLowerCase()
+					s.time?.toLowerCase() === time.toLowerCase()
 				)
-			}),
+			})
+				? true
+				: false,
 		)
 	}, [todaysDailyLog])
+
+  const takenSupplement = todaysDailyLog?.supplements.find((s) => {
+    return (
+      s.supplementId === supp?.supplementId &&
+      s.time?.toLowerCase() === time.toLowerCase()
+    )
+  })
 
 	const handleClick = () => {
 		if (!supp) return
@@ -121,13 +132,11 @@ const Supp = ({
 				<div className='col-span-4 truncate'>{supp.supplement?.name}</div>
 				<div className='place-self-end'>{supp.size}</div>
 				<div className='place-self-start'>{supp.unit}</div>
-        {
-          isTaken ? (
-            <div className='absolute -bottom-1 right-1/2 translate-x-1/2 opacity-80 text-[0.6rem]'>
-              {`${new Date(isTaken.createdAt).getHours()}:${new Date(isTaken.createdAt).getMinutes()}`}
-            </div>
-          ) :null
-        }
+				{isTaken ? (
+					<div className='absolute -bottom-1 right-1/2 translate-x-1/2 opacity-80 text-[0.6rem]'>
+						{`${new Date(takenSupplement.createdAt).getHours()}:${new Date(takenSupplement.createdAt).getMinutes()}`}
+					</div>
+				) : null}
 			</div>
 		</div>
 	)
