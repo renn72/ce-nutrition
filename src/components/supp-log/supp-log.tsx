@@ -2,17 +2,21 @@
 
 import { api } from '@/trpc/react'
 
+import { useEffect, useState } from 'react'
+
 import { cn } from '@/lib/utils'
-import type { GetAllDailyLogs } from '@/types'
+import type {
+	GetAllDailyLogs,
+	GetDailyLogById,
+	GetSupplementFromStack,
+	GetUserById,
+} from '@/types'
 import NumberFlow from '@number-flow/react'
 import { Sheet } from '@silk-hq/components'
 // @ts-ignore
 import confetti from 'canvas-confetti'
 import { ChevronDown, ListCollapse, Pill, Toilet } from 'lucide-react'
 import { toast } from 'sonner'
-
-import type { GetUserById } from '@/types'
-import { ScrollArea } from '@/components/ui/scroll-area'
 
 import {
 	Card,
@@ -23,36 +27,143 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card'
+import { ScrollArea } from '@/components/ui/scroll-area'
+
 import { SuppBottomSheet } from './supp-bottom-sheet'
 
-const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
+const Supp = ({
+	user,
+	supp,
+	time,
+	date,
+	todaysDailyLog,
+}: {
+	user: GetUserById
+	supp: GetSupplementFromStack
+	time: string
+	date: Date
+	todaysDailyLog: GetDailyLogById | null | undefined
+}) => {
+	const ctx = api.useUtils()
+	const { mutate: logSupplement } = api.supplement.logSupplement.useMutation({
+		onSuccess: () => {
+			ctx.dailyLog.invalidate()
+		},
+		onError: (err) => {},
+	})
+	const { mutate: unLogSupplement } =
+		api.supplement.unLogSupplement.useMutation({
+			onSuccess: () => {
+				ctx.dailyLog.invalidate()
+			},
+			onError: (err) => {},
+		})
 
+	const [isTaken, setIsTaken] = useState(() =>
+		todaysDailyLog?.supplements.find((s) => {
+			return (
+				s.supplementId === supp?.supplementId &&
+				s.time.toLowerCase() === time.toLowerCase()
+			)
+		}),
+	)
+
+	useEffect(() => {
+		setIsTaken(
+			todaysDailyLog?.supplements.find((s) => {
+				return (
+					s.supplementId === supp?.supplementId &&
+					s.time.toLowerCase() === time.toLowerCase()
+				)
+			}),
+		)
+	}, [todaysDailyLog])
+
+	const handleClick = () => {
+		if (!supp) return
+		if (!supp.supplementId) return
+		if (!supp.supplementStackId) return
+		if (!supp.size) return
+		if (!supp.unit) return
+		setIsTaken(!isTaken)
+		if (isTaken) {
+			unLogSupplement({
+				id: isTaken.id,
+			})
+		} else {
+			logSupplement({
+				suppId: supp.supplementId,
+				date: date.toDateString(),
+				time: time,
+				amount: supp.size,
+				unit: supp.unit,
+				stackId: supp.supplementStackId.toString(),
+			})
+		}
+	}
+
+	if (!supp) return null
 	return (
-		<Card className='w-full'>
-			<CardHeader>
+		<div
+			className={cn(
+				' px-1 py-1 rounded-full border active:shadow-none active:inset-shadow-sm text-sm',
+				isTaken ? 'inset-shadow-sm bg-backound' : 'bg-background shadow-md',
+			)}
+			key={supp.id}
+			onClick={handleClick}
+		>
+			<div
+				className={cn(
+					'grid grid-cols-6 gap-2 items-center px-3 py-1.5 rounded-full border relative',
+					isTaken ? 'bg-accent' : 'bg-card',
+				)}
+			>
+				<div className='col-span-4 truncate'>{supp.supplement?.name}</div>
+				<div className='place-self-end'>{supp.size}</div>
+				<div className='place-self-start'>{supp.unit}</div>
+        {
+          isTaken ? (
+            <div className='absolute -bottom-1 right-1/2 translate-x-1/2 opacity-80 text-[0.6rem]'>
+              {`${new Date(isTaken.createdAt).getHours()}:${new Date(isTaken.createdAt).getMinutes()}`}
+            </div>
+          ) :null
+        }
+			</div>
+		</div>
+	)
+}
+
+const SuppTimes = ({
+	user,
+	time,
+	date,
+	todaysDailyLog,
+}: {
+	user: GetUserById
+	time: string
+	date: Date
+	todaysDailyLog: GetDailyLogById | null | undefined
+}) => {
+	return (
+		<Card className='w-full px-0 py-2 gap-2'>
+			<CardHeader className='py-0'>
 				<CardTitle className='capitalize'>{time}</CardTitle>
 				<CardDescription>Supplements</CardDescription>
 			</CardHeader>
-			<CardContent>
-				<div
-					className={cn(
-						'flex flex-col gap-2',
-					)}
-				>
+			<CardContent className='px-4 py-0'>
+				<div className={cn('flex flex-col gap-1')}>
 					{user.supplementStacks
 						.find((stack) => stack.time === time)
 						?.supplements.map((supp) => {
 							return (
-								<div
+								<Supp
 									key={supp.id}
-									className='grid grid-cols-6 gap-2 items-center px-2 text-sm py-1 rounded-full border bg-background shadow-sm'
-								>
-									<div className='col-span-3 truncate'>
-										{supp.supplement?.name}
-									</div>
-									<div className='place-self-end'>{supp.size}</div>
-									<div className='place-self-start'>{supp.unit}</div>
-								</div>
+									user={user}
+									supp={supp}
+									time={time}
+									date={date}
+									todaysDailyLog={todaysDailyLog}
+								/>
 							)
 						})}
 				</div>
@@ -82,11 +193,13 @@ const SuppLog = ({
 		})
 		.filter((item, pos, self) => self.indexOf(item) === pos)
 
+	console.log('log', todaysDailyLog)
+
 	return (
 		<div className='flex flex-col gap-0 w-full items-center'>
 			<Sheet.Root license='non-commercial'>
 				<div className='flex flex-col gap-0 items-center justify-start w-full'>
-					<div className={cn('text-lg font-semibold opacity-0')} >0</div>
+					<div className={cn('text-lg font-semibold opacity-0')}>0</div>
 					<div
 						className={cn(
 							'rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center',
@@ -125,11 +238,19 @@ const SuppLog = ({
 										</div>
 									</div>
 									<ScrollArea className='pt-4 px-2 h-[calc(95vh-130px)]'>
-										{suppTimes?.map((time) => {
-											return time && user ? (
-												<SuppTimes key={time} user={user} time={time} />
-											) : null
-										})}
+										<div className='flex flex-col gap-2'>
+											{suppTimes?.map((time) => {
+												return time && user ? (
+													<SuppTimes
+														key={time}
+														user={user}
+														time={time}
+														date={today}
+														todaysDailyLog={todaysDailyLog}
+													/>
+												) : null
+											})}
+										</div>
 									</ScrollArea>
 								</div>
 								<Sheet.Trigger
@@ -147,7 +268,7 @@ const SuppLog = ({
 					</Sheet.View>
 				</Sheet.Portal>
 			</Sheet.Root>
-      <SuppBottomSheet dailyLogs={dailyLogs} />
+			<SuppBottomSheet dailyLogs={dailyLogs} />
 		</div>
 	)
 }

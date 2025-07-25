@@ -2,8 +2,8 @@ import { relations, sql } from 'drizzle-orm'
 import { int, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import type { AdapterAccount } from 'next-auth/adapters'
 
-import { ingredient } from './ingredient'
 import { dailyLog, tag } from './daily-logs'
+import { ingredient } from './ingredient'
 import { message } from './message'
 import {
 	bodyFat,
@@ -83,7 +83,7 @@ export const userRelations = relations(user, ({ one, many }) => ({
 	goalsTrainer: many(goals, { relationName: 'trainer' }),
 	trainerNotes: many(trainerNotes, { relationName: 'user' }),
 	trainerNotesTrainer: many(trainerNotes, { relationName: 'trainer' }),
-  supplementStacks: many(supplementStack),
+	supplementStacks: many(supplementStack),
 }))
 
 export const supplementStack = createTable('supplement_stack', {
@@ -111,22 +111,26 @@ export const supplementStackRelations = relations(
 			references: [user.id],
 			relationName: 'user',
 		}),
-    supplements: many(supplementToSupplementStack),
+		supplements: many(supplementToSupplementStack),
 	}),
 )
 
 export const supplementToSupplementStack = createTable(
 	'supplement_to_supplement_stack',
 	{
-    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-    supplementId: int('supplement_id').references(() => ingredient.id, {
-      onDelete: 'cascade',
-    }),
-    supplementStackId: int('supplement_stack_id').references(() => supplementStack.id, {
-      onDelete: 'cascade',
-    }),
-    size: text('size'),
-    unit: text('unit'),
+		id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+		supplementId: int('supplement_id')
+			.references(() => ingredient.id, {
+				onDelete: 'cascade',
+			})
+			.notNull(),
+		supplementStackId: int('supplement_stack_id')
+			.references(() => supplementStack.id, {
+				onDelete: 'cascade',
+			})
+			.notNull(),
+		size: text('size'),
+		unit: text('unit'),
 	},
 )
 

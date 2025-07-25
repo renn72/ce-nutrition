@@ -82,3 +82,5 @@ export type GetWeighInById = RouterOutputs['weighIn']['get']
 
 export type GetSkinfoldById = RouterOutputs['metrics']['getSkinfold']
 export type GetUserSkinfolds = RouterOutputs['metrics']['getUserSkinfolds']
+
+export type GetSupplementFromStack = RouterOutputs['supplement']['getSuppFromPlan']

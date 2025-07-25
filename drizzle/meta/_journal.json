@@ -225,6 +225,13 @@
       "when": 1753003696580,
       "tag": "0031_shallow_champions",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "6",
+      "when": 1753425804379,
+      "tag": "0032_lying_human_torch",
+      "breakpoints": true
     }
   ]
 }

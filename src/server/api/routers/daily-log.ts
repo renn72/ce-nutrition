@@ -1608,6 +1608,11 @@ export const dailyLogRouter = createTRPCRouter({
 				with: {
 					waterLogs: true,
 					poopLogs: true,
+          supplements: {
+            with: {
+              supplement: true,
+            },
+          },
 					tags: {
 						with: {
 							tag: true,
@@ -1640,6 +1645,11 @@ export const dailyLogRouter = createTRPCRouter({
 				with: {
 					poopLogs: true,
 					waterLogs: true,
+          supplements: {
+            with: {
+              supplement: true,
+            },
+          },
 					tags: {
 						with: {
 							tag: true,
@@ -1690,6 +1700,11 @@ export const dailyLogRouter = createTRPCRouter({
 			with: {
 				poopLogs: true,
 				waterLogs: true,
+        supplements: {
+          with: {
+            supplement: true,
+          },
+        },
 				tags: {
 					with: {
 						tag: true,

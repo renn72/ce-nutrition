@@ -10,6 +10,7 @@ import {
 	supplementStack,
 	supplementToSupplementStack,
 } from '@/server/db/schema/user'
+import { dailySupplement, dailyLog } from '@/server/db/schema/daily-logs'
 import { TRPCError } from '@trpc/server'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { and, asc, eq } from 'drizzle-orm'
@@ -112,6 +113,17 @@ export const supplementsRouter = createTRPCRouter({
 				.returning({ id: supplementStack.id })
 			return res
 		}),
+  getSuppFromPlan: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const res = await ctx.db.query.supplementToSupplementStack.findFirst({
+        where: (supplement, { eq }) => eq(supplement.id, input.id),
+        with: {
+          supplement: true,
+        },
+      })
+      return res
+    }),
 	addToUser: protectedProcedure
 		.input(
 			z.object({
@@ -151,6 +163,56 @@ export const supplementsRouter = createTRPCRouter({
 
 			return true
 		}),
+  logSupplement: protectedProcedure
+    .input(
+      z.object({
+        suppId: z.number(),
+        date: z.string(),
+        time: z.string(),
+        amount: z.string(),
+        unit: z.string(),
+        stackId: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+
+			const log = await ctx.db.query.dailyLog.findFirst({
+				where: and(
+					eq(dailyLog.date, input.date),
+					eq(dailyLog.userId, ctx.session.user.id),
+				),
+			})
+
+      let logId = log?.id as number | undefined
+
+			if (!log) {
+				const res = await ctx.db.insert(dailyLog).values({
+					date: input.date,
+					userId: ctx.session.user.id,
+				}).returning({ id: dailyLog.id })
+        logId = res[0]?.id
+			}
+
+      if (!logId) throw new TRPCError({ code: 'NOT_FOUND' })
+
+      await ctx.db.insert(dailySupplement).values({
+        dailyLogId: logId,
+        supplementId: input.suppId,
+        amount: input.amount,
+        unit: input.unit,
+        time: input.time,
+        notes: input.stackId.toString(),
+      })
+      return true
+    }),
+  unLogSupplement: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      await ctx.db
+        .delete(dailySupplement)
+        .where(eq(dailySupplement.id, input.id))
+      return true
+    }),
 	deleteFromUser: protectedProcedure
 		.input(z.object({ suppId: z.number(), suppStackId: z.number() }))
 		.mutation(async ({ input, ctx }) => {
