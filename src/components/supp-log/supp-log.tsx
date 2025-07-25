@@ -23,6 +23,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card'
+import { SuppBottomSheet } from './supp-bottom-sheet'
 
 const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
 
@@ -85,7 +86,7 @@ const SuppLog = ({
 		<div className='flex flex-col gap-0 w-full items-center'>
 			<Sheet.Root license='non-commercial'>
 				<div className='flex flex-col gap-0 items-center justify-start w-full'>
-					<div className={cn('text-lg font-semibold h-7')} />
+					<div className={cn('text-lg font-semibold opacity-0')} >0</div>
 					<div
 						className={cn(
 							'rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center',
@@ -125,7 +126,7 @@ const SuppLog = ({
 									</div>
 									<ScrollArea className='pt-4 px-2 h-[calc(95vh-130px)]'>
 										{suppTimes?.map((time) => {
-											return time ? (
+											return time && user ? (
 												<SuppTimes key={time} user={user} time={time} />
 											) : null
 										})}
@@ -146,7 +147,7 @@ const SuppLog = ({
 					</Sheet.View>
 				</Sheet.Portal>
 			</Sheet.Root>
-			<ListCollapse size={20} className='text-muted-foreground' />
+      <SuppBottomSheet dailyLogs={dailyLogs} />
 		</div>
 	)
 }
