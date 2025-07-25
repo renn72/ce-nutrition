@@ -72,6 +72,7 @@ const Meal = ({
 }) => {
 	const [selectValue, setSelectValue] = useState<string>('')
 	const [recipeName, setRecipeName] = useState<string>('')
+	const [isAllMeals, _setIsAllMeals] = useAtom(isAllMealsAtom)
 
 	console.log('index', index)
 	console.log('todaysLog', todaysLog)
@@ -269,6 +270,7 @@ const Meal = ({
 														'data-[state=on]:text-slate-100 data-[state=on]:shadow-none',
 														'h-full shadow-sm flex flex-col w-[calc(100vw-2rem)] gap-0',
 														'hover:text-primary hover:bg-background',
+                            isAllMeals && recipe.mealIndex % 2 === 1 ? 'bg-secondary' : '',
 													)}
 												>
 													<div className=' flex'>
