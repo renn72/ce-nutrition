@@ -74,8 +74,6 @@ const Ingredient = ({
 
 	const ratio = Number(size) / Number(ingredient?.ingredient?.serveSize)
 
-  console.log('ingredient', ingredientsSize)
-
 	return (
 		<div className='flex flex-col gap-1'>
 			<div className='grid md:grid-cols-10 grid-cols-8 md:gap-1 text-muted-foreground items-center relative'>

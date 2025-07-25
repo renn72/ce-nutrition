@@ -15,7 +15,8 @@ import {
 import type { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle,
+  CardFooter } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
 	Command,
@@ -276,8 +277,8 @@ const Meal = ({
 	})
 
 	return (
-		<Card>
-			<CardHeader className='pb-0 flex flex-row justify-between bg-background'>
+		<Card className='pt-0 bg-background'>
+			<CardHeader className='py-4 flex flex-row justify-between bg-secondary items-center'>
 				<CardTitle className='text-xl font-medium'>Meal {index + 1}</CardTitle>
 				<div className='flex gap-2 items-center'>
 					<Button
@@ -300,7 +301,7 @@ const Meal = ({
 					</Button>
 				</div>
 			</CardHeader>
-			<CardContent className='flex flex-col gap-2 w-full lg:py-4 px-1 lg:px-4 bg-background'>
+			<CardContent className='flex flex-col gap-2 w-full py-0 px-1 lg:px-4 bg-background'>
 				<div className='flex lg:gap-2 lg:items-center flex-col lg:flex-row'>
 					<FormField
 						control={form.control}

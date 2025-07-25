@@ -248,12 +248,23 @@ const Supps = ({ user }: { user: GetUserById }) => {
 
 	return (
 		<div className='flex flex-col gap-4 items-center '>
+			{suppTimes.length === 0 ? (
+				<Card className='min-w-[400px]'>
+					<CardHeader>
+						<CardTitle className='capitalize' />
+						<CardDescription />
+					</CardHeader>
+					<CardContent className='flex flex-col items-center pb-6 text-muted-foreground'>
+           -- Empty --
+					</CardContent>
+				</Card>
+			) : null}
 			{suppTimes.map((time) => {
 				return time ? <SuppTimes key={time} user={user} time={time} /> : null
 			})}
 			<Dialog open={isOpen} onOpenChange={setIsOpen}>
 				<DialogTrigger asChild>
-					<Button variant='secondary'>Add Another Time</Button>
+					<Button variant='secondary'>Add Supplement Stack</Button>
 				</DialogTrigger>
 				<DialogContent>
 					<DialogHeader>
