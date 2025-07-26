@@ -72,7 +72,7 @@ const SignIn = () => {
 							checkEmail(data.email)
 							const res = await signIn('credentials', {
 								redirect: false,
-								username: data.email,
+								username: data.email.toLowerCase(),
 								password: data.password,
 							})
 							console.log('res', res)

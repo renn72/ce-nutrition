@@ -60,7 +60,13 @@ const FormDialog = () => {
     },
   })
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    createUser(data)
+    createUser({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email.toLowerCase(),
+      password: data.password,
+      isTrainer: data.isTrainer,
+    })
   }
 
   return (
@@ -75,7 +81,7 @@ const FormDialog = () => {
         <DialogHeader>
           <DialogTitle>Create User</DialogTitle>
         </DialogHeader>
-        <DialogDescription></DialogDescription>
+        <DialogDescription/>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className='flex flex-col gap-4'>

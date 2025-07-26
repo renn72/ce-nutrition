@@ -114,7 +114,7 @@ const Email = ({ currentUser }: { currentUser: GetUserById }) => {
           variant='ghost'
 					onClick={() => {
 						updateEmail({
-							email: email,
+							email: email.toLowerCase(),
 							id: currentUser?.id ?? '',
 						})
 					}}
