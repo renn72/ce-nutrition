@@ -275,7 +275,7 @@ const AdminSidebar = ({
 																)}
 															/>
 															<span className='col-span-6 truncate'>
-																{user.name}
+																{user.name ?? user.email}
 															</span>
 															<span className='col-span-4 flex gap-[1px] flex-wrap'>
 																{user.trainers.map((trainer) => (
