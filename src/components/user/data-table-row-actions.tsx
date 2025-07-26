@@ -111,6 +111,7 @@ const Email = ({ currentUser }: { currentUser: GetUserById }) => {
 				<Button
 					disabled={isSaving}
 					className='relative'
+          variant='ghost'
 					onClick={() => {
 						updateEmail({
 							email: email,
@@ -173,6 +174,7 @@ const Password = ({ currentUser }: { currentUser: GetUserById }) => {
 				<Button
 					disabled={isSaving}
 					className='relative'
+          variant='ghost'
 					onClick={() => {
 						updatePassword({
               password: password,
@@ -221,7 +223,7 @@ const DeleteAccount = ({ currentUser }: { currentUser: GetUserById }) => {
 				</DialogHeader>
 				<div className='flex flex-col gap-4 w-full'>
 					<Button
-						variant='destructive'
+          variant='ghost'
 						onClick={() => {
 							if (!currentUser) return
 							if (isUser?.id === currentUser?.id) {
