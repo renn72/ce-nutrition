@@ -59,6 +59,8 @@ const Supp = ({
 			onError: (err) => {},
 		})
 
+  const { data: suppFromDailyLog } = api.supplement.getSupplementFromDailyLog.useQuery({ id: supp?.id || -1 })
+
 	const [isTaken, setIsTaken] = useState(() =>
 		todaysDailyLog?.supplements.find((s) => {
 			return (
@@ -72,16 +74,11 @@ const Supp = ({
 
 	useEffect(() => {
 		setIsTaken(
-			todaysDailyLog?.supplements.find((s) => {
-				return (
-					s.supplementId === supp?.supplementId &&
-					s.time?.toLowerCase() === time.toLowerCase()
-				)
-			})
+      suppFromDailyLog
 				? true
 				: false,
 		)
-	}, [todaysDailyLog])
+	}, [suppFromDailyLog])
 
   const takenSupplement = todaysDailyLog?.supplements.find((s) => {
     return (

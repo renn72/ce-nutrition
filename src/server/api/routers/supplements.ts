@@ -61,6 +61,20 @@ export const supplementsRouter = createTRPCRouter({
 		})
 		return res
 	}),
+  getSupplementFromDailyLog: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ input, ctx }) => {
+
+      if (input.id === -1) return false
+
+      const res = await ctx.db.query.dailySupplement.findFirst({
+        where: (supplement, { eq }) => eq(supplement.id, input.id),
+        with: {
+          supplement: true,
+        },
+      })
+      return res ? true : false
+    }),
 	getFullSupplement: protectedProcedure
 		.input(z.object({ id: z.number() }))
 		.query(async ({ input, ctx }) => {
