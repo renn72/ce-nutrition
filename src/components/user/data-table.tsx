@@ -31,6 +31,8 @@ import { DataTablePagination } from '@/components/table/data-table-pagination'
 import { columns } from './columns'
 import { DataTableToolbar } from './data-table-toolbar'
 
+import { usePathname } from 'next/navigation'
+
 export const dynamic = 'force-dynamic'
 
 const DataTable = ({ users: data }: { users: GetAllUsers }) => {
@@ -80,6 +82,8 @@ const DataTable = ({ users: data }: { users: GetAllUsers }) => {
 		getFacetedRowModel: getFacetedRowModel(),
 		getFacetedUniqueValues: getFacetedUniqueValues(),
 	})
+
+  console.log(window.location.hostname)
 
 	return (
 		<div className='space-y-4'>

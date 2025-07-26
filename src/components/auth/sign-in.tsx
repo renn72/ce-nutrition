@@ -6,6 +6,7 @@ import { useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
+import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { signIn } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
@@ -37,12 +38,26 @@ const signInSchema = z.object({
 })
 
 const SignIn = () => {
+	const [isEmailError, setIsEmailError] = useState(false)
 	const [isUser, setIsUser] = useState(true)
-  const [isCorrectPassword, setIsCorrectPassword] = useState(true)
+	const [isCorrectPassword, setIsCorrectPassword] = useState(true)
 	const { mutate: checkEmail } = api.user.checkEmail.useMutation({
 		onSuccess: (data) => {
 			console.log('data', data)
 			if (!data) setIsUser(false)
+		},
+	})
+	const { mutate: sendEmail } = api.user.checkEmail.useMutation({
+		onSuccess: async (data) => {
+			console.log('data', data)
+			if (!data) {
+				toast.error('Invalid email')
+				setIsLoading(false)
+				setIsEmailError(true)
+				return
+			}
+			setIsEmailError(false)
+			await signIn('resend', { email: email.toLowerCase() })
 		},
 	})
 	const [isLoading, setIsLoading] = useState(false)
@@ -65,7 +80,7 @@ const SignIn = () => {
 				<form
 					onSubmit={form.handleSubmit(async (data) => {
 						setIsUser(true)
-            setIsCorrectPassword(true)
+						setIsCorrectPassword(true)
 						setLoginError('')
 						console.log('data', data)
 						try {
@@ -81,10 +96,11 @@ const SignIn = () => {
 								router.push('/')
 								router.refresh()
 							} else if (res?.error === 'CredentialsSignin') {
-                setIsCorrectPassword(false)
-							}
-              else {
-								setLoginError('Failed to login')
+								setIsCorrectPassword(false)
+							} else {
+								setLoginError('')
+								router.push('/')
+								router.refresh()
 							}
 							if (res?.error) throw new Error(res.error)
 						} catch (err: any) {
@@ -145,7 +161,7 @@ const SignIn = () => {
 							/>
 							{isUser && !isCorrectPassword && (
 								<div className='text-sm text-destructive w-full text-center h-4 leading-none'>
-                  Invalid password
+									Invalid password
 								</div>
 							)}
 						</div>
@@ -176,7 +192,11 @@ const SignIn = () => {
 								<Input
 									placeholder='email'
 									type='email'
-									className='w-full'
+									autoComplete='email'
+									className={cn(
+										'w-full',
+										isEmailError && 'border-red-500 border-2',
+									)}
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}
 								/>
@@ -186,7 +206,12 @@ const SignIn = () => {
 									onClick={async (e) => {
 										e.preventDefault()
 										setIsLoading(true)
-										await signIn('resend', { email: email.toLowerCase() })
+										sendEmail(email.toLowerCase())
+										//           if (!isEmail) {
+										//             toast.error('Invalid email')
+										//             return
+										//           }
+										// await signIn('resend', { email: email.toLowerCase() })
 									}}
 								>
 									{isLoading ? 'Sending' : 'Send'}

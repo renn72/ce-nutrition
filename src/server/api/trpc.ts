@@ -92,6 +92,8 @@ const timingMiddleware = t.middleware(async (opts) => {
 	//   await new Promise((resolve) => setTimeout(resolve, waitMs));
 	// }
 
+  console.log('entering middleware')
+
 	const start = Date.now()
 	const result = await opts.next()
 	const input = await opts.getRawInput()
@@ -118,6 +120,7 @@ const timingMiddleware = t.middleware(async (opts) => {
 		// 	userId: opts.ctx.session?.user.id,
 		// })
 	}
+  console.log('leaving middleware')
 
 	return result
 

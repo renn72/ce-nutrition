@@ -39,12 +39,12 @@ const DialogWrapper = ({
 	children,
 	isOpen,
 	setIsOpen,
-  title = 'Update Email',
+	title = 'Update Email',
 }: {
 	children: React.ReactNode
 	isOpen: boolean
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-  title?: string
+	title?: string
 }) => {
 	return (
 		<Dialog
@@ -54,7 +54,9 @@ const DialogWrapper = ({
 			}}
 		>
 			<DialogTrigger asChild>
-				<Button variant='ghost'>{title}</Button>
+				<Button variant='ghost' className='hover:bg-accent'>
+					{title}
+				</Button>
 			</DialogTrigger>
 			<DialogContent
 				onOpenAutoFocus={(e) => {
@@ -111,7 +113,7 @@ const Email = ({ currentUser }: { currentUser: GetUserById }) => {
 				<Button
 					disabled={isSaving}
 					className='relative'
-          variant='ghost'
+					variant='ghost'
 					onClick={() => {
 						updateEmail({
 							email: email.toLowerCase(),
@@ -155,7 +157,11 @@ const Password = ({ currentUser }: { currentUser: GetUserById }) => {
 		},
 	})
 	return (
-		<DialogWrapper isOpen={isOpen} setIsOpen={setIsOpen} title='Update Password'>
+		<DialogWrapper
+			isOpen={isOpen}
+			setIsOpen={setIsOpen}
+			title='Update Password'
+		>
 			<DialogHeader>
 				<DialogTitle>Password</DialogTitle>
 				<DialogDescription>Update your password.</DialogDescription>
@@ -174,10 +180,10 @@ const Password = ({ currentUser }: { currentUser: GetUserById }) => {
 				<Button
 					disabled={isSaving}
 					className='relative'
-          variant='ghost'
+					variant='ghost'
 					onClick={() => {
 						updatePassword({
-              password: password,
+							password: password,
 							id: currentUser?.id ?? '',
 						})
 					}}
@@ -206,7 +212,9 @@ const DeleteAccount = ({ currentUser }: { currentUser: GetUserById }) => {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				<Button variant='ghost'>Delete Account</Button>
+				<Button className='hover:bg-accent' variant='ghost'>
+					Delete Account
+				</Button>
 			</DialogTrigger>
 			<DialogContent
 				onOpenAutoFocus={(e) => {
@@ -223,7 +231,7 @@ const DeleteAccount = ({ currentUser }: { currentUser: GetUserById }) => {
 				</DialogHeader>
 				<div className='flex flex-col gap-4 w-full'>
 					<Button
-          variant='ghost'
+						variant='ghost'
 						onClick={() => {
 							if (!currentUser) return
 							if (isUser?.id === currentUser?.id) {
@@ -293,7 +301,9 @@ export function DataTableRowActions<TData>({
 								})
 							}}
 						>
-							<Button variant='ghost'>Toggle Admin</Button>
+							<Button variant='ghost' className='hover:bg-accent'>
+								Toggle Admin
+							</Button>
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
 					</>
@@ -317,7 +327,9 @@ export function DataTableRowActions<TData>({
 						})
 					}}
 				>
-					<Button variant='ghost'>Toggle Trainer</Button>
+					<Button variant='ghost' className='hover:bg-accent'>
+						Toggle Trainer
+					</Button>
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
@@ -344,11 +356,14 @@ export function DataTableRowActions<TData>({
 						await signIn('resend', {
 							email: data?.email?.toLowerCase(),
 							redirect: false,
+              callbackUrl: window.location.hostname,
 						})
 						toast.success('Sent email invite')
 					}}
 				>
-					<Button variant='ghost'>Send Email Invite</Button>
+					<Button variant='ghost' className='hover:bg-accent'>
+						Send Email Invite
+					</Button>
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem

@@ -408,6 +408,15 @@ export const userRouter = createTRPCRouter({
 					images: true,
 					settings: true,
 					roles: true,
+        supplementStacks: {
+          with: {
+            supplements: {
+              with: {
+                supplement: true,
+              },
+            },
+          },
+        },
 					userPlans: {
 						with: {
 							userMeals: true,
