@@ -356,7 +356,7 @@ export function DataTableRowActions<TData>({
 						await signIn('resend', {
 							email: data?.email?.toLowerCase(),
 							redirect: false,
-              callbackUrl: window.location.hostname,
+              callbackUrl: `https://${window.location.origin}`,
 						})
 						toast.success('Sent email invite')
 					}}
