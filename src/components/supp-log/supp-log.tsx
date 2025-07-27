@@ -13,10 +13,10 @@ import type {
 } from '@/types'
 import NumberFlow from '@number-flow/react'
 import { Sheet } from '@silk-hq/components'
-// @ts-ignore
-import confetti from 'canvas-confetti'
 import { ChevronDown, ListCollapse, Pill, Toilet } from 'lucide-react'
 import { toast } from 'sonner'
+
+import { DateSelect } from '@/components/date-select'
 
 import {
 	Card,
@@ -59,7 +59,6 @@ const Supp = ({
 			onError: (err) => {},
 		})
 
-  const { data: suppFromDailyLog } = api.supplement.getSupplementFromDailyLog.useQuery({ id: supp?.id || -1 })
 
 	const [isTaken, setIsTaken] = useState(() =>
 		todaysDailyLog?.supplements.find((s) => {
@@ -72,13 +71,6 @@ const Supp = ({
 			: false,
 	)
 
-	useEffect(() => {
-		setIsTaken(
-      suppFromDailyLog
-				? true
-				: false,
-		)
-	}, [suppFromDailyLog])
 
   const takenSupplement = todaysDailyLog?.supplements.find((s) => {
     return (
@@ -87,7 +79,18 @@ const Supp = ({
     )
   })
 
-	const handleClick = () => {
+  const { data: suppFromDailyLog } = api.supplement.getSupplementFromDailyLog.useQuery({ id: takenSupplement?.id || -1 })
+	useEffect(() => {
+		setIsTaken(
+      suppFromDailyLog
+				? true
+				: false,
+		)
+	}, [suppFromDailyLog])
+
+	const handleClick = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
 		if (!supp) return
 		if (!supp.supplementId) return
 		if (!supp.supplementStackId) return
@@ -109,6 +112,8 @@ const Supp = ({
 			})
 		}
 	}
+
+  console.log('supp', supp)
 
 	if (!supp) return null
 	return (
@@ -185,12 +190,12 @@ const SuppLog = ({
 	userId: string
 	dailyLogs: GetAllDailyLogs | null | undefined
 }) => {
-	const today = new Date()
+	const [day, setDay] = useState<Date>(new Date())
 
 	const ctx = api.useUtils()
 
 	const todaysDailyLog = dailyLogs?.find(
-		(dailyLog) => dailyLog.date === today.toDateString(),
+		(dailyLog) => dailyLog.date === day.toDateString(),
 	)
 	const { data: user } = api.user.get.useQuery(userId || '')
 	const suppTimes = user?.supplementStacks
@@ -212,7 +217,9 @@ const SuppLog = ({
 							'justify-center active:scale-75 transition-transform cursor-pointer',
 						)}
 					>
-						<Sheet.Trigger onClick={(e) => {}}>
+						<Sheet.Trigger onClick={(e) => {
+              setDay(new Date())
+            }}>
 							<Pill
 								size={28}
 								className={cn(
@@ -234,6 +241,7 @@ const SuppLog = ({
 										/>
 									</div>
 									<div className='flex gap-0 pt-2 flex-col border-b-[1px] border-primary pb-2 relative font-medium'>
+                      <DateSelect today={day} setDay={setDay} />
 										<div className='flex justify-center items-center gap-6 mt-1'>
 											<Sheet.Title className='text-xl mt-[2px] font-semibold'>
 												Supps
@@ -251,7 +259,7 @@ const SuppLog = ({
 														key={time}
 														user={user}
 														time={time}
-														date={today}
+														date={day}
 														todaysDailyLog={todaysDailyLog}
 													/>
 												) : null
