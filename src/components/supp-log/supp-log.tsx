@@ -13,7 +13,7 @@ import type {
 } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Sheet, SheetStack } from '@silk-hq/components'
-import { ChevronDown, ListCollapse, LockIcon, Pill, Toilet } from 'lucide-react'
+import { ChevronDown, ListCollapse, LockIcon, Pill, Toilet, XIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -54,13 +54,7 @@ const formSchema = z.object({
 	stackId: z.number(),
 })
 
-const SuppUserCreate = ({
-	user,
-	todaysDailyLog,
-}: {
-	user: GetUserById
-	todaysDailyLog: GetDailyLogById | null | undefined
-}) => {
+const SuppUserCreate = ({ user }: { user: GetUserById }) => {
 	const [isOpen, setIsOpen] = useState(false)
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -275,6 +269,112 @@ const SuppUserCreate = ({
 	)
 }
 
+const SuppUser = ({ user }: { user: GetUserById }) => {
+	const [isOpen, setIsOpen] = useState(false)
+
+	const ctx = api.useUtils()
+  const { mutate: deleteSuppFromUser } = api.supplement.deleteFromUser.useMutation({
+    onSuccess: () => {
+      ctx.user.invalidate()
+    },
+  })
+
+	return (
+		<div className='flex flex-col gap-0 w-full items-center'>
+			<Sheet.Root
+				license='non-commercial'
+				presented={isOpen}
+				onPresentedChange={setIsOpen}
+			>
+				<Sheet.Trigger>
+					<div
+						className={cn(
+							'text-sm truncate max-w-[600px]  py-3 px-4 border font-bold h-[40px] rounded-md bg-secondary ',
+							'shadow-sm flex flex-col w-[calc(100vw-2rem)] gap-0 items-center justify-center',
+							'hover:text-primary hover:bg-background',
+						)}
+					>
+						Your Supplements
+					</div>
+				</Sheet.Trigger>
+				<Sheet.Portal>
+					<Sheet.View className='z-[1000] h-[100vh] bg-black/50 '>
+						<Sheet.Content className='min-h-[200px] max-h-[90vh] h-full rounded-t-3xl bg-background relative'>
+							<div className='flex flex-col justify-between h-full'>
+								<div className='flex flex-col '>
+									<div className='flex justify-center pt-1'>
+										<Sheet.Handle
+											className=' w-[50px] h-[6px] border-0 rounded-full bg-primary/20'
+											action='dismiss'
+										/>
+									</div>
+									<div className='flex justify-center items-center flex-col '>
+										<Sheet.Title className='text-xl mt-[2px] font-semibold'>
+											Your Supplement
+										</Sheet.Title>
+										<Sheet.Description className='hidden'>
+											create a new supplement
+										</Sheet.Description>
+									</div>
+								</div>
+								<ScrollArea className='pt-4 px-2 h-[calc(95vh-130px)]'>
+                  <div className='flex flex-col'>
+                    {
+                      user.supplementStacks.map((stack) => {
+                        const time = stack.time
+                        return (
+                          <div key={stack.id}>
+                            <div className={cn('text-base font-semibold',
+                              stack.supplements.filter((supp) => supp.supplement?.isUserCreated).length === 0 && 'hidden'
+                            )}>{time}</div>
+                            {stack.supplements.map((supp) => {
+                              if (!supp.supplement?.isUserCreated) return null
+                              console.log(supp)
+                              return (
+                                <div key={supp.id} className='bg-secondary rounded-full bg-secondary grid grid-cols-6 my-2 mx-2 p-2'>
+                                  <div className='text-sm truncate col-span-3'>{supp.supplement?.name}</div>
+                                  <div className='text-sm truncate justify-self-end'>{supp.supplement?.serveSize}</div>
+                                  <div className='text-sm truncate pl-2'>{supp.supplement?.serveUnit}</div>
+                                  <XIcon
+                                    size={16}
+                                    strokeWidth={3}
+                                    className='text-red-500 justify-self-end'
+                                    onClick={() => {
+                                      deleteSuppFromUser({
+                                        suppId: supp.supplementId,
+                                        suppStackId: stack.id,
+                                      })
+                                    }}
+                                    />
+                                </div>
+                              )
+                            })}
+                          </div>
+                        )
+                      })
+                    }
+                  <div className='h-12'/>
+									<SuppUserCreate user={user} />
+                  </div>
+								</ScrollArea>
+								<Sheet.Trigger
+									className='w-full flex justify-center'
+									action='dismiss'
+								>
+									<ChevronDown
+										size={32}
+										strokeWidth={2}
+										className='text-muted-foreground'
+									/>
+								</Sheet.Trigger>
+							</div>
+						</Sheet.Content>
+					</Sheet.View>
+				</Sheet.Portal>
+			</Sheet.Root>
+		</div>
+	)
+}
 const Supp = ({
 	user,
 	supp,
@@ -519,12 +619,7 @@ const SuppLog = ({
 														/>
 													) : null
 												})}
-												{user && (
-													<SuppUserCreate
-														user={user}
-														todaysDailyLog={todaysDailyLog}
-													/>
-												)}
+												{user && <SuppUser user={user} />}
 											</div>
 										</ScrollArea>
 									</div>
