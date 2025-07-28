@@ -221,6 +221,7 @@ export const supplementsRouter = createTRPCRouter({
 				),
 			})
 
+
 			let logId = log?.id as number | undefined
 
 			if (!log) {
@@ -233,6 +234,14 @@ export const supplementsRouter = createTRPCRouter({
 					.returning({ id: dailyLog.id })
 				logId = res[0]?.id
 			}
+
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				task: 'Log Supplement',
+				notes: JSON.stringify(input),
+				objectId: logId,
+			})
 
 			if (!logId) throw new TRPCError({ code: 'NOT_FOUND' })
 
@@ -249,6 +258,13 @@ export const supplementsRouter = createTRPCRouter({
 	unLogSupplement: protectedProcedure
 		.input(z.object({ id: z.number() }))
 		.mutation(async ({ input, ctx }) => {
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				task: 'unLog Supplement',
+				notes: JSON.stringify(input),
+				objectId: null,
+			})
 			await ctx.db
 				.delete(dailySupplement)
 				.where(eq(dailySupplement.id, input.id))
@@ -309,6 +325,13 @@ export const supplementsRouter = createTRPCRouter({
       const suppId = res[0]?.id
       if (!suppId) throw new TRPCError({ code: 'NOT_FOUND' })
 
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				task: 'User Create Supplement',
+				notes: JSON.stringify(input),
+				objectId: suppId,
+			})
 			await ctx.db.insert(supplementToSupplementStack).values({
 				supplementId: suppId,
 				supplementStackId: input.stackId,
