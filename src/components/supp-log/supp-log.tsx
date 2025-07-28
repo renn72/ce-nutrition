@@ -332,7 +332,7 @@ const SuppUser = ({ user }: { user: GetUserById }) => {
                               console.log(supp)
                               return (
                                 <div key={supp.id} className='bg-secondary rounded-full bg-secondary grid grid-cols-6 my-2 mx-2 p-2'>
-                                  <div className='text-sm truncate col-span-3'>{supp.supplement?.name}</div>
+                                  <div className='text-sm truncate col-span-3 capitalize'>{supp.supplement?.name}</div>
                                   <div className='text-sm truncate justify-self-end'>{supp.supplement?.serveSize}</div>
                                   <div className='text-sm truncate pl-2'>{supp.supplement?.serveUnit}</div>
                                   <XIcon
@@ -474,7 +474,7 @@ const Supp = ({
 					isTaken ? 'bg-accent' : 'bg-card',
 				)}
 			>
-				<div className='col-span-4 truncate'>{supp.supplement?.name}</div>
+				<div className='col-span-4 truncate capitalize'>{supp.supplement?.name}</div>
 				<div className='place-self-end'>{supp.size}</div>
 				<div className='place-self-start truncate'>{supp.unit}</div>
 				{isTaken && takenSupplement ? (
