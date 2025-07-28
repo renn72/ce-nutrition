@@ -58,20 +58,7 @@ export function DataTableRowActions<TData>({
             router.push(`/admin/supplement/edit?ingredient=${data.id}`)
           }}
         >Edit</DropdownMenuItem>
-        {
-          data?.hiddenAt ? (
-            <DropdownMenuItem
-            >
-              Unhide
-            </DropdownMenuItem>
-          ) : (
-            <DropdownMenuItem
-            >
-              Hide
-            </DropdownMenuItem>
-          )
-        }
-        <DropdownMenuSeparator />
+
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={ () => {

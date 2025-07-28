@@ -81,7 +81,7 @@ const SuppUserCreate = ({
 			ctx.user.invalidate()
 			ctx.dailyLog.invalidate()
 			setIsOpen(false)
-      form.reset()
+			form.reset()
 		},
 		onError: () => {
 			toast.error('error conflict')
@@ -379,7 +379,12 @@ const Supp = ({
 				<div className='place-self-start truncate'>{supp.unit}</div>
 				{isTaken && takenSupplement ? (
 					<div className='absolute -bottom-1 right-1/2 translate-x-1/2 opacity-80 text-[0.6rem]'>
-						{`${new Date(takenSupplement.createdAt).getHours()}:${new Date(takenSupplement.createdAt).getMinutes()}`}
+						{new Date(takenSupplement.createdAt).toLocaleTimeString('en-AU', {
+							hour: '2-digit', // 'numeric', '2-digit'
+							minute: '2-digit', // 'numeric', '2-digit'
+							second: '2-digit', // 'numeric', '2-digit'
+							hour12: true, // true for AM/PM, false for 24-hour
+						})}
 					</div>
 				) : null}
 				{isPrivateAndUser && (
