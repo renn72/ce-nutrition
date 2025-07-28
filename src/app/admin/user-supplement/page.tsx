@@ -8,7 +8,7 @@ import { useSearchParams } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
 import type { GetUserById } from '@/types'
-import { CircleX } from 'lucide-react'
+import { CircleX, LockIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -29,7 +29,7 @@ import {
 	DialogTrigger,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { VirtualizedCombobox } from '@/components/ui/virtualized-combobox'
+import { VirtualizedCombobox } from '@/components/ui/virtualized-combobox-supps'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,6 +39,8 @@ const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
 	const [selected, setSelected] = useState<string | null>(null)
 	const [unit, setUnit] = useState<string>('')
 	const [size, setSize] = useState<number>(1)
+
+  const { data: currentUser, isLoading: currentUserLoading } = api.user.getCurrentUser.useQuery()
 
 	const { data: supplements } = api.supplement.getAll.useQuery()
 
@@ -72,6 +74,9 @@ const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
 			})
 		}
 	}
+
+  if (currentUserLoading) return null
+  if (!currentUser) return null
 
 	console.log('selected', selected)
 
@@ -109,13 +114,17 @@ const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
 					{user.supplementStacks
 						.find((stack) => stack.time === time)
 						?.supplements.map((supp) => {
+              if (supp.supplement.isPrivate && supp.supplement.userId !== currentUser.id) return null
 							return (
 								<div
 									key={supp.id}
 									className='grid grid-cols-6 gap-2 items-center px-2 text-sm py-1'
 								>
-									<div className='col-span-3 truncate'>
-										{supp.supplement?.name}
+									<div className='col-span-3 truncate flex items-center '>
+                    <span className='flex-grow'>{supp.supplement?.name}</span>
+                    {
+                      supp.supplement.isPrivate ? <LockIcon size={10} className='text-red-500' /> : null
+                    }
 									</div>
 									<div className='place-self-end'>{supp.size}</div>
 									<div className='place-self-start'>{supp.unit}</div>
@@ -163,6 +172,8 @@ const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
 										return {
 											value: i.id.toString(),
 											label: i.name ?? '',
+                      unit: i.serveUnit ?? '',
+                      isPrivate: i.isPrivate ?? false,
 										}
 									})}
 								selectedOption={selected ?? ''}

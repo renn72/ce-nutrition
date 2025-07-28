@@ -11,17 +11,13 @@ import type {
 	GetSupplementFromStack,
 	GetUserById,
 } from '@/types'
-import NumberFlow from '@number-flow/react'
 import { Sheet } from '@silk-hq/components'
 import { ChevronDown, ListCollapse, Pill, Toilet } from 'lucide-react'
-import { toast } from 'sonner'
 
 import {
 	Card,
-	CardAction,
 	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card'
@@ -94,7 +90,7 @@ const Supp = ({
 		if (isSuccess) setIsTaken(suppFromDailyLog ? true : false)
 	}, [suppFromDailyLog])
 
-	const handleClick = (e) => {
+	const handleClick = (e : React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		e.stopPropagation()
 		e.preventDefault()
 		if (!supp) return

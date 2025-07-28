@@ -4,14 +4,12 @@ import { useState } from 'react'
 
 import { cn } from '@/lib/utils'
 import type { GetAllDailyLogs } from '@/types'
-import NumberFlow from '@number-flow/react'
 import { Sheet } from '@silk-hq/components'
 import { format } from 'date-fns'
 import { CalendarIcon, ChevronDown, ListCollapse, Trash2 } from 'lucide-react'
-
+import { api } from '@/trpc/react'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar-log'
-import { Input } from '@/components/ui/input'
 import {
 	Popover,
 	PopoverContent,
@@ -30,6 +28,16 @@ const SuppBottomSheet = ({
 	const todaysDailyLog = dailyLogs?.find((dailyLog) => {
 		return dailyLog.date === today.toDateString()
 	})
+
+  const ctx = api.useUtils()
+  const { mutate: deleteSuppLog } = api.supplement.unLogSupplement.useMutation({
+		onSuccess: () => {
+			ctx.dailyLog.invalidate()
+		},
+		onError: (err) => {},
+	})
+
+  console.log('supps', todaysDailyLog?.supplements)
 
 
 	return (
@@ -103,7 +111,9 @@ const SuppBottomSheet = ({
 														return <div>{props.date.getDate()}</div>
 													return (
 														<div className='flex flex-col gap-[2px]'>
-															<div className='font-semibold'>{props.date.getDate()}</div>
+															<div className='font-semibold'>
+																{props.date.getDate()}
+															</div>
 															<div className='text-[0.7rem] text-muted-foreground font-medium'>
 																{totalWater === 0
 																	? '.'
@@ -120,53 +130,52 @@ const SuppBottomSheet = ({
 								<div className='flex gap-4 pt-4 border-b-[1px] border-primary pb-4 relative font-medium'>
 									<div className='transition-transform '>
 										<Sheet.Title className='text-lg ml-4 '>
-											Water Log
+											Supplements Log
 										</Sheet.Title>
 									</div>
 									<Sheet.Description className='hidden'>
-										Water Log
+										Supplement Log
 									</Sheet.Description>
 									<div className='border w-px h-6' />
-									<div className='flex items-baseline'>
-                    0
-										<span className='text-xs text-primary/50 ml-[1px]'>ml</span>
-									</div>
 								</div>
-								<div className='flex items-center gap-2 justify-around mx-4'>
-								</div>
-
-								<ScrollArea className='p-4 h-[calc(80vh-210px)]'>
+								<ScrollArea className='px-4 h-[calc(90vh-170px)]'>
 									<div className='flex flex-col gap-2 '>
-										{todaysDailyLog?.waterLogs.length === 0 ||
+										{todaysDailyLog?.supplements.length === 0 ||
 										!todaysDailyLog ? (
 											<div className='text-center'>...</div>
 										) : (
-											todaysDailyLog?.waterLogs.map((waterLog, i) => (
+											todaysDailyLog?.supplements.map((supp, i) => (
 												<div
-													key={waterLog.id}
-													className='grid grid-cols-6 gap-2 text-sm w-full bg-secondary rounded-full px-4 py-2 items-center'
+													key={supp.id}
+													className='text-sm w-full bg-secondary rounded-full px-4 py-2 items-center flex flex-col'
 												>
-													<div className='text-primary font-normal col-span-1'>
-														<div className='rounded-full h-6 w-6 bg-primary/20 flex justify-center items-center pt-[1px]'>
-															{i + 1}
+													<div className='grid grid-cols-6 gap-2 text-sm w-full items-center'>
+														<div className='text-primary text-lg font-semibold col-span-2'>
+															{supp.supplement?.name}
 														</div>
+														<div className='text-primary font-normal col-span-3 justify-self-end'>
+                                {supp.time}
+                            </div>
+
 													</div>
-													<div className='text-muted-foreground font-normal col-span-2'>
-														{waterLog.createdAt.toLocaleTimeString('en-AU')}
-													</div>
-													<div className='text-muted-foreground font-medium col-span-2'>
-														{waterLog.amount}ml
-													</div>
-													<div className='justify-self-end'>
-														<Trash2
-															size={16}
-															className='cursor-pointer text-destructive hover:text-primary active:scale-90 transition-transform cursor-pointer mb-[1px]'
-															onClick={() => {
-																deleteWaterLog({
-																	id: waterLog.id,
-																})
-															}}
-														/>
+													<div className='grid grid-cols-6 gap-2 text-sm w-full items-center'>
+														<div className='text-muted-foreground font-medium col-span-2'>
+															{`${supp.amount} ${supp.unit}`}
+														</div>
+														<div className='text-muted-foreground font-normal col-span-3 justify-self-end'>
+															{supp.createdAt.toLocaleTimeString('en-AU')}
+														</div>
+														<div className='justify-self-end'>
+															<Trash2
+																size={16}
+																className='cursor-pointer text-destructive hover:text-primary active:scale-90 transition-transform cursor-pointer mb-[1px]'
+																onClick={() => {
+                                  deleteSuppLog({
+                                    id: supp.id,
+                                  })
+																}}
+															/>
+														</div>
 													</div>
 												</div>
 											))
