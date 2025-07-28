@@ -37,8 +37,6 @@ const SuppBottomSheet = ({
 		onError: (err) => {},
 	})
 
-  console.log('supps', todaysDailyLog?.supplements)
-
 
 	return (
 		<Sheet.Root license='non-commercial'>

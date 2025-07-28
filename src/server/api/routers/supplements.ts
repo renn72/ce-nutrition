@@ -44,26 +44,26 @@ const createLog = async ({
 }
 
 export const supplementsRouter = createTRPCRouter({
-  delete: protectedProcedure
-    .input(z.object({ id: z.number() }))
-    .mutation(async ({ input, ctx }) => {
-      const res = await ctx.db
-        .update(ingredient)
-        .set({
-          deletedAt: new Date(),
-        })
-        .where(eq(ingredient.id, input.id))
-      return res
-    }),
+	delete: protectedProcedure
+		.input(z.object({ id: z.number() }))
+		.mutation(async ({ input, ctx }) => {
+			const res = await ctx.db
+				.update(ingredient)
+				.set({
+					deletedAt: new Date(),
+				})
+				.where(eq(ingredient.id, input.id))
+			return res
+		}),
 	getAll: protectedProcedure.query(async ({ ctx }) => {
-    const userId = ctx.session?.user?.id
+		const userId = ctx.session?.user?.id
 		const res = await ctx.db.query.ingredient.findMany({
 			where: (ingredient, { isNull, and, eq }) =>
 				and(
 					isNull(ingredient.hiddenAt),
 					isNull(ingredient.deletedAt),
 					eq(ingredient.isSupplement, true),
-          eq(ingredient.isUserCreated, false),
+					eq(ingredient.isUserCreated, false),
 				),
 			with: {
 				user: {
@@ -76,14 +76,14 @@ export const supplementsRouter = createTRPCRouter({
 			orderBy: [asc(ingredient.name)],
 		})
 
-    const filterRes = res.filter((item) => {
-      if (item.isPrivate) {
-        if (item.userId === userId) return true
-        if (item.viewableBy?.split(',').includes(userId)) return true
-        return false
-      }
-      return true
-    })
+		const filterRes = res.filter((item) => {
+			if (item.isPrivate) {
+				if (item.userId === userId) return true
+				if (item.viewableBy?.split(',').includes(userId)) return true
+				return false
+			}
+			return true
+		})
 
 		return filterRes
 	}),
@@ -279,6 +279,45 @@ export const supplementsRouter = createTRPCRouter({
 				.where(eq(supplementStack.id, input.id))
 			return true
 		}),
+	userCreate: protectedProcedure
+		.input(
+			z.object({
+				name: z.string(),
+				serveSize: z.number(),
+				serveUnit: z.string(),
+				isPrivate: z.boolean(),
+				stackId: z.number(),
+        viewableBy: z.string().optional(),
+        userId: z.string(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const res = await ctx.db
+				.insert(ingredient)
+				.values({
+					name: input.name,
+					serveSize: input.serveSize.toString(),
+					serveUnit: input.serveUnit,
+					isPrivate: input.isPrivate,
+					viewableBy: input.viewableBy,
+					userId: input.userId,
+					isUserCreated: true,
+					isSupplement: true,
+				})
+				.returning({ id: ingredient.id })
+
+      const suppId = res[0]?.id
+      if (!suppId) throw new TRPCError({ code: 'NOT_FOUND' })
+
+			await ctx.db.insert(supplementToSupplementStack).values({
+				supplementId: suppId,
+				supplementStackId: input.stackId,
+				size: input.serveSize.toString(),
+				unit: input.serveUnit,
+			})
+
+			return res
+		}),
 	update: protectedProcedure
 		.input(updateSchema)
 		.mutation(async ({ input, ctx }) => {
@@ -290,8 +329,8 @@ export const supplementsRouter = createTRPCRouter({
 					serveUnit: input.serveUnit,
 					serveSize: input.serveSize.toString(),
 					name: input.name,
-          isPrivate: input.isPrivate,
-          viewableBy: input.viewableBy,
+					isPrivate: input.isPrivate,
+					viewableBy: input.viewableBy,
 					userId: userId,
 					caloriesWFibre:
 						input.caloriesWFibre === 0 ? null : input.caloriesWFibre.toString(),
@@ -668,7 +707,7 @@ export const supplementsRouter = createTRPCRouter({
 								? null
 								: input.totalPolyunsaturatedFattyAcidsEquated.toString(),
 					})
-					.where(eq(ingredientAdditionThree.ingredientId, input.id))
+					.where(eq(ingredientAdditionThree.ingredientId, input.id)),
 			])
 
 			return res
@@ -683,8 +722,8 @@ export const supplementsRouter = createTRPCRouter({
 					serveUnit: input.serveUnit,
 					serveSize: input.serveSize.toString(),
 					name: input.name,
-          isPrivate: input.isPrivate,
-          viewableBy: input.viewableBy,
+					isPrivate: input.isPrivate,
+					viewableBy: input.viewableBy,
 					userId: userId,
 					caloriesWFibre:
 						input.caloriesWFibre === 0 ? null : input.caloriesWFibre.toString(),
