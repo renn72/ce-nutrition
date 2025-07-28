@@ -44,6 +44,17 @@ const createLog = async ({
 }
 
 export const supplementsRouter = createTRPCRouter({
+  delete: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.db
+        .update(ingredient)
+        .set({
+          deletedAt: new Date(),
+        })
+        .where(eq(ingredient.id, input.id))
+      return res
+    }),
 	getAll: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session?.user?.id
 		const res = await ctx.db.query.ingredient.findMany({
@@ -52,6 +63,7 @@ export const supplementsRouter = createTRPCRouter({
 					isNull(ingredient.hiddenAt),
 					isNull(ingredient.deletedAt),
 					eq(ingredient.isSupplement, true),
+          eq(ingredient.isUserCreated, false),
 				),
 			with: {
 				user: {

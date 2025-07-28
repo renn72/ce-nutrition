@@ -30,6 +30,13 @@ export function DataTableRowActions<TData>({
   const router = useRouter()
   const data = row.original as GetSupplementById
 
+  const ctx = api.useUtils()
+  const { mutate: deleteSupplement } = api.supplement.delete.useMutation({
+    onSuccess: () => {
+      ctx.supplement.invalidate()
+    },
+  })
+
 
   return (
     <DropdownMenu>
@@ -67,6 +74,11 @@ export function DataTableRowActions<TData>({
         <DropdownMenuSeparator />
         <DropdownMenuSeparator />
         <DropdownMenuItem
+          onClick={ () => {
+            deleteSupplement({
+              id: data.id,
+            })
+          }}
         >
           Delete
         </DropdownMenuItem>

@@ -14,7 +14,13 @@ export const ingredientRouter = createTRPCRouter({
 	getAll: protectedProcedure.query(async ({ ctx }) => {
 		const res = await ctx.db.query.ingredient.findMany({
 			where: (ingredient, { isNull, and, eq }) =>
-					and(isNull(ingredient.hiddenAt), isNull(ingredient.deletedAt), eq(ingredient.isSupplement, false)),
+				and(
+					isNull(ingredient.hiddenAt),
+					isNull(ingredient.deletedAt),
+					eq(ingredient.isSupplement, false),
+          eq(ingredient.isPrivate, false),
+          eq(ingredient.isUserCreated, false),
+				),
 			with: {
 				user: {
 					columns: {
@@ -35,7 +41,13 @@ export const ingredientRouter = createTRPCRouter({
 	getAllFav: protectedProcedure.query(async ({ ctx }) => {
 		const res = await ctx.db.query.ingredient.findMany({
 			where: (ingredient, { isNull, and, eq }) =>
-				and(isNull(ingredient.hiddenAt), isNull(ingredient.deletedAt), eq(ingredient.isSupplement, false)),
+				and(
+					isNull(ingredient.hiddenAt),
+					isNull(ingredient.deletedAt),
+					eq(ingredient.isSupplement, false),
+          eq(ingredient.isPrivate, false),
+          eq(ingredient.isUserCreated, false),
+				),
 			with: {
 				ingredientToGroceryStore: {
 					with: {
