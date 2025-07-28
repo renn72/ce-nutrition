@@ -6,7 +6,7 @@ import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { formatDate } from '@/lib/utils'
 import type { GetSupplementById } from '@/types'
 import type { ColumnDef, SortingFn } from '@tanstack/react-table'
-import { Bookmark } from 'lucide-react'
+import { Bookmark, FolderLock } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -125,6 +125,52 @@ export const columns: ColumnDef<GetSupplementById>[] = [
             {row.getValue('name')}
           </span>
         </div>
+			)
+		},
+	},
+	{
+		accessorKey: 'serveSize',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Size' />
+		),
+		cell: ({ row }) => {
+			return (
+				<div className='flex space-x-2'>
+					<span className='max-w-[100px] truncate font-medium'>
+						{row.getValue('serveSize')}
+					</span>
+				</div>
+			)
+		},
+	},
+	{
+		accessorKey: 'serveUnit',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Unit' />
+		),
+		cell: ({ row }) => {
+			return (
+				<div className='flex space-x-2'>
+					<span className='max-w-[100px] truncate font-medium'>
+						{row.getValue('serveUnit')}
+					</span>
+				</div>
+			)
+		},
+	},
+	{
+		accessorKey: 'isPrivate',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Private' />
+		),
+		cell: ({ row }) => {
+      const isPrivate = row.getValue('isPrivate') as boolean
+			return (
+				<div className='flex space-x-2'>
+					<span className='max-w-[100px] truncate font-medium'>
+						{isPrivate ? <FolderLock /> : ''}
+					</span>
+				</div>
 			)
 		},
 	},

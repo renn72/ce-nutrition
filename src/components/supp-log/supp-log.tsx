@@ -78,18 +78,20 @@ const Supp = ({
 	})
 
 	const { data: suppFromDailyLog, isSuccess } =
-		api.supplement.getSupplementFromDailyLog.useQuery({
-			id: takenSupplement?.id || -1,
-		})
+		api.supplement.getSupplementFromDailyLog.useQuery(
+			{
+				id: takenSupplement?.id || -1,
+			},
+		)
 
 	if (supp?.supplement.name?.toLowerCase() === 'magnesium') {
 		console.log('suppFromDailyLog', suppFromDailyLog)
 		console.log('isTaken', isTaken)
-    console.log('takenSupplement', takenSupplement)
+		console.log('takenSupplement', takenSupplement)
 		console.log('supp', supp)
 	}
 	useEffect(() => {
-    if (isSuccess) setIsTaken(suppFromDailyLog ? true : false)
+		if (isSuccess) setIsTaken(suppFromDailyLog ? true : false)
 	}, [suppFromDailyLog])
 
 	const handleClick = (e) => {

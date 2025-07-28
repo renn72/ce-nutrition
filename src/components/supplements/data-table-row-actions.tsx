@@ -27,6 +27,7 @@ export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
 
+  const router = useRouter()
   const data = row.original as GetSupplementById
 
 
@@ -46,6 +47,9 @@ export function DataTableRowActions<TData>({
         className='w-[160px]'
       >
         <DropdownMenuItem
+          onClick={() => {
+            router.push(`/admin/supplement/edit?ingredient=${data.id}`)
+          }}
         >Edit</DropdownMenuItem>
         {
           data?.hiddenAt ? (

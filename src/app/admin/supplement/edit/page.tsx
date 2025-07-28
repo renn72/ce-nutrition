@@ -1,24 +1,25 @@
 'use client'
 
+import { api } from '@/trpc/react'
+
 import { useSearchParams } from 'next/navigation'
 
-import { api } from '@/trpc/react'
-import { FormIngredient } from '@/components/ingredients/form-ingredient'
-
+import { FormSupplement } from '@/components/supplements/form-supplement'
 
 export default function Home() {
+	const searchParams = useSearchParams()
+	const i = searchParams.get('ingredient')
 
-  const {data, isLoading} = api.ingredient.getAll.useQuery()
-  const searchParams = useSearchParams()
-  const i = searchParams.get('ingredient')
+	const { data, isLoading } = api.ingredient.getFullSupplement.useQuery({
+		id: Number(i),
+	})
 
-  const ingredient = data?.find((ingredient) => ingredient.id === Number(i))
+	if (isLoading) return null
+	if (!data) return null
 
-  if (isLoading) return null
-
-  return (
-    <div className='flex flex-col max-w-screen-lg mx-auto mt-10 px-2'>
-      <FormIngredient ingredient={ingredient} />
-    </div>
-  )
+	return (
+		<div className='flex flex-col max-w-screen-lg mx-auto mt-10 px-2'>
+			<FormSupplement supplement={data} />
+		</div>
+	)
 }

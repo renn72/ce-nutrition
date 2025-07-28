@@ -47,6 +47,8 @@ export const ingredient = createTable(
     ),
     isUserCreated: int('is_user_created', { mode: 'boolean' }).default(false),
     isSupplement: int('is_supplement', { mode: 'boolean' }).default(false),
+    isPrivate: int('is_private', { mode: 'boolean' }).default(false),
+    viewableBy: text('viewable_by'),
     notes: text('notes'),
   },
 )

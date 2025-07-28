@@ -9,8 +9,10 @@ import type { GetFullSupplementById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CircleX } from 'lucide-react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import type { z } from 'zod'
 
+import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import {
 	Form,
@@ -23,7 +25,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { toast } from 'sonner'
 
 import { BackButton } from '../back-button'
 import { fieldsMapWUnit as fieldsMap, formSchema } from './store'
@@ -39,20 +40,33 @@ const FormSupplement = ({
 	const ingredient = supplement
 	const ctx = api.useUtils()
 
-  const { mutate: createSupplement } = api.supplement.create.useMutation({
-    onSettled: () => {
-      ctx.supplement.invalidate()
-      form.reset()
-    },
-    onError: () => {
-      toast.error('error conflict')
-    },
-  })
+	const { mutate: createSupplement } = api.supplement.create.useMutation({
+		onSettled: () => {
+			ctx.supplement.invalidate()
+			form.reset()
+			toast.success('saved')
+		},
+		onError: () => {
+			toast.error('error conflict')
+		},
+	})
+
+	const { mutate: updateSupplement } = api.supplement.update.useMutation({
+		onSettled: () => {
+			ctx.supplement.invalidate()
+			toast.success('updated')
+		},
+		onError: () => {
+			toast.error('error conflict')
+		},
+	})
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: ingredient?.name || '',
+			isPrivate: ingredient?.isPrivate || false,
+			viewableBy: ingredient?.viewableBy || '',
 			serveSize: Number(ingredient?.serveSize) || 1,
 			serveUnit: ingredient?.serveUnit || 'gram',
 			caloriesWFibre: Number(ingredient?.caloriesWFibre) || 0,
@@ -327,8 +341,17 @@ const FormSupplement = ({
 		},
 	})
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
-    createSupplement(data)
-  }
+    console.log(data)
+		if (ingredient) {
+			updateSupplement({
+				id: ingredient.id,
+				...data,
+			})
+		} else {
+			createSupplement(data)
+		}
+	}
+  console.log(form.getValues('isPrivate'))
 
 	return (
 		<div className='flex flex-col gap-4'>
@@ -337,7 +360,7 @@ const FormSupplement = ({
 				<form onSubmit={form.handleSubmit(onSubmit)}>
 					<div className='flex flex-col gap-4'>
 						<div>
-							<Button type='submit'>Submit</Button>
+							<Button type='submit'>Save</Button>
 						</div>
 						<FormField
 							control={form.control}
@@ -392,6 +415,23 @@ const FormSupplement = ({
 								)}
 							/>
 						</div>
+						<FormField
+							control={form.control}
+							name='isPrivate'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Private</FormLabel>
+									<FormControl>
+										<Switch
+											checked={field.value}
+											onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<div className='mt-6'>This Part is not implemented yet</div>
 						<div className='flex gap-1 flex-col max-w-full'>
 							<Label>Search</Label>
 							<div className='flex gap-4 items-center'>
@@ -417,29 +457,27 @@ const FormSupplement = ({
 									f.name.toLowerCase().includes(search.toLowerCase()),
 								)
 								.map((f) => (
-										<FormField
-											key={f.field}
-											control={form.control}
-											// @ts-ignore
-											name={f.field}
-											render={({ field }) => field.value === null ? null : (
-												<FormItem>
-													<FormLabel>{`${f.name} (${f.unit})`}</FormLabel>
-													<FormControl>
-														<Input
-															placeholder={f.name}
-															{...field}
-															type='number'
-														/>
-													</FormControl>
-													<FormMessage />
-												</FormItem>
-											)}
-										/>
-									)
-								)}
+									<FormField
+										key={f.field}
+										control={form.control}
+										// @ts-ignore
+										name={f.field}
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>{`${f.name} (${f.unit})`}</FormLabel>
+												<FormControl>
+													<Input
+														placeholder={f.name}
+														{...field}
+														type='number'
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								))}
 						</div>
-
 					</div>
 				</form>
 			</Form>
