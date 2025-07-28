@@ -45,6 +45,7 @@ const createLog = async ({
 
 export const supplementsRouter = createTRPCRouter({
 	getAll: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session?.user?.id
 		const res = await ctx.db.query.ingredient.findMany({
 			where: (ingredient, { isNull, and, eq }) =>
 				and(
@@ -62,7 +63,17 @@ export const supplementsRouter = createTRPCRouter({
 			},
 			orderBy: [asc(ingredient.name)],
 		})
-		return res
+
+    const filterRes = res.filter((item) => {
+      if (item.isPrivate) {
+        if (item.userId === userId) return true
+        if (item.viewableBy?.split(',').includes(userId)) return true
+        return false
+      }
+      return true
+    })
+
+		return filterRes
 	}),
 	getSupplementFromDailyLog: protectedProcedure
 		.input(z.object({ id: z.number() }))

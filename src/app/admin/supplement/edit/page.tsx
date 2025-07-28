@@ -10,7 +10,7 @@ export default function Home() {
 	const searchParams = useSearchParams()
 	const i = searchParams.get('ingredient')
 
-	const { data, isLoading } = api.ingredient.getFullSupplement.useQuery({
+	const { data, isLoading } = api.supplement.getFullSupplement.useQuery({
 		id: Number(i),
 	})
 

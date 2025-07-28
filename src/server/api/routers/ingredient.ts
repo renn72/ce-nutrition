@@ -32,57 +32,6 @@ export const ingredientRouter = createTRPCRouter({
 		})
 		return res
 	}),
-	getAllSupplements: protectedProcedure.query(async ({ ctx }) => {
-		const res = await ctx.db.query.ingredient.findMany({
-			where: (ingredient, { isNull, and, eq }) =>
-					and(isNull(ingredient.hiddenAt), isNull(ingredient.deletedAt), eq(ingredient.isSupplement, true)),
-			with: {
-				user: {
-					columns: {
-						id: true,
-						name: true,
-					},
-				},
-			},
-			orderBy: [asc(ingredient.name)],
-		})
-		return res
-	}),
-	getFullSupplement: protectedProcedure
-		.input(z.object({ id: z.number() }))
-		.query(async ({ input, ctx }) => {
-			const res = await ctx.db.query.ingredient.findFirst({
-				where: (ingredient, { eq }) => eq(ingredient.id, input.id),
-				with: {
-          ingredientAdditionOne: true,
-          ingredientAdditionTwo: true,
-          ingredientAdditionThree: true,
-					user: {
-						columns: {
-							id: true,
-							name: true,
-						},
-					},
-				},
-			})
-			return res
-		}),
-	getSupplement: protectedProcedure
-		.input(z.object({ id: z.number() }))
-		.query(async ({ input, ctx }) => {
-			const res = await ctx.db.query.ingredient.findFirst({
-				where: (ingredient, { eq }) => eq(ingredient.id, input.id),
-				with: {
-					user: {
-						columns: {
-							id: true,
-							name: true,
-						},
-					},
-				},
-			})
-			return res
-		}),
 	getAllFav: protectedProcedure.query(async ({ ctx }) => {
 		const res = await ctx.db.query.ingredient.findMany({
 			where: (ingredient, { isNull, and, eq }) =>

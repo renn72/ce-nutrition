@@ -6,8 +6,7 @@ import { DataTable } from '@/components/supplements/data-table'
 import { DataTableSkeleton } from '@/components/table/data-table-skeleton'
 
 export default function Home() {
-	const { data, isLoading } = api.ingredient.getAllSupplements.useQuery()
-  console.log(data)
+	const { data, isLoading } = api.supplement.getAll.useQuery()
 	return (
 		<div className='flex min-h-screen flex-col items-center w-full px-2'>
 			{isLoading ? (

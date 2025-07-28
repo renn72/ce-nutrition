@@ -6,7 +6,7 @@ import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { formatDate } from '@/lib/utils'
 import type { GetSupplementById } from '@/types'
 import type { ColumnDef, SortingFn } from '@tanstack/react-table'
-import { Bookmark, FolderLock } from 'lucide-react'
+import { Bookmark, LockKeyhole } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -105,7 +105,6 @@ export const columns: ColumnDef<GetSupplementById>[] = [
 
       // @ts-ignore
 			const values = filterValue.split(' ').filter((v) => v !== '')
-			console.log(values)
 			let res = false
 			let i = 0
 			for (const value of values) {
@@ -166,10 +165,8 @@ export const columns: ColumnDef<GetSupplementById>[] = [
 		cell: ({ row }) => {
       const isPrivate = row.getValue('isPrivate') as boolean
 			return (
-				<div className='flex space-x-2'>
-					<span className='max-w-[100px] truncate font-medium'>
-						{isPrivate ? <FolderLock /> : ''}
-					</span>
+				<div className='flex space-x-2 justify-center text-fuchsia-800'>
+						{isPrivate ? <LockKeyhole size={18} strokeWidth={2.5} /> : ''}
 				</div>
 			)
 		},

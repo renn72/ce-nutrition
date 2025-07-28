@@ -1835,6 +1835,8 @@ export const fieldsMapWUnit = [
 
 export const updateSchema = z.object({
   id: z.number(),
+  isPrivate: z.boolean(),
+  viewableBy: z.string(),
 	name: z.string().min(1),
 	serveSize: z.number(),
 	serveUnit: z.string().min(1),
@@ -2045,6 +2047,8 @@ export const updateSchema = z.object({
 
 export const formSchema = z.object({
 	name: z.string().min(1),
+  isPrivate: z.boolean(),
+  viewableBy: z.string(),
 	serveSize: z.number(),
 	serveUnit: z.string().min(1),
 	caloriesWFibre: z.number(),
