@@ -84,9 +84,8 @@ export const columns: ColumnDef<GetSkinfoldById>[] = [
   {
     accessorKey: 'date',
     sortingFn: (a, b, c) => {
-      const aValue = a?.getValue('date')
-      const bValue = b?.getValue('date')
-      if (aValue === null || bValue === null) return 0
+      const aValue = a?.getValue('date') as string
+      const bValue = b?.getValue('date') as string
       return new Date(bValue).getTime() - new Date(aValue).getTime()
     },
     header: ({ column }) => (

@@ -12,8 +12,16 @@ import type {
 	GetUserById,
 } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
+
 import { Sheet, SheetStack } from '@silk-hq/components'
-import { ChevronDown, ListCollapse, LockIcon, Pill, Toilet, XIcon } from 'lucide-react'
+import {
+	ChevronDown,
+	ListCollapse,
+	LockIcon,
+	Pill,
+	Toilet,
+	XIcon,
+} from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -36,7 +44,6 @@ import {
 	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
@@ -46,12 +53,12 @@ import { DateSelect } from '@/components/date-select'
 import { SuppBottomSheet } from './supp-bottom-sheet'
 
 const formSchema = z.object({
-	name: z.string().min(1),
+	name: z.string().min(1, { message: 'name is required' }),
 	serveSize: z.number().positive(),
-	serveUnit: z.string().min(1),
+	serveUnit: z.string().min(1, { message: 'unit is required' }),
 	isPrivate: z.boolean(),
-	viewableBy: z.string().optional(),
-	stackId: z.number(),
+	viewableBy: z.string(),
+	stackId: z.string().min(1, { message: 'time is required' }),
 })
 
 const SuppUserCreate = ({ user }: { user: GetUserById }) => {
@@ -65,7 +72,7 @@ const SuppUserCreate = ({ user }: { user: GetUserById }) => {
 			serveUnit: '',
 			isPrivate: false,
 			viewableBy: '',
-			stackId: -1,
+			stackId: '',
 		},
 	})
 
@@ -85,6 +92,7 @@ const SuppUserCreate = ({ user }: { user: GetUserById }) => {
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
 		createSupplement({
 			...data,
+			stackId: Number(data.stackId),
 			userId: user.id,
 		})
 	}
@@ -179,8 +187,6 @@ const SuppUserCreate = ({ user }: { user: GetUserById }) => {
 																		className='w-full'
 																	/>
 																</FormControl>
-
-																<FormDescription />
 																<FormMessage />
 															</FormItem>
 														)}
@@ -198,9 +204,9 @@ const SuppUserCreate = ({ user }: { user: GetUserById }) => {
 																		variant='outline'
 																		type='single'
 																		className='w-full justify-start'
-																		value={field.value.toString()}
+																		value={field.value}
 																		onValueChange={(value) => {
-																			field.onChange(Number(value))
+																			field.onChange(value)
 																		}}
 																	>
 																		{user.supplementStacks.map((stack) => {
@@ -273,11 +279,12 @@ const SuppUser = ({ user }: { user: GetUserById }) => {
 	const [isOpen, setIsOpen] = useState(false)
 
 	const ctx = api.useUtils()
-  const { mutate: deleteSuppFromUser } = api.supplement.deleteFromUser.useMutation({
-    onSuccess: () => {
-      ctx.user.invalidate()
-    },
-  })
+	const { mutate: deleteSuppFromUser } =
+		api.supplement.deleteFromUser.useMutation({
+			onSuccess: () => {
+				ctx.user.invalidate()
+			},
+		})
 
 	return (
 		<div className='flex flex-col gap-0 w-full items-center'>
@@ -318,44 +325,58 @@ const SuppUser = ({ user }: { user: GetUserById }) => {
 									</div>
 								</div>
 								<ScrollArea className='pt-4 px-2 h-[calc(95vh-130px)]'>
-                  <div className='flex flex-col'>
-                    {
-                      user.supplementStacks.map((stack) => {
-                        const time = stack.time
-                        return (
-                          <div key={stack.id}>
-                            <div className={cn('text-base font-semibold',
-                              stack.supplements.filter((supp) => supp.supplement?.isUserCreated).length === 0 && 'hidden'
-                            )}>{time}</div>
-                            {stack.supplements.map((supp) => {
-                              if (!supp.supplement?.isUserCreated) return null
-                              console.log(supp)
-                              return (
-                                <div key={supp.id} className='bg-secondary rounded-full bg-secondary grid grid-cols-6 my-2 mx-2 p-2'>
-                                  <div className='text-sm truncate col-span-3 capitalize'>{supp.supplement?.name}</div>
-                                  <div className='text-sm truncate justify-self-end'>{supp.supplement?.serveSize}</div>
-                                  <div className='text-sm truncate pl-2'>{supp.supplement?.serveUnit}</div>
-                                  <XIcon
-                                    size={16}
-                                    strokeWidth={3}
-                                    className='text-red-500 justify-self-end'
-                                    onClick={() => {
-                                      deleteSuppFromUser({
-                                        suppId: supp.supplementId,
-                                        suppStackId: stack.id,
-                                      })
-                                    }}
-                                    />
-                                </div>
-                              )
-                            })}
-                          </div>
-                        )
-                      })
-                    }
-                  <div className='h-12'/>
-									<SuppUserCreate user={user} />
-                  </div>
+									<div className='flex flex-col'>
+										{user.supplementStacks.map((stack) => {
+											const time = stack.time
+											return (
+												<div key={stack.id}>
+													<div
+														className={cn(
+															'text-base font-semibold',
+															stack.supplements.filter(
+																(supp) => supp.supplement?.isUserCreated,
+															).length === 0 && 'hidden',
+														)}
+													>
+														{time}
+													</div>
+													{stack.supplements.map((supp) => {
+														if (!supp.supplement?.isUserCreated) return null
+														console.log(supp)
+														return (
+															<div
+																key={supp.id}
+																className='bg-secondary rounded-full bg-secondary grid grid-cols-6 my-2 mx-2 p-2'
+															>
+																<div className='text-sm truncate col-span-3 capitalize'>
+																	{supp.supplement?.name}
+																</div>
+																<div className='text-sm truncate justify-self-end'>
+																	{supp.supplement?.serveSize}
+																</div>
+																<div className='text-sm truncate pl-2'>
+																	{supp.supplement?.serveUnit}
+																</div>
+																<XIcon
+																	size={16}
+																	strokeWidth={3}
+																	className='text-red-500 justify-self-end'
+																	onClick={() => {
+																		deleteSuppFromUser({
+																			suppId: supp.supplementId,
+																			suppStackId: stack.id,
+																		})
+																	}}
+																/>
+															</div>
+														)
+													})}
+												</div>
+											)
+										})}
+										<div className='h-12' />
+										<SuppUserCreate user={user} />
+									</div>
 								</ScrollArea>
 								<Sheet.Trigger
 									className='w-full flex justify-center'
@@ -474,7 +495,9 @@ const Supp = ({
 					isTaken ? 'bg-accent' : 'bg-card',
 				)}
 			>
-				<div className='col-span-4 truncate capitalize'>{supp.supplement?.name}</div>
+				<div className='col-span-4 truncate capitalize'>
+					{supp.supplement?.name}
+				</div>
 				<div className='place-self-end'>{supp.size}</div>
 				<div className='place-self-start truncate'>{supp.unit}</div>
 				{isTaken && takenSupplement ? (
