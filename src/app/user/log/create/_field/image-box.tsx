@@ -136,9 +136,14 @@ const ImageTake = ({
 							onUploadBegin={() => {
 								setIsUploading(true)
 							}}
-							onUploadError={() => {
+							onUploadError={(e) => {
 								setIsUploading(false)
-								toast.error('error')
+                console.log({e})
+                if (e.cause?.cause?.message === 'Invalid config: FileSizeMismatch') {
+                  toast.error('File size exceeds limit')
+                  return
+                }
+								toast.error('error', e?.cause?.cause?.message)
 							}}
 							onBeforeUploadBegin={(files) => {
 								setIsUploading(true)
