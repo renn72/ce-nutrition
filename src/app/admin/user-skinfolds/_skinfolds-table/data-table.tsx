@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 
 import type { GetUserSkinfolds } from '@/types'
 import {
-  ColumnFiltersState,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -14,9 +14,9 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
+  type SortingState,
   useReactTable,
-  VisibilityState,
+  type VisibilityState,
 } from '@tanstack/react-table'
 
 import {

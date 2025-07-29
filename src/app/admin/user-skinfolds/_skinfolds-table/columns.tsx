@@ -7,7 +7,7 @@ import {
 
 import { formatDate } from '@/lib/utils'
 import type { GetSkinfoldById } from '@/types'
-import { ColumnDef, SortingFn } from '@tanstack/react-table'
+import type  { ColumnDef, SortingFn } from '@tanstack/react-table'
 
 import { formulaOne } from '../utils'
 
@@ -84,8 +84,10 @@ export const columns: ColumnDef<GetSkinfoldById>[] = [
   {
     accessorKey: 'date',
     sortingFn: (a, b, c) => {
-      if (a === null || b === null) return 0
-      return new Date(b).getTime() - new Date(a).getTime()
+      const aValue = a?.getValue('date')
+      const bValue = b?.getValue('date')
+      if (aValue === null || bValue === null) return 0
+      return new Date(bValue).getTime() - new Date(aValue).getTime()
     },
     header: ({ column }) => (
       <DataTableColumnHeader
