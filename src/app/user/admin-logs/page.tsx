@@ -19,12 +19,15 @@ import { Switch } from '@/components/ui/switch'
 export default function AdminLogs() {
 	const [isHideMe, setIsHideMe] = useState(false)
 	const [filter, setFilter] = useState('')
+  const [userFilter, setUserFilter] = useState('')
 	const ctx = api.useUtils()
 	const { data: logs } = api.user.getAdminLogs.useQuery(undefined, {
-		refetchInterval: 1000 * 60 * 5,
+		refetchInterval: 1000 * 60 * 15,
 	})
 
 	const isMobile = useClientMediaQuery('(max-width: 600px)')
+
+  console.log(logs)
 
 	return (
 		<div className='flex flex-col gap-0 my-16 px-1 w-full tracking-tight md:tracking-normal '>
@@ -43,6 +46,14 @@ export default function AdminLogs() {
 					placeholder='filter'
 					className='w-48'
 				/>
+				<Input
+					value={userFilter}
+					onChange={(e) => {
+						setUserFilter(e.target.value)
+					}}
+					placeholder='user filter'
+					className='w-48'
+				/>
 				<RefreshCcw
 					size={20}
 					className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer'
@@ -58,6 +69,7 @@ export default function AdminLogs() {
 					return true
 				})
 				.filter((log) => log.task?.toLowerCase().includes(filter.toLowerCase()))
+				.filter((log) => log.user?.toLowerCase().includes(userFilter.toLowerCase()))
 				.map((log) => (
 					<Collapsible key={log.id}>
 						<CollapsibleTrigger asChild>
