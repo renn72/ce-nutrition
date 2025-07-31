@@ -9,6 +9,8 @@
     "moduleDetection": "force",
     "isolatedModules": true,
 
+    // "disableSourceOfProjectReferenceRedirect": true,
+
     /* Strictness */
     "strict": true,
     "noUncheckedIndexedAccess": true,

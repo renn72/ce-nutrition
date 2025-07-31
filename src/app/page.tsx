@@ -7,9 +7,9 @@ import { useEffect, useState } from 'react'
 import { impersonatedUserAtom } from '@/atoms'
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
-import type { GetUserById } from '@/types'
+import type { GetUserById, } from '@/types'
 import { useAtom } from 'jotai'
-import { Pill, XIcon } from 'lucide-react'
+import { XIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
@@ -20,10 +20,10 @@ import { MobileFooter } from '@/components/layout/mobile-footer'
 import { MobileHeader } from '@/components/layout/mobile-header'
 import { MealLog } from '@/components/meal-log/meal-log'
 import { PoopLog } from '@/components/poop-log/poop-log'
+import { SuppLog } from '@/components/supp-log/supp-log'
 import { WaterLog } from '@/components/water-log/water-log'
 
 import DailyLogCarousel from './_components/dailylog-carousel'
-import { SuppLog } from '@/components/supp-log/supp-log'
 
 export const dynamic = 'force-dynamic'
 
@@ -52,7 +52,7 @@ const Mobile = ({
 	})
 
 	const dailyLog = dailyLogs?.find(
-		(dailyLog) => dailyLog.date === new Date().toDateString(),
+		(log) => log.date === new Date().toDateString(),
 	)
 
 	useEffect(() => {
@@ -67,9 +67,7 @@ const Mobile = ({
 						userId: currentUser.id,
 					})
 				}, 200)
-			} catch (err) {
-				// toast.error('error', err.message)
-			}
+			} catch (_err) {}
 		}
 	}, [dailyLogs])
 
@@ -106,7 +104,9 @@ const Mobile = ({
 								settingsId={currentUser.settings.id}
 							/>
 							<MealLog dailyLogs={dailyLogs} currentUser={currentUser} />
-							{isSupplements ? <SuppLog userId={userId} dailyLogs={dailyLogs} /> : null}
+							{isSupplements ? (
+								<SuppLog userId={userId} dailyLogs={dailyLogs} />
+							) : null}
 							<PoopLog userId={userId} dailyLogs={dailyLogs} />
 						</div>
 					</CardContent>

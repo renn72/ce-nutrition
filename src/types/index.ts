@@ -1,4 +1,4 @@
-import { type SQL } from "drizzle-orm"
+import type {  SQL } from "drizzle-orm"
 
 export interface SearchParams {
   [key: string]: string | string[] | undefined
@@ -44,9 +44,9 @@ type RouterOutputs = inferRouterOutputs<typeof appRouter>
 export type GetAllIngredients = RouterOutputs['ingredient']['getAll']
 export type GetIngredientById = RouterOutputs['ingredient']['get']
 
-export type GetAllSupplements = RouterOutputs['ingredient']['getAllSupplements']
-export type GetSupplementById = RouterOutputs['ingredient']['getSupplement']
-export type GetFullSupplementById = RouterOutputs['ingredient']['getFullSupplement']
+export type GetAllSupplements = RouterOutputs['supplement']['getAll']
+export type GetSupplementById = RouterOutputs['supplement']['getSupplement']
+export type GetFullSupplementById = RouterOutputs['supplement']['getFullSupplement']
 
 export type GetAllGroceryStores = RouterOutputs['groceryStore']['getAll']
 export type GetGroceryStoreById = RouterOutputs['groceryStore']['get']

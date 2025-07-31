@@ -10,7 +10,7 @@
 import { env } from '@/env'
 import { auth } from '@/server/auth'
 import { db } from '@/server/db'
-import { logNew } from '@/server/db/schema/log'
+// import { logNew } from '@/server/db/schema/log'
 import { initTRPC, TRPCError } from '@trpc/server'
 import superjson from 'superjson'
 import { ZodError } from 'zod'
