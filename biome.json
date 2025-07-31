@@ -34,7 +34,8 @@
 			},
 			"a11y": {
 				"useKeyWithClickEvents": "off",
-				"useSemanticElements": "off"
+				"useSemanticElements": "off",
+        "noStaticElementInteractions": "off"
 			},
 			"correctness": {
 				"useExhaustiveDependencies": "off"

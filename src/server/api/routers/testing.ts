@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs'
 
 import { db } from '@/server/db'
-import { schema } from '@/server/db/index'
+import * as schema from '@/server/db/schema'
 import {
   groceryStore,
   ingredient,

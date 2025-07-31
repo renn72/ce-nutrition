@@ -16,10 +16,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Sheet, SheetStack } from '@silk-hq/components'
 import {
 	ChevronDown,
-	ListCollapse,
 	LockIcon,
 	Pill,
-	Toilet,
 	XIcon,
 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -414,14 +412,12 @@ const Supp = ({
 		onSuccess: () => {
 			ctx.dailyLog.invalidate()
 		},
-		onError: (err) => {},
 	})
 	const { mutate: unLogSupplement } =
 		api.supplement.unLogSupplement.useMutation({
 			onSuccess: () => {
 				ctx.dailyLog.invalidate()
 			},
-			onError: (err) => {},
 		})
 
 	const [isTaken, setIsTaken] = useState(() =>
@@ -478,6 +474,8 @@ const Supp = ({
 
 	const isPrivateAndUser =
 		supp?.supplement?.isPrivate && supp?.supplement?.isUserCreated
+	const isUser =
+		supp?.supplement?.isUserCreated
 
 	if (!supp) return null
 	return (
@@ -485,6 +483,8 @@ const Supp = ({
 			className={cn(
 				' px-1 py-1 rounded-full border active:shadow-none active:inset-shadow-sm text-sm',
 				isTaken ? 'inset-shadow-sm bg-backound' : 'bg-background shadow-md',
+        isUser ? 'bg-yellow-300/50' : '',
+        isUser && isTaken ? 'bg-yellow-400/60' : '',
 			)}
 			key={supp.id}
 			onClick={handleClick}
