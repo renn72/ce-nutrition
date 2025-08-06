@@ -4,10 +4,11 @@ import { api } from '@/trpc/react'
 
 import { UserCharts } from '@/components/charts/user-charts'
 
+import { UserDailyLogsTable } from './user-daily-logs-table'
 import { UserGoals } from './user-goals'
+import { UserMeals } from './user-meals'
 import { UserNotes } from './user-notes'
 import { UserWeight } from './user-weight'
-import { UserMeals } from './user-meals'
 
 const UserInfo = ({ userId }: { userId: string }) => {
 	const { data: user } = api.user.get.useQuery(userId)
@@ -24,17 +25,20 @@ const UserInfo = ({ userId }: { userId: string }) => {
 	if (userNotesLoading) return null
 
 	return (
-		<div className="p-4 flex flex-wrap gap-4 w-full">
+		<div className='p-4 flex flex-wrap gap-4 w-full'>
 			<UserWeight user={user} dailyLogs={dailyLogs} />
 			<UserGoals user={user} userGoals={userGoals} />
-			<div className="w-[616px]">
-			<UserNotes user={user} userNotes={userNotes} />
+			<div className='w-[616px]'>
+				<UserNotes user={user} userNotes={userNotes} />
 			</div>
-			<div className="w-[616px]">
+			<div className='w-[616px]'>
 				<UserCharts dailyLogs={dailyLogs} currentUser={user} />
 			</div>
-			<div className="w-[616px]">
+			<div className='w-[616px]'>
 				<UserMeals dailyLogs={dailyLogs} currentUser={user} />
+			</div>
+			<div className='w-full'>
+				<UserDailyLogsTable dailyLogs={dailyLogs} />
 			</div>
 		</div>
 	)
