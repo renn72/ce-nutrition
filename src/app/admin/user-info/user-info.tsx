@@ -37,7 +37,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
 			<div className="w-[616px]">
 				<UserNotes user={user} userNotes={userNotes} />
 			</div>
-			<div className="w-[616px]">
+			<div className="w-[924px]">
 				<UserCharts dailyLogs={dailyLogs} currentUser={user} />
 			</div>
 			<div className="w-[616px]">

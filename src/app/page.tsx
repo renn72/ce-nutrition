@@ -25,6 +25,16 @@ import { WaterLog } from '@/components/water-log/water-log'
 
 import DailyLogCarousel from './_components/dailylog-carousel'
 
+
+import { UserCurrentPlan } from '@/app/admin/user-info/user-current-plan'
+import { UserDailyLogsTable } from '@/app/admin/user-info/user-daily-logs-table'
+import { UserGoals } from '@/app/admin/user-info/user-goals'
+import { UserMeals } from '@/app/admin/user-info/user-meals'
+import { UserSupplementPlan } from '@/app/admin/user-info/user-supplement-plan'
+import { UserRecentMetrics } from '@/app/admin/user-info/user-recent-metrics'
+import { UserWeight } from '@/app/admin/user-info/user-weight'
+
+
 export const dynamic = 'force-dynamic'
 
 const Mobile = ({
@@ -125,9 +135,31 @@ const Desktop = ({
 	userId: string
 	currentUser: GetUserById
 }) => {
+	const { data: user } = api.user.get.useQuery(userId)
+	const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId)
+	const { data: userGoals, isLoading: userGoalsLoading } =
+		api.goal.getUser.useQuery({ userId: userId })
+
+	if (!user) return null
+	if (!dailyLogs) return null
+	if (userGoalsLoading) return null
+
 	return (
-		<div className='flex flex-col items-center gap-2 '>
-			<Mobile userId={userId} currentUser={currentUser} />
+		<div className="p-4 flex flex-wrap gap-4 w-full">
+			<UserWeight user={user} dailyLogs={dailyLogs} />
+			<UserGoals user={user} userGoals={userGoals} />
+			<UserCurrentPlan user={user} />
+			<UserSupplementPlan user={user} />
+			<UserRecentMetrics user={user} />
+			<div className="w-[924px]">
+				<UserCharts dailyLogs={dailyLogs} currentUser={user} />
+			</div>
+			<div className="w-[616px]">
+				<UserMeals dailyLogs={dailyLogs} currentUser={user} />
+			</div>
+			<div className="w-full">
+				<UserDailyLogsTable dailyLogs={dailyLogs} />
+			</div>
 		</div>
 	)
 }
