@@ -19326,6 +19326,142 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             meta: object;
         }>;
     }>>;
+    trainerNotes: _trpc_server.TRPCBuiltRouter<{
+        ctx: {
+            headers: Headers;
+            db: drizzle_orm_libsql.LibSQLDatabase<typeof ______db_schema> & {
+                $client: _libsql_client.Client;
+            };
+            session: next_auth.Session | null;
+        };
+        meta: object;
+        errorShape: {
+            data: {
+                zodError: zod.ZodFlattenedError<unknown, string> | null;
+                code: _trpc_server.TRPC_ERROR_CODE_KEY;
+                httpStatus: number;
+                path?: string;
+                stack?: string;
+            };
+            message: string;
+            code: _trpc_server.TRPC_ERROR_CODE_NUMBER;
+        };
+        transformer: true;
+    }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        getAllUser: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                id: number;
+                createdAt: Date;
+                updatedAt: Date | null;
+                description: string | null;
+                userId: string;
+                title: string | null;
+                trainerId: string;
+                state: string | null;
+                trainer: {
+                    id: string;
+                    name: string | null;
+                    firstName: string | null;
+                    lastName: string | null;
+                    clerkId: string | null;
+                    birthDate: Date | null;
+                    gender: string | null;
+                    address: string | null;
+                    notes: string | null;
+                    instagram: string | null;
+                    openLifter: string | null;
+                    phone: string | null;
+                    email: string | null;
+                    emailVerified: Date | null;
+                    password: string | null;
+                    currentPlanId: number | null;
+                    image: string | null;
+                    isFake: boolean | null;
+                    isTrainer: boolean | null;
+                    isRoot: boolean | null;
+                    isCreator: boolean | null;
+                    isAllTrainers: boolean | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                };
+            }[];
+            meta: object;
+        }>;
+        get: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                id: number;
+            };
+            output: {
+                id: number;
+                createdAt: Date;
+                updatedAt: Date | null;
+                description: string | null;
+                userId: string;
+                title: string | null;
+                trainerId: string;
+                state: string | null;
+                trainer: {
+                    id: string;
+                    name: string | null;
+                    firstName: string | null;
+                    lastName: string | null;
+                    clerkId: string | null;
+                    birthDate: Date | null;
+                    gender: string | null;
+                    address: string | null;
+                    notes: string | null;
+                    instagram: string | null;
+                    openLifter: string | null;
+                    phone: string | null;
+                    email: string | null;
+                    emailVerified: Date | null;
+                    password: string | null;
+                    currentPlanId: number | null;
+                    image: string | null;
+                    isFake: boolean | null;
+                    isTrainer: boolean | null;
+                    isRoot: boolean | null;
+                    isCreator: boolean | null;
+                    isAllTrainers: boolean | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                };
+            } | undefined;
+            meta: object;
+        }>;
+        create: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                title: string;
+                description: string;
+                state: string;
+            };
+            output: {
+                id: number;
+            }[];
+            meta: object;
+        }>;
+        update: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+                title: string;
+                description: string;
+                state: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        delete: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+    }>>;
 }>>;
 type AppRouter = typeof appRouter;
 /**
@@ -25599,6 +25735,142 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             output: {
                 id: number;
             }[];
+            meta: object;
+        }>;
+    }>>;
+    trainerNotes: _trpc_server.TRPCBuiltRouter<{
+        ctx: {
+            headers: Headers;
+            db: drizzle_orm_libsql.LibSQLDatabase<typeof ______db_schema> & {
+                $client: _libsql_client.Client;
+            };
+            session: next_auth.Session | null;
+        };
+        meta: object;
+        errorShape: {
+            data: {
+                zodError: zod.ZodFlattenedError<unknown, string> | null;
+                code: _trpc_server.TRPC_ERROR_CODE_KEY;
+                httpStatus: number;
+                path?: string;
+                stack?: string;
+            };
+            message: string;
+            code: _trpc_server.TRPC_ERROR_CODE_NUMBER;
+        };
+        transformer: true;
+    }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        getAllUser: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                id: number;
+                createdAt: Date;
+                updatedAt: Date | null;
+                description: string | null;
+                userId: string;
+                title: string | null;
+                trainerId: string;
+                state: string | null;
+                trainer: {
+                    id: string;
+                    name: string | null;
+                    firstName: string | null;
+                    lastName: string | null;
+                    clerkId: string | null;
+                    birthDate: Date | null;
+                    gender: string | null;
+                    address: string | null;
+                    notes: string | null;
+                    instagram: string | null;
+                    openLifter: string | null;
+                    phone: string | null;
+                    email: string | null;
+                    emailVerified: Date | null;
+                    password: string | null;
+                    currentPlanId: number | null;
+                    image: string | null;
+                    isFake: boolean | null;
+                    isTrainer: boolean | null;
+                    isRoot: boolean | null;
+                    isCreator: boolean | null;
+                    isAllTrainers: boolean | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                };
+            }[];
+            meta: object;
+        }>;
+        get: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                id: number;
+            };
+            output: {
+                id: number;
+                createdAt: Date;
+                updatedAt: Date | null;
+                description: string | null;
+                userId: string;
+                title: string | null;
+                trainerId: string;
+                state: string | null;
+                trainer: {
+                    id: string;
+                    name: string | null;
+                    firstName: string | null;
+                    lastName: string | null;
+                    clerkId: string | null;
+                    birthDate: Date | null;
+                    gender: string | null;
+                    address: string | null;
+                    notes: string | null;
+                    instagram: string | null;
+                    openLifter: string | null;
+                    phone: string | null;
+                    email: string | null;
+                    emailVerified: Date | null;
+                    password: string | null;
+                    currentPlanId: number | null;
+                    image: string | null;
+                    isFake: boolean | null;
+                    isTrainer: boolean | null;
+                    isRoot: boolean | null;
+                    isCreator: boolean | null;
+                    isAllTrainers: boolean | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                };
+            } | undefined;
+            meta: object;
+        }>;
+        create: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                title: string;
+                description: string;
+                state: string;
+            };
+            output: {
+                id: number;
+            }[];
+            meta: object;
+        }>;
+        update: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+                title: string;
+                description: string;
+                state: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        delete: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
             meta: object;
         }>;
     }>>;

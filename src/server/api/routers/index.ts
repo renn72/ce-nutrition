@@ -16,6 +16,7 @@ import { tagRouter } from '@/server/api/routers/tag'
 import { goalsRouter } from '@/server/api/routers/goals'
 import { trainerRouter } from '@/server/api/routers/trainer'
 import { supplementsRouter } from '@/server/api/routers/supplements'
+import { trainerNotesRouter } from '@/server/api/routers/trainer-notes'
 
 import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc'
 
@@ -43,6 +44,7 @@ export const appRouter = createTRPCRouter({
   metrics: metricsRouter,
   trainer: trainerRouter,
   supplement: supplementsRouter,
+  trainerNotes: trainerNotesRouter,
 })
 
 // export type definition of API

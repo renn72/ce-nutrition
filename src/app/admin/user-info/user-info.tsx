@@ -5,6 +5,7 @@ import { api } from '@/trpc/react'
 import { UserCharts } from '@/components/charts/user-charts'
 
 import { UserGoals } from './user-goals'
+import { UserNotes } from './user-notes'
 import { UserWeight } from './user-weight'
 import { UserMeals } from './user-meals'
 
@@ -14,14 +15,21 @@ const UserInfo = ({ userId }: { userId: string }) => {
 	const { data: userGoals, isLoading: userGoalsLoading } =
 		api.goal.getUser.useQuery({ userId: userId })
 
+	const { data: userNotes, isLoading: userNotesLoading } =
+		api.trainerNotes.getAllUser.useQuery({ userId: userId })
+
 	if (!user) return null
 	if (!dailyLogs) return null
 	if (userGoalsLoading) return null
+	if (userNotesLoading) return null
 
 	return (
 		<div className="p-4 flex flex-wrap gap-4 w-full">
 			<UserWeight user={user} dailyLogs={dailyLogs} />
 			<UserGoals user={user} userGoals={userGoals} />
+			<div className="w-[616px]">
+			<UserNotes user={user} userNotes={userNotes} />
+			</div>
 			<div className="w-[616px]">
 				<UserCharts dailyLogs={dailyLogs} currentUser={user} />
 			</div>

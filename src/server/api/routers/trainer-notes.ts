@@ -1,22 +1,28 @@
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
-import { goals } from '~/server/db/schema/user'
+import { trainerNotes } from '~/server/db/schema/user'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 
-export const goalsRouter = createTRPCRouter({
-	getUser: protectedProcedure
+export const trainerNotesRouter = createTRPCRouter({
+	getAllUser: protectedProcedure
 		.input(z.object({ userId: z.string() }))
 		.query(async ({ ctx, input }) => {
-			const res = await ctx.db.query.goals.findMany({
-				where: (goal, { eq }) => eq(goal.userId, input.userId),
+			const res = await ctx.db.query.trainerNotes.findMany({
+				where: (note, { eq }) => eq(note.userId, input.userId),
+				with: {
+					trainer: true,
+				},
 			})
 			return res
 		}),
 	get: protectedProcedure
 		.input(z.object({ id: z.number() }))
 		.query(async ({ ctx, input }) => {
-			const res = await ctx.db.query.goals.findFirst({
-				where: (goal, { eq }) => eq(goal.id, input.id),
+			const res = await ctx.db.query.trainerNotes.findFirst({
+				where: (note, { eq }) => eq(note.id, input.id),
+				with: {
+					trainer: true,
+				},
 			})
 			return res
 		}),
@@ -32,15 +38,15 @@ export const goalsRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			const trainerId = ctx.session?.user.id
 			const res = await ctx.db
-				.insert(goals)
+				.insert(trainerNotes)
 				.values({
 					userId: input.userId,
 					title: input.title,
 					description: input.description,
-					state: input.state,
+					state: 'created',
 					trainerId: trainerId,
 				})
-				.returning({ id: goals.id })
+				.returning({ id: trainerNotes.id })
 			return res
 		}),
 	update: protectedProcedure
@@ -54,19 +60,21 @@ export const goalsRouter = createTRPCRouter({
 		)
 		.mutation(async ({ ctx, input }) => {
 			const res = await ctx.db
-				.update(goals)
+				.update(trainerNotes)
 				.set({
 					title: input.title,
 					description: input.description,
 					state: input.state,
 				})
-				.where(eq(goals.id, input.id))
+				.where(eq(trainerNotes.id, input.id))
 			return res
 		}),
 	delete: protectedProcedure
 		.input(z.object({ id: z.number() }))
 		.mutation(async ({ ctx, input }) => {
-			const res = await ctx.db.delete(goals).where(eq(goals.id, input.id))
+			const res = await ctx.db
+				.delete(trainerNotes)
+				.where(eq(trainerNotes.id, input.id))
 			return res
 		}),
 })

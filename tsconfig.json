@@ -28,7 +28,7 @@
         "name": "next"
       }
     ],
-    // "incremental": true,
+    "incremental": true,
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
@@ -38,8 +38,7 @@
       "~/*": [
         "./src/*"
       ]
-    },
-    "incremental": true
+    }
   },
   "include": [
     ".eslintrc.cjs",

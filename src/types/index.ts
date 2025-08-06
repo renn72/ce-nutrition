@@ -84,3 +84,6 @@ export type GetSkinfoldById = RouterOutputs['metrics']['getSkinfold']
 export type GetUserSkinfolds = RouterOutputs['metrics']['getUserSkinfolds']
 
 export type GetSupplementFromStack = RouterOutputs['supplement']['getSuppFromPlan']
+
+export type GetAllTrainerNotes = RouterOutputs['trainerNotes']['getAllUser']
+export type GetTrainerNoteById = RouterOutputs['trainerNotes']['get']
