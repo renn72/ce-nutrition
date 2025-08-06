@@ -144,7 +144,7 @@ const Desktop = ({
 
 	return (
 		<div className='p-4 flex flex-wrap gap-4 w-full relative'>
-      <div className='absolute top-1 right-1'>
+      <div className='absolute top-1 right-1 z-100'>
       <User />
       </div>
 			<UserWeight user={user} dailyLogs={dailyLogs} />
