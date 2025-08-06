@@ -4,10 +4,17 @@ import { api } from '@/trpc/react'
 
 import { useEffect, useState } from 'react'
 
+import { UserCurrentPlan } from '@/app/admin/user-info/user-current-plan'
+import { UserDailyLogsTable } from '@/app/admin/user-info/user-daily-logs-table'
+import { UserGoals } from '@/app/admin/user-info/user-goals'
+import { UserMeals } from '@/app/admin/user-info/user-meals'
+import { UserRecentMetrics } from '@/app/admin/user-info/user-recent-metrics'
+import { UserSupplementPlan } from '@/app/admin/user-info/user-supplement-plan'
+import { UserWeight } from '@/app/admin/user-info/user-weight'
 import { impersonatedUserAtom } from '@/atoms'
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
-import type { GetUserById, } from '@/types'
+import type { GetUserById } from '@/types'
 import { useAtom } from 'jotai'
 import { XIcon } from 'lucide-react'
 import { toast } from 'sonner'
@@ -24,16 +31,7 @@ import { SuppLog } from '@/components/supp-log/supp-log'
 import { WaterLog } from '@/components/water-log/water-log'
 
 import DailyLogCarousel from './_components/dailylog-carousel'
-
-
-import { UserCurrentPlan } from '@/app/admin/user-info/user-current-plan'
-import { UserDailyLogsTable } from '@/app/admin/user-info/user-daily-logs-table'
-import { UserGoals } from '@/app/admin/user-info/user-goals'
-import { UserMeals } from '@/app/admin/user-info/user-meals'
-import { UserSupplementPlan } from '@/app/admin/user-info/user-supplement-plan'
-import { UserRecentMetrics } from '@/app/admin/user-info/user-recent-metrics'
-import { UserWeight } from '@/app/admin/user-info/user-weight'
-
+import { User } from '@/components/auth/user'
 
 export const dynamic = 'force-dynamic'
 
@@ -145,19 +143,22 @@ const Desktop = ({
 	if (userGoalsLoading) return null
 
 	return (
-		<div className="p-4 flex flex-wrap gap-4 w-full">
+		<div className='p-4 flex flex-wrap gap-4 w-full relative'>
+      <div className='absolute top-1 right-1'>
+      <User />
+      </div>
 			<UserWeight user={user} dailyLogs={dailyLogs} />
 			<UserGoals user={user} userGoals={userGoals} />
 			<UserCurrentPlan user={user} />
 			<UserSupplementPlan user={user} />
 			<UserRecentMetrics user={user} />
-			<div className="w-[924px]">
+			<div className='w-[924px]'>
 				<UserCharts dailyLogs={dailyLogs} currentUser={user} />
 			</div>
-			<div className="w-[616px]">
+			<div className='w-[616px]'>
 				<UserMeals dailyLogs={dailyLogs} currentUser={user} />
 			</div>
-			<div className="w-full">
+			<div className='w-full'>
 				<UserDailyLogsTable dailyLogs={dailyLogs} />
 			</div>
 		</div>
