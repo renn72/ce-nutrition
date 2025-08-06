@@ -43,8 +43,8 @@ const UserCurrentPlan = ({ user }: { user: GetUserById }) => {
 						</CardHeader>
 						<CardContent className='px-0 py-0'>
               <div className='flex justify-between items-center'>
-                <p className='text-sm'>{cals} cals</p>
-                <p className='text-sm'>{protein}g protein</p>
+                <p className='text-sm'>{cals.toFixed(0)} cals</p>
+                <p className='text-sm'>{protein.toFixed(1)} g</p>
                 <p className='text-sm'>{numMeals} meals</p>
               </div>
 						</CardContent>

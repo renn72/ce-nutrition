@@ -9,6 +9,8 @@ import { UserDailyLogsTable } from './user-daily-logs-table'
 import { UserGoals } from './user-goals'
 import { UserMeals } from './user-meals'
 import { UserNotes } from './user-notes'
+import { UserSupplementPlan } from './user-supplement-plan'
+import { UserRecentMetrics } from './user-recent-metrics'
 import { UserWeight } from './user-weight'
 
 const UserInfo = ({ userId }: { userId: string }) => {
@@ -30,6 +32,8 @@ const UserInfo = ({ userId }: { userId: string }) => {
 			<UserWeight user={user} dailyLogs={dailyLogs} />
 			<UserGoals user={user} userGoals={userGoals} />
 			<UserCurrentPlan user={user} />
+			<UserSupplementPlan user={user} />
+			<UserRecentMetrics user={user} />
 			<div className="w-[616px]">
 				<UserNotes user={user} userNotes={userNotes} />
 			</div>

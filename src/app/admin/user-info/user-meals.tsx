@@ -34,7 +34,7 @@ const UserMeals = ({
 		(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
 	)
 
-	console.log('logs', logs)
+	
 
 	return (
 		<div className='border rounded-lg p-2 w-full max-h-[450px] min-h-[300px]'>

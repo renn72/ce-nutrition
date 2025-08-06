@@ -78,7 +78,7 @@ const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
   if (currentUserLoading) return null
   if (!currentUser) return null
 
-	console.log('selected', selected)
+	
 
 	return (
 		<Card className='min-w-[400px]'>
