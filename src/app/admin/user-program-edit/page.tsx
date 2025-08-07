@@ -6,13 +6,11 @@ import { useSearchParams } from 'next/navigation'
 
 import { CreateUserPlan } from '@/components/user-plan/create-user-plan'
 
-const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic'
 
 const EditUserPlan = ({
-  userId,
   userPlanId,
 }: {
-  userId: string
   userPlanId: string
 }) => {
   const { data: userPlan, isLoading: isLoadingUserPlan } =
@@ -21,8 +19,6 @@ const EditUserPlan = ({
   if (isLoadingUserPlan) return null
 
   if (!userPlan) return null
-
-  console.log('userPlan', userPlan)
 
   return (
     <div className='flex flex-col max-w-7xl w-full mx-auto mt-0'>
@@ -48,7 +44,6 @@ export default function Home() {
 
   return (
     <EditUserPlan
-      userId={userId}
       userPlanId={userPlanId}
     />
   )

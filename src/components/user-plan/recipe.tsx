@@ -6,7 +6,12 @@ import { useEffect, useState } from 'react'
 
 import { cn, getRecipeDetailsForUserPlan } from '@/lib/utils'
 import type { GetIngredientById, GetPlanById } from '@/types'
-import { CircleMinus, CirclePlus, XCircle } from 'lucide-react'
+import {
+	CircleMinus,
+	CirclePlus,
+	EllipsisVertical,
+	XCircle,
+} from 'lucide-react'
 import {
 	useFieldArray,
 	type UseFieldArrayReturn,
@@ -25,6 +30,14 @@ import {
 	DialogTrigger,
 } from '@/components/ui/dialog'
 import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import {
 	FormControl,
 	FormField,
 	FormItem,
@@ -38,26 +51,36 @@ import type { formSchema } from './create-user-plan'
 export const dynamic = 'force-dynamic'
 
 const Ingredient = ({
-	ingredient,
 	form,
 	ingredientIndex,
 	recipeIndex,
 	mealIndex,
-	plan,
-  ingredientsSize,
+	ingredientsSize,
 	setIngredientsSize,
 	ingredientsField,
 }: {
-	ingredient: any
 	form: UseFormReturn<z.infer<typeof formSchema>>
 	ingredientIndex: number
 	recipeIndex: number
 	mealIndex: number
-	plan: GetPlanById
 	setIngredientsSize: React.Dispatch<React.SetStateAction<number[]>>
-  ingredientsSize: number[]
+	ingredientsSize: number[]
 	ingredientsField: UseFieldArrayReturn<z.infer<typeof formSchema>['meals']>
 }) => {
+  const ingredient  = form.watch(`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}`)
+
+	const [isOpen, setIsOpen] = useState(false)
+	const [selected, setSelected] = useState<string | null>(null)
+	const [selectedAlt, setSelectedAlt] = useState<string | null>(null)
+
+  useEffect(() => {
+    setSelected(ingredient?.ingredientId)
+    setSelectedAlt(ingredient?.alternateId)
+    console.log('ingredient', ingredient)
+  }, [ingredient])
+
+	const { data: allIngredients } = api.ingredient.getAll.useQuery()
+
 	const size = form.watch(
 		`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.serveSize`,
 	)
@@ -74,11 +97,12 @@ const Ingredient = ({
 
 	const ratio = Number(size) / Number(ingredient?.ingredient?.serveSize)
 
+
 	return (
 		<div className='flex flex-col gap-1'>
 			<div className='grid md:grid-cols-10 grid-cols-8 md:gap-1 text-muted-foreground items-center relative'>
 				<div className='md:col-span-4 col-span-2 md:ml-2'>
-					{ingredient.ingredient.name}
+					{ingredient?.name}
 				</div>
 				<FormField
 					control={form.control}
@@ -131,17 +155,155 @@ const Ingredient = ({
 					).toFixed(1)}
 				</div>
 				<div>{(Number(ingredient.ingredient.fatTotal) * ratio).toFixed(1)}</div>
-				<Badge
-					variant='destructive'
-					className='cursor-pointer active:scale-90 w-min absolute right-2 h-4 top-1/2 -translate-y-1/2'
-					onClick={(e) => {
-						e.preventDefault()
-						ingredientsField.remove(ingredientIndex)
-						setIngredientsSize(ingredientsSize.filter((_, i) => i !== ingredientIndex))
-					}}
-				>
-					del
-				</Badge>
+
+				<Dialog open={isOpen} onOpenChange={setIsOpen}>
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<EllipsisVertical
+								size={20}
+								className={cn(
+									'text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90',
+									' transition-transform cursor-pointer shrink-0 absolute right-2 top-1/2 -translate-y-1/2',
+								)}
+							/>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent>
+							<DropdownMenuLabel>Action</DropdownMenuLabel>
+							<DropdownMenuSeparator />
+							<DialogTrigger asChild>
+								<DropdownMenuItem>Edit</DropdownMenuItem>
+							</DialogTrigger>
+							<DropdownMenuItem
+								onSelect={(e) => {
+									e.preventDefault()
+									ingredientsField.remove(ingredientIndex)
+									setIngredientsSize(
+										ingredientsSize.filter((_, i) => i !== ingredientIndex),
+									)
+								}}
+							>
+								Delete
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+						<DialogContent className='top-[30%] max-w-2xl'>
+							<DialogHeader className='col-span-3 mb-6'>
+								<DialogTitle>Add a new ingredient</DialogTitle>
+								<DialogDescription>
+									Select an ingredient to add to this recipe
+								</DialogDescription>
+							</DialogHeader>
+							<div className='flex flex-col gap-2 w-full'>
+								<div className='flex flex-col gap-2 w-full'>
+									<h2 className='font-semibold '>Ingredient</h2>
+									{!allIngredients ? null : (
+										<div className='flex gap-2 items-center w-full lg:w-content col-span-3 mb-8'>
+											<VirtualizedCombobox
+												width='600px'
+												height='800px'
+												options={allIngredients
+													?.sort((a, b) => {
+														if (a.favouriteAt) return -1
+														if (b.favouriteAt) return 1
+														return 0
+													})
+													?.map((i) => {
+														return {
+															value: i.id.toString(),
+															label: i.name ?? '',
+														}
+													})}
+												selectedOption={selected ?? ''}
+												onSelectOption={(value) => {
+													setSelected(value)
+												}}
+											/>
+
+											<XCircle
+												size={18}
+												className='text-secondary-foreground shrink-0'
+												onClick={() => {
+													setSelected(null)
+												}}
+											/>
+										</div>
+									)}
+								</div>
+								<div className='flex flex-col gap-2 w-full'>
+									<h2 className='font-semibold '>Alt Ingredient</h2>
+									{!allIngredients ? null : (
+										<div className='flex gap-2 items-center w-full lg:w-content col-span-3 mb-8'>
+											<VirtualizedCombobox
+												width='600px'
+												height='800px'
+												options={allIngredients
+													?.sort((a, b) => {
+														if (a.favouriteAt) return -1
+														if (b.favouriteAt) return 1
+														return 0
+													})
+													?.map((i) => {
+														return {
+															value: i.id.toString(),
+															label: i.name ?? '',
+														}
+													})}
+												selectedOption={selectedAlt ?? ''}
+												onSelectOption={(value) => {
+													setSelectedAlt(value)
+												}}
+											/>
+
+											<XCircle
+												size={18}
+												className='text-secondary-foreground shrink-0'
+												onClick={() => {
+													setSelected(null)
+												}}
+											/>
+										</div>
+									)}
+								</div>
+							</div>
+							<div className='flex gap-4 justify-center w-full col-span-3'>
+								<Button
+									onClick={(e) => {
+										e.preventDefault()
+										const newIngredient = allIngredients?.find(
+											(i) => i.id === Number(selected),
+										)
+										const newAltIngredient = allIngredients?.find(
+											(i) => i.id === Number(selectedAlt),
+										)
+										if (!newIngredient) return
+                    if (!selected) return
+                    form.setValue(`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.ingredientId`, selected, { shouldTouch: true })
+                    form.setValue(`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.name`, newIngredient.name ?? 'error', { shouldTouch: true })
+                    form.setValue(`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.alternateId`, selectedAlt ?? null, { shouldTouch: true })
+
+
+
+                    // @ts-ignore
+                    form.setValue(`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.ingredient`, {...newIngredient}, { shouldTouch: true })
+                    // @ts-ignore
+                    form.setValue(`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.alternateIngredient`, {...newAltIngredient}, { shouldTouch: true })
+
+										setIsOpen(false)
+									}}
+								>
+                  Save
+								</Button>
+								<Button
+									onClick={(e) => {
+										e.preventDefault()
+										setIsOpen(false)
+									}}
+								>
+									cancel
+								</Button>
+							</div>
+						</DialogContent>
+					</DropdownMenu>
+				</Dialog>
 			</div>
 			{ingredient.alternateId && ingredient.alternateIngredient ? (
 				<div className='grid grid-cols-10 gap-1 text-muted-foreground items-center text-sm'>
@@ -192,6 +354,7 @@ const Recipe = ({
 			[],
 	)
 	const [selected, setSelected] = useState<string | null>(null)
+	const [selectedAlt, setSelectedAlt] = useState<string | null>(null)
 	const [isOpen, setIsOpen] = useState(false)
 
 	const formRecipe = form.watch(`meals.${mealIndex}.recipes.${recipeIndex}`)
@@ -205,7 +368,6 @@ const Recipe = ({
 		console.log('recipe', formRecipe)
 		console.log('ingredientsSize', ingredientsSize)
 	}
-
 
 	return (
 		<div className='flex flex-col gap-1 border rounded-md p-2 relative'>
@@ -222,23 +384,24 @@ const Recipe = ({
 			</div>
 			<div className='grid md:grid-cols-10 grid-cols-8 md:gap-1 font-bold'>
 				<div className='md:col-span-4 col-span-2 flex gap-2 justify-between'>
-				<FormField
-					control={form.control}
-					name={`meals.${mealIndex}.recipes.${recipeIndex}.name`}
-					render={({ field }) => (
-						<FormItem className='w-full col-span-2'>
-							<FormControl>
+					<FormField
+						control={form.control}
+						name={`meals.${mealIndex}.recipes.${recipeIndex}.name`}
+						render={({ field }) => (
+							<FormItem className='w-full col-span-2'>
+								<FormControl>
 									<Input
 										placeholder=''
 										{...field}
 										onChange={(e) => {
 											field.onChange(e)
-										}}/>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
+										}}
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 					<Button
 						variant='destructive'
 						size='icon'
@@ -270,12 +433,11 @@ const Recipe = ({
 					key={ingredient.ingredientId}
 					form={form}
 					ingredientIndex={ingredientIndex}
-					ingredient={ingredient}
 					recipeIndex={recipeIndex}
 					mealIndex={mealIndex}
-					plan={plan}
 					setIngredientsSize={setIngredientsSize}
-          ingredientsSize={ingredientsSize}
+					ingredientsSize={ingredientsSize}
+					// @ts-ignore
 					ingredientsField={ingredientsField}
 				/>
 			))}
@@ -286,23 +448,6 @@ const Recipe = ({
 							size={20}
 							strokeWidth={4}
 							className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0'
-							onClick={(e) => {
-								// ingredientsField.append({
-								//   ingredientId: -1,
-								//   alternateId: null,
-								//   ingredient: {
-								//     id: 1,
-								//     name: 'poo',
-								//     serveSize: '',
-								//     serveUnit: '',
-								//     note: '',
-								//   },
-								//   name: '',
-								//   serveSize: '',
-								//   serveUnit: '',
-								//   note: '',
-								// })
-							}}
 						/>
 					</DialogTrigger>
 					<DialogContent className='top-[30%] max-w-2xl'>
@@ -312,51 +457,98 @@ const Recipe = ({
 								Select an ingredient to add to this recipe
 							</DialogDescription>
 						</DialogHeader>
-						{!allIngredients ? null : (
-							<div className='flex gap-2 items-center w-full lg:w-content col-span-3 mb-8'>
-								<VirtualizedCombobox
-									width='600px'
-									height='800px'
-									options={allIngredients
-										?.sort((a, b) => {
-											if (a.favouriteAt) return -1
-											if (b.favouriteAt) return 1
-											return 0
-										})
-										?.map((i) => {
-											return {
-												value: i.id.toString(),
-												label: i.name ?? '',
-											}
-										})}
-									selectedOption={selected ?? ''}
-									onSelectOption={(value) => {
-										setSelected(value)
-									}}
-								/>
+						<div className='flex flex-col gap-2 w-full'>
+							<div className='flex flex-col gap-2 w-full'>
+								<h2 className='font-semibold '>Ingredient</h2>
+								{!allIngredients ? null : (
+									<div className='flex gap-2 items-center w-full lg:w-content col-span-3 mb-8'>
+										<VirtualizedCombobox
+											width='600px'
+											height='800px'
+											options={allIngredients
+												?.sort((a, b) => {
+													if (a.favouriteAt) return -1
+													if (b.favouriteAt) return 1
+													return 0
+												})
+												?.map((i) => {
+													return {
+														value: i.id.toString(),
+														label: i.name ?? '',
+													}
+												})}
+											selectedOption={selected ?? ''}
+											onSelectOption={(value) => {
+												setSelected(value)
+											}}
+										/>
 
-								<XCircle
-									size={18}
-									className='text-secondary-foreground shrink-0'
-									onClick={() => {
-										setSelected(null)
-									}}
-								/>
+										<XCircle
+											size={18}
+											className='text-secondary-foreground shrink-0'
+											onClick={() => {
+												setSelected(null)
+											}}
+										/>
+									</div>
+								)}
 							</div>
-						)}
+							<div className='flex flex-col gap-2 w-full'>
+								<h2 className='font-semibold '>Alt Ingredient</h2>
+								{!allIngredients ? null : (
+									<div className='flex gap-2 items-center w-full lg:w-content col-span-3 mb-8'>
+										<VirtualizedCombobox
+											width='600px'
+											height='800px'
+											options={allIngredients
+												?.sort((a, b) => {
+													if (a.favouriteAt) return -1
+													if (b.favouriteAt) return 1
+													return 0
+												})
+												?.map((i) => {
+													return {
+														value: i.id.toString(),
+														label: i.name ?? '',
+													}
+												})}
+											selectedOption={selectedAlt ?? ''}
+											onSelectOption={(value) => {
+												setSelectedAlt(value)
+											}}
+										/>
+
+										<XCircle
+											size={18}
+											className='text-secondary-foreground shrink-0'
+											onClick={() => {
+												setSelected(null)
+											}}
+										/>
+									</div>
+								)}
+							</div>
+						</div>
 						<div className='flex gap-4 justify-center w-full col-span-3'>
 							<Button
 								onClick={(e) => {
+									e.preventDefault()
 									const newIngredient = allIngredients?.find(
 										(i) => i.id === Number(selected),
 									)
+									const newAltIngredient = allIngredients?.find(
+										(i) => i.id === Number(selectedAlt),
+									)
 									if (!newIngredient) return
-									e.preventDefault()
 									ingredientsField.append({
 										ingredientId: newIngredient.id.toString(),
-										alternateId: null,
+										alternateId: selectedAlt ?? null,
+										// @ts-ignore
 										ingredient: {
 											...newIngredient,
+										},
+										alternateIngredient: {
+											...newAltIngredient,
 										},
 										name: newIngredient?.name || '',
 										serveSize: '',
@@ -364,6 +556,7 @@ const Recipe = ({
 										note: '',
 									})
 									setSelected(null)
+                  setSelectedAlt(null)
 									setIsOpen(false)
 									setIngredientsSize([...ingredientsSize, 0])
 								}}

@@ -114,7 +114,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
 					)}
 				>
 					<Collapsible>
-						<CardHeader className='pb-2 flex justify-between relative'>
+						<CardHeader className='pb-2 flex flex-col justify-between relative'>
 							<CollapsibleTrigger className='absolute bottom-0 right-1/2 -translate-x-1/2'>
 								<ChevronDown size={40} />
 							</CollapsibleTrigger>

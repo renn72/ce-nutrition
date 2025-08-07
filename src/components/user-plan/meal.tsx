@@ -15,8 +15,7 @@ import {
 import type { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle,
-  CardFooter } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
 	Command,
@@ -48,13 +47,6 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from '@/components/ui/popover'
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select'
 
 import type { formSchema } from './create-user-plan'
 import { Recipe } from './recipe'
@@ -555,8 +547,10 @@ const Meal = ({
 
 									<div className='flex gap-2 items-center max-w-md w-full'>
 										<Popover
-                      modal={true}
-                      open={cmdIsOpen} onOpenChange={setCmdIsOpen}>
+											modal={true}
+											open={cmdIsOpen}
+											onOpenChange={setCmdIsOpen}
+										>
 											<PopoverTrigger asChild>
 												<FormControl>
 													<Button
@@ -580,10 +574,8 @@ const Meal = ({
 													</Button>
 												</FormControl>
 											</PopoverTrigger>
-											<PopoverContent
-                        className='w-[800px] p-0'>
-												<Command
-                        >
+											<PopoverContent className='w-[800px] p-0'>
+												<Command>
 													<CommandInput
 														placeholder='Search recipes...'
 														className='h-9'
