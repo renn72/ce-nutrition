@@ -18,8 +18,8 @@ export const ingredientRouter = createTRPCRouter({
 					isNull(ingredient.hiddenAt),
 					isNull(ingredient.deletedAt),
 					eq(ingredient.isSupplement, false),
-          eq(ingredient.isPrivate, false),
-          eq(ingredient.isUserCreated, false),
+					eq(ingredient.isPrivate, false),
+					eq(ingredient.isUserCreated, false),
 				),
 			with: {
 				user: {
@@ -45,8 +45,8 @@ export const ingredientRouter = createTRPCRouter({
 					isNull(ingredient.hiddenAt),
 					isNull(ingredient.deletedAt),
 					eq(ingredient.isSupplement, false),
-          eq(ingredient.isPrivate, false),
-          eq(ingredient.isUserCreated, false),
+					eq(ingredient.isPrivate, false),
+					eq(ingredient.isUserCreated, false),
 				),
 			with: {
 				ingredientToGroceryStore: {
@@ -167,7 +167,13 @@ export const ingredientRouter = createTRPCRouter({
 					...rest,
 					userId,
 				})
-				.returning({ id: ingredient.id })
+				.returning({
+					id: ingredient.id,
+					name: ingredient.name,
+					serveSize: ingredient.serveSize,
+					serveUnit: ingredient.serveUnit,
+          caloriesWFibre: ingredient.caloriesWFibre,
+				})
 
 			const ingredientId = res[0]?.id as number
 

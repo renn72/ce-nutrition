@@ -10695,6 +10695,25 @@ declare const skinfold: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
         }, {}, {
             length: number | undefined;
         }>;
+        test: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "test";
+            tableName: "skinfold";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
     };
     dialect: "sqlite";
 }>;
@@ -15802,6 +15821,10 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             };
             output: {
                 id: number;
+                name: string | null;
+                serveSize: string | null;
+                serveUnit: string | null;
+                caloriesWFibre: string | null;
             }[];
             meta: object;
         }>;
@@ -18117,6 +18140,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
         getUserSkinfolds: _trpc_server.TRPCQueryProcedure<{
             input: string;
             output: {
+                test: string | null;
                 date: string;
                 id: number;
                 notes: string | null;
@@ -18176,6 +18200,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
         getAllSkinfolds: _trpc_server.TRPCQueryProcedure<{
             input: void;
             output: {
+                test: string | null;
                 date: string;
                 id: number;
                 notes: string | null;
@@ -18261,6 +18286,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
         getSkinfold: _trpc_server.TRPCQueryProcedure<{
             input: number;
             output: {
+                test: string | null;
                 date: string;
                 id: number;
                 notes: string | null;
@@ -22214,6 +22240,10 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             };
             output: {
                 id: number;
+                name: string | null;
+                serveSize: string | null;
+                serveUnit: string | null;
+                caloriesWFibre: string | null;
             }[];
             meta: object;
         }>;
@@ -24529,6 +24559,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         getUserSkinfolds: _trpc_server.TRPCQueryProcedure<{
             input: string;
             output: {
+                test: string | null;
                 date: string;
                 id: number;
                 notes: string | null;
@@ -24588,6 +24619,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         getAllSkinfolds: _trpc_server.TRPCQueryProcedure<{
             input: void;
             output: {
+                test: string | null;
                 date: string;
                 id: number;
                 notes: string | null;
@@ -24673,6 +24705,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         getSkinfold: _trpc_server.TRPCQueryProcedure<{
             input: number;
             output: {
+                test: string | null;
                 date: string;
                 id: number;
                 notes: string | null;

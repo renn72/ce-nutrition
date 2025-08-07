@@ -39,6 +39,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
+
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 import { BackButton } from '../back-button'
@@ -69,22 +71,69 @@ const FormIngredient = ({
 	ingredient?: GetIngredientById | null
 }) => {
 	const router = useRouter()
-	const [isOpen, setIsOpen] = useState(false)
+	const [isCreateRecipe, setIsCreateRecipe] = useState(false)
 	const [kj, setKj] = useState(() =>
 		Math.round((Number(ingredient?.caloriesWOFibre) || 0) * 4.184),
 	)
 	const ctx = api.useUtils()
 	const { data: stores } = api.groceryStore.getAll.useQuery()
+  const { mutate: createRecipe } = api.recipe.create.useMutation({
+    onSuccess: () => {
+      ctx.recipe.invalidate()
+      toast.success('Recipe added successfully')
+        setTimeout(() => {
+          router.back()
+        }, 200)
+    },
+  })
 	const { mutate: createIngredient } = api.ingredient.create.useMutation({
-		onSuccess: () => {
-			setIsOpen(false)
+		onSuccess: (e) => {
 			ctx.ingredient.invalidate()
 			toast.success('Ingredient added successfully')
+      console.log(isCreateRecipe)
+      if (isCreateRecipe) {
+        const i = e?.[0]
+        console.log(i)
+
+        if (i) {
+          const name = i.name || ''
+          const id = i.id
+          const size = i.serveSize || ''
+          const unit = i.serveUnit || ''
+          const calories = Number(i.caloriesWFibre) || 0
+          createRecipe({
+            name,
+            description: '',
+            image: '',
+            notes: '',
+            recipeCategory: '',
+            calories: calories,
+            isUserRecipe: false,
+            ingredients: [
+              {
+                ingredientId: id,
+                alternateId: '',
+                note: '',
+                serveSize: size,
+                serveUnit: unit,
+                index: 0,
+              },
+            ],
+          })
+        } else {
+          toast.error('error creating recipe')
+        }
+      } else {
+        setTimeout(() => {
+          router.back()
+        }, 200)
+      }
+      console.log(e)
+
 		},
 	})
 	const { mutate: updateIngredient } = api.ingredient.update.useMutation({
 		onSuccess: () => {
-			setIsOpen(false)
 			ctx.ingredient.invalidate()
 			toast.success('Ingredient added successfully')
 		},
@@ -167,6 +216,16 @@ const FormIngredient = ({
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)}>
 					<div className='flex flex-col gap-4'>
+						<div className='flex gap-4 items-center'>
+							<Label className={cn(isCreateRecipe ? 'font-semibold ' : 'text-secondary-foreground')}>
+								Create recipe
+							</Label>
+							<Checkbox
+								checked={isCreateRecipe}
+								onCheckedChange={(e) => setIsCreateRecipe(e === 'indeterminate' ? false : e)}
+								className=''
+							/>
+						</div>
 						<FormField
 							control={form.control}
 							name='name'

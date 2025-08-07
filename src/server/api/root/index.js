@@ -438,7 +438,8 @@ var skinfold = createTable4("skinfold", {
   knee: text4("knee"),
   shoulder: text4("shoulder"),
   notes: text4("notes"),
-  formula: text4("formula")
+  formula: text4("formula"),
+  test: text4("test")
 });
 var girthMeasurement = createTable4("girth_measurement", {
   id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
@@ -2028,7 +2029,13 @@ var ingredientRouter = createTRPCRouter({
     const res = await ctx.db.insert(ingredient).values({
       ...rest,
       userId
-    }).returning({ id: ingredient.id });
+    }).returning({
+      id: ingredient.id,
+      name: ingredient.name,
+      serveSize: ingredient.serveSize,
+      serveUnit: ingredient.serveUnit,
+      caloriesWFibre: ingredient.caloriesWFibre
+    });
     const ingredientId = res[0]?.id;
     if (stores.length > 0 && ingredientId) {
       await ctx.db.insert(ingredientToGroceryStore).values(
@@ -2266,9 +2273,9 @@ var BaseGenerator = class {
     const extraConfigBuilder = table[ExtraConfigBuilder];
     const extraConfigColumns = table[ExtraConfigColumns];
     const extraConfig = extraConfigBuilder?.(extraConfigColumns ?? {});
-    const builtIndexes = (Array.isArray(extraConfig) ? extraConfig : Object.values(extraConfig ?? {})).map((b) => b?.build(table)).filter((b) => b !== void 0).filter((index6) => !(is(index6, PgCheck) || is(index6, MySqlCheck) || is(index6, SQLiteCheck)));
+    const builtIndexes = (Array.isArray(extraConfig) ? extraConfig : Object.values(extraConfig ?? {})).map((b) => b?.build(table)).filter((b) => b !== void 0).filter((index5) => !(is(index5, PgCheck) || is(index5, MySqlCheck) || is(index5, SQLiteCheck)));
     const fks = builtIndexes.filter(
-      (index6) => is(index6, PgForeignKey) || is(index6, MySqlForeignKey) || is(index6, SQLiteForeignKey)
+      (index5) => is(index5, PgForeignKey) || is(index5, MySqlForeignKey) || is(index5, SQLiteForeignKey)
     );
     if (!this.relational) {
       this.generateForeignKeys(fks);
@@ -2277,26 +2284,26 @@ var BaseGenerator = class {
       const indexes = extraConfig ?? {};
       dbml.newLine().tab().insert("indexes {").newLine();
       for (const indexName in indexes) {
-        const index6 = indexes[indexName].build(table);
+        const index5 = indexes[indexName].build(table);
         dbml.tab(2);
-        if (is(index6, PgIndex) || is(index6, MySqlIndex) || is(index6, SQLiteIndex)) {
-          const configColumns = index6.config.columns.flatMap(
+        if (is(index5, PgIndex) || is(index5, MySqlIndex) || is(index5, SQLiteIndex)) {
+          const configColumns = index5.config.columns.flatMap(
             (entry) => is(entry, SQL) ? entry.queryChunks.filter((v) => is(v, Column)) : entry
           );
           const idxColumns = wrapColumns(
             configColumns,
             this.buildQueryConfig.escapeName
           );
-          const idxProperties = index6.config.name ? ` [name: '${index6.config.name}'${index6.config.unique ? ", unique" : ""}]` : "";
+          const idxProperties = index5.config.name ? ` [name: '${index5.config.name}'${index5.config.unique ? ", unique" : ""}]` : "";
           dbml.insert(`${idxColumns}${idxProperties}`);
         }
-        if (is(index6, PgPrimaryKey) || is(index6, MySqlPrimaryKey) || is(index6, SQLitePrimaryKey)) {
-          const pkColumns = wrapColumns(index6.columns, this.buildQueryConfig.escapeName);
+        if (is(index5, PgPrimaryKey) || is(index5, MySqlPrimaryKey) || is(index5, SQLitePrimaryKey)) {
+          const pkColumns = wrapColumns(index5.columns, this.buildQueryConfig.escapeName);
           dbml.insert(`${pkColumns} [pk]`);
         }
-        if (is(index6, PgUniqueConstraint) || is(index6, MySqlUniqueConstraint) || is(index6, SQLiteUniqueConstraint)) {
-          const uqColumns = wrapColumns(index6.columns, this.buildQueryConfig.escapeName);
-          const uqProperties = index6.name ? `[name: '${index6.name}', unique]` : "[unique]";
+        if (is(index5, PgUniqueConstraint) || is(index5, MySqlUniqueConstraint) || is(index5, SQLiteUniqueConstraint)) {
+          const uqColumns = wrapColumns(index5.columns, this.buildQueryConfig.escapeName);
+          const uqProperties = index5.name ? `[name: '${index5.name}', unique]` : "[unique]";
           dbml.insert(`${uqColumns} ${uqProperties}`);
         }
         dbml.newLine();
