@@ -1,5 +1,5 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 import { user } from './user'
 
@@ -33,6 +33,7 @@ export const skinfold = createTable('skinfold', {
 	shoulder: text('shoulder'),
 	notes: text('notes'),
 	formula: text('formula'),
+  test: text('test'),
 })
 
 export const girthMeasurement = createTable('girth_measurement', {

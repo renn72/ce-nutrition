@@ -1,0 +1,1 @@
+ALTER TABLE `skinfold` ADD `test` text;
