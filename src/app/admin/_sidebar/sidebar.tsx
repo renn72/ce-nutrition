@@ -7,6 +7,7 @@ import * as React from 'react'
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
+import { impersonatedUserAtom } from '@/atoms'
 import { cn } from '@/lib/utils'
 import { atom, useAtom } from 'jotai'
 import { Check, ChevronsUpDown, ShieldUser, User } from 'lucide-react'
@@ -30,6 +31,13 @@ import {
 	PopoverTrigger,
 } from '@/components/ui/popover'
 import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select'
+import {
 	Sidebar,
 	SidebarContent,
 	SidebarGroup,
@@ -48,8 +56,6 @@ import { Switch } from '@/components/ui/switch'
 import WhistleIcon from '@/components/icons/whistle-icon'
 
 export const userAtom = atom<string>('')
-
-import { impersonatedUserAtom } from '@/atoms'
 
 const data = {
 	navMain: [
@@ -85,10 +91,10 @@ const data = {
 					title: 'Supplements',
 					url: '/admin/user-supplement',
 				},
-        {
-          title: 'break-1',
-          url: '',
-        },
+				{
+					title: 'break-1',
+					url: '',
+				},
 				{
 					title: 'Settings',
 					url: '/admin/user-settings',
@@ -176,6 +182,8 @@ const AdminSidebar = ({
 }: Readonly<{ children: React.ReactNode }>) => {
 	const [isOpen, setIsOpen] = React.useState(false)
 
+	const [selectedCategory, setSelectedCategory] = useState<string>('')
+
 	const [isOnlyYourClients, setIsOnlyYourClients] = useState(false)
 
 	const router = useRouter()
@@ -184,20 +192,35 @@ const AdminSidebar = ({
 	const user = searchParams.get('user')
 
 	const [selectedUser, setSelectedUser] = useAtom(userAtom)
-  const [impersonatedUser, _setImpersonatedUser] = useAtom(impersonatedUserAtom)
+	const [impersonatedUser, _setImpersonatedUser] = useAtom(impersonatedUserAtom)
 
-  const { data: currentUser } = api.user.getCurrentUser.useQuery({id: impersonatedUser.id})
+	const { data: userCategories } = api.userCatagories.getAll.useQuery()
+	const { data: currentUser } = api.user.getCurrentUser.useQuery({
+		id: impersonatedUser.id,
+	})
 	const { data: yourUsers, isLoading } = api.user.getAllYour.useQuery()
 
 	const allUsers = yourUsers
 		?.filter((user) => {
-			if (!currentUser?.roles?.find((role) => role.name === 'admin')) return true
+			if (!currentUser?.roles?.find((role) => role.name === 'admin'))
+				return true
 			if (user.id === currentUser?.id) return true
 			if (isOnlyYourClients) {
 				return user.trainers.find(
 					(trainer) => trainer.trainer.id === currentUser?.id,
 				)
 			}
+			return true
+		})
+		?.filter((user) => {
+			if (selectedCategory === 'none') return true
+			if (selectedCategory === '') return true
+			if (
+				!user.category?.find(
+					(category) => category.category.name === selectedCategory,
+				)
+			)
+				return false
 			return true
 		})
 		?.sort((a, b) => a.name?.localeCompare(b.name ?? '') ?? 0)
@@ -229,14 +252,35 @@ const AdminSidebar = ({
 										<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
 									</Button>
 								</PopoverTrigger>
-								<PopoverContent className='w-[400px] max-w-[100vw] p-0'>
+								<PopoverContent className='w-[600px] max-w-[100vw] p-0'>
 									<Command>
 										<div className='flex gap-2 w-full '>
 											<CommandInput
 												className='w-full'
 												placeholder='Search users...'
 											/>
-											{}
+											<Select
+												value={selectedCategory}
+												onValueChange={(value) => {
+													setSelectedCategory(value)
+												}}
+											>
+												<SelectTrigger className='w-[180px] mt-1'>
+													<SelectValue placeholder='Category' />
+												</SelectTrigger>
+												<SelectContent>
+													<SelectItem value='none'>None</SelectItem>
+													{userCategories?.map((category) => (
+														<SelectItem
+															key={category.id}
+															value={category.name ?? category.id.toString()}
+															className='capitalize'
+														>
+															{category.name}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
 											<div className='flex gap-2 items-center'>
 												<Label>Only your clients</Label>
 												<Switch
@@ -266,7 +310,10 @@ const AdminSidebar = ({
 																setSelectedUser(currentValue)
 																setIsOpen(false)
 															}}
-															className='grid grid-cols-13'
+															className={cn(
+																'grid grid-cols-13',
+																selectedUser === user.id ? 'bg-muted' : '',
+															)}
 														>
 															<Check
 																className={cn(
@@ -276,10 +323,7 @@ const AdminSidebar = ({
 																		: 'opacity-0',
 																)}
 															/>
-															<span className='col-span-6 truncate'>
-																{user.name ?? user.email}
-															</span>
-															<span className='col-span-4 flex gap-[1px] flex-wrap'>
+															<span className='col-span-1 flex gap-[1px] flex-wrap'>
 																{user.trainers.map((trainer) => (
 																	<Badge
 																		key={trainer.trainer.id}
@@ -287,6 +331,20 @@ const AdminSidebar = ({
 																		className='text-[0.7rem] py-[3px] px-1 h-min leading-none cursor-pointer hover:text-background hover:bg-foreground tracking-tighter'
 																	>
 																		{trainer.trainer?.firstName}
+																	</Badge>
+																))}
+															</span>
+															<span className='col-span-6 truncate'>
+																{user.name ?? user.email}
+															</span>
+															<span className='col-span-3 flex gap-[1px] flex-wrap'>
+																{user.category?.map((category) => (
+																	<Badge
+																		key={category.category.id}
+																		variant='accent'
+																		className='text-[0.7rem] py-[3px] px-1 h-min leading-none cursor-pointer hover:text-background hover:bg-foreground tracking-tighter'
+																	>
+																		{category.category.name}
 																	</Badge>
 																))}
 															</span>
@@ -328,7 +386,8 @@ const AdminSidebar = ({
 								<SidebarMenu>
 									{item.items
 										.filter(
-											(item) => item.title !== 'Super' || currentUser?.isCreator,
+											(item) =>
+												item.title !== 'Super' || currentUser?.isCreator,
 										)
 										.filter(
 											(item) =>
@@ -336,24 +395,27 @@ const AdminSidebar = ({
 										)
 										.filter(
 											(item) =>
-												item.title !== 'All Skinfolds' || currentUser?.isCreator,
+												item.title !== 'All Skinfolds' ||
+												currentUser?.isCreator,
 										)
 										.map((item) => {
-                      if (item.url === '') return <div key={item.title} className='py-1'/>
-                      return (
-											<div key={item.title}>
-												<SidebarMenuItem key={item.title}>
-													<SidebarMenuButton
-														asChild
-														isActive={pathname === item.url}
-													>
-														<Link href={`${item.url}?user=${user}`}>
-															{item.title}
-														</Link>
-													</SidebarMenuButton>
-												</SidebarMenuItem>
-											</div>
-										)})}
+											if (item.url === '')
+												return <div key={item.title} className='py-1' />
+											return (
+												<div key={item.title}>
+													<SidebarMenuItem key={item.title}>
+														<SidebarMenuButton
+															asChild
+															isActive={pathname === item.url}
+														>
+															<Link href={`${item.url}?user=${user}`}>
+																{item.title}
+															</Link>
+														</SidebarMenuButton>
+													</SidebarMenuItem>
+												</div>
+											)
+										})}
 								</SidebarMenu>
 							</SidebarGroupContent>
 						</SidebarGroup>

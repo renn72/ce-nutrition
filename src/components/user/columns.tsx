@@ -2,22 +2,22 @@
 
 import { api } from '@/trpc/react'
 
-import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/utils'
 import type { GetUserBasic } from '@/types'
 import type { ColumnDef } from '@tanstack/react-table'
 import { CirclePlus, ShieldUser } from 'lucide-react'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
 
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '@/components/ui/dialog'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -160,92 +160,99 @@ export const columns: ColumnDef<GetUserBasic>[] = [
 			<DataTableColumnHeader column={column} title='Categories' />
 		),
 		cell: ({ row }) => {
-      const categories = row.original?.category?.map((category) => ({
-        id: category.category.id,
-        name: category.category.name,
-      }))
+			const categories = row.original?.category?.map((category) => ({
+				id: category.category.id,
+				name: category.category.name,
+			}))
 
-      const ctx = api.useUtils()
-	    const { data: userCategories } = api.userCatagories.getAll.useQuery()
-      const { mutate: addToUser } = api.userCatagories.addToUser.useMutation({
-        onSuccess: () => {
-          ctx.user.invalidate()
-        },
-      })
-      const { mutate: removeFromUser } = api.userCatagories.removeFromUser.useMutation({
-        onSuccess: () => {
-          ctx.user.invalidate()
-        },
-      })
+			const ctx = api.useUtils()
+			const { data: userCategories } = api.userCatagories.getAll.useQuery()
+			const { mutate: addToUser } = api.userCatagories.addToUser.useMutation({
+				onSuccess: () => {
+					ctx.user.invalidate()
+				},
+			})
+			const { mutate: removeFromUser } =
+				api.userCatagories.removeFromUser.useMutation({
+					onSuccess: () => {
+						ctx.user.invalidate()
+					},
+				})
 			return (
-				<div className='flex space-x-2'>
-          {categories?.map((category) => (
-              <Dialog key={category.id}>
-                <DialogTrigger asChild>
-            <Badge
-              key={category.id}
-              variant='secondary'
-              className='text-[0.7rem] py-[3px] h-min leading-none cursor-pointer hover:text-background hover:bg-foreground'
-            >
-              {category.name}
-            </Badge>
-                </DialogTrigger>
-                <DialogContent
-                  onOpenAutoFocus={(e) => {
-                    e.preventDefault()
-                  }}
-                >
-                  <DialogHeader>
-                    <DialogTitle>{`Remove ${'category'} as this clients category?`}</DialogTitle>
-                    <DialogDescription className=''>Remove the category from this client.</DialogDescription>
-                  </DialogHeader>
-                  <div className='flex flex-col gap-4 w-full'>
-                    <Button
-                      variant='destructive'
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        if (!row.original) return
-                        removeFromUser({
-                          userId: row.original.id,
-                          categoryId: category.id,
-                        })
-                      }}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-          ))}
-          <DropdownMenu>
+				<div className='flex space-x-2 justify-between'>
+					<div className='flex gap-1 flex-wrap'>
+						{categories?.map((category) => (
+							<Dialog key={category.id}>
+								<DialogTrigger asChild>
+									<Badge
+										key={category.id}
+										variant='secondary'
+										className='text-[0.7rem] py-[3px] h-min leading-none cursor-pointer hover:text-background hover:bg-foreground'
+									>
+										{category.name}
+									</Badge>
+								</DialogTrigger>
+								<DialogContent
+									onOpenAutoFocus={(e) => {
+										e.preventDefault()
+									}}
+								>
+									<DialogHeader>
+										<DialogTitle>{`Remove ${'category'} as this clients category?`}</DialogTitle>
+										<DialogDescription className=''>
+											Remove the category from this client.
+										</DialogDescription>
+									</DialogHeader>
+									<div className='flex flex-col gap-4 w-full'>
+										<Button
+											variant='destructive'
+											onClick={(e) => {
+												e.stopPropagation()
+												if (!row.original) return
+												removeFromUser({
+													userId: row.original.id,
+													categoryId: category.id,
+												})
+											}}
+										>
+											Delete
+										</Button>
+									</div>
+								</DialogContent>
+							</Dialog>
+						))}
+					</div>
+					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-              <CirclePlus size={16} strokeWidth={2} className='text-secondary-foreground hover:text-primary active:text-primary active:scale-90' />
-            </DropdownMenuTrigger>
+							<CirclePlus
+								size={16}
+								strokeWidth={2}
+								className='text-secondary-foreground hover:text-primary active:text-primary active:scale-90'
+							/>
+						</DropdownMenuTrigger>
 						<DropdownMenuContent>
 							<DropdownMenuLabel>Add Category</DropdownMenuLabel>
 							<DropdownMenuSeparator />
-              {
-                userCategories
-                ?.map((category) => {
-                  return (
-                    <DropdownMenuItem key={category.id}
-                      onSelect={(e) => {
-                        e.stopPropagation()
-                        if (!row.original) return
-                        addToUser({
-                          userId: row.original.id,
-                          categoryId: category.id,
-                        })
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation()
-                      }}
-                    >
-                      {category.name}
-                    </DropdownMenuItem>
-                  )
-                })
-              }
+							{userCategories?.map((category) => {
+								return (
+									<DropdownMenuItem
+										key={category.id}
+										onSelect={(e) => {
+											e.stopPropagation()
+											if (!row.original) return
+											addToUser({
+												userId: row.original.id,
+												categoryId: category.id,
+											})
+										}}
+										onClick={(e) => {
+											e.stopPropagation()
+										}}
+									>
+										{category.name}
+									</DropdownMenuItem>
+								)
+							})}
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</div>
@@ -258,94 +265,102 @@ export const columns: ColumnDef<GetUserBasic>[] = [
 			<DataTableColumnHeader column={column} title='Trainer' />
 		),
 		cell: ({ row }) => {
-      const ctx = api.useUtils()
-      const { data: trainers } = api.trainer.getAll.useQuery()
-      const { mutate: addTrainer } = api.trainer.add.useMutation({
-        onSuccess: () => {
-          ctx.user.invalidate()
-        },
-      })
-      const { mutate: deleteTrainer } = api.trainer.delete.useMutation({
-        onSuccess: () => {
-          ctx.user.invalidate()
-        },
-      })
-      const clientsTrainers = row.original?.trainers.map((trainer) => ({
-        id: trainer.trainer.id,
-        name: trainer.trainer.name,
-      }))
+			const ctx = api.useUtils()
+			const { data: trainers } = api.trainer.getAll.useQuery()
+			const { mutate: addTrainer } = api.trainer.add.useMutation({
+				onSuccess: () => {
+					ctx.user.invalidate()
+				},
+			})
+			const { mutate: deleteTrainer } = api.trainer.delete.useMutation({
+				onSuccess: () => {
+					ctx.user.invalidate()
+				},
+			})
+			const clientsTrainers = row.original?.trainers.map((trainer) => ({
+				id: trainer.trainer.id,
+				name: trainer.trainer.name,
+			}))
 			return (
 				<div className='flex justify-between space-x-2 items-center max-w-[300px]'>
-          <div className='flex gap-1 flex-wrap'>
-            {clientsTrainers?.map((trainer) => (
-              <Dialog key={trainer.id}>
-                <DialogTrigger asChild>
-              <Badge
-                key={trainer.id}
-                variant='secondary'
-                className='text-[0.7rem] py-[3px] h-min leading-none cursor-pointer hover:text-background hover:bg-foreground'
-              >
-                {trainer.name?.split(' ')[0]}
-              </Badge>
-                </DialogTrigger>
-                <DialogContent
-                  onOpenAutoFocus={(e) => {
-                    e.preventDefault()
-                  }}
-                >
-                  <DialogHeader>
-                    <DialogTitle>{`Remove ${trainer.name} as this clients trainer?`}</DialogTitle>
-                    <DialogDescription className=''>remove the trainer from this client.</DialogDescription>
-                  </DialogHeader>
-                  <div className='flex flex-col gap-4 w-full'>
-                    <Button
-                      variant='destructive'
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        if (!row.original) return
-                        deleteTrainer({
-                          userId: row.original.id,
-                          trainerId: trainer.id,
-                        })
-                      }}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            ))}
-          </div>
+					<div className='flex gap-1 flex-wrap'>
+						{clientsTrainers?.map((trainer) => (
+							<Dialog key={trainer.id}>
+								<DialogTrigger asChild>
+									<Badge
+										key={trainer.id}
+										variant='secondary'
+										className='text-[0.7rem] py-[3px] h-min leading-none cursor-pointer hover:text-background hover:bg-foreground'
+									>
+										{trainer.name?.split(' ')[0]}
+									</Badge>
+								</DialogTrigger>
+								<DialogContent
+									onOpenAutoFocus={(e) => {
+										e.preventDefault()
+									}}
+								>
+									<DialogHeader>
+										<DialogTitle>{`Remove ${trainer.name} as this clients trainer?`}</DialogTitle>
+										<DialogDescription className=''>
+											remove the trainer from this client.
+										</DialogDescription>
+									</DialogHeader>
+									<div className='flex flex-col gap-4 w-full'>
+										<Button
+											variant='destructive'
+											onClick={(e) => {
+												e.stopPropagation()
+												if (!row.original) return
+												deleteTrainer({
+													userId: row.original.id,
+													trainerId: trainer.id,
+												})
+											}}
+										>
+											Delete
+										</Button>
+									</div>
+								</DialogContent>
+							</Dialog>
+						))}
+					</div>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-              <CirclePlus size={16} strokeWidth={2} className='text-secondary-foreground hover:text-primary active:text-primary active:scale-90' />
-            </DropdownMenuTrigger>
+							<CirclePlus
+								size={16}
+								strokeWidth={2}
+								className='text-secondary-foreground hover:text-primary active:text-primary active:scale-90'
+							/>
+						</DropdownMenuTrigger>
 						<DropdownMenuContent>
 							<DropdownMenuLabel>Add Trainer</DropdownMenuLabel>
 							<DropdownMenuSeparator />
-              {
-                trainers
-                ?.filter((trainer) => trainer.id !== 'f3feb152-06de-4a1e-8c9f-19d5c96c6788')
-                ?.map((trainer) => {
-                  return (
-                    <DropdownMenuItem key={trainer.id}
-                      onSelect={(e) => {
-                        e.stopPropagation()
-                        if (!row.original) return
-                        addTrainer({
-                          userId: row.original.id,
-                          trainerId: trainer.id,
-                        })
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation()
-                      }}
-                    >
-                      {trainer.name}
-                    </DropdownMenuItem>
-                  )
-                })
-              }
+							{trainers
+								?.filter(
+									(trainer) =>
+										trainer.id !== 'f3feb152-06de-4a1e-8c9f-19d5c96c6788',
+								)
+								?.map((trainer) => {
+									return (
+										<DropdownMenuItem
+											key={trainer.id}
+											onSelect={(e) => {
+												e.stopPropagation()
+												if (!row.original) return
+												addTrainer({
+													userId: row.original.id,
+													trainerId: trainer.id,
+												})
+											}}
+											onClick={(e) => {
+												e.stopPropagation()
+											}}
+										>
+											{trainer.name}
+										</DropdownMenuItem>
+									)
+								})}
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</div>

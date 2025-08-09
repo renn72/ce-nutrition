@@ -5022,6 +5022,11 @@ var userRouter = createTRPCRouter({
         password: false
       },
       with: {
+        category: {
+          with: {
+            category: true
+          }
+        },
         roles: true,
         trainers: {
           with: {

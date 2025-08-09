@@ -15354,6 +15354,14 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                         updatedAt: Date | null;
                     };
                 }[];
+                category: {
+                    userId: string;
+                    categoryId: number;
+                    category: {
+                        id: number;
+                        name: string | null;
+                    };
+                }[];
             }[];
             meta: object;
         }>;
@@ -21852,6 +21860,14 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                         isAllTrainers: boolean | null;
                         createdAt: Date;
                         updatedAt: Date | null;
+                    };
+                }[];
+                category: {
+                    userId: string;
+                    categoryId: number;
+                    category: {
+                        id: number;
+                        name: string | null;
                     };
                 }[];
             }[];
