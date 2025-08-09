@@ -66,7 +66,7 @@ export const messageRouter = createTRPCRouter({
         userId = ctx.session?.user.id
       }
       const res = await ctx.db.query.message.findMany({
-        where: eq(message.userId, input),
+        where: eq(message.userId, userId),
         orderBy: (data, { desc }) => desc(data.createdAt),
         with: {
           fromUser: true,
@@ -83,7 +83,7 @@ export const messageRouter = createTRPCRouter({
         userId = ctx.session?.user.id
       }
       const res = await ctx.db.query.message.findMany({
-        where: eq(message.fromUserId, input),
+        where: eq(message.fromUserId, userId),
         orderBy: (data, { desc }) => desc(data.createdAt),
         with: {
           fromUser: true,

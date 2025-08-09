@@ -4,6 +4,8 @@ import { api } from '@/trpc/react'
 
 import { useState } from 'react'
 
+import Link from 'next/link'
+
 import { impersonatedUserAtom } from '@/atoms'
 import { cn } from '@/lib/utils'
 import type { GetAllUsers, GetUserById } from '@/types'
@@ -15,7 +17,6 @@ import {
 	CircleCheck,
 	CircleDot,
 	CirclePlus,
-	Star,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -24,7 +25,6 @@ import {
 	Card,
 	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card'
@@ -64,12 +64,9 @@ const SendTo = ({
 	setValue: (value: string) => void
 }) => {
 	const [open, setOpen] = useState(false)
-  const [search, setSearch] = useState('')
 	if (!sendList) return null
 	return (
-		<Popover
-        modal={true}
-      open={open} onOpenChange={setOpen}>
+		<Popover modal={true} open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>
 				<Button
 					variant='outline'
@@ -95,27 +92,30 @@ const SendTo = ({
 					<CommandList>
 						<CommandEmpty>No one found.</CommandEmpty>
 						<CommandGroup>
-								{sendList.map((user) => (
-									<CommandItem
-										key={user.id}
-										value={user.name ?? user.id}
-                    className='data-[disabled=true]:pointer-events-auto'
-										onSelect={(currentValue) => {
-                      const user = sendList.find((user) => user.name === currentValue || user.id === currentValue)
-                      if (!user) return
-											setValue(user.name === value ? '' : user.id ?? '')
-											setOpen(false)
-										}}
-									>
-										<Check
-											className={cn(
-												'mr-2 h-4 w-4',
-												value === user.id ? 'opacity-100' : 'opacity-0',
-											)}
-										/>
-										{user.name}
-									</CommandItem>
-								))}
+							{sendList.map((user) => (
+								<CommandItem
+									key={user.id}
+									value={user.name ?? user.id}
+									className='data-[disabled=true]:pointer-events-auto'
+									onSelect={(currentValue) => {
+										const user = sendList.find(
+											(user) =>
+												user.name === currentValue || user.id === currentValue,
+										)
+										if (!user) return
+										setValue(user.name === value ? '' : (user.id ?? ''))
+										setOpen(false)
+									}}
+								>
+									<Check
+										className={cn(
+											'mr-2 h-4 w-4',
+											value === user.id ? 'opacity-100' : 'opacity-0',
+										)}
+									/>
+									{user.name}
+								</CommandItem>
+							))}
 						</CommandGroup>
 					</CommandList>
 				</Command>
@@ -132,9 +132,7 @@ const NewMessage = ({
 	currentUser: GetUserById
 }) => {
 	const [message, setMessage] = useState('')
-	const [subject, setSubject] = useState('')
 	const [recipient, setRecipient] = useState<string>('')
-	const [isImportant, setIsImportant] = useState(false)
 	const [isSending, setIsSending] = useState(false)
 	const [isOpen, setIsOpen] = useState(false)
 
@@ -147,7 +145,6 @@ const NewMessage = ({
 			toast.success('Message sent')
 			setIsOpen(false)
 			setMessage('')
-			setSubject('')
 			setRecipient('')
 		},
 	})
@@ -156,7 +153,10 @@ const NewMessage = ({
 	return (
 		<Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
 			<DialogTrigger asChild>
-				<CirclePlus size={24} className='cursor-pointer' />
+				<div className='flex items-start   gap-2 px-4'>
+					<CirclePlus size={20} className='cursor-pointer' />
+					<div className=''>New Message Chat</div>
+				</div>
 			</DialogTrigger>
 			<DialogContent
 				onOpenAutoFocus={(e) => e.preventDefault()}
@@ -171,22 +171,7 @@ const NewMessage = ({
 						setValue={setRecipient}
 					/>
 				</DialogHeader>
-				<div className='flex gap-4 items-center'>
-					<Input
-						placeholder='Subject'
-						value={subject}
-						onChange={(e) => setSubject(e.target.value)}
-					/>
-					<CircleAlert
-						size={36}
-						strokeWidth={isImportant ? 3 : 2}
-						className={cn(
-							'cursor-pointer text-muted-foreground p-1',
-							isImportant ? 'text-alert rounded-md' : '',
-						)}
-						onClick={() => setIsImportant(!isImportant)}
-					/>
-				</div>
+
 				<Textarea
 					placeholder='Message'
 					value={message}
@@ -201,10 +186,10 @@ const NewMessage = ({
 							if (message === '') return toast.error('Message cannot be empty')
 							sendMessage({
 								message: message,
-								subject: subject,
+								subject: '',
 								userId: recipient,
 								fromUserId: currentUser.id,
-								isImportant: isImportant,
+								isImportant: false,
 							})
 						}}
 					>
@@ -214,7 +199,6 @@ const NewMessage = ({
 						className='w-full'
 						onClick={() => {
 							setRecipient('')
-							setSubject('')
 							setMessage('')
 						}}
 					>
@@ -223,6 +207,63 @@ const NewMessage = ({
 				</div>
 			</DialogContent>
 		</Dialog>
+	)
+}
+
+const RecentMessages = ({
+	userId,
+	currentUser,
+}: {
+	userId: string
+	currentUser: GetUserById
+}) => {
+	const { data: messages } = api.message.getAllUser.useQuery(currentUser.id)
+	const { data: sentMessages } = api.message.getAllFromUser.useQuery(
+		currentUser.id,
+	)
+
+	if (userId === '') return null
+
+	const m = messages
+		?.filter((message) => message.fromUser?.id === userId)
+		.sort(
+			(a, b) =>
+				new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+		)[0]
+	const s = sentMessages
+		?.filter((message) => message.user?.id === userId)
+		.sort(
+			(a, b) =>
+				new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+		)[0]
+
+	if (!m && !s) return null
+
+	const r =
+		(m?.createdAt ?? -1) > (s?.createdAt ?? -1)
+			? { ...m, r: m?.fromUser }
+			: { ...s, r: s?.user }
+
+	return (
+		<Link key={userId} href={`/user/message/${userId}`}>
+			<div className='px-2 py-2 bg-card w-screen '>
+				<div className='flex justify-between items-baseline'>
+					<div className='font-semibold text-primary/80  text-base'>
+						{r.r?.name}
+					</div>
+					<div className='text-[0.7rem] text-muted-foreground'>
+						{new Date(r.createdAt ?? '').toLocaleDateString('en-AU', {
+							month: 'short',
+							day: 'numeric',
+							year: 'numeric',
+						})}
+					</div>
+				</div>
+				<div className='truncate text-sm text-muted-foreground'>
+					{r.message}
+				</div>
+			</div>
+		</Link>
 	)
 }
 
@@ -235,6 +276,29 @@ const Messages = ({ currentUser }: { currentUser: GetUserById }) => {
 		api.user.getAll.useQuery()
 
 	if (messagesLoading || sentMessageLoading || getAllUserLoading) return null
+
+	console.log('sent', sentMessages)
+	// console.log('messages', messages)
+
+	const s = sentMessages?.map((message) => {
+		return {
+			date: message.createdAt,
+			user: { ...message.user },
+		}
+	})
+	const m = messages?.map((message) => {
+		return {
+			date: message.createdAt,
+			user: { ...message.fromUser },
+		}
+	})
+
+	const l = [...(s ?? []), ...(m ?? [])]
+		.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+		.filter((message, index, self) => {
+			return self.findIndex((t) => t.user.id === message.user.id) === index
+		})
+
 	const sendList = getAllUser?.filter((user) => {
 		if (currentUser.isRoot) return true
 		if (currentUser.isCreator) return true
@@ -243,87 +307,28 @@ const Messages = ({ currentUser }: { currentUser: GetUserById }) => {
 
 		if (user.isTrainer) return true
 		return false
-	})
+	}).filter((user) => {
+    return l.findIndex((message) => message.user.id === user.id) === -1
+  })
 
-	console.log('sent', sentMessages)
-	console.log('messages', messages)
+	console.log('s', s)
+	console.log('m', m)
+	console.log('l', l)
 
 	return (
-		<div className='flex gap-4 flex-col items-center justify-center w-full mt-16'>
-			<div className='flex gap-4'>
-				<h1>Messages</h1>
-				<NewMessage sendList={sendList} currentUser={currentUser} />
-			</div>
-			<Tabs defaultValue='inbox' className='w-full'>
-				<TabsList className='w-full'>
-					<TabsTrigger value='inbox'>Inbox</TabsTrigger>
-					<TabsTrigger value='sent'>Sent</TabsTrigger>
-				</TabsList>
-				<TabsContent value='inbox' className='w-full flex flex-col gap-4'>
-					{messages?.map((message) => (
-						<Card className='w-full' key={message.id}>
-							<CardHeader className='flex justify-between'>
-								<CardTitle className='text-center w-full relative'>
-									<span>From {message.fromUser?.name}</span>
-									{message.isViewed ? (
-										<CircleCheck
-											size={16}
-											className={cn(
-												'absolute right-0 top-0 cursor-pointer text-green-700',
-											)}
-										/>
-									) : (
-										<CircleDot
-											size={16}
-											className={cn(
-												'absolute right-0 top-0 cursor-pointer text-muted-foreground',
-											)}
-										/>
-									)}
-								</CardTitle>
-								<CardDescription className='text-center'>
-									{message.subject}
-								</CardDescription>
-							</CardHeader>
-							<CardContent className='flex justify-between'>
-								{message.message}
-							</CardContent>
-						</Card>
+		<div className='flex gap-4 flex-col mt-20 max-w-[100vw]'>
+			<NewMessage sendList={sendList} currentUser={currentUser} />
+			<ScrollArea className='h-[calc(100vh-170px)]'>
+				<div className='flex gap-4 flex-col'>
+					{l.map((message) => (
+						<RecentMessages
+							key={message.user.id}
+							userId={message.user.id ?? ''}
+							currentUser={currentUser}
+						/>
 					))}
-				</TabsContent>
-				<TabsContent value='sent' className='w-full flex flex-col gap-4'>
-					{sentMessages?.map((message) => (
-						<Card className='w-full' key={message.id}>
-							<CardHeader className='flex justify-between'>
-								<CardTitle className='text-center w-full relative'>
-									<span>To {message.user?.name}</span>
-									{message.isViewed ? (
-										<CircleCheck
-											size={16}
-											className={cn(
-												'absolute right-0 top-0 cursor-pointer text-green-700',
-											)}
-										/>
-									) : (
-										<CircleDot
-											size={16}
-											className={cn(
-												'absolute right-0 top-0 cursor-pointer text-muted-foreground',
-											)}
-										/>
-									)}
-								</CardTitle>
-								<CardDescription className='text-center'>
-									{message.subject}
-								</CardDescription>
-							</CardHeader>
-							<CardContent className='flex justify-between'>
-								{message.message}
-							</CardContent>
-						</Card>
-					))}
-				</TabsContent>
-			</Tabs>
+				</div>
+			</ScrollArea>
 		</div>
 	)
 }
