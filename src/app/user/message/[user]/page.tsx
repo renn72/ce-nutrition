@@ -76,7 +76,7 @@ const Messages = ({
 	const userName = l?.[0]?.user?.name ?? ''
 
 	return (
-		<div className='flex flex-col gap-4 w-full mt-16 justify-between h-[calc(100vh-120px)]'>
+		<div className='flex flex-col gap-4 w-full mt-16 justify-between h-[calc(100svh-120px)]'>
 			<div
 				className='flex gap-8 items-start text-primary text-lg font-semibold border-b py-2 border-t'
 				onClick={() => router.push('/user/message')}
@@ -84,7 +84,7 @@ const Messages = ({
 				<ArrowLeft size={24} strokeWidth={2.5} className='cursor-pointer' />
 				<div className=''>{userName}</div>
 			</div>
-			<ScrollArea className='h-[calc(100vh-170px)]'>
+			<ScrollArea className='h-[calc(100svh-170px)]'>
 				<div className='flex flex-col gap-4 w-full px-1'>
 					{l.map((message) => (
 						<div
