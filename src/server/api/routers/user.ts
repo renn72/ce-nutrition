@@ -768,6 +768,11 @@ export const userRouter = createTRPCRouter({
 					password: false,
 				},
 				with: {
+					category: {
+						with: {
+							category: true,
+						},
+					},
 					roles: true,
 					trainers: {
 						with: {
@@ -780,8 +785,8 @@ export const userRouter = createTRPCRouter({
 		}),
 	getAllYour: protectedProcedure
 		.input(z.string().optional())
-		.query(async ({ input, ctx }) => {
-			const userId = input ? input : ctx.session?.user.id
+		.query(async ({ ctx }) => {
+			const userId = ctx.session?.user.id
 
 			const res = await ctx.db.query.user.findMany({
 				columns: {
@@ -814,6 +819,11 @@ export const userRouter = createTRPCRouter({
 			},
 			with: {
 				roles: true,
+				category: {
+					with: {
+						category: true,
+					},
+				},
 				trainers: {
 					with: {
 						trainer: true,

@@ -1,7 +1,8 @@
 'use client'
 
 import { Cross2Icon } from '@radix-ui/react-icons'
-import { Table } from '@tanstack/react-table'
+import type { Table } from '@tanstack/react-table'
+import { FormUserCatagories } from './user-catagories'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -43,6 +44,7 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       <div className='flex items-center gap-2'>
+        <FormUserCatagories />
         <FormDialog />
         <DataTableViewOptions table={table} />
       </div>

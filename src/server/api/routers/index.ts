@@ -17,6 +17,7 @@ import { goalsRouter } from '@/server/api/routers/goals'
 import { trainerRouter } from '@/server/api/routers/trainer'
 import { supplementsRouter } from '@/server/api/routers/supplements'
 import { trainerNotesRouter } from '@/server/api/routers/trainer-notes'
+import { userCatagoriesRouter } from '@/server/api/routers/userCatagories'
 
 import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc'
 
@@ -45,6 +46,7 @@ export const appRouter = createTRPCRouter({
   trainer: trainerRouter,
   supplement: supplementsRouter,
   trainerNotes: trainerNotesRouter,
+  userCatagories: userCatagoriesRouter,
 })
 
 // export type definition of API

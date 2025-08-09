@@ -93,7 +93,7 @@ export const userToUserCategory = createTable('user_to_user_category', {
     .references(() => user.id, {
       onDelete: 'cascade',
     }),
-  categoryId: text('category_id')
+  categoryId: int('category_id')
     .notNull()
     .references(() => userCategory.id, {
       onDelete: 'cascade',

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/utils'
 import type { GetUserBasic } from '@/types'
 import type { ColumnDef } from '@tanstack/react-table'
-import { CircleCheck, CirclePlus, ShieldUser } from 'lucide-react'
+import { CirclePlus, ShieldUser } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -151,6 +151,104 @@ export const columns: ColumnDef<GetUserBasic>[] = [
 						</div>
 					</HoverCardContent>
 				</HoverCard>
+			)
+		},
+	},
+	{
+		accessorKey: 'category',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Categories' />
+		),
+		cell: ({ row }) => {
+      const categories = row.original?.category?.map((category) => ({
+        id: category.category.id,
+        name: category.category.name,
+      }))
+
+      const ctx = api.useUtils()
+	    const { data: userCategories } = api.userCatagories.getAll.useQuery()
+      const { mutate: addToUser } = api.userCatagories.addToUser.useMutation({
+        onSuccess: () => {
+          ctx.user.invalidate()
+        },
+      })
+      const { mutate: removeFromUser } = api.userCatagories.removeFromUser.useMutation({
+        onSuccess: () => {
+          ctx.user.invalidate()
+        },
+      })
+			return (
+				<div className='flex space-x-2'>
+          {categories?.map((category) => (
+              <Dialog key={category.id}>
+                <DialogTrigger asChild>
+            <Badge
+              key={category.id}
+              variant='secondary'
+              className='text-[0.7rem] py-[3px] h-min leading-none cursor-pointer hover:text-background hover:bg-foreground'
+            >
+              {category.name}
+            </Badge>
+                </DialogTrigger>
+                <DialogContent
+                  onOpenAutoFocus={(e) => {
+                    e.preventDefault()
+                  }}
+                >
+                  <DialogHeader>
+                    <DialogTitle>{`Remove ${'category'} as this clients category?`}</DialogTitle>
+                    <DialogDescription className=''>Remove the category from this client.</DialogDescription>
+                  </DialogHeader>
+                  <div className='flex flex-col gap-4 w-full'>
+                    <Button
+                      variant='destructive'
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        if (!row.original) return
+                        removeFromUser({
+                          userId: row.original.id,
+                          categoryId: category.id,
+                        })
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+          ))}
+          <DropdownMenu>
+						<DropdownMenuTrigger asChild>
+              <CirclePlus size={16} strokeWidth={2} className='text-secondary-foreground hover:text-primary active:text-primary active:scale-90' />
+            </DropdownMenuTrigger>
+						<DropdownMenuContent>
+							<DropdownMenuLabel>Add Category</DropdownMenuLabel>
+							<DropdownMenuSeparator />
+              {
+                userCategories
+                ?.map((category) => {
+                  return (
+                    <DropdownMenuItem key={category.id}
+                      onSelect={(e) => {
+                        e.stopPropagation()
+                        if (!row.original) return
+                        addToUser({
+                          userId: row.original.id,
+                          categoryId: category.id,
+                        })
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                      }}
+                    >
+                      {category.name}
+                    </DropdownMenuItem>
+                  )
+                })
+              }
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
 			)
 		},
 	},

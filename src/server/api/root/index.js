@@ -662,7 +662,33 @@ var userRelations = relations6(user, ({ one, many }) => ({
   goalsTrainer: many(goals, { relationName: "trainer" }),
   trainerNotes: many(trainerNotes, { relationName: "user" }),
   trainerNotesTrainer: many(trainerNotes, { relationName: "trainer" }),
-  supplementStacks: many(supplementStack)
+  supplementStacks: many(supplementStack),
+  category: many(userToUserCategory)
+}));
+var userToUserCategory = createTable6("user_to_user_category", {
+  userId: text6("user_id").notNull().references(() => user.id, {
+    onDelete: "cascade"
+  }),
+  categoryId: int6("category_id").notNull().references(() => userCategory.id, {
+    onDelete: "cascade"
+  })
+});
+var usertoUserCategoryRelations = relations6(userToUserCategory, ({ one }) => ({
+  user: one(user, {
+    fields: [userToUserCategory.userId],
+    references: [user.id]
+  }),
+  category: one(userCategory, {
+    fields: [userToUserCategory.categoryId],
+    references: [userCategory.id]
+  })
+}));
+var userCategory = createTable6("user_category", {
+  id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  name: text6("name")
+});
+var userCategoryRelations = relations6(userCategory, ({ many }) => ({
+  users: many(userToUserCategory)
 }));
 var supplementStack = createTable6("supplement_stack", {
   id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
@@ -1482,6 +1508,8 @@ __export(schema_exports, {
   trainerNotes: () => trainerNotes,
   trainerNotesRelations: () => trainerNotesRelations,
   user: () => user,
+  userCategory: () => userCategory,
+  userCategoryRelations: () => userCategoryRelations,
   userIngredient: () => userIngredient,
   userIngredientRelations: () => userIngredientRelations,
   userMeal: () => userMeal,
@@ -1495,6 +1523,8 @@ __export(schema_exports, {
   userSettingsRelations: () => userSettingsRelations,
   userToTrainer: () => userToTrainer,
   userToTrainerRelations: () => userToTrainerRelations,
+  userToUserCategory: () => userToUserCategory,
+  usertoUserCategoryRelations: () => usertoUserCategoryRelations,
   vegeStack: () => vegeStack,
   vegeStackRelations: () => vegeStackRelations,
   verificationToken: () => verificationToken,
@@ -1713,9 +1743,9 @@ var authConfig = {
     strategy: "jwt"
   },
   callbacks: {
-    async signIn({ user: user2 }) {
-      console.log(user2);
-      if (!user2) {
+    async signIn({ user: user3 }) {
+      console.log(user3);
+      if (!user3) {
       }
       return true;
     },
@@ -1736,7 +1766,7 @@ var authConfig = {
       if (session2.user && token.uid) {
         const dbUser = await db.query.user.findFirst({
           // @ts-ignore
-          where: (user2, { eq: eq18 }) => eq18(user2.id, token.uid),
+          where: (user3, { eq: eq19 }) => eq19(user3.id, token.uid),
           columns: {
             id: true,
             isTrainer: true,
@@ -1752,7 +1782,7 @@ var authConfig = {
             id: dbUser.id,
             isTrainer: dbUser.isTrainer || false,
             isCreator: dbUser.isCreator || false,
-            isAdmin: dbUser.roles?.find((role2) => role2.name === "admin") ? true : false
+            isAdmin: dbUser.roles?.find((role3) => role3.name === "admin") ? true : false
           };
         }
       }
@@ -1760,9 +1790,9 @@ var authConfig = {
         ...session2
       };
     },
-    jwt: async ({ user: user2, token }) => {
-      if (user2) {
-        token.uid = user2.id;
+    jwt: async ({ user: user3, token }) => {
+      if (user3) {
+        token.uid = user3.id;
       }
       return token;
     }
@@ -1800,7 +1830,7 @@ var authConfig = {
         console.log("credentials", credentials);
         if (!credentials) return null;
         const maybeUser = await db.query.user.findFirst({
-          where: (user2, { eq: eq18 }) => eq18(user2.email, credentials.username)
+          where: (user3, { eq: eq19 }) => eq19(user3.email, credentials.username)
         });
         if (!maybeUser) throw new Error("user not found");
         if (!maybeUser.password) throw new Error("invalid password");
@@ -1893,11 +1923,11 @@ var rootProtectedProcedure = t.procedure.use(timingMiddleware).use(async ({ ctx,
   }
   const sessionUser = ctx.session.user;
   if (!sessionUser) return next({ ctx });
-  const user2 = await ctx.db.query.user.findFirst({
-    where: (user3, { eq: eq18 }) => eq18(user3.id, sessionUser.id)
+  const user3 = await ctx.db.query.user.findFirst({
+    where: (user4, { eq: eq19 }) => eq19(user4.id, sessionUser.id)
   });
-  console.log("user in protected", user2);
-  if (!user2?.isRoot) {
+  console.log("user in protected", user3);
+  if (!user3?.isRoot) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "You are not poo" });
   }
   return next({
@@ -1914,12 +1944,12 @@ import { z as z3 } from "zod";
 var ingredientRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.ingredient.findMany({
-      where: (ingredient2, { isNull, and: and7, eq: eq18 }) => and7(
+      where: (ingredient2, { isNull, and: and8, eq: eq19 }) => and8(
         isNull(ingredient2.hiddenAt),
         isNull(ingredient2.deletedAt),
-        eq18(ingredient2.isSupplement, false),
-        eq18(ingredient2.isPrivate, false),
-        eq18(ingredient2.isUserCreated, false)
+        eq19(ingredient2.isSupplement, false),
+        eq19(ingredient2.isPrivate, false),
+        eq19(ingredient2.isUserCreated, false)
       ),
       with: {
         user: {
@@ -1940,12 +1970,12 @@ var ingredientRouter = createTRPCRouter({
   }),
   getAllFav: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.ingredient.findMany({
-      where: (ingredient2, { isNull, and: and7, eq: eq18 }) => and7(
+      where: (ingredient2, { isNull, and: and8, eq: eq19 }) => and8(
         isNull(ingredient2.hiddenAt),
         isNull(ingredient2.deletedAt),
-        eq18(ingredient2.isSupplement, false),
-        eq18(ingredient2.isPrivate, false),
-        eq18(ingredient2.isUserCreated, false)
+        eq19(ingredient2.isSupplement, false),
+        eq19(ingredient2.isPrivate, false),
+        eq19(ingredient2.isUserCreated, false)
       ),
       with: {
         ingredientToGroceryStore: {
@@ -1960,7 +1990,7 @@ var ingredientRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z3.object({ id: z3.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.ingredient.findFirst({
-      where: (ingredient2, { eq: eq18 }) => eq18(ingredient2.id, input.id),
+      where: (ingredient2, { eq: eq19 }) => eq19(ingredient2.id, input.id),
       with: {
         user: {
           columns: {
@@ -2070,7 +2100,7 @@ var groceryStoreRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z5.object({ id: z5.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.groceryStore.findFirst({
-      where: (store, { eq: eq18 }) => eq18(store.id, input.id)
+      where: (store, { eq: eq19 }) => eq19(store.id, input.id)
     });
     return res;
   }),
@@ -2488,8 +2518,8 @@ var testRouter = createTRPCRouter({
       columns: true,
       skip_empty_lines: true
     });
-    const user2 = await db.query.user.findFirst({
-      where: (user3, { eq: eq18 }) => eq18(user3.email, "renn@warner.systems"),
+    const user3 = await db.query.user.findFirst({
+      where: (user4, { eq: eq19 }) => eq19(user4.email, "renn@warner.systems"),
       columns: {
         id: true
       }
@@ -2497,7 +2527,7 @@ var testRouter = createTRPCRouter({
     const r = await ctx.db.insert(ingredient).values(
       // @ts-ignore
       csvData.map((row) => ({
-        userId: user2?.id ?? "",
+        userId: user3?.id ?? "",
         serveSize: "100",
         serveUnit: "mls",
         isAusFood: true,
@@ -2760,8 +2790,8 @@ var testRouter = createTRPCRouter({
     const csv6 = csvData.slice(1e3, 1200);
     const csv7 = csvData.slice(1200, 1400);
     const csv8 = csvData.slice(1400, csvData.length);
-    const user2 = await db.query.user.findFirst({
-      where: (user3, { eq: eq18 }) => eq18(user3.email, "renn@warner.systems"),
+    const user3 = await db.query.user.findFirst({
+      where: (user4, { eq: eq19 }) => eq19(user4.email, "renn@warner.systems"),
       columns: {
         id: true
       }
@@ -2769,7 +2799,7 @@ var testRouter = createTRPCRouter({
     const r = await ctx.db.insert(ingredient).values(
       // @ts-ignore
       csvData.map((row) => ({
-        userId: user2?.id ?? "",
+        userId: user3?.id ?? "",
         serveSize: "100",
         serveUnit: "grams",
         isAusFood: true,
@@ -4426,7 +4456,7 @@ var createSchema = z6.object({
   email: z6.string().optional()
 });
 var createLog = async ({
-  user: user2,
+  user: user3,
   task,
   notes,
   userId,
@@ -4435,7 +4465,7 @@ var createLog = async ({
   await db.insert(log).values({
     task,
     notes,
-    user: user2,
+    user: user3,
     userId,
     objectId
   });
@@ -4463,7 +4493,7 @@ var userRouter = createTRPCRouter({
   getByEmail: protectedProcedure.input(z6.string()).query(async ({ ctx, input }) => {
     if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
     const res = await ctx.db.query.user.findFirst({
-      where: (user2, { eq: eq18 }) => eq18(user2.email, input),
+      where: (user3, { eq: eq19 }) => eq19(user3.email, input),
       columns: {
         password: false
       }
@@ -4631,7 +4661,7 @@ var userRouter = createTRPCRouter({
   get: protectedProcedure.input(z6.string()).query(async ({ ctx, input }) => {
     if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
     const res = await ctx.db.query.user.findFirst({
-      where: (user2, { eq: eq18 }) => eq18(user2.id, input),
+      where: (user3, { eq: eq19 }) => eq19(user3.id, input),
       columns: {
         password: false
       },
@@ -4670,7 +4700,7 @@ var userRouter = createTRPCRouter({
     if (input?.id && input.id !== "") userId = input.id;
     if (!userId) return null;
     const res = await ctx.db.query.user.findFirst({
-      where: (user2, { eq: eq18 }) => eq18(user2.id, userId),
+      where: (user3, { eq: eq19 }) => eq19(user3.id, userId),
       columns: {
         password: false
       },
@@ -4713,7 +4743,7 @@ var userRouter = createTRPCRouter({
     const userId = ctx.session?.user.id;
     if (!userId) return null;
     const res = await ctx.db.query.user.findFirst({
-      where: (user2, { eq: eq18 }) => eq18(user2.id, userId),
+      where: (user3, { eq: eq19 }) => eq19(user3.id, userId),
       columns: {
         isCreator: true
       }
@@ -4724,7 +4754,7 @@ var userRouter = createTRPCRouter({
     const userId = ctx.session?.user.id;
     if (!userId) return null;
     const res = await ctx.db.query.user.findFirst({
-      where: (user2, { eq: eq18 }) => eq18(user2.id, userId),
+      where: (user3, { eq: eq19 }) => eq19(user3.id, userId),
       columns: {
         isTrainer: true
       }
@@ -4735,7 +4765,7 @@ var userRouter = createTRPCRouter({
     const userId = ctx.session?.user.id;
     if (!userId) return null;
     const res = await ctx.db.query.user.findFirst({
-      where: (user2, { eq: eq18 }) => eq18(user2.id, userId),
+      where: (user3, { eq: eq19 }) => eq19(user3.id, userId),
       columns: {
         isRoot: true
       }
@@ -4746,13 +4776,13 @@ var userRouter = createTRPCRouter({
     const userId = ctx.session?.user.id;
     if (!userId) return null;
     const res = await ctx.db.query.user.findFirst({
-      where: (user2, { eq: eq18 }) => eq18(user2.id, userId),
+      where: (user3, { eq: eq19 }) => eq19(user3.id, userId),
       with: {
         roles: true
       }
     });
     if (!res) return false;
-    const isAdmin = res?.roles?.find((role2) => role2.name === "admin") ? true : false;
+    const isAdmin = res?.roles?.find((role3) => role3.name === "admin") ? true : false;
     return isAdmin;
   }),
   updateRoot: rootProtectedProcedure.input(z6.object({ isRoot: z6.boolean(), id: z6.string() })).mutation(async ({ ctx, input }) => {
@@ -4832,14 +4862,14 @@ var userRouter = createTRPCRouter({
     const hashedPassword = await hash("hklasd", 10);
     const hashedJamie = await hash("jamiedash", 10);
     const res = await ctx.db.insert(user).values(
-      users.map((user2) => ({
-        firstName: user2.firstName,
-        lastName: user2.lastName,
-        name: `${user2.firstName} ${user2.lastName}`,
-        email: `${user2.firstName.toLowerCase()}${user2.lastName.toLowerCase()}@warner.systems`,
+      users.map((user3) => ({
+        firstName: user3.firstName,
+        lastName: user3.lastName,
+        name: `${user3.firstName} ${user3.lastName}`,
+        email: `${user3.firstName.toLowerCase()}${user3.lastName.toLowerCase()}@warner.systems`,
         password: hashedPassword,
-        isFake: user2.isFake,
-        isTrainer: user2.isTrainer || false
+        isFake: user3.isFake,
+        isTrainer: user3.isTrainer || false
       }))
     );
     const jamie = await ctx.db.insert(user).values({
@@ -4864,9 +4894,9 @@ var userRouter = createTRPCRouter({
   }),
   updateRoleBodyBuilderImages: protectedProcedure.input(z6.object({ userId: z6.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role2, { eq: eq18, and: and7 }) => and7(
-        eq18(role2.userId, input.userId),
-        eq18(role2.name, "body-builder-images")
+      where: (role3, { eq: eq19, and: and8 }) => and8(
+        eq19(role3.userId, input.userId),
+        eq19(role3.name, "body-builder-images")
       )
     });
     if (res) {
@@ -4881,7 +4911,7 @@ var userRouter = createTRPCRouter({
   }),
   updateRoleSupplements: protectedProcedure.input(z6.object({ userId: z6.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role2, { eq: eq18, and: and7 }) => and7(eq18(role2.userId, input.userId), eq18(role2.name, "supplements"))
+      where: (role3, { eq: eq19, and: and8 }) => and8(eq19(role3.userId, input.userId), eq19(role3.name, "supplements"))
     });
     if (res) {
       await ctx.db.delete(role).where(eq3(role.id, res.id));
@@ -4902,7 +4932,7 @@ var userRouter = createTRPCRouter({
   }),
   updateRoleCreateMeals: protectedProcedure.input(z6.object({ userId: z6.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role2, { eq: eq18, and: and7 }) => and7(eq18(role2.userId, input.userId), eq18(role2.name, "create-meals"))
+      where: (role3, { eq: eq19, and: and8 }) => and8(eq19(role3.userId, input.userId), eq19(role3.name, "create-meals"))
     });
     if (res) {
       await ctx.db.delete(role).where(eq3(role.id, res.id));
@@ -4923,7 +4953,7 @@ var userRouter = createTRPCRouter({
   }),
   updateRoleAdmin: protectedProcedure.input(z6.object({ userId: z6.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role2, { eq: eq18, and: and7 }) => and7(eq18(role2.userId, input.userId), eq18(role2.name, "admin"))
+      where: (role3, { eq: eq19, and: and8 }) => and8(eq19(role3.userId, input.userId), eq19(role3.name, "admin"))
     });
     if (res) {
       await ctx.db.delete(role).where(eq3(role.id, res.id));
@@ -4958,18 +4988,23 @@ var userRouter = createTRPCRouter({
   }),
   getFakeUsers: rootProtectedProcedure.query(async () => {
     const res = await db.query.user.findMany({
-      where: (users, { eq: eq18 }) => eq18(users.isFake, true)
+      where: (users, { eq: eq19 }) => eq19(users.isFake, true)
     });
     return res;
   }),
   getBasic: protectedProcedure.input(z6.string()).query(async ({ ctx, input }) => {
     if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
     const res = await ctx.db.query.user.findFirst({
-      where: (user2, { eq: eq18 }) => eq18(user2.id, input),
+      where: (user3, { eq: eq19 }) => eq19(user3.id, input),
       columns: {
         password: false
       },
       with: {
+        category: {
+          with: {
+            category: true
+          }
+        },
         roles: true,
         trainers: {
           with: {
@@ -4980,7 +5015,7 @@ var userRouter = createTRPCRouter({
     });
     return res;
   }),
-  getAllYour: protectedProcedure.query(async ({ ctx }) => {
+  getAllYour: protectedProcedure.input(z6.string().optional()).query(async ({ ctx }) => {
     const userId = ctx.session?.user.id;
     const res = await ctx.db.query.user.findMany({
       columns: {
@@ -4995,10 +5030,10 @@ var userRouter = createTRPCRouter({
         }
       }
     });
-    const users = res.filter((user2) => {
-      if (user2.id === userId) return true;
+    const users = res.filter((user3) => {
+      if (user3.id === userId) return true;
       if (ctx.session.user.isAdmin) return true;
-      if (user2.trainers.find((trainer) => trainer.trainer.id === userId))
+      if (user3.trainers.find((trainer) => trainer.trainer.id === userId))
         return true;
       return false;
     });
@@ -5011,6 +5046,11 @@ var userRouter = createTRPCRouter({
       },
       with: {
         roles: true,
+        category: {
+          with: {
+            category: true
+          }
+        },
         trainers: {
           with: {
             trainer: true
@@ -5023,14 +5063,14 @@ var userRouter = createTRPCRouter({
   checkEmail: publicProcedure.input(z6.string()).mutation(async ({ ctx, input }) => {
     if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
     const res = await ctx.db.query.user.findFirst({
-      where: (user2, { eq: eq18 }) => eq18(user2.email, input)
+      where: (user3, { eq: eq19 }) => eq19(user3.email, input)
     });
     return res ? true : false;
   }),
   getGaurenteed: protectedProcedure.input(z6.string()).query(async ({ ctx, input }) => {
     if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
     const res = await ctx.db.query.user.findFirst({
-      where: (user2, { eq: eq18 }) => eq18(user2.id, input),
+      where: (user3, { eq: eq19 }) => eq19(user3.id, input),
       columns: {
         password: false
       },
@@ -5087,7 +5127,7 @@ import { z as z8 } from "zod";
 var recipeRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.recipe.findMany({
-      where: (recipe2, { eq: eq18 }) => eq18(recipe2.isUserRecipe, false),
+      where: (recipe2, { eq: eq19 }) => eq19(recipe2.isUserRecipe, false),
       orderBy: [desc3(recipe.createdAt)],
       with: {
         creator: true,
@@ -5111,9 +5151,9 @@ var recipeRouter = createTRPCRouter({
   }),
   getAllUserCreated: protectedProcedure.input(z8.object({ userId: z8.string() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.recipe.findMany({
-      where: (recipe2, { eq: eq18, and: and7 }) => and7(
-        eq18(recipe2.creatorId, input.userId),
-        eq18(recipe2.isUserRecipe, true)
+      where: (recipe2, { eq: eq19, and: and8 }) => and8(
+        eq19(recipe2.creatorId, input.userId),
+        eq19(recipe2.isUserRecipe, true)
       ),
       orderBy: [desc3(recipe.createdAt)],
       with: {
@@ -5137,7 +5177,7 @@ var recipeRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z8.object({ id: z8.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.recipe.findFirst({
-      where: (recipe2, { eq: eq18 }) => eq18(recipe2.id, input.id),
+      where: (recipe2, { eq: eq19 }) => eq19(recipe2.id, input.id),
       with: {
         creator: true,
         recipeToIngredient: {
@@ -5335,7 +5375,7 @@ var planRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z9.number()).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.plan.findFirst({
-      where: (plan2, { eq: eq18 }) => eq18(plan2.id, input),
+      where: (plan2, { eq: eq19 }) => eq19(plan2.id, input),
       with: {
         creator: true,
         meals: {
@@ -5645,7 +5685,7 @@ var mealRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z10.object({ id: z10.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.meal.findFirst({
-      where: (meal2, { eq: eq18 }) => eq18(meal2.id, input.id),
+      where: (meal2, { eq: eq19 }) => eq19(meal2.id, input.id),
       with: {
         mealToVegeStack: {
           with: {
@@ -5794,7 +5834,7 @@ var vegeRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z11.object({ id: z11.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.vegeStack.findFirst({
-      where: (store, { eq: eq18 }) => eq18(store.id, input.id)
+      where: (store, { eq: eq19 }) => eq19(store.id, input.id)
     });
     return res;
   }),
@@ -5995,7 +6035,7 @@ var createBlankLogs = async (userId, startDate) => {
   return logs;
 };
 var createLog2 = async ({
-  user: user2,
+  user: user3,
   task,
   notes,
   userId,
@@ -6004,7 +6044,7 @@ var createLog2 = async ({
   await db.insert(log).values({
     task,
     notes,
-    user: user2,
+    user: user3,
     userId,
     objectId
   });
@@ -7349,7 +7389,7 @@ var weighInRouter = createTRPCRouter({
 import { eq as eq11 } from "drizzle-orm";
 import { z as z15 } from "zod";
 var createLog3 = async ({
-  user: user2,
+  user: user3,
   task,
   notes,
   userId,
@@ -7358,7 +7398,7 @@ var createLog3 = async ({
   await db.insert(log).values({
     task,
     notes,
-    user: user2,
+    user: user3,
     userId,
     objectId
   });
@@ -7392,7 +7432,7 @@ var messageRouter = createTRPCRouter({
       userId = ctx.session?.user.id;
     }
     const res = await ctx.db.query.message.findMany({
-      where: eq11(message.userId, input),
+      where: eq11(message.userId, userId),
       orderBy: (data, { desc: desc12 }) => desc12(data.createdAt),
       with: {
         fromUser: true,
@@ -7407,7 +7447,7 @@ var messageRouter = createTRPCRouter({
       userId = ctx.session?.user.id;
     }
     const res = await ctx.db.query.message.findMany({
-      where: eq11(message.fromUserId, input),
+      where: eq11(message.fromUserId, userId),
       orderBy: (data, { desc: desc12 }) => desc12(data.createdAt),
       with: {
         fromUser: true,
@@ -7458,7 +7498,7 @@ var messageRouter = createTRPCRouter({
 import { eq as eq12 } from "drizzle-orm";
 import { z as z16 } from "zod";
 var createLog4 = async ({
-  user: user2,
+  user: user3,
   task,
   notes,
   userId,
@@ -7467,7 +7507,7 @@ var createLog4 = async ({
   await db.insert(log).values({
     task,
     notes,
-    user: user2,
+    user: user3,
     userId,
     objectId
   });
@@ -7650,13 +7690,13 @@ import { z as z18 } from "zod";
 var goalsRouter = createTRPCRouter({
   getUser: protectedProcedure.input(z18.object({ userId: z18.string() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.goals.findMany({
-      where: (goal, { eq: eq18 }) => eq18(goal.userId, input.userId)
+      where: (goal, { eq: eq19 }) => eq19(goal.userId, input.userId)
     });
     return res;
   }),
   get: protectedProcedure.input(z18.object({ id: z18.number() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.goals.findFirst({
-      where: (goal, { eq: eq18 }) => eq18(goal.id, input.id)
+      where: (goal, { eq: eq19 }) => eq19(goal.id, input.id)
     });
     return res;
   }),
@@ -7703,7 +7743,7 @@ var goalsRouter = createTRPCRouter({
 import { and as and5, eq as eq15 } from "drizzle-orm";
 import { z as z19 } from "zod";
 var createLog5 = async ({
-  user: user2,
+  user: user3,
   task,
   notes,
   userId,
@@ -7712,7 +7752,7 @@ var createLog5 = async ({
   await db.insert(log).values({
     task,
     notes,
-    user: user2,
+    user: user3,
     userId,
     objectId
   });
@@ -7720,7 +7760,7 @@ var createLog5 = async ({
 var trainerRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.user.findMany({
-      where: (user2, { eq: eq18 }) => eq18(user2.isTrainer, true),
+      where: (user3, { eq: eq19 }) => eq19(user3.isTrainer, true),
       columns: {
         id: true,
         name: true
@@ -8191,7 +8231,7 @@ var formSchema = z20.object({
 
 // src/server/api/routers/supplements.ts
 var createLog6 = async ({
-  user: user2,
+  user: user3,
   task,
   notes,
   userId,
@@ -8200,7 +8240,7 @@ var createLog6 = async ({
   await db.insert(log).values({
     task,
     notes,
-    user: user2,
+    user: user3,
     userId,
     objectId
   });
@@ -8215,11 +8255,11 @@ var supplementsRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session?.user?.id;
     const res = await ctx.db.query.ingredient.findMany({
-      where: (ingredient2, { isNull, and: and7, eq: eq18 }) => and7(
+      where: (ingredient2, { isNull, and: and8, eq: eq19 }) => and8(
         isNull(ingredient2.hiddenAt),
         isNull(ingredient2.deletedAt),
-        eq18(ingredient2.isSupplement, true),
-        eq18(ingredient2.isUserCreated, false)
+        eq19(ingredient2.isSupplement, true),
+        eq19(ingredient2.isUserCreated, false)
       ),
       with: {
         user: {
@@ -8244,7 +8284,7 @@ var supplementsRouter = createTRPCRouter({
   getSupplementFromDailyLog: protectedProcedure.input(z21.object({ id: z21.number() })).query(async ({ input, ctx }) => {
     if (input.id === -1) return false;
     const res = await ctx.db.query.dailySupplement.findFirst({
-      where: (supplement, { eq: eq18 }) => eq18(supplement.id, input.id),
+      where: (supplement, { eq: eq19 }) => eq19(supplement.id, input.id),
       with: {
         supplement: true
       }
@@ -8253,7 +8293,7 @@ var supplementsRouter = createTRPCRouter({
   }),
   getFullSupplement: protectedProcedure.input(z21.object({ id: z21.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.ingredient.findFirst({
-      where: (ingredient2, { eq: eq18 }) => eq18(ingredient2.id, input.id),
+      where: (ingredient2, { eq: eq19 }) => eq19(ingredient2.id, input.id),
       with: {
         ingredientAdditionOne: true,
         ingredientAdditionTwo: true,
@@ -8270,7 +8310,7 @@ var supplementsRouter = createTRPCRouter({
   }),
   getSupplement: protectedProcedure.input(z21.object({ id: z21.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.ingredient.findFirst({
-      where: (ingredient2, { eq: eq18 }) => eq18(ingredient2.id, input.id),
+      where: (ingredient2, { eq: eq19 }) => eq19(ingredient2.id, input.id),
       with: {
         user: {
           columns: {
@@ -8296,7 +8336,7 @@ var supplementsRouter = createTRPCRouter({
   }),
   getSuppFromPlan: protectedProcedure.input(z21.object({ id: z21.number() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.supplementToSupplementStack.findFirst({
-      where: (supplement, { eq: eq18 }) => eq18(supplement.id, input.id),
+      where: (supplement, { eq: eq19 }) => eq19(supplement.id, input.id),
       with: {
         supplement: true
       }
@@ -8313,7 +8353,7 @@ var supplementsRouter = createTRPCRouter({
     })
   ).mutation(async ({ input, ctx }) => {
     const userTimes = await ctx.db.query.supplementStack.findMany({
-      where: (stack, { eq: eq18 }) => eq18(stack.userId, input.userId)
+      where: (stack, { eq: eq19 }) => eq19(stack.userId, input.userId)
     });
     let timeId = userTimes.find((stack) => stack.time === input.time)?.id || null;
     if (!timeId) {
@@ -8904,7 +8944,7 @@ import { z as z22 } from "zod";
 var trainerNotesRouter = createTRPCRouter({
   getAllUser: protectedProcedure.input(z22.object({ userId: z22.string() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.trainerNotes.findMany({
-      where: (note, { eq: eq18 }) => eq18(note.userId, input.userId),
+      where: (note, { eq: eq19 }) => eq19(note.userId, input.userId),
       with: {
         trainer: true
       }
@@ -8913,7 +8953,7 @@ var trainerNotesRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z22.object({ id: z22.number() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.trainerNotes.findFirst({
-      where: (note, { eq: eq18 }) => eq18(note.id, input.id),
+      where: (note, { eq: eq19 }) => eq19(note.id, input.id),
       with: {
         trainer: true
       }
@@ -8959,6 +8999,48 @@ var trainerNotesRouter = createTRPCRouter({
   })
 });
 
+// src/server/api/routers/userCatagories.tsx
+import { and as and7, eq as eq18 } from "drizzle-orm";
+import { z as z23 } from "zod";
+var userCatagoriesRouter = createTRPCRouter({
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const res = await ctx.db.query.userCategory.findMany();
+    return res;
+  }),
+  create: protectedProcedure.input(z23.string()).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.insert(userCategory).values({
+      name: input
+    });
+    return res;
+  }),
+  update: protectedProcedure.input(z23.object({ id: z23.number(), name: z23.string() })).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.update(userCategory).set({
+      name: input.name
+    }).where(eq18(userCategory.id, input.id));
+    return res;
+  }),
+  delete: protectedProcedure.input(z23.number()).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.delete(userCategory).where(eq18(userCategory.id, input));
+    return res;
+  }),
+  addToUser: protectedProcedure.input(z23.object({ userId: z23.string(), categoryId: z23.number() })).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.insert(userToUserCategory).values({
+      userId: input.userId,
+      categoryId: input.categoryId
+    });
+    return res;
+  }),
+  removeFromUser: protectedProcedure.input(z23.object({ userId: z23.string(), categoryId: z23.number() })).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.delete(userToUserCategory).where(
+      and7(
+        eq18(userToUserCategory.userId, input.userId),
+        eq18(userToUserCategory.categoryId, input.categoryId)
+      )
+    );
+    return res;
+  })
+});
+
 // src/server/api/routers/index.ts
 var appRouter = createTRPCRouter({
   goal: goalsRouter,
@@ -8979,7 +9061,8 @@ var appRouter = createTRPCRouter({
   metrics: metricsRouter,
   trainer: trainerRouter,
   supplement: supplementsRouter,
-  trainerNotes: trainerNotesRouter
+  trainerNotes: trainerNotesRouter,
+  userCatagories: userCatagoriesRouter
 });
 var createCaller = createCallerFactory(appRouter);
 export {
