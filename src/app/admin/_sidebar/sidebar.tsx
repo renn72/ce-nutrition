@@ -49,6 +49,8 @@ import WhistleIcon from '@/components/icons/whistle-icon'
 
 export const userAtom = atom<string>('')
 
+import { impersonatedUserAtom } from '@/atoms'
+
 const data = {
 	navMain: [
 		{
@@ -182,18 +184,18 @@ const AdminSidebar = ({
 	const user = searchParams.get('user')
 
 	const [selectedUser, setSelectedUser] = useAtom(userAtom)
+  const [impersonatedUser, _setImpersonatedUser] = useAtom(impersonatedUserAtom)
 
+  const { data: currentUser } = api.user.getCurrentUser.useQuery({id: impersonatedUser.id})
 	const { data: yourUsers, isLoading } = api.user.getAllYour.useQuery()
-
-	const { data: isUser } = api.user.isUser.useQuery()
 
 	const allUsers = yourUsers
 		?.filter((user) => {
-			if (!isUser?.isAdmin) return true
-			if (user.id === isUser?.id) return true
+			if (!currentUser?.roles?.find((role) => role.name === 'admin')) return true
+			if (user.id === currentUser?.id) return true
 			if (isOnlyYourClients) {
 				return user.trainers.find(
-					(trainer) => trainer.trainer.id === isUser?.id,
+					(trainer) => trainer.trainer.id === currentUser?.id,
 				)
 			}
 			return true
@@ -326,15 +328,15 @@ const AdminSidebar = ({
 								<SidebarMenu>
 									{item.items
 										.filter(
-											(item) => item.title !== 'Super' || isUser?.isCreator,
+											(item) => item.title !== 'Super' || currentUser?.isCreator,
 										)
 										.filter(
 											(item) =>
-												item.title !== 'User Super' || isUser?.isCreator,
+												item.title !== 'User Super' || currentUser?.isCreator,
 										)
 										.filter(
 											(item) =>
-												item.title !== 'All Skinfolds' || isUser?.isCreator,
+												item.title !== 'All Skinfolds' || currentUser?.isCreator,
 										)
 										.map((item) => {
                       if (item.url === '') return <div key={item.title} className='py-1'/>

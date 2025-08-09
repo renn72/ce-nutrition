@@ -51,7 +51,7 @@ const createLog = async ({
 	})
 }
 
-const isUserRoot = async (userId: string) => {
+export const isUserRoot = async (userId: string) => {
 	const res = await db.query.user.findFirst({
 		where: (user, { eq }) => eq(user.id, userId),
 		columns: {
@@ -365,15 +365,15 @@ export const userRouter = createTRPCRouter({
 				roles: true,
 				images: true,
 				trainers: true,
-        supplementStacks: {
-          with: {
-            supplements: {
-              with: {
-                supplement: true,
-              },
-            },
-          },
-        },
+				supplementStacks: {
+					with: {
+						supplements: {
+							with: {
+								supplement: true,
+							},
+						},
+					},
+				},
 				userPlans: {
 					with: {
 						userMeals: true,
@@ -408,15 +408,15 @@ export const userRouter = createTRPCRouter({
 					images: true,
 					settings: true,
 					roles: true,
-        supplementStacks: {
-          with: {
-            supplements: {
-              with: {
-                supplement: true,
-              },
-            },
-          },
-        },
+					supplementStacks: {
+						with: {
+							supplements: {
+								with: {
+									supplement: true,
+								},
+							},
+						},
+					},
 					userPlans: {
 						with: {
 							userMeals: true,
@@ -778,33 +778,35 @@ export const userRouter = createTRPCRouter({
 			})
 			return res
 		}),
-	getAllYour: protectedProcedure.query(async ({ ctx }) => {
-		const userId = ctx.session?.user.id
+	getAllYour: protectedProcedure
+		.input(z.string().optional())
+		.query(async ({ input, ctx }) => {
+			const userId = input ? input : ctx.session?.user.id
 
-		const res = await ctx.db.query.user.findMany({
-			columns: {
-				password: false,
-			},
-			with: {
-				roles: true,
-				trainers: {
-					with: {
-						trainer: true,
+			const res = await ctx.db.query.user.findMany({
+				columns: {
+					password: false,
+				},
+				with: {
+					roles: true,
+					trainers: {
+						with: {
+							trainer: true,
+						},
 					},
 				},
-			},
-		})
+			})
 
-		const users = res.filter((user) => {
-			if (user.id === userId) return true
-			if (ctx.session.user.isAdmin) return true
-			if (user.trainers.find((trainer) => trainer.trainer.id === userId))
-				return true
-			return false
-		})
+			const users = res.filter((user) => {
+				if (user.id === userId) return true
+				if (ctx.session.user.isAdmin) return true
+				if (user.trainers.find((trainer) => trainer.trainer.id === userId))
+					return true
+				return false
+			})
 
-		return users
-	}),
+			return users
+		}),
 	getAll: protectedProcedure.query(async ({ ctx }) => {
 		const res = await ctx.db.query.user.findMany({
 			columns: {
@@ -843,15 +845,15 @@ export const userRouter = createTRPCRouter({
 					settings: true,
 					images: true,
 					roles: true,
-        supplementStacks: {
-          with: {
-            supplements: {
-              with: {
-                supplement: true,
-              },
-            },
-          },
-        },
+					supplementStacks: {
+						with: {
+							supplements: {
+								with: {
+									supplement: true,
+								},
+							},
+						},
+					},
 					userPlans: {
 						with: {
 							userMeals: true,

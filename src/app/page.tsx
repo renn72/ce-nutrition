@@ -170,6 +170,7 @@ export default function Home() {
 	const { data: currentUser, isLoading } = api.user.getCurrentUser.useQuery({
 		id: impersonatedUser.id,
 	})
+  console.log(impersonatedUser)
 	const isMobile = useClientMediaQuery('(max-width: 600px)')
 
 	if (isLoading) return null

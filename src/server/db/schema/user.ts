@@ -84,6 +84,40 @@ export const userRelations = relations(user, ({ one, many }) => ({
 	trainerNotes: many(trainerNotes, { relationName: 'user' }),
 	trainerNotesTrainer: many(trainerNotes, { relationName: 'trainer' }),
 	supplementStacks: many(supplementStack),
+  category: many(userToUserCategory),
+}))
+
+export const userToUserCategory = createTable('user_to_user_category', {
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, {
+      onDelete: 'cascade',
+    }),
+  categoryId: text('category_id')
+    .notNull()
+    .references(() => userCategory.id, {
+      onDelete: 'cascade',
+    }),
+})
+
+export const usertoUserCategoryRelations = relations(userToUserCategory, ({ one }) => ({
+  user: one(user, {
+    fields: [userToUserCategory.userId],
+    references: [user.id],
+  }),
+  category: one(userCategory, {
+    fields: [userToUserCategory.categoryId],
+    references: [userCategory.id],
+  }),
+}))
+
+export const userCategory = createTable('user_category', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  name: text('name'),
+})
+
+export const userCategoryRelations = relations(userCategory, ({ many }) => ({
+  users: many(userToUserCategory),
 }))
 
 export const supplementStack = createTable('supplement_stack', {
