@@ -117,17 +117,17 @@ const Messages = ({
 					))}
 				</div>
 			</ScrollArea>
-			<div className='flex gap-4 items-center'>
+			<div className='flex gap-2 items-center px-2'>
 				<Textarea
 					placeholder='Message'
 					value={message}
 					rows={2}
 					onChange={(e) => setMessage(e.target.value)}
 				/>
-				<div className='flex items-center justify-center rounded-full h-12 w-12 border-2 border-primary shrink-0 mr-2'>
+				<div className='flex items-center justify-center rounded-full h-12 w-12 border-2 border-primary shrink-0'>
 					<Send
 						size={28}
-						className='cursor-pointer mr-[2px]'
+						className='cursor-pointer mr-[3px]'
 						onClick={() => {
 							if (message === '') return
 							sendMessage({
