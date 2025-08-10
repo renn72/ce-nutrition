@@ -78,6 +78,7 @@ const createLog = async ({
 	userId: string
 	objectId: number | null | undefined
 }) => {
+  console.log('-------------------------------------log-------------')
 	await db.insert(log).values({
 		task: task,
 		notes: notes,
@@ -347,6 +348,7 @@ export const dailyLogRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
+      console.log('-------------------------------------enter')
 			const log = await ctx.db.query.dailyLog.findFirst({
 				where: and(
 					eq(dailyLog.date, input.date),
@@ -354,6 +356,7 @@ export const dailyLogRouter = createTRPCRouter({
 				),
 			})
 
+      console.log('-------------------------------------log')
 			createLog({
 				user: ctx.session.user.name,
 				userId: ctx.session.user.id,
@@ -361,6 +364,7 @@ export const dailyLogRouter = createTRPCRouter({
 				notes: JSON.stringify(input),
 				objectId: null,
 			})
+      console.log('-------------------------------------log')
 
 			if (!log) {
 				const res = await ctx.db.insert(dailyLog).values({

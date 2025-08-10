@@ -50,7 +50,6 @@ export const authConfig : NextAuthConfig = {
 	},
 	callbacks: {
 		async signIn({ user }) {
-			console.log(user)
 			if (!user) {
         // throw new Error('Login failed')
 			}
