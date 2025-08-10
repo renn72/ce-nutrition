@@ -4,9 +4,8 @@ import { api } from '@/trpc/react'
 
 import { useState } from 'react'
 
-import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
-import { RefreshCcw, XCircle } from 'lucide-react'
+import { RefreshCcw, } from 'lucide-react'
 
 import {
 	Collapsible,
@@ -25,9 +24,7 @@ export default function AdminLogs() {
 		refetchInterval: 1000 * 60 * 15,
 	})
 
-	const isMobile = useClientMediaQuery('(max-width: 600px)')
 
-  console.log(logs)
 
 	return (
 		<div className='flex flex-col gap-0 my-16 px-1 w-full tracking-tight md:tracking-normal '>
@@ -56,7 +53,7 @@ export default function AdminLogs() {
 				/>
 				<RefreshCcw
 					size={20}
-					className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform cursor-pointer'
+					className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform'
 					onClick={() => {
 						ctx.user.invalidate()
 					}}
