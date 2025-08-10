@@ -7,12 +7,10 @@ import { useState } from 'react'
 import Image from 'next/image'
 
 import { impersonatedUserAtom } from '@/atoms'
-import { slideInOut } from '@/lib/tranistions'
 import { cn } from '@/lib/utils'
-import { GetUserById } from '@/types'
+import type { GetUserById } from '@/types'
 import { useAtom } from 'jotai'
 import { Bell, BellDot, NotebookText } from 'lucide-react'
-// import Link from 'next/link'
 import { Link, useTransitionRouter } from 'next-view-transitions'
 import { toast } from 'sonner'
 
