@@ -1,9 +1,8 @@
 import { db } from '@/server/db'
 import { log } from '@/server/db/schema/log'
 import { message } from '@/server/db/schema/message'
-import { TRPCError } from '@trpc/server'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
-import { desc, eq } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 const createLog = async ({

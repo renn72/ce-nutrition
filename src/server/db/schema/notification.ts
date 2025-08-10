@@ -1,5 +1,5 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 import { user } from './user'
 
@@ -15,6 +15,7 @@ export const notification = createTable(
     userId: text('user_id').references(() => user.id, {
       onDelete: 'cascade',
     }),
+    code: text('code'),
     title: text('title'),
     description: text('description'),
     isRead: int('is_read', { mode: 'boolean' }),

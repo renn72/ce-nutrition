@@ -1,6 +1,6 @@
 import { notification } from '@/server/db/schema/notification'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
-import { desc, eq } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 export const notificationRouter = createTRPCRouter({
@@ -10,7 +10,7 @@ export const notificationRouter = createTRPCRouter({
     })
     return res
   }),
-  getAll: protectedProcedure.query(async ({ input, ctx }) => {
+  getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.notification.findMany({
       where: eq(notification.isRead, false),
       orderBy: (data, { desc }) => desc(data.createdAt),
