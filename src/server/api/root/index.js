@@ -583,6 +583,7 @@ var notification = createTable5(
     userId: text5("user_id").references(() => user.id, {
       onDelete: "cascade"
     }),
+    code: text5("code"),
     title: text5("title"),
     description: text5("description"),
     isRead: int5("is_read", { mode: "boolean" }),
@@ -1744,7 +1745,6 @@ var authConfig = {
   },
   callbacks: {
     async signIn({ user: user3 }) {
-      console.log(user3);
       if (!user3) {
       }
       return true;
@@ -1879,7 +1879,6 @@ var t = initTRPC.context().create({
 var createCallerFactory = t.createCallerFactory;
 var createTRPCRouter = t.router;
 var timingMiddleware = t.middleware(async (opts) => {
-  console.log("entering middleware");
   const start = Date.now();
   const result2 = await opts.next();
   const input = await opts.getRawInput();
@@ -1896,7 +1895,6 @@ var timingMiddleware = t.middleware(async (opts) => {
     });
   } else {
   }
-  console.log("leaving middleware");
   return result2;
 });
 var publicProcedure = t.procedure.use(timingMiddleware);
@@ -2303,9 +2301,9 @@ var BaseGenerator = class {
     const extraConfigBuilder = table[ExtraConfigBuilder];
     const extraConfigColumns = table[ExtraConfigColumns];
     const extraConfig = extraConfigBuilder?.(extraConfigColumns ?? {});
-    const builtIndexes = (Array.isArray(extraConfig) ? extraConfig : Object.values(extraConfig ?? {})).map((b) => b?.build(table)).filter((b) => b !== void 0).filter((index5) => !(is(index5, PgCheck) || is(index5, MySqlCheck) || is(index5, SQLiteCheck)));
+    const builtIndexes = (Array.isArray(extraConfig) ? extraConfig : Object.values(extraConfig ?? {})).map((b) => b?.build(table)).filter((b) => b !== void 0).filter((index4) => !(is(index4, PgCheck) || is(index4, MySqlCheck) || is(index4, SQLiteCheck)));
     const fks = builtIndexes.filter(
-      (index5) => is(index5, PgForeignKey) || is(index5, MySqlForeignKey) || is(index5, SQLiteForeignKey)
+      (index4) => is(index4, PgForeignKey) || is(index4, MySqlForeignKey) || is(index4, SQLiteForeignKey)
     );
     if (!this.relational) {
       this.generateForeignKeys(fks);
@@ -2314,26 +2312,26 @@ var BaseGenerator = class {
       const indexes = extraConfig ?? {};
       dbml.newLine().tab().insert("indexes {").newLine();
       for (const indexName in indexes) {
-        const index5 = indexes[indexName].build(table);
+        const index4 = indexes[indexName].build(table);
         dbml.tab(2);
-        if (is(index5, PgIndex) || is(index5, MySqlIndex) || is(index5, SQLiteIndex)) {
-          const configColumns = index5.config.columns.flatMap(
+        if (is(index4, PgIndex) || is(index4, MySqlIndex) || is(index4, SQLiteIndex)) {
+          const configColumns = index4.config.columns.flatMap(
             (entry) => is(entry, SQL) ? entry.queryChunks.filter((v) => is(v, Column)) : entry
           );
           const idxColumns = wrapColumns(
             configColumns,
             this.buildQueryConfig.escapeName
           );
-          const idxProperties = index5.config.name ? ` [name: '${index5.config.name}'${index5.config.unique ? ", unique" : ""}]` : "";
+          const idxProperties = index4.config.name ? ` [name: '${index4.config.name}'${index4.config.unique ? ", unique" : ""}]` : "";
           dbml.insert(`${idxColumns}${idxProperties}`);
         }
-        if (is(index5, PgPrimaryKey) || is(index5, MySqlPrimaryKey) || is(index5, SQLitePrimaryKey)) {
-          const pkColumns = wrapColumns(index5.columns, this.buildQueryConfig.escapeName);
+        if (is(index4, PgPrimaryKey) || is(index4, MySqlPrimaryKey) || is(index4, SQLitePrimaryKey)) {
+          const pkColumns = wrapColumns(index4.columns, this.buildQueryConfig.escapeName);
           dbml.insert(`${pkColumns} [pk]`);
         }
-        if (is(index5, PgUniqueConstraint) || is(index5, MySqlUniqueConstraint) || is(index5, SQLiteUniqueConstraint)) {
-          const uqColumns = wrapColumns(index5.columns, this.buildQueryConfig.escapeName);
-          const uqProperties = index5.name ? `[name: '${index5.name}', unique]` : "[unique]";
+        if (is(index4, PgUniqueConstraint) || is(index4, MySqlUniqueConstraint) || is(index4, SQLiteUniqueConstraint)) {
+          const uqColumns = wrapColumns(index4.columns, this.buildQueryConfig.escapeName);
+          const uqProperties = index4.name ? `[name: '${index4.name}', unique]` : "[unique]";
           dbml.insert(`${uqColumns} ${uqProperties}`);
         }
         dbml.newLine();
@@ -4474,7 +4472,7 @@ var userRouter = createTRPCRouter({
   getAdminLogs: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.log.findMany({
       limit: 4e3,
-      orderBy: (log2, { desc: desc12 }) => [desc12(log2.createdAt)]
+      orderBy: (log2, { desc: desc11 }) => [desc11(log2.createdAt)]
     });
     return res;
   }),
@@ -6046,6 +6044,7 @@ var createLog2 = async ({
   userId,
   objectId
 }) => {
+  console.log("-------------------------------------log-------------");
   await db.insert(log).values({
     task,
     notes,
@@ -6232,7 +6231,7 @@ var dailyLogRouter = createTRPCRouter({
     createLog2({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
-      task: "Update Supplement" + log2 ? "" : " and Create Log",
+      task: "Update Supplement",
       notes: JSON.stringify(input),
       objectId: null
     });
@@ -6253,19 +6252,22 @@ var dailyLogRouter = createTRPCRouter({
       notes: z13.string()
     })
   ).mutation(async ({ input, ctx }) => {
+    console.log("-------------------------------------enter");
     const log2 = await ctx.db.query.dailyLog.findFirst({
       where: and2(
         eq9(dailyLog.date, input.date),
         eq9(dailyLog.userId, ctx.session.user.id)
       )
     });
+    console.log("-------------------------------------log");
     createLog2({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
-      task: "Update Note" + log2 ? "" : " and Create Log",
+      task: "Update Note",
       notes: JSON.stringify(input),
       objectId: null
     });
+    console.log("-------------------------------------log");
     if (!log2) {
       const res2 = await ctx.db.insert(dailyLog).values({
         date: input.date,
@@ -6297,7 +6299,7 @@ var dailyLogRouter = createTRPCRouter({
     createLog2({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
-      task: "Update Posing" + log2 ? "" : " and Create Log",
+      task: "Update Posing",
       notes: JSON.stringify(input),
       objectId: null
     });
@@ -6332,7 +6334,7 @@ var dailyLogRouter = createTRPCRouter({
     createLog2({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
-      task: "Update Sleep" + log2 ? "" : " and Create Log",
+      task: "Update Sleep",
       notes: JSON.stringify(input),
       objectId: null
     });
@@ -6367,7 +6369,7 @@ var dailyLogRouter = createTRPCRouter({
     createLog2({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
-      task: "Update Sleep Qual" + log2 ? "" : " and Create Log",
+      task: "Update Sleep Qual",
       notes: JSON.stringify(input),
       objectId: null
     });
@@ -6400,6 +6402,13 @@ var dailyLogRouter = createTRPCRouter({
       )
     });
     if (!log2) return;
+    createLog2({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "Update Steps",
+      notes: JSON.stringify(input),
+      objectId: log2?.id
+    });
     const res = await ctx.db.update(dailyLog).set({ steps: input.steps }).where(
       and2(
         eq9(dailyLog.date, input.date),
@@ -6421,6 +6430,13 @@ var dailyLogRouter = createTRPCRouter({
       )
     });
     if (!log2) return;
+    createLog2({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "Update Sauna",
+      notes: JSON.stringify(input),
+      objectId: log2?.id
+    });
     const res = await ctx.db.update(dailyLog).set({ sauna: input.sauna }).where(
       and2(
         eq9(dailyLog.date, input.date),
@@ -6442,6 +6458,13 @@ var dailyLogRouter = createTRPCRouter({
       )
     });
     if (!log2) return;
+    createLog2({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "Update Cold Plunge",
+      notes: JSON.stringify(input),
+      objectId: log2?.id
+    });
     const res = await ctx.db.update(dailyLog).set({ coldPlunge: input.coldPlunge }).where(
       and2(
         eq9(dailyLog.date, input.date),
@@ -6465,7 +6488,7 @@ var dailyLogRouter = createTRPCRouter({
     createLog2({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
-      task: "Update Nap" + log2 ? "" : " and Create Log",
+      task: "Update Nap",
       notes: JSON.stringify(input),
       objectId: null
     });
@@ -6500,7 +6523,7 @@ var dailyLogRouter = createTRPCRouter({
     createLog2({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
-      task: "Update hiit" + log2 ? "" : " and Create Log",
+      task: "Update hiit",
       notes: JSON.stringify(input),
       objectId: null
     });
@@ -6531,6 +6554,13 @@ var dailyLogRouter = createTRPCRouter({
         eq9(dailyLog.date, input.date),
         eq9(dailyLog.userId, ctx.session.user.id)
       )
+    });
+    createLog2({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "Update Cardio",
+      notes: JSON.stringify(input),
+      objectId: log2?.id
     });
     if (!log2) {
       const res2 = await ctx.db.insert(dailyLog).values({
@@ -6563,7 +6593,7 @@ var dailyLogRouter = createTRPCRouter({
     createLog2({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
-      task: "Update Weight Training" + log2 ? "" : " and Create Log",
+      task: "Update Weight Training",
       notes: JSON.stringify(input),
       objectId: null
     });
@@ -6598,7 +6628,7 @@ var dailyLogRouter = createTRPCRouter({
     createLog2({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
-      task: "Update Liss" + log2 ? "" : " and Create Log",
+      task: "Update Liss",
       notes: JSON.stringify(input),
       objectId: null
     });
@@ -6633,7 +6663,7 @@ var dailyLogRouter = createTRPCRouter({
     createLog2({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
-      task: "Update Girth" + log2 ? "" : " and Create Log",
+      task: "Update Girth",
       notes: JSON.stringify(input),
       objectId: null
     });
@@ -6668,7 +6698,7 @@ var dailyLogRouter = createTRPCRouter({
     createLog2({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
-      task: "Update Weight" + log2 ? "" : " and Create Log",
+      task: "Update Weight",
       notes: JSON.stringify(input),
       objectId: null
     });
@@ -6703,7 +6733,7 @@ var dailyLogRouter = createTRPCRouter({
     createLog2({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
-      task: `Update Blood Glucose' + ${log2 ? "" : " and Create Log"}`,
+      task: `Update Blood Glucose`,
       notes: JSON.stringify(input),
       objectId: null
     });
@@ -7256,7 +7286,7 @@ var dailyLogRouter = createTRPCRouter({
           }
         }
       },
-      orderBy: (data, { desc: desc12 }) => desc12(data.createdAt)
+      orderBy: (data, { desc: desc11 }) => desc11(data.createdAt)
     });
     return res;
   }),
@@ -7369,7 +7399,7 @@ var weighInRouter = createTRPCRouter({
     if (input === "") throw new TRPCError4({ code: "NOT_FOUND" });
     const res = await ctx.db.query.weighIn.findMany({
       where: eq10(weighIn.userId, input),
-      orderBy: (data, { desc: desc12 }) => desc12(data.date)
+      orderBy: (data, { desc: desc11 }) => desc11(data.date)
     });
     return res;
   }),
@@ -7438,7 +7468,7 @@ var messageRouter = createTRPCRouter({
     }
     const res = await ctx.db.query.message.findMany({
       where: eq11(message.userId, userId),
-      orderBy: (data, { desc: desc12 }) => desc12(data.createdAt),
+      orderBy: (data, { desc: desc11 }) => desc11(data.createdAt),
       with: {
         fromUser: true,
         user: true
@@ -7453,7 +7483,7 @@ var messageRouter = createTRPCRouter({
     }
     const res = await ctx.db.query.message.findMany({
       where: eq11(message.fromUserId, userId),
-      orderBy: (data, { desc: desc12 }) => desc12(data.createdAt),
+      orderBy: (data, { desc: desc11 }) => desc11(data.createdAt),
       with: {
         fromUser: true,
         user: true
@@ -7636,7 +7666,7 @@ var tagRouter = createTRPCRouter({
   getAllTagsCurrentUser: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.tag.findMany({
       where: eq13(tag.userId, ctx.session.user.id),
-      orderBy: (data, { desc: desc12 }) => desc12(data.createdAt)
+      orderBy: (data, { desc: desc11 }) => desc11(data.createdAt)
     });
     return res;
   }),

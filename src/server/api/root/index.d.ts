@@ -2209,6 +2209,25 @@ declare const notification: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
         }, {}, {
             length: number | undefined;
         }>;
+        code: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "code";
+            tableName: "notification";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
         title: drizzle_orm_sqlite_core.SQLiteColumn<{
             name: "title";
             tableName: "notification";
