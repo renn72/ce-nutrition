@@ -357,7 +357,7 @@ export const dailyLogRouter = createTRPCRouter({
 			createLog({
 				user: ctx.session.user.name,
 				userId: ctx.session.user.id,
-				task: 'Update Note' + log ? '' : ' and Create Log',
+				task: 'Update Note',
 				notes: JSON.stringify(input),
 				objectId: null,
 			})
@@ -531,6 +531,14 @@ export const dailyLogRouter = createTRPCRouter({
 
 			if (!log) return
 
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Update Steps',
+        notes: JSON.stringify(input),
+        objectId: log?.id,
+      })
+
 			const res = await ctx.db
 				.update(dailyLog)
 				.set({ steps: input.steps })
@@ -560,6 +568,14 @@ export const dailyLogRouter = createTRPCRouter({
 
 			if (!log) return
 
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Update Sauna',
+        notes: JSON.stringify(input),
+        objectId: log?.id,
+      })
+
 			const res = await ctx.db
 				.update(dailyLog)
 				.set({ sauna: input.sauna })
@@ -588,6 +604,14 @@ export const dailyLogRouter = createTRPCRouter({
 			})
 
 			if (!log) return
+
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Update Cold Plunge',
+        notes: JSON.stringify(input),
+        objectId: log?.id,
+      })
 
 			const res = await ctx.db
 				.update(dailyLog)
@@ -701,6 +725,14 @@ export const dailyLogRouter = createTRPCRouter({
 					eq(dailyLog.userId, ctx.session.user.id),
 				),
 			})
+
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Update Cardio',
+        notes: JSON.stringify(input),
+        objectId: log?.id,
+      })
 
 			if (!log) {
 				const res = await ctx.db.insert(dailyLog).values({
