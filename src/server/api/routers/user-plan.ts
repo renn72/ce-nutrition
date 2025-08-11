@@ -1,14 +1,16 @@
 import { plan, planToMeal } from '@/server/db/schema/plan'
-import { user } from '@/server/db/schema/user'
 import {
   userIngredient,
   userMeal,
   userPlan,
   userRecipe,
 } from '@/server/db/schema/user-plan'
+import { notification } from '@/server/db/schema/notification'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
-import { desc, eq } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 import { z } from 'zod'
+
+import { createLog } from '@/server/api/routers/admin-log'
 
 export const userPlanRouter = createTRPCRouter({
   delete: protectedProcedure
@@ -180,6 +182,30 @@ export const userPlanRouter = createTRPCRouter({
           )
           .returning({ id: userIngredient.id }),
       ])
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'User Create Plan',
+        notes: JSON.stringify(input),
+        objectId: resId,
+      })
+			const notif = await ctx.db.query.notification.findMany({
+				where: and(
+					eq(notification.userId, input.userId),
+					eq(notification.code, 'user-plan_update'),
+					eq(notification.isViewed, false),
+				),
+			})
+			if (notif.length === 0) {
+				await ctx.db.insert(notification).values({
+					userId: input.userId,
+					code: 'user-plan_update',
+					title: 'Your user meal plan has been updated',
+					description: 'You have a new user meal plan update',
+					isViewed: false,
+          isRead: false,
+				})
+			}
       return { res, batchRes }
     }),
 })

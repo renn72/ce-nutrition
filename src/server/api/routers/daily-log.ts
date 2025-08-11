@@ -78,7 +78,6 @@ const createLog = async ({
 	userId: string
 	objectId: number | null | undefined
 }) => {
-  console.log('-------------------------------------log-------------')
 	await db.insert(log).values({
 		task: task,
 		notes: notes,
