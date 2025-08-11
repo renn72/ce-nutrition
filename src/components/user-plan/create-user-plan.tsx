@@ -258,9 +258,9 @@ const CreateUserPlan = ({
 			meals:
 				_selectedPlan?.meals?.map((meal, mealIndex) => {
 					const recipe = meal?.mealToRecipe?.[0]?.recipe
-          console.log('recipe', recipe)
+					console.log('recipe', recipe)
 
-        // @ts-ignore
+					// @ts-ignore
 					const recipeDetails = recipe ? getRecipeDetails(recipe) : null
 
 					console.log('recipeDetails', recipeDetails)
@@ -369,6 +369,9 @@ const CreateUserPlan = ({
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)}>
 						<div className='flex flex-col lg:gap-2 '>
+							<Button type='submit'
+                className='w-min mt-8'
+              >Save</Button>
 							<div className='flex flex-col lg:flex-row justify-between lg:gap-8'>
 								<FormField
 									control={form.control}
@@ -453,14 +456,7 @@ const CreateUserPlan = ({
 								</Button>
 							</div>
 							<div className='my-8'>
-								<Button
-									type='submit'
-									onClick={() => {
-										console.log('form', form.getValues())
-									}}
-								>
-									Save
-								</Button>
+								<Button type='submit'>Save</Button>
 							</div>
 						</div>
 					</form>

@@ -13239,6 +13239,35 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
         };
         transformer: true;
     }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        create: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                title: string;
+                description: string;
+                state: string;
+            };
+            output: {
+                id: number;
+            }[];
+            meta: object;
+        }>;
+        update: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+                title: string;
+                description: string;
+                state: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        delete: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         getUser: _trpc_server.TRPCQueryProcedure<{
             input: {
                 userId: string;
@@ -13271,35 +13300,6 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 state: string | null;
                 completedAt: Date | null;
             } | undefined;
-            meta: object;
-        }>;
-        create: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                userId: string;
-                title: string;
-                description: string;
-                state: string;
-            };
-            output: {
-                id: number;
-            }[];
-            meta: object;
-        }>;
-        update: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                id: number;
-                title: string;
-                description: string;
-                state: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        delete: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                id: number;
-            };
-            output: _libsql_client.ResultSet;
             meta: object;
         }>;
     }>>;
@@ -19849,6 +19849,35 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         };
         transformer: true;
     }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        create: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                title: string;
+                description: string;
+                state: string;
+            };
+            output: {
+                id: number;
+            }[];
+            meta: object;
+        }>;
+        update: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+                title: string;
+                description: string;
+                state: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        delete: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         getUser: _trpc_server.TRPCQueryProcedure<{
             input: {
                 userId: string;
@@ -19881,35 +19910,6 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 state: string | null;
                 completedAt: Date | null;
             } | undefined;
-            meta: object;
-        }>;
-        create: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                userId: string;
-                title: string;
-                description: string;
-                state: string;
-            };
-            output: {
-                id: number;
-            }[];
-            meta: object;
-        }>;
-        update: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                id: number;
-                title: string;
-                description: string;
-                state: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        delete: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                id: number;
-            };
-            output: _libsql_client.ResultSet;
             meta: object;
         }>;
     }>>;

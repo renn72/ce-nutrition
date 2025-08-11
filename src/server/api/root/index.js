@@ -7775,10 +7775,9 @@ var tagRouter = createTRPCRouter({
   })
 });
 
-// src/server/api/routers/goals.ts
-import { eq as eq14 } from "drizzle-orm";
+// src/server/api/routers/goals/get.ts
 import { z as z18 } from "zod";
-var goalsRouter = createTRPCRouter({
+var get = {
   getUser: protectedProcedure.input(z18.object({ userId: z18.string() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.goals.findMany({
       where: (goal, { eq: eq20 }) => eq20(goal.userId, input.userId)
@@ -7790,13 +7789,19 @@ var goalsRouter = createTRPCRouter({
       where: (goal, { eq: eq20 }) => eq20(goal.id, input.id)
     });
     return res;
-  }),
+  })
+};
+
+// src/server/api/routers/goals/post.ts
+import { eq as eq14 } from "drizzle-orm";
+import { z as z19 } from "zod";
+var post = {
   create: protectedProcedure.input(
-    z18.object({
-      userId: z18.string(),
-      title: z18.string(),
-      description: z18.string(),
-      state: z18.string()
+    z19.object({
+      userId: z19.string(),
+      title: z19.string(),
+      description: z19.string(),
+      state: z19.string()
     })
   ).mutation(async ({ ctx, input }) => {
     const trainerId = ctx.session?.user.id;
@@ -7810,11 +7815,11 @@ var goalsRouter = createTRPCRouter({
     return res;
   }),
   update: protectedProcedure.input(
-    z18.object({
-      id: z18.number(),
-      title: z18.string(),
-      description: z18.string(),
-      state: z18.string()
+    z19.object({
+      id: z19.number(),
+      title: z19.string(),
+      description: z19.string(),
+      state: z19.string()
     })
   ).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.update(goals).set({
@@ -7824,15 +7829,21 @@ var goalsRouter = createTRPCRouter({
     }).where(eq14(goals.id, input.id));
     return res;
   }),
-  delete: protectedProcedure.input(z18.object({ id: z18.number() })).mutation(async ({ ctx, input }) => {
+  delete: protectedProcedure.input(z19.object({ id: z19.number() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.delete(goals).where(eq14(goals.id, input.id));
     return res;
   })
+};
+
+// src/server/api/routers/goals.ts
+var goalsRouter = createTRPCRouter({
+  ...get,
+  ...post
 });
 
 // src/server/api/routers/trainer.ts
 import { and as and6, eq as eq15 } from "drizzle-orm";
-import { z as z19 } from "zod";
+import { z as z20 } from "zod";
 var createLog6 = async ({
   user: user3,
   task,
@@ -7859,7 +7870,7 @@ var trainerRouter = createTRPCRouter({
     });
     return res;
   }),
-  add: protectedProcedure.input(z19.object({ userId: z19.string(), trainerId: z19.string() })).mutation(async ({ ctx, input }) => {
+  add: protectedProcedure.input(z20.object({ userId: z20.string(), trainerId: z20.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.insert(userToTrainer).values({
       userId: input.userId,
       trainerId: input.trainerId
@@ -7873,7 +7884,7 @@ var trainerRouter = createTRPCRouter({
     });
     return res;
   }),
-  delete: protectedProcedure.input(z19.object({ userId: z19.string(), trainerId: z19.string() })).mutation(async ({ ctx, input }) => {
+  delete: protectedProcedure.input(z20.object({ userId: z20.string(), trainerId: z20.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.delete(userToTrainer).where(
       and6(
         eq15(userToTrainer.userId, input.userId),
@@ -7894,430 +7905,430 @@ var trainerRouter = createTRPCRouter({
 // src/server/api/routers/supplements.ts
 import { TRPCError as TRPCError5 } from "@trpc/server";
 import { and as and7, asc as asc2, eq as eq16 } from "drizzle-orm";
-import { z as z21 } from "zod";
+import { z as z22 } from "zod";
 
 // src/components/supplements/store.ts
-import { z as z20 } from "zod";
-var updateSchema = z20.object({
-  id: z20.number(),
-  isPrivate: z20.boolean(),
-  viewableBy: z20.string(),
-  name: z20.string().min(1),
-  serveSize: z20.number(),
-  serveUnit: z20.string().min(1),
-  caloriesWFibre: z20.number(),
-  caloriesWOFibre: z20.number(),
-  protein: z20.number(),
-  fatTotal: z20.number(),
-  totalDietaryFibre: z20.number(),
-  totalSugars: z20.number(),
-  starch: z20.number(),
-  resistantStarch: z20.number(),
-  availableCarbohydrateWithoutSugarAlcohols: z20.number(),
-  availableCarbohydrateWithSugarAlcohols: z20.number(),
-  addedSugars: z20.number(),
-  freeSugars: z20.number(),
-  moisture: z20.number(),
-  nitrogen: z20.number(),
-  alcohol: z20.number(),
-  fructose: z20.number(),
-  glucose: z20.number(),
-  sucrose: z20.number(),
-  maltose: z20.number(),
-  lactose: z20.number(),
-  galactose: z20.number(),
-  maltotrios: z20.number(),
-  ash: z20.number(),
-  dextrin: z20.number(),
-  glycerol: z20.number(),
-  glycogen: z20.number(),
-  inulin: z20.number(),
-  erythritol: z20.number(),
-  maltitol: z20.number(),
-  mannitol: z20.number(),
-  xylitol: z20.number(),
-  maltodextrin: z20.number(),
-  oligosaccharides: z20.number(),
-  polydextrose: z20.number(),
-  raffinose: z20.number(),
-  stachyose: z20.number(),
-  sorbitol: z20.number(),
-  aceticAcid: z20.number(),
-  citricAcid: z20.number(),
-  fumaricAcid: z20.number(),
-  lacticAcid: z20.number(),
-  malicAcid: z20.number(),
-  oxalicAcid: z20.number(),
-  propionicAcid: z20.number(),
-  quinicAcid: z20.number(),
-  shikimicAcid: z20.number(),
-  succinicAcid: z20.number(),
-  tartaricAcid: z20.number(),
-  aluminium: z20.number(),
-  antimony: z20.number(),
-  arsenic: z20.number(),
-  cadmium: z20.number(),
-  calcium: z20.number(),
-  chromium: z20.number(),
-  chloride: z20.number(),
-  cobalt: z20.number(),
-  copper: z20.number(),
-  fluoride: z20.number(),
-  iodine: z20.number(),
-  iron: z20.number(),
-  lead: z20.number(),
-  magnesium: z20.number(),
-  manganese: z20.number(),
-  mercury: z20.number(),
-  molybdenum: z20.number(),
-  nickel: z20.number(),
-  phosphorus: z20.number(),
-  potassium: z20.number(),
-  selenium: z20.number(),
-  sodium: z20.number(),
-  sulphur: z20.number(),
-  tin: z20.number(),
-  zinc: z20.number(),
-  retinol: z20.number(),
-  alphaCarotene: z20.number(),
-  betaCarotene: z20.number(),
-  cryptoxanthin: z20.number(),
-  betaCaroteneEquivalents: z20.number(),
-  vitaminARetinolEquivalents: z20.number(),
-  lutein: z20.number(),
-  lycopene: z20.number(),
-  xanthophyl: z20.number(),
-  thiamin: z20.number(),
-  riboflavin: z20.number(),
-  niacin: z20.number(),
-  niacinDerivedFromTryptophan: z20.number(),
-  niacinDerivedEquivalents: z20.number(),
-  pantothenicAcid: z20.number(),
-  pyridoxine: z20.number(),
-  biotin: z20.number(),
-  cobalamin: z20.number(),
-  folateNatural: z20.number(),
-  folicAcid: z20.number(),
-  totalFolates: z20.number(),
-  dietaryFolateEquivalents: z20.number(),
-  vitaminC: z20.number(),
-  cholecalciferol: z20.number(),
-  ergocalciferol: z20.number(),
-  hydroxyCholecalciferol: z20.number(),
-  hydroxyErgocalciferol: z20.number(),
-  vitaminDEquivalents: z20.number(),
-  alphaTocopherol: z20.number(),
-  alphaTocotrienol: z20.number(),
-  betaTocopherol: z20.number(),
-  betaTocotrienol: z20.number(),
-  deltaTocopherol: z20.number(),
-  deltaTocotrienol: z20.number(),
-  gammaTocopherol: z20.number(),
-  gammaTocotrienol: z20.number(),
-  vitaminE: z20.number(),
-  totalSaturatedFattyAcids: z20.number(),
-  totalMonounsaturatedFattyAcids: z20.number(),
-  totalPolyunsaturatedFattyAcids: z20.number(),
-  totalLongChainOmega3FattyAcids: z20.number(),
-  totalTransFattyAcids: z20.number(),
-  caffeine: z20.number(),
-  cholesterol: z20.number(),
-  alanine: z20.number(),
-  arginine: z20.number(),
-  asparticAcid: z20.number(),
-  cystinePlusCysteine: z20.number(),
-  glutamicAcid: z20.number(),
-  glycine: z20.number(),
-  histidine: z20.number(),
-  isoleucine: z20.number(),
-  leucine: z20.number(),
-  lysine: z20.number(),
-  methionine: z20.number(),
-  phenylalanine: z20.number(),
-  proline: z20.number(),
-  serine: z20.number(),
-  threonine: z20.number(),
-  tyrosine: z20.number(),
-  tryptophan: z20.number(),
-  valine: z20.number(),
-  c4: z20.number(),
-  c6: z20.number(),
-  c8: z20.number(),
-  c10: z20.number(),
-  c11: z20.number(),
-  c12: z20.number(),
-  c13: z20.number(),
-  c14: z20.number(),
-  c15: z20.number(),
-  c16: z20.number(),
-  c17: z20.number(),
-  c18: z20.number(),
-  c19: z20.number(),
-  c20: z20.number(),
-  c21: z20.number(),
-  c22: z20.number(),
-  c23: z20.number(),
-  c24: z20.number(),
-  totalSaturatedFattyAcidsEquated: z20.number(),
-  c10_1: z20.number(),
-  c12_1: z20.number(),
-  c14_1: z20.number(),
-  c15_1: z20.number(),
-  c16_1: z20.number(),
-  c17_1: z20.number(),
-  c18_1: z20.number(),
-  c18_1w5: z20.number(),
-  c18_1w6: z20.number(),
-  c18_1w7: z20.number(),
-  c18_1w9: z20.number(),
-  c20_1: z20.number(),
-  c20_1w9: z20.number(),
-  c20_1w13: z20.number(),
-  c20_1w11: z20.number(),
-  c22_1: z20.number(),
-  c22_1w9: z20.number(),
-  c22_1w11: z20.number(),
-  c24_1: z20.number(),
-  c24_1w9: z20.number(),
-  c24_1w11: z20.number(),
-  c24_1w13: z20.number(),
-  totalMonounsaturatedFattyAcidsEquated: z20.number(),
-  c12_2: z20.number(),
-  c16_2w4: z20.number(),
-  c16_3: z20.number(),
-  c18_2w6: z20.number(),
-  c18_3w3: z20.number(),
-  c18_3w4: z20.number(),
-  c18_3w6: z20.number(),
-  c18_4w1: z20.number(),
-  c18_4w3: z20.number(),
-  c20_2: z20.number(),
-  c20_2w6: z20.number(),
-  c20_3: z20.number(),
-  c20_3w3: z20.number(),
-  c20_3w6: z20.number(),
-  c20_4: z20.number(),
-  c20_4w3: z20.number(),
-  c20_4w6: z20.number(),
-  c20_5w3: z20.number(),
-  c21_5w3: z20.number(),
-  c22_2: z20.number(),
-  c22_2w6: z20.number(),
-  c22_4w6: z20.number(),
-  c22_5w3: z20.number(),
-  c22_5w6: z20.number(),
-  c22_6w3: z20.number(),
-  totalPolyunsaturatedFattyAcidsEquated: z20.number()
+import { z as z21 } from "zod";
+var updateSchema = z21.object({
+  id: z21.number(),
+  isPrivate: z21.boolean(),
+  viewableBy: z21.string(),
+  name: z21.string().min(1),
+  serveSize: z21.number(),
+  serveUnit: z21.string().min(1),
+  caloriesWFibre: z21.number(),
+  caloriesWOFibre: z21.number(),
+  protein: z21.number(),
+  fatTotal: z21.number(),
+  totalDietaryFibre: z21.number(),
+  totalSugars: z21.number(),
+  starch: z21.number(),
+  resistantStarch: z21.number(),
+  availableCarbohydrateWithoutSugarAlcohols: z21.number(),
+  availableCarbohydrateWithSugarAlcohols: z21.number(),
+  addedSugars: z21.number(),
+  freeSugars: z21.number(),
+  moisture: z21.number(),
+  nitrogen: z21.number(),
+  alcohol: z21.number(),
+  fructose: z21.number(),
+  glucose: z21.number(),
+  sucrose: z21.number(),
+  maltose: z21.number(),
+  lactose: z21.number(),
+  galactose: z21.number(),
+  maltotrios: z21.number(),
+  ash: z21.number(),
+  dextrin: z21.number(),
+  glycerol: z21.number(),
+  glycogen: z21.number(),
+  inulin: z21.number(),
+  erythritol: z21.number(),
+  maltitol: z21.number(),
+  mannitol: z21.number(),
+  xylitol: z21.number(),
+  maltodextrin: z21.number(),
+  oligosaccharides: z21.number(),
+  polydextrose: z21.number(),
+  raffinose: z21.number(),
+  stachyose: z21.number(),
+  sorbitol: z21.number(),
+  aceticAcid: z21.number(),
+  citricAcid: z21.number(),
+  fumaricAcid: z21.number(),
+  lacticAcid: z21.number(),
+  malicAcid: z21.number(),
+  oxalicAcid: z21.number(),
+  propionicAcid: z21.number(),
+  quinicAcid: z21.number(),
+  shikimicAcid: z21.number(),
+  succinicAcid: z21.number(),
+  tartaricAcid: z21.number(),
+  aluminium: z21.number(),
+  antimony: z21.number(),
+  arsenic: z21.number(),
+  cadmium: z21.number(),
+  calcium: z21.number(),
+  chromium: z21.number(),
+  chloride: z21.number(),
+  cobalt: z21.number(),
+  copper: z21.number(),
+  fluoride: z21.number(),
+  iodine: z21.number(),
+  iron: z21.number(),
+  lead: z21.number(),
+  magnesium: z21.number(),
+  manganese: z21.number(),
+  mercury: z21.number(),
+  molybdenum: z21.number(),
+  nickel: z21.number(),
+  phosphorus: z21.number(),
+  potassium: z21.number(),
+  selenium: z21.number(),
+  sodium: z21.number(),
+  sulphur: z21.number(),
+  tin: z21.number(),
+  zinc: z21.number(),
+  retinol: z21.number(),
+  alphaCarotene: z21.number(),
+  betaCarotene: z21.number(),
+  cryptoxanthin: z21.number(),
+  betaCaroteneEquivalents: z21.number(),
+  vitaminARetinolEquivalents: z21.number(),
+  lutein: z21.number(),
+  lycopene: z21.number(),
+  xanthophyl: z21.number(),
+  thiamin: z21.number(),
+  riboflavin: z21.number(),
+  niacin: z21.number(),
+  niacinDerivedFromTryptophan: z21.number(),
+  niacinDerivedEquivalents: z21.number(),
+  pantothenicAcid: z21.number(),
+  pyridoxine: z21.number(),
+  biotin: z21.number(),
+  cobalamin: z21.number(),
+  folateNatural: z21.number(),
+  folicAcid: z21.number(),
+  totalFolates: z21.number(),
+  dietaryFolateEquivalents: z21.number(),
+  vitaminC: z21.number(),
+  cholecalciferol: z21.number(),
+  ergocalciferol: z21.number(),
+  hydroxyCholecalciferol: z21.number(),
+  hydroxyErgocalciferol: z21.number(),
+  vitaminDEquivalents: z21.number(),
+  alphaTocopherol: z21.number(),
+  alphaTocotrienol: z21.number(),
+  betaTocopherol: z21.number(),
+  betaTocotrienol: z21.number(),
+  deltaTocopherol: z21.number(),
+  deltaTocotrienol: z21.number(),
+  gammaTocopherol: z21.number(),
+  gammaTocotrienol: z21.number(),
+  vitaminE: z21.number(),
+  totalSaturatedFattyAcids: z21.number(),
+  totalMonounsaturatedFattyAcids: z21.number(),
+  totalPolyunsaturatedFattyAcids: z21.number(),
+  totalLongChainOmega3FattyAcids: z21.number(),
+  totalTransFattyAcids: z21.number(),
+  caffeine: z21.number(),
+  cholesterol: z21.number(),
+  alanine: z21.number(),
+  arginine: z21.number(),
+  asparticAcid: z21.number(),
+  cystinePlusCysteine: z21.number(),
+  glutamicAcid: z21.number(),
+  glycine: z21.number(),
+  histidine: z21.number(),
+  isoleucine: z21.number(),
+  leucine: z21.number(),
+  lysine: z21.number(),
+  methionine: z21.number(),
+  phenylalanine: z21.number(),
+  proline: z21.number(),
+  serine: z21.number(),
+  threonine: z21.number(),
+  tyrosine: z21.number(),
+  tryptophan: z21.number(),
+  valine: z21.number(),
+  c4: z21.number(),
+  c6: z21.number(),
+  c8: z21.number(),
+  c10: z21.number(),
+  c11: z21.number(),
+  c12: z21.number(),
+  c13: z21.number(),
+  c14: z21.number(),
+  c15: z21.number(),
+  c16: z21.number(),
+  c17: z21.number(),
+  c18: z21.number(),
+  c19: z21.number(),
+  c20: z21.number(),
+  c21: z21.number(),
+  c22: z21.number(),
+  c23: z21.number(),
+  c24: z21.number(),
+  totalSaturatedFattyAcidsEquated: z21.number(),
+  c10_1: z21.number(),
+  c12_1: z21.number(),
+  c14_1: z21.number(),
+  c15_1: z21.number(),
+  c16_1: z21.number(),
+  c17_1: z21.number(),
+  c18_1: z21.number(),
+  c18_1w5: z21.number(),
+  c18_1w6: z21.number(),
+  c18_1w7: z21.number(),
+  c18_1w9: z21.number(),
+  c20_1: z21.number(),
+  c20_1w9: z21.number(),
+  c20_1w13: z21.number(),
+  c20_1w11: z21.number(),
+  c22_1: z21.number(),
+  c22_1w9: z21.number(),
+  c22_1w11: z21.number(),
+  c24_1: z21.number(),
+  c24_1w9: z21.number(),
+  c24_1w11: z21.number(),
+  c24_1w13: z21.number(),
+  totalMonounsaturatedFattyAcidsEquated: z21.number(),
+  c12_2: z21.number(),
+  c16_2w4: z21.number(),
+  c16_3: z21.number(),
+  c18_2w6: z21.number(),
+  c18_3w3: z21.number(),
+  c18_3w4: z21.number(),
+  c18_3w6: z21.number(),
+  c18_4w1: z21.number(),
+  c18_4w3: z21.number(),
+  c20_2: z21.number(),
+  c20_2w6: z21.number(),
+  c20_3: z21.number(),
+  c20_3w3: z21.number(),
+  c20_3w6: z21.number(),
+  c20_4: z21.number(),
+  c20_4w3: z21.number(),
+  c20_4w6: z21.number(),
+  c20_5w3: z21.number(),
+  c21_5w3: z21.number(),
+  c22_2: z21.number(),
+  c22_2w6: z21.number(),
+  c22_4w6: z21.number(),
+  c22_5w3: z21.number(),
+  c22_5w6: z21.number(),
+  c22_6w3: z21.number(),
+  totalPolyunsaturatedFattyAcidsEquated: z21.number()
 });
-var formSchema = z20.object({
-  name: z20.string().min(1),
-  isPrivate: z20.boolean(),
-  viewableBy: z20.string(),
-  serveSize: z20.number(),
-  serveUnit: z20.string().min(1),
-  caloriesWFibre: z20.number(),
-  caloriesWOFibre: z20.number(),
-  protein: z20.number(),
-  fatTotal: z20.number(),
-  totalDietaryFibre: z20.number(),
-  totalSugars: z20.number(),
-  starch: z20.number(),
-  resistantStarch: z20.number(),
-  availableCarbohydrateWithoutSugarAlcohols: z20.number(),
-  availableCarbohydrateWithSugarAlcohols: z20.number(),
-  addedSugars: z20.number(),
-  freeSugars: z20.number(),
-  moisture: z20.number(),
-  nitrogen: z20.number(),
-  alcohol: z20.number(),
-  fructose: z20.number(),
-  glucose: z20.number(),
-  sucrose: z20.number(),
-  maltose: z20.number(),
-  lactose: z20.number(),
-  galactose: z20.number(),
-  maltotrios: z20.number(),
-  ash: z20.number(),
-  dextrin: z20.number(),
-  glycerol: z20.number(),
-  glycogen: z20.number(),
-  inulin: z20.number(),
-  erythritol: z20.number(),
-  maltitol: z20.number(),
-  mannitol: z20.number(),
-  xylitol: z20.number(),
-  maltodextrin: z20.number(),
-  oligosaccharides: z20.number(),
-  polydextrose: z20.number(),
-  raffinose: z20.number(),
-  stachyose: z20.number(),
-  sorbitol: z20.number(),
-  aceticAcid: z20.number(),
-  citricAcid: z20.number(),
-  fumaricAcid: z20.number(),
-  lacticAcid: z20.number(),
-  malicAcid: z20.number(),
-  oxalicAcid: z20.number(),
-  propionicAcid: z20.number(),
-  quinicAcid: z20.number(),
-  shikimicAcid: z20.number(),
-  succinicAcid: z20.number(),
-  tartaricAcid: z20.number(),
-  aluminium: z20.number(),
-  antimony: z20.number(),
-  arsenic: z20.number(),
-  cadmium: z20.number(),
-  calcium: z20.number(),
-  chromium: z20.number(),
-  chloride: z20.number(),
-  cobalt: z20.number(),
-  copper: z20.number(),
-  fluoride: z20.number(),
-  iodine: z20.number(),
-  iron: z20.number(),
-  lead: z20.number(),
-  magnesium: z20.number(),
-  manganese: z20.number(),
-  mercury: z20.number(),
-  molybdenum: z20.number(),
-  nickel: z20.number(),
-  phosphorus: z20.number(),
-  potassium: z20.number(),
-  selenium: z20.number(),
-  sodium: z20.number(),
-  sulphur: z20.number(),
-  tin: z20.number(),
-  zinc: z20.number(),
-  retinol: z20.number(),
-  alphaCarotene: z20.number(),
-  betaCarotene: z20.number(),
-  cryptoxanthin: z20.number(),
-  betaCaroteneEquivalents: z20.number(),
-  vitaminARetinolEquivalents: z20.number(),
-  lutein: z20.number(),
-  lycopene: z20.number(),
-  xanthophyl: z20.number(),
-  thiamin: z20.number(),
-  riboflavin: z20.number(),
-  niacin: z20.number(),
-  niacinDerivedFromTryptophan: z20.number(),
-  niacinDerivedEquivalents: z20.number(),
-  pantothenicAcid: z20.number(),
-  pyridoxine: z20.number(),
-  biotin: z20.number(),
-  cobalamin: z20.number(),
-  folateNatural: z20.number(),
-  folicAcid: z20.number(),
-  totalFolates: z20.number(),
-  dietaryFolateEquivalents: z20.number(),
-  vitaminC: z20.number(),
-  cholecalciferol: z20.number(),
-  ergocalciferol: z20.number(),
-  hydroxyCholecalciferol: z20.number(),
-  hydroxyErgocalciferol: z20.number(),
-  vitaminDEquivalents: z20.number(),
-  alphaTocopherol: z20.number(),
-  alphaTocotrienol: z20.number(),
-  betaTocopherol: z20.number(),
-  betaTocotrienol: z20.number(),
-  deltaTocopherol: z20.number(),
-  deltaTocotrienol: z20.number(),
-  gammaTocopherol: z20.number(),
-  gammaTocotrienol: z20.number(),
-  vitaminE: z20.number(),
-  totalSaturatedFattyAcids: z20.number(),
-  totalMonounsaturatedFattyAcids: z20.number(),
-  totalPolyunsaturatedFattyAcids: z20.number(),
-  totalLongChainOmega3FattyAcids: z20.number(),
-  totalTransFattyAcids: z20.number(),
-  caffeine: z20.number(),
-  cholesterol: z20.number(),
-  alanine: z20.number(),
-  arginine: z20.number(),
-  asparticAcid: z20.number(),
-  cystinePlusCysteine: z20.number(),
-  glutamicAcid: z20.number(),
-  glycine: z20.number(),
-  histidine: z20.number(),
-  isoleucine: z20.number(),
-  leucine: z20.number(),
-  lysine: z20.number(),
-  methionine: z20.number(),
-  phenylalanine: z20.number(),
-  proline: z20.number(),
-  serine: z20.number(),
-  threonine: z20.number(),
-  tyrosine: z20.number(),
-  tryptophan: z20.number(),
-  valine: z20.number(),
-  c4: z20.number(),
-  c6: z20.number(),
-  c8: z20.number(),
-  c10: z20.number(),
-  c11: z20.number(),
-  c12: z20.number(),
-  c13: z20.number(),
-  c14: z20.number(),
-  c15: z20.number(),
-  c16: z20.number(),
-  c17: z20.number(),
-  c18: z20.number(),
-  c19: z20.number(),
-  c20: z20.number(),
-  c21: z20.number(),
-  c22: z20.number(),
-  c23: z20.number(),
-  c24: z20.number(),
-  totalSaturatedFattyAcidsEquated: z20.number(),
-  c10_1: z20.number(),
-  c12_1: z20.number(),
-  c14_1: z20.number(),
-  c15_1: z20.number(),
-  c16_1: z20.number(),
-  c17_1: z20.number(),
-  c18_1: z20.number(),
-  c18_1w5: z20.number(),
-  c18_1w6: z20.number(),
-  c18_1w7: z20.number(),
-  c18_1w9: z20.number(),
-  c20_1: z20.number(),
-  c20_1w9: z20.number(),
-  c20_1w13: z20.number(),
-  c20_1w11: z20.number(),
-  c22_1: z20.number(),
-  c22_1w9: z20.number(),
-  c22_1w11: z20.number(),
-  c24_1: z20.number(),
-  c24_1w9: z20.number(),
-  c24_1w11: z20.number(),
-  c24_1w13: z20.number(),
-  totalMonounsaturatedFattyAcidsEquated: z20.number(),
-  c12_2: z20.number(),
-  c16_2w4: z20.number(),
-  c16_3: z20.number(),
-  c18_2w6: z20.number(),
-  c18_3w3: z20.number(),
-  c18_3w4: z20.number(),
-  c18_3w6: z20.number(),
-  c18_4w1: z20.number(),
-  c18_4w3: z20.number(),
-  c20_2: z20.number(),
-  c20_2w6: z20.number(),
-  c20_3: z20.number(),
-  c20_3w3: z20.number(),
-  c20_3w6: z20.number(),
-  c20_4: z20.number(),
-  c20_4w3: z20.number(),
-  c20_4w6: z20.number(),
-  c20_5w3: z20.number(),
-  c21_5w3: z20.number(),
-  c22_2: z20.number(),
-  c22_2w6: z20.number(),
-  c22_4w6: z20.number(),
-  c22_5w3: z20.number(),
-  c22_5w6: z20.number(),
-  c22_6w3: z20.number(),
-  totalPolyunsaturatedFattyAcidsEquated: z20.number()
+var formSchema = z21.object({
+  name: z21.string().min(1),
+  isPrivate: z21.boolean(),
+  viewableBy: z21.string(),
+  serveSize: z21.number(),
+  serveUnit: z21.string().min(1),
+  caloriesWFibre: z21.number(),
+  caloriesWOFibre: z21.number(),
+  protein: z21.number(),
+  fatTotal: z21.number(),
+  totalDietaryFibre: z21.number(),
+  totalSugars: z21.number(),
+  starch: z21.number(),
+  resistantStarch: z21.number(),
+  availableCarbohydrateWithoutSugarAlcohols: z21.number(),
+  availableCarbohydrateWithSugarAlcohols: z21.number(),
+  addedSugars: z21.number(),
+  freeSugars: z21.number(),
+  moisture: z21.number(),
+  nitrogen: z21.number(),
+  alcohol: z21.number(),
+  fructose: z21.number(),
+  glucose: z21.number(),
+  sucrose: z21.number(),
+  maltose: z21.number(),
+  lactose: z21.number(),
+  galactose: z21.number(),
+  maltotrios: z21.number(),
+  ash: z21.number(),
+  dextrin: z21.number(),
+  glycerol: z21.number(),
+  glycogen: z21.number(),
+  inulin: z21.number(),
+  erythritol: z21.number(),
+  maltitol: z21.number(),
+  mannitol: z21.number(),
+  xylitol: z21.number(),
+  maltodextrin: z21.number(),
+  oligosaccharides: z21.number(),
+  polydextrose: z21.number(),
+  raffinose: z21.number(),
+  stachyose: z21.number(),
+  sorbitol: z21.number(),
+  aceticAcid: z21.number(),
+  citricAcid: z21.number(),
+  fumaricAcid: z21.number(),
+  lacticAcid: z21.number(),
+  malicAcid: z21.number(),
+  oxalicAcid: z21.number(),
+  propionicAcid: z21.number(),
+  quinicAcid: z21.number(),
+  shikimicAcid: z21.number(),
+  succinicAcid: z21.number(),
+  tartaricAcid: z21.number(),
+  aluminium: z21.number(),
+  antimony: z21.number(),
+  arsenic: z21.number(),
+  cadmium: z21.number(),
+  calcium: z21.number(),
+  chromium: z21.number(),
+  chloride: z21.number(),
+  cobalt: z21.number(),
+  copper: z21.number(),
+  fluoride: z21.number(),
+  iodine: z21.number(),
+  iron: z21.number(),
+  lead: z21.number(),
+  magnesium: z21.number(),
+  manganese: z21.number(),
+  mercury: z21.number(),
+  molybdenum: z21.number(),
+  nickel: z21.number(),
+  phosphorus: z21.number(),
+  potassium: z21.number(),
+  selenium: z21.number(),
+  sodium: z21.number(),
+  sulphur: z21.number(),
+  tin: z21.number(),
+  zinc: z21.number(),
+  retinol: z21.number(),
+  alphaCarotene: z21.number(),
+  betaCarotene: z21.number(),
+  cryptoxanthin: z21.number(),
+  betaCaroteneEquivalents: z21.number(),
+  vitaminARetinolEquivalents: z21.number(),
+  lutein: z21.number(),
+  lycopene: z21.number(),
+  xanthophyl: z21.number(),
+  thiamin: z21.number(),
+  riboflavin: z21.number(),
+  niacin: z21.number(),
+  niacinDerivedFromTryptophan: z21.number(),
+  niacinDerivedEquivalents: z21.number(),
+  pantothenicAcid: z21.number(),
+  pyridoxine: z21.number(),
+  biotin: z21.number(),
+  cobalamin: z21.number(),
+  folateNatural: z21.number(),
+  folicAcid: z21.number(),
+  totalFolates: z21.number(),
+  dietaryFolateEquivalents: z21.number(),
+  vitaminC: z21.number(),
+  cholecalciferol: z21.number(),
+  ergocalciferol: z21.number(),
+  hydroxyCholecalciferol: z21.number(),
+  hydroxyErgocalciferol: z21.number(),
+  vitaminDEquivalents: z21.number(),
+  alphaTocopherol: z21.number(),
+  alphaTocotrienol: z21.number(),
+  betaTocopherol: z21.number(),
+  betaTocotrienol: z21.number(),
+  deltaTocopherol: z21.number(),
+  deltaTocotrienol: z21.number(),
+  gammaTocopherol: z21.number(),
+  gammaTocotrienol: z21.number(),
+  vitaminE: z21.number(),
+  totalSaturatedFattyAcids: z21.number(),
+  totalMonounsaturatedFattyAcids: z21.number(),
+  totalPolyunsaturatedFattyAcids: z21.number(),
+  totalLongChainOmega3FattyAcids: z21.number(),
+  totalTransFattyAcids: z21.number(),
+  caffeine: z21.number(),
+  cholesterol: z21.number(),
+  alanine: z21.number(),
+  arginine: z21.number(),
+  asparticAcid: z21.number(),
+  cystinePlusCysteine: z21.number(),
+  glutamicAcid: z21.number(),
+  glycine: z21.number(),
+  histidine: z21.number(),
+  isoleucine: z21.number(),
+  leucine: z21.number(),
+  lysine: z21.number(),
+  methionine: z21.number(),
+  phenylalanine: z21.number(),
+  proline: z21.number(),
+  serine: z21.number(),
+  threonine: z21.number(),
+  tyrosine: z21.number(),
+  tryptophan: z21.number(),
+  valine: z21.number(),
+  c4: z21.number(),
+  c6: z21.number(),
+  c8: z21.number(),
+  c10: z21.number(),
+  c11: z21.number(),
+  c12: z21.number(),
+  c13: z21.number(),
+  c14: z21.number(),
+  c15: z21.number(),
+  c16: z21.number(),
+  c17: z21.number(),
+  c18: z21.number(),
+  c19: z21.number(),
+  c20: z21.number(),
+  c21: z21.number(),
+  c22: z21.number(),
+  c23: z21.number(),
+  c24: z21.number(),
+  totalSaturatedFattyAcidsEquated: z21.number(),
+  c10_1: z21.number(),
+  c12_1: z21.number(),
+  c14_1: z21.number(),
+  c15_1: z21.number(),
+  c16_1: z21.number(),
+  c17_1: z21.number(),
+  c18_1: z21.number(),
+  c18_1w5: z21.number(),
+  c18_1w6: z21.number(),
+  c18_1w7: z21.number(),
+  c18_1w9: z21.number(),
+  c20_1: z21.number(),
+  c20_1w9: z21.number(),
+  c20_1w13: z21.number(),
+  c20_1w11: z21.number(),
+  c22_1: z21.number(),
+  c22_1w9: z21.number(),
+  c22_1w11: z21.number(),
+  c24_1: z21.number(),
+  c24_1w9: z21.number(),
+  c24_1w11: z21.number(),
+  c24_1w13: z21.number(),
+  totalMonounsaturatedFattyAcidsEquated: z21.number(),
+  c12_2: z21.number(),
+  c16_2w4: z21.number(),
+  c16_3: z21.number(),
+  c18_2w6: z21.number(),
+  c18_3w3: z21.number(),
+  c18_3w4: z21.number(),
+  c18_3w6: z21.number(),
+  c18_4w1: z21.number(),
+  c18_4w3: z21.number(),
+  c20_2: z21.number(),
+  c20_2w6: z21.number(),
+  c20_3: z21.number(),
+  c20_3w3: z21.number(),
+  c20_3w6: z21.number(),
+  c20_4: z21.number(),
+  c20_4w3: z21.number(),
+  c20_4w6: z21.number(),
+  c20_5w3: z21.number(),
+  c21_5w3: z21.number(),
+  c22_2: z21.number(),
+  c22_2w6: z21.number(),
+  c22_4w6: z21.number(),
+  c22_5w3: z21.number(),
+  c22_5w6: z21.number(),
+  c22_6w3: z21.number(),
+  totalPolyunsaturatedFattyAcidsEquated: z21.number()
 });
 
 // src/server/api/routers/supplements.ts
@@ -8337,7 +8348,7 @@ var createLog7 = async ({
   });
 };
 var supplementsRouter = createTRPCRouter({
-  delete: protectedProcedure.input(z21.object({ id: z21.number() })).mutation(async ({ input, ctx }) => {
+  delete: protectedProcedure.input(z22.object({ id: z22.number() })).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.update(ingredient).set({
       deletedAt: /* @__PURE__ */ new Date()
     }).where(eq16(ingredient.id, input.id));
@@ -8372,7 +8383,7 @@ var supplementsRouter = createTRPCRouter({
     });
     return filterRes;
   }),
-  getSupplementFromDailyLog: protectedProcedure.input(z21.object({ id: z21.number() })).query(async ({ input, ctx }) => {
+  getSupplementFromDailyLog: protectedProcedure.input(z22.object({ id: z22.number() })).query(async ({ input, ctx }) => {
     if (input.id === -1) return false;
     const res = await ctx.db.query.dailySupplement.findFirst({
       where: (supplement, { eq: eq20 }) => eq20(supplement.id, input.id),
@@ -8382,7 +8393,7 @@ var supplementsRouter = createTRPCRouter({
     });
     return res ? true : false;
   }),
-  getFullSupplement: protectedProcedure.input(z21.object({ id: z21.number() })).query(async ({ input, ctx }) => {
+  getFullSupplement: protectedProcedure.input(z22.object({ id: z22.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.ingredient.findFirst({
       where: (ingredient2, { eq: eq20 }) => eq20(ingredient2.id, input.id),
       with: {
@@ -8399,7 +8410,7 @@ var supplementsRouter = createTRPCRouter({
     });
     return res;
   }),
-  getSupplement: protectedProcedure.input(z21.object({ id: z21.number() })).query(async ({ input, ctx }) => {
+  getSupplement: protectedProcedure.input(z22.object({ id: z22.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.ingredient.findFirst({
       where: (ingredient2, { eq: eq20 }) => eq20(ingredient2.id, input.id),
       with: {
@@ -8414,9 +8425,9 @@ var supplementsRouter = createTRPCRouter({
     return res;
   }),
   addTime: protectedProcedure.input(
-    z21.object({
-      time: z21.string(),
-      userId: z21.string()
+    z22.object({
+      time: z22.string(),
+      userId: z22.string()
     })
   ).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.insert(supplementStack).values({
@@ -8425,7 +8436,7 @@ var supplementsRouter = createTRPCRouter({
     }).returning({ id: supplementStack.id });
     return res;
   }),
-  getSuppFromPlan: protectedProcedure.input(z21.object({ id: z21.number() })).query(async ({ ctx, input }) => {
+  getSuppFromPlan: protectedProcedure.input(z22.object({ id: z22.number() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.supplementToSupplementStack.findFirst({
       where: (supplement, { eq: eq20 }) => eq20(supplement.id, input.id),
       with: {
@@ -8435,12 +8446,12 @@ var supplementsRouter = createTRPCRouter({
     return res;
   }),
   addToUser: protectedProcedure.input(
-    z21.object({
-      suppId: z21.number(),
-      userId: z21.string(),
-      time: z21.string(),
-      size: z21.string(),
-      unit: z21.string()
+    z22.object({
+      suppId: z22.number(),
+      userId: z22.string(),
+      time: z22.string(),
+      size: z22.string(),
+      unit: z22.string()
     })
   ).mutation(async ({ input, ctx }) => {
     const userTimes = await ctx.db.query.supplementStack.findMany({
@@ -8482,13 +8493,13 @@ var supplementsRouter = createTRPCRouter({
     return true;
   }),
   logSupplement: protectedProcedure.input(
-    z21.object({
-      suppId: z21.number(),
-      date: z21.string(),
-      time: z21.string(),
-      amount: z21.string(),
-      unit: z21.string(),
-      stackId: z21.string()
+    z22.object({
+      suppId: z22.number(),
+      date: z22.string(),
+      time: z22.string(),
+      amount: z22.string(),
+      unit: z22.string(),
+      stackId: z22.string()
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
@@ -8523,7 +8534,7 @@ var supplementsRouter = createTRPCRouter({
     });
     return true;
   }),
-  unLogSupplement: protectedProcedure.input(z21.object({ id: z21.number() })).mutation(async ({ input, ctx }) => {
+  unLogSupplement: protectedProcedure.input(z22.object({ id: z22.number() })).mutation(async ({ input, ctx }) => {
     createLog7({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
@@ -8534,7 +8545,7 @@ var supplementsRouter = createTRPCRouter({
     await ctx.db.delete(dailySupplement).where(eq16(dailySupplement.id, input.id));
     return true;
   }),
-  deleteFromUser: protectedProcedure.input(z21.object({ suppId: z21.number(), suppStackId: z21.number() })).mutation(async ({ input, ctx }) => {
+  deleteFromUser: protectedProcedure.input(z22.object({ suppId: z22.number(), suppStackId: z22.number() })).mutation(async ({ input, ctx }) => {
     await ctx.db.delete(supplementToSupplementStack).where(
       and7(
         eq16(supplementToSupplementStack.supplementId, input.suppId),
@@ -8546,19 +8557,19 @@ var supplementsRouter = createTRPCRouter({
     );
     return true;
   }),
-  deleteTime: protectedProcedure.input(z21.object({ id: z21.number() })).mutation(async ({ input, ctx }) => {
+  deleteTime: protectedProcedure.input(z22.object({ id: z22.number() })).mutation(async ({ input, ctx }) => {
     await ctx.db.delete(supplementStack).where(eq16(supplementStack.id, input.id));
     return true;
   }),
   userCreate: protectedProcedure.input(
-    z21.object({
-      name: z21.string(),
-      serveSize: z21.number(),
-      serveUnit: z21.string(),
-      isPrivate: z21.boolean(),
-      stackId: z21.number(),
-      viewableBy: z21.string().optional(),
-      userId: z21.string()
+    z22.object({
+      name: z22.string(),
+      serveSize: z22.number(),
+      serveUnit: z22.string(),
+      isPrivate: z22.boolean(),
+      stackId: z22.number(),
+      viewableBy: z22.string().optional(),
+      userId: z22.string()
     })
   ).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.insert(ingredient).values({
@@ -9048,9 +9059,9 @@ var supplementsRouter = createTRPCRouter({
 
 // src/server/api/routers/trainer-notes.ts
 import { eq as eq17 } from "drizzle-orm";
-import { z as z22 } from "zod";
+import { z as z23 } from "zod";
 var trainerNotesRouter = createTRPCRouter({
-  getAllUser: protectedProcedure.input(z22.object({ userId: z22.string() })).query(async ({ ctx, input }) => {
+  getAllUser: protectedProcedure.input(z23.object({ userId: z23.string() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.trainerNotes.findMany({
       where: (note, { eq: eq20 }) => eq20(note.userId, input.userId),
       with: {
@@ -9059,7 +9070,7 @@ var trainerNotesRouter = createTRPCRouter({
     });
     return res;
   }),
-  get: protectedProcedure.input(z22.object({ id: z22.number() })).query(async ({ ctx, input }) => {
+  get: protectedProcedure.input(z23.object({ id: z23.number() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.trainerNotes.findFirst({
       where: (note, { eq: eq20 }) => eq20(note.id, input.id),
       with: {
@@ -9069,11 +9080,11 @@ var trainerNotesRouter = createTRPCRouter({
     return res;
   }),
   create: protectedProcedure.input(
-    z22.object({
-      userId: z22.string(),
-      title: z22.string(),
-      description: z22.string(),
-      state: z22.string()
+    z23.object({
+      userId: z23.string(),
+      title: z23.string(),
+      description: z23.string(),
+      state: z23.string()
     })
   ).mutation(async ({ ctx, input }) => {
     const trainerId = ctx.session?.user.id;
@@ -9087,11 +9098,11 @@ var trainerNotesRouter = createTRPCRouter({
     return res;
   }),
   update: protectedProcedure.input(
-    z22.object({
-      id: z22.number(),
-      title: z22.string(),
-      description: z22.string(),
-      state: z22.string()
+    z23.object({
+      id: z23.number(),
+      title: z23.string(),
+      description: z23.string(),
+      state: z23.string()
     })
   ).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.update(trainerNotes).set({
@@ -9101,7 +9112,7 @@ var trainerNotesRouter = createTRPCRouter({
     }).where(eq17(trainerNotes.id, input.id));
     return res;
   }),
-  delete: protectedProcedure.input(z22.object({ id: z22.number() })).mutation(async ({ ctx, input }) => {
+  delete: protectedProcedure.input(z23.object({ id: z23.number() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.delete(trainerNotes).where(eq17(trainerNotes.id, input.id));
     return res;
   })
@@ -9109,36 +9120,36 @@ var trainerNotesRouter = createTRPCRouter({
 
 // src/server/api/routers/userCatagories.tsx
 import { and as and8, eq as eq18 } from "drizzle-orm";
-import { z as z23 } from "zod";
+import { z as z24 } from "zod";
 var userCatagoriesRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.userCategory.findMany();
     return res;
   }),
-  create: protectedProcedure.input(z23.string()).mutation(async ({ ctx, input }) => {
+  create: protectedProcedure.input(z24.string()).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.insert(userCategory).values({
       name: input
     });
     return res;
   }),
-  update: protectedProcedure.input(z23.object({ id: z23.number(), name: z23.string() })).mutation(async ({ ctx, input }) => {
+  update: protectedProcedure.input(z24.object({ id: z24.number(), name: z24.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.update(userCategory).set({
       name: input.name
     }).where(eq18(userCategory.id, input.id));
     return res;
   }),
-  delete: protectedProcedure.input(z23.number()).mutation(async ({ ctx, input }) => {
+  delete: protectedProcedure.input(z24.number()).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.delete(userCategory).where(eq18(userCategory.id, input));
     return res;
   }),
-  addToUser: protectedProcedure.input(z23.object({ userId: z23.string(), categoryId: z23.number() })).mutation(async ({ ctx, input }) => {
+  addToUser: protectedProcedure.input(z24.object({ userId: z24.string(), categoryId: z24.number() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.insert(userToUserCategory).values({
       userId: input.userId,
       categoryId: input.categoryId
     });
     return res;
   }),
-  removeFromUser: protectedProcedure.input(z23.object({ userId: z23.string(), categoryId: z23.number() })).mutation(async ({ ctx, input }) => {
+  removeFromUser: protectedProcedure.input(z24.object({ userId: z24.string(), categoryId: z24.number() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.delete(userToUserCategory).where(
       and8(
         eq18(userToUserCategory.userId, input.userId),
@@ -9151,15 +9162,15 @@ var userCatagoriesRouter = createTRPCRouter({
 
 // src/server/api/routers/notification.ts
 import { eq as eq19 } from "drizzle-orm";
-import { z as z24 } from "zod";
+import { z as z25 } from "zod";
 var notificationRouter = createTRPCRouter({
   create: protectedProcedure.input(
-    z24.object({
-      userId: z24.string(),
-      code: z24.string(),
-      title: z24.string(),
-      description: z24.string().optional(),
-      notes: z24.string().optional()
+    z25.object({
+      userId: z25.string(),
+      code: z25.string(),
+      title: z25.string(),
+      description: z25.string().optional(),
+      notes: z25.string().optional()
     })
   ).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.insert(notification).values({
@@ -9171,7 +9182,7 @@ var notificationRouter = createTRPCRouter({
     });
     return res;
   }),
-  get: protectedProcedure.input(z24.number()).query(async ({ input, ctx }) => {
+  get: protectedProcedure.input(z25.number()).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.notification.findFirst({
       where: eq19(notification.id, input)
     });
@@ -9184,24 +9195,24 @@ var notificationRouter = createTRPCRouter({
     });
     return res;
   }),
-  getAllUser: protectedProcedure.input(z24.string()).query(async ({ input, ctx }) => {
+  getAllUser: protectedProcedure.input(z25.string()).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.notification.findMany({
       where: eq19(notification.userId, input),
       orderBy: (data, { desc: desc10 }) => desc10(data.createdAt)
     });
     return res;
   }),
-  delete: protectedProcedure.input(z24.number()).mutation(async ({ input, ctx }) => {
+  delete: protectedProcedure.input(z25.number()).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.delete(notification).where(eq19(notification.id, input));
     return res;
   }),
-  markAsRead: protectedProcedure.input(z24.number()).mutation(async ({ input, ctx }) => {
+  markAsRead: protectedProcedure.input(z25.number()).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.update(notification).set({
       isRead: true
     }).where(eq19(notification.id, input));
     return res;
   }),
-  markAsViewed: protectedProcedure.input(z24.number()).mutation(async ({ input, ctx }) => {
+  markAsViewed: protectedProcedure.input(z25.number()).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.update(notification).set({
       isViewed: true,
       isRead: true
