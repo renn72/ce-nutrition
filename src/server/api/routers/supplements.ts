@@ -213,7 +213,7 @@ export const supplementsRouter = createTRPCRouter({
 				await ctx.db.insert(notification).values({
 					userId: ctx.session.user.id,
 					code: 'supplement_update',
-					title: 'Supplement Update',
+					title: 'Your supplements have been updated',
 					description: 'You have a new supplement update',
 					isViewed: false,
           isRead: false,

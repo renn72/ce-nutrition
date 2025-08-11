@@ -170,7 +170,7 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 				alignOffset={-28}
 				align='end'
 				sideOffset={8}
-				className='min-w-[240px] px-0 pb-0'
+				className='min-w-[240px] px-0 pb-0 max-w-[98vw]'
 			>
 				<DropdownMenuLabel>Notifications</DropdownMenuLabel>
 				<DropdownMenuSeparator className='my-0 bg-primary/20' />
@@ -208,7 +208,7 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 									<CollapsibleTrigger asChild>
 										<div
 											className={cn(
-												'flex items-center justify-between w-full',
+												'flex items-center justify-between w-full gap-4',
 												message.isViewed === false || message.isViewed === null
 													? 'text-foreground font-semibold'
 													: '',
@@ -216,7 +216,7 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 										>
 											{message.state === 'message' ? (
 												<>
-													<div className='truncate'>
+													<div className='truncate text-xs'>
 														{message.isViewed === false ||
 														message.isViewed === null
 															? 'New Message'
@@ -238,7 +238,7 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 												</>
 											) : (
 												<>
-													<div className='truncate'>{message.content}</div>
+													<div className='truncate text-sm'>{message.content}</div>
 													<div className='text-sm text-muted-foreground'>
 														{message.isViewed === false ||
 														message.isViewed === null ? (

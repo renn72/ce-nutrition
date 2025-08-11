@@ -52,7 +52,7 @@ export default async function RootLayout({
               />
               <TRPCReactProvider>
                 {!session?.user?.id ? (
-                  <div className='flex min-h-screen flex-col items-center justify-center'>
+                  <div className='flex min-h-[100svh] flex-col items-center justify-center'>
                     <div className='flex flex-col items-center justify-center'>
                       <h2 className='text-3xl font-bold'>CE Nutrition</h2>
                       <h3 className='text-xl font-bold'>Sign in</h3>
