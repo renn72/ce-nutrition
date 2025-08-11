@@ -11,7 +11,8 @@
     "db:studio": "drizzle-kit studio",
     "dev": "next dev --turbo",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "tsup:run": "rm ./src/server/api/root/index.d.ts ; rm ./src/server/api/root/index.js ; tsup --tsconfig tsconfig-tsup.json"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.10.0",
