@@ -13382,357 +13382,6 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
         };
         transformer: true;
     }, _trpc_server.TRPCDecorateCreateRouterOptions<{
-        create: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                userId: string;
-                morningWeight?: string | undefined;
-                fastedBloodGlucose?: string | undefined;
-                notes?: string | undefined;
-                sleep?: string | undefined;
-                sleepQuality?: string | undefined;
-                nap?: string | undefined;
-                waistMeasurement?: string | undefined;
-                isHiit?: boolean | undefined;
-                isCardio?: boolean | undefined;
-                isLift?: boolean | undefined;
-                isLiss?: boolean | undefined;
-                image?: string | undefined;
-            };
-            output: {
-                res: {
-                    id: number;
-                }[];
-            };
-            meta: object;
-        }>;
-        deleteMeal: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                mealIndex: number;
-                logId: number;
-            };
-            output: boolean;
-            meta: object;
-        }>;
-        copyWeek: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                userId: string;
-                logId: number;
-            };
-            output: boolean;
-            meta: object;
-        }>;
-        clearDay: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                logId: number;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateIsStarred: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                isStarred: boolean;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateSupplement: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                suppId: number;
-                amount: number;
-                unit: string;
-            };
-            output: {
-                id: number;
-            }[];
-            meta: object;
-        }>;
-        updateNote: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                notes: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updatePosing: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                posing: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateSleep: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                sleep: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateSleepQuality: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                sleepQuality: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateSteps: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                steps: string;
-            };
-            output: _libsql_client.ResultSet | undefined;
-            meta: object;
-        }>;
-        updateSauna: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                sauna: string;
-            };
-            output: _libsql_client.ResultSet | undefined;
-            meta: object;
-        }>;
-        updateColdPlunge: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                coldPlunge: string;
-            };
-            output: _libsql_client.ResultSet | undefined;
-            meta: object;
-        }>;
-        updateNap: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                nap: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateHiit: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                hiit: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateCardio: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                cardio: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateWeightTraining: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                weight: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateLiss: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                liss: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateWaistMeasurement: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                waistMeasurement: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateWeight: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                morningWeight: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateBloodGlucose: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                fastedBloodGlucose: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateFrontImage: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                logId: number;
-                image: string;
-            };
-            output: boolean;
-            meta: object;
-        }>;
-        updateSideImage: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                logId: number;
-                image: string;
-            };
-            output: boolean;
-            meta: object;
-        }>;
-        updateBackImage: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                logId: number;
-                image: string;
-            };
-            output: boolean;
-            meta: object;
-        }>;
-        updateBodyBuilderImage: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                image: string;
-                name: string;
-                userId: string;
-            };
-            output: {
-                id: number;
-            }[];
-            meta: object;
-        }>;
-        updateImage: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                image: string;
-            };
-            output: boolean;
-            meta: object;
-        }>;
-        addWaterLog: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                amount: number;
-            };
-            output: {
-                id: number;
-            }[];
-            meta: object;
-        }>;
-        deleteWaterLog: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                id: number;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        addPoopLog: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-            };
-            output: {
-                id: number;
-            }[];
-            meta: object;
-        }>;
-        deletePoopLog: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                id: number;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        addUserCreatedRecipe: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                mealIndex: number;
-                logId: number;
-                recipe: {
-                    name: string;
-                    description: string;
-                    image: string;
-                    notes: string;
-                    recipeCategory: string;
-                    calories: number;
-                    ingredients: {
-                        ingredientId: number;
-                        alternateId: string;
-                        note: string;
-                        serveSize: string;
-                        serveUnit: string;
-                        index: number;
-                        isAlternate?: boolean | undefined;
-                    }[];
-                };
-            };
-            output: {
-                meal: {
-                    id: number;
-                }[];
-                recipe: {
-                    id: number;
-                }[];
-                ingredient: {
-                    id: number;
-                }[];
-            } | undefined;
-            meta: object;
-        }>;
-        addMeal: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                userId: string;
-                planId: number;
-                mealIndex: number | null;
-                date: Date;
-                logId: number | null;
-                recipeIndex?: number | null | undefined;
-                recipeId?: number | null | undefined;
-            };
-            output: {
-                meal: {
-                    id: number;
-                }[];
-                recipe?: undefined;
-                ingredient?: undefined;
-            } | {
-                meal: {
-                    id: number;
-                }[];
-                recipe: {
-                    id: number;
-                }[];
-                ingredient: {
-                    id: number;
-                }[];
-            } | undefined;
-            meta: object;
-        }>;
-        update: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                id: number;
-                date: string;
-                userId: string;
-                morningWeight?: string | undefined;
-                notes?: string | undefined;
-                sleep?: string | undefined;
-                sleepQuality?: string | undefined;
-                fastedBloodGlucose?: string | undefined;
-                nap?: string | undefined;
-                waistMeasurement?: string | undefined;
-                isHiit?: boolean | undefined;
-                isCardio?: boolean | undefined;
-                isLift?: boolean | undefined;
-                isLiss?: boolean | undefined;
-                image?: string | undefined;
-            };
-            output: {
-                res: _libsql_client.ResultSet;
-            };
-            meta: object;
-        }>;
         getAllUser: _trpc_server.TRPCQueryProcedure<{
             input: string;
             output: {
@@ -14107,16 +13756,6 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             }[] | null;
             meta: object;
         }>;
-        delete: _trpc_server.TRPCMutationProcedure<{
-            input: number;
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        deleteAll: _trpc_server.TRPCMutationProcedure<{
-            input: string;
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
         getSimple: _trpc_server.TRPCQueryProcedure<{
             input: number;
             output: {
@@ -14342,6 +13981,367 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     dailyLogId: number;
                 }[];
             } | undefined;
+            meta: object;
+        }>;
+        update: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+                date: string;
+                userId: string;
+                morningWeight?: string | undefined;
+                notes?: string | undefined;
+                sleep?: string | undefined;
+                sleepQuality?: string | undefined;
+                fastedBloodGlucose?: string | undefined;
+                nap?: string | undefined;
+                waistMeasurement?: string | undefined;
+                isHiit?: boolean | undefined;
+                isCardio?: boolean | undefined;
+                isLift?: boolean | undefined;
+                isLiss?: boolean | undefined;
+                image?: string | undefined;
+            };
+            output: {
+                res: _libsql_client.ResultSet;
+            };
+            meta: object;
+        }>;
+        updateIsStarred: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                isStarred: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateSupplement: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                suppId: number;
+                amount: number;
+                unit: string;
+            };
+            output: {
+                id: number;
+            }[];
+            meta: object;
+        }>;
+        updateNote: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                notes: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updatePosing: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                posing: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateSleep: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                sleep: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateSleepQuality: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                sleepQuality: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateSteps: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                steps: string;
+            };
+            output: _libsql_client.ResultSet | undefined;
+            meta: object;
+        }>;
+        updateSauna: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                sauna: string;
+            };
+            output: _libsql_client.ResultSet | undefined;
+            meta: object;
+        }>;
+        updateColdPlunge: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                coldPlunge: string;
+            };
+            output: _libsql_client.ResultSet | undefined;
+            meta: object;
+        }>;
+        updateNap: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                nap: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateHiit: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                hiit: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateCardio: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                cardio: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateWeightTraining: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                weight: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateLiss: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                liss: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateWaistMeasurement: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                waistMeasurement: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateWeight: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                morningWeight: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateBloodGlucose: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                fastedBloodGlucose: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateFrontImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+                image: string;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        updateSideImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+                image: string;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        updateBackImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+                image: string;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        updateBodyBuilderImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                image: string;
+                name: string;
+                userId: string;
+            };
+            output: {
+                id: number;
+            }[];
+            meta: object;
+        }>;
+        updateImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                image: string;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        addWaterLog: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                amount: number;
+            };
+            output: {
+                id: number;
+            }[];
+            meta: object;
+        }>;
+        deleteWaterLog: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        addPoopLog: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+            };
+            output: {
+                id: number;
+            }[];
+            meta: object;
+        }>;
+        deletePoopLog: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        create: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                userId: string;
+                morningWeight?: string | undefined;
+                fastedBloodGlucose?: string | undefined;
+                notes?: string | undefined;
+                sleep?: string | undefined;
+                sleepQuality?: string | undefined;
+                nap?: string | undefined;
+                waistMeasurement?: string | undefined;
+                isHiit?: boolean | undefined;
+                isCardio?: boolean | undefined;
+                isLift?: boolean | undefined;
+                isLiss?: boolean | undefined;
+                image?: string | undefined;
+            };
+            output: {
+                res: {
+                    id: number;
+                }[];
+            };
+            meta: object;
+        }>;
+        deleteMeal: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                mealIndex: number;
+                logId: number;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        copyWeek: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                logId: number;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        clearDay: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        addUserCreatedRecipe: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                mealIndex: number;
+                logId: number;
+                recipe: {
+                    name: string;
+                    description: string;
+                    image: string;
+                    notes: string;
+                    recipeCategory: string;
+                    calories: number;
+                    ingredients: {
+                        ingredientId: number;
+                        alternateId: string;
+                        note: string;
+                        serveSize: string;
+                        serveUnit: string;
+                        index: number;
+                        isAlternate?: boolean | undefined;
+                    }[];
+                };
+            };
+            output: {
+                meal: {
+                    id: number;
+                }[];
+                recipe: {
+                    id: number;
+                }[];
+                ingredient: {
+                    id: number;
+                }[];
+            } | undefined;
+            meta: object;
+        }>;
+        addMeal: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                planId: number;
+                mealIndex: number | null;
+                date: Date;
+                logId: number | null;
+                recipeIndex?: number | null | undefined;
+                recipeId?: number | null | undefined;
+            };
+            output: {
+                meal: {
+                    id: number;
+                }[];
+                recipe?: undefined;
+                ingredient?: undefined;
+            } | {
+                meal: {
+                    id: number;
+                }[];
+                recipe: {
+                    id: number;
+                }[];
+                ingredient: {
+                    id: number;
+                }[];
+            } | undefined;
+            meta: object;
+        }>;
+        delete: _trpc_server.TRPCMutationProcedure<{
+            input: number;
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        deleteAll: _trpc_server.TRPCMutationProcedure<{
+            input: string;
+            output: _libsql_client.ResultSet;
             meta: object;
         }>;
     }>>;
@@ -19992,357 +19992,6 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         };
         transformer: true;
     }, _trpc_server.TRPCDecorateCreateRouterOptions<{
-        create: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                userId: string;
-                morningWeight?: string | undefined;
-                fastedBloodGlucose?: string | undefined;
-                notes?: string | undefined;
-                sleep?: string | undefined;
-                sleepQuality?: string | undefined;
-                nap?: string | undefined;
-                waistMeasurement?: string | undefined;
-                isHiit?: boolean | undefined;
-                isCardio?: boolean | undefined;
-                isLift?: boolean | undefined;
-                isLiss?: boolean | undefined;
-                image?: string | undefined;
-            };
-            output: {
-                res: {
-                    id: number;
-                }[];
-            };
-            meta: object;
-        }>;
-        deleteMeal: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                mealIndex: number;
-                logId: number;
-            };
-            output: boolean;
-            meta: object;
-        }>;
-        copyWeek: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                userId: string;
-                logId: number;
-            };
-            output: boolean;
-            meta: object;
-        }>;
-        clearDay: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                logId: number;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateIsStarred: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                isStarred: boolean;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateSupplement: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                suppId: number;
-                amount: number;
-                unit: string;
-            };
-            output: {
-                id: number;
-            }[];
-            meta: object;
-        }>;
-        updateNote: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                notes: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updatePosing: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                posing: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateSleep: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                sleep: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateSleepQuality: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                sleepQuality: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateSteps: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                steps: string;
-            };
-            output: _libsql_client.ResultSet | undefined;
-            meta: object;
-        }>;
-        updateSauna: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                sauna: string;
-            };
-            output: _libsql_client.ResultSet | undefined;
-            meta: object;
-        }>;
-        updateColdPlunge: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                coldPlunge: string;
-            };
-            output: _libsql_client.ResultSet | undefined;
-            meta: object;
-        }>;
-        updateNap: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                nap: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateHiit: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                hiit: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateCardio: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                cardio: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateWeightTraining: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                weight: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateLiss: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                liss: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateWaistMeasurement: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                waistMeasurement: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateWeight: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                morningWeight: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateBloodGlucose: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                fastedBloodGlucose: string;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateFrontImage: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                logId: number;
-                image: string;
-            };
-            output: boolean;
-            meta: object;
-        }>;
-        updateSideImage: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                logId: number;
-                image: string;
-            };
-            output: boolean;
-            meta: object;
-        }>;
-        updateBackImage: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                logId: number;
-                image: string;
-            };
-            output: boolean;
-            meta: object;
-        }>;
-        updateBodyBuilderImage: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                image: string;
-                name: string;
-                userId: string;
-            };
-            output: {
-                id: number;
-            }[];
-            meta: object;
-        }>;
-        updateImage: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                image: string;
-            };
-            output: boolean;
-            meta: object;
-        }>;
-        addWaterLog: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                amount: number;
-            };
-            output: {
-                id: number;
-            }[];
-            meta: object;
-        }>;
-        deleteWaterLog: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                id: number;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        addPoopLog: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-            };
-            output: {
-                id: number;
-            }[];
-            meta: object;
-        }>;
-        deletePoopLog: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                id: number;
-            };
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        addUserCreatedRecipe: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                mealIndex: number;
-                logId: number;
-                recipe: {
-                    name: string;
-                    description: string;
-                    image: string;
-                    notes: string;
-                    recipeCategory: string;
-                    calories: number;
-                    ingredients: {
-                        ingredientId: number;
-                        alternateId: string;
-                        note: string;
-                        serveSize: string;
-                        serveUnit: string;
-                        index: number;
-                        isAlternate?: boolean | undefined;
-                    }[];
-                };
-            };
-            output: {
-                meal: {
-                    id: number;
-                }[];
-                recipe: {
-                    id: number;
-                }[];
-                ingredient: {
-                    id: number;
-                }[];
-            } | undefined;
-            meta: object;
-        }>;
-        addMeal: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                userId: string;
-                planId: number;
-                mealIndex: number | null;
-                date: Date;
-                logId: number | null;
-                recipeIndex?: number | null | undefined;
-                recipeId?: number | null | undefined;
-            };
-            output: {
-                meal: {
-                    id: number;
-                }[];
-                recipe?: undefined;
-                ingredient?: undefined;
-            } | {
-                meal: {
-                    id: number;
-                }[];
-                recipe: {
-                    id: number;
-                }[];
-                ingredient: {
-                    id: number;
-                }[];
-            } | undefined;
-            meta: object;
-        }>;
-        update: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                id: number;
-                date: string;
-                userId: string;
-                morningWeight?: string | undefined;
-                notes?: string | undefined;
-                sleep?: string | undefined;
-                sleepQuality?: string | undefined;
-                fastedBloodGlucose?: string | undefined;
-                nap?: string | undefined;
-                waistMeasurement?: string | undefined;
-                isHiit?: boolean | undefined;
-                isCardio?: boolean | undefined;
-                isLift?: boolean | undefined;
-                isLiss?: boolean | undefined;
-                image?: string | undefined;
-            };
-            output: {
-                res: _libsql_client.ResultSet;
-            };
-            meta: object;
-        }>;
         getAllUser: _trpc_server.TRPCQueryProcedure<{
             input: string;
             output: {
@@ -20717,16 +20366,6 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             }[] | null;
             meta: object;
         }>;
-        delete: _trpc_server.TRPCMutationProcedure<{
-            input: number;
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        deleteAll: _trpc_server.TRPCMutationProcedure<{
-            input: string;
-            output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
         getSimple: _trpc_server.TRPCQueryProcedure<{
             input: number;
             output: {
@@ -20952,6 +20591,367 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     dailyLogId: number;
                 }[];
             } | undefined;
+            meta: object;
+        }>;
+        update: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+                date: string;
+                userId: string;
+                morningWeight?: string | undefined;
+                notes?: string | undefined;
+                sleep?: string | undefined;
+                sleepQuality?: string | undefined;
+                fastedBloodGlucose?: string | undefined;
+                nap?: string | undefined;
+                waistMeasurement?: string | undefined;
+                isHiit?: boolean | undefined;
+                isCardio?: boolean | undefined;
+                isLift?: boolean | undefined;
+                isLiss?: boolean | undefined;
+                image?: string | undefined;
+            };
+            output: {
+                res: _libsql_client.ResultSet;
+            };
+            meta: object;
+        }>;
+        updateIsStarred: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                isStarred: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateSupplement: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                suppId: number;
+                amount: number;
+                unit: string;
+            };
+            output: {
+                id: number;
+            }[];
+            meta: object;
+        }>;
+        updateNote: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                notes: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updatePosing: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                posing: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateSleep: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                sleep: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateSleepQuality: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                sleepQuality: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateSteps: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                steps: string;
+            };
+            output: _libsql_client.ResultSet | undefined;
+            meta: object;
+        }>;
+        updateSauna: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                sauna: string;
+            };
+            output: _libsql_client.ResultSet | undefined;
+            meta: object;
+        }>;
+        updateColdPlunge: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                coldPlunge: string;
+            };
+            output: _libsql_client.ResultSet | undefined;
+            meta: object;
+        }>;
+        updateNap: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                nap: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateHiit: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                hiit: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateCardio: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                cardio: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateWeightTraining: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                weight: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateLiss: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                liss: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateWaistMeasurement: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                waistMeasurement: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateWeight: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                morningWeight: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateBloodGlucose: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                fastedBloodGlucose: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateFrontImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+                image: string;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        updateSideImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+                image: string;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        updateBackImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+                image: string;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        updateBodyBuilderImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                image: string;
+                name: string;
+                userId: string;
+            };
+            output: {
+                id: number;
+            }[];
+            meta: object;
+        }>;
+        updateImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                image: string;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        addWaterLog: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                amount: number;
+            };
+            output: {
+                id: number;
+            }[];
+            meta: object;
+        }>;
+        deleteWaterLog: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        addPoopLog: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+            };
+            output: {
+                id: number;
+            }[];
+            meta: object;
+        }>;
+        deletePoopLog: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        create: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                userId: string;
+                morningWeight?: string | undefined;
+                fastedBloodGlucose?: string | undefined;
+                notes?: string | undefined;
+                sleep?: string | undefined;
+                sleepQuality?: string | undefined;
+                nap?: string | undefined;
+                waistMeasurement?: string | undefined;
+                isHiit?: boolean | undefined;
+                isCardio?: boolean | undefined;
+                isLift?: boolean | undefined;
+                isLiss?: boolean | undefined;
+                image?: string | undefined;
+            };
+            output: {
+                res: {
+                    id: number;
+                }[];
+            };
+            meta: object;
+        }>;
+        deleteMeal: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                mealIndex: number;
+                logId: number;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        copyWeek: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                logId: number;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        clearDay: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        addUserCreatedRecipe: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                mealIndex: number;
+                logId: number;
+                recipe: {
+                    name: string;
+                    description: string;
+                    image: string;
+                    notes: string;
+                    recipeCategory: string;
+                    calories: number;
+                    ingredients: {
+                        ingredientId: number;
+                        alternateId: string;
+                        note: string;
+                        serveSize: string;
+                        serveUnit: string;
+                        index: number;
+                        isAlternate?: boolean | undefined;
+                    }[];
+                };
+            };
+            output: {
+                meal: {
+                    id: number;
+                }[];
+                recipe: {
+                    id: number;
+                }[];
+                ingredient: {
+                    id: number;
+                }[];
+            } | undefined;
+            meta: object;
+        }>;
+        addMeal: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                planId: number;
+                mealIndex: number | null;
+                date: Date;
+                logId: number | null;
+                recipeIndex?: number | null | undefined;
+                recipeId?: number | null | undefined;
+            };
+            output: {
+                meal: {
+                    id: number;
+                }[];
+                recipe?: undefined;
+                ingredient?: undefined;
+            } | {
+                meal: {
+                    id: number;
+                }[];
+                recipe: {
+                    id: number;
+                }[];
+                ingredient: {
+                    id: number;
+                }[];
+            } | undefined;
+            meta: object;
+        }>;
+        delete: _trpc_server.TRPCMutationProcedure<{
+            input: number;
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        deleteAll: _trpc_server.TRPCMutationProcedure<{
+            input: string;
+            output: _libsql_client.ResultSet;
             meta: object;
         }>;
     }>>;
