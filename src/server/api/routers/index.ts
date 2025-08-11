@@ -18,6 +18,7 @@ import { trainerRouter } from '@/server/api/routers/trainer'
 import { supplementsRouter } from '@/server/api/routers/supplements'
 import { trainerNotesRouter } from '@/server/api/routers/trainer-notes'
 import { userCatagoriesRouter } from '@/server/api/routers/userCatagories'
+import { notificationRouter } from '@/server/api/routers/notification'
 
 import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc'
 
@@ -47,6 +48,7 @@ export const appRouter = createTRPCRouter({
   supplement: supplementsRouter,
   trainerNotes: trainerNotesRouter,
   userCatagories: userCatagoriesRouter,
+  notifications: notificationRouter,
 })
 
 // export type definition of API

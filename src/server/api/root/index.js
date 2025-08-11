@@ -1766,7 +1766,7 @@ var authConfig = {
       if (session2.user && token.uid) {
         const dbUser = await db.query.user.findFirst({
           // @ts-ignore
-          where: (user3, { eq: eq19 }) => eq19(user3.id, token.uid),
+          where: (user3, { eq: eq20 }) => eq20(user3.id, token.uid),
           columns: {
             id: true,
             isTrainer: true,
@@ -1830,7 +1830,7 @@ var authConfig = {
         console.log("credentials", credentials);
         if (!credentials) return null;
         const maybeUser = await db.query.user.findFirst({
-          where: (user3, { eq: eq19 }) => eq19(user3.email, credentials.username)
+          where: (user3, { eq: eq20 }) => eq20(user3.email, credentials.username)
         });
         if (!maybeUser) throw new Error("user not found");
         if (!maybeUser.password) throw new Error("invalid password");
@@ -1922,7 +1922,7 @@ var rootProtectedProcedure = t.procedure.use(timingMiddleware).use(async ({ ctx,
   const sessionUser = ctx.session.user;
   if (!sessionUser) return next({ ctx });
   const user3 = await ctx.db.query.user.findFirst({
-    where: (user4, { eq: eq19 }) => eq19(user4.id, sessionUser.id)
+    where: (user4, { eq: eq20 }) => eq20(user4.id, sessionUser.id)
   });
   console.log("user in protected", user3);
   if (!user3?.isRoot) {
@@ -1942,12 +1942,12 @@ import { z as z3 } from "zod";
 var ingredientRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.ingredient.findMany({
-      where: (ingredient2, { isNull, and: and8, eq: eq19 }) => and8(
+      where: (ingredient2, { isNull, and: and8, eq: eq20 }) => and8(
         isNull(ingredient2.hiddenAt),
         isNull(ingredient2.deletedAt),
-        eq19(ingredient2.isSupplement, false),
-        eq19(ingredient2.isPrivate, false),
-        eq19(ingredient2.isUserCreated, false)
+        eq20(ingredient2.isSupplement, false),
+        eq20(ingredient2.isPrivate, false),
+        eq20(ingredient2.isUserCreated, false)
       ),
       with: {
         user: {
@@ -1968,12 +1968,12 @@ var ingredientRouter = createTRPCRouter({
   }),
   getAllFav: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.ingredient.findMany({
-      where: (ingredient2, { isNull, and: and8, eq: eq19 }) => and8(
+      where: (ingredient2, { isNull, and: and8, eq: eq20 }) => and8(
         isNull(ingredient2.hiddenAt),
         isNull(ingredient2.deletedAt),
-        eq19(ingredient2.isSupplement, false),
-        eq19(ingredient2.isPrivate, false),
-        eq19(ingredient2.isUserCreated, false)
+        eq20(ingredient2.isSupplement, false),
+        eq20(ingredient2.isPrivate, false),
+        eq20(ingredient2.isUserCreated, false)
       ),
       with: {
         ingredientToGroceryStore: {
@@ -1988,7 +1988,7 @@ var ingredientRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z3.object({ id: z3.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.ingredient.findFirst({
-      where: (ingredient2, { eq: eq19 }) => eq19(ingredient2.id, input.id),
+      where: (ingredient2, { eq: eq20 }) => eq20(ingredient2.id, input.id),
       with: {
         user: {
           columns: {
@@ -2098,7 +2098,7 @@ var groceryStoreRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z5.object({ id: z5.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.groceryStore.findFirst({
-      where: (store, { eq: eq19 }) => eq19(store.id, input.id)
+      where: (store, { eq: eq20 }) => eq20(store.id, input.id)
     });
     return res;
   }),
@@ -2301,9 +2301,9 @@ var BaseGenerator = class {
     const extraConfigBuilder = table[ExtraConfigBuilder];
     const extraConfigColumns = table[ExtraConfigColumns];
     const extraConfig = extraConfigBuilder?.(extraConfigColumns ?? {});
-    const builtIndexes = (Array.isArray(extraConfig) ? extraConfig : Object.values(extraConfig ?? {})).map((b) => b?.build(table)).filter((b) => b !== void 0).filter((index4) => !(is(index4, PgCheck) || is(index4, MySqlCheck) || is(index4, SQLiteCheck)));
+    const builtIndexes = (Array.isArray(extraConfig) ? extraConfig : Object.values(extraConfig ?? {})).map((b) => b?.build(table)).filter((b) => b !== void 0).filter((index3) => !(is(index3, PgCheck) || is(index3, MySqlCheck) || is(index3, SQLiteCheck)));
     const fks = builtIndexes.filter(
-      (index4) => is(index4, PgForeignKey) || is(index4, MySqlForeignKey) || is(index4, SQLiteForeignKey)
+      (index3) => is(index3, PgForeignKey) || is(index3, MySqlForeignKey) || is(index3, SQLiteForeignKey)
     );
     if (!this.relational) {
       this.generateForeignKeys(fks);
@@ -2312,26 +2312,26 @@ var BaseGenerator = class {
       const indexes = extraConfig ?? {};
       dbml.newLine().tab().insert("indexes {").newLine();
       for (const indexName in indexes) {
-        const index4 = indexes[indexName].build(table);
+        const index3 = indexes[indexName].build(table);
         dbml.tab(2);
-        if (is(index4, PgIndex) || is(index4, MySqlIndex) || is(index4, SQLiteIndex)) {
-          const configColumns = index4.config.columns.flatMap(
+        if (is(index3, PgIndex) || is(index3, MySqlIndex) || is(index3, SQLiteIndex)) {
+          const configColumns = index3.config.columns.flatMap(
             (entry) => is(entry, SQL) ? entry.queryChunks.filter((v) => is(v, Column)) : entry
           );
           const idxColumns = wrapColumns(
             configColumns,
             this.buildQueryConfig.escapeName
           );
-          const idxProperties = index4.config.name ? ` [name: '${index4.config.name}'${index4.config.unique ? ", unique" : ""}]` : "";
+          const idxProperties = index3.config.name ? ` [name: '${index3.config.name}'${index3.config.unique ? ", unique" : ""}]` : "";
           dbml.insert(`${idxColumns}${idxProperties}`);
         }
-        if (is(index4, PgPrimaryKey) || is(index4, MySqlPrimaryKey) || is(index4, SQLitePrimaryKey)) {
-          const pkColumns = wrapColumns(index4.columns, this.buildQueryConfig.escapeName);
+        if (is(index3, PgPrimaryKey) || is(index3, MySqlPrimaryKey) || is(index3, SQLitePrimaryKey)) {
+          const pkColumns = wrapColumns(index3.columns, this.buildQueryConfig.escapeName);
           dbml.insert(`${pkColumns} [pk]`);
         }
-        if (is(index4, PgUniqueConstraint) || is(index4, MySqlUniqueConstraint) || is(index4, SQLiteUniqueConstraint)) {
-          const uqColumns = wrapColumns(index4.columns, this.buildQueryConfig.escapeName);
-          const uqProperties = index4.name ? `[name: '${index4.name}', unique]` : "[unique]";
+        if (is(index3, PgUniqueConstraint) || is(index3, MySqlUniqueConstraint) || is(index3, SQLiteUniqueConstraint)) {
+          const uqColumns = wrapColumns(index3.columns, this.buildQueryConfig.escapeName);
+          const uqProperties = index3.name ? `[name: '${index3.name}', unique]` : "[unique]";
           dbml.insert(`${uqColumns} ${uqProperties}`);
         }
         dbml.newLine();
@@ -2517,7 +2517,7 @@ var testRouter = createTRPCRouter({
       skip_empty_lines: true
     });
     const user3 = await db.query.user.findFirst({
-      where: (user4, { eq: eq19 }) => eq19(user4.email, "renn@warner.systems"),
+      where: (user4, { eq: eq20 }) => eq20(user4.email, "renn@warner.systems"),
       columns: {
         id: true
       }
@@ -2789,7 +2789,7 @@ var testRouter = createTRPCRouter({
     const csv7 = csvData.slice(1200, 1400);
     const csv8 = csvData.slice(1400, csvData.length);
     const user3 = await db.query.user.findFirst({
-      where: (user4, { eq: eq19 }) => eq19(user4.email, "renn@warner.systems"),
+      where: (user4, { eq: eq20 }) => eq20(user4.email, "renn@warner.systems"),
       columns: {
         id: true
       }
@@ -4491,7 +4491,7 @@ var userRouter = createTRPCRouter({
   getByEmail: protectedProcedure.input(z6.string()).query(async ({ ctx, input }) => {
     if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq19 }) => eq19(user3.email, input),
+      where: (user3, { eq: eq20 }) => eq20(user3.email, input),
       columns: {
         password: false
       }
@@ -4659,7 +4659,7 @@ var userRouter = createTRPCRouter({
   get: protectedProcedure.input(z6.string()).query(async ({ ctx, input }) => {
     if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq19 }) => eq19(user3.id, input),
+      where: (user3, { eq: eq20 }) => eq20(user3.id, input),
       columns: {
         password: false
       },
@@ -4698,7 +4698,7 @@ var userRouter = createTRPCRouter({
     if (input?.id && input.id !== "") userId = input.id;
     if (!userId) return null;
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq19 }) => eq19(user3.id, userId),
+      where: (user3, { eq: eq20 }) => eq20(user3.id, userId),
       columns: {
         password: false
       },
@@ -4741,7 +4741,7 @@ var userRouter = createTRPCRouter({
     const userId = ctx.session?.user.id;
     if (!userId) return null;
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq19 }) => eq19(user3.id, userId),
+      where: (user3, { eq: eq20 }) => eq20(user3.id, userId),
       columns: {
         isCreator: true
       }
@@ -4752,7 +4752,7 @@ var userRouter = createTRPCRouter({
     const userId = ctx.session?.user.id;
     if (!userId) return null;
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq19 }) => eq19(user3.id, userId),
+      where: (user3, { eq: eq20 }) => eq20(user3.id, userId),
       columns: {
         isTrainer: true
       }
@@ -4763,7 +4763,7 @@ var userRouter = createTRPCRouter({
     const userId = ctx.session?.user.id;
     if (!userId) return null;
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq19 }) => eq19(user3.id, userId),
+      where: (user3, { eq: eq20 }) => eq20(user3.id, userId),
       columns: {
         isRoot: true
       }
@@ -4774,7 +4774,7 @@ var userRouter = createTRPCRouter({
     const userId = ctx.session?.user.id;
     if (!userId) return null;
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq19 }) => eq19(user3.id, userId),
+      where: (user3, { eq: eq20 }) => eq20(user3.id, userId),
       with: {
         roles: true
       }
@@ -4892,9 +4892,9 @@ var userRouter = createTRPCRouter({
   }),
   updateRoleBodyBuilderImages: protectedProcedure.input(z6.object({ userId: z6.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role3, { eq: eq19, and: and8 }) => and8(
-        eq19(role3.userId, input.userId),
-        eq19(role3.name, "body-builder-images")
+      where: (role3, { eq: eq20, and: and8 }) => and8(
+        eq20(role3.userId, input.userId),
+        eq20(role3.name, "body-builder-images")
       )
     });
     if (res) {
@@ -4909,7 +4909,7 @@ var userRouter = createTRPCRouter({
   }),
   updateRoleSupplements: protectedProcedure.input(z6.object({ userId: z6.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role3, { eq: eq19, and: and8 }) => and8(eq19(role3.userId, input.userId), eq19(role3.name, "supplements"))
+      where: (role3, { eq: eq20, and: and8 }) => and8(eq20(role3.userId, input.userId), eq20(role3.name, "supplements"))
     });
     if (res) {
       await ctx.db.delete(role).where(eq3(role.id, res.id));
@@ -4930,7 +4930,7 @@ var userRouter = createTRPCRouter({
   }),
   updateRoleCreateMeals: protectedProcedure.input(z6.object({ userId: z6.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role3, { eq: eq19, and: and8 }) => and8(eq19(role3.userId, input.userId), eq19(role3.name, "create-meals"))
+      where: (role3, { eq: eq20, and: and8 }) => and8(eq20(role3.userId, input.userId), eq20(role3.name, "create-meals"))
     });
     if (res) {
       await ctx.db.delete(role).where(eq3(role.id, res.id));
@@ -4951,7 +4951,7 @@ var userRouter = createTRPCRouter({
   }),
   updateRoleAdmin: protectedProcedure.input(z6.object({ userId: z6.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role3, { eq: eq19, and: and8 }) => and8(eq19(role3.userId, input.userId), eq19(role3.name, "admin"))
+      where: (role3, { eq: eq20, and: and8 }) => and8(eq20(role3.userId, input.userId), eq20(role3.name, "admin"))
     });
     if (res) {
       await ctx.db.delete(role).where(eq3(role.id, res.id));
@@ -4986,14 +4986,14 @@ var userRouter = createTRPCRouter({
   }),
   getFakeUsers: rootProtectedProcedure.query(async () => {
     const res = await db.query.user.findMany({
-      where: (users, { eq: eq19 }) => eq19(users.isFake, true)
+      where: (users, { eq: eq20 }) => eq20(users.isFake, true)
     });
     return res;
   }),
   getBasic: protectedProcedure.input(z6.string()).query(async ({ ctx, input }) => {
     if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq19 }) => eq19(user3.id, input),
+      where: (user3, { eq: eq20 }) => eq20(user3.id, input),
       columns: {
         password: false
       },
@@ -5066,14 +5066,14 @@ var userRouter = createTRPCRouter({
   checkEmail: publicProcedure.input(z6.string()).mutation(async ({ ctx, input }) => {
     if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq19 }) => eq19(user3.email, input)
+      where: (user3, { eq: eq20 }) => eq20(user3.email, input)
     });
     return res ? true : false;
   }),
   getGaurenteed: protectedProcedure.input(z6.string()).query(async ({ ctx, input }) => {
     if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq19 }) => eq19(user3.id, input),
+      where: (user3, { eq: eq20 }) => eq20(user3.id, input),
       columns: {
         password: false
       },
@@ -5130,7 +5130,7 @@ import { z as z8 } from "zod";
 var recipeRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.recipe.findMany({
-      where: (recipe2, { eq: eq19 }) => eq19(recipe2.isUserRecipe, false),
+      where: (recipe2, { eq: eq20 }) => eq20(recipe2.isUserRecipe, false),
       orderBy: [desc3(recipe.createdAt)],
       with: {
         creator: true,
@@ -5154,9 +5154,9 @@ var recipeRouter = createTRPCRouter({
   }),
   getAllUserCreated: protectedProcedure.input(z8.object({ userId: z8.string() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.recipe.findMany({
-      where: (recipe2, { eq: eq19, and: and8 }) => and8(
-        eq19(recipe2.creatorId, input.userId),
-        eq19(recipe2.isUserRecipe, true)
+      where: (recipe2, { eq: eq20, and: and8 }) => and8(
+        eq20(recipe2.creatorId, input.userId),
+        eq20(recipe2.isUserRecipe, true)
       ),
       orderBy: [desc3(recipe.createdAt)],
       with: {
@@ -5180,7 +5180,7 @@ var recipeRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z8.object({ id: z8.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.recipe.findFirst({
-      where: (recipe2, { eq: eq19 }) => eq19(recipe2.id, input.id),
+      where: (recipe2, { eq: eq20 }) => eq20(recipe2.id, input.id),
       with: {
         creator: true,
         recipeToIngredient: {
@@ -5378,7 +5378,7 @@ var planRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z9.number()).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.plan.findFirst({
-      where: (plan2, { eq: eq19 }) => eq19(plan2.id, input),
+      where: (plan2, { eq: eq20 }) => eq20(plan2.id, input),
       with: {
         creator: true,
         meals: {
@@ -5688,7 +5688,7 @@ var mealRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z10.object({ id: z10.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.meal.findFirst({
-      where: (meal2, { eq: eq19 }) => eq19(meal2.id, input.id),
+      where: (meal2, { eq: eq20 }) => eq20(meal2.id, input.id),
       with: {
         mealToVegeStack: {
           with: {
@@ -5837,7 +5837,7 @@ var vegeRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z11.object({ id: z11.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.vegeStack.findFirst({
-      where: (store, { eq: eq19 }) => eq19(store.id, input.id)
+      where: (store, { eq: eq20 }) => eq20(store.id, input.id)
     });
     return res;
   }),
@@ -7519,6 +7519,20 @@ var messageRouter = createTRPCRouter({
     });
     return res;
   }),
+  markFromUserAsViewedAndRead: protectedProcedure.input(z15.string()).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.update(message).set({
+      isViewed: true,
+      isRead: true
+    }).where(eq11(message.fromUserId, input));
+    createLog3({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "Mark Message as Read",
+      notes: "",
+      objectId: null
+    });
+    return res;
+  }),
   delete: protectedProcedure.input(z15.number()).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.update(message).set({ isDeleted: true }).where(eq11(message.id, input));
     return res;
@@ -7725,13 +7739,13 @@ import { z as z18 } from "zod";
 var goalsRouter = createTRPCRouter({
   getUser: protectedProcedure.input(z18.object({ userId: z18.string() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.goals.findMany({
-      where: (goal, { eq: eq19 }) => eq19(goal.userId, input.userId)
+      where: (goal, { eq: eq20 }) => eq20(goal.userId, input.userId)
     });
     return res;
   }),
   get: protectedProcedure.input(z18.object({ id: z18.number() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.goals.findFirst({
-      where: (goal, { eq: eq19 }) => eq19(goal.id, input.id)
+      where: (goal, { eq: eq20 }) => eq20(goal.id, input.id)
     });
     return res;
   }),
@@ -7795,7 +7809,7 @@ var createLog5 = async ({
 var trainerRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.user.findMany({
-      where: (user3, { eq: eq19 }) => eq19(user3.isTrainer, true),
+      where: (user3, { eq: eq20 }) => eq20(user3.isTrainer, true),
       columns: {
         id: true,
         name: true
@@ -8290,11 +8304,11 @@ var supplementsRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session?.user?.id;
     const res = await ctx.db.query.ingredient.findMany({
-      where: (ingredient2, { isNull, and: and8, eq: eq19 }) => and8(
+      where: (ingredient2, { isNull, and: and8, eq: eq20 }) => and8(
         isNull(ingredient2.hiddenAt),
         isNull(ingredient2.deletedAt),
-        eq19(ingredient2.isSupplement, true),
-        eq19(ingredient2.isUserCreated, false)
+        eq20(ingredient2.isSupplement, true),
+        eq20(ingredient2.isUserCreated, false)
       ),
       with: {
         user: {
@@ -8319,7 +8333,7 @@ var supplementsRouter = createTRPCRouter({
   getSupplementFromDailyLog: protectedProcedure.input(z21.object({ id: z21.number() })).query(async ({ input, ctx }) => {
     if (input.id === -1) return false;
     const res = await ctx.db.query.dailySupplement.findFirst({
-      where: (supplement, { eq: eq19 }) => eq19(supplement.id, input.id),
+      where: (supplement, { eq: eq20 }) => eq20(supplement.id, input.id),
       with: {
         supplement: true
       }
@@ -8328,7 +8342,7 @@ var supplementsRouter = createTRPCRouter({
   }),
   getFullSupplement: protectedProcedure.input(z21.object({ id: z21.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.ingredient.findFirst({
-      where: (ingredient2, { eq: eq19 }) => eq19(ingredient2.id, input.id),
+      where: (ingredient2, { eq: eq20 }) => eq20(ingredient2.id, input.id),
       with: {
         ingredientAdditionOne: true,
         ingredientAdditionTwo: true,
@@ -8345,7 +8359,7 @@ var supplementsRouter = createTRPCRouter({
   }),
   getSupplement: protectedProcedure.input(z21.object({ id: z21.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.ingredient.findFirst({
-      where: (ingredient2, { eq: eq19 }) => eq19(ingredient2.id, input.id),
+      where: (ingredient2, { eq: eq20 }) => eq20(ingredient2.id, input.id),
       with: {
         user: {
           columns: {
@@ -8371,7 +8385,7 @@ var supplementsRouter = createTRPCRouter({
   }),
   getSuppFromPlan: protectedProcedure.input(z21.object({ id: z21.number() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.supplementToSupplementStack.findFirst({
-      where: (supplement, { eq: eq19 }) => eq19(supplement.id, input.id),
+      where: (supplement, { eq: eq20 }) => eq20(supplement.id, input.id),
       with: {
         supplement: true
       }
@@ -8388,7 +8402,7 @@ var supplementsRouter = createTRPCRouter({
     })
   ).mutation(async ({ input, ctx }) => {
     const userTimes = await ctx.db.query.supplementStack.findMany({
-      where: (stack, { eq: eq19 }) => eq19(stack.userId, input.userId)
+      where: (stack, { eq: eq20 }) => eq20(stack.userId, input.userId)
     });
     let timeId = userTimes.find((stack) => stack.time === input.time)?.id || null;
     if (!timeId) {
@@ -8406,6 +8420,23 @@ var supplementsRouter = createTRPCRouter({
       size: input.size,
       unit: input.unit
     });
+    const notif = await ctx.db.query.notification.findMany({
+      where: and6(
+        eq16(notification.userId, ctx.session.user.id),
+        eq16(notification.code, "supplement_update"),
+        eq16(notification.isViewed, false)
+      )
+    });
+    if (notif.length === 0) {
+      await ctx.db.insert(notification).values({
+        userId: ctx.session.user.id,
+        code: "supplement_update",
+        title: "Supplement Update",
+        description: "You have a new supplement update",
+        isViewed: false,
+        isRead: false
+      });
+    }
     return true;
   }),
   logSupplement: protectedProcedure.input(
@@ -8979,7 +9010,7 @@ import { z as z22 } from "zod";
 var trainerNotesRouter = createTRPCRouter({
   getAllUser: protectedProcedure.input(z22.object({ userId: z22.string() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.trainerNotes.findMany({
-      where: (note, { eq: eq19 }) => eq19(note.userId, input.userId),
+      where: (note, { eq: eq20 }) => eq20(note.userId, input.userId),
       with: {
         trainer: true
       }
@@ -8988,7 +9019,7 @@ var trainerNotesRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z22.object({ id: z22.number() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.trainerNotes.findFirst({
-      where: (note, { eq: eq19 }) => eq19(note.id, input.id),
+      where: (note, { eq: eq20 }) => eq20(note.id, input.id),
       with: {
         trainer: true
       }
@@ -9076,6 +9107,67 @@ var userCatagoriesRouter = createTRPCRouter({
   })
 });
 
+// src/server/api/routers/notification.ts
+import { eq as eq19 } from "drizzle-orm";
+import { z as z24 } from "zod";
+var notificationRouter = createTRPCRouter({
+  create: protectedProcedure.input(
+    z24.object({
+      userId: z24.string(),
+      code: z24.string(),
+      title: z24.string(),
+      description: z24.string().optional(),
+      notes: z24.string().optional()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.insert(notification).values({
+      userId: input.userId,
+      code: input.code,
+      title: input.title,
+      description: input.description,
+      notes: input.notes
+    });
+    return res;
+  }),
+  get: protectedProcedure.input(z24.number()).query(async ({ input, ctx }) => {
+    const res = await ctx.db.query.notification.findFirst({
+      where: eq19(notification.id, input)
+    });
+    return res;
+  }),
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const res = await ctx.db.query.notification.findMany({
+      where: eq19(notification.isRead, false),
+      orderBy: (data, { desc: desc11 }) => desc11(data.createdAt)
+    });
+    return res;
+  }),
+  getAllUser: protectedProcedure.input(z24.string()).query(async ({ input, ctx }) => {
+    const res = await ctx.db.query.notification.findMany({
+      where: eq19(notification.userId, input),
+      orderBy: (data, { desc: desc11 }) => desc11(data.createdAt)
+    });
+    return res;
+  }),
+  delete: protectedProcedure.input(z24.number()).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.delete(notification).where(eq19(notification.id, input));
+    return res;
+  }),
+  markAsRead: protectedProcedure.input(z24.number()).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.update(notification).set({
+      isRead: true
+    }).where(eq19(notification.id, input));
+    return res;
+  }),
+  markAsViewed: protectedProcedure.input(z24.number()).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.update(notification).set({
+      isViewed: true,
+      isRead: true
+    }).where(eq19(notification.id, input));
+    return res;
+  })
+});
+
 // src/server/api/routers/index.ts
 var appRouter = createTRPCRouter({
   goal: goalsRouter,
@@ -9097,7 +9189,8 @@ var appRouter = createTRPCRouter({
   trainer: trainerRouter,
   supplement: supplementsRouter,
   trainerNotes: trainerNotesRouter,
-  userCatagories: userCatagoriesRouter
+  userCatagories: userCatagoriesRouter,
+  notifications: notificationRouter
 });
 var createCaller = createCallerFactory(appRouter);
 export {

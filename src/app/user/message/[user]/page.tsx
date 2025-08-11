@@ -2,7 +2,7 @@
 
 import { api } from '@/trpc/react'
 
-import { use, useState } from 'react'
+import { use, useState, useEffect } from 'react'
 
 import { useRouter } from 'next/navigation'
 
@@ -24,7 +24,6 @@ const Messages = ({
 	userId: string
 }) => {
 	const [message, setMessage] = useState('')
-	const [isSending, setIsSending] = useState(false)
 	const { data: messages, isLoading: messagesLoading } =
 		api.message.getAllUser.useQuery(currentUser.id)
 	const { data: sentMessages, isLoading: sentMessageLoading } =
@@ -34,13 +33,21 @@ const Messages = ({
 
 	const ctx = api.useUtils()
 	const { mutate: sendMessage } = api.message.create.useMutation({
-		onMutate: () => setIsSending(true),
-		onSettled: () => setIsSending(false),
 		onSuccess: () => {
 			ctx.message.invalidate()
 			setMessage('')
 		},
 	})
+
+  const {mutate: markViewed} = api.message.markFromUserAsViewedAndRead.useMutation({
+    onSuccess: () => {
+      ctx.message.invalidate()
+    },
+  })
+
+  useEffect(() => {
+    markViewed(userId)
+  }, [userId])
 
 	if (messagesLoading || sentMessageLoading) return null
 
@@ -153,7 +160,6 @@ const Page = ({ params }: { params: Promise<{ user: string }> }) => {
 			id: impersonatedUser.id,
 		})
 
-	console.log('userId', userId)
 
 	if (!userId) return null
 	if (getAllUserLoading) return null

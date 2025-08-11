@@ -18235,6 +18235,11 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        markFromUserAsViewedAndRead: _trpc_server.TRPCMutationProcedure<{
+            input: string;
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         delete: _trpc_server.TRPCMutationProcedure<{
             input: number;
             output: _libsql_client.ResultSet;
@@ -19690,6 +19695,103 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 userId: string;
                 categoryId: number;
             };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+    }>>;
+    notifications: _trpc_server.TRPCBuiltRouter<{
+        ctx: {
+            headers: Headers;
+            db: drizzle_orm_libsql.LibSQLDatabase<typeof ______db_schema> & {
+                $client: _libsql_client.Client;
+            };
+            session: next_auth.Session | null;
+        };
+        meta: object;
+        errorShape: {
+            data: {
+                zodError: zod.ZodFlattenedError<unknown, string> | null;
+                code: _trpc_server.TRPC_ERROR_CODE_KEY;
+                httpStatus: number;
+                path?: string;
+                stack?: string;
+            };
+            message: string;
+            code: _trpc_server.TRPC_ERROR_CODE_NUMBER;
+        };
+        transformer: true;
+    }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        create: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                code: string;
+                title: string;
+                description?: string | undefined;
+                notes?: string | undefined;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        get: _trpc_server.TRPCQueryProcedure<{
+            input: number;
+            output: {
+                id: number;
+                notes: string | null;
+                createdAt: Date;
+                description: string | null;
+                userId: string | null;
+                code: string | null;
+                title: string | null;
+                isRead: boolean | null;
+                isViewed: boolean | null;
+                isDeleted: boolean | null;
+            } | undefined;
+            meta: object;
+        }>;
+        getAll: _trpc_server.TRPCQueryProcedure<{
+            input: void;
+            output: {
+                id: number;
+                notes: string | null;
+                createdAt: Date;
+                description: string | null;
+                userId: string | null;
+                code: string | null;
+                title: string | null;
+                isRead: boolean | null;
+                isViewed: boolean | null;
+                isDeleted: boolean | null;
+            }[];
+            meta: object;
+        }>;
+        getAllUser: _trpc_server.TRPCQueryProcedure<{
+            input: string;
+            output: {
+                id: number;
+                notes: string | null;
+                createdAt: Date;
+                description: string | null;
+                userId: string | null;
+                code: string | null;
+                title: string | null;
+                isRead: boolean | null;
+                isViewed: boolean | null;
+                isDeleted: boolean | null;
+            }[];
+            meta: object;
+        }>;
+        delete: _trpc_server.TRPCMutationProcedure<{
+            input: number;
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        markAsRead: _trpc_server.TRPCMutationProcedure<{
+            input: number;
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        markAsViewed: _trpc_server.TRPCMutationProcedure<{
+            input: number;
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
@@ -24743,6 +24845,11 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        markFromUserAsViewedAndRead: _trpc_server.TRPCMutationProcedure<{
+            input: string;
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         delete: _trpc_server.TRPCMutationProcedure<{
             input: number;
             output: _libsql_client.ResultSet;
@@ -26198,6 +26305,103 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 userId: string;
                 categoryId: number;
             };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+    }>>;
+    notifications: _trpc_server.TRPCBuiltRouter<{
+        ctx: {
+            headers: Headers;
+            db: drizzle_orm_libsql.LibSQLDatabase<typeof ______db_schema> & {
+                $client: _libsql_client.Client;
+            };
+            session: next_auth.Session | null;
+        };
+        meta: object;
+        errorShape: {
+            data: {
+                zodError: zod.ZodFlattenedError<unknown, string> | null;
+                code: _trpc_server.TRPC_ERROR_CODE_KEY;
+                httpStatus: number;
+                path?: string;
+                stack?: string;
+            };
+            message: string;
+            code: _trpc_server.TRPC_ERROR_CODE_NUMBER;
+        };
+        transformer: true;
+    }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        create: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                code: string;
+                title: string;
+                description?: string | undefined;
+                notes?: string | undefined;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        get: _trpc_server.TRPCQueryProcedure<{
+            input: number;
+            output: {
+                id: number;
+                notes: string | null;
+                createdAt: Date;
+                description: string | null;
+                userId: string | null;
+                code: string | null;
+                title: string | null;
+                isRead: boolean | null;
+                isViewed: boolean | null;
+                isDeleted: boolean | null;
+            } | undefined;
+            meta: object;
+        }>;
+        getAll: _trpc_server.TRPCQueryProcedure<{
+            input: void;
+            output: {
+                id: number;
+                notes: string | null;
+                createdAt: Date;
+                description: string | null;
+                userId: string | null;
+                code: string | null;
+                title: string | null;
+                isRead: boolean | null;
+                isViewed: boolean | null;
+                isDeleted: boolean | null;
+            }[];
+            meta: object;
+        }>;
+        getAllUser: _trpc_server.TRPCQueryProcedure<{
+            input: string;
+            output: {
+                id: number;
+                notes: string | null;
+                createdAt: Date;
+                description: string | null;
+                userId: string | null;
+                code: string | null;
+                title: string | null;
+                isRead: boolean | null;
+                isViewed: boolean | null;
+                isDeleted: boolean | null;
+            }[];
+            meta: object;
+        }>;
+        delete: _trpc_server.TRPCMutationProcedure<{
+            input: number;
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        markAsRead: _trpc_server.TRPCMutationProcedure<{
+            input: number;
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        markAsViewed: _trpc_server.TRPCMutationProcedure<{
+            input: number;
             output: _libsql_client.ResultSet;
             meta: object;
         }>;

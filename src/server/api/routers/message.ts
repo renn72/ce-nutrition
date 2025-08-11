@@ -131,6 +131,25 @@ export const messageRouter = createTRPCRouter({
       })
       return res
     }),
+  markFromUserAsViewedAndRead: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.db
+        .update(message)
+        .set({
+          isViewed: true,
+          isRead: true,
+        })
+        .where(eq(message.fromUserId, input))
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Mark Message as Read',
+        notes: '',
+        objectId: null,
+      })
+      return res
+    }),
 
   delete: protectedProcedure
     .input(z.number())

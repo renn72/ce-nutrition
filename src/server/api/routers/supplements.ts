@@ -7,6 +7,7 @@ import {
 	ingredientAdditionTwo,
 } from '@/server/db/schema/ingredient'
 import { log } from '@/server/db/schema/log'
+import { notification } from '@/server/db/schema/notification'
 import {
 	supplementStack,
 	supplementToSupplementStack,
@@ -200,6 +201,25 @@ export const supplementsRouter = createTRPCRouter({
 				unit: input.unit,
 			})
 
+			const notif = await ctx.db.query.notification.findMany({
+				where: and(
+					eq(notification.userId, ctx.session.user.id),
+					eq(notification.code, 'supplement_update'),
+					eq(notification.isViewed, false),
+				),
+			})
+
+			if (notif.length === 0) {
+				await ctx.db.insert(notification).values({
+					userId: ctx.session.user.id,
+					code: 'supplement_update',
+					title: 'Supplement Update',
+					description: 'You have a new supplement update',
+					isViewed: false,
+          isRead: false,
+				})
+			}
+
 			return true
 		}),
 	logSupplement: protectedProcedure
@@ -220,7 +240,6 @@ export const supplementsRouter = createTRPCRouter({
 					eq(dailyLog.userId, ctx.session.user.id),
 				),
 			})
-
 
 			let logId = log?.id as number | undefined
 
@@ -303,8 +322,8 @@ export const supplementsRouter = createTRPCRouter({
 				serveUnit: z.string(),
 				isPrivate: z.boolean(),
 				stackId: z.number(),
-        viewableBy: z.string().optional(),
-        userId: z.string(),
+				viewableBy: z.string().optional(),
+				userId: z.string(),
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
@@ -322,8 +341,8 @@ export const supplementsRouter = createTRPCRouter({
 				})
 				.returning({ id: ingredient.id })
 
-      const suppId = res[0]?.id
-      if (!suppId) throw new TRPCError({ code: 'NOT_FOUND' })
+			const suppId = res[0]?.id
+			if (!suppId) throw new TRPCError({ code: 'NOT_FOUND' })
 
 			createLog({
 				user: ctx.session.user.name,
