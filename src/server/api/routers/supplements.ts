@@ -203,7 +203,7 @@ export const supplementsRouter = createTRPCRouter({
 
 			const notif = await ctx.db.query.notification.findMany({
 				where: and(
-					eq(notification.userId, ctx.session.user.id),
+					eq(notification.userId, input.userId),
 					eq(notification.code, 'supplement_update'),
 					eq(notification.isViewed, false),
 				),
@@ -211,7 +211,7 @@ export const supplementsRouter = createTRPCRouter({
 
 			if (notif.length === 0) {
 				await ctx.db.insert(notification).values({
-					userId: ctx.session.user.id,
+					userId: input.userId,
 					code: 'supplement_update',
 					title: 'Your supplements have been updated',
 					description: 'You have a new supplement update',

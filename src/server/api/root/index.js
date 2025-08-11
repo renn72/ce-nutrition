@@ -8422,14 +8422,14 @@ var supplementsRouter = createTRPCRouter({
     });
     const notif = await ctx.db.query.notification.findMany({
       where: and6(
-        eq16(notification.userId, ctx.session.user.id),
+        eq16(notification.userId, input.userId),
         eq16(notification.code, "supplement_update"),
         eq16(notification.isViewed, false)
       )
     });
     if (notif.length === 0) {
       await ctx.db.insert(notification).values({
-        userId: ctx.session.user.id,
+        userId: input.userId,
         code: "supplement_update",
         title: "Your supplements have been updated",
         description: "You have a new supplement update",
