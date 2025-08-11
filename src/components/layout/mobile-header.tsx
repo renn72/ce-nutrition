@@ -2,8 +2,6 @@
 
 import { api } from '@/trpc/react'
 
-import { useState } from 'react'
-
 import Image from 'next/image'
 
 import { impersonatedUserAtom } from '@/atoms'
@@ -11,7 +9,7 @@ import { cn } from '@/lib/utils'
 import type { GetUserById } from '@/types'
 import { useAtom } from 'jotai'
 import { Bell, BellDot, NotebookText } from 'lucide-react'
-import { Link, useTransitionRouter } from 'next-view-transitions'
+import { Link } from 'next-view-transitions'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -29,6 +27,8 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Label } from '@/components/ui/label'
+
+export const dynamic = 'force-dynamic'
 
 const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 	const ctx = api.useUtils()
@@ -128,7 +128,7 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 			isRead: message.isRead,
 			isViewed: message.isViewed,
 			fromUser: message.fromUser?.name || '',
-      userId: message.fromUser?.id,
+			userId: message.fromUser?.id,
 			state: 'message',
 		})) || []),
 		...(userNotifications?.map((message) => ({
@@ -138,7 +138,7 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 			isRead: message.isRead,
 			isViewed: message.isViewed,
 			fromUser: '',
-      userId: '',
+			userId: '',
 			state: 'notification',
 		})) || []),
 	]
@@ -202,9 +202,7 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 								}}
 								key={message.id}
 							>
-								<Collapsible
-                  className='w-full'
-                >
+								<Collapsible className='w-full'>
 									<CollapsibleTrigger asChild>
 										<div
 											className={cn(
@@ -238,7 +236,9 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 												</>
 											) : (
 												<>
-													<div className='truncate text-sm'>{message.content}</div>
+													<div className='truncate text-sm'>
+														{message.content}
+													</div>
 													<div className='text-sm text-muted-foreground'>
 														{message.isViewed === false ||
 														message.isViewed === null ? (
@@ -280,6 +280,13 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 							)}
 						</div>
 					))}
+				{fullList?.filter(
+					(message) => message.isRead === false || message.isRead === null,
+				)?.length === 0 ? (
+					<div className='w-full flex py-2 px-2 text-muted-foreground text-xs'>
+						No new notifications
+					</div>
+				) : null}
 			</DropdownMenuContent>
 		</DropdownMenu>
 	)
