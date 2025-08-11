@@ -9206,6 +9206,13 @@ var notificationRouter = createTRPCRouter({
       isViewed: true,
       isRead: true
     }).where(eq19(notification.id, input));
+    createLog2({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "Mark Notification as Viewed",
+      notes: JSON.stringify(input),
+      objectId: null
+    });
     return res;
   })
 });

@@ -3,6 +3,8 @@ import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 
+import { createLog } from '@/server/api/routers/admin-log'
+
 export const notificationRouter = createTRPCRouter({
 	create: protectedProcedure
 		.input(
@@ -75,6 +77,13 @@ export const notificationRouter = createTRPCRouter({
           isRead: true,
 				})
 				.where(eq(notification.id, input))
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Mark Notification as Viewed',
+        notes: JSON.stringify(input),
+        objectId: null,
+      })
 			return res
 		}),
 })
