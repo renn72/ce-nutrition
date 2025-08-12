@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+import { Reminders } from './reminders'
 
 export const dynamic = 'force-dynamic'
 
@@ -452,7 +453,7 @@ const BodyBuilderImages = ({ currentUser }: { currentUser: GetUserById }) => {
 const Settings = ({ user }: { user: GetUserById }) => {
 
   return (
-    <div className='flex flex-col gap-2 items-center w-full mt-10'>
+    <div className='flex flex-col gap-2 items-center w-full my-10'>
       <h2
         className='text-xl font-semibold'
       > User Settings</h2>
@@ -474,6 +475,7 @@ const Settings = ({ user }: { user: GetUserById }) => {
         <Posing currentUser={user} />
         <Notes currentUser={user} />
       </div>
+      <Reminders user={user} />
     </div>
   )
 }

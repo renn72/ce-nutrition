@@ -14490,6 +14490,39 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
         };
         transformer: true;
     }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        getNotifications: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                type: string | null;
+                id: number;
+                createdAt: Date;
+                userId: string;
+                interval: string | null;
+                sleep: string | null;
+            }[];
+            meta: object;
+        }>;
+        toggleNotification: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                type: string;
+                interval: string;
+                sleep?: string | undefined;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateNotification: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                interval: string;
+                id: number;
+                sleep?: string | undefined;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         getAdminLogs: _trpc_server.TRPCQueryProcedure<{
             input: void;
             output: {
@@ -21056,6 +21089,39 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         };
         transformer: true;
     }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        getNotifications: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                type: string | null;
+                id: number;
+                createdAt: Date;
+                userId: string;
+                interval: string | null;
+                sleep: string | null;
+            }[];
+            meta: object;
+        }>;
+        toggleNotification: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                type: string;
+                interval: string;
+                sleep?: string | undefined;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateNotification: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                interval: string;
+                id: number;
+                sleep?: string | undefined;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         getAdminLogs: _trpc_server.TRPCQueryProcedure<{
             input: void;
             output: {

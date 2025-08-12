@@ -4,6 +4,7 @@ import { get } from '@/server/api/routers/user/get'
 import { post } from '@/server/api/routers/user/post'
 import { roles } from '@/server/api/routers/user/roles'
 import { update } from '@/server/api/routers/user/update'
+import { notifications } from '@/server/api/routers/user/notifications'
 import { createTRPCRouter } from '~/server/api/trpc'
 
 export const userRouter = createTRPCRouter({
@@ -13,4 +14,5 @@ export const userRouter = createTRPCRouter({
 	...generation,
 	...post,
 	...adminLogs,
+  ...notifications,
 })

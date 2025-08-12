@@ -87,3 +87,5 @@ export type GetSupplementFromStack = RouterOutputs['supplement']['getSuppFromPla
 
 export type GetAllTrainerNotes = RouterOutputs['trainerNotes']['getAllUser']
 export type GetTrainerNoteById = RouterOutputs['trainerNotes']['get']
+
+export type GetNotifications = RouterOutputs['user']['getNotifications']
