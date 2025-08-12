@@ -453,7 +453,7 @@ const BodyBuilderImages = ({ currentUser }: { currentUser: GetUserById }) => {
 const Settings = ({ user }: { user: GetUserById }) => {
 
   return (
-    <div className='flex flex-col gap-2 items-center w-full my-10'>
+    <div className='flex flex-col gap-2 items-center w-full mt-10 mb-40'>
       <h2
         className='text-xl font-semibold'
       > User Settings</h2>
