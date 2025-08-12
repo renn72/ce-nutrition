@@ -281,6 +281,20 @@
       "when": 1754959309044,
       "tag": "0039_short_warlock",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "6",
+      "when": 1754960903042,
+      "tag": "0040_white_marvex",
+      "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "6",
+      "when": 1754963585781,
+      "tag": "0041_uneven_jack_murdock",
+      "breakpoints": true
     }
   ]
 }

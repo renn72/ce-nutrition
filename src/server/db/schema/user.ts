@@ -57,6 +57,7 @@ export const user = createTable('user', {
 export const userRelations = relations(user, ({ one, many }) => ({
 	roles: many(role),
 	notifications: many(notification),
+  notificationsToggles: many(notificationToggle),
 	messages: many(message, { relationName: 'userMessages' }),
 	sentMessages: many(message, { relationName: 'sentMessages' }),
 	accounts: many(account),
@@ -85,6 +86,29 @@ export const userRelations = relations(user, ({ one, many }) => ({
 	trainerNotesTrainer: many(trainerNotes, { relationName: 'trainer' }),
 	supplementStacks: many(supplementStack),
   category: many(userToUserCategory),
+}))
+
+export const notificationToggle = createTable('notification_toggle', {
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  createdAt: int('created_at', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, {
+      onDelete: 'cascade',
+    }),
+  type: text('type'),
+  interval: text('interval'),
+  sleep: text('sleep'),
+})
+
+export const notificationToggleRelations = relations(notificationToggle, ({ one }) => ({
+  user: one(user, {
+    fields: [notificationToggle.userId],
+    references: [user.id],
+    relationName: 'user',
+  }),
 }))
 
 export const userToUserCategory = createTable('user_to_user_category', {
@@ -270,7 +294,6 @@ export const userSettings = createTable('user_settings', {
 		.references(() => user.id, {
 			onDelete: 'cascade',
 		}),
-  notifications: text('notifications'),
 	defaultWater: text('default_water'),
 	defaultChartRange: text('default_chart_range'),
 	isPosing: int('is_posing', { mode: 'boolean' }).default(false),

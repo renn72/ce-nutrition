@@ -80,12 +80,14 @@ export default function AdminLogs() {
 							>
 								<div className='md:col-span-1 col-span-2 truncate'>
 									{log.createdAt.toLocaleString('en-AU', {
-										year: 'numeric',
-										month: 'numeric',
-										day: 'numeric',
 										hour: 'numeric',
 										minute: 'numeric',
 										hour12: false,
+									})},{' '}
+									{log.createdAt.toLocaleString('en-AU', {
+										year: '2-digit',
+										month: 'numeric',
+										day: 'numeric',
 									})}
 								</div>
 								<div className='col-span-2 md:col-span-1 truncate'>{log.user}</div>
