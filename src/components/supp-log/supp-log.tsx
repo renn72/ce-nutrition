@@ -463,6 +463,7 @@ const Supp = ({
 		} else {
 			logSupplement({
 				suppId: supp.supplementId,
+        suppName: supp.supplement?.name || '',
 				date: date.toDateString(),
 				time: time,
 				amount: supp.size,
@@ -568,8 +569,6 @@ const SuppLog = ({
 	dailyLogs: GetAllDailyLogs | null | undefined
 }) => {
 	const [day, setDay] = useState<Date>(new Date())
-
-	const ctx = api.useUtils()
 
 	const todaysDailyLog = dailyLogs?.find(
 		(dailyLog) => dailyLog.date === day.toDateString(),

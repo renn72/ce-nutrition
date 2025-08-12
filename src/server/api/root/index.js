@@ -637,6 +637,7 @@ var user = createTable6("user", {
 var userRelations = relations6(user, ({ one, many }) => ({
   roles: many(role),
   notifications: many(notification),
+  notificationsToggles: many(notificationToggle),
   messages: many(message, { relationName: "userMessages" }),
   sentMessages: many(message, { relationName: "sentMessages" }),
   accounts: many(account),
@@ -665,6 +666,23 @@ var userRelations = relations6(user, ({ one, many }) => ({
   trainerNotesTrainer: many(trainerNotes, { relationName: "trainer" }),
   supplementStacks: many(supplementStack),
   category: many(userToUserCategory)
+}));
+var notificationToggle = createTable6("notification_toggle", {
+  id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
+  userId: text6("user_id").notNull().references(() => user.id, {
+    onDelete: "cascade"
+  }),
+  type: text6("type"),
+  interval: text6("interval"),
+  sleep: text6("sleep")
+});
+var notificationToggleRelations = relations6(notificationToggle, ({ one }) => ({
+  user: one(user, {
+    fields: [notificationToggle.userId],
+    references: [user.id],
+    relationName: "user"
+  })
 }));
 var userToUserCategory = createTable6("user_to_user_category", {
   userId: text6("user_id").notNull().references(() => user.id, {
@@ -809,7 +827,6 @@ var userSettings = createTable6("user_settings", {
   userId: text6("user_id").notNull().references(() => user.id, {
     onDelete: "cascade"
   }),
-  notifications: text6("notifications"),
   defaultWater: text6("default_water"),
   defaultChartRange: text6("default_chart_range"),
   isPosing: int6("is_posing", { mode: "boolean" }).default(false),
@@ -1482,6 +1499,8 @@ __export(schema_exports, {
   messageRelations: () => messageRelations,
   notification: () => notification,
   notificationRelations: () => notificationRelations,
+  notificationToggle: () => notificationToggle,
+  notificationToggleRelations: () => notificationToggleRelations,
   plan: () => plan,
   planRelations: () => planRelations,
   planToMeal: () => planToMeal,
@@ -8460,6 +8479,7 @@ var supplementsRouter = createTRPCRouter({
   logSupplement: protectedProcedure.input(
     z28.object({
       suppId: z28.number(),
+      suppName: z28.string(),
       date: z28.string(),
       time: z28.string(),
       amount: z28.string(),

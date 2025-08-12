@@ -226,6 +226,7 @@ export const supplementsRouter = createTRPCRouter({
 		.input(
 			z.object({
 				suppId: z.number(),
+        suppName: z.string(),
 				date: z.string(),
 				time: z.string(),
 				amount: z.string(),
