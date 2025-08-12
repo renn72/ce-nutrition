@@ -128,12 +128,11 @@ const Mobile = ({
 
 const Desktop = ({
 	userId,
-	currentUser,
+	currentUser : user,
 }: {
 	userId: string
 	currentUser: GetUserById
 }) => {
-	const { data: user } = api.user.get.useQuery(userId)
 	const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId)
 	const { data: userGoals, isLoading: userGoalsLoading } =
 		api.goal.getUser.useQuery({ userId: userId })

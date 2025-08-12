@@ -270,6 +270,7 @@ export const userSettings = createTable('user_settings', {
 		.references(() => user.id, {
 			onDelete: 'cascade',
 		}),
+  notifications: text('notifications'),
 	defaultWater: text('default_water'),
 	defaultChartRange: text('default_chart_range'),
 	isPosing: int('is_posing', { mode: 'boolean' }).default(false),
