@@ -94,6 +94,7 @@ const Mobile = ({
 					'flex flex-col gap-4 w-full max-w-screen-xl main-content',
 				)}
 			>
+        pwa-test
 				<UserCharts
 					dailyLogs={dailyLogs}
 					isMoblie={true}
