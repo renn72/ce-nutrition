@@ -18,12 +18,10 @@ const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
 const DayToggle = ({
 	notificationToggles,
 	name,
-	userId,
 	day,
 }: {
 	notificationToggles: GetNotifications
 	name: string
-	userId: string
 	day: string
 }) => {
 	const toggle = notificationToggles.find((toggle) => toggle.type === name)
@@ -60,9 +58,10 @@ const DayToggle = ({
 				} else {
 					interval.splice(interval.indexOf(day), 1)
 				}
+				console.log(interval)
 				updateNotification({
 					id: toggle.id,
-					interval: interval.join(','),
+					interval: interval.filter((day) => day !== '').join(','),
 					sleep: '',
 				})
 			}}
@@ -161,7 +160,6 @@ const Toggles = ({
 									key={day}
 									notificationToggles={notificationToggles}
 									name={name}
-									userId={userId}
 									day={day}
 								/>
 							))}
@@ -173,7 +171,18 @@ const Toggles = ({
 	)
 }
 
-const reminders = ['morning weight']
+const reminders = [
+	'morning weight',
+	'supplements',
+	'front pose',
+	'steps',
+	'sleep',
+	'sleep quality',
+	'LISS',
+	'HIIT',
+	'weight training',
+	'posing',
+]
 
 const Reminders = ({ user }: { user: GetUserById }) => {
 	const { data: notificationToggles, isLoading } =
@@ -185,14 +194,15 @@ const Reminders = ({ user }: { user: GetUserById }) => {
 	return (
 		<div className='flex flex-col gap-2 w-full p-4 border rounded-lg max-w-lg'>
 			<h2 className='text-base font-semibold'>Reminders</h2>
-			{notificationToggles && reminders.map((reminder) => (
-				<Toggles
-          key={reminder}
-					notificationToggles={notificationToggles}
-					name={reminder}
-					userId={user.id}
-				/>
-			))}
+			{notificationToggles &&
+				reminders.map((reminder) => (
+					<Toggles
+						key={reminder}
+						notificationToggles={notificationToggles}
+						name={reminder}
+						userId={user.id}
+					/>
+				))}
 		</div>
 	)
 }
