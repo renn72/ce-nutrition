@@ -1,2 +1,40 @@
+[variables]
+CI = 'true'
+NIXPACKS_METADATA = 'node'
+NODE_ENV = 'production'
+NPM_CONFIG_PRODUCTION = 'false'
+
+[phases.build]
+dependsOn = ['install']
+cmds = ['pnpm run build']
+cacheDirectories = [
+'.next/cache',
+'node_modules/.cache',
+]
+
+[phases.install]
+dependsOn = ['setup']
+cmds = [
+'npm install -g corepack@0.24.1 && corepack enable',
+'pnpm i --frozen-lockfile',
+]
+cacheDirectories = ['/root/.local/share/pnpm/store/v3']
+paths = ['/app/node_modules/.bin']
+
 [phases.setup]
-nixPkgs = ["sqlite"]
+nixPkgs = [
+'nodejs_18',
+'pnpm-9_x',
+'openssl',
+'sqlite',
+]
+nixLibs = [
+'gcc-unwrapped',
+'libuuid',
+'libGL',
+]
+nixOverlays = ['https://github.com/railwayapp/nix-npm-overlay/archive/main.tar.gz']
+nixpkgsArchive = 'ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7'
+
+[start]
+cmd = 'pnpm run start'
