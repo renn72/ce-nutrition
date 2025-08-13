@@ -4,6 +4,10 @@ import { useEffect, useState } from 'react'
 
 import { sendNotification, subscribeUser, unsubscribeUser } from '@/actions/pwa'
 
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+
 function urlBase64ToUint8Array(base64String: string) {
 	const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
 	const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
@@ -39,8 +43,16 @@ function PushNotificationManager() {
 		const sub = await registration.pushManager.getSubscription()
 		setSubscription(sub)
 	}
-
 	async function subscribeToPush() {
+		// 1. Request permission
+		const permission = await Notification.requestPermission()
+
+		if (permission !== 'granted') {
+			console.error('Permission for push notifications was not granted.')
+			return
+		}
+
+		// 2. If permission is granted, proceed with subscription
 		const registration = await navigator.serviceWorker.ready
 		const sub = await registration.pushManager.subscribe({
 			userVisibleOnly: true,
@@ -52,6 +64,19 @@ function PushNotificationManager() {
 		const serializedSub = JSON.parse(JSON.stringify(sub))
 		await subscribeUser(serializedSub)
 	}
+
+	// async function subscribeToPush() {
+	// 	const registration = await navigator.serviceWorker.ready
+	// 	const sub = await registration.pushManager.subscribe({
+	// 		userVisibleOnly: true,
+	// 		applicationServerKey: urlBase64ToUint8Array(
+	// 			process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+	// 		),
+	// 	})
+	// 	setSubscription(sub)
+	// 	const serializedSub = JSON.parse(JSON.stringify(sub))
+	// 	await subscribeUser(serializedSub)
+	// }
 
 	async function unsubscribeFromPush() {
 		await subscription?.unsubscribe()
@@ -76,25 +101,25 @@ function PushNotificationManager() {
 			{subscription ? (
 				<>
 					<p>You are subscribed to push notifications.</p>
-					<button type='button' onClick={unsubscribeFromPush}>
+					<Button type='button' onClick={unsubscribeFromPush}>
 						Unsubscribe
-					</button>
-					<input
+					</Button>
+					<Input
 						type='text'
 						placeholder='Enter notification message'
 						value={message}
 						onChange={(e) => setMessage(e.target.value)}
 					/>
-					<button type='button' onClick={sendTestNotification}>
+					<Button type='button' onClick={sendTestNotification}>
 						Send Test
-					</button>
+					</Button>
 				</>
 			) : (
 				<>
 					<p>You are not subscribed to push notifications.</p>
-					<button type='button' onClick={subscribeToPush}>
+					<Button type='button' onClick={subscribeToPush}>
 						Subscribe
-					</button>
+					</Button>
 				</>
 			)}
 		</div>
@@ -120,7 +145,7 @@ function InstallPrompt() {
 	return (
 		<div>
 			<h3>Install App</h3>
-			<button type='button'>Add to Home Screen</button>
+			<Button type='button'>Add to Home Screen</Button>
 			{isIOS && (
 				<p>
 					To install this app on your iOS device, tap the share button

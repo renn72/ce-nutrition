@@ -89,6 +89,8 @@ const Mobile = ({
 	return (
 		<div className={cn('flex flex-col gap-2 w-full mt-16 items-center mb-16 ')}>
 			<MobileHeader isDesktop={false} />
+			<MobileFooter />
+      <PwaNotifications />
 			<div
 				id='main-content'
 				className={cn(
@@ -122,8 +124,6 @@ const Mobile = ({
 				</Card>
 				<DailyLogCarousel currentUser={currentUser} dailyLogs={dailyLogs} />
 			</div>
-			<MobileFooter />
-      <PwaNotifications />
 
 		</div>
 	)
@@ -163,6 +163,8 @@ const Desktop = ({
 			<div className='w-full'>
 				<UserDailyLogsTable dailyLogs={dailyLogs} />
 			</div>
+			<MobileFooter />
+      <PwaNotifications />
 		</div>
 	)
 }
