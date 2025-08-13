@@ -67,6 +67,18 @@ export const notificationRouter = createTRPCRouter({
 				.where(eq(notification.id, input))
 			return res
 		}),
+  markAllAsViewed: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .update(notification)
+        .set({
+          isRead: true,
+          isViewed: true,
+        })
+        .where(eq(notification.userId, input))
+      return res
+    }),
 	markAsViewed: protectedProcedure
 		.input(z.number())
 		.mutation(async ({ input, ctx }) => {

@@ -9254,6 +9254,13 @@ var notificationRouter = createTRPCRouter({
     }).where(eq25(notification.id, input));
     return res;
   }),
+  markAllAsViewed: protectedProcedure.input(z32.string()).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.update(notification).set({
+      isRead: true,
+      isViewed: true
+    }).where(eq25(notification.userId, input));
+    return res;
+  }),
   markAsViewed: protectedProcedure.input(z32.number()).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.update(notification).set({
       isViewed: true,

@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import type { GetNotifications, GetUserById } from '@/types'
 import { toast } from 'sonner'
 
+import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Toggle } from '@/components/ui/toggle'
@@ -92,6 +93,16 @@ const Toggles = ({
 		setIsDailyLog(toggle?.interval === 'daily' ? true : false)
 	}, [notificationToggles])
 
+	const { mutate: sendNotification } = api.notifications.create.useMutation({
+		onSuccess: () => {
+			ctx.user.invalidate()
+		},
+		onError: () => {
+			toast.error('error')
+			ctx.user.invalidate()
+		},
+	})
+
 	const { mutate: toggleNotification } =
 		api.user.toggleNotification.useMutation({
 			onSuccess: () => {
@@ -117,7 +128,7 @@ const Toggles = ({
 
 	return (
 		<div className='flex flex-col rounded-lg border px-3 py-4 gap-6 shadow-sm'>
-			<div className='flex items-center justify-between'>
+			<div className='flex items-center justify-between gap-2'>
 				<div className='space-y-0.5'>
 					<Label className='capitalize'>{name}</Label>
 					<div className='text-sm text-muted-foreground'>
@@ -136,6 +147,22 @@ const Toggles = ({
 						})
 					}}
 				/>
+				<Button
+					className='w-min text-wrap h-12'
+					variant='outline'
+					onClick={() => {
+						sendNotification({
+							userId: userId,
+							code: 'daily-log',
+							title: `Please log your ${name
+								.split(' ')
+								.map((word) => word[0]?.toUpperCase() + word.slice(1))
+								.join(' ')}`,
+						})
+					}}
+				>
+					Send Notification
+				</Button>
 			</div>
 			{toggle ? (
 				<div className='flex flex-col gap-4 items-center'>

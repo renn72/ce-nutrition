@@ -2,6 +2,8 @@
 
 import { api } from '@/trpc/react'
 
+import { useState } from 'react'
+
 import Image from 'next/image'
 
 import { impersonatedUserAtom } from '@/atoms'
@@ -31,14 +33,26 @@ import { Label } from '@/components/ui/label'
 export const dynamic = 'force-dynamic'
 
 const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
+	const [isOpen, setIsOpen] = useState(false)
 	const ctx = api.useUtils()
 	const { data: userNotifications } = api.notifications.getAllUser.useQuery(
 		currentUser.id,
-    {
-      refetchInterval: 1000 * 60 * 1,
-    }
+		{
+			refetchInterval: 1000 * 60 * 1,
+		},
 	)
 	const { data: userMessages } = api.message.getAllUser.useQuery(currentUser.id)
+	const { mutate: markAllNotificationsAsViewed } =
+		api.notifications.markAllAsViewed.useMutation({
+			onSuccess: () => {
+				ctx.notifications.invalidate()
+        setIsOpen(false)
+			},
+			onError: () => {
+				toast.error('error')
+				ctx.notifications.invalidate()
+			},
+		})
 	const { mutate: markNotificationAsViewed } =
 		api.notifications.markAsViewed.useMutation({
 			onMutate: async (newMessage) => {
@@ -151,7 +165,7 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 	)
 
 	return (
-		<DropdownMenu>
+		<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
 			<DropdownMenuTrigger asChild>
 				{isNotifications ? (
 					<div className={cn('relative', isNotifications ? '' : '')}>
@@ -175,7 +189,19 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 				sideOffset={8}
 				className='min-w-[240px] px-0 pb-0 max-w-[98vw]'
 			>
-				<DropdownMenuLabel>Notifications</DropdownMenuLabel>
+				<div className='flex items-center justify-between py-1 px-1'>
+					<DropdownMenuLabel>Notifications</DropdownMenuLabel>
+					<Button
+						className='text-[0.7rem] font-light h-6'
+						size='sm'
+						variant='outline'
+						onClick={() => {
+							markAllNotificationsAsViewed(currentUser.id)
+						}}
+					>
+						Clear
+					</Button>
+				</div>
 				<DropdownMenuSeparator className='my-0 bg-primary/20' />
 				{fullList
 					?.filter(
