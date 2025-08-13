@@ -22,6 +22,7 @@ import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 
+import { User } from '@/components/auth/user'
 import { UserCharts } from '@/components/charts/user-charts'
 import { MobileFooter } from '@/components/layout/mobile-footer'
 import { MobileHeader } from '@/components/layout/mobile-header'
@@ -30,10 +31,10 @@ import { PoopLog } from '@/components/poop-log/poop-log'
 import { SuppLog } from '@/components/supp-log/supp-log'
 import { WaterLog } from '@/components/water-log/water-log'
 
-import DailyLogCarousel from './_components/dailylog-carousel'
-import { User } from '@/components/auth/user'
+import { PwaNotifications } from '@/components/layout/pwa-notifications'
 
-export const dynamic = 'force-dynamic'
+import DailyLogCarousel from './_components/dailylog-carousel'
+
 
 const Mobile = ({
 	userId,
@@ -94,13 +95,12 @@ const Mobile = ({
 					'flex flex-col gap-4 w-full max-w-screen-xl main-content',
 				)}
 			>
-        pwa-test
+				pwa-test
 				<UserCharts
 					dailyLogs={dailyLogs}
 					isMoblie={true}
 					currentUser={currentUser}
 				/>
-
 				<Card className='py-2 '>
 					<CardContent className='px-0 py-0'>
 						<div className='flex justify-between w-full'>
@@ -123,13 +123,15 @@ const Mobile = ({
 				<DailyLogCarousel currentUser={currentUser} dailyLogs={dailyLogs} />
 			</div>
 			<MobileFooter />
+      <PwaNotifications />
+
 		</div>
 	)
 }
 
 const Desktop = ({
 	userId,
-	currentUser : user,
+	currentUser: user,
 }: {
 	userId: string
 	currentUser: GetUserById
@@ -144,9 +146,9 @@ const Desktop = ({
 
 	return (
 		<div className='p-4 flex flex-wrap gap-4 w-full relative'>
-      <div className='absolute top-1 right-1 z-100'>
-      <User />
-      </div>
+			<div className='absolute top-1 right-1 z-100'>
+				<User />
+			</div>
 			<UserWeight user={user} dailyLogs={dailyLogs} />
 			<UserGoals user={user} userGoals={userGoals} />
 			<UserCurrentPlan user={user} />
@@ -170,7 +172,7 @@ export default function Home() {
 	const { data: currentUser, isLoading } = api.user.getCurrentUser.useQuery({
 		id: impersonatedUser.id,
 	})
-  console.log(impersonatedUser)
+	console.log(impersonatedUser)
 	const isMobile = useClientMediaQuery('(max-width: 600px)')
 
 	if (isLoading) return null
