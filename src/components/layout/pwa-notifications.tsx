@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react'
 
 import { sendNotification, subscribeUser, unsubscribeUser } from '@/actions/pwa'
-
 import { toast } from 'sonner'
+
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -48,9 +48,10 @@ function PushNotificationManager() {
 		const permission = await Notification.requestPermission()
 
 		if (permission !== 'granted') {
-			console.error('Permission for push notifications was not granted.')
+			toast.error('Permission for push notifications was not granted.')
 			return
 		}
+		toast.success('Permission for push notifications was granted.')
 
 		// 2. If permission is granted, proceed with subscription
 		const registration = await navigator.serviceWorker.ready
@@ -125,36 +126,91 @@ function PushNotificationManager() {
 		</div>
 	)
 }
-
 function InstallPrompt() {
 	const [isIOS, setIsIOS] = useState(false)
 	const [isStandalone, setIsStandalone] = useState(false)
+	// State to store the beforeinstallprompt event
+	const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null)
 
 	useEffect(() => {
+		// Detect iOS
 		setIsIOS(
 			/iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream,
 		)
-
+		// Detect if app is running in standalone mode (installed PWA)
 		setIsStandalone(window.matchMedia('(display-mode: standalone)').matches)
+
+		// Event listener for beforeinstallprompt
+		const handleBeforeInstallPrompt = (e: Event) => {
+			// Prevent the mini-infobar from appearing on mobile
+			e.preventDefault()
+			// Stash the event so it can be triggered later.
+			setDeferredPrompt(e)
+			console.log('beforeinstallprompt event fired and stored.')
+		}
+
+		window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+
+		// Cleanup the event listener on component unmount
+		return () => {
+			window.removeEventListener(
+				'beforeinstallprompt',
+				handleBeforeInstallPrompt,
+			)
+		}
 	}, [])
 
-	if (isStandalone) {
-		return null // Don't show install button if already installed
+	// Function to handle the "Add to Home Screen" button click
+	const handleInstallClick = async () => {
+		if (deferredPrompt) {
+			// Show the install prompt
+			// Note: This 'prompt' method returns a Promise that resolves with a 'userChoice' object
+			// indicating whether the user accepted or dismissed the prompt.
+			;(deferredPrompt as any).prompt()
+
+			// Wait for the user to respond to the prompt
+			const { outcome } = await (deferredPrompt as any).userChoice
+			console.log(`User response to the install prompt: ${outcome}`)
+
+			// We no longer need the prompt after it's been used or dismissed
+			setDeferredPrompt(null)
+
+			// You might want to update UI based on the outcome (e.g., hide the button if installed)
+			if (outcome === 'accepted') {
+				console.log('User accepted the A2HS prompt')
+			} else {
+				console.log('User dismissed the A2HS prompt')
+			}
+		}
+	}
+
+	// Don't show install button if already installed or if no prompt is available yet (not installable)
+	if (isStandalone || !deferredPrompt) {
+		return null
 	}
 
 	return (
-		<div>
-			<h3>Install App</h3>
-			<Button type='button'>Add to Home Screen</Button>
+		<div className='p-4 bg-blue-100 rounded-lg shadow-md max-w-md mx-auto my-4'>
+			<h3 className='text-xl font-semibold mb-4 text-blue-800'>Install App</h3>
+			{/* Show the button only if deferredPrompt is available */}
+			{deferredPrompt && (
+				<button
+					type='button'
+					onClick={handleInstallClick}
+					className='bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out shadow-md'
+				>
+					Add to Home Screen
+				</button>
+			)}
 			{isIOS && (
-				<p>
+				<p className='mt-4 text-blue-700 text-sm'>
 					To install this app on your iOS device, tap the share button
-					<span role='img' aria-label='share icon'>
+					<span role='img' aria-label='share icon' className='mx-1 text-lg'>
 						{' '}
 						⎋{' '}
 					</span>
 					and then "Add to Home Screen"
-					<span role='img' aria-label='plus icon'>
+					<span role='img' aria-label='plus icon' className='mx-1 text-lg'>
 						{' '}
 						➕{' '}
 					</span>
@@ -164,6 +220,44 @@ function InstallPrompt() {
 		</div>
 	)
 }
+// function InstallPrompt() {
+// 	const [isIOS, setIsIOS] = useState(false)
+// 	const [isStandalone, setIsStandalone] = useState(false)
+//
+// 	useEffect(() => {
+// 		setIsIOS(
+// 			/iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream,
+// 		)
+//
+// 		setIsStandalone(window.matchMedia('(display-mode: standalone)').matches)
+// 	}, [])
+//
+// 	if (isStandalone) {
+// 		return null // Don't show install button if already installed
+// 	}
+//
+// 	return (
+// 		<div>
+// 			<h3>Install App</h3>
+// 			<Button type='button'>Add to Home Screen</Button>
+// 			{isIOS && (
+// 				<p>
+// 					To install this app on your iOS device, tap the share button
+// 					<span role='img' aria-label='share icon'>
+// 						{' '}
+// 						⎋{' '}
+// 					</span>
+// 					and then "Add to Home Screen"
+// 					<span role='img' aria-label='plus icon'>
+// 						{' '}
+// 						➕{' '}
+// 					</span>
+// 					.
+// 				</p>
+// 			)}
+// 		</div>
+// 	)
+// }
 
 export function PwaNotifications() {
 	return (
