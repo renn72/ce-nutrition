@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'CE Nutrition',
-    short_name: 'CEN',
+    name: 'CE Nutrition Test',
+    short_name: 'CENT',
     description: 'A Nutrition tracker',
     start_url: '/',
     display: 'standalone',
