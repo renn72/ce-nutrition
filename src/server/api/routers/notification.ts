@@ -77,6 +77,13 @@ export const notificationRouter = createTRPCRouter({
           isViewed: true,
         })
         .where(eq(notification.userId, input))
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Mark All Notifications as Viewed',
+        notes: JSON.stringify(input),
+        objectId: null,
+      })
       return res
     }),
 	markAsViewed: protectedProcedure

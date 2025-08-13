@@ -95,6 +95,7 @@ const Toggles = ({
 
 	const { mutate: sendNotification } = api.notifications.create.useMutation({
 		onSuccess: () => {
+      toast.success('Notification sent')
 			ctx.user.invalidate()
 		},
 		onError: () => {
