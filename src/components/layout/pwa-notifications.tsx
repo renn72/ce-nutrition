@@ -96,6 +96,10 @@ function PushNotificationManager() {
 		return <p>Push notifications are not supported in this browser.</p>
 	}
 
+  if (!subscription) {
+    subscribeToPush()
+  }
+
 	return (
 		<div>
 			<h3>Push Notifications</h3>
