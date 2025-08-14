@@ -102,8 +102,11 @@ const PwaInstallButton: React.FC = () => {
 		return null
 	}
 
+  console.log('isInstallable', isInstallable)
+
 	return (
 		<div className=''>
+      hi
 			{isIOS ? (
 				// Instructions for iOS users
 				<div className='text-center'>
