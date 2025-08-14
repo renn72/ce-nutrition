@@ -43,6 +43,7 @@ function PushNotificationManager() {
 		const sub = await registration.pushManager.getSubscription()
 		setSubscription(sub)
 	}
+
 	async function subscribeToPush() {
 		// 1. Request permission
 		const permission = await Notification.requestPermission()
@@ -51,7 +52,6 @@ function PushNotificationManager() {
 			toast.error('Permission for push notifications was not granted.')
 			return
 		}
-		toast.success('Permission for push notifications was granted.')
 
 		// 2. If permission is granted, proceed with subscription
 		const registration = await navigator.serviceWorker.ready
@@ -121,10 +121,6 @@ function PushNotificationManager() {
 				</>
 			) : (
 				<>
-					<p>You are not subscribed to push notifications.</p>
-					<Button type='button' onClick={subscribeToPush}>
-						Subscribe
-					</Button>
 				</>
 			)}
 		</div>
