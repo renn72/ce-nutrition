@@ -142,19 +142,22 @@ function InstallPrompt() {
 		setIsIOS(
 			/iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream,
 		)
+    console.log('effect')
 		// Detect if app is running in standalone mode (installed PWA)
 		setIsStandalone(window.matchMedia('(display-mode: standalone)').matches)
 
 		// Event listener for beforeinstallprompt
 		const handleBeforeInstallPrompt = (e: Event) => {
-			// Prevent the mini-infobar from appearing on mobile
+      console.log('handleBeforeInstallPrompt')
 			e.preventDefault()
-			// Stash the event so it can be triggered later.
 			setDeferredPrompt(e)
+			toast.message('beforeinstallprompt event fired and stored.')
 			console.log('beforeinstallprompt event fired and stored.')
+
 		}
 
 		window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    console.log('effect end')
 
 		// Cleanup the event listener on component unmount
 		return () => {
@@ -167,6 +170,7 @@ function InstallPrompt() {
 
 	// Function to handle the "Add to Home Screen" button click
 	const handleInstallClick = async () => {
+    toast.success('click')
 		if (deferredPrompt) {
 			// Show the install prompt
 			// Note: This 'prompt' method returns a Promise that resolves with a 'userChoice' object
@@ -175,7 +179,7 @@ function InstallPrompt() {
 
 			// Wait for the user to respond to the prompt
 			const { outcome } = await (deferredPrompt as any).userChoice
-			console.log(`User response to the install prompt: ${outcome}`)
+			toast.message(`User response to the install prompt: ${outcome}`)
 
 			// We no longer need the prompt after it's been used or dismissed
 			setDeferredPrompt(null)
@@ -200,15 +204,12 @@ function InstallPrompt() {
 		<div className='p-4 bg-blue-100 rounded-lg shadow-md max-w-md mx-auto my-4'>
 			<h3 className='text-xl font-semibold mb-4 text-blue-800'>Install App</h3>
 			{/* Show the button only if deferredPrompt is available */}
-			{deferredPrompt && (
-				<button
+				<Button
 					type='button'
 					onClick={handleInstallClick}
-					className='bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out shadow-md'
 				>
 					Add to Home Screen
-				</button>
-			)}
+				</Button>
 			{isIOS && (
 				<p className='mt-4 text-blue-700 text-sm'>
 					To install this app on your iOS device, tap the share button
@@ -269,8 +270,8 @@ function InstallPrompt() {
 export function PwaNotifications() {
 	return (
 		<div>
-			<PushNotificationManager />
 			<InstallPrompt />
+			<PushNotificationManager />
 		</div>
 	)
 }
