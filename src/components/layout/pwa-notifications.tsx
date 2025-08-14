@@ -185,7 +185,7 @@ function InstallPrompt() {
 	}
 
 	// Don't show install button if already installed or if no prompt is available yet (not installable)
-	if (isStandalone || !deferredPrompt) {
+	if (isStandalone) {
 		return null
 	}
 
