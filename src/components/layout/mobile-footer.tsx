@@ -13,7 +13,7 @@ const MobileFooter = () => {
     <div
       className={cn(
         'grid grid-cols-5 place-items-center p-2 fixed border-t border-border bg-background w-full tracking-tighter',
-        'bottom-0 w-full',
+        'bottom-0 w-full z-[99999]',
       )}
     >
       <Link href='/user/log'>
