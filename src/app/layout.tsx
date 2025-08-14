@@ -20,7 +20,6 @@ import '../styles/globals.css'
 
 export const metadata: Metadata = {
   title: 'CE Nutrition',
-
   description: 'CE Nutrition',
   icons: [{ rel: 'icon', url: '/favicon.ico' }],
 }

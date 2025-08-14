@@ -49,3 +49,7 @@ yarn-error.log*
 /db/local.db-wal
 /db/local.db-shm
 /db/local.db-info
+
+# Serwist
+public/sw*
+public/swe-worker*
