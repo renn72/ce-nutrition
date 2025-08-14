@@ -143,12 +143,13 @@ function InstallPrompt() {
 			/iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream,
 		)
     console.log('effect')
+    toast.message('effect')
 		// Detect if app is running in standalone mode (installed PWA)
 		setIsStandalone(window.matchMedia('(display-mode: standalone)').matches)
 
 		// Event listener for beforeinstallprompt
 		const handleBeforeInstallPrompt = (e: Event) => {
-      console.log('handleBeforeInstallPrompt')
+      toast.message('handleBeforeInstallPrompt')
 			e.preventDefault()
 			setDeferredPrompt(e)
 			toast.message('beforeinstallprompt event fired and stored.')
