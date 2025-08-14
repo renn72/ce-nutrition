@@ -103,7 +103,7 @@ const PwaInstallButton: React.FC = () => {
 	}
 
 	return (
-		<div className='fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-lg z-50 md:hidden flex justify-center items-center'>
+		<div className=''>
 			{isIOS ? (
 				// Instructions for iOS users
 				<div className='text-center'>
@@ -120,7 +120,7 @@ const PwaInstallButton: React.FC = () => {
 							stroke='currentColor'
 							className='w-5 h-5'
 						>
-              <title>Share icon</title>
+							<title>Share icon</title>
 							<path
 								strokeLinecap='round'
 								strokeLinejoin='round'
@@ -134,7 +134,7 @@ const PwaInstallButton: React.FC = () => {
 				// Button for Android/Desktop browsers supporting beforeinstallprompt
 				isInstallable && (
 					<button
-            type='button'
+						type='button'
 						onClick={handleInstallClick}
 						className='px-6 py-3 bg-white text-blue-700 font-bold rounded-full shadow-lg hover:bg-gray-100 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300'
 					>
