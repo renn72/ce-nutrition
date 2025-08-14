@@ -54,6 +54,7 @@ function PushNotificationManager() {
 		}
 
 		// 2. If permission is granted, proceed with subscription
+    try {
 		const registration = await navigator.serviceWorker.ready
 		const sub = await registration.pushManager.subscribe({
 			userVisibleOnly: true,
@@ -64,6 +65,10 @@ function PushNotificationManager() {
 		setSubscription(sub)
 		const serializedSub = JSON.parse(JSON.stringify(sub))
 		await subscribeUser(serializedSub)
+    } catch (error) {
+      console.log('Error subscribing to push notifications:', error)
+    }
+
 	}
 
 	// async function subscribeToPush() {
@@ -183,6 +188,8 @@ function InstallPrompt() {
 			}
 		}
 	}
+
+  console.log('deferredPrompt', deferredPrompt)
 
 	// Don't show install button if already installed or if no prompt is available yet (not installable)
 	if (isStandalone) {
