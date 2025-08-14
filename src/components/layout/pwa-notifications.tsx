@@ -273,7 +273,7 @@ function InstallPrompt() {
 export function PwaNotifications() {
 	return (
 		<div>
-      <PwaInstallButton />
+      <InstallPrompt />
 			<PushNotificationManager />
 		</div>
 	)
