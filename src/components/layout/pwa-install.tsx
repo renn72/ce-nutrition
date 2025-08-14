@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react'
 
+import { Button } from '@/components/ui/button'
+
 // Define the type for the BeforeInstallPromptEvent
 interface BeforeInstallPromptEvent extends Event {
 	readonly platforms: Array<string>
@@ -136,13 +138,12 @@ const PwaInstallButton: React.FC = () => {
 			) : (
 				// Button for Android/Desktop browsers supporting beforeinstallprompt
 				isInstallable && (
-					<button
-						type='button'
+					<Button
 						onClick={handleInstallClick}
 						className='px-6 py-3 bg-white text-blue-700 font-bold rounded-full shadow-lg hover:bg-gray-100 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300'
 					>
 						Install App
-					</button>
+					</Button>
 				)
 			)}
 		</div>
