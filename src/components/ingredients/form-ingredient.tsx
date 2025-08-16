@@ -329,7 +329,7 @@ const FormIngredient = ({
 													type='number'
 												/>
 												<div className='absolute right-8 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
-													grams
+                          cals
 												</div>
 											</div>
 										</FormControl>
