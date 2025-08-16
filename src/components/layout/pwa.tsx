@@ -3,10 +3,10 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { env } from '@/env'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { toast } from 'sonner'
 
 import { sendNotification, subscribeUser, unsubscribeUser } from './action'
 
@@ -128,11 +128,6 @@ const PwaInstallButton: React.FC = () => {
 	// This runs once when the component mounts.
 	useEffect(() => {
 		// Check if the user is on an iOS device
-		console.log('effect')
-
-    if ('onbeforeinstallprompt' in window) console.log('onbeforeinstallprompt')
-    console.log(window)
-
 		const isIOS = () => {
 			// Use a more robust check for iOS devices including iPads
 			return (
@@ -148,8 +143,6 @@ const PwaInstallButton: React.FC = () => {
 		// Event listener for the 'beforeinstallprompt' event
 		// This event fires when the browser determines the PWA is installable.
 		const handleBeforeInstallPrompt = (e: Event) => {
-			console.log('beforeinstallprompt event fired.')
-      toast.success('beforeinstallprompt')
 			// Prevent the default browser install prompt from showing automatically
 			// e.preventDefault()
 			// Store the event so it can be triggered later by a user gesture
@@ -170,11 +163,8 @@ const PwaInstallButton: React.FC = () => {
 		}
 
 		// Add event listeners when the component mounts
-		setTimeout(() => {
-      toast.success('PWA')
-			window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-			window.addEventListener('appinstalled', handleAppInstalled)
-		}, 50000)
+		window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+		window.addEventListener('appinstalled', handleAppInstalled)
 
 		// Initial check for iOS and standalone mode
 		if (isIOS() && !isInStandaloneMode()) {
