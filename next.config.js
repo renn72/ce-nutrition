@@ -1,17 +1,8 @@
-import withPWA from 'next-pwa'
-
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
  */
 await import('./src/env.js')
-
-const pwa = withPWA({
-	dest: 'public',
-	register: true,
-	skipWaiting: true,
-	disable: process.env.NODE_ENV === 'development', // Disable PWA in development
-})
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -68,4 +59,4 @@ const config = {
 	},
 }
 
-export default pwa(config)
+export default config
