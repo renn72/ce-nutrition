@@ -71,6 +71,8 @@ function PushNotificationManager() {
 		}
 	}
 
+  console.log(subscription)
+
 	if (!isSupported) {
 		return <p>Push notifications are not supported in this browser.</p>
 	}

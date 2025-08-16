@@ -49,3 +49,5 @@ yarn-error.log*
 /db/local.db-wal
 /db/local.db-shm
 /db/local.db-info
+
+certificates
