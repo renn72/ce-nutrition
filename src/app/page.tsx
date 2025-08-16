@@ -32,6 +32,7 @@ import { WaterLog } from '@/components/water-log/water-log'
 
 import DailyLogCarousel from './_components/dailylog-carousel'
 import { User } from '@/components/auth/user'
+import { Pwa } from '@/components/layout/pwa'
 
 export const dynamic = 'force-dynamic'
 
@@ -88,8 +89,8 @@ const Mobile = ({
 	return (
 		<div className={cn('flex flex-col gap-2 w-full mt-16 items-center mb-16 ')}>
 			<MobileHeader isDesktop={false} />
+      <Pwa />
 			<div
-				id='main-content'
 				className={cn(
 					'flex flex-col gap-4 w-full max-w-screen-xl main-content',
 				)}
@@ -143,6 +144,7 @@ const Desktop = ({
 
 	return (
 		<div className='p-4 flex flex-wrap gap-4 w-full relative'>
+      <Pwa />
       <div className='absolute top-1 right-1 z-100'>
       <User />
       </div>
@@ -169,7 +171,6 @@ export default function Home() {
 	const { data: currentUser, isLoading } = api.user.getCurrentUser.useQuery({
 		id: impersonatedUser.id,
 	})
-  console.log(impersonatedUser)
 	const isMobile = useClientMediaQuery('(max-width: 600px)')
 
 	if (isLoading) return null
