@@ -129,6 +129,9 @@ const PwaInstallButton: React.FC = () => {
 	useEffect(() => {
 		// Check if the user is on an iOS device
 		console.log('effect')
+
+    if ('onbeforeinstallprompt' in window) console.log('onbeforeinstallprompt')
+
 		const isIOS = () => {
 			// Use a more robust check for iOS devices including iPads
 			return (
