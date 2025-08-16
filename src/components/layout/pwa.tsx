@@ -163,6 +163,10 @@ const PwaInstallButton: React.FC = () => {
 		// Add event listeners when the component mounts
 		window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
 		window.addEventListener('appinstalled', handleAppInstalled)
+		window.addEventListener('beforeinstallprompt', (event) => {
+			event.preventDefault()
+      console.log('beforeinstallprompt event fired.')
+		})
 
 		// Initial check for iOS and standalone mode
 		if (isIOS() && !isInStandaloneMode()) {
