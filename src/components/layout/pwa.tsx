@@ -131,6 +131,7 @@ const PwaInstallButton: React.FC = () => {
 		console.log('effect')
 
     if ('onbeforeinstallprompt' in window) console.log('onbeforeinstallprompt')
+    console.log(window)
 
 		const isIOS = () => {
 			// Use a more robust check for iOS devices including iPads
@@ -148,8 +149,9 @@ const PwaInstallButton: React.FC = () => {
 		// This event fires when the browser determines the PWA is installable.
 		const handleBeforeInstallPrompt = (e: Event) => {
 			console.log('beforeinstallprompt event fired.')
+      toast.success('beforeinstallprompt')
 			// Prevent the default browser install prompt from showing automatically
-			e.preventDefault()
+			// e.preventDefault()
 			// Store the event so it can be triggered later by a user gesture
 			setDeferredPrompt(e as BeforeInstallPromptEvent)
 			// Show our custom install button
@@ -172,11 +174,7 @@ const PwaInstallButton: React.FC = () => {
       toast.success('PWA')
 			window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
 			window.addEventListener('appinstalled', handleAppInstalled)
-			window.addEventListener('beforeinstallprompt', (event) => {
-				event.preventDefault()
-				console.log('beforeinstallprompt event fired.')
-			})
-		}, 500)
+		}, 50000)
 
 		// Initial check for iOS and standalone mode
 		if (isIOS() && !isInStandaloneMode()) {
