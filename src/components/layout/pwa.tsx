@@ -6,6 +6,7 @@ import { env } from '@/env'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { toast } from 'sonner'
 
 import { sendNotification, subscribeUser, unsubscribeUser } from './action'
 
@@ -127,10 +128,13 @@ const PwaInstallButton: React.FC = () => {
 	// This runs once when the component mounts.
 	useEffect(() => {
 		// Check if the user is on an iOS device
+		console.log('effect')
 		const isIOS = () => {
 			// Use a more robust check for iOS devices including iPads
-			const userAgent = window.navigator.userAgent.toLowerCase()
-			return /iphone|ipad|ipod/.test(userAgent) && !window.MSStream
+			return (
+				/iPad|iPhone|iPod/.test(navigator.userAgent) &&
+				!(window as any).MSStream
+			)
 		}
 
 		// Check if the PWA is already running in standalone mode (installed)
@@ -150,6 +154,18 @@ const PwaInstallButton: React.FC = () => {
 			console.log('BeforeInstallPrompt event fired.')
 		}
 
+		window.addEventListener('load', () => {
+			console.log('load')
+			window.addEventListener('beforeinstallprompt', (evt) => {
+				console.log('new evt', evt)
+			})
+			// Register Server Worker
+			navigator.serviceWorker
+				.register('/install-btn/sw.js', { scope: '/install-btn/' })
+				.then((res) => console.log('Service Worker Registered'))
+				.catch((err) => console.log('Service Worker Not Registered', err))
+		})
+
 		// Event listener for the 'appinstalled' event
 		// This event fires after the PWA has been successfully installed.
 		const handleAppInstalled = () => {
@@ -161,12 +177,15 @@ const PwaInstallButton: React.FC = () => {
 		}
 
 		// Add event listeners when the component mounts
-		window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-		window.addEventListener('appinstalled', handleAppInstalled)
-		window.addEventListener('beforeinstallprompt', (event) => {
-			event.preventDefault()
-      console.log('beforeinstallprompt event fired.')
-		})
+		setTimeout(() => {
+      toast.success('PWA')
+			window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+			window.addEventListener('appinstalled', handleAppInstalled)
+			window.addEventListener('beforeinstallprompt', (event) => {
+				event.preventDefault()
+				console.log('beforeinstallprompt event fired.')
+			})
+		}, 500)
 
 		// Initial check for iOS and standalone mode
 		if (isIOS() && !isInStandaloneMode()) {
