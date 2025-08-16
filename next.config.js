@@ -1,62 +1,71 @@
+import withPWA from 'next-pwa'
+
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
  */
 await import('./src/env.js')
 
+const pwa = withPWA({
+	dest: 'public',
+	register: true,
+	skipWaiting: true,
+	disable: process.env.NODE_ENV === 'development', // Disable PWA in development
+})
+
 /** @type {import("next").NextConfig} */
 const config = {
-  eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has TypeScript errors.
-    ignoreBuildErrors: true,
-  },
-  images: {
-    remotePatterns: [new URL('https://utfs.io/**')],
-  },
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-        ],
-      },
-      {
-        source: '/sw.js',
-        headers: [
-          {
-            key: 'Content-Type',
-            value: 'application/javascript; charset=utf-8',
-          },
-          {
-            key: 'Cache-Control',
-            value: 'no-cache, no-store, must-revalidate',
-          },
-          {
-            key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self'",
-          },
-        ],
-      },
-    ]
-  }
+	eslint: {
+		// Warning: This allows production builds to successfully complete even if
+		// your project has ESLint errors.
+		ignoreDuringBuilds: true,
+	},
+	typescript: {
+		// Warning: This allows production builds to successfully complete even if
+		// your project has TypeScript errors.
+		ignoreBuildErrors: true,
+	},
+	images: {
+		remotePatterns: [new URL('https://utfs.io/**')],
+	},
+	async headers() {
+		return [
+			{
+				source: '/(.*)',
+				headers: [
+					{
+						key: 'X-Content-Type-Options',
+						value: 'nosniff',
+					},
+					{
+						key: 'X-Frame-Options',
+						value: 'DENY',
+					},
+					{
+						key: 'Referrer-Policy',
+						value: 'strict-origin-when-cross-origin',
+					},
+				],
+			},
+			{
+				source: '/sw.js',
+				headers: [
+					{
+						key: 'Content-Type',
+						value: 'application/javascript; charset=utf-8',
+					},
+					{
+						key: 'Cache-Control',
+						value: 'no-cache, no-store, must-revalidate',
+					},
+					{
+						key: 'Content-Security-Policy',
+						value: "default-src 'self'; script-src 'self'",
+					},
+				],
+			},
+		]
+	},
 }
 
-export default config
+export default pwa(config)

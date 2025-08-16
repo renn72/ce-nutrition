@@ -157,18 +157,6 @@ const PwaInstallButton: React.FC = () => {
 			console.log('BeforeInstallPrompt event fired.')
 		}
 
-		window.addEventListener('load', () => {
-			console.log('load')
-			window.addEventListener('beforeinstallprompt', (evt) => {
-				console.log('new evt', evt)
-			})
-			// Register Server Worker
-			navigator.serviceWorker
-				.register('/install-btn/sw.js', { scope: '/install-btn/' })
-				.then((res) => console.log('Service Worker Registered'))
-				.catch((err) => console.log('Service Worker Not Registered', err))
-		})
-
 		// Event listener for the 'appinstalled' event
 		// This event fires after the PWA has been successfully installed.
 		const handleAppInstalled = () => {
