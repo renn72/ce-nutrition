@@ -1,14 +1,24 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { env } from '@/env'
-import { toast } from 'sonner'
+import { Share } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 
 import { sendNotification, subscribeUser, unsubscribeUser } from './action'
+
+export const dynamic = 'force-dynamic'
 
 function urlBase64ToUint8Array(base64String: string) {
 	const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
@@ -71,8 +81,6 @@ function PushNotificationManager() {
 			setMessage('')
 		}
 	}
-
-	console.log(subscription)
 
 	if (!isSupported) {
 		return <p>Push notifications are not supported in this browser.</p>
@@ -204,39 +212,30 @@ const PwaInstallButton: React.FC = () => {
 		}
 	}
 	return (
-		<div className='p-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-lg z-50 md:hidden flex justify-center items-center'>
+		<div className='w-full'>
 			{showIosInstructions ? (
 				// Instructions for iOS users
-				<div className='text-center'>
-					<p className='text-sm font-semibold mb-2'>
-						To install this app on your iOS device:
-					</p>
-					<div className='flex items-center justify-center space-x-2 text-sm'>
-						<span>Tap the</span>
-						<svg
-							xmlns='http://www.w3.org/2000/svg'
-							fill='none'
-							viewBox='0 0 24 24'
-							strokeWidth='2'
-							stroke='currentColor'
-							className='w-5 h-5'
-						>
-							<title>Share icon</title>
-							<path
-								strokeLinecap='round'
-								strokeLinejoin='round'
-								d='M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.769-.283 1.093m0-2.186l9.566-5.316m-9.566 5.316l9.566 5.316m0-10.632a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.769-.283 1.093m0-2.186l9.566-5.316m-9.566 5.316l9.566 5.316'
-							/>
-						</svg>
-						<span>Share icon, then 'Add to Home Screen'.</span>
-					</div>
-				</div>
+				<Dialog>
+					<DialogTrigger asChild>
+						<Button size='sm'>Install App</Button>
+					</DialogTrigger>
+					<DialogContent>
+						<DialogHeader>
+							<DialogTitle>To install this app </DialogTitle>
+							<DialogDescription>
+								<span className='flex ga-2'>on your iOS device, tap the share button <Share size={16} className='ml-2' /></span>
+
+								<span>and then "Add to Home Screen".</span>
+							</DialogDescription>
+						</DialogHeader>
+					</DialogContent>
+				</Dialog>
 			) : (
 				// Button for Android/Desktop browsers supporting beforeinstallprompt
-				showInstallButton && (
+				true && (
 					<Button
 						onClick={onClickInstall}
-						className='px-6 py-3 bg-white text-blue-700 font-bold rounded-full shadow-lg hover:bg-gray-100 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300'
+            size='sm'
 					>
 						Install App
 					</Button>
@@ -245,49 +244,10 @@ const PwaInstallButton: React.FC = () => {
 		</div>
 	)
 }
-function InstallPrompt() {
-	const [isIOS, setIsIOS] = useState(false)
-	const [isStandalone, setIsStandalone] = useState(false)
-
-	useEffect(() => {
-		setIsIOS(
-			/iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream,
-		)
-
-		setIsStandalone(window.matchMedia('(display-mode: standalone)').matches)
-	}, [])
-
-	if (isStandalone) {
-		return null // Don't show install button if already installed
-	}
-
-	return (
-		<div>
-			<h3>Install App</h3>
-			<Button>Add to Home Screen</Button>
-			{isIOS && (
-				<p>
-					To install this app on your iOS device, tap the share button
-					<span role='img' aria-label='share icon'>
-						{' '}
-						⎋{' '}
-					</span>
-					and then "Add to Home Screen"
-					<span role='img' aria-label='plus icon'>
-						{' '}
-						➕{' '}
-					</span>
-					.
-				</p>
-			)}
-		</div>
-	)
-}
 
 export function Pwa() {
 	return (
 		<div>
-			<PushNotificationManager />
 			<PwaInstallButton />
 		</div>
 	)
