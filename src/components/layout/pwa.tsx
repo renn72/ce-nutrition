@@ -232,7 +232,7 @@ const PwaInstallButton: React.FC = () => {
 				</Dialog>
 			) : (
 				// Button for Android/Desktop browsers supporting beforeinstallprompt
-				true && (
+				showInstallButton && (
 					<Button
 						onClick={onClickInstall}
             size='sm'
