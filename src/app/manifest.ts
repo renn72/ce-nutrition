@@ -6,8 +6,8 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: 'CENT',
     description: 'Your Nutrition',
     start_url: '/',
+    scope: '/',
     display: 'standalone',
-    orientation: 'any',
     background_color: '#ffffff',
     theme_color: '#000000',
     icons: [
