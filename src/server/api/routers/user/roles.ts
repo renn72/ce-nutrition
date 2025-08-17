@@ -62,6 +62,14 @@ export const roles = {
 				})
 			}
 
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        objectId: null,
+        task: 'accept supplement disclaimer',
+        notes: JSON.stringify(input),
+      })
+
 			return res
 		}),
 	updateRoleSupplements: protectedProcedure

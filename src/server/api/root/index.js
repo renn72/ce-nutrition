@@ -4908,6 +4908,13 @@ var roles = {
         userId: input.userId
       });
     }
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      objectId: null,
+      task: "accept supplement disclaimer",
+      notes: JSON.stringify(input)
+    });
     return res;
   }),
   updateRoleSupplements: protectedProcedure.input(z9.object({ userId: z9.string() })).mutation(async ({ ctx, input }) => {
