@@ -75,7 +75,7 @@ const PushNotificationManager = () => {
 					<Button
             size='sm'
             variant='outline'
-            onClick={subscribeToPush}>Enable Notifications</Button>
+            onClick={subscribeToPush}>Enable push notifications</Button>
 				</div>
 			)}
 		</>

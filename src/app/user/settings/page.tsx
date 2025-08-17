@@ -89,7 +89,7 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 	return (
 		<DailyLogToggleWrapper
 			title='Notifications'
-			description='Enable notifications.'
+			description='Enable push notifications.'
 		>
 			{isLoading ? null : (
 				<Switch
