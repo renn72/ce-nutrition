@@ -19,6 +19,7 @@ export const message = createTable(
     isRead: int('is_read', { mode: 'boolean' }),
     isViewed: int('is_viewed', { mode: 'boolean' }),
     isDeleted: int('is_deleted', { mode: 'boolean' }),
+    isNotified: int('is_notified', { mode: 'boolean' }).default(false),
     message: text('message'),
     image: text('image'),
     fromUserId: text('from_user_id').references(() => user.id, {

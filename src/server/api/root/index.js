@@ -391,6 +391,7 @@ var message = createTable3(
     isRead: int3("is_read", { mode: "boolean" }),
     isViewed: int3("is_viewed", { mode: "boolean" }),
     isDeleted: int3("is_deleted", { mode: "boolean" }),
+    isNotified: int3("is_notified", { mode: "boolean" }).default(false),
     message: text3("message"),
     image: text3("image"),
     fromUserId: text3("from_user_id").references(() => user.id, {
@@ -589,6 +590,7 @@ var notification = createTable5(
     isRead: int5("is_read", { mode: "boolean" }),
     isViewed: int5("is_viewed", { mode: "boolean" }),
     isDeleted: int5("is_deleted", { mode: "boolean" }),
+    isNotified: int5("is_notified", { mode: "boolean" }).default(false),
     notes: text5("notes")
   }
 );
@@ -720,7 +722,8 @@ var supplementStack = createTable6("supplement_stack", {
   }),
   name: text6("name"),
   time: text6("time"),
-  isTemplate: int6("is_template", { mode: "boolean" }).default(false)
+  isTemplate: int6("is_template", { mode: "boolean" }).default(false),
+  order: int6("order").default(0)
 });
 var supplementStackRelations = relations6(
   supplementStack,
@@ -744,7 +747,8 @@ var supplementToSupplementStack = createTable6(
       onDelete: "cascade"
     }).notNull(),
     size: text6("size"),
-    unit: text6("unit")
+    unit: text6("unit"),
+    order: int6("order").default(0)
   }
 );
 var supplementToSupplementStackRelations = relations6(

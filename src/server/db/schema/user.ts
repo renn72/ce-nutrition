@@ -160,6 +160,7 @@ export const supplementStack = createTable('supplement_stack', {
 	name: text('name'),
 	time: text('time'),
   isTemplate: int('is_template', { mode: 'boolean' }).default(false),
+  order: int('order').default(0),
 })
 
 export const supplementStackRelations = relations(
@@ -190,6 +191,7 @@ export const supplementToSupplementStack = createTable(
 			.notNull(),
 		size: text('size'),
 		unit: text('unit'),
+    order: int('order').default(0),
 	},
 )
 

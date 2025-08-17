@@ -822,6 +822,23 @@ declare const supplementStack: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             identity: undefined;
             generated: undefined;
         }, {}, {}>;
+        order: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "order";
+            tableName: "supplement_stack";
+            dataType: "number";
+            columnType: "SQLiteInteger";
+            data: number;
+            driverParam: number;
+            notNull: false;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
     };
     dialect: "sqlite";
 }>;
@@ -922,6 +939,23 @@ declare const supplementToSupplementStack: drizzle_orm_sqlite_core.SQLiteTableWi
         }, {}, {
             length: number | undefined;
         }>;
+        order: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "order";
+            tableName: "supplement_to_supplement_stack";
+            dataType: "number";
+            columnType: "SQLiteInteger";
+            data: number;
+            driverParam: number;
+            notNull: false;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
     };
     dialect: "sqlite";
 }>;
@@ -2447,6 +2481,23 @@ declare const notification: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             driverParam: number;
             notNull: false;
             hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        isNotified: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "is_notified";
+            tableName: "notification";
+            dataType: "boolean";
+            columnType: "SQLiteBoolean";
+            data: boolean;
+            driverParam: number;
+            notNull: false;
+            hasDefault: true;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -10444,6 +10495,23 @@ declare const message: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             identity: undefined;
             generated: undefined;
         }, {}, {}>;
+        isNotified: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "is_notified";
+            tableName: "message";
+            dataType: "boolean";
+            columnType: "SQLiteBoolean";
+            data: boolean;
+            driverParam: number;
+            notNull: false;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
         message: drizzle_orm_sqlite_core.SQLiteColumn<{
             name: "message";
             tableName: "message";
@@ -15241,8 +15309,10 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     userId: string;
                     time: string | null;
                     isTemplate: boolean | null;
+                    order: number | null;
                     supplements: {
                         id: number;
+                        order: number | null;
                         supplementId: number;
                         supplementStackId: number;
                         size: string | null;
@@ -15522,8 +15592,10 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     userId: string;
                     time: string | null;
                     isTemplate: boolean | null;
+                    order: number | null;
                     supplements: {
                         id: number;
+                        order: number | null;
                         supplementId: number;
                         supplementStackId: number;
                         size: string | null;
@@ -15772,8 +15844,10 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     userId: string;
                     time: string | null;
                     isTemplate: boolean | null;
+                    order: number | null;
                     supplements: {
                         id: number;
+                        order: number | null;
                         supplementId: number;
                         supplementStackId: number;
                         size: string | null;
@@ -18225,6 +18299,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isRead: boolean | null;
                 isViewed: boolean | null;
                 isDeleted: boolean | null;
+                isNotified: boolean | null;
                 subject: string | null;
                 isImportant: boolean | null;
                 fromUserId: string | null;
@@ -18294,6 +18369,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isRead: boolean | null;
                 isViewed: boolean | null;
                 isDeleted: boolean | null;
+                isNotified: boolean | null;
                 subject: string | null;
                 isImportant: boolean | null;
                 fromUserId: string | null;
@@ -18363,6 +18439,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isRead: boolean | null;
                 isViewed: boolean | null;
                 isDeleted: boolean | null;
+                isNotified: boolean | null;
                 subject: string | null;
                 isImportant: boolean | null;
                 fromUserId: string | null;
@@ -19110,6 +19187,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             };
             output: {
                 id: number;
+                order: number | null;
                 supplementId: number;
                 supplementStackId: number;
                 size: string | null;
@@ -19890,6 +19968,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isRead: boolean | null;
                 isViewed: boolean | null;
                 isDeleted: boolean | null;
+                isNotified: boolean | null;
             } | undefined;
             meta: object;
         }>;
@@ -19906,6 +19985,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isRead: boolean | null;
                 isViewed: boolean | null;
                 isDeleted: boolean | null;
+                isNotified: boolean | null;
             }[];
             meta: object;
         }>;
@@ -19922,6 +20002,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isRead: boolean | null;
                 isViewed: boolean | null;
                 isDeleted: boolean | null;
+                isNotified: boolean | null;
             }[];
             meta: object;
         }>;
@@ -21892,8 +21973,10 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     userId: string;
                     time: string | null;
                     isTemplate: boolean | null;
+                    order: number | null;
                     supplements: {
                         id: number;
+                        order: number | null;
                         supplementId: number;
                         supplementStackId: number;
                         size: string | null;
@@ -22173,8 +22256,10 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     userId: string;
                     time: string | null;
                     isTemplate: boolean | null;
+                    order: number | null;
                     supplements: {
                         id: number;
+                        order: number | null;
                         supplementId: number;
                         supplementStackId: number;
                         size: string | null;
@@ -22423,8 +22508,10 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     userId: string;
                     time: string | null;
                     isTemplate: boolean | null;
+                    order: number | null;
                     supplements: {
                         id: number;
+                        order: number | null;
                         supplementId: number;
                         supplementStackId: number;
                         size: string | null;
@@ -24876,6 +24963,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isRead: boolean | null;
                 isViewed: boolean | null;
                 isDeleted: boolean | null;
+                isNotified: boolean | null;
                 subject: string | null;
                 isImportant: boolean | null;
                 fromUserId: string | null;
@@ -24945,6 +25033,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isRead: boolean | null;
                 isViewed: boolean | null;
                 isDeleted: boolean | null;
+                isNotified: boolean | null;
                 subject: string | null;
                 isImportant: boolean | null;
                 fromUserId: string | null;
@@ -25014,6 +25103,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isRead: boolean | null;
                 isViewed: boolean | null;
                 isDeleted: boolean | null;
+                isNotified: boolean | null;
                 subject: string | null;
                 isImportant: boolean | null;
                 fromUserId: string | null;
@@ -25761,6 +25851,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             };
             output: {
                 id: number;
+                order: number | null;
                 supplementId: number;
                 supplementStackId: number;
                 size: string | null;
@@ -26541,6 +26632,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isRead: boolean | null;
                 isViewed: boolean | null;
                 isDeleted: boolean | null;
+                isNotified: boolean | null;
             } | undefined;
             meta: object;
         }>;
@@ -26557,6 +26649,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isRead: boolean | null;
                 isViewed: boolean | null;
                 isDeleted: boolean | null;
+                isNotified: boolean | null;
             }[];
             meta: object;
         }>;
@@ -26573,6 +26666,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isRead: boolean | null;
                 isViewed: boolean | null;
                 isDeleted: boolean | null;
+                isNotified: boolean | null;
             }[];
             meta: object;
         }>;
