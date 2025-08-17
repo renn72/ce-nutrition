@@ -159,6 +159,7 @@ export const supplementStack = createTable('supplement_stack', {
 		}),
 	name: text('name'),
 	time: text('time'),
+  isTemplate: int('is_template', { mode: 'boolean' }).default(false),
 })
 
 export const supplementStackRelations = relations(

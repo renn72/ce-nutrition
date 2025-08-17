@@ -5,7 +5,7 @@ import { api } from '@/trpc/react'
 import { useState } from 'react'
 
 import { cn } from '@/lib/utils'
-import { RefreshCcw, } from 'lucide-react'
+import { RefreshCcw } from 'lucide-react'
 
 import {
 	Collapsible,
@@ -18,12 +18,25 @@ import { Switch } from '@/components/ui/switch'
 export default function AdminLogs() {
 	const [isHideMe, setIsHideMe] = useState(false)
 	const [filter, setFilter] = useState('')
-  const [userFilter, setUserFilter] = useState('')
+	const [userFilter, setUserFilter] = useState('')
 	const ctx = api.useUtils()
 	const { data: logs } = api.user.getAdminLogs.useQuery(undefined, {
 		refetchInterval: 1000 * 60 * 15,
 	})
 
+	if (!logs) return null
+
+	const l = logs
+		.filter((log) => log.createdAt.toDateString() === new Date().toDateString())
+
+  const u = l.filter((log, index, arr) => {
+    return arr.findIndex((t) => t.user === log.user) === index
+  })
+
+  const logYesterday = logs.filter((log) => log.createdAt.toDateString() === new Date(new Date().setDate(new Date().getDate() - 1)).toDateString())
+  const uYesterday = logYesterday.filter((log, index, arr) => {
+    return arr.findIndex((t) => t.user === log.user) === index
+  })
 
 
 	return (
@@ -59,6 +72,16 @@ export default function AdminLogs() {
 					}}
 				/>
 			</div>
+			<div className='flex items-center gap-8 w-full py-2'>
+        <div>Today</div>
+        <div>Total {l.length}</div>
+        <div>Users {u.length}</div>
+			</div>
+			<div className='flex items-center gap-8 w-full py-2'>
+        <div>Yesterday</div>
+        <div>Total {logYesterday.length}</div>
+        <div>Users {uYesterday.length}</div>
+			</div>
 			{logs
 				?.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 				.filter((log) => {
@@ -66,7 +89,9 @@ export default function AdminLogs() {
 					return true
 				})
 				.filter((log) => log.task?.toLowerCase().includes(filter.toLowerCase()))
-				.filter((log) => log.user?.toLowerCase().includes(userFilter.toLowerCase()))
+				.filter((log) =>
+					log.user?.toLowerCase().includes(userFilter.toLowerCase()),
+				)
 				.map((log) => (
 					<Collapsible key={log.id}>
 						<CollapsibleTrigger asChild>
@@ -83,23 +108,30 @@ export default function AdminLogs() {
 										hour: 'numeric',
 										minute: 'numeric',
 										hour12: false,
-									})},{' '}
+									})}
+									,{' '}
 									{log.createdAt.toLocaleString('en-AU', {
 										year: '2-digit',
 										month: 'numeric',
 										day: 'numeric',
 									})}
 								</div>
-								<div className='col-span-2 md:col-span-1 truncate'>{log.user}</div>
-								<div className='col-span-3 md:col-span-1 truncate'>{log.task}</div>
-								<div className='truncate col-span-2 md:col-span-6'>{log.notes}</div>
+								<div className='col-span-2 md:col-span-1 truncate'>
+									{log.user}
+								</div>
+								<div className='col-span-3 md:col-span-1 truncate'>
+									{log.task}
+								</div>
+								<div className='truncate col-span-2 md:col-span-6'>
+									{log.notes}
+								</div>
 							</div>
 						</CollapsibleTrigger>
 						<CollapsibleContent className='p-0 '>
 							<div
 								className={cn(
 									'flex flex-col gap-1 text-[0.7rem] md:text-xs max-w-screen-xl py-[2px] shrink-0 pl-4 ',
-                  'bg-blue-200'
+									'bg-blue-200',
 								)}
 							>
 								<div className='col-span-2 shrink-0'>
@@ -116,8 +148,7 @@ export default function AdminLogs() {
 								<div className='col-span-3 '>{log.task}</div>
 								<div className=' col-span-2'>{log.notes}</div>
 							</div>
-
-            </CollapsibleContent>
+						</CollapsibleContent>
 					</Collapsible>
 				))}
 		</div>

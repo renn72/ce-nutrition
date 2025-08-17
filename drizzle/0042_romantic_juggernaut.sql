@@ -1,0 +1,1 @@
+ALTER TABLE `supplement_stack` ADD `is_template` integer DEFAULT false;
