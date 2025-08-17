@@ -2,8 +2,9 @@
 
 import { api } from '@/trpc/react'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
+import { env } from '@/env'
 import { cn } from '@/lib/utils'
 import type { GetUserById } from '@/types'
 import { RefreshCw } from 'lucide-react'
@@ -22,6 +23,90 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 
+import { subscribeUser, unsubscribeUser } from '@/components/layout/action'
+import { urlBase64ToUint8Array } from '@/components/layout/pwa'
+
+const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
+	const [isNotifications, setIsNotifications] = useState(false)
+	const [subscription, setSubscription] = useState<PushSubscription | null>(
+		null,
+	)
+	const [isLoading, setIsLoading] = useState(true)
+  const { mutate } = api.adminLog.create.useMutation()
+
+	useEffect(() => {
+		if ('serviceWorker' in navigator && 'PushManager' in window) {
+			registerServiceWorker()
+		} else {
+			// setIsLoading(false)
+			setIsNotifications(false)
+		}
+	}, [])
+
+	async function registerServiceWorker() {
+		const registration = await navigator.serviceWorker.register('/sw.js', {
+			scope: '/',
+			updateViaCache: 'none',
+		})
+		const sub = await registration.pushManager.getSubscription()
+		setSubscription(sub)
+		setTimeout(() => {
+			setIsLoading(false)
+		}, 50)
+		if (sub) {
+			setIsNotifications(true)
+		} else {
+			setIsNotifications(false)
+		}
+	}
+
+	async function subscribeToPush() {
+		const registration = await navigator.serviceWorker.ready
+		const sub = await registration.pushManager.subscribe({
+			userVisibleOnly: true,
+			applicationServerKey: urlBase64ToUint8Array(
+				env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+			),
+		})
+		const serializedSub = JSON.parse(JSON.stringify(sub))
+		await subscribeUser(serializedSub)
+    mutate({
+      task: 'Subscribe to Push Notifications',
+      notes: '',
+    })
+	}
+
+	async function unsubscribeFromPush() {
+		await subscription?.unsubscribe()
+		setSubscription(null)
+		await unsubscribeUser()
+    mutate({
+      task: 'Unsubscribe from Push Notifications',
+      notes: '',
+    })
+	}
+
+	return (
+		<DailyLogToggleWrapper
+			title='Notifications'
+			description='Enable notifications.'
+		>
+			{isLoading ? null : (
+				<Switch
+					checked={isNotifications === true}
+					onCheckedChange={(checked) => {
+						setIsNotifications(checked)
+						if (checked) {
+							subscribeToPush()
+						} else {
+							unsubscribeFromPush()
+						}
+					}}
+				/>
+			)}
+		</DailyLogToggleWrapper>
+	)
+}
 const DefaultWater = ({ currentUser }: { currentUser: GetUserById }) => {
 	const [water, setWater] = useState(
 		Number(currentUser?.settings?.defaultWater),
@@ -255,7 +340,7 @@ const Email = ({ currentUser }: { currentUser: GetUserById }) => {
 	return (
 		<DialogWrapper
 			title='Email'
-      id='settings-user-email'
+			id='settings-user-email'
 			value={currentUser?.email ?? ''}
 			isOpen={isOpen}
 			setIsOpen={setIsOpen}
@@ -839,6 +924,10 @@ const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
 				<LastName currentUser={currentUser} />
 				<Email currentUser={currentUser} />
 				<Password currentUser={currentUser} />
+			</div>
+			<div className='flex flex-col gap-2 w-full p-4 border rounded-lg'>
+				<h2 className='text-base font-semibold'>Notifications</h2>
+				<Notifications currentUser={currentUser} />
 			</div>
 			<div
 				id='settings-water-defaults'

@@ -19946,6 +19946,37 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             meta: object;
         }>;
     }>>;
+    adminLog: _trpc_server.TRPCBuiltRouter<{
+        ctx: {
+            headers: Headers;
+            db: drizzle_orm_libsql.LibSQLDatabase<typeof ______db_schema> & {
+                $client: _libsql_client.Client;
+            };
+            session: next_auth.Session | null;
+        };
+        meta: object;
+        errorShape: {
+            data: {
+                zodError: zod.ZodFlattenedError<unknown, string> | null;
+                code: _trpc_server.TRPC_ERROR_CODE_KEY;
+                httpStatus: number;
+                path?: string;
+                stack?: string;
+            };
+            message: string;
+            code: _trpc_server.TRPC_ERROR_CODE_NUMBER;
+        };
+        transformer: true;
+    }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        create: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                task: string;
+                notes: string;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+    }>>;
 }>>;
 type AppRouter = typeof appRouter;
 /**
@@ -26563,6 +26594,37 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         markAsViewed: _trpc_server.TRPCMutationProcedure<{
             input: number;
             output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+    }>>;
+    adminLog: _trpc_server.TRPCBuiltRouter<{
+        ctx: {
+            headers: Headers;
+            db: drizzle_orm_libsql.LibSQLDatabase<typeof ______db_schema> & {
+                $client: _libsql_client.Client;
+            };
+            session: next_auth.Session | null;
+        };
+        meta: object;
+        errorShape: {
+            data: {
+                zodError: zod.ZodFlattenedError<unknown, string> | null;
+                code: _trpc_server.TRPC_ERROR_CODE_KEY;
+                httpStatus: number;
+                path?: string;
+                stack?: string;
+            };
+            message: string;
+            code: _trpc_server.TRPC_ERROR_CODE_NUMBER;
+        };
+        transformer: true;
+    }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        create: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                task: string;
+                notes: string;
+            };
+            output: boolean;
             meta: object;
         }>;
     }>>;

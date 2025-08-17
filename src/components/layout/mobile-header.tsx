@@ -30,6 +30,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Label } from '@/components/ui/label'
 
+import { PushNotificationManager } from './push-notifications'
+
 export const dynamic = 'force-dynamic'
 
 const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
@@ -201,6 +203,9 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 					>
 						Clear
 					</Button>
+				</div>
+				<div className='flex items-center justify-between py-1 px-1'>
+          <PushNotificationManager />
 				</div>
 				<DropdownMenuSeparator className='my-0 bg-primary/20' />
 				{fullList
