@@ -805,6 +805,23 @@ declare const supplementStack: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
         }, {}, {
             length: number | undefined;
         }>;
+        isTemplate: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "is_template";
+            tableName: "supplement_stack";
+            dataType: "boolean";
+            columnType: "SQLiteBoolean";
+            data: boolean;
+            driverParam: number;
+            notNull: false;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
     };
     dialect: "sqlite";
 }>;
@@ -14589,6 +14606,19 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             } | undefined;
             meta: object;
         }>;
+        updateRoleSupplementDisclaimer: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                id: number;
+                name: string | null;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string | null;
+            } | undefined;
+            meta: object;
+        }>;
         updateRoleSupplements: _trpc_server.TRPCMutationProcedure<{
             input: {
                 userId: string;
@@ -15210,6 +15240,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     updatedAt: Date | null;
                     userId: string;
                     time: string | null;
+                    isTemplate: boolean | null;
                     supplements: {
                         id: number;
                         supplementId: number;
@@ -15490,6 +15521,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     updatedAt: Date | null;
                     userId: string;
                     time: string | null;
+                    isTemplate: boolean | null;
                     supplements: {
                         id: number;
                         supplementId: number;
@@ -15739,6 +15771,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     updatedAt: Date | null;
                     userId: string;
                     time: string | null;
+                    isTemplate: boolean | null;
                     supplements: {
                         id: number;
                         supplementId: number;
@@ -21193,6 +21226,19 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             } | undefined;
             meta: object;
         }>;
+        updateRoleSupplementDisclaimer: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                id: number;
+                name: string | null;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string | null;
+            } | undefined;
+            meta: object;
+        }>;
         updateRoleSupplements: _trpc_server.TRPCMutationProcedure<{
             input: {
                 userId: string;
@@ -21814,6 +21860,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     updatedAt: Date | null;
                     userId: string;
                     time: string | null;
+                    isTemplate: boolean | null;
                     supplements: {
                         id: number;
                         supplementId: number;
@@ -22094,6 +22141,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     updatedAt: Date | null;
                     userId: string;
                     time: string | null;
+                    isTemplate: boolean | null;
                     supplements: {
                         id: number;
                         supplementId: number;
@@ -22343,6 +22391,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     updatedAt: Date | null;
                     userId: string;
                     time: string | null;
+                    isTemplate: boolean | null;
                     supplements: {
                         id: number;
                         supplementId: number;

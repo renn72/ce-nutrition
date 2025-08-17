@@ -41,7 +41,8 @@
 				"useExhaustiveDependencies": "off"
 			},
 			"complexity": {
-				"noUselessTernary": "off"
+				"noUselessTernary": "off",
+        "noUselessFragments": "off"
 			},
 			"suspicious": {
 				"noAssignInExpressions": "off"

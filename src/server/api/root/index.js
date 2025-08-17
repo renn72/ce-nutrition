@@ -719,7 +719,8 @@ var supplementStack = createTable6("supplement_stack", {
     onDelete: "cascade"
   }),
   name: text6("name"),
-  time: text6("time")
+  time: text6("time"),
+  isTemplate: int6("is_template", { mode: "boolean" }).default(false)
 });
 var supplementStackRelations = relations6(
   supplementStack,
@@ -1401,6 +1402,7 @@ var env = createEnv({
     EMAIL_SERVER_PORT: z2.string(),
     EMAIL_SERVER_HOST: z2.string(),
     EMAIL_FROM: z2.string(),
+    VAPID_PRIVATE_KEY: z2.string(),
     UPLOADTHING_TOKEN: z2.string(),
     NODE_ENV: z2.enum(["development", "test", "production"]).default("development")
   },
@@ -1411,6 +1413,7 @@ var env = createEnv({
    */
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_VAPID_PUBLIC_KEY: z2.string()
   },
   /**
    * You can't destruct `process.env` as a regular object in the Next.js edge runtimes (e.g.
@@ -1428,6 +1431,8 @@ var env = createEnv({
     EMAIL_SERVER_PORT: process.env.EMAIL_SERVER_PORT,
     EMAIL_SERVER_HOST: process.env.EMAIL_SERVER_HOST,
     EMAIL_FROM: process.env.EMAIL_FROM,
+    NEXT_PUBLIC_VAPID_PUBLIC_KEY: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+    VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
     UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
@@ -2138,7 +2143,7 @@ var groceryStoreRouter = createTRPCRouter({
 import { readFileSync } from "fs";
 import { parse } from "csv-parse/sync";
 
-// node_modules/.pnpm/drizzle-dbml-generator@0.10.0_drizzle-orm@0.41.0_@libsql+client@0.15.10_gel@2.1.1_/node_modules/drizzle-dbml-generator/dist/index.js
+// node_modules/.pnpm/drizzle-dbml-generator@0.10.0_drizzle-orm@0.41.0_@libsql+client@0.15.11_gel@2.1.1_/node_modules/drizzle-dbml-generator/dist/index.js
 import {
   One,
   Relations,
@@ -4883,6 +4888,23 @@ var roles = {
     } else {
       await ctx.db.insert(role).values({
         name: "body-builder-images",
+        userId: input.userId
+      });
+    }
+    return res;
+  }),
+  updateRoleSupplementDisclaimer: protectedProcedure.input(z9.object({ userId: z9.string() })).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.query.role.findFirst({
+      where: (role3, { eq: eq26, and: and10 }) => and10(
+        eq26(role3.userId, input.userId),
+        eq26(role3.name, "supplement_disclaimer_v1")
+      )
+    });
+    if (res) {
+      await ctx.db.delete(role).where(eq5(role.id, res.id));
+    } else {
+      await ctx.db.insert(role).values({
+        name: "supplement_disclaimer_v1",
         userId: input.userId
       });
     }

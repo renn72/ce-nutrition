@@ -17,6 +17,7 @@ import { ThemeProvider } from '@/components/misc/theme-provider'
 import { Providers } from '@/components/provider'
 
 import '../styles/globals.css'
+import { Disclaimers } from '@/components/disclamier/disclamiers'
 
 export const metadata: Metadata = {
   title: 'CE Nutrition',
@@ -62,6 +63,7 @@ export default async function RootLayout({
                 ) : (
                   <>
                     {children}
+                    <Disclaimers />
                   </>
                 )}
                 <Toaster />
