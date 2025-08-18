@@ -49,7 +49,12 @@ const NotificationTrigger = ({
 				) {
 					console.log('subscription', message)
 					const serializedSub = JSON.parse(JSON.stringify(subscription))
-					sendNotification(message.content, serializedSub)
+          if (message.state === 'message') {
+            sendNotification(message.content, serializedSub, 'New Message')
+          }
+          if (message.state === 'notification') {
+            sendNotification(message.content, serializedSub, 'New Notification')
+          }
 					if (message.state === 'message' && !isMutating) {
 						setIsMutating(true)
 						markMessageAsNotified(message.id)
