@@ -42,19 +42,15 @@ const NotificationTrigger = ({
 	useEffect(() => {
 		if (subscription) {
 			for (const message of messages) {
-				if (
-					!message.isNotified &&
-					!message.isRead &&
-					message.fromUser === 'Test Test'
-				) {
+				if (!message.isNotified && !message.isRead) {
 					console.log('subscription', message)
 					const serializedSub = JSON.parse(JSON.stringify(subscription))
-          if (message.state === 'message') {
-            sendNotification(message.content, serializedSub, 'New Message')
-          }
-          if (message.state === 'notification') {
-            sendNotification(message.content, serializedSub, 'New Notification')
-          }
+					if (message.state === 'message') {
+						sendNotification(message.content, serializedSub, 'New Message')
+					}
+					if (message.state === 'notification') {
+						sendNotification(message.content, serializedSub, 'New Notification')
+					}
 					if (message.state === 'message' && !isMutating) {
 						setIsMutating(true)
 						markMessageAsNotified(message.id)
