@@ -1,5 +1,7 @@
 'use client'
 
+import { api } from '@/trpc/react'
+
 import { useEffect, useState } from 'react'
 
 import { env } from '@/env'
@@ -193,7 +195,13 @@ const PwaInstallButton: React.FC = () => {
 	}, []) // Empty dependency array means this effect runs once after the initial render
 
 	// Function to handle the click event of the install button
+
+	const { mutate } = api.adminLog.create.useMutation()
 	const onClickInstall = async () => {
+		mutate({
+			task: 'Install PWA',
+			notes: '',
+		})
 		console.log('Install button clicked.', deferredPrompt)
 		if (deferredPrompt) {
 			// Hide the button immediately after click
@@ -223,7 +231,10 @@ const PwaInstallButton: React.FC = () => {
 						<DialogHeader>
 							<DialogTitle>To install this app </DialogTitle>
 							<DialogDescription>
-								<span className='flex ga-2'>on your iOS device, tap the share button <Share size={16} className='ml-2' /></span>
+								<span className='flex ga-2'>
+									on your iOS device, tap the share button{' '}
+									<Share size={16} className='ml-2' />
+								</span>
 
 								<span>and then "Add to Home Screen".</span>
 							</DialogDescription>
@@ -233,10 +244,7 @@ const PwaInstallButton: React.FC = () => {
 			) : (
 				// Button for Android/Desktop browsers supporting beforeinstallprompt
 				showInstallButton && (
-					<Button
-						onClick={onClickInstall}
-            size='sm'
-					>
+					<Button onClick={onClickInstall} size='sm'>
 						Install App
 					</Button>
 				)
