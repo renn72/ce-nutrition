@@ -68,9 +68,6 @@ const Messages = ({
 		})
 		?.filter((message) => message.user?.id === userId)
 
-	console.log('m', m)
-	console.log('s', s)
-
 	const l = [...(s ?? []), ...(m ?? [])]
 		.sort(
 			(a, b) =>
