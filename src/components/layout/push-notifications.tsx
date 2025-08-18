@@ -31,7 +31,7 @@ const PushNotificationManager = () => {
 	async function registerServiceWorker() {
 		const registration = await navigator.serviceWorker.register('/sw.js', {
 			scope: '/',
-			updateViaCache: 'none',
+			updateViaCache: 'all',
 		})
 		const sub = await registration.pushManager.getSubscription()
     // @ts-ignore
