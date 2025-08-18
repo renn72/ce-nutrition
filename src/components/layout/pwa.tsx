@@ -225,7 +225,14 @@ const PwaInstallButton: React.FC = () => {
 				// Instructions for iOS users
 				<Dialog>
 					<DialogTrigger asChild>
-						<Button size='sm'>Install App</Button>
+						<Button size='sm'
+              onClick={() => {
+                mutate({
+                  task: 'Install PWA Apple',
+                  notes: '',
+                })
+              }}
+            >Install App</Button>
 					</DialogTrigger>
 					<DialogContent>
 						<DialogHeader>
