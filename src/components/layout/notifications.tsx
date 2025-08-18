@@ -45,12 +45,12 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 	const ctx = api.useUtils()
 	const { data: userNotifications, isLoading } =
 		api.notifications.getAllUserUnread.useQuery(currentUser.id, {
-			refetchInterval: 1000 * 20 * 1,
+			refetchInterval: 1000 * 60 * 1,
 		})
 	const { data: userMessages } = api.message.getAllUserUnread.useQuery(
 		currentUser.id,
 		{
-			refetchInterval: 1000 * 20 * 1,
+			refetchInterval: 1000 * 60 * 1,
 		},
 	)
 	const { mutate: markAllNotificationsAsViewed } =

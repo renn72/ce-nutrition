@@ -15,14 +15,14 @@ import { subscriptionAtom } from './notifications'
 export const dynamic = 'force-dynamic'
 
 const NotificationTrigger = ({
-	currentUser : _currentUser,
+	currentUser: _currentUser,
 	items: messages,
 }: {
 	currentUser: GetUserById
 	items: Item[]
 }) => {
 	const [subscription, setSubscription] = useAtom(subscriptionAtom)
-  const [isMutating, setIsMutating] = useState(false)
+	const [isMutating, setIsMutating] = useState(false)
 
 	useEffect(() => {
 		if ('serviceWorker' in navigator && 'PushManager' in window) {
@@ -50,33 +50,35 @@ const NotificationTrigger = ({
 					console.log('subscription', message)
 					const serializedSub = JSON.parse(JSON.stringify(subscription))
 					sendNotification(message.content, serializedSub)
-          if (message.state === 'message' && !isMutating) {
-            setIsMutating(true)
-            markMessageAsNotified(message.id)
-          }
-          if (message.state === 'notification' && !isMutating) {
-            setIsMutating(true)
-            markNotificationAsNotified(message.id)
-          }
+					if (message.state === 'message' && !isMutating) {
+						setIsMutating(true)
+						markMessageAsNotified(message.id)
+					}
+					if (message.state === 'notification' && !isMutating) {
+						setIsMutating(true)
+						markNotificationAsNotified(message.id)
+					}
 				}
 			}
 			// console.log('subscription', message.content, subscription)
 			// const serializedSub = JSON.parse(JSON.stringify(subscription))
 			// sendNotification(message.content, serializedSub)
 		}
-	}, [subscription])
+	}, [subscription, messages])
 
 	const ctx = api.useUtils()
 	const { mutate: markNotificationAsNotified } =
 		api.notifications.markAsNotified.useMutation({
 			onSuccess: () => {
 				ctx.notifications.invalidate()
+				setIsMutating(false)
 			},
 		})
 	const { mutate: markMessageAsNotified } =
 		api.message.markAsNotified.useMutation({
 			onSuccess: () => {
 				ctx.message.invalidate()
+				setIsMutating(false)
 			},
 		})
 
