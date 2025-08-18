@@ -2446,7 +2446,7 @@ declare const notification: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             data: boolean;
             driverParam: number;
             notNull: false;
-            hasDefault: false;
+            hasDefault: true;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -2463,7 +2463,7 @@ declare const notification: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             data: boolean;
             driverParam: number;
             notNull: false;
-            hasDefault: false;
+            hasDefault: true;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -2480,7 +2480,7 @@ declare const notification: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             data: boolean;
             driverParam: number;
             notNull: false;
-            hasDefault: false;
+            hasDefault: true;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -10452,7 +10452,7 @@ declare const message: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             data: boolean;
             driverParam: number;
             notNull: false;
-            hasDefault: false;
+            hasDefault: true;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -10469,7 +10469,7 @@ declare const message: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             data: boolean;
             driverParam: number;
             notNull: false;
-            hasDefault: false;
+            hasDefault: true;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -10486,7 +10486,7 @@ declare const message: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             data: boolean;
             driverParam: number;
             notNull: false;
-            hasDefault: false;
+            hasDefault: true;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
