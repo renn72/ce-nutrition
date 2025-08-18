@@ -38,7 +38,8 @@ export async function sendNotification(message: string, sub: PushSubscription | 
 			JSON.stringify({
 				title: title,
 				body: message,
-				// icon: '/ce.png',
+				icon: '/ce.png',
+        badge: '/ce.png',
 			}),
 		)
 		return { success: true }
