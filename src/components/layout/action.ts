@@ -27,18 +27,18 @@ export async function unsubscribeUser() {
 	return { success: true }
 }
 
-export async function sendNotification(message: string) {
-	if (!subscription) {
+export async function sendNotification(message: string, sub: PushSubscription | null = null) {
+	if (!sub) {
 		throw new Error('No subscription available')
 	}
 
 	try {
 		await webpush.sendNotification(
-			subscription,
+			sub,
 			JSON.stringify({
 				title: 'Test Notification',
 				body: message,
-				icon: '/icon.png',
+				icon: '/ce.png',
 			}),
 		)
 		return { success: true }

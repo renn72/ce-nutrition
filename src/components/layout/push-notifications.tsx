@@ -11,11 +11,12 @@ import { urlBase64ToUint8Array } from './pwa'
 
 import { api } from '@/trpc/react'
 
+import { subscriptionAtom } from './notifications'
+import { useAtom } from 'jotai'
+
 const PushNotificationManager = () => {
 	const [isSupported, setIsSupported] = useState(false)
-	const [subscription, setSubscription] = useState<PushSubscription | null>(
-		null,
-	)
+	const [subscription, setSubscription] = useAtom(subscriptionAtom)
 	const [message, setMessage] = useState('')
 
   const { mutate } = api.adminLog.create.useMutation()
@@ -33,6 +34,7 @@ const PushNotificationManager = () => {
 			updateViaCache: 'none',
 		})
 		const sub = await registration.pushManager.getSubscription()
+    // @ts-ignore
 		setSubscription(sub)
 	}
 
@@ -44,6 +46,7 @@ const PushNotificationManager = () => {
 				env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
 			),
 		})
+    // @ts-ignore
 		setSubscription(sub)
 		const serializedSub = JSON.parse(JSON.stringify(sub))
 		await subscribeUser(serializedSub)
@@ -54,6 +57,7 @@ const PushNotificationManager = () => {
 	}
 
 	async function unsubscribeFromPush() {
+    // @ts-ignore
 		await subscription?.unsubscribe()
 		setSubscription(null)
 		await unsubscribeUser()

@@ -7653,6 +7653,17 @@ var messageRouter = createTRPCRouter({
     });
     return res;
   }),
+  markAsNotified: protectedProcedure.input(z23.number()).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.update(message).set({ isNotified: true }).where(eq17(message.id, input));
+    createLog2({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "Mark Message as Notified",
+      notes: "",
+      objectId: input
+    });
+    return res;
+  }),
   markFromUserAsViewedAndRead: protectedProcedure.input(z23.string()).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.update(message).set({
       isViewed: true,
@@ -9303,6 +9314,19 @@ var notificationRouter = createTRPCRouter({
     const res = await ctx.db.update(notification).set({
       isRead: true
     }).where(eq25(notification.id, input));
+    return res;
+  }),
+  markAsNotified: protectedProcedure.input(z33.number()).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.update(notification).set({
+      isNotified: true
+    }).where(eq25(notification.id, input));
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "Mark Notification as Notified",
+      notes: JSON.stringify(input),
+      objectId: null
+    });
     return res;
   }),
   markAllAsViewed: protectedProcedure.input(z33.string()).mutation(async ({ ctx, input }) => {

@@ -23,7 +23,6 @@ import { toast } from 'sonner'
 const Supplements = ({ currentUser }: { currentUser: GetUserById }) => {
 	const [isOpen, setIsOpen] = useState(true)
 	const [checked, setChecked] = useState(false)
-	console.log(currentUser)
 
 	const ctx = api.useUtils()
 	const { mutate } = api.user.updateRoleSupplementDisclaimer.useMutation({

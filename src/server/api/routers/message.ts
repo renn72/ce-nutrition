@@ -131,6 +131,22 @@ export const messageRouter = createTRPCRouter({
       })
       return res
     }),
+  markAsNotified: protectedProcedure
+    .input(z.number())
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.db
+        .update(message)
+        .set({ isNotified: true })
+        .where(eq(message.id, input))
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        task: 'Mark Message as Notified',
+        notes: '',
+        objectId: input,
+      })
+      return res
+    }),
   markFromUserAsViewedAndRead: protectedProcedure
     .input(z.string())
     .mutation(async ({ input, ctx }) => {
