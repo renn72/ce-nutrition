@@ -7555,7 +7555,7 @@ var weighInRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/message.ts
-import { eq as eq17, and as and5 } from "drizzle-orm";
+import { and as and5, eq as eq17 } from "drizzle-orm";
 import { z as z23 } from "zod";
 var createLog2 = async ({
   user: user3,
@@ -7665,6 +7665,20 @@ var messageRouter = createTRPCRouter({
       task: "Mark Message as Read",
       notes: "",
       objectId: input
+    });
+    return res;
+  }),
+  markAllAsViewed: protectedProcedure.input(z23.string()).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.update(message).set({
+      isViewed: true,
+      isRead: true
+    }).where(eq17(message.fromUserId, input));
+    createLog2({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "Mark All Messages as Viewed/Read",
+      notes: "",
+      objectId: null
     });
     return res;
   }),

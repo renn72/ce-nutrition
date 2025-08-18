@@ -53,6 +53,7 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 			refetchInterval: 1000 * 60 * 1,
 		},
 	)
+
 	const { mutate: markAllNotificationsAsViewed } =
 		api.notifications.markAllAsViewed.useMutation({
 			onSuccess: () => {
@@ -64,6 +65,17 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 				ctx.notifications.invalidate()
 			},
 		})
+  const { mutate: markAllMessagesAsViewed } =
+    api.message.markAllAsViewed.useMutation({
+      onSuccess: () => {
+        ctx.message.invalidate()
+        setIsOpen(false)
+      },
+      onError: () => {
+        toast.error('error')
+        ctx.message.invalidate()
+      },
+    })
 
 	const fullList: Item[] = [
 		...(userMessages?.map((message) => ({
@@ -137,6 +149,7 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 						variant='outline'
 						onClick={() => {
 							markAllNotificationsAsViewed(currentUser.id)
+              markAllMessagesAsViewed(currentUser.id)
 						}}
 					>
 						Clear

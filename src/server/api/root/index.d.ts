@@ -18526,6 +18526,11 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        markAllAsViewed: _trpc_server.TRPCMutationProcedure<{
+            input: string;
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         markAsNotified: _trpc_server.TRPCMutationProcedure<{
             input: number;
             output: _libsql_client.ResultSet;
@@ -25284,6 +25289,11 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         }>;
         markAsRead: _trpc_server.TRPCMutationProcedure<{
             input: number;
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        markAllAsViewed: _trpc_server.TRPCMutationProcedure<{
+            input: string;
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
