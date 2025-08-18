@@ -157,7 +157,7 @@ export const messageRouter = createTRPCRouter({
 					isViewed: true,
 					isRead: true,
 				})
-				.where(eq(message.fromUserId, input))
+				.where(eq(message.userId, input))
 			createLog({
 				user: ctx.session.user.name,
 				userId: ctx.session.user.id,

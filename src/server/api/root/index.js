@@ -7672,7 +7672,7 @@ var messageRouter = createTRPCRouter({
     const res = await ctx.db.update(message).set({
       isViewed: true,
       isRead: true
-    }).where(eq17(message.fromUserId, input));
+    }).where(eq17(message.userId, input));
     createLog2({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
