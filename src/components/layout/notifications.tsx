@@ -2,7 +2,7 @@
 
 import { api } from '@/trpc/react'
 
-import { useState, } from 'react'
+import { useState } from 'react'
 
 import { cn } from '@/lib/utils'
 import type { GetUserById } from '@/types'
@@ -21,8 +21,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { Notification } from './notification'
-import { PushNotificationManager } from './push-notifications'
 import { NotificationTrigger } from './notification-trigger'
+import { PushNotificationManager } from './push-notifications'
 
 export const subscriptionAtom = atom<PushSubscription | null>(null)
 
@@ -43,15 +43,16 @@ export interface Item {
 const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const ctx = api.useUtils()
-	const { data: userNotifications, isLoading } = api.notifications.getAllUserUnread.useQuery(
+	const { data: userNotifications, isLoading } =
+		api.notifications.getAllUserUnread.useQuery(currentUser.id, {
+			refetchInterval: 1000 * 20 * 1,
+		})
+	const { data: userMessages } = api.message.getAllUserUnread.useQuery(
 		currentUser.id,
 		{
 			refetchInterval: 1000 * 20 * 1,
 		},
 	)
-	const { data: userMessages } = api.message.getAllUserUnread.useQuery(currentUser.id, {
-    refetchInterval: 1000 * 20 * 1,
-  })
 	const { mutate: markAllNotificationsAsViewed } =
 		api.notifications.markAllAsViewed.useMutation({
 			onSuccess: () => {
@@ -93,11 +94,17 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 		(message) => message.isViewed === false || message.isViewed === null,
 	)
 
-  if (isLoading) return null
+	if (isLoading)
+		return (
+			<Bell
+				size={36}
+				className='bg-accentt cursor-pointer rounded-full p-1'
+			/>
+		)
 
 	return (
 		<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-      <NotificationTrigger currentUser={currentUser} items={fullList} />
+			<NotificationTrigger currentUser={currentUser} items={fullList} />
 			<DropdownMenuTrigger asChild>
 				{isNotifications ? (
 					<div className={cn('relative', isNotifications ? '' : '')}>
