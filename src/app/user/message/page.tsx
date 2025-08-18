@@ -13,21 +13,11 @@ import { useAtomValue } from 'jotai'
 import {
 	Check,
 	ChevronsUpDown,
-	CircleAlert,
-	CircleCheck,
-	CircleDot,
 	CirclePlus,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card'
 import {
 	Command,
 	CommandEmpty,
@@ -44,14 +34,12 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
 import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
 } from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 
 const SendTo = ({
@@ -277,9 +265,6 @@ const Messages = ({ currentUser }: { currentUser: GetUserById }) => {
 
 	if (messagesLoading || sentMessageLoading || getAllUserLoading) return null
 
-	console.log('sent', sentMessages)
-	// console.log('messages', messages)
-
 	const s = sentMessages?.map((message) => {
 		return {
 			date: message.createdAt,
@@ -310,10 +295,6 @@ const Messages = ({ currentUser }: { currentUser: GetUserById }) => {
 	}).filter((user) => {
     return l.findIndex((message) => message.user.id === user.id) === -1
   })
-
-	console.log('s', s)
-	console.log('m', m)
-	console.log('l', l)
 
 	return (
 		<div className='flex gap-4 flex-col mt-20 max-w-[100vw]'>
