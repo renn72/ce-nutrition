@@ -18358,6 +18358,76 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             }[];
             meta: object;
         }>;
+        getAllUserUnread: _trpc_server.TRPCQueryProcedure<{
+            input: string;
+            output: {
+                message: string | null;
+                id: number;
+                image: string | null;
+                createdAt: Date;
+                userId: string | null;
+                isRead: boolean | null;
+                isViewed: boolean | null;
+                isDeleted: boolean | null;
+                isNotified: boolean | null;
+                subject: string | null;
+                isImportant: boolean | null;
+                fromUserId: string | null;
+                user: {
+                    id: string;
+                    name: string | null;
+                    firstName: string | null;
+                    lastName: string | null;
+                    clerkId: string | null;
+                    birthDate: Date | null;
+                    gender: string | null;
+                    address: string | null;
+                    notes: string | null;
+                    instagram: string | null;
+                    openLifter: string | null;
+                    phone: string | null;
+                    email: string | null;
+                    emailVerified: Date | null;
+                    password: string | null;
+                    currentPlanId: number | null;
+                    image: string | null;
+                    isFake: boolean | null;
+                    isTrainer: boolean | null;
+                    isRoot: boolean | null;
+                    isCreator: boolean | null;
+                    isAllTrainers: boolean | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                } | null;
+                fromUser: {
+                    id: string;
+                    name: string | null;
+                    firstName: string | null;
+                    lastName: string | null;
+                    clerkId: string | null;
+                    birthDate: Date | null;
+                    gender: string | null;
+                    address: string | null;
+                    notes: string | null;
+                    instagram: string | null;
+                    openLifter: string | null;
+                    phone: string | null;
+                    email: string | null;
+                    emailVerified: Date | null;
+                    password: string | null;
+                    currentPlanId: number | null;
+                    image: string | null;
+                    isFake: boolean | null;
+                    isTrainer: boolean | null;
+                    isRoot: boolean | null;
+                    isCreator: boolean | null;
+                    isAllTrainers: boolean | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                } | null;
+            }[];
+            meta: object;
+        }>;
         getAllFromUser: _trpc_server.TRPCQueryProcedure<{
             input: string;
             output: {
@@ -19995,6 +20065,23 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             meta: object;
         }>;
         getAllUser: _trpc_server.TRPCQueryProcedure<{
+            input: string;
+            output: {
+                id: number;
+                notes: string | null;
+                createdAt: Date;
+                description: string | null;
+                userId: string | null;
+                code: string | null;
+                title: string | null;
+                isRead: boolean | null;
+                isViewed: boolean | null;
+                isDeleted: boolean | null;
+                isNotified: boolean | null;
+            }[];
+            meta: object;
+        }>;
+        getAllUserUnread: _trpc_server.TRPCQueryProcedure<{
             input: string;
             output: {
                 id: number;
@@ -25032,6 +25119,76 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             }[];
             meta: object;
         }>;
+        getAllUserUnread: _trpc_server.TRPCQueryProcedure<{
+            input: string;
+            output: {
+                message: string | null;
+                id: number;
+                image: string | null;
+                createdAt: Date;
+                userId: string | null;
+                isRead: boolean | null;
+                isViewed: boolean | null;
+                isDeleted: boolean | null;
+                isNotified: boolean | null;
+                subject: string | null;
+                isImportant: boolean | null;
+                fromUserId: string | null;
+                user: {
+                    id: string;
+                    name: string | null;
+                    firstName: string | null;
+                    lastName: string | null;
+                    clerkId: string | null;
+                    birthDate: Date | null;
+                    gender: string | null;
+                    address: string | null;
+                    notes: string | null;
+                    instagram: string | null;
+                    openLifter: string | null;
+                    phone: string | null;
+                    email: string | null;
+                    emailVerified: Date | null;
+                    password: string | null;
+                    currentPlanId: number | null;
+                    image: string | null;
+                    isFake: boolean | null;
+                    isTrainer: boolean | null;
+                    isRoot: boolean | null;
+                    isCreator: boolean | null;
+                    isAllTrainers: boolean | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                } | null;
+                fromUser: {
+                    id: string;
+                    name: string | null;
+                    firstName: string | null;
+                    lastName: string | null;
+                    clerkId: string | null;
+                    birthDate: Date | null;
+                    gender: string | null;
+                    address: string | null;
+                    notes: string | null;
+                    instagram: string | null;
+                    openLifter: string | null;
+                    phone: string | null;
+                    email: string | null;
+                    emailVerified: Date | null;
+                    password: string | null;
+                    currentPlanId: number | null;
+                    image: string | null;
+                    isFake: boolean | null;
+                    isTrainer: boolean | null;
+                    isRoot: boolean | null;
+                    isCreator: boolean | null;
+                    isAllTrainers: boolean | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                } | null;
+            }[];
+            meta: object;
+        }>;
         getAllFromUser: _trpc_server.TRPCQueryProcedure<{
             input: string;
             output: {
@@ -26669,6 +26826,23 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             meta: object;
         }>;
         getAllUser: _trpc_server.TRPCQueryProcedure<{
+            input: string;
+            output: {
+                id: number;
+                notes: string | null;
+                createdAt: Date;
+                description: string | null;
+                userId: string | null;
+                code: string | null;
+                title: string | null;
+                isRead: boolean | null;
+                isViewed: boolean | null;
+                isDeleted: boolean | null;
+                isNotified: boolean | null;
+            }[];
+            meta: object;
+        }>;
+        getAllUserUnread: _trpc_server.TRPCQueryProcedure<{
             input: string;
             output: {
                 id: number;

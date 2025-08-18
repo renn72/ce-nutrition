@@ -1971,7 +1971,7 @@ import { z as z3 } from "zod";
 var ingredientRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.ingredient.findMany({
-      where: (ingredient2, { isNull, and: and10, eq: eq26 }) => and10(
+      where: (ingredient2, { isNull, and: and12, eq: eq26 }) => and12(
         isNull(ingredient2.hiddenAt),
         isNull(ingredient2.deletedAt),
         eq26(ingredient2.isSupplement, false),
@@ -1997,7 +1997,7 @@ var ingredientRouter = createTRPCRouter({
   }),
   getAllFav: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.ingredient.findMany({
-      where: (ingredient2, { isNull, and: and10, eq: eq26 }) => and10(
+      where: (ingredient2, { isNull, and: and12, eq: eq26 }) => and12(
         isNull(ingredient2.hiddenAt),
         isNull(ingredient2.deletedAt),
         eq26(ingredient2.isSupplement, false),
@@ -4900,7 +4900,7 @@ var roles = {
   }),
   updateRoleBodyBuilderImages: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role3, { eq: eq26, and: and10 }) => and10(
+      where: (role3, { eq: eq26, and: and12 }) => and12(
         eq26(role3.userId, input.userId),
         eq26(role3.name, "body-builder-images")
       )
@@ -4917,7 +4917,7 @@ var roles = {
   }),
   updateRoleSupplementDisclaimer: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role3, { eq: eq26, and: and10 }) => and10(
+      where: (role3, { eq: eq26, and: and12 }) => and12(
         eq26(role3.userId, input.userId),
         eq26(role3.name, "supplement_disclaimer_v1")
       )
@@ -4941,7 +4941,7 @@ var roles = {
   }),
   updateRoleSupplements: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role3, { eq: eq26, and: and10 }) => and10(eq26(role3.userId, input.userId), eq26(role3.name, "supplements"))
+      where: (role3, { eq: eq26, and: and12 }) => and12(eq26(role3.userId, input.userId), eq26(role3.name, "supplements"))
     });
     if (res) {
       await ctx.db.delete(role).where(eq5(role.id, res.id));
@@ -4962,7 +4962,7 @@ var roles = {
   }),
   updateRoleCreateMeals: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role3, { eq: eq26, and: and10 }) => and10(eq26(role3.userId, input.userId), eq26(role3.name, "create-meals"))
+      where: (role3, { eq: eq26, and: and12 }) => and12(eq26(role3.userId, input.userId), eq26(role3.name, "create-meals"))
     });
     if (res) {
       await ctx.db.delete(role).where(eq5(role.id, res.id));
@@ -4983,7 +4983,7 @@ var roles = {
   }),
   updateRoleAdmin: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role3, { eq: eq26, and: and10 }) => and10(eq26(role3.userId, input.userId), eq26(role3.name, "admin"))
+      where: (role3, { eq: eq26, and: and12 }) => and12(eq26(role3.userId, input.userId), eq26(role3.name, "admin"))
     });
     if (res) {
       await ctx.db.delete(role).where(eq5(role.id, res.id));
@@ -5200,7 +5200,7 @@ var notifications = {
     })
   ).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.query.notificationToggle.findFirst({
-      where: (toggle, { eq: eq26, and: and10 }) => and10(eq26(toggle.userId, input.userId), eq26(toggle.type, input.type))
+      where: (toggle, { eq: eq26, and: and12 }) => and12(eq26(toggle.userId, input.userId), eq26(toggle.type, input.type))
     });
     createLog({
       user: ctx.session.user.name,
@@ -5293,7 +5293,7 @@ var recipeRouter = createTRPCRouter({
   }),
   getAllUserCreated: protectedProcedure.input(z14.object({ userId: z14.string() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.recipe.findMany({
-      where: (recipe2, { eq: eq26, and: and10 }) => and10(
+      where: (recipe2, { eq: eq26, and: and12 }) => and12(
         eq26(recipe2.creatorId, input.userId),
         eq26(recipe2.isUserRecipe, true)
       ),
@@ -7555,7 +7555,7 @@ var weighInRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/message.ts
-import { eq as eq17 } from "drizzle-orm";
+import { eq as eq17, and as and5 } from "drizzle-orm";
 import { z as z23 } from "zod";
 var createLog2 = async ({
   user: user3,
@@ -7602,6 +7602,21 @@ var messageRouter = createTRPCRouter({
     }
     const res = await ctx.db.query.message.findMany({
       where: eq17(message.userId, userId),
+      orderBy: (data, { desc: desc10 }) => desc10(data.createdAt),
+      with: {
+        fromUser: true,
+        user: true
+      }
+    });
+    return res;
+  }),
+  getAllUserUnread: protectedProcedure.input(z23.string()).query(async ({ ctx, input }) => {
+    let userId = input;
+    if (input === "") {
+      userId = ctx.session?.user.id;
+    }
+    const res = await ctx.db.query.message.findMany({
+      where: and5(eq17(message.userId, userId), eq17(message.isRead, false)),
       orderBy: (data, { desc: desc10 }) => desc10(data.createdAt),
       with: {
         fromUser: true,
@@ -7819,7 +7834,7 @@ var metricsRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/tag.ts
-import { and as and6, eq as eq19 } from "drizzle-orm";
+import { and as and7, eq as eq19 } from "drizzle-orm";
 import { z as z25 } from "zod";
 var tagRouter = createTRPCRouter({
   getAllTagsCurrentUser: protectedProcedure.query(async ({ ctx }) => {
@@ -7851,14 +7866,14 @@ var tagRouter = createTRPCRouter({
     })
   ).mutation(async ({ input, ctx }) => {
     const isTagged = await ctx.db.query.tagToDailyLog.findFirst({
-      where: and6(
+      where: and7(
         eq19(tagToDailyLog.tagId, input.tagId),
         eq19(tagToDailyLog.dailyLogId, input.dailyLogId)
       )
     });
     if (isTagged) {
       await ctx.db.delete(tagToDailyLog).where(
-        and6(
+        and7(
           eq19(tagToDailyLog.tagId, input.tagId),
           eq19(tagToDailyLog.dailyLogId, input.dailyLogId)
         )
@@ -7945,7 +7960,7 @@ var goalsRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/trainer.ts
-import { and as and7, eq as eq21 } from "drizzle-orm";
+import { and as and8, eq as eq21 } from "drizzle-orm";
 import { z as z28 } from "zod";
 var createLog4 = async ({
   user: user3,
@@ -7989,7 +8004,7 @@ var trainerRouter = createTRPCRouter({
   }),
   delete: protectedProcedure.input(z28.object({ userId: z28.string(), trainerId: z28.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.delete(userToTrainer).where(
-      and7(
+      and8(
         eq21(userToTrainer.userId, input.userId),
         eq21(userToTrainer.trainerId, input.trainerId)
       )
@@ -8007,7 +8022,7 @@ var trainerRouter = createTRPCRouter({
 
 // src/server/api/routers/supplements.ts
 import { TRPCError as TRPCError7 } from "@trpc/server";
-import { and as and8, asc as asc2, eq as eq22 } from "drizzle-orm";
+import { and as and9, asc as asc2, eq as eq22 } from "drizzle-orm";
 import { z as z30 } from "zod";
 
 // src/components/supplements/store.ts
@@ -8460,7 +8475,7 @@ var supplementsRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session?.user?.id;
     const res = await ctx.db.query.ingredient.findMany({
-      where: (ingredient2, { isNull, and: and10, eq: eq26 }) => and10(
+      where: (ingredient2, { isNull, and: and12, eq: eq26 }) => and12(
         isNull(ingredient2.hiddenAt),
         isNull(ingredient2.deletedAt),
         eq26(ingredient2.isSupplement, true),
@@ -8577,7 +8592,7 @@ var supplementsRouter = createTRPCRouter({
       unit: input.unit
     });
     const notif = await ctx.db.query.notification.findMany({
-      where: and8(
+      where: and9(
         eq22(notification.userId, input.userId),
         eq22(notification.code, "supplement_update"),
         eq22(notification.isViewed, false)
@@ -8607,7 +8622,7 @@ var supplementsRouter = createTRPCRouter({
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and8(
+      where: and9(
         eq22(dailyLog.date, input.date),
         eq22(dailyLog.userId, ctx.session.user.id)
       )
@@ -8651,7 +8666,7 @@ var supplementsRouter = createTRPCRouter({
   }),
   deleteFromUser: protectedProcedure.input(z30.object({ suppId: z30.number(), suppStackId: z30.number() })).mutation(async ({ input, ctx }) => {
     await ctx.db.delete(supplementToSupplementStack).where(
-      and8(
+      and9(
         eq22(supplementToSupplementStack.supplementId, input.suppId),
         eq22(
           supplementToSupplementStack.supplementStackId,
@@ -9223,7 +9238,7 @@ var trainerNotesRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/userCatagories.tsx
-import { and as and9, eq as eq24 } from "drizzle-orm";
+import { and as and10, eq as eq24 } from "drizzle-orm";
 import { z as z32 } from "zod";
 var userCatagoriesRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -9255,7 +9270,7 @@ var userCatagoriesRouter = createTRPCRouter({
   }),
   removeFromUser: protectedProcedure.input(z32.object({ userId: z32.string(), categoryId: z32.number() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.delete(userToUserCategory).where(
-      and9(
+      and10(
         eq24(userToUserCategory.userId, input.userId),
         eq24(userToUserCategory.categoryId, input.categoryId)
       )
@@ -9265,7 +9280,7 @@ var userCatagoriesRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/notification.ts
-import { eq as eq25 } from "drizzle-orm";
+import { eq as eq25, and as and11 } from "drizzle-orm";
 import { z as z33 } from "zod";
 var notificationRouter = createTRPCRouter({
   create: protectedProcedure.input(
@@ -9302,6 +9317,13 @@ var notificationRouter = createTRPCRouter({
   getAllUser: protectedProcedure.input(z33.string()).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.notification.findMany({
       where: eq25(notification.userId, input),
+      orderBy: (data, { desc: desc10 }) => desc10(data.createdAt)
+    });
+    return res;
+  }),
+  getAllUserUnread: protectedProcedure.input(z33.string()).query(async ({ ctx, input }) => {
+    const res = await ctx.db.query.notification.findMany({
+      where: and11(eq25(notification.userId, input), eq25(notification.isRead, false)),
       orderBy: (data, { desc: desc10 }) => desc10(data.createdAt)
     });
     return res;

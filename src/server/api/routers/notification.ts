@@ -1,6 +1,6 @@
 import { notification } from '@/server/db/schema/notification'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
-import { eq } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 import { z } from 'zod'
 
 import { createLog } from '@/server/api/routers/admin-log'
@@ -48,6 +48,15 @@ export const notificationRouter = createTRPCRouter({
 			})
 			return res
 		}),
+  getAllUserUnread: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const res = await ctx.db.query.notification.findMany({
+        where: and(eq(notification.userId, input), eq(notification.isRead, false)),
+        orderBy: (data, { desc }) => desc(data.createdAt),
+      })
+      return res
+    }),
 	delete: protectedProcedure
 		.input(z.number())
 		.mutation(async ({ input, ctx }) => {

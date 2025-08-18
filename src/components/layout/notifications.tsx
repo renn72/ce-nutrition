@@ -43,13 +43,15 @@ export interface Item {
 const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const ctx = api.useUtils()
-	const { data: userNotifications, isLoading } = api.notifications.getAllUser.useQuery(
+	const { data: userNotifications, isLoading } = api.notifications.getAllUserUnread.useQuery(
 		currentUser.id,
 		{
-			refetchInterval: 1000 * 60 * 1,
+			refetchInterval: 1000 * 20 * 1,
 		},
 	)
-	const { data: userMessages } = api.message.getAllUser.useQuery(currentUser.id)
+	const { data: userMessages } = api.message.getAllUserUnread.useQuery(currentUser.id, {
+    refetchInterval: 1000 * 20 * 1,
+  })
 	const { mutate: markAllNotificationsAsViewed } =
 		api.notifications.markAllAsViewed.useMutation({
 			onSuccess: () => {

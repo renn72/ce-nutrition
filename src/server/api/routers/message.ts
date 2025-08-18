@@ -2,7 +2,7 @@ import { db } from '@/server/db'
 import { log } from '@/server/db/schema/log'
 import { message } from '@/server/db/schema/message'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
-import { eq } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 import { z } from 'zod'
 
 const createLog = async ({
@@ -66,6 +66,23 @@ export const messageRouter = createTRPCRouter({
       }
       const res = await ctx.db.query.message.findMany({
         where: eq(message.userId, userId),
+        orderBy: (data, { desc }) => desc(data.createdAt),
+        with: {
+          fromUser: true,
+          user: true,
+        },
+      })
+      return res
+    }),
+  getAllUserUnread: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      let userId = input
+      if (input === '') {
+        userId = ctx.session?.user.id
+      }
+      const res = await ctx.db.query.message.findMany({
+        where: and(eq(message.userId, userId), eq(message.isRead, false)),
         orderBy: (data, { desc }) => desc(data.createdAt),
         with: {
           fromUser: true,
