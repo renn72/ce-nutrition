@@ -27,7 +27,7 @@ export async function unsubscribeUser() {
 	return { success: true }
 }
 
-export async function sendNotification(message: string, sub: PushSubscription | null = null) {
+export async function sendNotification(message: string, sub: PushSubscription | null = null, title: string = 'Notification') {
 	if (!sub) {
 		throw new Error('No subscription available')
 	}
@@ -36,9 +36,9 @@ export async function sendNotification(message: string, sub: PushSubscription | 
 		await webpush.sendNotification(
 			sub,
 			JSON.stringify({
-				title: 'Test Notification',
+				title: title,
 				body: message,
-				icon: '/ce.png',
+				// icon: '/ce.png',
 			}),
 		)
 		return { success: true }
