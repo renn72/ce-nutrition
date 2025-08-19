@@ -11512,6 +11512,25 @@ declare const images: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
         }, {}, {
             length: number | undefined;
         }>;
+        svg: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "svg";
+            tableName: "images";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
     };
     dialect: "sqlite";
 }>;
@@ -12520,6 +12539,63 @@ declare const dailyLog: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
         }, {}, {
             length: number | undefined;
         }>;
+        frontImageSvg: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "front_image_svg";
+            tableName: "daily_log";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        sideImageSvg: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "side_image_svg";
+            tableName: "daily_log";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        backImageSvg: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "back_image_svg";
+            tableName: "daily_log";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
         frontPoseImage: drizzle_orm_sqlite_core.SQLiteColumn<{
             name: "front_pose_image";
             tableName: "daily_log";
@@ -13296,6 +13372,103 @@ declare const dailyMealRelations: drizzle_orm.Relations<"daily_meal", {
     ingredients: drizzle_orm.Many<"user_ingredient">;
 }>;
 
+declare const pushSubscription: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
+    name: "push_subscription";
+    schema: undefined;
+    columns: {
+        id: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "id";
+            tableName: "push_subscription";
+            dataType: "number";
+            columnType: "SQLiteInteger";
+            data: number;
+            driverParam: number;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: true;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        createdAt: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "created_at";
+            tableName: "push_subscription";
+            dataType: "date";
+            columnType: "SQLiteTimestamp";
+            data: Date;
+            driverParam: number;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        updatedAt: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "updated_at";
+            tableName: "push_subscription";
+            dataType: "date";
+            columnType: "SQLiteTimestamp";
+            data: Date;
+            driverParam: number;
+            notNull: false;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        subscription: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "subscription";
+            tableName: "push_subscription";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        userId: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "user_id";
+            tableName: "push_subscription";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+    };
+    dialect: "sqlite";
+}>;
+
 declare const ______db_schema_account: typeof account;
 declare const ______db_schema_accountsRelations: typeof accountsRelations;
 declare const ______db_schema_bodyFat: typeof bodyFat;
@@ -13348,6 +13521,7 @@ declare const ______db_schema_planToMeal: typeof planToMeal;
 declare const ______db_schema_planToMealRelations: typeof planToMealRelations;
 declare const ______db_schema_poopLog: typeof poopLog;
 declare const ______db_schema_poopLogRelations: typeof poopLogRelations;
+declare const ______db_schema_pushSubscription: typeof pushSubscription;
 declare const ______db_schema_recipe: typeof recipe;
 declare const ______db_schema_recipeRelations: typeof recipeRelations;
 declare const ______db_schema_recipeToIngredient: typeof recipeToIngredient;
@@ -13395,7 +13569,7 @@ declare const ______db_schema_waterLogRelations: typeof waterLogRelations;
 declare const ______db_schema_weighIn: typeof weighIn;
 declare const ______db_schema_weighInRelations: typeof weighInRelations;
 declare namespace ______db_schema {
-  export { ______db_schema_account as account, ______db_schema_accountsRelations as accountsRelations, ______db_schema_bodyFat as bodyFat, ______db_schema_bodyFatRelations as bodyFatRelations, ______db_schema_bodyWeight as bodyWeight, ______db_schema_bodyWeightRelations as bodyWeightRelations, ______db_schema_dailyLog as dailyLog, ______db_schema_dailyLogRelations as dailyLogRelations, ______db_schema_dailyMeal as dailyMeal, ______db_schema_dailyMealRelations as dailyMealRelations, ______db_schema_dailySupplement as dailySupplement, ______db_schema_dailySupplementRelations as dailySupplementRelations, ______db_schema_girthMeasurement as girthMeasurement, ______db_schema_girthMeasurementRelations as girthMeasurementRelations, ______db_schema_goals as goals, ______db_schema_goalsRelations as goalsRelations, ______db_schema_groceryStore as groceryStore, ______db_schema_groceryStoreRelations as groceryStoreRelations, ______db_schema_images as images, ______db_schema_imagesRelations as imagesRelations, ______db_schema_ingredient as ingredient, ______db_schema_ingredientAdditionOne as ingredientAdditionOne, ______db_schema_ingredientAdditionOneRelations as ingredientAdditionOneRelations, ______db_schema_ingredientAdditionThree as ingredientAdditionThree, ______db_schema_ingredientAdditionThreeRelations as ingredientAdditionThreeRelations, ______db_schema_ingredientAdditionTwo as ingredientAdditionTwo, ______db_schema_ingredientAdditionTwoRelations as ingredientAdditionTwoRelations, ______db_schema_ingredientRelations as ingredientRelations, ______db_schema_ingredientToGroceryStore as ingredientToGroceryStore, ______db_schema_ingredientToGroceryStoreRelations as ingredientToGroceryStoreRelations, ______db_schema_leanMass as leanMass, ______db_schema_leanMassRelations as leanMassRelations, ______db_schema_log as log, ______db_schema_logNew as logNew, ______db_schema_meal as meal, ______db_schema_mealRelations as mealRelations, ______db_schema_mealToRecipe as mealToRecipe, ______db_schema_mealToRecipeRelations as mealToRecipeRelations, ______db_schema_mealToVegeStack as mealToVegeStack, ______db_schema_mealToVegeStackRelations as mealToVegeStackRelations, ______db_schema_message as message, ______db_schema_messageRelations as messageRelations, ______db_schema_notification as notification, ______db_schema_notificationRelations as notificationRelations, ______db_schema_notificationToggle as notificationToggle, ______db_schema_notificationToggleRelations as notificationToggleRelations, ______db_schema_plan as plan, ______db_schema_planRelations as planRelations, ______db_schema_planToMeal as planToMeal, ______db_schema_planToMealRelations as planToMealRelations, ______db_schema_poopLog as poopLog, ______db_schema_poopLogRelations as poopLogRelations, ______db_schema_recipe as recipe, ______db_schema_recipeRelations as recipeRelations, ______db_schema_recipeToIngredient as recipeToIngredient, ______db_schema_recipeToIngredientRelations as recipeToIngredientRelations, ______db_schema_role as role, ______db_schema_roleRelations as roleRelations, ______db_schema_session as session, ______db_schema_sessionsRelations as sessionsRelations, ______db_schema_settings as settings, ______db_schema_skinfold as skinfold, ______db_schema_skinfoldRelations as skinfoldRelations, ______db_schema_supplementStack as supplementStack, ______db_schema_supplementStackRelations as supplementStackRelations, ______db_schema_supplementToSupplementStack as supplementToSupplementStack, ______db_schema_supplementToSupplementStackRelations as supplementToSupplementStackRelations, ______db_schema_tag as tag, ______db_schema_tagRelations as tagRelations, ______db_schema_tagToDailyLog as tagToDailyLog, ______db_schema_tagToDailyLogRelations as tagToDailyLogRelations, ______db_schema_trainerNotes as trainerNotes, ______db_schema_trainerNotesRelations as trainerNotesRelations, ______db_schema_user as user, ______db_schema_userCategory as userCategory, ______db_schema_userCategoryRelations as userCategoryRelations, ______db_schema_userIngredient as userIngredient, ______db_schema_userIngredientRelations as userIngredientRelations, ______db_schema_userMeal as userMeal, ______db_schema_userMealRelations as userMealRelations, ______db_schema_userPlan as userPlan, ______db_schema_userPlanRelations as userPlanRelations, ______db_schema_userRecipe as userRecipe, ______db_schema_userRecipeRelations as userRecipeRelations, ______db_schema_userRelations as userRelations, ______db_schema_userSettings as userSettings, ______db_schema_userSettingsRelations as userSettingsRelations, ______db_schema_userToTrainer as userToTrainer, ______db_schema_userToTrainerRelations as userToTrainerRelations, ______db_schema_userToUserCategory as userToUserCategory, ______db_schema_usertoUserCategoryRelations as usertoUserCategoryRelations, ______db_schema_vegeStack as vegeStack, ______db_schema_vegeStackRelations as vegeStackRelations, ______db_schema_verificationToken as verificationToken, ______db_schema_waterLog as waterLog, ______db_schema_waterLogRelations as waterLogRelations, ______db_schema_weighIn as weighIn, ______db_schema_weighInRelations as weighInRelations };
+  export { ______db_schema_account as account, ______db_schema_accountsRelations as accountsRelations, ______db_schema_bodyFat as bodyFat, ______db_schema_bodyFatRelations as bodyFatRelations, ______db_schema_bodyWeight as bodyWeight, ______db_schema_bodyWeightRelations as bodyWeightRelations, ______db_schema_dailyLog as dailyLog, ______db_schema_dailyLogRelations as dailyLogRelations, ______db_schema_dailyMeal as dailyMeal, ______db_schema_dailyMealRelations as dailyMealRelations, ______db_schema_dailySupplement as dailySupplement, ______db_schema_dailySupplementRelations as dailySupplementRelations, ______db_schema_girthMeasurement as girthMeasurement, ______db_schema_girthMeasurementRelations as girthMeasurementRelations, ______db_schema_goals as goals, ______db_schema_goalsRelations as goalsRelations, ______db_schema_groceryStore as groceryStore, ______db_schema_groceryStoreRelations as groceryStoreRelations, ______db_schema_images as images, ______db_schema_imagesRelations as imagesRelations, ______db_schema_ingredient as ingredient, ______db_schema_ingredientAdditionOne as ingredientAdditionOne, ______db_schema_ingredientAdditionOneRelations as ingredientAdditionOneRelations, ______db_schema_ingredientAdditionThree as ingredientAdditionThree, ______db_schema_ingredientAdditionThreeRelations as ingredientAdditionThreeRelations, ______db_schema_ingredientAdditionTwo as ingredientAdditionTwo, ______db_schema_ingredientAdditionTwoRelations as ingredientAdditionTwoRelations, ______db_schema_ingredientRelations as ingredientRelations, ______db_schema_ingredientToGroceryStore as ingredientToGroceryStore, ______db_schema_ingredientToGroceryStoreRelations as ingredientToGroceryStoreRelations, ______db_schema_leanMass as leanMass, ______db_schema_leanMassRelations as leanMassRelations, ______db_schema_log as log, ______db_schema_logNew as logNew, ______db_schema_meal as meal, ______db_schema_mealRelations as mealRelations, ______db_schema_mealToRecipe as mealToRecipe, ______db_schema_mealToRecipeRelations as mealToRecipeRelations, ______db_schema_mealToVegeStack as mealToVegeStack, ______db_schema_mealToVegeStackRelations as mealToVegeStackRelations, ______db_schema_message as message, ______db_schema_messageRelations as messageRelations, ______db_schema_notification as notification, ______db_schema_notificationRelations as notificationRelations, ______db_schema_notificationToggle as notificationToggle, ______db_schema_notificationToggleRelations as notificationToggleRelations, ______db_schema_plan as plan, ______db_schema_planRelations as planRelations, ______db_schema_planToMeal as planToMeal, ______db_schema_planToMealRelations as planToMealRelations, ______db_schema_poopLog as poopLog, ______db_schema_poopLogRelations as poopLogRelations, ______db_schema_pushSubscription as pushSubscription, ______db_schema_recipe as recipe, ______db_schema_recipeRelations as recipeRelations, ______db_schema_recipeToIngredient as recipeToIngredient, ______db_schema_recipeToIngredientRelations as recipeToIngredientRelations, ______db_schema_role as role, ______db_schema_roleRelations as roleRelations, ______db_schema_session as session, ______db_schema_sessionsRelations as sessionsRelations, ______db_schema_settings as settings, ______db_schema_skinfold as skinfold, ______db_schema_skinfoldRelations as skinfoldRelations, ______db_schema_supplementStack as supplementStack, ______db_schema_supplementStackRelations as supplementStackRelations, ______db_schema_supplementToSupplementStack as supplementToSupplementStack, ______db_schema_supplementToSupplementStackRelations as supplementToSupplementStackRelations, ______db_schema_tag as tag, ______db_schema_tagRelations as tagRelations, ______db_schema_tagToDailyLog as tagToDailyLog, ______db_schema_tagToDailyLogRelations as tagToDailyLogRelations, ______db_schema_trainerNotes as trainerNotes, ______db_schema_trainerNotesRelations as trainerNotesRelations, ______db_schema_user as user, ______db_schema_userCategory as userCategory, ______db_schema_userCategoryRelations as userCategoryRelations, ______db_schema_userIngredient as userIngredient, ______db_schema_userIngredientRelations as userIngredientRelations, ______db_schema_userMeal as userMeal, ______db_schema_userMealRelations as userMealRelations, ______db_schema_userPlan as userPlan, ______db_schema_userPlanRelations as userPlanRelations, ______db_schema_userRecipe as userRecipe, ______db_schema_userRecipeRelations as userRecipeRelations, ______db_schema_userRelations as userRelations, ______db_schema_userSettings as userSettings, ______db_schema_userSettingsRelations as userSettingsRelations, ______db_schema_userToTrainer as userToTrainer, ______db_schema_userToTrainerRelations as userToTrainerRelations, ______db_schema_userToUserCategory as userToUserCategory, ______db_schema_usertoUserCategoryRelations as usertoUserCategoryRelations, ______db_schema_vegeStack as vegeStack, ______db_schema_vegeStackRelations as vegeStackRelations, ______db_schema_verificationToken as verificationToken, ______db_schema_waterLog as waterLog, ______db_schema_waterLogRelations as waterLogRelations, ______db_schema_weighIn as weighIn, ______db_schema_weighInRelations as weighInRelations };
 }
 
 /**
@@ -13621,6 +13795,9 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 frontImage: string | null;
                 sideImage: string | null;
                 backImage: string | null;
+                frontImageSvg: string | null;
+                sideImageSvg: string | null;
+                backImageSvg: string | null;
                 frontPoseImage: string | null;
                 sidePoseImage: string | null;
                 backPoseImage: string | null;
@@ -13809,6 +13986,9 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 frontImage: string | null;
                 sideImage: string | null;
                 backImage: string | null;
+                frontImageSvg: string | null;
+                sideImageSvg: string | null;
+                backImageSvg: string | null;
                 frontPoseImage: string | null;
                 sidePoseImage: string | null;
                 backPoseImage: string | null;
@@ -13995,6 +14175,9 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 frontImage: string | null;
                 sideImage: string | null;
                 backImage: string | null;
+                frontImageSvg: string | null;
+                sideImageSvg: string | null;
+                backImageSvg: string | null;
                 frontPoseImage: string | null;
                 sidePoseImage: string | null;
                 backPoseImage: string | null;
@@ -14036,6 +14219,9 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 frontImage: string | null;
                 sideImage: string | null;
                 backImage: string | null;
+                frontImageSvg: string | null;
+                sideImageSvg: string | null;
+                backImageSvg: string | null;
                 frontPoseImage: string | null;
                 sidePoseImage: string | null;
                 backPoseImage: string | null;
@@ -15280,6 +15466,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     image: string;
                     createdAt: Date;
                     userId: string;
+                    svg: string | null;
                 }[];
                 settings: {
                     id: number;
@@ -15563,6 +15750,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     image: string;
                     createdAt: Date;
                     userId: string;
+                    svg: string | null;
                 }[];
                 settings: {
                     id: number;
@@ -15815,6 +16003,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     image: string;
                     createdAt: Date;
                     userId: string;
+                    svg: string | null;
                 }[];
                 settings: {
                     id: number;
@@ -20157,6 +20346,50 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 notes: string;
             };
             output: boolean;
+            meta: object;
+        }>;
+    }>>;
+    pushSubscription: _trpc_server.TRPCBuiltRouter<{
+        ctx: {
+            headers: Headers;
+            db: drizzle_orm_libsql.LibSQLDatabase<typeof ______db_schema> & {
+                $client: _libsql_client.Client;
+            };
+            session: next_auth.Session | null;
+        };
+        meta: object;
+        errorShape: {
+            data: {
+                zodError: zod.ZodFlattenedError<unknown, string> | null;
+                code: _trpc_server.TRPC_ERROR_CODE_KEY;
+                httpStatus: number;
+                path?: string;
+                stack?: string;
+            };
+            message: string;
+            code: _trpc_server.TRPC_ERROR_CODE_NUMBER;
+        };
+        transformer: true;
+    }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        create: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                subscription: string;
+            };
+            output: _libsql_client.ResultSet | {
+                id: number;
+            }[];
+            meta: object;
+        }>;
+        get: _trpc_server.TRPCQueryProcedure<{
+            input: string;
+            output: {
+                id: number;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string;
+                subscription: string;
+            } | undefined;
             meta: object;
         }>;
     }>>;
@@ -20387,6 +20620,9 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 frontImage: string | null;
                 sideImage: string | null;
                 backImage: string | null;
+                frontImageSvg: string | null;
+                sideImageSvg: string | null;
+                backImageSvg: string | null;
                 frontPoseImage: string | null;
                 sidePoseImage: string | null;
                 backPoseImage: string | null;
@@ -20575,6 +20811,9 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 frontImage: string | null;
                 sideImage: string | null;
                 backImage: string | null;
+                frontImageSvg: string | null;
+                sideImageSvg: string | null;
+                backImageSvg: string | null;
                 frontPoseImage: string | null;
                 sidePoseImage: string | null;
                 backPoseImage: string | null;
@@ -20761,6 +21000,9 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 frontImage: string | null;
                 sideImage: string | null;
                 backImage: string | null;
+                frontImageSvg: string | null;
+                sideImageSvg: string | null;
+                backImageSvg: string | null;
                 frontPoseImage: string | null;
                 sidePoseImage: string | null;
                 backPoseImage: string | null;
@@ -20802,6 +21044,9 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 frontImage: string | null;
                 sideImage: string | null;
                 backImage: string | null;
+                frontImageSvg: string | null;
+                sideImageSvg: string | null;
+                backImageSvg: string | null;
                 frontPoseImage: string | null;
                 sidePoseImage: string | null;
                 backPoseImage: string | null;
@@ -22046,6 +22291,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     image: string;
                     createdAt: Date;
                     userId: string;
+                    svg: string | null;
                 }[];
                 settings: {
                     id: number;
@@ -22329,6 +22575,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     image: string;
                     createdAt: Date;
                     userId: string;
+                    svg: string | null;
                 }[];
                 settings: {
                     id: number;
@@ -22581,6 +22828,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     image: string;
                     createdAt: Date;
                     userId: string;
+                    svg: string | null;
                 }[];
                 settings: {
                     id: number;
@@ -26923,6 +27171,50 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 notes: string;
             };
             output: boolean;
+            meta: object;
+        }>;
+    }>>;
+    pushSubscription: _trpc_server.TRPCBuiltRouter<{
+        ctx: {
+            headers: Headers;
+            db: drizzle_orm_libsql.LibSQLDatabase<typeof ______db_schema> & {
+                $client: _libsql_client.Client;
+            };
+            session: next_auth.Session | null;
+        };
+        meta: object;
+        errorShape: {
+            data: {
+                zodError: zod.ZodFlattenedError<unknown, string> | null;
+                code: _trpc_server.TRPC_ERROR_CODE_KEY;
+                httpStatus: number;
+                path?: string;
+                stack?: string;
+            };
+            message: string;
+            code: _trpc_server.TRPC_ERROR_CODE_NUMBER;
+        };
+        transformer: true;
+    }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        create: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                subscription: string;
+            };
+            output: _libsql_client.ResultSet | {
+                id: number;
+            }[];
+            meta: object;
+        }>;
+        get: _trpc_server.TRPCQueryProcedure<{
+            input: string;
+            output: {
+                id: number;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string;
+                subscription: string;
+            } | undefined;
             meta: object;
         }>;
     }>>;

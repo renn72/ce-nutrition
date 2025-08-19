@@ -14,12 +14,18 @@ import { api } from '@/trpc/react'
 import { subscriptionAtom } from './notifications'
 import { useAtom } from 'jotai'
 
-const PushNotificationManager = () => {
+const PushNotificationManager = ({ userId }: { userId: string }) => {
 	const [isSupported, setIsSupported] = useState(false)
 	const [subscription, setSubscription] = useAtom(subscriptionAtom)
 	const [message, setMessage] = useState('')
 
+  const ctx = api.useUtils()
   const { mutate } = api.adminLog.create.useMutation()
+  const { mutate: updateSubscription } = api.pushSubscription.create.useMutation({
+    onSuccess: () => {
+      ctx.pushSubscription.invalidate()
+    },
+  })
 
 	useEffect(() => {
 		if ('serviceWorker' in navigator && 'PushManager' in window) {
@@ -48,6 +54,10 @@ const PushNotificationManager = () => {
 		})
     // @ts-ignore
 		setSubscription(sub)
+    updateSubscription({
+      userId: userId,
+      subscription: JSON.stringify(sub),
+    })
 		const serializedSub = JSON.parse(JSON.stringify(sub))
 		await subscribeUser(serializedSub)
     mutate({

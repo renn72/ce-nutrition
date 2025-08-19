@@ -156,7 +156,7 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 					</Button>
 				</div>
 				<div className='flex items-center justify-between py-1 px-1'>
-					<PushNotificationManager />
+					<PushNotificationManager userId={currentUser.id} />
 				</div>
 				<DropdownMenuSeparator className='my-0 bg-primary/20' />
 				{fullList

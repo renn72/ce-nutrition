@@ -7,21 +7,6 @@ import * as schema from './schema'
 
 export const createTable = sqliteTableCreator((name) => `${name}`)
 
-// export const schema = {
-//   ...log,
-//   ...user,
-//   ...notification,
-//   ...ingredient,
-//   ...settings,
-//   ...recipe,
-//   ...plan,
-//   ...meal,
-//   ...userPlan,
-//   ...message,
-//   ...metrics,
-//   ...dailyLog,
-// }
-
 /**
  * Cache the database connection in development. This avoids creating a new connection on every HMR
  * update.

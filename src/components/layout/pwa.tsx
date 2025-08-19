@@ -159,7 +159,6 @@ const PwaInstallButton: React.FC = () => {
 			setDeferredPrompt(e as BeforeInstallPromptEvent)
 			// Show our custom install button
 			setShowInstallButton(true)
-			console.log('BeforeInstallPrompt event fired.')
 		}
 
 		// Event listener for the 'appinstalled' event

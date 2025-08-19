@@ -1,7 +1,9 @@
-import { notification } from '@/server/db/schema/notification'
+import { notification, pushSubscription } from '@/server/db/schema'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 import { eq, and } from 'drizzle-orm'
 import { z } from 'zod'
+
+import { sendPushNotification } from '@/server/api/utils/send-push'
 
 import { createLog } from '@/server/api/routers/admin-log'
 
@@ -24,6 +26,16 @@ export const notificationRouter = createTRPCRouter({
 				description: input.description,
 				notes: input.notes,
 			})
+      const sub = await ctx.db.query.pushSubscription.findFirst({
+        where: eq(pushSubscription.userId, input.userId),
+      })
+      if (sub) {
+        await sendPushNotification(
+          JSON.parse(sub.subscription),
+          input.title,
+          input.description || '',
+        )
+      }
 			return res
 		}),
 	get: protectedProcedure.input(z.number()).query(async ({ input, ctx }) => {
