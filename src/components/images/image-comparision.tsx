@@ -274,7 +274,7 @@ const ImageView = ({
 				{date}
 			</div>
 			{isRoot && (
-				<div className='absolute top-16 right-4 z-20 flex flex-col gap-4 w-8 items-center'>
+				<div className='absolute top-16 right-2 z-20 flex flex-col gap-4 w-14 items-center rounded-md bg-muted/50 py-2'>
 					<Button
 						variant='ghost'
 						className=' hover:outline hover:bg-primary/00 w-10 p-0'
