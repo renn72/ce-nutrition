@@ -29,7 +29,7 @@ export default function Page({
 		<div className='w-full grid justify-center px-2'>
 			<div className='relative flex gap-2  overflow-x-auto'>
 				<Button
-					onClick={() => router.push(`/admin/user-image?user=${user}`)}
+					onClick={() => router.push(`/user/user-image?user=${user}`)}
 					className='absolute top-2 left-2 z-20'
 				>
 					Back
