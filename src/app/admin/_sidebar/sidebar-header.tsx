@@ -21,7 +21,7 @@ import { User } from '@/components/auth/user'
 const SidebarHeader = () => {
   const pathname = usePathname()
   return (
-    <header className='flex h-16 items-center gap-2 border-b px-4 justify-between'>
+    <header className='flex h-12 items-center gap-2 border-b px-4 justify-between'>
       <div className='flex shrink-0 items-center gap-2 '>
         <SidebarTrigger className='-ml-1' />
         <Separator
@@ -44,7 +44,7 @@ const SidebarHeader = () => {
             <BreadcrumbSeparator className='hidden md:block' />
             <BreadcrumbItem>
               <BreadcrumbPage className='capitalize'>
-                {pathname.split('/')[3]}
+                {pathname.split('/')[3]?.replaceAll('%',' ')}
               </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>

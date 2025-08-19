@@ -6,17 +6,26 @@ import { useSearchParams } from 'next/navigation'
 
 import { ImageCarousel } from './image-carousel'
 
+import { atom } from 'jotai'
+
+export const userImagesAtom = atom<UserImage[]>([])
+
+interface UserImage {
+	src: string
+	date: string
+	alt: string
+}
+
 const UserImage = ({ userId }: { userId: string }) => {
-	const ctx = api.useUtils()
 	const { data: user, isLoading } = api.user.getCurrentUser.useQuery({
 		id: userId,
 	})
 
-	const { data: logs, isLoading: logsLoading } =
-		api.dailyLog.getAllUser.useQuery(userId)
+	const { data: logs, isLoading: isLoadingLogs } = api.dailyLog.getAllUser.useQuery(userId)
 
-	console.log('user', user)
-	console.log('logs', logs)
+	if (isLoading) return null
+  if (isLoadingLogs) return null
+	if (!user) return null
 
 	const frontImages = logs
 		?.map((log) => {
@@ -51,8 +60,6 @@ const UserImage = ({ userId }: { userId: string }) => {
 		.filter((image) => image.src !== '')
 		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
-	if (isLoading) return null
-	if (!user) return null
 
 	const frontDbl = user.images
 		.filter((image) => image.name === 'frontDouble')
@@ -134,48 +141,16 @@ const UserImage = ({ userId }: { userId: string }) => {
 
 	return (
 		<div className='flex flex-col gap-2 w-full mt-2 mb-10 items-center '>
-			<div className='flex flex-col gap-2 w-full'>
-				<h2 className='text-2xl font-medium text-center'>Front Images</h2>
-				<ImageCarousel images={frontImages || []} className='w-full' />
-			</div>
-			<div className='flex flex-col gap-2 w-full'>
-				<h2 className='text-2xl font-medium text-center'>Side Images</h2>
-				<ImageCarousel images={sideImages || []} className='w-full' />
-			</div>
-			<div className='flex flex-col gap-2 w-full'>
-				<h2 className='text-2xl font-medium text-center'>Back Images</h2>
-				<ImageCarousel images={backImages || []} className='w-full' />
-			</div>
-			<div className='flex flex-col gap-2 w-full'>
-				<h2 className='text-2xl font-medium text-center'>
-					Front Double Biceps
-				</h2>
-				<ImageCarousel images={frontDbl || []} className='w-full' />
-			</div>
-			<div className='flex flex-col gap-2 w-full'>
-				<h2 className='text-2xl font-medium text-center'>Side Chest</h2>
-				<ImageCarousel images={sideChest || []} className='w-full' />
-			</div>
-			<div className='flex flex-col gap-2 w-full'>
-				<h2 className='text-2xl font-medium text-center'>Side Triceps</h2>
-				<ImageCarousel images={sideTri || []} className='w-full' />
-			</div>
-			<div className='flex flex-col gap-2 w-full'>
-				<h2 className='text-2xl font-medium text-center'>Rear Double Biceps</h2>
-				<ImageCarousel images={rearDbl || []} className='w-full' />
-			</div>
-			<div className='flex flex-col gap-2 w-full'>
-				<h2 className='text-2xl font-medium text-center'>Abs & Thighs</h2>
-				<ImageCarousel images={absThigh || []} className='w-full' />
-			</div>
-			<div className='flex flex-col gap-2 w-full'>
-				<h2 className='text-2xl font-medium text-center'>Front Vacuum</h2>
-				<ImageCarousel images={frontVac || []} className='w-full' />
-			</div>
-			<div className='flex flex-col gap-2 w-full'>
-				<h2 className='text-2xl font-medium text-center'>Favourite Pose</h2>
-				<ImageCarousel images={favorite || []} className='w-full' />
-			</div>
+			<ImageCarousel images={frontImages || []} title='Front' />
+			<ImageCarousel images={sideImages || []} title='Side' />
+			<ImageCarousel images={backImages || []} title='Back' />
+			<ImageCarousel images={frontDbl || []} title='Front Double Biceps' />
+			<ImageCarousel images={sideChest || []} title='Side Chest' />
+			<ImageCarousel images={sideTri || []} title='Side Triceps' />
+			<ImageCarousel images={rearDbl || []} title='Rear Double Biceps' />
+			<ImageCarousel images={absThigh || []} title='Abs & Thighs' />
+			<ImageCarousel images={frontVac || []} title='Front Vacuum' />
+			<ImageCarousel images={favorite || []} title='Favourite Pose' />
 		</div>
 	)
 }

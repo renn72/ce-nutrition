@@ -41,7 +41,8 @@
       "a11y": {
         "useKeyWithClickEvents": "off",
         "useSemanticElements": "off",
-        "noStaticElementInteractions": "off"
+        "noStaticElementInteractions": "off",
+        "useButtonType": "off"
       },
       "correctness": {
         "useExhaustiveDependencies": "off"
@@ -50,8 +51,12 @@
         "noUselessTernary": "off",
         "noUselessFragments": "off"
       },
+      "performance": {
+        "noImgElement": "off"
+      },
       "suspicious": {
-        "noAssignInExpressions": "off"
+        "noAssignInExpressions": "off",
+        "noTsIgnore": "off"
       }
     }
   },

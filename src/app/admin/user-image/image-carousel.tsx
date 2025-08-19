@@ -3,10 +3,10 @@
 import { useState } from 'react'
 
 import Image from 'next/image'
+import { useSearchParams } from 'next/navigation'
 
-import { CircleChevronLeft, CircleChevronRight, CircleX, X } from 'lucide-react'
+import { Link } from 'next-view-transitions'
 
-import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
 import {
 	Carousel,
@@ -15,13 +15,10 @@ import {
 	CarouselNext,
 	CarouselPrevious,
 } from '@/components/ui/carousel'
-import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogDescription,
-	DialogTitle,
-} from '@/components/ui/dialog'
+
+import { userImagesAtom } from './page'
+
+import { useSetAtom } from 'jotai'
 
 interface ImageData {
 	src: string
@@ -31,32 +28,76 @@ interface ImageData {
 
 interface ImageCarouselProps {
 	images: ImageData[]
-	className?: string
+	title: string
 }
-const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
-	const [selectedImage, setSelectedImage] = useState<ImageData | null>(null)
-	const [selectedImageIndex, setSelectedImageIndex] = useState(0)
-	const [isModalOpen, setIsModalOpen] = useState(false)
 
-	const handleImageClick = (image: ImageData, index: number) => {
-		setSelectedImage(image)
-		setSelectedImageIndex(index)
-		setIsModalOpen(true)
+const Item = ({
+	image,
+	user,
+	title,
+  images,
+}: {
+	image: ImageData
+	user: string
+	title: string
+  images: ImageData[]
+}) => {
+	const [isPrefetched, setIsPrefetched] = useState(false)
+
+  const setImages = useSetAtom(userImagesAtom)
+
+	const handlePrefetch = () => {
+		if (isPrefetched) return
+		setIsPrefetched(true)
+		void fetch(image.src)
 	}
 
-	const closeModal = () => {
-		setIsModalOpen(false)
-		setSelectedImage(null)
-	}
+  const d = new Date(image.date).toLocaleDateString('en-AU').replaceAll('/', '-')
+  const link = `/admin/user-image/${title}%${d}?imageId=${image.src.split('/').pop()}&user=${user}&date=${d}&title=${title}`
+
+	return (
+		<CarouselItem key={image.src} className='md:basis-1/2 lg:basis-1/5 pl-1'>
+			<div className='p-1'>
+				<Card className='cursor-pointer hover:shadow-lg transition-shadow'>
+					<h3 className='text-center text-sm font-medium text-muted-foreground'>
+						{new Date(image.date).toLocaleDateString('en-AU')}
+					</h3>
+					<CardContent
+						onMouseEnter={() => handlePrefetch()}
+						className='flex aspect-[4/7] items-center justify-center p-2'
+					>
+						<div className='relative w-full h-full overflow-hidden rounded-md'>
+							<Link
+								href={link}
+								prefetch={true}
+                onClick={() => setImages([...images,])}
+							>
+								<Image
+									src={image.src || '/placeholder.svg'}
+									alt={image.alt}
+									fill
+									className='object-cover hover:scale-105 transition-transform duration-200'
+									sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw'
+								/>
+							</Link>
+						</div>
+					</CardContent>
+				</Card>
+			</div>
+		</CarouselItem>
+	)
+}
+
+const ImageCarousel = ({ images, title }: ImageCarouselProps) => {
+	const searchParams = useSearchParams()
+	const user = searchParams.get('user') ?? ''
 
 	if (images.length === 0)
 		return <div className='w-full text-center my-2'>nil</div>
 
-	const isFirstImage = selectedImageIndex === 0
-	const isLastImage = selectedImageIndex === images.length - 1
-
 	return (
-		<div className={className}>
+		<div className='flex flex-col gap-2 w-full'>
+			<h2 className='text-2xl font-medium text-center'>{title}</h2>
 			<Carousel
 				opts={{
 					direction: 'ltr',
@@ -65,92 +106,13 @@ const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
 				className='w-full max-w-screen-xl mx-auto'
 			>
 				<CarouselContent className='gap-0'>
-					{images.map((image, index) => (
-						<CarouselItem
-							key={image.src}
-							className='md:basis-1/2 lg:basis-1/5 pl-1'
-						>
-							<div className='p-1'>
-								<Card className='cursor-pointer hover:shadow-lg transition-shadow'>
-									<h3 className='text-center text-sm font-medium text-muted-foreground'>
-										{new Date(image.date).toLocaleDateString('en-AU')}
-									</h3>
-									<CardContent className='flex aspect-[4/7] items-center justify-center p-2'>
-										<div
-											className='relative w-full h-full overflow-hidden rounded-md'
-											onClick={() => handleImageClick(image, index)}
-										>
-											<Image
-												src={image.src || '/placeholder.svg'}
-												alt={image.alt}
-												fill
-												className='object-cover hover:scale-105 transition-transform duration-200'
-												sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw'
-											/>
-										</div>
-									</CardContent>
-								</Card>
-							</div>
-						</CarouselItem>
+					{images.map((image) => (
+						<Item key={image.src} image={image} user={user} title={title} images={images} />
 					))}
 				</CarouselContent>
 				<CarouselNext />
 				<CarouselPrevious />
 			</Carousel>
-
-			<Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-				<DialogContent className='max-h-[95vh] p-0 max-w-[55vw] bg-background/00 border-none shadow-none'>
-					<DialogTitle className='hidden'>Image</DialogTitle>
-					<DialogDescription className='hidden'>Image</DialogDescription>
-					{selectedImage && (
-						<div className=' w-full h-[95vh] relative '>
-							<DialogClose className='absolute top-2 left-1/2 -translate-x-1/2 text-white z-[1000] '>
-								<CircleX
-                  fill='#eeeeee77'
-                  size={24} className='hover:scale-110 active:scale-95' />
-							</DialogClose>
-							<CircleChevronLeft
-								className={cn('text-white/90 absolute top-1/2 left-2 -translate-y-1/2 z-[1000] ',
-                  isFirstImage ? 'opacity-50' : 'hover:scale-110 active:scale-95'
-                )}
-								strokeWidth={1}
-								size={36}
-								onClick={() => {
-									if (isFirstImage) return
-									handleImageClick(
-                    // @ts-ignore
-										images[selectedImageIndex - 1],
-										selectedImageIndex - 1,
-									)
-								}}
-							/>
-							<Image
-								src={selectedImage.src}
-								alt={selectedImage.alt}
-								fill
-								sizes=''
-								className='object-contain'
-								priority
-							/>
-							<CircleChevronRight
-								className={cn('text-white/90 absolute top-1/2 right-2 -translate-y-1/2 z-[1000] ',
-                  isLastImage ? 'opacity-50' : 'hover:scale-110 active:scale-95'
-                )}
-								strokeWidth={1}
-								size={36}
-								onClick={() =>{
-                  if (isLastImage) return
-									handleImageClick(
-                    // @ts-ignore
-										images[selectedImageIndex + 1],
-										selectedImageIndex + 1,
-									)
-								}}
-							/>
-						</div>
-					)}
-				</DialogContent>
-			</Dialog>
 		</div>
 	)
 }
