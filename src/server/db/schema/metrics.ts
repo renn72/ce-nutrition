@@ -77,6 +77,7 @@ export const images = createTable('images', {
 	name: text('name').notNull(),
 	date: text('date').notNull(),
 	image: text('image').notNull(),
+  svg: text('svg'),
 })
 
 export const imagesRelations = relations(images, ({ one }) => ({

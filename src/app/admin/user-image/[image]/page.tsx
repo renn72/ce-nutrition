@@ -1,6 +1,7 @@
 'use client'
 
 import {  useState } from 'react'
+import { api } from '@/trpc/react'
 
 import { useRouter, useSearchParams } from 'next/navigation'
 
@@ -22,6 +23,9 @@ export default function Page({
 	const [images, setImages] = useState([
 		{ url: `https://utfs.io/f/${imageId}`, date: date },
 	])
+  const { data: isRoot } = api.user.isRoot.useQuery()
+
+  console.log(isRoot)
 
 	if (!imageId) return <div>Loading...</div>
 
@@ -40,6 +44,7 @@ export default function Page({
 						src={image.url}
 						alt='image'
 						date={image.date}
+            isRoot={isRoot?.isRoot ?? false}
 					/>
 				))}
 				<ImageAdd setImages={setImages} images={images} />
