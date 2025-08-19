@@ -1,11 +1,11 @@
 'use client'
 
-import React, { useId, useRef, useState } from 'react'
+import React, { useEffect, useId, useRef, useState } from 'react'
 
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-import { useAtomValue } from 'jotai'
+import { atom, useAtom, useAtomValue } from 'jotai'
 import { CirclePlus } from 'lucide-react'
 import {
 	TransformComponent,
@@ -31,7 +31,24 @@ import {
 	DialogTrigger,
 } from '@/components/ui/dialog'
 
+import type { ReactZoomPanPinchContext } from 'react-zoom-pan-pinch'
+
 import { userImagesAtom } from './../page'
+
+const transFormsAtom = atom<Transforms>([])
+
+type SetTransformFunction = (
+	x: number,
+	y: number,
+	scale: number,
+	animationTime?: number,
+	animationName?: string,
+) => void
+
+type Transforms = {
+	url: string
+	setTransformFunction: SetTransformFunction
+}[]
 
 interface ImageData {
 	url: string
@@ -81,7 +98,7 @@ const ImageAdd = ({
 										<Card
 											onClick={() => {
 												setIsOpen(false)
-                        console.log(image)
+												console.log(image)
 												setImages([
 													...images,
 													{
@@ -126,30 +143,63 @@ const Controls = ({
 	zoomOut,
 	resetTransform,
 	centerView,
+	instance,
+	src,
+	setTransform,
 }: {
 	zoomIn: () => void
 	zoomOut: () => void
 	resetTransform: () => void
 	centerView: () => void
-}) => (
-	<div
-		className='flex gap-2 items-center justify-center border px-2 py-[5px]
+	src: string
+	setTransform: () => void
+  instance: ReactZoomPanPinchContext
+}) => {
+	const [transforms, setTransforms] = useAtom(transFormsAtom)
+
+	useEffect(() => {
+		if (transforms.find((t) => t.url === src)) return
+		setTransforms([
+			...transforms,
+			{
+				url: src,
+				setTransformFunction: setTransform,
+			},
+		])
+	}, [])
+
+  const handleDuplicate = () => {
+    console.log(instance)
+    console.log(transforms)
+    for (const transform of transforms) {
+        transform.setTransformFunction(instance.transformState.positionX, instance.transformState.positionY, instance.transformState.scale)
+    }
+  }
+
+  console.log('fincs', transforms)
+	return (
+		<div
+			className='flex gap-2 items-center justify-center border px-2 py-[5px]
       my-1 rounded-md bg-primary/60 shadow-sm z-10'
-	>
-		<Button size='sm' onClick={() => zoomIn()}>
-			Zoom In
-		</Button>
-		<Button size='sm' onClick={() => zoomOut()}>
-			Zoom Out
-		</Button>
-		<Button size='sm' onClick={() => centerView()}>
-			Center
-		</Button>
-		<Button size='sm' onClick={() => resetTransform()}>
-			Reset
-		</Button>
-	</div>
-)
+		>
+			<Button size='sm' onClick={() => zoomIn()}>
+				Zoom In
+			</Button>
+			<Button size='sm' onClick={() => zoomOut()}>
+				Zoom Out
+			</Button>
+			<Button size='sm' onClick={() => centerView()}>
+				Center
+			</Button>
+			<Button size='sm' onClick={() => resetTransform()}>
+				Reset
+			</Button>
+			<Button size='sm' onClick={handleDuplicate}>
+				Duplicate Position
+			</Button>
+		</div>
+	)
+}
 
 const ImageView = ({
 	src,
@@ -177,7 +227,7 @@ const ImageView = ({
 			>
 				{(utils) => (
 					<React.Fragment>
-						<Controls {...utils} />
+						<Controls {...utils} src={src} />
 						<TransformComponent>
 							<img
 								src={src}
@@ -212,19 +262,23 @@ export default function Page({
 
 	return (
 		<div className='w-full grid justify-center px-4'>
-		<div className='relative flex gap-2  overflow-x-scroll '>
-			<Button
-				onClick={() => router.push(`/admin/user-image?user=${user}`)}
-				className='absolute top-2 left-2 z-20'
-			>
-				Back
-			</Button>
-			{images.map((image) => (
-				<ImageView key={image.url} src={image.url} alt='image' date={image.date} />
-			))}
-			<ImageAdd setImages={setImages} images={images} />
+			<div className='relative flex gap-2  overflow-x-scroll '>
+				<Button
+					onClick={() => router.push(`/admin/user-image?user=${user}`)}
+					className='absolute top-2 left-2 z-20'
+				>
+					Back
+				</Button>
+				{images.map((image) => (
+					<ImageView
+						key={image.url}
+						src={image.url}
+						alt='image'
+						date={image.date}
+					/>
+				))}
+				<ImageAdd setImages={setImages} images={images} />
+			</div>
 		</div>
-		</div>
-  )
+	)
 }
-
