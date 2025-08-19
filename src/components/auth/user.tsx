@@ -1,6 +1,7 @@
 'use client'
 
 import { api } from '@/trpc/react'
+import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 
 import { useState } from 'react'
 
@@ -11,6 +12,7 @@ import { useAtom } from 'jotai'
 import {
 	Database,
 	House,
+	ImageIcon,
 	LogOutIcon,
 	MessageSquareMore,
 	Settings,
@@ -84,12 +86,8 @@ const User = () => {
 	const { data: user, isLoading } = api.user.getCurrentUser.useQuery()
 	const [isOpen, setIsOpen] = useState(false)
 
-	const { mutate: sync } = api.user.sync.useMutation({
-		onSuccess: () => {
-			ctx.invalidate()
-			toast.success('Synced')
-		},
-	})
+  const isMobile = useClientMediaQuery({ query: '(max-width: 768px)' })
+
 	const { theme, setTheme } = useTheme()
 	const isTrainer = user?.isTrainer
 
@@ -153,6 +151,19 @@ const User = () => {
 						Home{' '}
 					</DropdownMenuItem>
 				</Link>
+				{!isMobile && (
+					<>
+						<DropdownMenuSeparator />
+						<Link href={`/user/user-image`}>
+							<DropdownMenuItem
+								className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'
+							>
+                <ImageIcon size={20} />
+                Gallery
+							</DropdownMenuItem>
+						</Link>
+					</>
+				)}
 
 				{isTrainer && (
 					<>

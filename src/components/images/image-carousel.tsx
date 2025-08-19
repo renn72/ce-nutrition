@@ -17,7 +17,7 @@ import {
 	CarouselPrevious,
 } from '@/components/ui/carousel'
 
-import { userImagesAtom } from './page'
+import { userImagesAtom } from './user-gallery'
 
 interface ImageData {
 	src: string
@@ -28,6 +28,7 @@ interface ImageData {
 interface ImageCarouselProps {
 	images: ImageData[]
 	title: string
+  isAdmin: boolean
 }
 
 const Item = ({
@@ -35,11 +36,13 @@ const Item = ({
 	user,
 	title,
 	images,
+  isAdmin,
 }: {
 	image: ImageData
 	user: string
 	title: string
 	images: ImageData[]
+  isAdmin: boolean
 }) => {
 	const [isPrefetched, setIsPrefetched] = useState(false)
 
@@ -54,7 +57,7 @@ const Item = ({
 	const d = new Date(image.date)
 		.toLocaleDateString('en-AU')
 		.replaceAll('/', '-')
-	const link = `/admin/user-image/${title}%${d}?imageId=${image.src.split('/').pop()}&user=${user}&date=${d}&title=${title}`
+	const link = `/${isAdmin ? 'admin' : 'user'}/user-image/${title}%${d}?imageId=${image.src.split('/').pop()}&user=${user}&date=${d}&title=${title}`
 
 	return (
 		<CarouselItem key={image.src} className='md:basis-1/2 lg:basis-1/5 pl-1'>
@@ -96,7 +99,7 @@ const Item = ({
 	)
 }
 
-const ImageCarousel = ({ images, title }: ImageCarouselProps) => {
+const ImageCarousel = ({ images, title, isAdmin }: ImageCarouselProps) => {
 	const searchParams = useSearchParams()
 	const user = searchParams.get('user') ?? ''
 
@@ -116,6 +119,7 @@ const ImageCarousel = ({ images, title }: ImageCarouselProps) => {
 				<CarouselContent className='gap-0'>
 					{images.map((image) => (
 						<Item
+              isAdmin={isAdmin}
 							key={image.src}
 							image={image}
 							user={user}

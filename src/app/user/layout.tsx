@@ -4,6 +4,7 @@ import { isMobileDevice } from '@/lib/is-mobile-server'
 import { MobileHeader } from '@/components/layout/mobile-header'
 
 import { MobileFooter } from '@/components/layout/mobile-footer'
+import { User } from '@/components/auth/user'
 
 const Mobile = ({
   children,
@@ -13,11 +14,11 @@ const Mobile = ({
   isDesktop?: boolean
 }) => {
   return (
-    <div className='flex flex-col gap-2 w-full min-h-[100svh]'>
-      <MobileHeader isDesktop={false} />
+    <div className='flex flex-col gap-2 w-full min-h-[100svh] relative'>
+      <div className='absolute top-1 right-1 z-100'>
+        <User />
+      </div>
       {children}
-      <MobileFooter />
-
     </div>
   )
 }
