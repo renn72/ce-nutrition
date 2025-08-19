@@ -5,6 +5,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { useSearchParams } from 'next/navigation'
 
+import { useSetAtom } from 'jotai'
 import { Link } from 'next-view-transitions'
 
 import { Card, CardContent } from '@/components/ui/card'
@@ -17,8 +18,6 @@ import {
 } from '@/components/ui/carousel'
 
 import { userImagesAtom } from './page'
-
-import { useSetAtom } from 'jotai'
 
 interface ImageData {
 	src: string
@@ -35,16 +34,16 @@ const Item = ({
 	image,
 	user,
 	title,
-  images,
+	images,
 }: {
 	image: ImageData
 	user: string
 	title: string
-  images: ImageData[]
+	images: ImageData[]
 }) => {
 	const [isPrefetched, setIsPrefetched] = useState(false)
 
-  const setImages = useSetAtom(userImagesAtom)
+	const setImages = useSetAtom(userImagesAtom)
 
 	const handlePrefetch = () => {
 		if (isPrefetched) return
@@ -52,16 +51,25 @@ const Item = ({
 		void fetch(image.src)
 	}
 
-  const d = new Date(image.date).toLocaleDateString('en-AU').replaceAll('/', '-')
-  const link = `/admin/user-image/${title}%${d}?imageId=${image.src.split('/').pop()}&user=${user}&date=${d}&title=${title}`
+	const d = new Date(image.date)
+		.toLocaleDateString('en-AU')
+		.replaceAll('/', '-')
+	const link = `/admin/user-image/${title}%${d}?imageId=${image.src.split('/').pop()}&user=${user}&date=${d}&title=${title}`
 
 	return (
 		<CarouselItem key={image.src} className='md:basis-1/2 lg:basis-1/5 pl-1'>
 			<div className='p-1'>
 				<Card className='cursor-pointer hover:shadow-lg transition-shadow'>
-					<h3 className='text-center text-sm font-medium text-muted-foreground'>
-						{new Date(image.date).toLocaleDateString('en-AU')}
-					</h3>
+					<div className='flex flex-col'>
+						<h3 className='text-center text-sm font-medium text-muted-foreground'>
+							{new Date(image.date).toLocaleDateString('en-AU')}
+						</h3>
+						<h3 className='text-center text-sm font-medium text-muted-foreground'>
+							{new Date(image.date).toLocaleDateString('en-AU', {
+								weekday: 'long',
+							})}
+						</h3>
+					</div>
 					<CardContent
 						onMouseEnter={() => handlePrefetch()}
 						className='flex aspect-[4/7] items-center justify-center p-2'
@@ -70,7 +78,7 @@ const Item = ({
 							<Link
 								href={link}
 								prefetch={true}
-                onClick={() => setImages([...images,])}
+								onClick={() => setImages([...images])}
 							>
 								<Image
 									src={image.src || '/placeholder.svg'}
@@ -107,7 +115,13 @@ const ImageCarousel = ({ images, title }: ImageCarouselProps) => {
 			>
 				<CarouselContent className='gap-0'>
 					{images.map((image) => (
-						<Item key={image.src} image={image} user={user} title={title} images={images} />
+						<Item
+							key={image.src}
+							image={image}
+							user={user}
+							title={title}
+							images={images}
+						/>
 					))}
 				</CarouselContent>
 				<CarouselNext />

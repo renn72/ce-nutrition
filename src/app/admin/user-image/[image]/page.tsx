@@ -12,6 +12,8 @@ import {
 	TransformWrapper,
 	type ReactZoomPanPinchRef,
 } from 'react-zoom-pan-pinch'
+import type { ReactZoomPanPinchContext } from 'react-zoom-pan-pinch'
+
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -30,8 +32,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog'
-
-import type { ReactZoomPanPinchContext } from 'react-zoom-pan-pinch'
 
 import { userImagesAtom } from './../page'
 
@@ -153,7 +153,7 @@ const Controls = ({
 	centerView: () => void
 	src: string
 	setTransform: () => void
-  instance: ReactZoomPanPinchContext
+	instance: ReactZoomPanPinchContext
 }) => {
 	const [transforms, setTransforms] = useAtom(transFormsAtom)
 
@@ -168,15 +168,19 @@ const Controls = ({
 		])
 	}, [])
 
-  const handleDuplicate = () => {
-    console.log(instance)
-    console.log(transforms)
-    for (const transform of transforms) {
-        transform.setTransformFunction(instance.transformState.positionX, instance.transformState.positionY, instance.transformState.scale)
-    }
-  }
+	const handleDuplicate = () => {
+		console.log(instance)
+		console.log(transforms)
+		for (const transform of transforms) {
+			transform.setTransformFunction(
+				instance.transformState.positionX,
+				instance.transformState.positionY,
+				instance.transformState.scale,
+			)
+		}
+	}
 
-  console.log('fincs', transforms)
+	console.log('fincs', transforms)
 	return (
 		<div
 			className='flex gap-2 items-center justify-center border px-2 py-[5px]
@@ -233,7 +237,7 @@ const ImageView = ({
 								src={src}
 								alt={alt}
 								id={id}
-								className='h-[calc(100vh-120px)] rounded-md shadow-md'
+								className='h-[calc(100vh-120px)] rounded-md shadow-md z-10'
 							/>
 						</TransformComponent>
 					</React.Fragment>
@@ -261,8 +265,8 @@ export default function Page({
 	if (!imageId) return <div>Loading...</div>
 
 	return (
-		<div className='w-full grid justify-center px-4'>
-			<div className='relative flex gap-2  overflow-x-scroll '>
+		<div className='w-full grid justify-center px-2'>
+			<div className='relative flex gap-2  overflow-x-auto'>
 				<Button
 					onClick={() => router.push(`/admin/user-image?user=${user}`)}
 					className='absolute top-2 left-2 z-20'
