@@ -5,6 +5,7 @@ import { api } from '@/trpc/react'
 import type { GetUserById } from '@/types'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 const UserRecentMetrics = ({ user }: { user: GetUserById }) => {
 	const { data: skinfolds, isLoading } = api.metrics.getUserSkinfolds.useQuery(
@@ -46,8 +47,10 @@ const UserRecentMetrics = ({ user }: { user: GetUserById }) => {
 	)
 
 	return (
-		<div className='border rounded-lg p-4 flex flex-col w-[300px] items-start gap-2 max-h-[450px] min-h-[300px]'>
+		<div className='border rounded-lg py-4 px-2 flex flex-col w-[300px] items-start gap-2 max-h-[450px] min-h-[300px]'>
 			<h1 className='text-xl font-semibold'>Recent Metrics</h1>
+      <ScrollArea className='w-full'>
+      <div className='flex flex-col gap-2 w-full px-4'>
 			{latestMetrics?.map((skinfold) => (
 				<Card key={skinfold.id} className='py-2 px-2 gap-0 w-full'>
 					<CardHeader className='px-2 py-0'>
@@ -80,6 +83,8 @@ const UserRecentMetrics = ({ user }: { user: GetUserById }) => {
 					</CardContent>
 				</Card>
 			))}
+		</div>
+    </ScrollArea>
 		</div>
 	)
 }
