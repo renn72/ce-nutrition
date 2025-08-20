@@ -40,6 +40,14 @@ export const roles = {
 				})
 			}
 
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        objectId: null,
+        task: 'accept trainer front image notifications',
+        notes: JSON.stringify(input),
+      })
+
 			return res
 		}),
 	updateRoleNotifyTrainerAllImages: protectedProcedure
@@ -61,6 +69,14 @@ export const roles = {
 					userId: input.userId,
 				})
 			}
+
+      createLog({
+        user: ctx.session.user.name,
+        userId: ctx.session.user.id,
+        objectId: null,
+        task: 'accept trainer all images notifications',
+        notes: JSON.stringify(input),
+      })
 
 			return res
 		}),
