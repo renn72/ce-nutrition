@@ -12,6 +12,7 @@ import type { Item } from './notifications'
 import { subscriptionAtom } from './notifications'
 
 import { impersonatedUserAtom } from '@/atoms'
+import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,6 +25,8 @@ const NotificationTrigger = ({
 }) => {
 	const [_subscription, setSubscription] = useAtom(subscriptionAtom)
 
+  const isMobile = useClientMediaQuery('(max-width: 600px)')
+
   const impersonatedUser = useAtomValue(impersonatedUserAtom)
 
 	const ctx = api.useUtils()
@@ -35,7 +38,7 @@ const NotificationTrigger = ({
 		})
 
 	useEffect(() => {
-		if ('serviceWorker' in navigator && 'PushManager' in window && impersonatedUser.id === '') {
+		if ('serviceWorker' in navigator && 'PushManager' in window && impersonatedUser.id === '' && isMobile) {
 			navigator.serviceWorker.getRegistrations().then((registrations) => {
 				for (let registration of registrations) {
           // console.log('Unregistering old service worker:', registration)

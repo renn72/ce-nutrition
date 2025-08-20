@@ -14,10 +14,14 @@ import { api } from '@/trpc/react'
 import { subscriptionAtom } from './notifications'
 import { useAtom } from 'jotai'
 
+import { useClientMediaQuery } from '@/hooks/use-client-media-query'
+
 const PushNotificationManager = ({ userId }: { userId: string }) => {
 	const [isSupported, setIsSupported] = useState(false)
 	const [subscription, setSubscription] = useAtom(subscriptionAtom)
 	const [message, setMessage] = useState('')
+
+  const isMobile = useClientMediaQuery('(max-width: 600px)')
 
   const ctx = api.useUtils()
   const { mutate } = api.adminLog.create.useMutation()
@@ -84,7 +88,7 @@ const PushNotificationManager = ({ userId }: { userId: string }) => {
 
 	return (
 		<>
-			{subscription ? null : (
+			{subscription && !isMobile ? null : (
 				<div className='w-full flex items-center justify-center'>
 					<Button
             size='sm'
