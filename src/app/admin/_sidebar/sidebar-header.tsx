@@ -2,6 +2,10 @@
 
 import * as React from 'react'
 
+import { Notifications } from '@/components/layout/notifications'
+
+import { api } from '@/trpc/react'
+
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 
@@ -19,7 +23,10 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
 import { User } from '@/components/auth/user'
 
 const SidebarHeader = () => {
+  const { data: currentUser } = api.user.getCurrentUser.useQuery()
   const pathname = usePathname()
+
+  if (!currentUser) return null
   return (
     <header className='flex h-12 items-center gap-2 border-b px-4 justify-between'>
       <div className='flex shrink-0 items-center gap-2 '>
@@ -51,6 +58,7 @@ const SidebarHeader = () => {
         </Breadcrumb>
       </div>
         <div className='flex items-center gap-2'>
+				<Notifications currentUser={currentUser} />
           <User />
         </div>
     </header>
