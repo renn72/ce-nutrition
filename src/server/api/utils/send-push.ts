@@ -17,7 +17,7 @@ export async function sendPushNotification(
 	const payload = JSON.stringify({
 		title: title,
 		body: body,
-		url: url, // Include URL in payload for service worker
+		// url: url, // Include URL in payload for service worker
     badge: badge,
 	})
 
