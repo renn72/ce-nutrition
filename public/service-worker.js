@@ -1,4 +1,3 @@
-
 self.addEventListener('push', function (event) {
   if (event.data) {
     const data = event.data.json()
@@ -10,7 +9,7 @@ self.addEventListener('push', function (event) {
       data: {
         dateOfArrival: Date.now(),
         primaryKey: '2',
-        url: '',
+        url: JSON.parse(data.message).url,
       },
     }
     event.waitUntil(self.registration.showNotification(data.title, options))
@@ -21,9 +20,7 @@ self.addEventListener('notificationclick', (event) => {
 	console.log('Service Worker: Notification clicked!')
 	event.notification.close() // Close the notification after click
 
-  console.log(event.notification)
-
-	const urlToOpen = event?.notification?.data.url || '/' // Get the URL from the notification's data
+	const urlToOpen = event.notification.data.url // Get the URL from the notification's data
 
 	// Open the PWA window or focus an existing one
 	event.waitUntil(

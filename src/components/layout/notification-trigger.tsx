@@ -22,35 +22,46 @@ const NotificationTrigger = ({
 }) => {
 	const [_subscription, setSubscription] = useAtom(subscriptionAtom)
 
-  const ctx = api.useUtils()
-  const { mutate: updateSubscription } = api.pushSubscription.create.useMutation({
-    onSuccess: () => {
-      ctx.pushSubscription.invalidate()
-    },
-  })
+	const ctx = api.useUtils()
+	const { mutate: updateSubscription } =
+		api.pushSubscription.create.useMutation({
+			onSuccess: () => {
+				ctx.pushSubscription.invalidate()
+			},
+		})
 
 	useEffect(() => {
 		if ('serviceWorker' in navigator && 'PushManager' in window) {
-			registerServiceWorker()
+			navigator.serviceWorker.getRegistrations().then((registrations) => {
+				for (let registration of registrations) {
+          console.log('Unregistering old service worker:', registration)
+					// registration.unregister().then((unregistered) => {
+					// 	console.log('Unregistered old service worker:', unregistered)
+					// })
+				}
+			})
+				registerServiceWorker()
 		}
 	}, [])
 
 	async function registerServiceWorker() {
-		const registration = await navigator.serviceWorker.register('/sw.js', {
-			scope: '/',
-			updateViaCache: 'none',
-		})
+		const registration = await navigator.serviceWorker.register(
+			'/sw.js',
+			{
+				scope: '/',
+				updateViaCache: 'none',
+			},
+		)
 		const sub = await registration.pushManager.getSubscription()
 
-    console.log(sub)
-    updateSubscription({
-      userId: currentUser.id,
-      subscription: JSON.stringify(sub),
-    })
+		console.log(sub)
+		updateSubscription({
+			userId: currentUser.id,
+			subscription: JSON.stringify(sub),
+		})
 
 		setSubscription(sub as PushSubscription | null)
 	}
-
 
 	return null
 }
