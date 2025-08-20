@@ -12,11 +12,13 @@ export async function sendPushNotification(
 	title: string,
 	body: string,
 	url: string = '/', // URL to open when notification is clicked
+  badge: string = '/ce.png',
 ) {
 	const payload = JSON.stringify({
 		title: title,
 		body: body,
 		url: url, // Include URL in payload for service worker
+    badge: badge,
 	})
 
 
