@@ -1,5 +1,12 @@
 import webpush from 'web-push'
 
+import { env } from '@/env'
+
+webpush.setVapidDetails(
+	'mailto:admin@warner.systems',
+  env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+  env.VAPID_PRIVATE_KEY,
+)
 export async function sendPushNotification(
 	subscription: webpush.PushSubscription,
 	title: string,
@@ -11,6 +18,7 @@ export async function sendPushNotification(
 		body: body,
 		url: url, // Include URL in payload for service worker
 	})
+
 
 	try {
 		await webpush.sendNotification(subscription, payload)

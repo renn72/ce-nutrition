@@ -2,7 +2,7 @@
 
 import { api } from '@/trpc/react'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import type { GetUserById } from '@/types'
 import { useAtom } from 'jotai'
@@ -41,10 +41,13 @@ const NotificationTrigger = ({
 			updateViaCache: 'none',
 		})
 		const sub = await registration.pushManager.getSubscription()
+
+    console.log(sub)
     updateSubscription({
       userId: currentUser.id,
       subscription: JSON.stringify(sub),
     })
+
 		setSubscription(sub as PushSubscription | null)
 	}
 

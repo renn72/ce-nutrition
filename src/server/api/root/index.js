@@ -9321,6 +9321,11 @@ import { z as z33 } from "zod";
 
 // src/server/api/utils/send-push.ts
 import webpush from "web-push";
+webpush.setVapidDetails(
+  "mailto:admin@warner.systems",
+  env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+  env.VAPID_PRIVATE_KEY
+);
 async function sendPushNotification(subscription, title, body, url = "/") {
   const payload = JSON.stringify({
     title,

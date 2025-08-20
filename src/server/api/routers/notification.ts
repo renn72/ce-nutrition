@@ -33,7 +33,7 @@ export const notificationRouter = createTRPCRouter({
         await sendPushNotification(
           JSON.parse(sub.subscription),
           input.title,
-          input.description || '',
+          input.description || 'hi',
         )
       }
 			return res
