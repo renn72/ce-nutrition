@@ -5,11 +5,13 @@ import { api } from '@/trpc/react'
 import { useEffect, useState } from 'react'
 
 import type { GetUserById } from '@/types'
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import type { PushSubscription } from 'web-push'
 
 import type { Item } from './notifications'
 import { subscriptionAtom } from './notifications'
+
+import { impersonatedUserAtom } from '@/atoms'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,6 +24,8 @@ const NotificationTrigger = ({
 }) => {
 	const [_subscription, setSubscription] = useAtom(subscriptionAtom)
 
+  const impersonatedUser = useAtomValue(impersonatedUserAtom)
+
 	const ctx = api.useUtils()
 	const { mutate: updateSubscription } =
 		api.pushSubscription.create.useMutation({
@@ -31,7 +35,7 @@ const NotificationTrigger = ({
 		})
 
 	useEffect(() => {
-		if ('serviceWorker' in navigator && 'PushManager' in window) {
+		if ('serviceWorker' in navigator && 'PushManager' in window && impersonatedUser.id === '') {
 			navigator.serviceWorker.getRegistrations().then((registrations) => {
 				for (let registration of registrations) {
           // console.log('Unregistering old service worker:', registration)
