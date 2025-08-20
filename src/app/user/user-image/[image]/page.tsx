@@ -47,6 +47,7 @@ export default function Page({
 						alt='image'
 						date={image.date}
             isRoot={isRoot?.isRoot ?? false}
+            userId={user ?? ''}
 					/>
 				))}
 				<ImageAdd setImages={setImages} images={images} />

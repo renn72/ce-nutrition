@@ -70,7 +70,15 @@ const Note = ({
 					note.state === 'created' ? '' : 'line-through opacity-50',
 				)}
 			>
-				<div className='text-base font-medium'>{note.title}</div>
+			<div
+				className={cn(
+					'text-sm text-muted-foreground',
+					note.state === 'created' ? '' : 'hidden',
+				)}
+			>
+				{note.description}
+			</div>
+				<div className='text-base font-medium hidden'>{note.title}</div>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button
@@ -117,14 +125,6 @@ const Note = ({
 				<div className='text-[0.6rem] rounded-full bg-secondary text-secondary-foreground px-2 py-1 w-fit'>
 					{note.trainer.name}
 				</div>
-			</div>
-			<div
-				className={cn(
-					'text-sm text-muted-foreground',
-					note.state === 'created' ? '' : 'hidden',
-				)}
-			>
-				{note.description}
 			</div>
 		</div>
 	)
@@ -257,7 +257,9 @@ const UserNotes = ({
 											control={form.control}
 											name='title'
 											render={({ field }) => (
-												<FormItem>
+												<FormItem
+                          className='hidden'
+                        >
 													<FormLabel>Title</FormLabel>
 													<FormControl>
 														<Input placeholder='Title' {...field} type='text' />

@@ -3,11 +3,10 @@
 import React, { useEffect, useId, useRef, useState } from 'react'
 
 import Image from 'next/image'
-import { useRouter, useSearchParams } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
 import { atom, useAtom, useAtomValue } from 'jotai'
-import { CirclePlus, Eraser, Save, SquarePen, Trash } from 'lucide-react'
+import { CirclePlus, Eraser, Menu, Save, SquarePen, Trash } from 'lucide-react'
 import {
 	ReactSketchCanvas,
 	type ReactSketchCanvasRef,
@@ -229,11 +228,15 @@ const ImageView = ({
 	alt,
 	date,
 	isRoot = false,
+	userId,
+	isAdmin = false,
 }: {
 	src: string
 	alt: string
 	date: string
 	isRoot?: boolean
+	userId: string
+	isAdmin?: boolean
 }) => {
 	const [toggleDraw, setToggleDraw] = useState(false)
 	const transformComponentRef = useRef<ReactZoomPanPinchRef | null>(null)
@@ -245,10 +248,7 @@ const ImageView = ({
 	const ref = useRef<HTMLImageElement>(null)
 	const canvasRef = useRef<ReactSketchCanvasRef>(null)
 
-	console.log('ref', ref)
-
 	const width = ref.current?.width || 0
-	console.log('width', width)
 	const height = ref.current?.height || 0
 
 	const id = useId()
