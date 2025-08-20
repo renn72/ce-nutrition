@@ -7,7 +7,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 
 import { UploadButton } from '@/lib/uploadthing'
-import type { GetDailyLogById } from '@/types'
+import type { GetDailyLogById, GetUserById } from '@/types'
 import { File, ImageIcon, Loader2, XSquare } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -43,11 +43,13 @@ const titlesMap = {
 const ImageTake = ({
 	todaysLog,
 	position,
-	userName,
+  isNotifyTrainer,
+  currentUser,
 }: {
 	todaysLog: GetDailyLogById
 	position: 'front' | 'side' | 'back'
-	userName: string
+  isNotifyTrainer: boolean
+  currentUser: GetUserById
 }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const ctx = api.useUtils()
@@ -79,18 +81,24 @@ const ImageTake = ({
 			updateFrontImage({
 				logId: todaysLog.id,
 				image: url,
+        isNotifyTrainer: isNotifyTrainer,
+        userId: currentUser.id,
 			})
 		}
 		if (position === 'side') {
 			updateSideImage({
 				logId: todaysLog.id,
 				image: url,
-			})
+        isNotifyTrainer: isNotifyTrainer,
+        userId: currentUser.id,
+			},)
 		}
 		if (position === 'back') {
 			updateBackImage({
 				logId: todaysLog.id,
 				image: url,
+        isNotifyTrainer: isNotifyTrainer,
+        userId: currentUser.id,
 			})
 		}
 	}
@@ -139,10 +147,12 @@ const ImageTake = ({
 							onUploadError={(e) => {
 								setIsUploading(false)
                 console.log({e})
+                // @ts-ignore
                 if (e.cause?.cause?.message === 'Invalid config: FileSizeMismatch') {
                   toast.error('File size exceeds limit')
                   return
                 }
+                // @ts-ignore
 								toast.error('error', e?.cause?.cause?.message)
 							}}
 							onBeforeUploadBegin={(files) => {
@@ -171,11 +181,17 @@ const ImageBox = ({
 	todaysLog,
 	position,
 	userName,
+  currentUser,
 }: {
 	todaysLog: GetDailyLogById
 	position: 'front' | 'side' | 'back'
 	userName: string
+  currentUser: GetUserById
 }) => {
+  let isNotifyTrainer = currentUser.roles.find((role) => role.name === 'notify-trainer-all-images') ? true : false
+  isNotifyTrainer = position !== 'front' ? isNotifyTrainer :
+    isNotifyTrainer ? true : currentUser.roles.find((role) => role.name === 'notify-trainer-front-image') ? true : false
+
 	const [isOpen, setIsOpen] = useState(false)
 	const ctx = api.useUtils()
 	const { mutate: updateFrontImage } =
@@ -212,18 +228,24 @@ const ImageBox = ({
 			updateFrontImage({
 				logId: todaysLog.id,
 				image: '',
+        isNotifyTrainer: false,
+        userId: currentUser.id,
 			})
 		}
 		if (position === 'side') {
 			updateSideImage({
 				logId: todaysLog.id,
 				image: '',
+        isNotifyTrainer: false,
+        userId: currentUser.id,
 			})
 		}
 		if (position === 'back') {
 			updateBackImage({
 				logId: todaysLog.id,
 				image: '',
+        isNotifyTrainer: false,
+        userId: currentUser.id,
 			})
 		}
 	}
@@ -234,7 +256,8 @@ const ImageBox = ({
 				<ImageTake
 					todaysLog={todaysLog}
 					position={position}
-					userName={userName}
+          isNotifyTrainer={isNotifyTrainer}
+          currentUser={currentUser}
 				/>
 			) : (
 				<Dialog open={isOpen} onOpenChange={setIsOpen}>

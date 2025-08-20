@@ -1,16 +1,57 @@
+import { createLog } from '@/server/api/routers/admin-log'
+import { sendPushNotification } from '@/server/api/utils/send-push'
+import { db } from '@/server/db'
 import {
 	dailyLog,
 	dailySupplement,
+	notification,
 	poopLog,
+	pushSubscription,
+	user,
 	waterLog,
-} from '@/server/db/schema/daily-logs'
+} from '@/server/db/schema'
 import { images } from '@/server/db/schema/metrics'
 import { TRPCError } from '@trpc/server'
 import { protectedProcedure } from '~/server/api/trpc'
 import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
-import { createLog } from '@/server/api/routers/admin-log'
+export const sendTrainerNotification = async ({
+	title,
+	userId,
+}: {
+	userId: string
+	title: string
+}) => {
+	const userRes = await db.query.user.findFirst({
+		where: eq(user.id, userId),
+		with: {
+			trainers: {
+				with: {
+					trainer: true,
+				},
+			},
+		},
+	})
+
+	if (!userRes) return
+
+	for (const trainer of userRes.trainers) {
+		const res = await db.insert(notification).values({
+			userId: trainer.trainer.id,
+			code: 'image-upload',
+			title: `${userRes.name} has uploaded ${title}`,
+			description: '',
+			notes: '',
+		})
+		const sub = await db.query.pushSubscription.findFirst({
+			where: eq(pushSubscription.userId, trainer.trainer.id),
+		})
+		if (sub) {
+			await sendPushNotification(JSON.parse(sub.subscription), `${userRes.name} has uploaded ${title}`, '')
+		}
+	}
+}
 
 export const updateDl = {
 	update: protectedProcedure
@@ -144,7 +185,7 @@ export const updateDl = {
 			createLog({
 				user: ctx.session.user.name,
 				userId: ctx.session.user.id,
-        task: 'Update Supplement',
+				task: 'Update Supplement',
 				notes: JSON.stringify(input),
 				objectId: null,
 			})
@@ -173,7 +214,7 @@ export const updateDl = {
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
-      console.log('-------------------------------------enter')
+			console.log('-------------------------------------enter')
 			const log = await ctx.db.query.dailyLog.findFirst({
 				where: and(
 					eq(dailyLog.date, input.date),
@@ -181,7 +222,7 @@ export const updateDl = {
 				),
 			})
 
-      console.log('-------------------------------------log')
+			console.log('-------------------------------------log')
 			createLog({
 				user: ctx.session.user.name,
 				userId: ctx.session.user.id,
@@ -189,7 +230,7 @@ export const updateDl = {
 				notes: JSON.stringify(input),
 				objectId: null,
 			})
-      console.log('-------------------------------------log')
+			console.log('-------------------------------------log')
 
 			if (!log) {
 				const res = await ctx.db.insert(dailyLog).values({
@@ -360,13 +401,13 @@ export const updateDl = {
 
 			if (!log) return
 
-      createLog({
-        user: ctx.session.user.name,
-        userId: ctx.session.user.id,
-        task: 'Update Steps',
-        notes: JSON.stringify(input),
-        objectId: log?.id,
-      })
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				task: 'Update Steps',
+				notes: JSON.stringify(input),
+				objectId: log?.id,
+			})
 
 			const res = await ctx.db
 				.update(dailyLog)
@@ -397,13 +438,13 @@ export const updateDl = {
 
 			if (!log) return
 
-      createLog({
-        user: ctx.session.user.name,
-        userId: ctx.session.user.id,
-        task: 'Update Sauna',
-        notes: JSON.stringify(input),
-        objectId: log?.id,
-      })
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				task: 'Update Sauna',
+				notes: JSON.stringify(input),
+				objectId: log?.id,
+			})
 
 			const res = await ctx.db
 				.update(dailyLog)
@@ -434,13 +475,13 @@ export const updateDl = {
 
 			if (!log) return
 
-      createLog({
-        user: ctx.session.user.name,
-        userId: ctx.session.user.id,
-        task: 'Update Cold Plunge',
-        notes: JSON.stringify(input),
-        objectId: log?.id,
-      })
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				task: 'Update Cold Plunge',
+				notes: JSON.stringify(input),
+				objectId: log?.id,
+			})
 
 			const res = await ctx.db
 				.update(dailyLog)
@@ -555,13 +596,13 @@ export const updateDl = {
 				),
 			})
 
-      createLog({
-        user: ctx.session.user.name,
-        userId: ctx.session.user.id,
-        task: 'Update Cardio',
-        notes: JSON.stringify(input),
-        objectId: log?.id,
-      })
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				task: 'Update Cardio',
+				notes: JSON.stringify(input),
+				objectId: log?.id,
+			})
 
 			if (!log) {
 				const res = await ctx.db.insert(dailyLog).values({
@@ -730,7 +771,7 @@ export const updateDl = {
 			createLog({
 				user: ctx.session.user.name,
 				userId: ctx.session.user.id,
-        task: 'Update Weight',
+				task: 'Update Weight',
 				notes: JSON.stringify(input),
 				objectId: null,
 			})
@@ -773,7 +814,7 @@ export const updateDl = {
 			createLog({
 				user: ctx.session.user.name,
 				userId: ctx.session.user.id,
-        task: `Update Blood Glucose`,
+				task: `Update Blood Glucose`,
 				notes: JSON.stringify(input),
 				objectId: null,
 			})
@@ -804,6 +845,8 @@ export const updateDl = {
 			z.object({
 				logId: z.number(),
 				image: z.string(),
+				isNotifyTrainer: z.boolean(),
+				userId: z.string(),
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
@@ -820,6 +863,13 @@ export const updateDl = {
 				.set({ frontImage: input.image })
 				.where(eq(dailyLog.id, input.logId))
 
+			if (input.isNotifyTrainer) {
+				sendTrainerNotification({
+					title: 'Front Pose',
+					userId: input.userId,
+				})
+			}
+
 			return true
 		}),
 	updateSideImage: protectedProcedure
@@ -827,6 +877,8 @@ export const updateDl = {
 			z.object({
 				logId: z.number(),
 				image: z.string(),
+				isNotifyTrainer: z.boolean(),
+				userId: z.string(),
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
@@ -843,6 +895,13 @@ export const updateDl = {
 				.set({ sideImage: input.image })
 				.where(eq(dailyLog.id, input.logId))
 
+			if (input.isNotifyTrainer) {
+				sendTrainerNotification({
+					title: 'Side Pose',
+					userId: input.userId,
+				})
+			}
+
 			return true
 		}),
 	updateBackImage: protectedProcedure
@@ -850,6 +909,8 @@ export const updateDl = {
 			z.object({
 				logId: z.number(),
 				image: z.string(),
+				isNotifyTrainer: z.boolean(),
+				userId: z.string(),
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
@@ -866,6 +927,13 @@ export const updateDl = {
 				.set({ backImage: input.image })
 				.where(eq(dailyLog.id, input.logId))
 
+			if (input.isNotifyTrainer) {
+				sendTrainerNotification({
+					title: 'Back Pose',
+					userId: input.userId,
+				})
+			}
+
 			return true
 		}),
 	updateBodyBuilderImage: protectedProcedure
@@ -875,6 +943,7 @@ export const updateDl = {
 				image: z.string(),
 				name: z.string(),
 				userId: z.string(),
+				isNotifyTrainer: z.boolean(),
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
@@ -905,6 +974,13 @@ export const updateDl = {
 					image: input.image,
 				})
 				.returning({ id: images.id })
+
+			if (input.isNotifyTrainer) {
+				sendTrainerNotification({
+					title: input.name,
+					userId: input.userId,
+				})
+			}
 
 			return res
 		}),

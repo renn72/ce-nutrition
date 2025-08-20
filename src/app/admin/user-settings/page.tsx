@@ -450,6 +450,77 @@ const BodyBuilderImages = ({ currentUser }: { currentUser: GetUserById }) => {
   )
 }
 
+const NotifyTrainerFrontImage = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isImages, setIsImages] = useState<boolean>(!!currentUser.roles.find((role) => role.name === 'notify-trainer-front-image'))
+  const { mutate: updateRoleNotifyFrontImage } = api.user.updateRoleNotifyFrontImage.useMutation({
+    onSuccess: () => {
+      toast.success('Updated')
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error')
+      ctx.user.invalidate()
+    },
+  })
+  return (
+    <div className='flex flex-row items-center justify-between rounded-lg border p-3 gap-4 shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>Front Pose</Label>
+        <div className='text-sm text-muted-foreground'>
+          Notify trainer when the frone pose image is uploaded.
+        </div>
+      </div>
+      <Switch
+        checked={isImages === true}
+        onCheckedChange={(checked) => {
+          setIsImages(checked)
+          updateRoleNotifyFrontImage({
+            userId: currentUser.id,
+          })
+        }}
+      />
+    </div>
+  )
+}
+const NotifyTrainerAllImages = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isImages, setIsImages] = useState<boolean>(!!currentUser.roles.find((role) => role.name === 'notify-trainer-all-images'))
+  const { mutate: updateRoleNotifyTrainerAllImages } = api.user.updateRoleNotifyTrainerAllImages.useMutation({
+    onSuccess: () => {
+      toast.success('Updated')
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error')
+      ctx.user.invalidate()
+    },
+  })
+  return (
+    <div className='flex flex-row items-center justify-between rounded-lg border p-3 gap-4 shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>All Images</Label>
+        <div className='text-sm text-muted-foreground'>
+          Notify trainer when each image is uploaded.
+        </div>
+      </div>
+      <Switch
+        checked={isImages === true}
+        onCheckedChange={(checked) => {
+          setIsImages(checked)
+          updateRoleNotifyTrainerAllImages({
+            userId: currentUser.id,
+          })
+        }}
+      />
+    </div>
+  )
+}
+
 const Settings = ({ user }: { user: GetUserById }) => {
 
   return (
@@ -457,6 +528,11 @@ const Settings = ({ user }: { user: GetUserById }) => {
       <h2
         className='text-xl font-semibold'
       > User Settings</h2>
+      <div className='flex flex-col gap-2 w-full p-4 border rounded-lg max-w-lg'>
+        <h2 className='text-base font-semibold'>Notifications</h2>
+        <NotifyTrainerAllImages currentUser={user} />
+        <NotifyTrainerFrontImage currentUser={user} />
+      </div>
       <div className='flex flex-col gap-2 w-full p-4 border rounded-lg max-w-lg'>
         <h2 className='text-base font-semibold'>Plans</h2>
         <CreateMeals currentUser={user} />

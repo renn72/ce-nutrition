@@ -281,6 +281,8 @@ export const columns: ColumnDef<GetUserBasic>[] = [
 				id: trainer.trainer.id,
 				name: trainer.trainer.name,
 			}))
+      const { data: currentUser } = api.user.getCurrentUser.useQuery()
+      const currentUserId = currentUser?.id || ''
 			return (
 				<div className='flex justify-between space-x-2 items-center max-w-[300px]'>
 					<div className='flex gap-1 flex-wrap'>
@@ -338,8 +340,7 @@ export const columns: ColumnDef<GetUserBasic>[] = [
 							<DropdownMenuSeparator />
 							{trainers
 								?.filter(
-									(trainer) =>
-										trainer.id !== 'f3feb152-06de-4a1e-8c9f-19d5c96c6788',
+									(trainer) =>  currentUserId === 'f3feb152-06de-4a1e-8c9f-19d5c96c6788' || trainer.id !== 'f3feb152-06de-4a1e-8c9f-19d5c96c6788',
 								)
 								?.map((trainer) => {
 									return (

@@ -20,6 +20,50 @@ export const roles = {
 
 			return res
 		}),
+	updateRoleNotifyFrontImage: protectedProcedure
+		.input(z.object({ userId: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db.query.role.findFirst({
+				where: (role, { eq, and }) =>
+					and(
+						eq(role.userId, input.userId),
+						eq(role.name, 'notify-trainer-front-image'),
+					),
+			})
+
+			if (res) {
+				await ctx.db.delete(role).where(eq(role.id, res.id))
+			} else {
+				await ctx.db.insert(role).values({
+					name: 'notify-trainer-front-image',
+					userId: input.userId,
+				})
+			}
+
+			return res
+		}),
+	updateRoleNotifyTrainerAllImages: protectedProcedure
+		.input(z.object({ userId: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db.query.role.findFirst({
+				where: (role, { eq, and }) =>
+					and(
+						eq(role.userId, input.userId),
+						eq(role.name, 'notify-trainer-all-images'),
+					),
+			})
+
+			if (res) {
+				await ctx.db.delete(role).where(eq(role.id, res.id))
+			} else {
+				await ctx.db.insert(role).values({
+					name: 'notify-trainer-all-images',
+					userId: input.userId,
+				})
+			}
+
+			return res
+		}),
 	updateRoleBodyBuilderImages: protectedProcedure
 		.input(z.object({ userId: z.string() }))
 		.mutation(async ({ ctx, input }) => {

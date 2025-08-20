@@ -4920,6 +4920,40 @@ var roles = {
     }).where(eq5(user.id, input.id));
     return res;
   }),
+  updateRoleNotifyFrontImage: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.query.role.findFirst({
+      where: (role3, { eq: eq27, and: and12 }) => and12(
+        eq27(role3.userId, input.userId),
+        eq27(role3.name, "notify-trainer-front-image")
+      )
+    });
+    if (res) {
+      await ctx.db.delete(role).where(eq5(role.id, res.id));
+    } else {
+      await ctx.db.insert(role).values({
+        name: "notify-trainer-front-image",
+        userId: input.userId
+      });
+    }
+    return res;
+  }),
+  updateRoleNotifyTrainerAllImages: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.query.role.findFirst({
+      where: (role3, { eq: eq27, and: and12 }) => and12(
+        eq27(role3.userId, input.userId),
+        eq27(role3.name, "notify-trainer-all-images")
+      )
+    });
+    if (res) {
+      await ctx.db.delete(role).where(eq5(role.id, res.id));
+    } else {
+      await ctx.db.insert(role).values({
+        name: "notify-trainer-all-images",
+        userId: input.userId
+      });
+    }
+    return res;
+  }),
   updateRoleBodyBuilderImages: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
       where: (role3, { eq: eq27, and: and12 }) => and12(
@@ -6564,10 +6598,75 @@ var post2 = {
   })
 };
 
+// src/server/api/utils/send-push.ts
+import webpush from "web-push";
+webpush.setVapidDetails(
+  "mailto:admin@warner.systems",
+  env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+  env.VAPID_PRIVATE_KEY
+);
+async function sendPushNotification(subscription, title, body, url = "/", icon = "/ce.png") {
+  const payload = JSON.stringify({
+    title,
+    body,
+    // url: url, // Include URL in payload for service worker
+    icon,
+    url: "poo"
+  });
+  try {
+    await webpush.sendNotification(subscription, payload);
+    console.log("Push notification sent successfully!");
+    return { success: true, message: "Notification sent" };
+  } catch (error) {
+    console.error("Error sending push notification:", error);
+    if (error.statusCode === 410) {
+      console.warn(
+        "Subscription expired. You should delete it from your database."
+      );
+      return { success: false, message: "Subscription expired" };
+    }
+    return {
+      success: false,
+      message: `Failed to send notification: ${error.message}`
+    };
+  }
+}
+
 // src/server/api/routers/daily-logs/update-dl.ts
 import { TRPCError as TRPCError4 } from "@trpc/server";
 import { and as and4, eq as eq14 } from "drizzle-orm";
 import { z as z20 } from "zod";
+var sendTrainerNotification = async ({
+  title,
+  userId
+}) => {
+  const userRes = await db.query.user.findFirst({
+    where: eq14(user.id, userId),
+    with: {
+      trainers: {
+        with: {
+          trainer: true
+        }
+      }
+    }
+  });
+  if (!userRes) return;
+  for (const trainer of userRes.trainers) {
+    const res = await db.insert(notification).values({
+      userId: trainer.trainer.id,
+      code: "image-upload",
+      title: `${userRes.name} has uploaded ${title}`,
+      description: "",
+      notes: ""
+    });
+    const sub = await db.query.pushSubscription.findFirst({
+      where: eq14(pushSubscription.userId, trainer.trainer.id)
+    });
+    if (sub) {
+      await sendPushNotification(JSON.parse(sub.subscription), `${userRes.name} has uploaded ${title}`, "");
+    }
+  }
+};
 var updateDl = {
   update: protectedProcedure.input(
     z20.object({
@@ -7207,7 +7306,9 @@ var updateDl = {
   updateFrontImage: protectedProcedure.input(
     z20.object({
       logId: z20.number(),
-      image: z20.string()
+      image: z20.string(),
+      isNotifyTrainer: z20.boolean(),
+      userId: z20.string()
     })
   ).mutation(async ({ input, ctx }) => {
     createLog({
@@ -7218,12 +7319,20 @@ var updateDl = {
       objectId: null
     });
     const res = await ctx.db.update(dailyLog).set({ frontImage: input.image }).where(eq14(dailyLog.id, input.logId));
+    if (input.isNotifyTrainer) {
+      sendTrainerNotification({
+        title: "Front Pose",
+        userId: input.userId
+      });
+    }
     return true;
   }),
   updateSideImage: protectedProcedure.input(
     z20.object({
       logId: z20.number(),
-      image: z20.string()
+      image: z20.string(),
+      isNotifyTrainer: z20.boolean(),
+      userId: z20.string()
     })
   ).mutation(async ({ input, ctx }) => {
     createLog({
@@ -7234,12 +7343,20 @@ var updateDl = {
       objectId: null
     });
     const res = await ctx.db.update(dailyLog).set({ sideImage: input.image }).where(eq14(dailyLog.id, input.logId));
+    if (input.isNotifyTrainer) {
+      sendTrainerNotification({
+        title: "Side Pose",
+        userId: input.userId
+      });
+    }
     return true;
   }),
   updateBackImage: protectedProcedure.input(
     z20.object({
       logId: z20.number(),
-      image: z20.string()
+      image: z20.string(),
+      isNotifyTrainer: z20.boolean(),
+      userId: z20.string()
     })
   ).mutation(async ({ input, ctx }) => {
     createLog({
@@ -7250,6 +7367,12 @@ var updateDl = {
       objectId: null
     });
     const res = await ctx.db.update(dailyLog).set({ backImage: input.image }).where(eq14(dailyLog.id, input.logId));
+    if (input.isNotifyTrainer) {
+      sendTrainerNotification({
+        title: "Back Pose",
+        userId: input.userId
+      });
+    }
     return true;
   }),
   updateBodyBuilderImage: protectedProcedure.input(
@@ -7257,7 +7380,8 @@ var updateDl = {
       date: z20.string(),
       image: z20.string(),
       name: z20.string(),
-      userId: z20.string()
+      userId: z20.string(),
+      isNotifyTrainer: z20.boolean()
     })
   ).mutation(async ({ input, ctx }) => {
     await ctx.db.delete(images).where(
@@ -7280,6 +7404,12 @@ var updateDl = {
       date: input.date,
       image: input.image
     }).returning({ id: images.id });
+    if (input.isNotifyTrainer) {
+      sendTrainerNotification({
+        title: input.name,
+        userId: input.userId
+      });
+    }
     return res;
   }),
   updateImage: protectedProcedure.input(
@@ -9318,41 +9448,6 @@ var userCatagoriesRouter = createTRPCRouter({
 // src/server/api/routers/notification.ts
 import { eq as eq25, and as and11 } from "drizzle-orm";
 import { z as z33 } from "zod";
-
-// src/server/api/utils/send-push.ts
-import webpush from "web-push";
-webpush.setVapidDetails(
-  "mailto:admin@warner.systems",
-  env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-  env.VAPID_PRIVATE_KEY
-);
-async function sendPushNotification(subscription, title, body, url = "/") {
-  const payload = JSON.stringify({
-    title,
-    body,
-    url
-    // Include URL in payload for service worker
-  });
-  try {
-    await webpush.sendNotification(subscription, payload);
-    console.log("Push notification sent successfully!");
-    return { success: true, message: "Notification sent" };
-  } catch (error) {
-    console.error("Error sending push notification:", error);
-    if (error.statusCode === 410) {
-      console.warn(
-        "Subscription expired. You should delete it from your database."
-      );
-      return { success: false, message: "Subscription expired" };
-    }
-    return {
-      success: false,
-      message: `Failed to send notification: ${error.message}`
-    };
-  }
-}
-
-// src/server/api/routers/notification.ts
 var notificationRouter = createTRPCRouter({
   create: protectedProcedure.input(
     z33.object({
@@ -9377,7 +9472,7 @@ var notificationRouter = createTRPCRouter({
       await sendPushNotification(
         JSON.parse(sub.subscription),
         input.title,
-        input.description || ""
+        input.description || "hi"
       );
     }
     return res;

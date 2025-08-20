@@ -34,7 +34,7 @@ const NotificationTrigger = ({
 		if ('serviceWorker' in navigator && 'PushManager' in window) {
 			navigator.serviceWorker.getRegistrations().then((registrations) => {
 				for (let registration of registrations) {
-          console.log('Unregistering old service worker:', registration)
+          // console.log('Unregistering old service worker:', registration)
 					// registration.unregister().then((unregistered) => {
 					// 	console.log('Unregistered old service worker:', unregistered)
 					// })

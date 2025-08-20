@@ -93,16 +93,19 @@ const DailyLogForm = ({
 					todaysLog={todaysLog}
 					position='front'
           userName={userName}
+          currentUser={currentUser}
 				/>
 				<ImageBox
 					todaysLog={todaysLog}
 					position='side'
           userName={userName}
+          currentUser={currentUser}
 				/>
 				<ImageBox
 					todaysLog={todaysLog}
 					position='back'
           userName={userName}
+          currentUser={currentUser}
 				/>
         {
           isBodyBuilderImages ? (

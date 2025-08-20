@@ -48,6 +48,7 @@ const ImageTake = ({
 	todaysLog,
 	position,
 	currentUser,
+  isNotifyTrainer,
 }: {
 	todaysLog: GetDailyLogById
 	position:
@@ -59,6 +60,7 @@ const ImageTake = ({
 		| 'frontVacum'
 		| 'favourite'
 	currentUser: GetUserById
+  isNotifyTrainer: boolean
 }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [isUploading, setIsUploading] = useState(false)
@@ -78,6 +80,7 @@ const ImageTake = ({
       userId: currentUser.id,
       image: url,
       name: position,
+      isNotifyTrainer: isNotifyTrainer,
     })
 	}
 
@@ -164,6 +167,7 @@ const ImageBoxBodyBuilder = ({
 		| 'favourite'
 	currentUser: GetUserById
 }) => {
+  let isNotifyTrainer = currentUser.roles.find((role) => role.name === 'notify-trainer-all-images') ? true : false
 	const [isOpen, setIsOpen] = useState(false)
 	const ctx = api.useUtils()
 	const title = titlesMap[position]
@@ -186,6 +190,7 @@ const ImageBoxBodyBuilder = ({
       userId: currentUser.id,
       image: '',
       name: position,
+      isNotifyTrainer: false,
     })
 	}
 
@@ -196,6 +201,7 @@ const ImageBoxBodyBuilder = ({
 					todaysLog={todaysLog}
 					position={position}
 					currentUser={currentUser}
+          isNotifyTrainer={isNotifyTrainer}
 				/>
 			) : (
 				<Dialog open={isOpen} onOpenChange={setIsOpen}>

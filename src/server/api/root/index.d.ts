@@ -14544,6 +14544,8 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             input: {
                 logId: number;
                 image: string;
+                isNotifyTrainer: boolean;
+                userId: string;
             };
             output: boolean;
             meta: object;
@@ -14552,6 +14554,8 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             input: {
                 logId: number;
                 image: string;
+                isNotifyTrainer: boolean;
+                userId: string;
             };
             output: boolean;
             meta: object;
@@ -14560,6 +14564,8 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             input: {
                 logId: number;
                 image: string;
+                isNotifyTrainer: boolean;
+                userId: string;
             };
             output: boolean;
             meta: object;
@@ -14570,6 +14576,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 image: string;
                 name: string;
                 userId: string;
+                isNotifyTrainer: boolean;
             };
             output: {
                 id: number;
@@ -14845,6 +14852,32 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 id: string;
             };
             output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateRoleNotifyFrontImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                id: number;
+                name: string | null;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string | null;
+            } | undefined;
+            meta: object;
+        }>;
+        updateRoleNotifyTrainerAllImages: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                id: number;
+                name: string | null;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string | null;
+            } | undefined;
             meta: object;
         }>;
         updateRoleBodyBuilderImages: _trpc_server.TRPCMutationProcedure<{
@@ -21369,6 +21402,8 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             input: {
                 logId: number;
                 image: string;
+                isNotifyTrainer: boolean;
+                userId: string;
             };
             output: boolean;
             meta: object;
@@ -21377,6 +21412,8 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             input: {
                 logId: number;
                 image: string;
+                isNotifyTrainer: boolean;
+                userId: string;
             };
             output: boolean;
             meta: object;
@@ -21385,6 +21422,8 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             input: {
                 logId: number;
                 image: string;
+                isNotifyTrainer: boolean;
+                userId: string;
             };
             output: boolean;
             meta: object;
@@ -21395,6 +21434,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 image: string;
                 name: string;
                 userId: string;
+                isNotifyTrainer: boolean;
             };
             output: {
                 id: number;
@@ -21670,6 +21710,32 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 id: string;
             };
             output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateRoleNotifyFrontImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                id: number;
+                name: string | null;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string | null;
+            } | undefined;
+            meta: object;
+        }>;
+        updateRoleNotifyTrainerAllImages: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                id: number;
+                name: string | null;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string | null;
+            } | undefined;
             meta: object;
         }>;
         updateRoleBodyBuilderImages: _trpc_server.TRPCMutationProcedure<{
