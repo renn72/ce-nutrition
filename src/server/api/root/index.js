@@ -1817,7 +1817,7 @@ var authConfig = {
       if (session2.user && token.uid) {
         const dbUser = await db.query.user.findFirst({
           // @ts-ignore
-          where: (user3, { eq: eq27 }) => eq27(user3.id, token.uid),
+          where: (user3, { eq: eq28 }) => eq28(user3.id, token.uid),
           columns: {
             id: true,
             isTrainer: true,
@@ -1881,7 +1881,7 @@ var authConfig = {
         console.log("credentials", credentials);
         if (!credentials) return null;
         const maybeUser = await db.query.user.findFirst({
-          where: (user3, { eq: eq27 }) => eq27(user3.email, credentials.username)
+          where: (user3, { eq: eq28 }) => eq28(user3.email, credentials.username)
         });
         if (!maybeUser) throw new Error("user not found");
         if (!maybeUser.password) throw new Error("invalid password");
@@ -1973,7 +1973,7 @@ var rootProtectedProcedure = t.procedure.use(timingMiddleware).use(async ({ ctx,
   const sessionUser = ctx.session.user;
   if (!sessionUser) return next({ ctx });
   const user3 = await ctx.db.query.user.findFirst({
-    where: (user4, { eq: eq27 }) => eq27(user4.id, sessionUser.id)
+    where: (user4, { eq: eq28 }) => eq28(user4.id, sessionUser.id)
   });
   console.log("user in protected", user3);
   if (!user3?.isRoot) {
@@ -1993,12 +1993,12 @@ import { z as z3 } from "zod";
 var ingredientRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.ingredient.findMany({
-      where: (ingredient2, { isNull, and: and12, eq: eq27 }) => and12(
+      where: (ingredient2, { isNull, and: and13, eq: eq28 }) => and13(
         isNull(ingredient2.hiddenAt),
         isNull(ingredient2.deletedAt),
-        eq27(ingredient2.isSupplement, false),
-        eq27(ingredient2.isPrivate, false),
-        eq27(ingredient2.isUserCreated, false)
+        eq28(ingredient2.isSupplement, false),
+        eq28(ingredient2.isPrivate, false),
+        eq28(ingredient2.isUserCreated, false)
       ),
       with: {
         user: {
@@ -2019,12 +2019,12 @@ var ingredientRouter = createTRPCRouter({
   }),
   getAllFav: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.ingredient.findMany({
-      where: (ingredient2, { isNull, and: and12, eq: eq27 }) => and12(
+      where: (ingredient2, { isNull, and: and13, eq: eq28 }) => and13(
         isNull(ingredient2.hiddenAt),
         isNull(ingredient2.deletedAt),
-        eq27(ingredient2.isSupplement, false),
-        eq27(ingredient2.isPrivate, false),
-        eq27(ingredient2.isUserCreated, false)
+        eq28(ingredient2.isSupplement, false),
+        eq28(ingredient2.isPrivate, false),
+        eq28(ingredient2.isUserCreated, false)
       ),
       with: {
         ingredientToGroceryStore: {
@@ -2039,7 +2039,7 @@ var ingredientRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z3.object({ id: z3.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.ingredient.findFirst({
-      where: (ingredient2, { eq: eq27 }) => eq27(ingredient2.id, input.id),
+      where: (ingredient2, { eq: eq28 }) => eq28(ingredient2.id, input.id),
       with: {
         user: {
           columns: {
@@ -2149,7 +2149,7 @@ var groceryStoreRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z5.object({ id: z5.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.groceryStore.findFirst({
-      where: (store, { eq: eq27 }) => eq27(store.id, input.id)
+      where: (store, { eq: eq28 }) => eq28(store.id, input.id)
     });
     return res;
   }),
@@ -2568,7 +2568,7 @@ var testRouter = createTRPCRouter({
       skip_empty_lines: true
     });
     const user3 = await db.query.user.findFirst({
-      where: (user4, { eq: eq27 }) => eq27(user4.email, "renn@warner.systems"),
+      where: (user4, { eq: eq28 }) => eq28(user4.email, "renn@warner.systems"),
       columns: {
         id: true
       }
@@ -2840,7 +2840,7 @@ var testRouter = createTRPCRouter({
     const csv7 = csvData.slice(1200, 1400);
     const csv8 = csvData.slice(1400, csvData.length);
     const user3 = await db.query.user.findFirst({
-      where: (user4, { eq: eq27 }) => eq27(user4.email, "renn@warner.systems"),
+      where: (user4, { eq: eq28 }) => eq28(user4.email, "renn@warner.systems"),
       columns: {
         id: true
       }
@@ -4587,7 +4587,7 @@ var get = {
   getBasic: protectedProcedure.input(z7.string()).query(async ({ ctx, input }) => {
     if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq27 }) => eq27(user3.id, input),
+      where: (user3, { eq: eq28 }) => eq28(user3.id, input),
       columns: {
         password: false
       },
@@ -4660,14 +4660,14 @@ var get = {
   checkEmail: publicProcedure.input(z7.string()).mutation(async ({ ctx, input }) => {
     if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq27 }) => eq27(user3.email, input)
+      where: (user3, { eq: eq28 }) => eq28(user3.email, input)
     });
     return res ? true : false;
   }),
   getGaurenteed: protectedProcedure.input(z7.string()).query(async ({ ctx, input }) => {
     if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq27 }) => eq27(user3.id, input),
+      where: (user3, { eq: eq28 }) => eq28(user3.id, input),
       columns: {
         password: false
       },
@@ -4704,7 +4704,7 @@ var get = {
   getByEmail: protectedProcedure.input(z7.string()).query(async ({ ctx, input }) => {
     if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq27 }) => eq27(user3.email, input),
+      where: (user3, { eq: eq28 }) => eq28(user3.email, input),
       columns: {
         password: false
       }
@@ -4714,7 +4714,7 @@ var get = {
   get: protectedProcedure.input(z7.string()).query(async ({ ctx, input }) => {
     if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq27 }) => eq27(user3.id, input),
+      where: (user3, { eq: eq28 }) => eq28(user3.id, input),
       columns: {
         password: false
       },
@@ -4753,7 +4753,7 @@ var get = {
     if (input?.id && input.id !== "") userId = input.id;
     if (!userId) return null;
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq27 }) => eq27(user3.id, userId),
+      where: (user3, { eq: eq28 }) => eq28(user3.id, userId),
       columns: {
         password: false
       },
@@ -4796,7 +4796,7 @@ var get = {
     const userId = ctx.session?.user.id;
     if (!userId) return null;
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq27 }) => eq27(user3.id, userId),
+      where: (user3, { eq: eq28 }) => eq28(user3.id, userId),
       columns: {
         isCreator: true
       }
@@ -4807,7 +4807,7 @@ var get = {
     const userId = ctx.session?.user.id;
     if (!userId) return null;
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq27 }) => eq27(user3.id, userId),
+      where: (user3, { eq: eq28 }) => eq28(user3.id, userId),
       columns: {
         isTrainer: true
       }
@@ -4818,7 +4818,7 @@ var get = {
     const userId = ctx.session?.user.id;
     if (!userId) return null;
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq27 }) => eq27(user3.id, userId),
+      where: (user3, { eq: eq28 }) => eq28(user3.id, userId),
       columns: {
         isRoot: true
       }
@@ -4829,7 +4829,7 @@ var get = {
     const userId = ctx.session?.user.id;
     if (!userId) return null;
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq27 }) => eq27(user3.id, userId),
+      where: (user3, { eq: eq28 }) => eq28(user3.id, userId),
       with: {
         roles: true
       }
@@ -4922,9 +4922,9 @@ var roles = {
   }),
   updateRoleNotifyFrontImage: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role3, { eq: eq27, and: and12 }) => and12(
-        eq27(role3.userId, input.userId),
-        eq27(role3.name, "notify-trainer-front-image")
+      where: (role3, { eq: eq28, and: and13 }) => and13(
+        eq28(role3.userId, input.userId),
+        eq28(role3.name, "notify-trainer-front-image")
       )
     });
     if (res) {
@@ -4946,9 +4946,9 @@ var roles = {
   }),
   updateRoleNotifyTrainerAllImages: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role3, { eq: eq27, and: and12 }) => and12(
-        eq27(role3.userId, input.userId),
-        eq27(role3.name, "notify-trainer-all-images")
+      where: (role3, { eq: eq28, and: and13 }) => and13(
+        eq28(role3.userId, input.userId),
+        eq28(role3.name, "notify-trainer-all-images")
       )
     });
     if (res) {
@@ -4970,9 +4970,9 @@ var roles = {
   }),
   updateRoleBodyBuilderImages: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role3, { eq: eq27, and: and12 }) => and12(
-        eq27(role3.userId, input.userId),
-        eq27(role3.name, "body-builder-images")
+      where: (role3, { eq: eq28, and: and13 }) => and13(
+        eq28(role3.userId, input.userId),
+        eq28(role3.name, "body-builder-images")
       )
     });
     if (res) {
@@ -4987,9 +4987,9 @@ var roles = {
   }),
   updateRoleSupplementDisclaimer: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role3, { eq: eq27, and: and12 }) => and12(
-        eq27(role3.userId, input.userId),
-        eq27(role3.name, "supplement_disclaimer_v1")
+      where: (role3, { eq: eq28, and: and13 }) => and13(
+        eq28(role3.userId, input.userId),
+        eq28(role3.name, "supplement_disclaimer_v1")
       )
     });
     if (res) {
@@ -5011,7 +5011,7 @@ var roles = {
   }),
   updateRoleSupplements: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role3, { eq: eq27, and: and12 }) => and12(eq27(role3.userId, input.userId), eq27(role3.name, "supplements"))
+      where: (role3, { eq: eq28, and: and13 }) => and13(eq28(role3.userId, input.userId), eq28(role3.name, "supplements"))
     });
     if (res) {
       await ctx.db.delete(role).where(eq5(role.id, res.id));
@@ -5032,7 +5032,7 @@ var roles = {
   }),
   updateRoleCreateMeals: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role3, { eq: eq27, and: and12 }) => and12(eq27(role3.userId, input.userId), eq27(role3.name, "create-meals"))
+      where: (role3, { eq: eq28, and: and13 }) => and13(eq28(role3.userId, input.userId), eq28(role3.name, "create-meals"))
     });
     if (res) {
       await ctx.db.delete(role).where(eq5(role.id, res.id));
@@ -5053,7 +5053,7 @@ var roles = {
   }),
   updateRoleAdmin: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role3, { eq: eq27, and: and12 }) => and12(eq27(role3.userId, input.userId), eq27(role3.name, "admin"))
+      where: (role3, { eq: eq28, and: and13 }) => and13(eq28(role3.userId, input.userId), eq28(role3.name, "admin"))
     });
     if (res) {
       await ctx.db.delete(role).where(eq5(role.id, res.id));
@@ -5257,7 +5257,7 @@ import { z as z12 } from "zod";
 var notifications = {
   getNotifications: protectedProcedure.input(z12.object({ userId: z12.string() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.notificationToggle.findMany({
-      where: (toggle, { eq: eq27 }) => eq27(toggle.userId, input.userId)
+      where: (toggle, { eq: eq28 }) => eq28(toggle.userId, input.userId)
     });
     return res;
   }),
@@ -5270,7 +5270,7 @@ var notifications = {
     })
   ).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.query.notificationToggle.findFirst({
-      where: (toggle, { eq: eq27, and: and12 }) => and12(eq27(toggle.userId, input.userId), eq27(toggle.type, input.type))
+      where: (toggle, { eq: eq28, and: and13 }) => and13(eq28(toggle.userId, input.userId), eq28(toggle.type, input.type))
     });
     createLog({
       user: ctx.session.user.name,
@@ -5339,7 +5339,7 @@ import { z as z14 } from "zod";
 var recipeRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.recipe.findMany({
-      where: (recipe2, { eq: eq27 }) => eq27(recipe2.isUserRecipe, false),
+      where: (recipe2, { eq: eq28 }) => eq28(recipe2.isUserRecipe, false),
       orderBy: [desc3(recipe.createdAt)],
       with: {
         creator: true,
@@ -5363,9 +5363,9 @@ var recipeRouter = createTRPCRouter({
   }),
   getAllUserCreated: protectedProcedure.input(z14.object({ userId: z14.string() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.recipe.findMany({
-      where: (recipe2, { eq: eq27, and: and12 }) => and12(
-        eq27(recipe2.creatorId, input.userId),
-        eq27(recipe2.isUserRecipe, true)
+      where: (recipe2, { eq: eq28, and: and13 }) => and13(
+        eq28(recipe2.creatorId, input.userId),
+        eq28(recipe2.isUserRecipe, true)
       ),
       orderBy: [desc3(recipe.createdAt)],
       with: {
@@ -5389,7 +5389,7 @@ var recipeRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z14.object({ id: z14.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.recipe.findFirst({
-      where: (recipe2, { eq: eq27 }) => eq27(recipe2.id, input.id),
+      where: (recipe2, { eq: eq28 }) => eq28(recipe2.id, input.id),
       with: {
         creator: true,
         recipeToIngredient: {
@@ -5587,7 +5587,7 @@ var planRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z15.number()).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.plan.findFirst({
-      where: (plan2, { eq: eq27 }) => eq27(plan2.id, input),
+      where: (plan2, { eq: eq28 }) => eq28(plan2.id, input),
       with: {
         creator: true,
         meals: {
@@ -5897,7 +5897,7 @@ var mealRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z16.object({ id: z16.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.meal.findFirst({
-      where: (meal2, { eq: eq27 }) => eq27(meal2.id, input.id),
+      where: (meal2, { eq: eq28 }) => eq28(meal2.id, input.id),
       with: {
         mealToVegeStack: {
           with: {
@@ -6046,7 +6046,7 @@ var vegeRouter = createTRPCRouter({
   }),
   get: protectedProcedure.input(z17.object({ id: z17.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.vegeStack.findFirst({
-      where: (store, { eq: eq27 }) => eq27(store.id, input.id)
+      where: (store, { eq: eq28 }) => eq28(store.id, input.id)
     });
     return res;
   }),
@@ -6612,75 +6612,10 @@ var post2 = {
   })
 };
 
-// src/server/api/utils/send-push.ts
-import webpush from "web-push";
-webpush.setVapidDetails(
-  "mailto:admin@warner.systems",
-  env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-  env.VAPID_PRIVATE_KEY
-);
-async function sendPushNotification(subscription, title, body, url = "/", icon = "/ce.png") {
-  const payload = JSON.stringify({
-    title,
-    body,
-    // url: url, // Include URL in payload for service worker
-    icon,
-    url: "poo"
-  });
-  try {
-    await webpush.sendNotification(subscription, payload);
-    console.log("Push notification sent successfully!");
-    return { success: true, message: "Notification sent" };
-  } catch (error) {
-    console.error("Error sending push notification:", error);
-    if (error.statusCode === 410) {
-      console.warn(
-        "Subscription expired. You should delete it from your database."
-      );
-      return { success: false, message: "Subscription expired" };
-    }
-    return {
-      success: false,
-      message: `Failed to send notification: ${error.message}`
-    };
-  }
-}
-
 // src/server/api/routers/daily-logs/update-dl.ts
 import { TRPCError as TRPCError4 } from "@trpc/server";
 import { and as and4, eq as eq14 } from "drizzle-orm";
 import { z as z20 } from "zod";
-var sendTrainerNotification = async ({
-  title,
-  userId
-}) => {
-  const userRes = await db.query.user.findFirst({
-    where: eq14(user.id, userId),
-    with: {
-      trainers: {
-        with: {
-          trainer: true
-        }
-      }
-    }
-  });
-  if (!userRes) return;
-  for (const trainer of userRes.trainers) {
-    const res = await db.insert(notification).values({
-      userId: trainer.trainer.id,
-      code: "image-upload",
-      title: `${userRes.name} has uploaded ${title}`,
-      description: "",
-      notes: ""
-    });
-    const sub = await db.query.pushSubscription.findFirst({
-      where: eq14(pushSubscription.userId, trainer.trainer.id)
-    });
-    if (sub) {
-      await sendPushNotification(JSON.parse(sub.subscription), `${userRes.name} has uploaded ${title}`, "");
-    }
-  }
-};
 var updateDl = {
   update: protectedProcedure.input(
     z20.object({
@@ -6714,7 +6649,7 @@ var updateDl = {
       isCardio,
       isLift,
       isLiss,
-      image,
+      image: image2,
       userId,
       nap
     } = input;
@@ -6731,7 +6666,7 @@ var updateDl = {
       isCardio,
       isLift,
       isLiss,
-      image,
+      image: image2,
       userId
     }).where(eq14(dailyLog.id, id));
     createLog({
@@ -7317,115 +7252,6 @@ var updateDl = {
     );
     return res;
   }),
-  updateFrontImage: protectedProcedure.input(
-    z20.object({
-      logId: z20.number(),
-      image: z20.string(),
-      isNotifyTrainer: z20.boolean(),
-      userId: z20.string()
-    })
-  ).mutation(async ({ input, ctx }) => {
-    createLog({
-      user: ctx.session.user.name,
-      userId: ctx.session.user.id,
-      task: "Update Front Image",
-      notes: JSON.stringify(input),
-      objectId: null
-    });
-    const res = await ctx.db.update(dailyLog).set({ frontImage: input.image }).where(eq14(dailyLog.id, input.logId));
-    if (input.isNotifyTrainer) {
-      sendTrainerNotification({
-        title: "Front Pose",
-        userId: input.userId
-      });
-    }
-    return true;
-  }),
-  updateSideImage: protectedProcedure.input(
-    z20.object({
-      logId: z20.number(),
-      image: z20.string(),
-      isNotifyTrainer: z20.boolean(),
-      userId: z20.string()
-    })
-  ).mutation(async ({ input, ctx }) => {
-    createLog({
-      user: ctx.session.user.name,
-      userId: ctx.session.user.id,
-      task: "Update side Image",
-      notes: JSON.stringify(input),
-      objectId: null
-    });
-    const res = await ctx.db.update(dailyLog).set({ sideImage: input.image }).where(eq14(dailyLog.id, input.logId));
-    if (input.isNotifyTrainer) {
-      sendTrainerNotification({
-        title: "Side Pose",
-        userId: input.userId
-      });
-    }
-    return true;
-  }),
-  updateBackImage: protectedProcedure.input(
-    z20.object({
-      logId: z20.number(),
-      image: z20.string(),
-      isNotifyTrainer: z20.boolean(),
-      userId: z20.string()
-    })
-  ).mutation(async ({ input, ctx }) => {
-    createLog({
-      user: ctx.session.user.name,
-      userId: ctx.session.user.id,
-      task: "Update  Back Image",
-      notes: JSON.stringify(input),
-      objectId: null
-    });
-    const res = await ctx.db.update(dailyLog).set({ backImage: input.image }).where(eq14(dailyLog.id, input.logId));
-    if (input.isNotifyTrainer) {
-      sendTrainerNotification({
-        title: "Back Pose",
-        userId: input.userId
-      });
-    }
-    return true;
-  }),
-  updateBodyBuilderImage: protectedProcedure.input(
-    z20.object({
-      date: z20.string(),
-      image: z20.string(),
-      name: z20.string(),
-      userId: z20.string(),
-      isNotifyTrainer: z20.boolean()
-    })
-  ).mutation(async ({ input, ctx }) => {
-    await ctx.db.delete(images).where(
-      and4(
-        eq14(images.date, input.date),
-        eq14(images.name, input.name),
-        eq14(images.userId, input.userId)
-      )
-    );
-    createLog({
-      user: ctx.session.user.name,
-      userId: ctx.session.user.id,
-      task: `Update Image ${input.name} `,
-      notes: JSON.stringify(input),
-      objectId: null
-    });
-    const res = await ctx.db.insert(images).values({
-      userId: input.userId,
-      name: input.name,
-      date: input.date,
-      image: input.image
-    }).returning({ id: images.id });
-    if (input.isNotifyTrainer) {
-      sendTrainerNotification({
-        title: input.name,
-        userId: input.userId
-      });
-    }
-    return res;
-  }),
   updateImage: protectedProcedure.input(
     z20.object({
       date: z20.string(),
@@ -7665,29 +7491,274 @@ var get2 = {
   })
 };
 
+// src/server/api/utils/send-push.ts
+import webpush from "web-push";
+webpush.setVapidDetails(
+  "mailto:admin@warner.systems",
+  env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+  env.VAPID_PRIVATE_KEY
+);
+async function sendPushNotification(subscription, title, body, url = "/", icon = "/ce.png") {
+  const payload = JSON.stringify({
+    title,
+    body,
+    // url: url, // Include URL in payload for service worker
+    icon,
+    url: "poo"
+  });
+  try {
+    await webpush.sendNotification(subscription, payload);
+    console.log("Push notification sent successfully!");
+    return { success: true, message: "Notification sent" };
+  } catch (error) {
+    console.error("Error sending push notification:", error);
+    if (error.statusCode === 410) {
+      console.warn(
+        "Subscription expired. You should delete it from your database."
+      );
+      return { success: false, message: "Subscription expired" };
+    }
+    return {
+      success: false,
+      message: `Failed to send notification: ${error.message}`
+    };
+  }
+}
+
+// src/server/api/routers/daily-logs/image.ts
+import { and as and5, eq as eq16 } from "drizzle-orm";
+import { z as z22 } from "zod";
+var sendTrainerNotification = async ({
+  title,
+  userId
+}) => {
+  const userRes = await db.query.user.findFirst({
+    where: eq16(user.id, userId),
+    with: {
+      trainers: {
+        with: {
+          trainer: true
+        }
+      }
+    }
+  });
+  if (!userRes) return;
+  for (const trainer of userRes.trainers) {
+    await db.insert(notification).values({
+      userId: trainer.trainer.id,
+      code: "image-upload",
+      title: `${userRes.name} has uploaded ${title}`,
+      description: "",
+      notes: ""
+    });
+    const sub = await db.query.pushSubscription.findFirst({
+      where: eq16(pushSubscription.userId, trainer.trainer.id)
+    });
+    if (sub) {
+      await sendPushNotification(JSON.parse(sub.subscription), `${userRes.name} has uploaded ${title}`, "");
+    }
+  }
+};
+var image = {
+  updateFrontImage: protectedProcedure.input(
+    z22.object({
+      logId: z22.number(),
+      image: z22.string(),
+      isNotifyTrainer: z22.boolean(),
+      userId: z22.string()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "Update Front Image",
+      notes: JSON.stringify(input),
+      objectId: null
+    });
+    const res = await ctx.db.update(dailyLog).set({ frontImage: input.image }).where(eq16(dailyLog.id, input.logId));
+    if (input.isNotifyTrainer) {
+      sendTrainerNotification({
+        title: "Front Pose",
+        userId: input.userId
+      });
+    }
+    return res;
+  }),
+  updateFrontImageOverlay: protectedProcedure.input(
+    z22.object({
+      logId: z22.number(),
+      overlay: z22.string()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "Update Front Image Overlay",
+      notes: JSON.stringify(input),
+      objectId: null
+    });
+    const res = await ctx.db.update(dailyLog).set({ frontImageSvg: input.overlay }).where(eq16(dailyLog.id, input.logId));
+    return res;
+  }),
+  updateSideImage: protectedProcedure.input(
+    z22.object({
+      logId: z22.number(),
+      image: z22.string(),
+      isNotifyTrainer: z22.boolean(),
+      userId: z22.string()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "Update side Image",
+      notes: JSON.stringify(input),
+      objectId: null
+    });
+    const res = await ctx.db.update(dailyLog).set({ sideImage: input.image }).where(eq16(dailyLog.id, input.logId));
+    if (input.isNotifyTrainer) {
+      sendTrainerNotification({
+        title: "Side Pose",
+        userId: input.userId
+      });
+    }
+    return res;
+  }),
+  updateSideImageOverlay: protectedProcedure.input(
+    z22.object({
+      logId: z22.number(),
+      overlay: z22.string()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "Update Side Image Overlay",
+      notes: JSON.stringify(input),
+      objectId: null
+    });
+    const res = await ctx.db.update(dailyLog).set({ sideImageSvg: input.overlay }).where(eq16(dailyLog.id, input.logId));
+    return res;
+  }),
+  updateBackImage: protectedProcedure.input(
+    z22.object({
+      logId: z22.number(),
+      image: z22.string(),
+      isNotifyTrainer: z22.boolean(),
+      userId: z22.string()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "Update  Back Image",
+      notes: JSON.stringify(input),
+      objectId: null
+    });
+    const res = await ctx.db.update(dailyLog).set({ backImage: input.image }).where(eq16(dailyLog.id, input.logId));
+    if (input.isNotifyTrainer) {
+      sendTrainerNotification({
+        title: "Back Pose",
+        userId: input.userId
+      });
+    }
+    return res;
+  }),
+  updateBackImageOverlay: protectedProcedure.input(
+    z22.object({
+      logId: z22.number(),
+      overlay: z22.string()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "Update Back Image Overlay",
+      notes: JSON.stringify(input),
+      objectId: null
+    });
+    const res = await ctx.db.update(dailyLog).set({ backImageSvg: input.overlay }).where(eq16(dailyLog.id, input.logId));
+    return res;
+  }),
+  updateBodyBuilderImage: protectedProcedure.input(
+    z22.object({
+      date: z22.string(),
+      image: z22.string(),
+      name: z22.string(),
+      userId: z22.string(),
+      isNotifyTrainer: z22.boolean()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    await ctx.db.delete(images).where(
+      and5(
+        eq16(images.date, input.date),
+        eq16(images.name, input.name),
+        eq16(images.userId, input.userId)
+      )
+    );
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: `Update Image ${input.name} `,
+      notes: JSON.stringify(input),
+      objectId: null
+    });
+    const res = await ctx.db.insert(images).values({
+      userId: input.userId,
+      name: input.name,
+      date: input.date,
+      image: input.image
+    }).returning({ id: images.id });
+    if (input.isNotifyTrainer) {
+      sendTrainerNotification({
+        title: input.name,
+        userId: input.userId
+      });
+    }
+    return res;
+  }),
+  updateBodyBuilderImageOverlay: protectedProcedure.input(
+    z22.object({
+      imageId: z22.number(),
+      overlay: z22.string()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "Update Body Builder Image Overlay",
+      notes: JSON.stringify(input),
+      objectId: null
+    });
+    const res = await ctx.db.update(images).set({ svg: input.overlay }).where(eq16(images.id, input.imageId));
+    return res;
+  })
+};
+
 // src/server/api/routers/daily-log.ts
 var dailyLogRouter = createTRPCRouter({
   ...post2,
   ...updateDl,
-  ...get2
+  ...get2,
+  ...image
 });
 
 // src/server/api/routers/weigh-in.ts
 import { TRPCError as TRPCError6 } from "@trpc/server";
-import { eq as eq16 } from "drizzle-orm";
-import { z as z22 } from "zod";
+import { eq as eq17 } from "drizzle-orm";
+import { z as z23 } from "zod";
 var weighInRouter = createTRPCRouter({
   create: protectedProcedure.input(
-    z22.object({
-      date: z22.date().optional(),
-      bodyWeight: z22.string(),
-      bodyFat: z22.string(),
-      leanMass: z22.string(),
-      bloodPressure: z22.string(),
-      userId: z22.string(),
-      trainerId: z22.string(),
-      notes: z22.string().optional(),
-      image: z22.string().optional()
+    z23.object({
+      date: z23.date().optional(),
+      bodyWeight: z23.string(),
+      bodyFat: z23.string(),
+      leanMass: z23.string(),
+      bloodPressure: z23.string(),
+      userId: z23.string(),
+      trainerId: z23.string(),
+      notes: z23.string().optional(),
+      image: z23.string().optional()
     })
   ).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.insert(weighIn).values({
@@ -7695,34 +7766,34 @@ var weighInRouter = createTRPCRouter({
     }).returning({ id: weighIn.id });
     return { res };
   }),
-  getAllUser: protectedProcedure.input(z22.string()).query(async ({ ctx, input }) => {
+  getAllUser: protectedProcedure.input(z23.string()).query(async ({ ctx, input }) => {
     if (input === "") throw new TRPCError6({ code: "NOT_FOUND" });
     const res = await ctx.db.query.weighIn.findMany({
-      where: eq16(weighIn.userId, input),
+      where: eq17(weighIn.userId, input),
       orderBy: (data, { desc: desc10 }) => desc10(data.date)
     });
     return res;
   }),
-  get: protectedProcedure.input(z22.number()).query(async ({ ctx, input }) => {
+  get: protectedProcedure.input(z23.number()).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.weighIn.findFirst({
-      where: eq16(weighIn.id, input)
+      where: eq17(weighIn.id, input)
     });
     return res;
   }),
-  delete: protectedProcedure.input(z22.number()).mutation(async ({ input, ctx }) => {
-    const res = await ctx.db.delete(weighIn).where(eq16(weighIn.id, input));
+  delete: protectedProcedure.input(z23.number()).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.delete(weighIn).where(eq17(weighIn.id, input));
     return res;
   }),
-  deleteAll: protectedProcedure.input(z22.string()).mutation(async ({ input, ctx }) => {
+  deleteAll: protectedProcedure.input(z23.string()).mutation(async ({ input, ctx }) => {
     if (input === "") throw new TRPCError6({ code: "NOT_FOUND" });
-    const res = await ctx.db.delete(weighIn).where(eq16(weighIn.userId, input));
+    const res = await ctx.db.delete(weighIn).where(eq17(weighIn.userId, input));
     return res;
   })
 });
 
 // src/server/api/routers/message.ts
-import { and as and5, eq as eq17 } from "drizzle-orm";
-import { z as z23 } from "zod";
+import { and as and6, eq as eq18 } from "drizzle-orm";
+import { z as z24 } from "zod";
 var createLog2 = async ({
   user: user3,
   task,
@@ -7740,13 +7811,13 @@ var createLog2 = async ({
 };
 var messageRouter = createTRPCRouter({
   create: protectedProcedure.input(
-    z23.object({
-      userId: z23.string(),
-      fromUserId: z23.string(),
-      subject: z23.string(),
-      message: z23.string(),
-      isImportant: z23.boolean(),
-      image: z23.string().optional()
+    z24.object({
+      userId: z24.string(),
+      fromUserId: z24.string(),
+      subject: z24.string(),
+      message: z24.string(),
+      isImportant: z24.boolean(),
+      image: z24.string().optional()
     })
   ).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.insert(message).values({
@@ -7761,13 +7832,13 @@ var messageRouter = createTRPCRouter({
     });
     return { res };
   }),
-  getAllUser: protectedProcedure.input(z23.string()).query(async ({ ctx, input }) => {
+  getAllUser: protectedProcedure.input(z24.string()).query(async ({ ctx, input }) => {
     let userId = input;
     if (input === "") {
       userId = ctx.session?.user.id;
     }
     const res = await ctx.db.query.message.findMany({
-      where: eq17(message.userId, userId),
+      where: eq18(message.userId, userId),
       orderBy: (data, { desc: desc10 }) => desc10(data.createdAt),
       with: {
         fromUser: true,
@@ -7776,13 +7847,13 @@ var messageRouter = createTRPCRouter({
     });
     return res;
   }),
-  getAllUserUnread: protectedProcedure.input(z23.string()).query(async ({ ctx, input }) => {
+  getAllUserUnread: protectedProcedure.input(z24.string()).query(async ({ ctx, input }) => {
     let userId = input;
     if (input === "") {
       userId = ctx.session?.user.id;
     }
     const res = await ctx.db.query.message.findMany({
-      where: and5(eq17(message.userId, userId), eq17(message.isRead, false)),
+      where: and6(eq18(message.userId, userId), eq18(message.isRead, false)),
       orderBy: (data, { desc: desc10 }) => desc10(data.createdAt),
       with: {
         fromUser: true,
@@ -7791,13 +7862,13 @@ var messageRouter = createTRPCRouter({
     });
     return res;
   }),
-  getAllFromUser: protectedProcedure.input(z23.string()).query(async ({ ctx, input }) => {
+  getAllFromUser: protectedProcedure.input(z24.string()).query(async ({ ctx, input }) => {
     let userId = input;
     if (input === "") {
       userId = ctx.session?.user.id;
     }
     const res = await ctx.db.query.message.findMany({
-      where: eq17(message.fromUserId, userId),
+      where: eq18(message.fromUserId, userId),
       orderBy: (data, { desc: desc10 }) => desc10(data.createdAt),
       with: {
         fromUser: true,
@@ -7806,14 +7877,14 @@ var messageRouter = createTRPCRouter({
     });
     return res;
   }),
-  get: protectedProcedure.input(z23.number()).query(async ({ ctx, input }) => {
+  get: protectedProcedure.input(z24.number()).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.message.findFirst({
-      where: eq17(message.id, input)
+      where: eq18(message.id, input)
     });
     return res;
   }),
-  markAsViewed: protectedProcedure.input(z23.number()).mutation(async ({ input, ctx }) => {
-    const res = await ctx.db.update(message).set({ isViewed: true }).where(eq17(message.id, input));
+  markAsViewed: protectedProcedure.input(z24.number()).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.update(message).set({ isViewed: true }).where(eq18(message.id, input));
     createLog2({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
@@ -7823,8 +7894,8 @@ var messageRouter = createTRPCRouter({
     });
     return res;
   }),
-  markAsRead: protectedProcedure.input(z23.number()).mutation(async ({ input, ctx }) => {
-    const res = await ctx.db.update(message).set({ isRead: true }).where(eq17(message.id, input));
+  markAsRead: protectedProcedure.input(z24.number()).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.update(message).set({ isRead: true }).where(eq18(message.id, input));
     createLog2({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
@@ -7834,11 +7905,11 @@ var messageRouter = createTRPCRouter({
     });
     return res;
   }),
-  markAllAsViewed: protectedProcedure.input(z23.string()).mutation(async ({ input, ctx }) => {
+  markAllAsViewed: protectedProcedure.input(z24.string()).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.update(message).set({
       isViewed: true,
       isRead: true
-    }).where(eq17(message.userId, input));
+    }).where(eq18(message.userId, input));
     createLog2({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
@@ -7848,8 +7919,8 @@ var messageRouter = createTRPCRouter({
     });
     return res;
   }),
-  markAsNotified: protectedProcedure.input(z23.number()).mutation(async ({ input, ctx }) => {
-    const res = await ctx.db.update(message).set({ isNotified: true }).where(eq17(message.id, input));
+  markAsNotified: protectedProcedure.input(z24.number()).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.update(message).set({ isNotified: true }).where(eq18(message.id, input));
     createLog2({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
@@ -7859,11 +7930,11 @@ var messageRouter = createTRPCRouter({
     });
     return res;
   }),
-  markFromUserAsViewedAndRead: protectedProcedure.input(z23.string()).mutation(async ({ input, ctx }) => {
+  markFromUserAsViewedAndRead: protectedProcedure.input(z24.string()).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.update(message).set({
       isViewed: true,
       isRead: true
-    }).where(eq17(message.fromUserId, input));
+    }).where(eq18(message.fromUserId, input));
     createLog2({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
@@ -7873,19 +7944,19 @@ var messageRouter = createTRPCRouter({
     });
     return res;
   }),
-  delete: protectedProcedure.input(z23.number()).mutation(async ({ input, ctx }) => {
-    const res = await ctx.db.update(message).set({ isDeleted: true }).where(eq17(message.id, input));
+  delete: protectedProcedure.input(z24.number()).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.update(message).set({ isDeleted: true }).where(eq18(message.id, input));
     return res;
   }),
-  deletePermanently: protectedProcedure.input(z23.number()).mutation(async ({ input, ctx }) => {
-    const res = await ctx.db.delete(message).where(eq17(message.id, input));
+  deletePermanently: protectedProcedure.input(z24.number()).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.delete(message).where(eq18(message.id, input));
     return res;
   })
 });
 
 // src/server/api/routers/metric.ts
-import { eq as eq18 } from "drizzle-orm";
-import { z as z24 } from "zod";
+import { eq as eq19 } from "drizzle-orm";
+import { z as z25 } from "zod";
 var createLog3 = async ({
   user: user3,
   task,
@@ -7903,9 +7974,9 @@ var createLog3 = async ({
 };
 var metricsRouter = createTRPCRouter({
   updateGallery: protectedProcedure.input(
-    z24.object({
-      image: z24.string(),
-      userId: z24.string()
+    z25.object({
+      image: z25.string(),
+      userId: z25.string()
     })
   ).mutation(async ({ input, ctx }) => {
     const res = await db.insert(log).values({
@@ -7917,9 +7988,9 @@ var metricsRouter = createTRPCRouter({
     });
     return { res };
   }),
-  getUserSkinfolds: protectedProcedure.input(z24.string()).query(async ({ input, ctx }) => {
+  getUserSkinfolds: protectedProcedure.input(z25.string()).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.skinfold.findMany({
-      where: eq18(skinfold.userId, input),
+      where: eq19(skinfold.userId, input),
       with: {
         bodyFat: true,
         leanMass: true,
@@ -7939,9 +8010,9 @@ var metricsRouter = createTRPCRouter({
     });
     return res;
   }),
-  getSkinfold: protectedProcedure.input(z24.number()).query(async ({ input, ctx }) => {
+  getSkinfold: protectedProcedure.input(z25.number()).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.skinfold.findFirst({
-      where: eq18(skinfold.id, input),
+      where: eq19(skinfold.id, input),
       with: {
         bodyFat: true,
         leanMass: true,
@@ -7950,34 +8021,34 @@ var metricsRouter = createTRPCRouter({
     });
     return res;
   }),
-  deleteSkinfold: protectedProcedure.input(z24.number()).mutation(async ({ input, ctx }) => {
-    const res = await ctx.db.delete(skinfold).where(eq18(skinfold.id, input));
+  deleteSkinfold: protectedProcedure.input(z25.number()).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.delete(skinfold).where(eq19(skinfold.id, input));
     return res;
   }),
   createSkinfold: protectedProcedure.input(
-    z24.object({
-      date: z24.string(),
-      chin: z24.string(),
-      cheek: z24.string(),
-      lowerAbdominal: z24.string(),
-      pectoral: z24.string(),
-      biceps: z24.string(),
-      triceps: z24.string(),
-      subscapular: z24.string(),
-      midAxillary: z24.string(),
-      suprailiac: z24.string(),
-      umbilical: z24.string(),
-      lowerBack: z24.string(),
-      quadriceps: z24.string(),
-      hamstrings: z24.string(),
-      medialCalf: z24.string(),
-      knee: z24.string(),
-      shoulder: z24.string(),
-      notes: z24.string(),
-      userId: z24.string(),
-      bodyWeight: z24.string(),
-      leanMass: z24.string(),
-      bodyFat: z24.string()
+    z25.object({
+      date: z25.string(),
+      chin: z25.string(),
+      cheek: z25.string(),
+      lowerAbdominal: z25.string(),
+      pectoral: z25.string(),
+      biceps: z25.string(),
+      triceps: z25.string(),
+      subscapular: z25.string(),
+      midAxillary: z25.string(),
+      suprailiac: z25.string(),
+      umbilical: z25.string(),
+      lowerBack: z25.string(),
+      quadriceps: z25.string(),
+      hamstrings: z25.string(),
+      medialCalf: z25.string(),
+      knee: z25.string(),
+      shoulder: z25.string(),
+      notes: z25.string(),
+      userId: z25.string(),
+      bodyWeight: z25.string(),
+      leanMass: z25.string(),
+      bodyFat: z25.string()
     })
   ).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.insert(skinfold).values({ ...input }).returning({ id: skinfold.id });
@@ -8014,21 +8085,21 @@ var metricsRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/tag.ts
-import { and as and7, eq as eq19 } from "drizzle-orm";
-import { z as z25 } from "zod";
+import { and as and8, eq as eq20 } from "drizzle-orm";
+import { z as z26 } from "zod";
 var tagRouter = createTRPCRouter({
   getAllTagsCurrentUser: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.tag.findMany({
-      where: eq19(tag.userId, ctx.session.user.id),
+      where: eq20(tag.userId, ctx.session.user.id),
       orderBy: (data, { desc: desc10 }) => desc10(data.createdAt)
     });
     return res;
   }),
   create: protectedProcedure.input(
-    z25.object({
-      name: z25.string(),
-      color: z25.string(),
-      icon: z25.string()
+    z26.object({
+      name: z26.string(),
+      color: z26.string(),
+      icon: z26.string()
     })
   ).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.insert(tag).values({
@@ -8040,22 +8111,22 @@ var tagRouter = createTRPCRouter({
     return res;
   }),
   updateTagToDailyLog: protectedProcedure.input(
-    z25.object({
-      tagId: z25.number(),
-      dailyLogId: z25.number()
+    z26.object({
+      tagId: z26.number(),
+      dailyLogId: z26.number()
     })
   ).mutation(async ({ input, ctx }) => {
     const isTagged = await ctx.db.query.tagToDailyLog.findFirst({
-      where: and7(
-        eq19(tagToDailyLog.tagId, input.tagId),
-        eq19(tagToDailyLog.dailyLogId, input.dailyLogId)
+      where: and8(
+        eq20(tagToDailyLog.tagId, input.tagId),
+        eq20(tagToDailyLog.dailyLogId, input.dailyLogId)
       )
     });
     if (isTagged) {
       await ctx.db.delete(tagToDailyLog).where(
-        and7(
-          eq19(tagToDailyLog.tagId, input.tagId),
-          eq19(tagToDailyLog.dailyLogId, input.dailyLogId)
+        and8(
+          eq20(tagToDailyLog.tagId, input.tagId),
+          eq20(tagToDailyLog.dailyLogId, input.dailyLogId)
         )
       );
       return true;
@@ -8067,39 +8138,39 @@ var tagRouter = createTRPCRouter({
       return res;
     }
   }),
-  delete: protectedProcedure.input(z25.number()).mutation(async ({ input, ctx }) => {
-    const res = await ctx.db.delete(tag).where(eq19(tag.id, input));
+  delete: protectedProcedure.input(z26.number()).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.delete(tag).where(eq20(tag.id, input));
     return res;
   })
 });
 
 // src/server/api/routers/goals/get.ts
-import { z as z26 } from "zod";
+import { z as z27 } from "zod";
 var get3 = {
-  getUser: protectedProcedure.input(z26.object({ userId: z26.string() })).query(async ({ ctx, input }) => {
+  getUser: protectedProcedure.input(z27.object({ userId: z27.string() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.goals.findMany({
-      where: (goal, { eq: eq27 }) => eq27(goal.userId, input.userId)
+      where: (goal, { eq: eq28 }) => eq28(goal.userId, input.userId)
     });
     return res;
   }),
-  get: protectedProcedure.input(z26.object({ id: z26.number() })).query(async ({ ctx, input }) => {
+  get: protectedProcedure.input(z27.object({ id: z27.number() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.goals.findFirst({
-      where: (goal, { eq: eq27 }) => eq27(goal.id, input.id)
+      where: (goal, { eq: eq28 }) => eq28(goal.id, input.id)
     });
     return res;
   })
 };
 
 // src/server/api/routers/goals/post.ts
-import { eq as eq20 } from "drizzle-orm";
-import { z as z27 } from "zod";
+import { eq as eq21 } from "drizzle-orm";
+import { z as z28 } from "zod";
 var post3 = {
   create: protectedProcedure.input(
-    z27.object({
-      userId: z27.string(),
-      title: z27.string(),
-      description: z27.string(),
-      state: z27.string()
+    z28.object({
+      userId: z28.string(),
+      title: z28.string(),
+      description: z28.string(),
+      state: z28.string()
     })
   ).mutation(async ({ ctx, input }) => {
     const trainerId = ctx.session?.user.id;
@@ -8113,22 +8184,22 @@ var post3 = {
     return res;
   }),
   update: protectedProcedure.input(
-    z27.object({
-      id: z27.number(),
-      title: z27.string(),
-      description: z27.string(),
-      state: z27.string()
+    z28.object({
+      id: z28.number(),
+      title: z28.string(),
+      description: z28.string(),
+      state: z28.string()
     })
   ).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.update(goals).set({
       title: input.title,
       description: input.description,
       state: input.state
-    }).where(eq20(goals.id, input.id));
+    }).where(eq21(goals.id, input.id));
     return res;
   }),
-  delete: protectedProcedure.input(z27.object({ id: z27.number() })).mutation(async ({ ctx, input }) => {
-    const res = await ctx.db.delete(goals).where(eq20(goals.id, input.id));
+  delete: protectedProcedure.input(z28.object({ id: z28.number() })).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.delete(goals).where(eq21(goals.id, input.id));
     return res;
   })
 };
@@ -8140,8 +8211,8 @@ var goalsRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/trainer.ts
-import { and as and8, eq as eq21 } from "drizzle-orm";
-import { z as z28 } from "zod";
+import { and as and9, eq as eq22 } from "drizzle-orm";
+import { z as z29 } from "zod";
 var createLog4 = async ({
   user: user3,
   task,
@@ -8160,7 +8231,7 @@ var createLog4 = async ({
 var trainerRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.user.findMany({
-      where: (user3, { eq: eq27 }) => eq27(user3.isTrainer, true),
+      where: (user3, { eq: eq28 }) => eq28(user3.isTrainer, true),
       columns: {
         id: true,
         name: true
@@ -8168,7 +8239,7 @@ var trainerRouter = createTRPCRouter({
     });
     return res;
   }),
-  add: protectedProcedure.input(z28.object({ userId: z28.string(), trainerId: z28.string() })).mutation(async ({ ctx, input }) => {
+  add: protectedProcedure.input(z29.object({ userId: z29.string(), trainerId: z29.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.insert(userToTrainer).values({
       userId: input.userId,
       trainerId: input.trainerId
@@ -8182,11 +8253,11 @@ var trainerRouter = createTRPCRouter({
     });
     return res;
   }),
-  delete: protectedProcedure.input(z28.object({ userId: z28.string(), trainerId: z28.string() })).mutation(async ({ ctx, input }) => {
+  delete: protectedProcedure.input(z29.object({ userId: z29.string(), trainerId: z29.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.delete(userToTrainer).where(
-      and8(
-        eq21(userToTrainer.userId, input.userId),
-        eq21(userToTrainer.trainerId, input.trainerId)
+      and9(
+        eq22(userToTrainer.userId, input.userId),
+        eq22(userToTrainer.trainerId, input.trainerId)
       )
     );
     createLog4({
@@ -8202,431 +8273,431 @@ var trainerRouter = createTRPCRouter({
 
 // src/server/api/routers/supplements.ts
 import { TRPCError as TRPCError7 } from "@trpc/server";
-import { and as and9, asc as asc2, eq as eq22 } from "drizzle-orm";
-import { z as z30 } from "zod";
+import { and as and10, asc as asc2, eq as eq23 } from "drizzle-orm";
+import { z as z31 } from "zod";
 
 // src/components/supplements/store.ts
-import { z as z29 } from "zod";
-var updateSchema = z29.object({
-  id: z29.number(),
-  isPrivate: z29.boolean(),
-  viewableBy: z29.string(),
-  name: z29.string().min(1),
-  serveSize: z29.number(),
-  serveUnit: z29.string().min(1),
-  caloriesWFibre: z29.number(),
-  caloriesWOFibre: z29.number(),
-  protein: z29.number(),
-  fatTotal: z29.number(),
-  totalDietaryFibre: z29.number(),
-  totalSugars: z29.number(),
-  starch: z29.number(),
-  resistantStarch: z29.number(),
-  availableCarbohydrateWithoutSugarAlcohols: z29.number(),
-  availableCarbohydrateWithSugarAlcohols: z29.number(),
-  addedSugars: z29.number(),
-  freeSugars: z29.number(),
-  moisture: z29.number(),
-  nitrogen: z29.number(),
-  alcohol: z29.number(),
-  fructose: z29.number(),
-  glucose: z29.number(),
-  sucrose: z29.number(),
-  maltose: z29.number(),
-  lactose: z29.number(),
-  galactose: z29.number(),
-  maltotrios: z29.number(),
-  ash: z29.number(),
-  dextrin: z29.number(),
-  glycerol: z29.number(),
-  glycogen: z29.number(),
-  inulin: z29.number(),
-  erythritol: z29.number(),
-  maltitol: z29.number(),
-  mannitol: z29.number(),
-  xylitol: z29.number(),
-  maltodextrin: z29.number(),
-  oligosaccharides: z29.number(),
-  polydextrose: z29.number(),
-  raffinose: z29.number(),
-  stachyose: z29.number(),
-  sorbitol: z29.number(),
-  aceticAcid: z29.number(),
-  citricAcid: z29.number(),
-  fumaricAcid: z29.number(),
-  lacticAcid: z29.number(),
-  malicAcid: z29.number(),
-  oxalicAcid: z29.number(),
-  propionicAcid: z29.number(),
-  quinicAcid: z29.number(),
-  shikimicAcid: z29.number(),
-  succinicAcid: z29.number(),
-  tartaricAcid: z29.number(),
-  aluminium: z29.number(),
-  antimony: z29.number(),
-  arsenic: z29.number(),
-  cadmium: z29.number(),
-  calcium: z29.number(),
-  chromium: z29.number(),
-  chloride: z29.number(),
-  cobalt: z29.number(),
-  copper: z29.number(),
-  fluoride: z29.number(),
-  iodine: z29.number(),
-  iron: z29.number(),
-  lead: z29.number(),
-  magnesium: z29.number(),
-  manganese: z29.number(),
-  mercury: z29.number(),
-  molybdenum: z29.number(),
-  nickel: z29.number(),
-  phosphorus: z29.number(),
-  potassium: z29.number(),
-  selenium: z29.number(),
-  sodium: z29.number(),
-  sulphur: z29.number(),
-  tin: z29.number(),
-  zinc: z29.number(),
-  retinol: z29.number(),
-  alphaCarotene: z29.number(),
-  betaCarotene: z29.number(),
-  cryptoxanthin: z29.number(),
-  betaCaroteneEquivalents: z29.number(),
-  vitaminARetinolEquivalents: z29.number(),
-  lutein: z29.number(),
-  lycopene: z29.number(),
-  xanthophyl: z29.number(),
-  thiamin: z29.number(),
-  riboflavin: z29.number(),
-  niacin: z29.number(),
-  niacinDerivedFromTryptophan: z29.number(),
-  niacinDerivedEquivalents: z29.number(),
-  pantothenicAcid: z29.number(),
-  pyridoxine: z29.number(),
-  biotin: z29.number(),
-  cobalamin: z29.number(),
-  folateNatural: z29.number(),
-  folicAcid: z29.number(),
-  totalFolates: z29.number(),
-  dietaryFolateEquivalents: z29.number(),
-  vitaminC: z29.number(),
-  cholecalciferol: z29.number(),
-  ergocalciferol: z29.number(),
-  hydroxyCholecalciferol: z29.number(),
-  hydroxyErgocalciferol: z29.number(),
-  vitaminDEquivalents: z29.number(),
-  alphaTocopherol: z29.number(),
-  alphaTocotrienol: z29.number(),
-  betaTocopherol: z29.number(),
-  betaTocotrienol: z29.number(),
-  deltaTocopherol: z29.number(),
-  deltaTocotrienol: z29.number(),
-  gammaTocopherol: z29.number(),
-  gammaTocotrienol: z29.number(),
-  vitaminE: z29.number(),
-  totalSaturatedFattyAcids: z29.number(),
-  totalMonounsaturatedFattyAcids: z29.number(),
-  totalPolyunsaturatedFattyAcids: z29.number(),
-  totalLongChainOmega3FattyAcids: z29.number(),
-  totalTransFattyAcids: z29.number(),
-  caffeine: z29.number(),
-  cholesterol: z29.number(),
-  alanine: z29.number(),
-  arginine: z29.number(),
-  asparticAcid: z29.number(),
-  cystinePlusCysteine: z29.number(),
-  glutamicAcid: z29.number(),
-  glycine: z29.number(),
-  histidine: z29.number(),
-  isoleucine: z29.number(),
-  leucine: z29.number(),
-  lysine: z29.number(),
-  methionine: z29.number(),
-  phenylalanine: z29.number(),
-  proline: z29.number(),
-  serine: z29.number(),
-  threonine: z29.number(),
-  tyrosine: z29.number(),
-  tryptophan: z29.number(),
-  valine: z29.number(),
-  c4: z29.number(),
-  c6: z29.number(),
-  c8: z29.number(),
-  c10: z29.number(),
-  c11: z29.number(),
-  c12: z29.number(),
-  c13: z29.number(),
-  c14: z29.number(),
-  c15: z29.number(),
-  c16: z29.number(),
-  c17: z29.number(),
-  c18: z29.number(),
-  c19: z29.number(),
-  c20: z29.number(),
-  c21: z29.number(),
-  c22: z29.number(),
-  c23: z29.number(),
-  c24: z29.number(),
-  totalSaturatedFattyAcidsEquated: z29.number(),
-  c10_1: z29.number(),
-  c12_1: z29.number(),
-  c14_1: z29.number(),
-  c15_1: z29.number(),
-  c16_1: z29.number(),
-  c17_1: z29.number(),
-  c18_1: z29.number(),
-  c18_1w5: z29.number(),
-  c18_1w6: z29.number(),
-  c18_1w7: z29.number(),
-  c18_1w9: z29.number(),
-  c20_1: z29.number(),
-  c20_1w9: z29.number(),
-  c20_1w13: z29.number(),
-  c20_1w11: z29.number(),
-  c22_1: z29.number(),
-  c22_1w9: z29.number(),
-  c22_1w11: z29.number(),
-  c24_1: z29.number(),
-  c24_1w9: z29.number(),
-  c24_1w11: z29.number(),
-  c24_1w13: z29.number(),
-  totalMonounsaturatedFattyAcidsEquated: z29.number(),
-  c12_2: z29.number(),
-  c16_2w4: z29.number(),
-  c16_3: z29.number(),
-  c18_2w6: z29.number(),
-  c18_3w3: z29.number(),
-  c18_3w4: z29.number(),
-  c18_3w6: z29.number(),
-  c18_4w1: z29.number(),
-  c18_4w3: z29.number(),
-  c20_2: z29.number(),
-  c20_2w6: z29.number(),
-  c20_3: z29.number(),
-  c20_3w3: z29.number(),
-  c20_3w6: z29.number(),
-  c20_4: z29.number(),
-  c20_4w3: z29.number(),
-  c20_4w6: z29.number(),
-  c20_5w3: z29.number(),
-  c21_5w3: z29.number(),
-  c22_2: z29.number(),
-  c22_2w6: z29.number(),
-  c22_4w6: z29.number(),
-  c22_5w3: z29.number(),
-  c22_5w6: z29.number(),
-  c22_6w3: z29.number(),
-  totalPolyunsaturatedFattyAcidsEquated: z29.number()
+import { z as z30 } from "zod";
+var updateSchema = z30.object({
+  id: z30.number(),
+  isPrivate: z30.boolean(),
+  viewableBy: z30.string(),
+  name: z30.string().min(1),
+  serveSize: z30.number(),
+  serveUnit: z30.string().min(1),
+  caloriesWFibre: z30.number(),
+  caloriesWOFibre: z30.number(),
+  protein: z30.number(),
+  fatTotal: z30.number(),
+  totalDietaryFibre: z30.number(),
+  totalSugars: z30.number(),
+  starch: z30.number(),
+  resistantStarch: z30.number(),
+  availableCarbohydrateWithoutSugarAlcohols: z30.number(),
+  availableCarbohydrateWithSugarAlcohols: z30.number(),
+  addedSugars: z30.number(),
+  freeSugars: z30.number(),
+  moisture: z30.number(),
+  nitrogen: z30.number(),
+  alcohol: z30.number(),
+  fructose: z30.number(),
+  glucose: z30.number(),
+  sucrose: z30.number(),
+  maltose: z30.number(),
+  lactose: z30.number(),
+  galactose: z30.number(),
+  maltotrios: z30.number(),
+  ash: z30.number(),
+  dextrin: z30.number(),
+  glycerol: z30.number(),
+  glycogen: z30.number(),
+  inulin: z30.number(),
+  erythritol: z30.number(),
+  maltitol: z30.number(),
+  mannitol: z30.number(),
+  xylitol: z30.number(),
+  maltodextrin: z30.number(),
+  oligosaccharides: z30.number(),
+  polydextrose: z30.number(),
+  raffinose: z30.number(),
+  stachyose: z30.number(),
+  sorbitol: z30.number(),
+  aceticAcid: z30.number(),
+  citricAcid: z30.number(),
+  fumaricAcid: z30.number(),
+  lacticAcid: z30.number(),
+  malicAcid: z30.number(),
+  oxalicAcid: z30.number(),
+  propionicAcid: z30.number(),
+  quinicAcid: z30.number(),
+  shikimicAcid: z30.number(),
+  succinicAcid: z30.number(),
+  tartaricAcid: z30.number(),
+  aluminium: z30.number(),
+  antimony: z30.number(),
+  arsenic: z30.number(),
+  cadmium: z30.number(),
+  calcium: z30.number(),
+  chromium: z30.number(),
+  chloride: z30.number(),
+  cobalt: z30.number(),
+  copper: z30.number(),
+  fluoride: z30.number(),
+  iodine: z30.number(),
+  iron: z30.number(),
+  lead: z30.number(),
+  magnesium: z30.number(),
+  manganese: z30.number(),
+  mercury: z30.number(),
+  molybdenum: z30.number(),
+  nickel: z30.number(),
+  phosphorus: z30.number(),
+  potassium: z30.number(),
+  selenium: z30.number(),
+  sodium: z30.number(),
+  sulphur: z30.number(),
+  tin: z30.number(),
+  zinc: z30.number(),
+  retinol: z30.number(),
+  alphaCarotene: z30.number(),
+  betaCarotene: z30.number(),
+  cryptoxanthin: z30.number(),
+  betaCaroteneEquivalents: z30.number(),
+  vitaminARetinolEquivalents: z30.number(),
+  lutein: z30.number(),
+  lycopene: z30.number(),
+  xanthophyl: z30.number(),
+  thiamin: z30.number(),
+  riboflavin: z30.number(),
+  niacin: z30.number(),
+  niacinDerivedFromTryptophan: z30.number(),
+  niacinDerivedEquivalents: z30.number(),
+  pantothenicAcid: z30.number(),
+  pyridoxine: z30.number(),
+  biotin: z30.number(),
+  cobalamin: z30.number(),
+  folateNatural: z30.number(),
+  folicAcid: z30.number(),
+  totalFolates: z30.number(),
+  dietaryFolateEquivalents: z30.number(),
+  vitaminC: z30.number(),
+  cholecalciferol: z30.number(),
+  ergocalciferol: z30.number(),
+  hydroxyCholecalciferol: z30.number(),
+  hydroxyErgocalciferol: z30.number(),
+  vitaminDEquivalents: z30.number(),
+  alphaTocopherol: z30.number(),
+  alphaTocotrienol: z30.number(),
+  betaTocopherol: z30.number(),
+  betaTocotrienol: z30.number(),
+  deltaTocopherol: z30.number(),
+  deltaTocotrienol: z30.number(),
+  gammaTocopherol: z30.number(),
+  gammaTocotrienol: z30.number(),
+  vitaminE: z30.number(),
+  totalSaturatedFattyAcids: z30.number(),
+  totalMonounsaturatedFattyAcids: z30.number(),
+  totalPolyunsaturatedFattyAcids: z30.number(),
+  totalLongChainOmega3FattyAcids: z30.number(),
+  totalTransFattyAcids: z30.number(),
+  caffeine: z30.number(),
+  cholesterol: z30.number(),
+  alanine: z30.number(),
+  arginine: z30.number(),
+  asparticAcid: z30.number(),
+  cystinePlusCysteine: z30.number(),
+  glutamicAcid: z30.number(),
+  glycine: z30.number(),
+  histidine: z30.number(),
+  isoleucine: z30.number(),
+  leucine: z30.number(),
+  lysine: z30.number(),
+  methionine: z30.number(),
+  phenylalanine: z30.number(),
+  proline: z30.number(),
+  serine: z30.number(),
+  threonine: z30.number(),
+  tyrosine: z30.number(),
+  tryptophan: z30.number(),
+  valine: z30.number(),
+  c4: z30.number(),
+  c6: z30.number(),
+  c8: z30.number(),
+  c10: z30.number(),
+  c11: z30.number(),
+  c12: z30.number(),
+  c13: z30.number(),
+  c14: z30.number(),
+  c15: z30.number(),
+  c16: z30.number(),
+  c17: z30.number(),
+  c18: z30.number(),
+  c19: z30.number(),
+  c20: z30.number(),
+  c21: z30.number(),
+  c22: z30.number(),
+  c23: z30.number(),
+  c24: z30.number(),
+  totalSaturatedFattyAcidsEquated: z30.number(),
+  c10_1: z30.number(),
+  c12_1: z30.number(),
+  c14_1: z30.number(),
+  c15_1: z30.number(),
+  c16_1: z30.number(),
+  c17_1: z30.number(),
+  c18_1: z30.number(),
+  c18_1w5: z30.number(),
+  c18_1w6: z30.number(),
+  c18_1w7: z30.number(),
+  c18_1w9: z30.number(),
+  c20_1: z30.number(),
+  c20_1w9: z30.number(),
+  c20_1w13: z30.number(),
+  c20_1w11: z30.number(),
+  c22_1: z30.number(),
+  c22_1w9: z30.number(),
+  c22_1w11: z30.number(),
+  c24_1: z30.number(),
+  c24_1w9: z30.number(),
+  c24_1w11: z30.number(),
+  c24_1w13: z30.number(),
+  totalMonounsaturatedFattyAcidsEquated: z30.number(),
+  c12_2: z30.number(),
+  c16_2w4: z30.number(),
+  c16_3: z30.number(),
+  c18_2w6: z30.number(),
+  c18_3w3: z30.number(),
+  c18_3w4: z30.number(),
+  c18_3w6: z30.number(),
+  c18_4w1: z30.number(),
+  c18_4w3: z30.number(),
+  c20_2: z30.number(),
+  c20_2w6: z30.number(),
+  c20_3: z30.number(),
+  c20_3w3: z30.number(),
+  c20_3w6: z30.number(),
+  c20_4: z30.number(),
+  c20_4w3: z30.number(),
+  c20_4w6: z30.number(),
+  c20_5w3: z30.number(),
+  c21_5w3: z30.number(),
+  c22_2: z30.number(),
+  c22_2w6: z30.number(),
+  c22_4w6: z30.number(),
+  c22_5w3: z30.number(),
+  c22_5w6: z30.number(),
+  c22_6w3: z30.number(),
+  totalPolyunsaturatedFattyAcidsEquated: z30.number()
 });
-var formSchema = z29.object({
-  name: z29.string().min(1),
-  isPrivate: z29.boolean(),
-  viewableBy: z29.string(),
-  serveSize: z29.number(),
-  serveUnit: z29.string().min(1),
-  caloriesWFibre: z29.number(),
-  caloriesWOFibre: z29.number(),
-  protein: z29.number(),
-  fatTotal: z29.number(),
-  totalDietaryFibre: z29.number(),
-  totalSugars: z29.number(),
-  starch: z29.number(),
-  resistantStarch: z29.number(),
-  availableCarbohydrateWithoutSugarAlcohols: z29.number(),
-  availableCarbohydrateWithSugarAlcohols: z29.number(),
-  addedSugars: z29.number(),
-  freeSugars: z29.number(),
-  moisture: z29.number(),
-  nitrogen: z29.number(),
-  alcohol: z29.number(),
-  fructose: z29.number(),
-  glucose: z29.number(),
-  sucrose: z29.number(),
-  maltose: z29.number(),
-  lactose: z29.number(),
-  galactose: z29.number(),
-  maltotrios: z29.number(),
-  ash: z29.number(),
-  dextrin: z29.number(),
-  glycerol: z29.number(),
-  glycogen: z29.number(),
-  inulin: z29.number(),
-  erythritol: z29.number(),
-  maltitol: z29.number(),
-  mannitol: z29.number(),
-  xylitol: z29.number(),
-  maltodextrin: z29.number(),
-  oligosaccharides: z29.number(),
-  polydextrose: z29.number(),
-  raffinose: z29.number(),
-  stachyose: z29.number(),
-  sorbitol: z29.number(),
-  aceticAcid: z29.number(),
-  citricAcid: z29.number(),
-  fumaricAcid: z29.number(),
-  lacticAcid: z29.number(),
-  malicAcid: z29.number(),
-  oxalicAcid: z29.number(),
-  propionicAcid: z29.number(),
-  quinicAcid: z29.number(),
-  shikimicAcid: z29.number(),
-  succinicAcid: z29.number(),
-  tartaricAcid: z29.number(),
-  aluminium: z29.number(),
-  antimony: z29.number(),
-  arsenic: z29.number(),
-  cadmium: z29.number(),
-  calcium: z29.number(),
-  chromium: z29.number(),
-  chloride: z29.number(),
-  cobalt: z29.number(),
-  copper: z29.number(),
-  fluoride: z29.number(),
-  iodine: z29.number(),
-  iron: z29.number(),
-  lead: z29.number(),
-  magnesium: z29.number(),
-  manganese: z29.number(),
-  mercury: z29.number(),
-  molybdenum: z29.number(),
-  nickel: z29.number(),
-  phosphorus: z29.number(),
-  potassium: z29.number(),
-  selenium: z29.number(),
-  sodium: z29.number(),
-  sulphur: z29.number(),
-  tin: z29.number(),
-  zinc: z29.number(),
-  retinol: z29.number(),
-  alphaCarotene: z29.number(),
-  betaCarotene: z29.number(),
-  cryptoxanthin: z29.number(),
-  betaCaroteneEquivalents: z29.number(),
-  vitaminARetinolEquivalents: z29.number(),
-  lutein: z29.number(),
-  lycopene: z29.number(),
-  xanthophyl: z29.number(),
-  thiamin: z29.number(),
-  riboflavin: z29.number(),
-  niacin: z29.number(),
-  niacinDerivedFromTryptophan: z29.number(),
-  niacinDerivedEquivalents: z29.number(),
-  pantothenicAcid: z29.number(),
-  pyridoxine: z29.number(),
-  biotin: z29.number(),
-  cobalamin: z29.number(),
-  folateNatural: z29.number(),
-  folicAcid: z29.number(),
-  totalFolates: z29.number(),
-  dietaryFolateEquivalents: z29.number(),
-  vitaminC: z29.number(),
-  cholecalciferol: z29.number(),
-  ergocalciferol: z29.number(),
-  hydroxyCholecalciferol: z29.number(),
-  hydroxyErgocalciferol: z29.number(),
-  vitaminDEquivalents: z29.number(),
-  alphaTocopherol: z29.number(),
-  alphaTocotrienol: z29.number(),
-  betaTocopherol: z29.number(),
-  betaTocotrienol: z29.number(),
-  deltaTocopherol: z29.number(),
-  deltaTocotrienol: z29.number(),
-  gammaTocopherol: z29.number(),
-  gammaTocotrienol: z29.number(),
-  vitaminE: z29.number(),
-  totalSaturatedFattyAcids: z29.number(),
-  totalMonounsaturatedFattyAcids: z29.number(),
-  totalPolyunsaturatedFattyAcids: z29.number(),
-  totalLongChainOmega3FattyAcids: z29.number(),
-  totalTransFattyAcids: z29.number(),
-  caffeine: z29.number(),
-  cholesterol: z29.number(),
-  alanine: z29.number(),
-  arginine: z29.number(),
-  asparticAcid: z29.number(),
-  cystinePlusCysteine: z29.number(),
-  glutamicAcid: z29.number(),
-  glycine: z29.number(),
-  histidine: z29.number(),
-  isoleucine: z29.number(),
-  leucine: z29.number(),
-  lysine: z29.number(),
-  methionine: z29.number(),
-  phenylalanine: z29.number(),
-  proline: z29.number(),
-  serine: z29.number(),
-  threonine: z29.number(),
-  tyrosine: z29.number(),
-  tryptophan: z29.number(),
-  valine: z29.number(),
-  c4: z29.number(),
-  c6: z29.number(),
-  c8: z29.number(),
-  c10: z29.number(),
-  c11: z29.number(),
-  c12: z29.number(),
-  c13: z29.number(),
-  c14: z29.number(),
-  c15: z29.number(),
-  c16: z29.number(),
-  c17: z29.number(),
-  c18: z29.number(),
-  c19: z29.number(),
-  c20: z29.number(),
-  c21: z29.number(),
-  c22: z29.number(),
-  c23: z29.number(),
-  c24: z29.number(),
-  totalSaturatedFattyAcidsEquated: z29.number(),
-  c10_1: z29.number(),
-  c12_1: z29.number(),
-  c14_1: z29.number(),
-  c15_1: z29.number(),
-  c16_1: z29.number(),
-  c17_1: z29.number(),
-  c18_1: z29.number(),
-  c18_1w5: z29.number(),
-  c18_1w6: z29.number(),
-  c18_1w7: z29.number(),
-  c18_1w9: z29.number(),
-  c20_1: z29.number(),
-  c20_1w9: z29.number(),
-  c20_1w13: z29.number(),
-  c20_1w11: z29.number(),
-  c22_1: z29.number(),
-  c22_1w9: z29.number(),
-  c22_1w11: z29.number(),
-  c24_1: z29.number(),
-  c24_1w9: z29.number(),
-  c24_1w11: z29.number(),
-  c24_1w13: z29.number(),
-  totalMonounsaturatedFattyAcidsEquated: z29.number(),
-  c12_2: z29.number(),
-  c16_2w4: z29.number(),
-  c16_3: z29.number(),
-  c18_2w6: z29.number(),
-  c18_3w3: z29.number(),
-  c18_3w4: z29.number(),
-  c18_3w6: z29.number(),
-  c18_4w1: z29.number(),
-  c18_4w3: z29.number(),
-  c20_2: z29.number(),
-  c20_2w6: z29.number(),
-  c20_3: z29.number(),
-  c20_3w3: z29.number(),
-  c20_3w6: z29.number(),
-  c20_4: z29.number(),
-  c20_4w3: z29.number(),
-  c20_4w6: z29.number(),
-  c20_5w3: z29.number(),
-  c21_5w3: z29.number(),
-  c22_2: z29.number(),
-  c22_2w6: z29.number(),
-  c22_4w6: z29.number(),
-  c22_5w3: z29.number(),
-  c22_5w6: z29.number(),
-  c22_6w3: z29.number(),
-  totalPolyunsaturatedFattyAcidsEquated: z29.number()
+var formSchema = z30.object({
+  name: z30.string().min(1),
+  isPrivate: z30.boolean(),
+  viewableBy: z30.string(),
+  serveSize: z30.number(),
+  serveUnit: z30.string().min(1),
+  caloriesWFibre: z30.number(),
+  caloriesWOFibre: z30.number(),
+  protein: z30.number(),
+  fatTotal: z30.number(),
+  totalDietaryFibre: z30.number(),
+  totalSugars: z30.number(),
+  starch: z30.number(),
+  resistantStarch: z30.number(),
+  availableCarbohydrateWithoutSugarAlcohols: z30.number(),
+  availableCarbohydrateWithSugarAlcohols: z30.number(),
+  addedSugars: z30.number(),
+  freeSugars: z30.number(),
+  moisture: z30.number(),
+  nitrogen: z30.number(),
+  alcohol: z30.number(),
+  fructose: z30.number(),
+  glucose: z30.number(),
+  sucrose: z30.number(),
+  maltose: z30.number(),
+  lactose: z30.number(),
+  galactose: z30.number(),
+  maltotrios: z30.number(),
+  ash: z30.number(),
+  dextrin: z30.number(),
+  glycerol: z30.number(),
+  glycogen: z30.number(),
+  inulin: z30.number(),
+  erythritol: z30.number(),
+  maltitol: z30.number(),
+  mannitol: z30.number(),
+  xylitol: z30.number(),
+  maltodextrin: z30.number(),
+  oligosaccharides: z30.number(),
+  polydextrose: z30.number(),
+  raffinose: z30.number(),
+  stachyose: z30.number(),
+  sorbitol: z30.number(),
+  aceticAcid: z30.number(),
+  citricAcid: z30.number(),
+  fumaricAcid: z30.number(),
+  lacticAcid: z30.number(),
+  malicAcid: z30.number(),
+  oxalicAcid: z30.number(),
+  propionicAcid: z30.number(),
+  quinicAcid: z30.number(),
+  shikimicAcid: z30.number(),
+  succinicAcid: z30.number(),
+  tartaricAcid: z30.number(),
+  aluminium: z30.number(),
+  antimony: z30.number(),
+  arsenic: z30.number(),
+  cadmium: z30.number(),
+  calcium: z30.number(),
+  chromium: z30.number(),
+  chloride: z30.number(),
+  cobalt: z30.number(),
+  copper: z30.number(),
+  fluoride: z30.number(),
+  iodine: z30.number(),
+  iron: z30.number(),
+  lead: z30.number(),
+  magnesium: z30.number(),
+  manganese: z30.number(),
+  mercury: z30.number(),
+  molybdenum: z30.number(),
+  nickel: z30.number(),
+  phosphorus: z30.number(),
+  potassium: z30.number(),
+  selenium: z30.number(),
+  sodium: z30.number(),
+  sulphur: z30.number(),
+  tin: z30.number(),
+  zinc: z30.number(),
+  retinol: z30.number(),
+  alphaCarotene: z30.number(),
+  betaCarotene: z30.number(),
+  cryptoxanthin: z30.number(),
+  betaCaroteneEquivalents: z30.number(),
+  vitaminARetinolEquivalents: z30.number(),
+  lutein: z30.number(),
+  lycopene: z30.number(),
+  xanthophyl: z30.number(),
+  thiamin: z30.number(),
+  riboflavin: z30.number(),
+  niacin: z30.number(),
+  niacinDerivedFromTryptophan: z30.number(),
+  niacinDerivedEquivalents: z30.number(),
+  pantothenicAcid: z30.number(),
+  pyridoxine: z30.number(),
+  biotin: z30.number(),
+  cobalamin: z30.number(),
+  folateNatural: z30.number(),
+  folicAcid: z30.number(),
+  totalFolates: z30.number(),
+  dietaryFolateEquivalents: z30.number(),
+  vitaminC: z30.number(),
+  cholecalciferol: z30.number(),
+  ergocalciferol: z30.number(),
+  hydroxyCholecalciferol: z30.number(),
+  hydroxyErgocalciferol: z30.number(),
+  vitaminDEquivalents: z30.number(),
+  alphaTocopherol: z30.number(),
+  alphaTocotrienol: z30.number(),
+  betaTocopherol: z30.number(),
+  betaTocotrienol: z30.number(),
+  deltaTocopherol: z30.number(),
+  deltaTocotrienol: z30.number(),
+  gammaTocopherol: z30.number(),
+  gammaTocotrienol: z30.number(),
+  vitaminE: z30.number(),
+  totalSaturatedFattyAcids: z30.number(),
+  totalMonounsaturatedFattyAcids: z30.number(),
+  totalPolyunsaturatedFattyAcids: z30.number(),
+  totalLongChainOmega3FattyAcids: z30.number(),
+  totalTransFattyAcids: z30.number(),
+  caffeine: z30.number(),
+  cholesterol: z30.number(),
+  alanine: z30.number(),
+  arginine: z30.number(),
+  asparticAcid: z30.number(),
+  cystinePlusCysteine: z30.number(),
+  glutamicAcid: z30.number(),
+  glycine: z30.number(),
+  histidine: z30.number(),
+  isoleucine: z30.number(),
+  leucine: z30.number(),
+  lysine: z30.number(),
+  methionine: z30.number(),
+  phenylalanine: z30.number(),
+  proline: z30.number(),
+  serine: z30.number(),
+  threonine: z30.number(),
+  tyrosine: z30.number(),
+  tryptophan: z30.number(),
+  valine: z30.number(),
+  c4: z30.number(),
+  c6: z30.number(),
+  c8: z30.number(),
+  c10: z30.number(),
+  c11: z30.number(),
+  c12: z30.number(),
+  c13: z30.number(),
+  c14: z30.number(),
+  c15: z30.number(),
+  c16: z30.number(),
+  c17: z30.number(),
+  c18: z30.number(),
+  c19: z30.number(),
+  c20: z30.number(),
+  c21: z30.number(),
+  c22: z30.number(),
+  c23: z30.number(),
+  c24: z30.number(),
+  totalSaturatedFattyAcidsEquated: z30.number(),
+  c10_1: z30.number(),
+  c12_1: z30.number(),
+  c14_1: z30.number(),
+  c15_1: z30.number(),
+  c16_1: z30.number(),
+  c17_1: z30.number(),
+  c18_1: z30.number(),
+  c18_1w5: z30.number(),
+  c18_1w6: z30.number(),
+  c18_1w7: z30.number(),
+  c18_1w9: z30.number(),
+  c20_1: z30.number(),
+  c20_1w9: z30.number(),
+  c20_1w13: z30.number(),
+  c20_1w11: z30.number(),
+  c22_1: z30.number(),
+  c22_1w9: z30.number(),
+  c22_1w11: z30.number(),
+  c24_1: z30.number(),
+  c24_1w9: z30.number(),
+  c24_1w11: z30.number(),
+  c24_1w13: z30.number(),
+  totalMonounsaturatedFattyAcidsEquated: z30.number(),
+  c12_2: z30.number(),
+  c16_2w4: z30.number(),
+  c16_3: z30.number(),
+  c18_2w6: z30.number(),
+  c18_3w3: z30.number(),
+  c18_3w4: z30.number(),
+  c18_3w6: z30.number(),
+  c18_4w1: z30.number(),
+  c18_4w3: z30.number(),
+  c20_2: z30.number(),
+  c20_2w6: z30.number(),
+  c20_3: z30.number(),
+  c20_3w3: z30.number(),
+  c20_3w6: z30.number(),
+  c20_4: z30.number(),
+  c20_4w3: z30.number(),
+  c20_4w6: z30.number(),
+  c20_5w3: z30.number(),
+  c21_5w3: z30.number(),
+  c22_2: z30.number(),
+  c22_2w6: z30.number(),
+  c22_4w6: z30.number(),
+  c22_5w3: z30.number(),
+  c22_5w6: z30.number(),
+  c22_6w3: z30.number(),
+  totalPolyunsaturatedFattyAcidsEquated: z30.number()
 });
 
 // src/server/api/routers/supplements.ts
@@ -8646,20 +8717,20 @@ var createLog5 = async ({
   });
 };
 var supplementsRouter = createTRPCRouter({
-  delete: protectedProcedure.input(z30.object({ id: z30.number() })).mutation(async ({ input, ctx }) => {
+  delete: protectedProcedure.input(z31.object({ id: z31.number() })).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.update(ingredient).set({
       deletedAt: /* @__PURE__ */ new Date()
-    }).where(eq22(ingredient.id, input.id));
+    }).where(eq23(ingredient.id, input.id));
     return res;
   }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session?.user?.id;
     const res = await ctx.db.query.ingredient.findMany({
-      where: (ingredient2, { isNull, and: and12, eq: eq27 }) => and12(
+      where: (ingredient2, { isNull, and: and13, eq: eq28 }) => and13(
         isNull(ingredient2.hiddenAt),
         isNull(ingredient2.deletedAt),
-        eq27(ingredient2.isSupplement, true),
-        eq27(ingredient2.isUserCreated, false)
+        eq28(ingredient2.isSupplement, true),
+        eq28(ingredient2.isUserCreated, false)
       ),
       with: {
         user: {
@@ -8681,19 +8752,19 @@ var supplementsRouter = createTRPCRouter({
     });
     return filterRes;
   }),
-  getSupplementFromDailyLog: protectedProcedure.input(z30.object({ id: z30.number() })).query(async ({ input, ctx }) => {
+  getSupplementFromDailyLog: protectedProcedure.input(z31.object({ id: z31.number() })).query(async ({ input, ctx }) => {
     if (input.id === -1) return false;
     const res = await ctx.db.query.dailySupplement.findFirst({
-      where: (supplement, { eq: eq27 }) => eq27(supplement.id, input.id),
+      where: (supplement, { eq: eq28 }) => eq28(supplement.id, input.id),
       with: {
         supplement: true
       }
     });
     return res ? true : false;
   }),
-  getFullSupplement: protectedProcedure.input(z30.object({ id: z30.number() })).query(async ({ input, ctx }) => {
+  getFullSupplement: protectedProcedure.input(z31.object({ id: z31.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.ingredient.findFirst({
-      where: (ingredient2, { eq: eq27 }) => eq27(ingredient2.id, input.id),
+      where: (ingredient2, { eq: eq28 }) => eq28(ingredient2.id, input.id),
       with: {
         ingredientAdditionOne: true,
         ingredientAdditionTwo: true,
@@ -8708,9 +8779,9 @@ var supplementsRouter = createTRPCRouter({
     });
     return res;
   }),
-  getSupplement: protectedProcedure.input(z30.object({ id: z30.number() })).query(async ({ input, ctx }) => {
+  getSupplement: protectedProcedure.input(z31.object({ id: z31.number() })).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.ingredient.findFirst({
-      where: (ingredient2, { eq: eq27 }) => eq27(ingredient2.id, input.id),
+      where: (ingredient2, { eq: eq28 }) => eq28(ingredient2.id, input.id),
       with: {
         user: {
           columns: {
@@ -8723,9 +8794,9 @@ var supplementsRouter = createTRPCRouter({
     return res;
   }),
   addTime: protectedProcedure.input(
-    z30.object({
-      time: z30.string(),
-      userId: z30.string()
+    z31.object({
+      time: z31.string(),
+      userId: z31.string()
     })
   ).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.insert(supplementStack).values({
@@ -8734,9 +8805,9 @@ var supplementsRouter = createTRPCRouter({
     }).returning({ id: supplementStack.id });
     return res;
   }),
-  getSuppFromPlan: protectedProcedure.input(z30.object({ id: z30.number() })).query(async ({ ctx, input }) => {
+  getSuppFromPlan: protectedProcedure.input(z31.object({ id: z31.number() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.supplementToSupplementStack.findFirst({
-      where: (supplement, { eq: eq27 }) => eq27(supplement.id, input.id),
+      where: (supplement, { eq: eq28 }) => eq28(supplement.id, input.id),
       with: {
         supplement: true
       }
@@ -8744,16 +8815,16 @@ var supplementsRouter = createTRPCRouter({
     return res;
   }),
   addToUser: protectedProcedure.input(
-    z30.object({
-      suppId: z30.number(),
-      userId: z30.string(),
-      time: z30.string(),
-      size: z30.string(),
-      unit: z30.string()
+    z31.object({
+      suppId: z31.number(),
+      userId: z31.string(),
+      time: z31.string(),
+      size: z31.string(),
+      unit: z31.string()
     })
   ).mutation(async ({ input, ctx }) => {
     const userTimes = await ctx.db.query.supplementStack.findMany({
-      where: (stack, { eq: eq27 }) => eq27(stack.userId, input.userId)
+      where: (stack, { eq: eq28 }) => eq28(stack.userId, input.userId)
     });
     let timeId = userTimes.find((stack) => stack.time === input.time)?.id || null;
     if (!timeId) {
@@ -8772,10 +8843,10 @@ var supplementsRouter = createTRPCRouter({
       unit: input.unit
     });
     const notif = await ctx.db.query.notification.findMany({
-      where: and9(
-        eq22(notification.userId, input.userId),
-        eq22(notification.code, "supplement_update"),
-        eq22(notification.isViewed, false)
+      where: and10(
+        eq23(notification.userId, input.userId),
+        eq23(notification.code, "supplement_update"),
+        eq23(notification.isViewed, false)
       )
     });
     if (notif.length === 0) {
@@ -8791,20 +8862,20 @@ var supplementsRouter = createTRPCRouter({
     return true;
   }),
   logSupplement: protectedProcedure.input(
-    z30.object({
-      suppId: z30.number(),
-      suppName: z30.string(),
-      date: z30.string(),
-      time: z30.string(),
-      amount: z30.string(),
-      unit: z30.string(),
-      stackId: z30.string()
+    z31.object({
+      suppId: z31.number(),
+      suppName: z31.string(),
+      date: z31.string(),
+      time: z31.string(),
+      amount: z31.string(),
+      unit: z31.string(),
+      stackId: z31.string()
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and9(
-        eq22(dailyLog.date, input.date),
-        eq22(dailyLog.userId, ctx.session.user.id)
+      where: and10(
+        eq23(dailyLog.date, input.date),
+        eq23(dailyLog.userId, ctx.session.user.id)
       )
     });
     let logId = log2?.id;
@@ -8833,7 +8904,7 @@ var supplementsRouter = createTRPCRouter({
     });
     return true;
   }),
-  unLogSupplement: protectedProcedure.input(z30.object({ id: z30.number() })).mutation(async ({ input, ctx }) => {
+  unLogSupplement: protectedProcedure.input(z31.object({ id: z31.number() })).mutation(async ({ input, ctx }) => {
     createLog5({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
@@ -8841,14 +8912,14 @@ var supplementsRouter = createTRPCRouter({
       notes: JSON.stringify(input),
       objectId: null
     });
-    await ctx.db.delete(dailySupplement).where(eq22(dailySupplement.id, input.id));
+    await ctx.db.delete(dailySupplement).where(eq23(dailySupplement.id, input.id));
     return true;
   }),
-  deleteFromUser: protectedProcedure.input(z30.object({ suppId: z30.number(), suppStackId: z30.number() })).mutation(async ({ input, ctx }) => {
+  deleteFromUser: protectedProcedure.input(z31.object({ suppId: z31.number(), suppStackId: z31.number() })).mutation(async ({ input, ctx }) => {
     await ctx.db.delete(supplementToSupplementStack).where(
-      and9(
-        eq22(supplementToSupplementStack.supplementId, input.suppId),
-        eq22(
+      and10(
+        eq23(supplementToSupplementStack.supplementId, input.suppId),
+        eq23(
           supplementToSupplementStack.supplementStackId,
           input.suppStackId
         )
@@ -8856,19 +8927,19 @@ var supplementsRouter = createTRPCRouter({
     );
     return true;
   }),
-  deleteTime: protectedProcedure.input(z30.object({ id: z30.number() })).mutation(async ({ input, ctx }) => {
-    await ctx.db.delete(supplementStack).where(eq22(supplementStack.id, input.id));
+  deleteTime: protectedProcedure.input(z31.object({ id: z31.number() })).mutation(async ({ input, ctx }) => {
+    await ctx.db.delete(supplementStack).where(eq23(supplementStack.id, input.id));
     return true;
   }),
   userCreate: protectedProcedure.input(
-    z30.object({
-      name: z30.string(),
-      serveSize: z30.number(),
-      serveUnit: z30.string(),
-      isPrivate: z30.boolean(),
-      stackId: z30.number(),
-      viewableBy: z30.string().optional(),
-      userId: z30.string()
+    z31.object({
+      name: z31.string(),
+      serveSize: z31.number(),
+      serveUnit: z31.string(),
+      isPrivate: z31.boolean(),
+      stackId: z31.number(),
+      viewableBy: z31.string().optional(),
+      userId: z31.string()
     })
   ).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.insert(ingredient).values({
@@ -8919,7 +8990,7 @@ var supplementsRouter = createTRPCRouter({
       availableCarbohydrateWithSugarAlcohols: input.availableCarbohydrateWithSugarAlcohols === 0 ? null : input.availableCarbohydrateWithSugarAlcohols.toString(),
       isSupplement: true,
       notes: ""
-    }).where(eq22(ingredient.id, input.id));
+    }).where(eq23(ingredient.id, input.id));
     await ctx.db.batch([
       ctx.db.update(ingredientAdditionOne).set({
         ingredientId: input.id,
@@ -8950,7 +9021,7 @@ var supplementsRouter = createTRPCRouter({
         raffinose: input.raffinose === 0 ? null : input.raffinose.toString(),
         stachyose: input.stachyose === 0 ? null : input.stachyose.toString(),
         sorbitol: input.sorbitol === 0 ? null : input.sorbitol.toString()
-      }).where(eq22(ingredientAdditionOne.ingredientId, input.id)),
+      }).where(eq23(ingredientAdditionOne.ingredientId, input.id)),
       ctx.db.update(ingredientAdditionTwo).set({
         ingredientId: input.id,
         aceticAcid: input.aceticAcid === 0 ? null : input.aceticAcid.toString(),
@@ -9026,7 +9097,7 @@ var supplementsRouter = createTRPCRouter({
         gammaTocopherol: input.gammaTocopherol === 0 ? null : input.gammaTocopherol.toString(),
         gammaTocotrienol: input.gammaTocotrienol === 0 ? null : input.gammaTocotrienol.toString(),
         vitaminE: input.vitaminE === 0 ? null : input.vitaminE.toString()
-      }).where(eq22(ingredientAdditionTwo.ingredientId, input.id)),
+      }).where(eq23(ingredientAdditionTwo.ingredientId, input.id)),
       ctx.db.update(ingredientAdditionThree).set({
         ingredientId: input.id,
         totalSaturatedFattyAcids: input.totalSaturatedFattyAcids === 0 ? null : input.totalSaturatedFattyAcids.toString(),
@@ -9122,7 +9193,7 @@ var supplementsRouter = createTRPCRouter({
         c22_5w6: input.c22_5w6 === 0 ? null : input.c22_5w6.toString(),
         c22_6w3: input.c22_6w3 === 0 ? null : input.c22_6w3.toString(),
         totalPolyunsaturatedFattyAcidsEquated: input.totalPolyunsaturatedFattyAcidsEquated === 0 ? null : input.totalPolyunsaturatedFattyAcidsEquated.toString()
-      }).where(eq22(ingredientAdditionThree.ingredientId, input.id))
+      }).where(eq23(ingredientAdditionThree.ingredientId, input.id))
     ]);
     return res;
   }),
@@ -9357,21 +9428,21 @@ var supplementsRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/trainer-notes.ts
-import { eq as eq23 } from "drizzle-orm";
-import { z as z31 } from "zod";
+import { eq as eq24 } from "drizzle-orm";
+import { z as z32 } from "zod";
 var trainerNotesRouter = createTRPCRouter({
-  getAllUser: protectedProcedure.input(z31.object({ userId: z31.string() })).query(async ({ ctx, input }) => {
+  getAllUser: protectedProcedure.input(z32.object({ userId: z32.string() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.trainerNotes.findMany({
-      where: (note, { eq: eq27 }) => eq27(note.userId, input.userId),
+      where: (note, { eq: eq28 }) => eq28(note.userId, input.userId),
       with: {
         trainer: true
       }
     });
     return res;
   }),
-  get: protectedProcedure.input(z31.object({ id: z31.number() })).query(async ({ ctx, input }) => {
+  get: protectedProcedure.input(z32.object({ id: z32.number() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.trainerNotes.findFirst({
-      where: (note, { eq: eq27 }) => eq27(note.id, input.id),
+      where: (note, { eq: eq28 }) => eq28(note.id, input.id),
       with: {
         trainer: true
       }
@@ -9379,11 +9450,11 @@ var trainerNotesRouter = createTRPCRouter({
     return res;
   }),
   create: protectedProcedure.input(
-    z31.object({
-      userId: z31.string(),
-      title: z31.string(),
-      description: z31.string(),
-      state: z31.string()
+    z32.object({
+      userId: z32.string(),
+      title: z32.string(),
+      description: z32.string(),
+      state: z32.string()
     })
   ).mutation(async ({ ctx, input }) => {
     const trainerId = ctx.session?.user.id;
@@ -9397,62 +9468,62 @@ var trainerNotesRouter = createTRPCRouter({
     return res;
   }),
   update: protectedProcedure.input(
-    z31.object({
-      id: z31.number(),
-      title: z31.string(),
-      description: z31.string(),
-      state: z31.string()
+    z32.object({
+      id: z32.number(),
+      title: z32.string(),
+      description: z32.string(),
+      state: z32.string()
     })
   ).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.update(trainerNotes).set({
       title: input.title,
       description: input.description,
       state: input.state
-    }).where(eq23(trainerNotes.id, input.id));
+    }).where(eq24(trainerNotes.id, input.id));
     return res;
   }),
-  delete: protectedProcedure.input(z31.object({ id: z31.number() })).mutation(async ({ ctx, input }) => {
-    const res = await ctx.db.delete(trainerNotes).where(eq23(trainerNotes.id, input.id));
+  delete: protectedProcedure.input(z32.object({ id: z32.number() })).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.delete(trainerNotes).where(eq24(trainerNotes.id, input.id));
     return res;
   })
 });
 
 // src/server/api/routers/userCatagories.tsx
-import { and as and10, eq as eq24 } from "drizzle-orm";
-import { z as z32 } from "zod";
+import { and as and11, eq as eq25 } from "drizzle-orm";
+import { z as z33 } from "zod";
 var userCatagoriesRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.userCategory.findMany();
     return res;
   }),
-  create: protectedProcedure.input(z32.string()).mutation(async ({ ctx, input }) => {
+  create: protectedProcedure.input(z33.string()).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.insert(userCategory).values({
       name: input
     });
     return res;
   }),
-  update: protectedProcedure.input(z32.object({ id: z32.number(), name: z32.string() })).mutation(async ({ ctx, input }) => {
+  update: protectedProcedure.input(z33.object({ id: z33.number(), name: z33.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.update(userCategory).set({
       name: input.name
-    }).where(eq24(userCategory.id, input.id));
+    }).where(eq25(userCategory.id, input.id));
     return res;
   }),
-  delete: protectedProcedure.input(z32.number()).mutation(async ({ ctx, input }) => {
-    const res = await ctx.db.delete(userCategory).where(eq24(userCategory.id, input));
+  delete: protectedProcedure.input(z33.number()).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.delete(userCategory).where(eq25(userCategory.id, input));
     return res;
   }),
-  addToUser: protectedProcedure.input(z32.object({ userId: z32.string(), categoryId: z32.number() })).mutation(async ({ ctx, input }) => {
+  addToUser: protectedProcedure.input(z33.object({ userId: z33.string(), categoryId: z33.number() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.insert(userToUserCategory).values({
       userId: input.userId,
       categoryId: input.categoryId
     });
     return res;
   }),
-  removeFromUser: protectedProcedure.input(z32.object({ userId: z32.string(), categoryId: z32.number() })).mutation(async ({ ctx, input }) => {
+  removeFromUser: protectedProcedure.input(z33.object({ userId: z33.string(), categoryId: z33.number() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.delete(userToUserCategory).where(
-      and10(
-        eq24(userToUserCategory.userId, input.userId),
-        eq24(userToUserCategory.categoryId, input.categoryId)
+      and11(
+        eq25(userToUserCategory.userId, input.userId),
+        eq25(userToUserCategory.categoryId, input.categoryId)
       )
     );
     return res;
@@ -9460,16 +9531,16 @@ var userCatagoriesRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/notification.ts
-import { eq as eq25, and as and11 } from "drizzle-orm";
-import { z as z33 } from "zod";
+import { eq as eq26, and as and12 } from "drizzle-orm";
+import { z as z34 } from "zod";
 var notificationRouter = createTRPCRouter({
   create: protectedProcedure.input(
-    z33.object({
-      userId: z33.string(),
-      code: z33.string(),
-      title: z33.string(),
-      description: z33.string().optional(),
-      notes: z33.string().optional()
+    z34.object({
+      userId: z34.string(),
+      code: z34.string(),
+      title: z34.string(),
+      description: z34.string().optional(),
+      notes: z34.string().optional()
     })
   ).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.insert(notification).values({
@@ -9480,7 +9551,7 @@ var notificationRouter = createTRPCRouter({
       notes: input.notes
     });
     const sub = await ctx.db.query.pushSubscription.findFirst({
-      where: eq25(pushSubscription.userId, input.userId)
+      where: eq26(pushSubscription.userId, input.userId)
     });
     if (sub) {
       await sendPushNotification(
@@ -9491,47 +9562,47 @@ var notificationRouter = createTRPCRouter({
     }
     return res;
   }),
-  get: protectedProcedure.input(z33.number()).query(async ({ input, ctx }) => {
+  get: protectedProcedure.input(z34.number()).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.notification.findFirst({
-      where: eq25(notification.id, input)
+      where: eq26(notification.id, input)
     });
     return res;
   }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.notification.findMany({
-      where: eq25(notification.isRead, false),
+      where: eq26(notification.isRead, false),
       orderBy: (data, { desc: desc10 }) => desc10(data.createdAt)
     });
     return res;
   }),
-  getAllUser: protectedProcedure.input(z33.string()).query(async ({ input, ctx }) => {
+  getAllUser: protectedProcedure.input(z34.string()).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.notification.findMany({
-      where: eq25(notification.userId, input),
+      where: eq26(notification.userId, input),
       orderBy: (data, { desc: desc10 }) => desc10(data.createdAt)
     });
     return res;
   }),
-  getAllUserUnread: protectedProcedure.input(z33.string()).query(async ({ ctx, input }) => {
+  getAllUserUnread: protectedProcedure.input(z34.string()).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.notification.findMany({
-      where: and11(eq25(notification.userId, input), eq25(notification.isRead, false)),
+      where: and12(eq26(notification.userId, input), eq26(notification.isRead, false)),
       orderBy: (data, { desc: desc10 }) => desc10(data.createdAt)
     });
     return res;
   }),
-  delete: protectedProcedure.input(z33.number()).mutation(async ({ input, ctx }) => {
-    const res = await ctx.db.delete(notification).where(eq25(notification.id, input));
+  delete: protectedProcedure.input(z34.number()).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.delete(notification).where(eq26(notification.id, input));
     return res;
   }),
-  markAsRead: protectedProcedure.input(z33.number()).mutation(async ({ input, ctx }) => {
+  markAsRead: protectedProcedure.input(z34.number()).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.update(notification).set({
       isRead: true
-    }).where(eq25(notification.id, input));
+    }).where(eq26(notification.id, input));
     return res;
   }),
-  markAsNotified: protectedProcedure.input(z33.number()).mutation(async ({ input, ctx }) => {
+  markAsNotified: protectedProcedure.input(z34.number()).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.update(notification).set({
       isNotified: true
-    }).where(eq25(notification.id, input));
+    }).where(eq26(notification.id, input));
     createLog({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
@@ -9541,11 +9612,11 @@ var notificationRouter = createTRPCRouter({
     });
     return res;
   }),
-  markAllAsViewed: protectedProcedure.input(z33.string()).mutation(async ({ ctx, input }) => {
+  markAllAsViewed: protectedProcedure.input(z34.string()).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.update(notification).set({
       isRead: true,
       isViewed: true
-    }).where(eq25(notification.userId, input));
+    }).where(eq26(notification.userId, input));
     createLog({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
@@ -9555,11 +9626,11 @@ var notificationRouter = createTRPCRouter({
     });
     return res;
   }),
-  markAsViewed: protectedProcedure.input(z33.number()).mutation(async ({ input, ctx }) => {
+  markAsViewed: protectedProcedure.input(z34.number()).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.update(notification).set({
       isViewed: true,
       isRead: true
-    }).where(eq25(notification.id, input));
+    }).where(eq26(notification.id, input));
     createLog({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
@@ -9572,22 +9643,22 @@ var notificationRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/push-subscription.ts
-import { eq as eq26 } from "drizzle-orm";
-import { z as z34 } from "zod";
+import { eq as eq27 } from "drizzle-orm";
+import { z as z35 } from "zod";
 var pushSubscriptionRouter = createTRPCRouter({
   create: protectedProcedure.input(
-    z34.object({
-      userId: z34.string(),
-      subscription: z34.string()
+    z35.object({
+      userId: z35.string(),
+      subscription: z35.string()
     })
   ).mutation(async ({ input, ctx }) => {
     const sub = await ctx.db.query.pushSubscription.findFirst({
-      where: eq26(pushSubscription.userId, input.userId)
+      where: eq27(pushSubscription.userId, input.userId)
     });
     if (sub) {
       const res2 = await ctx.db.update(pushSubscription).set({
         subscription: input.subscription
-      }).where(eq26(pushSubscription.id, sub.id));
+      }).where(eq27(pushSubscription.id, sub.id));
       return res2;
     }
     const res = await ctx.db.insert(pushSubscription).values({
@@ -9595,9 +9666,9 @@ var pushSubscriptionRouter = createTRPCRouter({
     }).returning({ id: pushSubscription.id });
     return res;
   }),
-  get: protectedProcedure.input(z34.string()).query(async ({ ctx, input }) => {
+  get: protectedProcedure.input(z35.string()).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.pushSubscription.findFirst({
-      where: eq26(pushSubscription.userId, input)
+      where: eq27(pushSubscription.userId, input)
     });
     return res;
   })

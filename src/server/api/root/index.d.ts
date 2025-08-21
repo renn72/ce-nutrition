@@ -13764,6 +13764,81 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
         };
         transformer: true;
     }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        updateFrontImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+                image: string;
+                isNotifyTrainer: boolean;
+                userId: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateFrontImageOverlay: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+                overlay: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateSideImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+                image: string;
+                isNotifyTrainer: boolean;
+                userId: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateSideImageOverlay: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+                overlay: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateBackImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+                image: string;
+                isNotifyTrainer: boolean;
+                userId: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateBackImageOverlay: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+                overlay: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateBodyBuilderImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                image: string;
+                name: string;
+                userId: string;
+                isNotifyTrainer: boolean;
+            };
+            output: {
+                id: number;
+            }[];
+            meta: object;
+        }>;
+        updateBodyBuilderImageOverlay: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                imageId: number;
+                overlay: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         getAllUser: _trpc_server.TRPCQueryProcedure<{
             input: string;
             output: {
@@ -14538,49 +14613,6 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 fastedBloodGlucose: string;
             };
             output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateFrontImage: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                logId: number;
-                image: string;
-                isNotifyTrainer: boolean;
-                userId: string;
-            };
-            output: boolean;
-            meta: object;
-        }>;
-        updateSideImage: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                logId: number;
-                image: string;
-                isNotifyTrainer: boolean;
-                userId: string;
-            };
-            output: boolean;
-            meta: object;
-        }>;
-        updateBackImage: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                logId: number;
-                image: string;
-                isNotifyTrainer: boolean;
-                userId: string;
-            };
-            output: boolean;
-            meta: object;
-        }>;
-        updateBodyBuilderImage: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                image: string;
-                name: string;
-                userId: string;
-                isNotifyTrainer: boolean;
-            };
-            output: {
-                id: number;
-            }[];
             meta: object;
         }>;
         updateImage: _trpc_server.TRPCMutationProcedure<{
@@ -20622,6 +20654,81 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         };
         transformer: true;
     }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        updateFrontImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+                image: string;
+                isNotifyTrainer: boolean;
+                userId: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateFrontImageOverlay: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+                overlay: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateSideImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+                image: string;
+                isNotifyTrainer: boolean;
+                userId: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateSideImageOverlay: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+                overlay: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateBackImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+                image: string;
+                isNotifyTrainer: boolean;
+                userId: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateBackImageOverlay: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                logId: number;
+                overlay: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateBodyBuilderImage: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                image: string;
+                name: string;
+                userId: string;
+                isNotifyTrainer: boolean;
+            };
+            output: {
+                id: number;
+            }[];
+            meta: object;
+        }>;
+        updateBodyBuilderImageOverlay: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                imageId: number;
+                overlay: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         getAllUser: _trpc_server.TRPCQueryProcedure<{
             input: string;
             output: {
@@ -21396,49 +21503,6 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 fastedBloodGlucose: string;
             };
             output: _libsql_client.ResultSet;
-            meta: object;
-        }>;
-        updateFrontImage: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                logId: number;
-                image: string;
-                isNotifyTrainer: boolean;
-                userId: string;
-            };
-            output: boolean;
-            meta: object;
-        }>;
-        updateSideImage: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                logId: number;
-                image: string;
-                isNotifyTrainer: boolean;
-                userId: string;
-            };
-            output: boolean;
-            meta: object;
-        }>;
-        updateBackImage: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                logId: number;
-                image: string;
-                isNotifyTrainer: boolean;
-                userId: string;
-            };
-            output: boolean;
-            meta: object;
-        }>;
-        updateBodyBuilderImage: _trpc_server.TRPCMutationProcedure<{
-            input: {
-                date: string;
-                image: string;
-                name: string;
-                userId: string;
-                isNotifyTrainer: boolean;
-            };
-            output: {
-                id: number;
-            }[];
             meta: object;
         }>;
         updateImage: _trpc_server.TRPCMutationProcedure<{

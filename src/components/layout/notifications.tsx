@@ -1,7 +1,6 @@
 'use client'
 
 import { api } from '@/trpc/react'
-
 import { useState } from 'react'
 
 import { cn } from '@/lib/utils'
@@ -43,14 +42,16 @@ export interface Item {
 const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const ctx = api.useUtils()
+  const origin = window.location.origin
+  const timing = origin === 'http://localhost:3000' ? 20 : 2
 	const { data: userNotifications, isLoading } =
 		api.notifications.getAllUserUnread.useQuery(currentUser.id, {
-			refetchInterval: 1000 * 60 * 1,
+			refetchInterval: 1000 * 60 * timing,
 		})
 	const { data: userMessages } = api.message.getAllUserUnread.useQuery(
 		currentUser.id,
 		{
-			refetchInterval: 1000 * 60 * 1,
+			refetchInterval: 1000 * 60 * timing,
 		},
 	)
 

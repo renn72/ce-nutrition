@@ -1,24 +1,15 @@
 'use client'
 
-import { api } from '@/trpc/react'
-
 import { useEffect, useState, type ReactNode } from 'react'
 
 import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/lib/utils'
 import type { GetAllIngredients, GetIngredientById } from '@/types'
-import {
-	Combobox,
-	ComboboxInput,
-	ComboboxOption,
-	ComboboxOptions,
-} from '@headlessui/react'
-import { CheckIcon, ChevronDownIcon, Star, XCircle } from 'lucide-react'
+import {  XCircle } from 'lucide-react'
 import type { UseFormReturn } from 'react-hook-form'
 import type { z } from 'zod'
 
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import {
 	FormControl,
 	FormField,

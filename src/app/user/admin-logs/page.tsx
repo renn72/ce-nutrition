@@ -2,9 +2,10 @@
 
 import { api } from '@/trpc/react'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { cn } from '@/lib/utils'
+import { useVirtualizer } from '@tanstack/react-virtual'
 import { RefreshCcw } from 'lucide-react'
 
 import {
@@ -13,6 +14,7 @@ import {
 	CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import { Input } from '@/components/ui/input'
+import { ScrlArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
 
 export default function AdminLogs() {
@@ -21,27 +23,49 @@ export default function AdminLogs() {
 	const [userFilter, setUserFilter] = useState('')
 	const ctx = api.useUtils()
 	const { data: logs } = api.user.getAdminLogs.useQuery(undefined, {
-		refetchInterval: 1000 * 60 * 15,
+		refetchInterval: 1000 * 60 * 1,
+	})
+
+	const parentRef = useRef(null)
+
+	const virtualizer = useVirtualizer({
+		count: 4000,
+		getScrollElement: () => parentRef.current,
+		estimateSize: () => 20,
+    overscan: 100,
 	})
 
 	if (!logs) return null
 
-	const l = logs
-		.filter((log) => log.createdAt.toDateString() === new Date().toDateString())
+	const l = logs.filter(
+		(log) => log.createdAt.toDateString() === new Date().toDateString(),
+	)
 
-  const u = l.filter((log, index, arr) => {
-    return arr.findIndex((t) => t.user === log.user) === index
-  })
+	const u = l.filter((log, index, arr) => {
+		return arr.findIndex((t) => t.user === log.user) === index
+	})
 
-  const logYesterday = logs.filter((log) => log.createdAt.toDateString() === new Date(new Date().setDate(new Date().getDate() - 1)).toDateString())
-  const uYesterday = logYesterday.filter((log, index, arr) => {
-    return arr.findIndex((t) => t.user === log.user) === index
-  })
+	const logYesterday = logs.filter(
+		(log) =>
+			log.createdAt.toDateString() ===
+			new Date(new Date().setDate(new Date().getDate() - 1)).toDateString(),
+	)
+	const uYesterday = logYesterday.filter((log, index, arr) => {
+		return arr.findIndex((t) => t.user === log.user) === index
+	})
 
+	const sortedFilterLogs = logs
+		?.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+		.filter((log) => {
+			if (isHideMe) return log.user?.toLowerCase() !== 'david warner'
+			return true
+		})
+		.filter((log) => log.task?.toLowerCase().includes(filter.toLowerCase()))
+		.filter((log) => log.user?.toLowerCase().includes(userFilter.toLowerCase()))
 
 	return (
-		<div className='flex flex-col gap-0 my-16 px-1 w-full tracking-tight md:tracking-normal '>
-			<div className='flex items-center gap-8 w-full py-2'>
+		<div className='flex flex-col gap-0 my-16  lg:my-0 px-1 w-full tracking-tight md:tracking-normal '>
+			<div className='flex items-center gap-2 lg:gap-8 w-full py-2 justify-between lg:justify-start'>
 				<Switch
 					checked={isHideMe}
 					onCheckedChange={(checked) => {
@@ -54,7 +78,7 @@ export default function AdminLogs() {
 						setFilter(e.target.value)
 					}}
 					placeholder='filter'
-					className='w-48'
+					className='w-full lg:w-48 h-8 lg:h-10'
 				/>
 				<Input
 					value={userFilter}
@@ -62,95 +86,115 @@ export default function AdminLogs() {
 						setUserFilter(e.target.value)
 					}}
 					placeholder='user filter'
-					className='w-48'
+					className='w-full lg:w-48  h-8 lg:h-10'
 				/>
 				<RefreshCcw
 					size={20}
-					className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform'
+					className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform shrink-0'
 					onClick={() => {
 						ctx.user.invalidate()
 					}}
 				/>
 			</div>
-			<div className='flex items-center gap-8 w-full py-2'>
-        <div>Today</div>
-        <div>Total {l.length}</div>
-        <div>Users {u.length}</div>
+			<div className='flex items-center gap-8 w-full lg:w-min py-0 text-sm'>
+				<div className='flex items-center gap-0 w-full py-0 text-sm'>
+					<div className='mr-4'>Today</div>
+					<div>{l.length}</div>
+					<div>/</div>
+					<div>{u.length}</div>
+				</div>
+				<div className='flex items-center gap-0 w-full py-0 text-sm'>
+					<div className='mr-4'>Yesterday</div>
+					<div>{logYesterday.length}</div>
+					<div>/</div>
+					<div>{uYesterday.length}</div>
+				</div>
 			</div>
-			<div className='flex items-center gap-8 w-full py-2'>
-        <div>Yesterday</div>
-        <div>Total {logYesterday.length}</div>
-        <div>Users {uYesterday.length}</div>
+			<div
+				ref={parentRef}
+				className='h-[calc(100vh-190px)] lg:h-[calc(100vh-80px)] overflow-y-auto'
+			>
+				<div
+					className={cn(
+						'flex flex-col gap-0',
+						`h-[${virtualizer.getTotalSize()}px]`,
+						'w-full relative',
+					)}
+				>
+					{virtualizer.getVirtualItems().map((virtualItem) => {
+            const log = sortedFilterLogs[virtualItem.index]
+            if (!log) return null
+						return (
+							<div
+                key={virtualItem.key}
+                className={cn('absolute top-0 left-0 w-full')}
+								style={{
+                  height: `${virtualItem.size}px`,
+									transform: `translateY(${virtualItem.start}px)`,
+								}}
+              >
+								<Collapsible>
+									<CollapsibleTrigger asChild>
+										<div
+											className={cn(
+												'grid grid-cols-9 gap-1 text-[0.7rem] md:text-xs max-w-screen-xl py-[2px] shrink-0 h-[20px] ',
+												log.createdAt.getDate() % 2 === 0
+													? 'bg-primary/10'
+													: 'bg-primary/5',
+											)}
+										>
+											<div className='md:col-span-1 col-span-2 truncate'>
+												{log.createdAt.toLocaleString('en-AU', {
+													hour: 'numeric',
+													minute: 'numeric',
+													hour12: false,
+												})}
+												,{' '}
+												{log.createdAt.toLocaleString('en-AU', {
+													year: '2-digit',
+													month: 'numeric',
+													day: 'numeric',
+												})}
+											</div>
+											<div className='col-span-2 md:col-span-1 truncate'>
+												{log.user}
+											</div>
+											<div className='col-span-3 md:col-span-1 truncate'>
+												{log.task}
+											</div>
+											<div className='truncate col-span-2 md:col-span-6'>
+												{log.notes}
+											</div>
+										</div>
+									</CollapsibleTrigger>
+									<CollapsibleContent className='p-0 '>
+										<div
+											className={cn(
+												'flex flex-col gap-1 text-[0.7rem] md:text-xs max-w-screen-xl py-[2px] shrink-0 pl-4 ',
+												'bg-blue-200',
+											)}
+										>
+											<div className='col-span-2 shrink-0'>
+												{log.createdAt.toLocaleString('en-AU', {
+													year: 'numeric',
+													month: 'numeric',
+													day: 'numeric',
+													hour: 'numeric',
+													minute: 'numeric',
+													hour12: false,
+												})}
+											</div>
+											<div className='col-span-2 '>{log.user}</div>
+											<div className='col-span-3 '>{log.task}</div>
+											<div className=' col-span-2'>{log.notes}</div>
+										</div>
+									</CollapsibleContent>
+								</Collapsible>
+							</div>
+						)
+					})}
+				</div>
 			</div>
-			{logs
-				?.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-				.filter((log) => {
-					if (isHideMe) return log.user?.toLowerCase() !== 'david warner'
-					return true
-				})
-				.filter((log) => log.task?.toLowerCase().includes(filter.toLowerCase()))
-				.filter((log) =>
-					log.user?.toLowerCase().includes(userFilter.toLowerCase()),
-				)
-				.map((log) => (
-					<Collapsible key={log.id}>
-						<CollapsibleTrigger asChild>
-							<div
-								className={cn(
-									'grid grid-cols-9 gap-1 text-[0.7rem] md:text-xs max-w-screen-xl py-[2px] shrink-0 ',
-									log.createdAt.getDate() % 2 === 0
-										? 'bg-primary/10'
-										: 'bg-primary/5',
-								)}
-							>
-								<div className='md:col-span-1 col-span-2 truncate'>
-									{log.createdAt.toLocaleString('en-AU', {
-										hour: 'numeric',
-										minute: 'numeric',
-										hour12: false,
-									})}
-									,{' '}
-									{log.createdAt.toLocaleString('en-AU', {
-										year: '2-digit',
-										month: 'numeric',
-										day: 'numeric',
-									})}
-								</div>
-								<div className='col-span-2 md:col-span-1 truncate'>
-									{log.user}
-								</div>
-								<div className='col-span-3 md:col-span-1 truncate'>
-									{log.task}
-								</div>
-								<div className='truncate col-span-2 md:col-span-6'>
-									{log.notes}
-								</div>
-							</div>
-						</CollapsibleTrigger>
-						<CollapsibleContent className='p-0 '>
-							<div
-								className={cn(
-									'flex flex-col gap-1 text-[0.7rem] md:text-xs max-w-screen-xl py-[2px] shrink-0 pl-4 ',
-									'bg-blue-200',
-								)}
-							>
-								<div className='col-span-2 shrink-0'>
-									{log.createdAt.toLocaleString('en-AU', {
-										year: 'numeric',
-										month: 'numeric',
-										day: 'numeric',
-										hour: 'numeric',
-										minute: 'numeric',
-										hour12: false,
-									})}
-								</div>
-								<div className='col-span-2 '>{log.user}</div>
-								<div className='col-span-3 '>{log.task}</div>
-								<div className=' col-span-2'>{log.notes}</div>
-							</div>
-						</CollapsibleContent>
-					</Collapsible>
-				))}
 		</div>
 	)
 }

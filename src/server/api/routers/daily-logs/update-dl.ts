@@ -1,57 +1,15 @@
 import { createLog } from '@/server/api/routers/admin-log'
-import { sendPushNotification } from '@/server/api/utils/send-push'
-import { db } from '@/server/db'
 import {
 	dailyLog,
 	dailySupplement,
-	notification,
 	poopLog,
-	pushSubscription,
-	user,
 	waterLog,
 } from '@/server/db/schema'
-import { images } from '@/server/db/schema/metrics'
 import { TRPCError } from '@trpc/server'
 import { protectedProcedure } from '~/server/api/trpc'
 import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
-export const sendTrainerNotification = async ({
-	title,
-	userId,
-}: {
-	userId: string
-	title: string
-}) => {
-	const userRes = await db.query.user.findFirst({
-		where: eq(user.id, userId),
-		with: {
-			trainers: {
-				with: {
-					trainer: true,
-				},
-			},
-		},
-	})
-
-	if (!userRes) return
-
-	for (const trainer of userRes.trainers) {
-		const res = await db.insert(notification).values({
-			userId: trainer.trainer.id,
-			code: 'image-upload',
-			title: `${userRes.name} has uploaded ${title}`,
-			description: '',
-			notes: '',
-		})
-		const sub = await db.query.pushSubscription.findFirst({
-			where: eq(pushSubscription.userId, trainer.trainer.id),
-		})
-		if (sub) {
-			await sendPushNotification(JSON.parse(sub.subscription), `${userRes.name} has uploaded ${title}`, '')
-		}
-	}
-}
 
 export const updateDl = {
 	update: protectedProcedure
@@ -837,150 +795,6 @@ export const updateDl = {
 						eq(dailyLog.userId, ctx.session.user.id),
 					),
 				)
-
-			return res
-		}),
-	updateFrontImage: protectedProcedure
-		.input(
-			z.object({
-				logId: z.number(),
-				image: z.string(),
-				isNotifyTrainer: z.boolean(),
-				userId: z.string(),
-			}),
-		)
-		.mutation(async ({ input, ctx }) => {
-			createLog({
-				user: ctx.session.user.name,
-				userId: ctx.session.user.id,
-				task: 'Update Front Image',
-				notes: JSON.stringify(input),
-				objectId: null,
-			})
-
-			const res = await ctx.db
-				.update(dailyLog)
-				.set({ frontImage: input.image })
-				.where(eq(dailyLog.id, input.logId))
-
-			if (input.isNotifyTrainer) {
-				sendTrainerNotification({
-					title: 'Front Pose',
-					userId: input.userId,
-				})
-			}
-
-			return true
-		}),
-	updateSideImage: protectedProcedure
-		.input(
-			z.object({
-				logId: z.number(),
-				image: z.string(),
-				isNotifyTrainer: z.boolean(),
-				userId: z.string(),
-			}),
-		)
-		.mutation(async ({ input, ctx }) => {
-			createLog({
-				user: ctx.session.user.name,
-				userId: ctx.session.user.id,
-				task: 'Update side Image',
-				notes: JSON.stringify(input),
-				objectId: null,
-			})
-
-			const res = await ctx.db
-				.update(dailyLog)
-				.set({ sideImage: input.image })
-				.where(eq(dailyLog.id, input.logId))
-
-			if (input.isNotifyTrainer) {
-				sendTrainerNotification({
-					title: 'Side Pose',
-					userId: input.userId,
-				})
-			}
-
-			return true
-		}),
-	updateBackImage: protectedProcedure
-		.input(
-			z.object({
-				logId: z.number(),
-				image: z.string(),
-				isNotifyTrainer: z.boolean(),
-				userId: z.string(),
-			}),
-		)
-		.mutation(async ({ input, ctx }) => {
-			createLog({
-				user: ctx.session.user.name,
-				userId: ctx.session.user.id,
-				task: 'Update  Back Image',
-				notes: JSON.stringify(input),
-				objectId: null,
-			})
-
-			const res = await ctx.db
-				.update(dailyLog)
-				.set({ backImage: input.image })
-				.where(eq(dailyLog.id, input.logId))
-
-			if (input.isNotifyTrainer) {
-				sendTrainerNotification({
-					title: 'Back Pose',
-					userId: input.userId,
-				})
-			}
-
-			return true
-		}),
-	updateBodyBuilderImage: protectedProcedure
-		.input(
-			z.object({
-				date: z.string(),
-				image: z.string(),
-				name: z.string(),
-				userId: z.string(),
-				isNotifyTrainer: z.boolean(),
-			}),
-		)
-		.mutation(async ({ input, ctx }) => {
-			await ctx.db
-				.delete(images)
-				.where(
-					and(
-						eq(images.date, input.date),
-						eq(images.name, input.name),
-						eq(images.userId, input.userId),
-					),
-				)
-
-			createLog({
-				user: ctx.session.user.name,
-				userId: ctx.session.user.id,
-				task: `Update Image ${input.name} `,
-				notes: JSON.stringify(input),
-				objectId: null,
-			})
-
-			const res = await ctx.db
-				.insert(images)
-				.values({
-					userId: input.userId,
-					name: input.name,
-					date: input.date,
-					image: input.image,
-				})
-				.returning({ id: images.id })
-
-			if (input.isNotifyTrainer) {
-				sendTrainerNotification({
-					title: input.name,
-					userId: input.userId,
-				})
-			}
 
 			return res
 		}),
