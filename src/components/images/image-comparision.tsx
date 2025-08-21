@@ -242,14 +242,14 @@ const Drawing = ({
 	imageRef: ref,
 	dataId,
 	imageType,
-  overlay,
-  setShowOverlay,
+	overlay,
+	setShowOverlay,
 }: {
 	imageRef: React.RefObject<HTMLImageElement>
 	dataId: number
 	imageType: string
-  overlay: string | undefined
-  setShowOverlay: React.Dispatch<React.SetStateAction<boolean>>
+	overlay: string | undefined | null
+	setShowOverlay: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
 	const ctx = api.useUtils()
 	const { mutate: updateFrontImageOverlay } =
@@ -345,10 +345,13 @@ const Drawing = ({
 					variant='ghost'
 					className=' hover:outline hover:outline-primary/50 hover:bg-primary/00 w-10 p-0 z-100 h-10'
 				>
-					<SquarePen size={24} onClick={() => {
-            if (!toggleDraw) setShowOverlay(false)
-            setToggleDraw(!toggleDraw)}
-          } />
+					<SquarePen
+						size={24}
+						onClick={() => {
+							if (!toggleDraw) setShowOverlay(false)
+							setToggleDraw(!toggleDraw)
+						}}
+					/>
 				</Button>
 				{toggleDraw && (
 					<>
@@ -518,7 +521,13 @@ const ImageView = ({
 	return (
 		<div className='flex flex-col items-center relative shrink-0'>
 			{isAdmin && dataId && (
-				<Drawing imageRef={ref} dataId={dataId} overlay={overlay} imageType={imageType} setShowOverlay={setShowOverlay} />
+				<Drawing
+					imageRef={ref}
+					dataId={dataId}
+					overlay={overlay}
+					imageType={imageType}
+					setShowOverlay={setShowOverlay}
+				/>
 			)}
 			<div className='absolute top-14 left-1/2 -translate-x-1/2 z-10 text-sm'>
 				{date}
@@ -543,28 +552,27 @@ const ImageView = ({
 								className='h-[calc(100vh-120px)] rounded-md shadow-md z-10'
 							/>
 							{dataId && overlay && (
-								<Overlay
-                  overlay={overlay}
-									showOverlay={showOverlay}
-								/>
+								<Overlay overlay={overlay} showOverlay={showOverlay} />
 							)}
-							<div className='absolute top-[9px] left-2 z-20 bg-muted/50 rounded-md w-14 h-14 flex items-center justify-center'>
-								{showOverlay ? (
-									<Button
-										variant='ghost'
-										className=' hover:outline hover:bg-primary/00 w-10 p-0'
-									>
-										<Eye size={24} onClick={() => setShowOverlay(false)} />
-									</Button>
-								) : (
-									<Button
-										variant='ghost'
-										className=' hover:outline hover:bg-primary/00 w-10 p-0'
-									>
-										<EyeOff size={24} onClick={() => setShowOverlay(true)} />
-									</Button>
-								)}
-							</div>
+							{overlay ? (
+								<div className='absolute top-[9px] left-2 z-20 bg-muted/50 rounded-md w-14 h-14 flex items-center justify-center'>
+									{showOverlay ? (
+										<Button
+											variant='ghost'
+											className=' hover:outline hover:bg-primary/00 w-10 p-0'
+										>
+											<Eye size={24} onClick={() => setShowOverlay(false)} />
+										</Button>
+									) : (
+										<Button
+											variant='ghost'
+											className=' hover:outline hover:bg-primary/00 w-10 p-0'
+										>
+											<EyeOff size={24} onClick={() => setShowOverlay(true)} />
+										</Button>
+									)}
+								</div>
+							) : null}
 						</TransformComponent>
 					</React.Fragment>
 				)}
