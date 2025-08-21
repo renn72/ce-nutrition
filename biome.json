@@ -38,6 +38,9 @@
         "useConst": "off",
         "useTemplate": "off"
       },
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
+      },
       "a11y": {
         "useKeyWithClickEvents": "off",
         "useSemanticElements": "off",

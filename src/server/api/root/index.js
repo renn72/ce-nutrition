@@ -7560,6 +7560,47 @@ var sendTrainerNotification = async ({
   }
 };
 var image = {
+  getImageOverlay: protectedProcedure.input(
+    z22.object({
+      dataId: z22.number(),
+      imageType: z22.string()
+    })
+  ).query(async ({ input, ctx }) => {
+    if (input.imageType === "front") {
+      const res2 = await ctx.db.query.dailyLog.findFirst({
+        where: eq16(dailyLog.id, input.dataId),
+        columns: {
+          frontImageSvg: true
+        }
+      });
+      return { overlay: res2?.frontImageSvg };
+    }
+    if (input.imageType === "side") {
+      const res2 = await ctx.db.query.dailyLog.findFirst({
+        where: eq16(dailyLog.id, input.dataId),
+        columns: {
+          sideImageSvg: true
+        }
+      });
+      return { overlay: res2?.sideImageSvg };
+    }
+    if (input.imageType === "back") {
+      const res2 = await ctx.db.query.dailyLog.findFirst({
+        where: eq16(dailyLog.id, input.dataId),
+        columns: {
+          backImageSvg: true
+        }
+      });
+      return { overlay: res2?.backImageSvg };
+    }
+    const res = await ctx.db.query.images.findFirst({
+      where: eq16(images.id, input.dataId),
+      columns: {
+        svg: true
+      }
+    });
+    return { overlay: res?.svg };
+  }),
   updateFrontImage: protectedProcedure.input(
     z22.object({
       logId: z22.number(),

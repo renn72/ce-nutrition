@@ -13764,6 +13764,16 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
         };
         transformer: true;
     }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        getImageOverlay: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                dataId: number;
+                imageType: string;
+            };
+            output: {
+                overlay: string | null | undefined;
+            };
+            meta: object;
+        }>;
         updateFrontImage: _trpc_server.TRPCMutationProcedure<{
             input: {
                 logId: number;
@@ -20654,6 +20664,16 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         };
         transformer: true;
     }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        getImageOverlay: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                dataId: number;
+                imageType: string;
+            };
+            output: {
+                overlay: string | null | undefined;
+            };
+            meta: object;
+        }>;
         updateFrontImage: _trpc_server.TRPCMutationProcedure<{
             input: {
                 logId: number;

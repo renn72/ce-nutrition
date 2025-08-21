@@ -50,6 +50,56 @@ const sendTrainerNotification = async ({
 }
 
 export const image = {
+  getImageOverlay: protectedProcedure
+    .input(
+      z.object({
+        dataId: z.number(),
+        imageType: z.string(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+
+    if (input.imageType === 'front') {
+      const res = await ctx.db.query.dailyLog.findFirst({
+        where: eq(dailyLog.id, input.dataId),
+        columns: {
+          frontImageSvg: true,
+        },
+      })
+
+      return { overlay: res?.frontImageSvg }
+    }
+    if (input.imageType === 'side') {
+      const res = await ctx.db.query.dailyLog.findFirst({
+        where: eq(dailyLog.id, input.dataId),
+        columns: {
+          sideImageSvg: true,
+        },
+      })
+
+      return { overlay: res?.sideImageSvg }
+    }
+    if (input.imageType === 'back') {
+      const res = await ctx.db.query.dailyLog.findFirst({
+        where: eq(dailyLog.id, input.dataId),
+        columns: {
+          backImageSvg: true,
+        },
+      })
+
+      return { overlay: res?.backImageSvg }
+    }
+
+    const res = await ctx.db.query.images.findFirst({
+      where: eq(images.id, input.dataId),
+      columns: {
+        svg: true,
+      },
+    })
+
+
+      return { overlay: res?.svg }
+    }),
 	updateFrontImage: protectedProcedure
 		.input(
 			z.object({

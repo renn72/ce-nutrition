@@ -12,6 +12,7 @@ interface UserImage {
 	src: string
 	date: string
 	alt: string
+  dataId: number
 }
 
 const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) => {
@@ -31,6 +32,7 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: log.frontImage || '',
 				date: log.date || '',
 				alt: 'alt',
+        dataId: log.id,
 			}
 		})
 		.filter((image) => image.src !== '')
@@ -42,6 +44,7 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: log.sideImage || '',
 				date: log.date || '',
 				alt: 'alt',
+        dataId: log.id,
 			}
 		})
 		.filter((image) => image.src !== '')
@@ -53,6 +56,7 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: log.backImage || '',
 				date: log.date || '',
 				alt: 'alt',
+        dataId: log.id,
 			}
 		})
 		.filter((image) => image.src !== '')
@@ -67,6 +71,7 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: image.image || '',
 				date: image.date || '',
 				alt: 'alt',
+        dataId: image.id,
 			}
 		})
 		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -78,6 +83,7 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: image.image || '',
 				date: image.date || '',
 				alt: 'alt',
+        dataId: image.id,
 			}
 		})
 		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -89,6 +95,7 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: image.image || '',
 				date: image.date || '',
 				alt: 'alt',
+        dataId: image.id,
 			}
 		})
 		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -100,6 +107,7 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: image.image || '',
 				date: image.date || '',
 				alt: 'alt',
+        dataId: image.id,
 			}
 		})
 		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -111,6 +119,7 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: image.image || '',
 				date: image.date || '',
 				alt: 'alt',
+        dataId: image.id,
 			}
 		})
 		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -122,6 +131,7 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: image.image || '',
 				date: image.date || '',
 				alt: 'alt',
+        dataId: image.id,
 			}
 		})
 		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -133,6 +143,7 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: image.image || '',
 				date: image.date || '',
 				alt: 'alt',
+        dataId: image.id,
 			}
 		})
 		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())

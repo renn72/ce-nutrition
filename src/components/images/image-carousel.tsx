@@ -23,12 +23,13 @@ interface ImageData {
 	src: string
 	alt: string
 	date: string
+	dataId: number
 }
 
 interface ImageCarouselProps {
 	images: ImageData[]
 	title: string
-  isAdmin: boolean
+	isAdmin: boolean
 }
 
 const Item = ({
@@ -36,13 +37,13 @@ const Item = ({
 	user,
 	title,
 	images,
-  isAdmin,
+	isAdmin,
 }: {
 	image: ImageData
 	user: string
 	title: string
 	images: ImageData[]
-  isAdmin: boolean
+	isAdmin: boolean
 }) => {
 	const [isPrefetched, setIsPrefetched] = useState(false)
 
@@ -57,7 +58,7 @@ const Item = ({
 	const d = new Date(image.date)
 		.toLocaleDateString('en-AU')
 		.replaceAll('/', '-')
-	const link = `/${isAdmin ? 'admin' : 'user'}/user-image/${title}%${d}?imageId=${image.src.split('/').pop()}&user=${user}&date=${d}&title=${title}`
+	const link = `/${isAdmin ? 'admin' : 'user'}/user-image/${title}%${d}?imageId=${image.src.split('/').pop()}&user=${user}&date=${d}&title=${title}&dataId=${image.dataId}`
 
 	return (
 		<CarouselItem key={image.src} className='md:basis-1/2 lg:basis-1/5 pl-1'>
@@ -119,7 +120,7 @@ const ImageCarousel = ({ images, title, isAdmin }: ImageCarouselProps) => {
 				<CarouselContent className='gap-0'>
 					{images.map((image) => (
 						<Item
-              isAdmin={isAdmin}
+							isAdmin={isAdmin}
 							key={image.src}
 							image={image}
 							user={user}
