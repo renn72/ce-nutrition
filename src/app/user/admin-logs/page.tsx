@@ -14,9 +14,12 @@ import {
 	CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import { Input } from '@/components/ui/input'
-import { ScrlArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
-
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 export default function AdminLogs() {
 	const [isHideMe, setIsHideMe] = useState(false)
 	const [filter, setFilter] = useState('')
@@ -118,7 +121,7 @@ export default function AdminLogs() {
 					className={cn(
 						'flex flex-col gap-0',
 						`h-[${virtualizer.getTotalSize()}px]`,
-						'w-full relative',
+						'w-full relative z-0',
 					)}
 				>
 					{virtualizer.getVirtualItems().map((virtualItem) => {
@@ -127,14 +130,14 @@ export default function AdminLogs() {
 						return (
 							<div
                 key={virtualItem.key}
-                className={cn('absolute top-0 left-0 w-full')}
+                className={cn('absolute top-0 left-0 w-full z-20')}
 								style={{
                   height: `${virtualItem.size}px`,
 									transform: `translateY(${virtualItem.start}px)`,
 								}}
               >
-								<Collapsible>
-									<CollapsibleTrigger asChild>
+								<Popover>
+									<PopoverTrigger asChild>
 										<div
 											className={cn(
 												'grid grid-cols-9 gap-1 text-[0.7rem] md:text-xs max-w-screen-xl py-[2px] shrink-0 h-[20px] ',
@@ -166,11 +169,11 @@ export default function AdminLogs() {
 												{log.notes}
 											</div>
 										</div>
-									</CollapsibleTrigger>
-									<CollapsibleContent className='p-0 '>
+									</PopoverTrigger>
+									<PopoverContent className='max-w-[90vw] w-full p-0'>
 										<div
 											className={cn(
-												'flex flex-col gap-1 text-[0.7rem] md:text-xs max-w-screen-xl py-[2px] shrink-0 pl-4 ',
+												'flex flex-col gap-1 text-[0.7rem] md:text-xs shrink-0 px-4 py-2 z-[1000] ',
 												'bg-blue-200',
 											)}
 										>
@@ -188,8 +191,8 @@ export default function AdminLogs() {
 											<div className='col-span-3 '>{log.task}</div>
 											<div className=' col-span-2'>{log.notes}</div>
 										</div>
-									</CollapsibleContent>
-								</Collapsible>
+									</PopoverContent>
+								</Popover>
 							</div>
 						)
 					})}
