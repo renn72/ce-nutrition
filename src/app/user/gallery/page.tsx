@@ -93,6 +93,7 @@ const Gallery = ({ userId }: { userId: string }) => {
 				src: log.frontImage || '',
 				date: log.date || '',
 				alt: 'alt',
+        svg: log.frontImageSvg || null,
 			}
 		})
 		.filter((image) => image.src !== '')
@@ -103,6 +104,7 @@ const Gallery = ({ userId }: { userId: string }) => {
 				src: log.sideImage || '',
 				date: log.date || '',
 				alt: 'alt',
+        svg: log.sideImageSvg || null,
 			}
 		})
 		.filter((image) => image.src !== '')
@@ -113,6 +115,7 @@ const Gallery = ({ userId }: { userId: string }) => {
 				src: log.backImage || '',
 				date: log.date || '',
 				alt: 'alt',
+        svg: log.backImageSvg || null,
 			}
 		})
 		.filter((image) => image.src !== '')
@@ -128,6 +131,7 @@ const Gallery = ({ userId }: { userId: string }) => {
 				src: image.image || '',
 				date: image.date || '',
 				alt: 'alt',
+        svg: image.svg || null,
 			}
 		})
 
