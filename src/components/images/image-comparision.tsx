@@ -532,6 +532,7 @@ const Overlay = ({
 	overlay: string
 	showOverlay: boolean
 }) => {
+  console.log('in')
 	return (
 		<div
 			className={cn(
@@ -569,11 +570,12 @@ const ImageView = ({
 	const id = useId()
 	const searchParams = useSearchParams()
 	const imageType = searchParams.get('title')?.toLowerCase()
+  const paramsDataId = Number(searchParams.get('dataId'))
 
 	const { data: overlayRes } = api.dailyLog.getImageOverlay.useQuery(
-		dataId && imageType
+		paramsDataId && imageType
 			? {
-					dataId: dataId,
+					dataId: paramsDataId,
 					imageType: imageType,
 				}
 			: skipToken,
@@ -614,7 +616,7 @@ const ImageView = ({
 								id={id}
 								className='h-[calc(100vh-120px)] rounded-md shadow-md z-10'
 							/>
-							{dataId && overlay && (
+							{overlay && (
 								<Overlay overlay={overlay} showOverlay={showOverlay} />
 							)}
 							{overlay ? (
