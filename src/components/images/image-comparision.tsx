@@ -56,6 +56,11 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 import { ColorPicker } from '@/components/images/color-picker'
 
@@ -355,91 +360,149 @@ const Drawing = ({
 				</Button>
 				{toggleDraw && (
 					<>
-						<ColorPicker onChange={setColor} value={color} />
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<div>
+									<ColorPicker onChange={setColor} value={color} />
+								</div>
+							</TooltipTrigger>
+							<TooltipContent>
+								<p>Change color</p>
+							</TooltipContent>
+						</Tooltip>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<div>
+									<DropdownMenu>
+										<DropdownMenuTrigger asChild>
+											<Button
+												variant='ghost'
+												className=' hover:outline hover:bg-primary/00 w-10 p-0'
+											>
+												<div
+													className={cn(
+														'rounded-full bg-primary/90 shadow-sm',
+														// @ts-ignore
+														`h-[${strokeMap[strokeWidth]}px] w-[${strokeMap[strokeWidth]}px]`,
+													)}
+												/>
+											</Button>
+										</DropdownMenuTrigger>
+										<DropdownMenuContent className='w-12 min-w-1'>
+											<DropdownMenuItem
+												onClick={() => setStrokeWidth(1)}
+												className='w-10 h-10 flex items-center justify-center'
+											>
+												<div className='h-[2px] w-[2px] rounded-full bg-primary/90 shadow-sm' />
+											</DropdownMenuItem>
+											<DropdownMenuItem
+												onClick={() => setStrokeWidth(2)}
+												className='w-10 h-10 flex items-center justify-center'
+											>
+												<div className='h-[4px] w-[4px] rounded-full bg-primary/90 shadow-sm' />
+											</DropdownMenuItem>
+											<DropdownMenuItem
+												onClick={() => setStrokeWidth(4)}
+												className='w-10 h-10 flex items-center justify-center'
+											>
+												<div className='h-[6px] w-[6px] rounded-full bg-primary/90 shadow-sm' />
+											</DropdownMenuItem>
+											<DropdownMenuItem
+												onClick={() => setStrokeWidth(8)}
+												className='w-10 h-10 flex items-center justify-center'
+											>
+												<div className='h-[8px] w-[8px] rounded-full bg-primary/90 shadow-sm' />
+											</DropdownMenuItem>
+											<DropdownMenuItem
+												onClick={() => setStrokeWidth(12)}
+												className='w-10 h-10 flex items-center justify-center'
+											>
+												<div className='h-[10px] w-[10px] rounded-full bg-primary/90 shadow-sm' />
+											</DropdownMenuItem>
+											<DropdownMenuItem
+												onClick={() => setStrokeWidth(20)}
+												className='w-10 h-10 flex items-center justify-center'
+											>
+												<div className='h-[16px] w-[16px] rounded-full bg-primary/90 shadow-sm' />
+											</DropdownMenuItem>
+										</DropdownMenuContent>
+									</DropdownMenu>
+								</div>
+							</TooltipTrigger>
+							<TooltipContent>
+								<p>Change stroke width</p>
+							</TooltipContent>
+						</Tooltip>
+
+						<Tooltip>
+							<TooltipTrigger asChild>
 								<Button
 									variant='ghost'
 									className=' hover:outline hover:bg-primary/00 w-10 p-0'
 								>
-									<div
-										className={cn(
-											'rounded-full bg-primary/90 shadow-sm',
-											// @ts-ignore
-											`h-[${strokeMap[strokeWidth]}px] w-[${strokeMap[strokeWidth]}px]`,
-										)}
-									/>
+									<Eraser size={26} onClick={handleToggeEraser} />
 								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent className='w-12 min-w-1'>
-								<DropdownMenuItem
-									onClick={() => setStrokeWidth(1)}
-									className='w-10 h-10 flex items-center justify-center'
+							</TooltipTrigger>
+							<TooltipContent>
+								<p>Eraser</p>
+							</TooltipContent>
+						</Tooltip>
+
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Button
+									variant='ghost'
+									className=' hover:outline hover:bg-primary/00 w-10 p-0'
 								>
-									<div className='h-[2px] w-[2px] rounded-full bg-primary/90 shadow-sm' />
-								</DropdownMenuItem>
-								<DropdownMenuItem
-									onClick={() => setStrokeWidth(2)}
-									className='w-10 h-10 flex items-center justify-center'
+									<UndoDot size={26} onClick={handleUndo} />
+								</Button>
+							</TooltipTrigger>
+							<TooltipContent>
+								<p>Undo</p>
+							</TooltipContent>
+						</Tooltip>
+
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Button
+									variant='ghost'
+									className=' hover:outline hover:bg-primary/00 w-10 p-0'
 								>
-									<div className='h-[4px] w-[4px] rounded-full bg-primary/90 shadow-sm' />
-								</DropdownMenuItem>
-								<DropdownMenuItem
-									onClick={() => setStrokeWidth(4)}
-									className='w-10 h-10 flex items-center justify-center'
+									<RedoDot size={26} onClick={handleRedo} />
+								</Button>
+							</TooltipTrigger>
+							<TooltipContent>
+								<p>Redo</p>
+							</TooltipContent>
+						</Tooltip>
+
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Button
+									variant='ghost'
+									className=' hover:outline hover:bg-primary/00 w-10 p-0'
 								>
-									<div className='h-[6px] w-[6px] rounded-full bg-primary/90 shadow-sm' />
-								</DropdownMenuItem>
-								<DropdownMenuItem
-									onClick={() => setStrokeWidth(8)}
-									className='w-10 h-10 flex items-center justify-center'
+									<Trash size={26} onClick={handleClear} />
+								</Button>
+							</TooltipTrigger>
+							<TooltipContent>
+								<p>Clear</p>
+							</TooltipContent>
+						</Tooltip>
+
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Button
+									variant='ghost'
+									className=' hover:outline hover:bg-primary/00 w-10 p-0'
 								>
-									<div className='h-[8px] w-[8px] rounded-full bg-primary/90 shadow-sm' />
-								</DropdownMenuItem>
-								<DropdownMenuItem
-									onClick={() => setStrokeWidth(12)}
-									className='w-10 h-10 flex items-center justify-center'
-								>
-									<div className='h-[10px] w-[10px] rounded-full bg-primary/90 shadow-sm' />
-								</DropdownMenuItem>
-								<DropdownMenuItem
-									onClick={() => setStrokeWidth(20)}
-									className='w-10 h-10 flex items-center justify-center'
-								>
-									<div className='h-[16px] w-[16px] rounded-full bg-primary/90 shadow-sm' />
-								</DropdownMenuItem>
-							</DropdownMenuContent>
-						</DropdownMenu>
-						<Button
-							variant='ghost'
-							className=' hover:outline hover:bg-primary/00 w-10 p-0'
-						>
-							<Eraser size={26} onClick={handleToggeEraser} />
-						</Button>
-						<Button
-							variant='ghost'
-							className=' hover:outline hover:bg-primary/00 w-10 p-0'
-						>
-							<UndoDot size={26} onClick={handleUndo} />
-						</Button>
-						<Button
-							variant='ghost'
-							className=' hover:outline hover:bg-primary/00 w-10 p-0'
-						>
-							<RedoDot size={26} onClick={handleRedo} />
-						</Button>
-						<Button
-							variant='ghost'
-							className=' hover:outline hover:bg-primary/00 w-10 p-0'
-						>
-							<Trash size={26} onClick={handleClear} />
-						</Button>
-						<Button
-							variant='ghost'
-							className=' hover:outline hover:bg-primary/00 w-10 p-0'
-						>
-							<Save size={26} onClick={handleSave} />
-						</Button>
+									<Save size={26} onClick={handleSave} />
+								</Button>
+							</TooltipTrigger>
+							<TooltipContent>
+								<p>Save</p>
+							</TooltipContent>
+						</Tooltip>
 					</>
 				)}
 			</div>
