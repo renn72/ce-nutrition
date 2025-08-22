@@ -43,7 +43,7 @@ const Text = ({
 					'text-sm font-semibold ',
 					text ? 'text-secondary-foreground' : 'text-muted-foreground/70',
 					'max-w-[calc(100vw-50px)]',
-					'truncate',
+					isWidthFull ? 'text-wrap' : 'truncate',
 				)}
 			>
 				{text ? text + suffix : '...'}

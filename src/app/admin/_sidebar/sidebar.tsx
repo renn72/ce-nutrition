@@ -10,8 +10,8 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { impersonatedUserAtom } from '@/atoms'
 import { cn } from '@/lib/utils'
 import { atom, useAtom } from 'jotai'
-import { Check, ChevronsUpDown, ShieldUser, } from 'lucide-react'
-import { Link, } from 'next-view-transitions'
+import { Check, ChevronsUpDown, ShieldUser } from 'lucide-react'
+import { Link } from 'next-view-transitions'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -49,6 +49,7 @@ import {
 	SidebarMenuItem,
 	SidebarProvider,
 	SidebarRail,
+	useSidebar,
 } from '@/components/ui/sidebar'
 import { Switch } from '@/components/ui/switch'
 
@@ -176,11 +177,9 @@ const data = {
 	],
 }
 
-const AdminSidebar = ({
-	children,
-}: Readonly<{ children: React.ReactNode }>) => {
+const AdminSidebarContent = () => {
 	const [isOpen, setIsOpen] = React.useState(false)
-
+	const { setOpenMobile, isMobile } = useSidebar()
 	const [selectedCategory, setSelectedCategory] = useState<string>('')
 
 	const [isOnlyYourClients, setIsOnlyYourClients] = useState(false)
@@ -233,35 +232,34 @@ const AdminSidebar = ({
 	if (isLoading) return null
 
 	return (
-		<SidebarProvider>
-			<Sidebar>
-				<SidebarHeader>
-					<SidebarMenu>
-						<SidebarMenuItem>
-							<Popover
-                modal={true}
-                open={isOpen} onOpenChange={setIsOpen}>
-								<PopoverTrigger asChild>
-									<Button
-										variant='outline'
-										role='combobox'
-										className='w-[200px] justify-between bg-sidebar-background text-sidebar-foreground'
-									>
-										{selectedUser
-											? allUsers?.find((user) => user.id === selectedUser)?.name
-											: 'Select user...'}
-										<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
-									</Button>
-								</PopoverTrigger>
-								<PopoverContent
-                  forceMount
-                  className='w-[900px] max-w-[100vw] p-0'>
-									<Command>
-										<div className='flex gap-2 w-full '>
-											<CommandInput
-												className='w-full'
-												placeholder='Search users...'
-											/>
+		<Sidebar>
+			<SidebarHeader>
+				<SidebarMenu>
+					<SidebarMenuItem>
+						<Popover modal={true} open={isOpen} onOpenChange={setIsOpen}>
+							<PopoverTrigger asChild>
+								<Button
+									variant='outline'
+									role='combobox'
+									className='w-[200px] justify-between bg-sidebar-background text-sidebar-foreground'
+								>
+									{selectedUser
+										? allUsers?.find((user) => user.id === selectedUser)?.name
+										: 'Select user...'}
+									<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+								</Button>
+							</PopoverTrigger>
+							<PopoverContent
+								forceMount
+								className='w-[900px] max-w-[100vw] p-0'
+							>
+								<Command>
+									<div className='flex gap-2 w-full flex-col lg:flex-row '>
+										<CommandInput
+											className='w-full'
+											placeholder='Search users...'
+										/>
+										<div className='flex gap-2 w-full justify-center lg:justify-start '>
 											<Select
 												value={selectedCategory}
 												onValueChange={(value) => {
@@ -293,139 +291,156 @@ const AdminSidebar = ({
 												/>
 											</div>
 										</div>
-										<CommandList className='max-h-[calc(100vh-100px)]'>
-											<CommandEmpty>No user found.</CommandEmpty>
-											<CommandGroup>
-												{allUsers?.map((user) => {
-													const isTrainer = user.isTrainer
-													const isAdmin = user.roles?.find(
-														(role) => role.name === 'admin',
-													)
-														? true
-														: false
-													return (
-														<CommandItem
-															key={user.id}
-															value={user.name ?? user.id}
-															onSelect={(currentValue) => {
-																router.push(`${pathname}?user=${user.id}`)
+									</div>
+									<CommandList className='max-h-[calc(100vh-100px)]'>
+										<CommandEmpty>No user found.</CommandEmpty>
+										<CommandGroup>
+											{allUsers?.map((user) => {
+												const isTrainer = user.isTrainer
+												const isAdmin = user.roles?.find(
+													(role) => role.name === 'admin',
+												)
+													? true
+													: false
+												return (
+													<CommandItem
+														key={user.id}
+														value={user.name ?? user.id}
+														onSelect={(currentValue) => {
+															router.push(`${pathname}?user=${user.id}`)
 
-																setSelectedUser(currentValue)
-																setIsOpen(false)
-															}}
+															setSelectedUser(currentValue)
+															setIsOpen(false)
+														}}
+														className={cn(
+															'grid grid-cols-13',
+															'px-0 lg:px-2',
+															selectedUser === user.id ? 'bg-muted' : '',
+														)}
+													>
+														<Check
 															className={cn(
-																'grid grid-cols-13',
-																selectedUser === user.id ? 'bg-muted' : '',
+																'mr-2 h-4 w-4',
+																selectedUser === user.id
+																	? 'opacity-100'
+																	: 'opacity-0',
 															)}
+														/>
+														<span className='col-span-2 lg:col-span-1 flex gap-[1px] flex-wrap'>
+															{user.trainers.map((trainer) => (
+																<Badge
+																	key={trainer.trainer.id}
+																	variant='secondary'
+																	className={cn(
+																		'text-[0.65rem] lg:text-[0.7rem] py-[3px] px-[2px] lg:px-1 h-min leading-none',
+																		'cursor-pointer hover:text-background hover:bg-foreground tracking-tighter',
+                                    'shadow-sm',
+																	)}
+																>
+																	{trainer.trainer?.firstName}
+																</Badge>
+															))}
+														</span>
+														<span className='col-span-5 lg:col-span-6 truncate'>
+															{user.name ?? user.email}
+														</span>
+														<span className='col-span-3 flex gap-[1px] flex-wrap'>
+															{user.category?.map((category) => (
+																<Badge
+																	key={category.category.id}
+																	variant='accent'
+																	className='text-[0.7rem] py-[3px] px-1 h-min leading-none cursor-pointer hover:text-background hover:bg-foreground tracking-tighter'
+																>
+																	{category.category.name}
+																</Badge>
+															))}
+														</span>
+														<span
+															className={cn(isTrainer ? 'text-blue-600' : '')}
 														>
-															<Check
-																className={cn(
-																	'mr-2 h-4 w-4',
-																	selectedUser === user.id
-																		? 'opacity-100'
-																		: 'opacity-0',
-																)}
-															/>
-															<span className='col-span-1 flex gap-[1px] flex-wrap'>
-																{user.trainers.map((trainer) => (
-																	<Badge
-																		key={trainer.trainer.id}
-																		variant='secondary'
-																		className='text-[0.7rem] py-[3px] px-1 h-min leading-none cursor-pointer hover:text-background hover:bg-foreground tracking-tighter'
-																	>
-																		{trainer.trainer?.firstName}
-																	</Badge>
-																))}
-															</span>
-															<span className='col-span-6 truncate'>
-																{user.name ?? user.email}
-															</span>
-															<span className='col-span-3 flex gap-[1px] flex-wrap'>
-																{user.category?.map((category) => (
-																	<Badge
-																		key={category.category.id}
-																		variant='accent'
-																		className='text-[0.7rem] py-[3px] px-1 h-min leading-none cursor-pointer hover:text-background hover:bg-foreground tracking-tighter'
-																	>
-																		{category.category.name}
-																	</Badge>
-																))}
-															</span>
-															<span
-																className={cn(isTrainer ? 'text-blue-600' : '')}
-															>
-																{isTrainer ? (
-																	<WhistleIcon
-																		size={20}
-																		strokeWidth={6}
-																		className='-rotate-[15deg]'
-																	/>
-																) : null}
-															</span>
-															<span
-																className={cn(isAdmin ? 'text-red-900/80' : '')}
-															>
-																{isAdmin ? (
-																	<ShieldUser size={20} strokeWidth={2} />
-																) : null}
-															</span>
-														</CommandItem>
-													)
-												})}
-											</CommandGroup>
-										</CommandList>
-									</Command>
-								</PopoverContent>
-							</Popover>
-						</SidebarMenuItem>
-					</SidebarMenu>
-				</SidebarHeader>
-				<SidebarContent>
-					{/* We create a SidebarGroup for each parent. */}
-					{data.navMain.map((item) => (
-						<SidebarGroup key={item.title}>
-							<SidebarGroupLabel>{item.title}</SidebarGroupLabel>
-							<SidebarGroupContent>
-								<SidebarMenu>
-									{item.items
-										.filter(
-											(item) =>
-												item.title !== 'Super' || currentUser?.isCreator,
-										)
-										.filter(
-											(item) =>
-												item.title !== 'User Super' || currentUser?.isCreator,
-										)
-										.filter(
-											(item) =>
-												item.title !== 'All Skinfolds' ||
-												currentUser?.isCreator,
-										)
-										.map((item) => {
-											if (item.url === '')
-												return <div key={item.title} className='py-1' />
-											return (
-												<div key={item.title}>
-													<SidebarMenuItem key={item.title}>
-														<SidebarMenuButton
-															asChild
-															isActive={pathname === item.url}
+															{isTrainer ? (
+																<WhistleIcon
+																	size={20}
+																	strokeWidth={6}
+																	className='-rotate-[15deg]'
+																/>
+															) : null}
+														</span>
+														<span
+															className={cn(isAdmin ? 'text-red-900/80' : '')}
 														>
-															<Link href={`${item.url}?user=${user}`}>
-																{item.title}
-															</Link>
-														</SidebarMenuButton>
-													</SidebarMenuItem>
-												</div>
-											)
-										})}
-								</SidebarMenu>
-							</SidebarGroupContent>
-						</SidebarGroup>
-					))}
-				</SidebarContent>
-				<SidebarRail />
-			</Sidebar>
+															{isAdmin ? (
+																<ShieldUser size={20} strokeWidth={2} />
+															) : null}
+														</span>
+													</CommandItem>
+												)
+											})}
+										</CommandGroup>
+									</CommandList>
+								</Command>
+							</PopoverContent>
+						</Popover>
+					</SidebarMenuItem>
+				</SidebarMenu>
+			</SidebarHeader>
+			<SidebarContent>
+				{/* We create a SidebarGroup for each parent. */}
+				{data.navMain.map((item) => (
+					<SidebarGroup key={item.title}>
+						<SidebarGroupLabel>{item.title}</SidebarGroupLabel>
+						<SidebarGroupContent>
+							<SidebarMenu>
+								{item.items
+									.filter(
+										(item) => item.title !== 'Super' || currentUser?.isCreator,
+									)
+									.filter(
+										(item) =>
+											item.title !== 'User Super' || currentUser?.isCreator,
+									)
+									.filter(
+										(item) =>
+											item.title !== 'All Skinfolds' || currentUser?.isCreator,
+									)
+									.map((item) => {
+										if (item.url === '')
+											return <div key={item.title} className='py-1' />
+										return (
+											<div key={item.title}>
+												<SidebarMenuItem key={item.title}>
+													<SidebarMenuButton
+														asChild
+														isActive={pathname === item.url}
+														onClick={() => {
+															console.log('clicked')
+															if (isMobile) setOpenMobile(false)
+														}}
+													>
+														<Link href={`${item.url}?user=${user}`}>
+															{item.title}
+														</Link>
+													</SidebarMenuButton>
+												</SidebarMenuItem>
+											</div>
+										)
+									})}
+							</SidebarMenu>
+						</SidebarGroupContent>
+					</SidebarGroup>
+				))}
+			</SidebarContent>
+			<SidebarRail />
+		</Sidebar>
+	)
+}
+
+const AdminSidebar = ({
+	children,
+}: Readonly<{ children: React.ReactNode }>) => {
+	return (
+		<SidebarProvider>
+			<AdminSidebarContent />
 			<SidebarInset className=''>{children}</SidebarInset>
 		</SidebarProvider>
 	)

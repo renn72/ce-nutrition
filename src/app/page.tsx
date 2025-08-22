@@ -165,7 +165,7 @@ const Desktop = ({
           className='h-[454px]'
           user={user} />
 				<UserCharts
-          className='col-span-3 row-span-1'
+          className='col-span-2 row-span-1'
           dailyLogs={dailyLogs} currentUser={user} />
 				<UserMeals
           className='h-[454px] col-span-2'

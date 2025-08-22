@@ -63,7 +63,7 @@ const UserLogs = ({
 
 	if (isMobile) {
 		return (
-			<div className='flex flex-col gap-4 items-center mb-10 mt-2 '>
+			<div className='flex flex-col gap-4 items-center mb-10 mt-2 max-w-[calc(100vw-40px)] '>
 				<DailyLogs userId={userId} user={user} />
 			</div>
 		)
