@@ -75,7 +75,7 @@ const UserMessages = ({
 		})
 
 	return (
-		<div className={cn('flex flex-col gap-4 justify-between rounded-md border p-2 w-ful', className)}>
+		<div className={cn('flex flex-col gap-4 justify-between rounded-md border p-2 w-full', className)}>
 			<ScrollArea className=''>
 				<div className='flex flex-col gap-4 w-full px-1'>
 					{l.map((message) => (

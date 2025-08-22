@@ -39,8 +39,7 @@ const UserMeals = ({
 
 
 	return (
-		<div className={cn('border rounded-lg p-2 w-full max-h-[450px] min-h-[300px]', className)}>
-			<ScrollArea className='h-[430px] w-full'>
+		<div className={cn('border rounded-lg py-2 px-1 lg:px-2 w-full overflow-y-auto', className)}>
         <div className='flex flex-col gap-2 '>
 				{logs.map((log) => {
 					const mealsMacros = log?.dailyMeals
@@ -108,27 +107,27 @@ const UserMeals = ({
 										return (
 											<div
 												key={meal.id}
-												className='grid grid-cols-5 gap-0 bg-secondary rounded-full w-full px-2 py-1'
+												className='grid grid-cols-5 gap-0 bg-secondary rounded-full w-full px-1 lg:px-2 py-1'
 											>
-												<div className='grid grid-cols-10 gap-0 text-sm w-full  items-baseline col-span-3'>
+												<div className='grid grid-cols-6 lg:grid-cols-10 gap-0 text-sm w-full  items-baseline col-span-2 lg:col-span-3'>
 													<div className='text-primary font-normal col-span-1'>
 														<div className='rounded-full h-5 w-5 bg-primary/20 flex justify-center items-center pt-[1px]'>
 															{Number(meal.mealIndex) + 1}
 														</div>
 													</div>
-													<div className='text-[0.7rem] font-light col-span-2 '>
+													<div className='text-[0.7rem] font-light col-span-2 hidden lg:block '>
 														{meal.createdAt.toLocaleTimeString('en-AU', {
 															hour: 'numeric',
 															minute: 'numeric',
 															hour12: true,
 														})}
 													</div>
-													<div className='col-span-7 truncate font-medium  '>
+													<div className='col-span-5 lg:col-span-7 truncate font-medium  '>
 														{meal.recipe?.[0]?.name}
 													</div>
 												</div>
-												<div className='grid grid-cols-4 gap-1 text-xs w-full place-items-center px-0 tracking-tighter col-span-2'>
-													<div>{`${cals} cals`}</div>
+												<div className='grid grid-cols-4 gap-0 text-xs w-full place-items-center px-0 tracking-tighter col-span-3 lg:col-span-2'>
+													<div>{`${cals} KJ`}</div>
 													<div>{`C:${carbs}g`}</div>
 													<div>{`P:${protein}g`}</div>
 													<div>{`F:${fat}g`}</div>
@@ -142,7 +141,6 @@ const UserMeals = ({
 					)
 				})}
         </div>
-			</ScrollArea>
 		</div>
 	)
 }

@@ -10,9 +10,8 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { impersonatedUserAtom } from '@/atoms'
 import { cn } from '@/lib/utils'
 import { atom, useAtom } from 'jotai'
-import { Check, ChevronsUpDown, ShieldUser, User } from 'lucide-react'
-// import Link from 'next/link'
-import { Link, useTransitionRouter } from 'next-view-transitions'
+import { Check, ChevronsUpDown, ShieldUser, } from 'lucide-react'
+import { Link, } from 'next-view-transitions'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -239,7 +238,9 @@ const AdminSidebar = ({
 				<SidebarHeader>
 					<SidebarMenu>
 						<SidebarMenuItem>
-							<Popover open={isOpen} onOpenChange={setIsOpen}>
+							<Popover
+                modal={true}
+                open={isOpen} onOpenChange={setIsOpen}>
 								<PopoverTrigger asChild>
 									<Button
 										variant='outline'
@@ -252,7 +253,9 @@ const AdminSidebar = ({
 										<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
 									</Button>
 								</PopoverTrigger>
-								<PopoverContent className='w-[600px] max-w-[100vw] p-0'>
+								<PopoverContent
+                  forceMount
+                  className='w-[900px] max-w-[100vw] p-0'>
 									<Command>
 										<div className='flex gap-2 w-full '>
 											<CommandInput
@@ -290,7 +293,7 @@ const AdminSidebar = ({
 												/>
 											</div>
 										</div>
-										<CommandList className='max-h-[80vh]'>
+										<CommandList className='max-h-[calc(100vh-100px)]'>
 											<CommandEmpty>No user found.</CommandEmpty>
 											<CommandGroup>
 												{allUsers?.map((user) => {

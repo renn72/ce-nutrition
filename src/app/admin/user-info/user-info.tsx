@@ -31,37 +31,31 @@ const UserInfo = ({ userId }: { userId: string }) => {
 	if (userNotesLoading) return null
 
 	return (
-		<div className='p-4 w-full'>
-			<div className='grid grid-cols-5 grid-rows-3 gap-4 w-full'>
+		<div className='p-2 lg:p-4 w-full'>
+			<div className='grid grid-cols-1 lg:grid-cols-5 lg:grid-rows-3 gap-2 lg:gap-4 w-[calc(100vw-16px)] lg:w-full lg:h-[calc(100vh-80px)]'>
 				<UserMessages
-          className='row-span-2'
+          className='lg:row-span-2'
           currentUser={currentUser} userId={userId} />
 				<UserWeight
-          className='h-[454px]'
           user={user} dailyLogs={dailyLogs} />
 				<UserGoals
-          className='h-[454px]'
           user={user} userGoals={userGoals} />
 				<UserCurrentPlan
-          className='h-[454px]'
           user={user} />
 				<UserSupplementPlan
-          className='h-[454px]'
           user={user} />
 				<UserRecentMetrics
-          className='h-[454px]'
           user={user} />
 				<UserNotes
-          className='h-[454px]'
           user={user} userNotes={userNotes} />
 				<UserCharts
-          className='col-span-2 row-span-1'
+          className='lg:col-span-2 row-span-1'
           dailyLogs={dailyLogs} currentUser={user} />
 				<UserMeals
-          className='h-[454px] col-span-2'
+          className=' lg:col-span-2 max-h-[450px]'
           dailyLogs={dailyLogs} currentUser={user} />
 				<UserDailyLogsTable
-          className='h-[454px] col-span-3'
+          className=' lg:col-span-3 max-h-[450px]'
           dailyLogs={dailyLogs}
         />
 			</div>
