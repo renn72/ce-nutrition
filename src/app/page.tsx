@@ -143,35 +143,30 @@ const Desktop = ({
 	if (userGoalsLoading) return null
 
 	return (
-		<div className='p-4 flex flex-wrap gap-4 w-full relative'>
+		<div className='p-4 flex flex-wrap gap-4 w-screen lg:h-screen relative'>
       <div className='absolute top-1 right-1 z-100'>
       <User />
       </div>
 
-			<div className='grid grid-cols-5 grid-rows-3 gap-4 w-full'>
+			<div className='grid grid-cols-5 grid-rows-3 gap-4 w-full h-[calc(100vh-32px)]'>
 				<UserWeight
-          className='h-[454px]'
           user={user} dailyLogs={dailyLogs} />
 				<UserGoals
-          className='h-[454px]'
           user={user} userGoals={userGoals} />
 				<UserCurrentPlan
-          className='h-[454px]'
           user={user} />
 				<UserSupplementPlan
-          className='h-[454px]'
           user={user} />
 				<UserRecentMetrics
-          className='h-[454px]'
           user={user} />
 				<UserCharts
-          className='col-span-2 row-span-1'
+          className='col-span-3 row-span-1'
           dailyLogs={dailyLogs} currentUser={user} />
 				<UserMeals
-          className='h-[454px] col-span-2'
+          className='col-span-2'
           dailyLogs={dailyLogs} currentUser={user} />
 				<UserDailyLogsTable
-          className='h-[454px] col-span-5'
+          className='col-span-5'
           dailyLogs={dailyLogs}
         />
 			</div>
