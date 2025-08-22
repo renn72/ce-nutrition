@@ -253,10 +253,12 @@ const UserCharts = ({
 	currentUser,
 	dailyLogs,
 	isMoblie = false,
+  className,
 }: {
 	dailyLogs: GetAllDailyLogs | undefined
 	isMoblie?: boolean
 	currentUser: GetUserById
+  className?: string
 }) => {
 	const [range, setRange] = useAtom(chartRangeAtom)
 	const [selectValueLeft, setSelectValueLeft] = useAtom(
@@ -396,6 +398,7 @@ const UserCharts = ({
 			className={cn(
 				'flex flex-col gap-2 p-2',
 				isMoblie ? 'bg-card shadow-md' : 'rounded-lg border',
+        className,
 			)}
 		>
 			<div

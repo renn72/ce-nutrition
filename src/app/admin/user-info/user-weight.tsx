@@ -98,9 +98,11 @@ const WeightArrow = ({ weight, lastWeight }: { weight: number | null, lastWeight
 const UserWeight = ({
   user,
   dailyLogs,
+  className,
 }: {
   user: GetUserById
   dailyLogs: GetAllDailyLogs
+  className?: string
 }) => {
   const logs = dailyLogs
     .filter((dailyLog) => dailyLog.morningWeight !== '')
@@ -132,7 +134,7 @@ const UserWeight = ({
     }, null)
 
   return (
-    <div className='border rounded-lg p-4 flex flex-col w-[300px] items-center'>
+    <div className={cn('border rounded-lg p-4 flex flex-col w-full items-center', className)}>
       <div
         className={cn(
           'flex items-center justify-center rounded-full border-[12px] border-blue-600/30',

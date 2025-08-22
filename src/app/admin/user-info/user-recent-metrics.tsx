@@ -4,17 +4,18 @@ import { api } from '@/trpc/react'
 
 import type { GetUserById } from '@/types'
 
+import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
-const UserRecentMetrics = ({ user }: { user: GetUserById }) => {
+const UserRecentMetrics = ({ user, className }: { user: GetUserById, className?: string }) => {
 	const { data: skinfolds, isLoading } = api.metrics.getUserSkinfolds.useQuery(
 		user.id,
 	)
 
 	if (isLoading) {
 		return (
-			<div className='w-[300px]'>
+			<div className={cn(className)}>
 				<Card>
 					<CardHeader>
 						<CardTitle>Recent Metrics</CardTitle>
@@ -29,7 +30,7 @@ const UserRecentMetrics = ({ user }: { user: GetUserById }) => {
 
 	if (!skinfolds || skinfolds.length === 0) {
 		return (
-			<div className='w-[300px]'>
+			<div className={cn(className)}>
 				<Card>
 					<CardHeader>
 						<CardTitle>Recent Metrics</CardTitle>
@@ -47,7 +48,7 @@ const UserRecentMetrics = ({ user }: { user: GetUserById }) => {
 	)
 
 	return (
-		<div className='border rounded-lg py-4 px-2 flex flex-col w-[300px] items-start gap-2 max-h-[450px] min-h-[300px]'>
+		<div className={cn('border rounded-lg py-4 px-2 flex flex-col items-start gap-2', className)}>
 			<h1 className='text-xl font-semibold'>Recent Metrics</h1>
       <ScrollArea className='w-full'>
       <div className='flex flex-col gap-2 w-full px-4'>

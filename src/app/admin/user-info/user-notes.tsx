@@ -133,7 +133,9 @@ const Note = ({
 const UserNotes = ({
 	user,
 	userNotes,
+  className,
 }: {
+  className?: string
 	user: GetUserById
 	userNotes: GetTrainerNoteById[] | undefined
 }) => {
@@ -202,7 +204,7 @@ const UserNotes = ({
 	}
 
 	return (
-		<div className='border rounded-lg p-4 flex flex-col w-full items-center justify-between gap-2 max-h-[450px] h-full'>
+		<div className={cn('border rounded-lg p-4 flex flex-col w-full items-center justify-between gap-2 max-h-[450px] h-full', className)}>
 			<div className='flex gap-2 flex-col w-full'>
 				<h2 className='text-xl font-semibold'>Notes</h2>
 				<div className='flex gap-2 flex-col'>

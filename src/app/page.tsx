@@ -144,23 +144,36 @@ const Desktop = ({
 
 	return (
 		<div className='p-4 flex flex-wrap gap-4 w-full relative'>
-      <Pwa />
       <div className='absolute top-1 right-1 z-100'>
       <User />
       </div>
-			<UserWeight user={user} dailyLogs={dailyLogs} />
-			<UserGoals user={user} userGoals={userGoals} />
-			<UserCurrentPlan user={user} />
-			<UserSupplementPlan user={user} />
-			<UserRecentMetrics user={user} />
-			<div className='w-[924px]'>
-				<UserCharts dailyLogs={dailyLogs} currentUser={user} />
-			</div>
-			<div className='w-[616px]'>
-				<UserMeals dailyLogs={dailyLogs} currentUser={user} />
-			</div>
-			<div className='w-full'>
-				<UserDailyLogsTable dailyLogs={dailyLogs} />
+
+			<div className='grid grid-cols-5 grid-rows-3 gap-4 w-full'>
+				<UserWeight
+          className='h-[454px]'
+          user={user} dailyLogs={dailyLogs} />
+				<UserGoals
+          className='h-[454px]'
+          user={user} userGoals={userGoals} />
+				<UserCurrentPlan
+          className='h-[454px]'
+          user={user} />
+				<UserSupplementPlan
+          className='h-[454px]'
+          user={user} />
+				<UserRecentMetrics
+          className='h-[454px]'
+          user={user} />
+				<UserCharts
+          className='col-span-3 row-span-1'
+          dailyLogs={dailyLogs} currentUser={user} />
+				<UserMeals
+          className='h-[454px] col-span-2'
+          dailyLogs={dailyLogs} currentUser={user} />
+				<UserDailyLogsTable
+          className='h-[454px] col-span-5'
+          dailyLogs={dailyLogs}
+        />
 			</div>
 		</div>
 	)

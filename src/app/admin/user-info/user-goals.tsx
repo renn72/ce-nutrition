@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import type { GetGoal, GetUserById, GetUserGoals } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { EllipsisVertical, XCircleIcon } from 'lucide-react'
+import { EllipsisVertical, } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -25,8 +25,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
@@ -140,9 +138,11 @@ const Goal = ({
 const UserGoals = ({
   user,
   userGoals,
+  className,
 }: {
   user: GetUserById
   userGoals: GetUserGoals | undefined
+  className?: string
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
@@ -209,7 +209,7 @@ const UserGoals = ({
   }
 
   return (
-    <div className='border rounded-lg p-4 flex flex-col w-[300px] items-center justify-between gap-2 max-h-[450px] min-h-[300px]'>
+    <div className={cn('border rounded-lg p-4 flex flex-col w-full items-center justify-between gap-2 ', className)}>
       <div className='flex gap-2 flex-col w-full'>
         <h2 className='text-xl font-semibold'>Goals</h2>
         <div className='flex gap-2 flex-col'>

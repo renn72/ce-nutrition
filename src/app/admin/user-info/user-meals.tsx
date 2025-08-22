@@ -26,18 +26,20 @@ const MacroValue = ({
 const UserMeals = ({
 	currentUser,
 	dailyLogs,
+  className,
 }: {
 	currentUser: GetUserById
 	dailyLogs: GetAllDailyLogs
+  className?: string
 }) => {
 	const logs = dailyLogs.sort(
 		(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
 	)
 
-	
+
 
 	return (
-		<div className='border rounded-lg p-2 w-full max-h-[450px] min-h-[300px]'>
+		<div className={cn('border rounded-lg p-2 w-full max-h-[450px] min-h-[300px]', className)}>
 			<ScrollArea className='h-[430px] w-full'>
         <div className='flex flex-col gap-2 '>
 				{logs.map((log) => {

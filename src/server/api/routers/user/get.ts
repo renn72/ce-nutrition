@@ -132,6 +132,49 @@ export const get = {
 			if (!res) throw new TRPCError({ code: 'NOT_FOUND' })
 			return res
 		}),
+	getCurrentUser: protectedProcedure
+		.input(z.object({ id: z.string() }).optional())
+		.query(async ({ ctx, input }) => {
+			let userId = ctx.session?.user.id
+
+			if (input?.id && input.id !== '') userId = input.id
+
+			if (!userId) return null
+
+			const res = await ctx.db.query.user.findFirst({
+				where: (user, { eq }) => eq(user.id, userId),
+				columns: {
+					password: false,
+				},
+				with: {
+					images: true,
+					settings: true,
+					roles: true,
+					supplementStacks: {
+						with: {
+							supplements: {
+								with: {
+									supplement: true,
+								},
+							},
+						},
+					},
+					userPlans: {
+						with: {
+							userMeals: true,
+							userRecipes: true,
+							userIngredients: {
+								with: {
+									ingredient: true,
+									alternateIngredient: true,
+								},
+							},
+						},
+					},
+				},
+			})
+			return res
+		}),
 	getByEmail: protectedProcedure
 		.input(z.string())
 		.query(async ({ ctx, input }) => {
@@ -181,49 +224,6 @@ export const get = {
 		})
 		return res
 	}),
-	getCurrentUser: protectedProcedure
-		.input(z.object({ id: z.string() }).optional())
-		.query(async ({ ctx, input }) => {
-			let userId = ctx.session?.user.id
-
-			if (input?.id && input.id !== '') userId = input.id
-
-			if (!userId) return null
-
-			const res = await ctx.db.query.user.findFirst({
-				where: (user, { eq }) => eq(user.id, userId),
-				columns: {
-					password: false,
-				},
-				with: {
-					images: true,
-					settings: true,
-					roles: true,
-					supplementStacks: {
-						with: {
-							supplements: {
-								with: {
-									supplement: true,
-								},
-							},
-						},
-					},
-					userPlans: {
-						with: {
-							userMeals: true,
-							userRecipes: true,
-							userIngredients: {
-								with: {
-									ingredient: true,
-									alternateIngredient: true,
-								},
-							},
-						},
-					},
-				},
-			})
-			return res
-		}),
 	isUser: publicProcedure.query(async () => {
 		const session = await auth()
 		if (!session?.user) return null

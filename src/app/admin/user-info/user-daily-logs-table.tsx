@@ -1,5 +1,6 @@
 'use client'
 
+import { cn } from '@/lib/utils'
 import {
   HoverCard,
   HoverCardContent,
@@ -16,7 +17,7 @@ import {
 import { getRecipeDetailsFromDailyLog } from '@/lib/utils'
 import type { GetAllDailyLogs } from '@/types'
 
-const UserDailyLogsTable = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
+const UserDailyLogsTable = ({ dailyLogs, className }: { dailyLogs: GetAllDailyLogs, className?: string }) => {
   const recentLogs = dailyLogs.slice(0, 30)
 
   const columnsToShow = {
@@ -38,7 +39,7 @@ const UserDailyLogsTable = ({ dailyLogs }: { dailyLogs: GetAllDailyLogs }) => {
   }
 
   return (
-    <div className="border rounded-lg max-h-[450px] overflow-y-scroll">
+    <div className={cn('border rounded-lg overflow-y-scroll', className)}>
       <Table>
         <TableHeader>
           <TableRow>

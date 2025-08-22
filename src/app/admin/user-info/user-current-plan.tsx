@@ -2,10 +2,10 @@
 
 import type { GetUserById } from '@/types'
 
-import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
-const UserCurrentPlan = ({ user }: { user: GetUserById }) => {
+const UserCurrentPlan = ({ user, className }: { user: GetUserById, className?: string }) => {
 	if (!user) return null
 
 	const activePlans = user.userPlans.filter((plan) => plan.isActive)
@@ -26,7 +26,7 @@ const UserCurrentPlan = ({ user }: { user: GetUserById }) => {
 	}
 
 	return (
-    <div className='border rounded-lg p-4 flex flex-col w-[300px] items-start gap-2 max-h-[450px] min-h-[300px] overflow-y-auto'>
+    <div className={cn('border rounded-lg p-4 flex flex-col items-start gap-2 overflow-y-auto', className)}>
       <h1 className='text-xl font-semibold'>Active Plans</h1>
 			{activePlans.map((plan) => {
         const cals = plan.userMeals.reduce((acc, meal) => acc + Number(meal.targetCalories), 0)

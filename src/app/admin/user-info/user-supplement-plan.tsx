@@ -1,12 +1,19 @@
 'use client'
 
+import { cn } from '@/lib/utils'
 import type { GetUserById } from '@/types'
+import { LockIcon } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { LockIcon } from 'lucide-react'
 
-const UserSupplementPlan = ({ user }: { user: GetUserById }) => {
+const UserSupplementPlan = ({
+	user,
+	className,
+}: {
+	user: GetUserById
+	className?: string
+}) => {
 	if (!user || !user.supplementStacks) return null
 
 	const supplementStacks = user.supplementStacks.filter(
@@ -15,7 +22,7 @@ const UserSupplementPlan = ({ user }: { user: GetUserById }) => {
 
 	if (supplementStacks.length === 0) {
 		return (
-			<div className='w-[300px]'>
+			<div className={cn('w-full', className)}>
 				<Card>
 					<CardHeader>
 						<CardTitle>Supplement Plan</CardTitle>
@@ -29,7 +36,12 @@ const UserSupplementPlan = ({ user }: { user: GetUserById }) => {
 	}
 
 	return (
-		<div className='border rounded-lg p-4 flex flex-col w-[300px] items-start gap-2 max-h-[450px] min-h-[300px]'>
+		<div
+			className={cn(
+				'border rounded-lg p-4 flex flex-col w-full items-start gap-2',
+				className,
+			)}
+		>
 			<h1 className='text-xl font-semibold'>Supplement Plan</h1>
 			<ScrollArea className='h-full w-full'>
 				<div className='flex flex-col gap-2 pr-2'>
@@ -48,14 +60,21 @@ const UserSupplementPlan = ({ user }: { user: GetUserById }) => {
 											className='grid grid-cols-4 gap-2 items-center text-sm py-1'
 										>
 											<div className='col-span-3 truncate flex items-center gap-1'>
-												<span className='truncate'>{supp.supplement?.name}</span>
+												<span className='truncate'>
+													{supp.supplement?.name}
+												</span>
 												{supp.supplement.isPrivate ? (
-													<LockIcon size={10} className='text-red-500 shrink-0' />
+													<LockIcon
+														size={10}
+														className='text-red-500 shrink-0'
+													/>
 												) : null}
 											</div>
 											<div className='place-self-end col-span-1 flex gap-1'>
 												<span>{supp.size}</span>
-												<span className='text-muted-foreground'>{supp.unit}</span>
+												<span className='text-muted-foreground'>
+													{supp.unit}
+												</span>
 											</div>
 										</div>
 									))}
