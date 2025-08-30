@@ -122,13 +122,6 @@ export const messageRouter = createTRPCRouter({
 				.set({ isViewed: true })
 				.where(eq(message.id, input))
 
-			createLog({
-				user: ctx.session.user.name,
-				userId: ctx.session.user.id,
-				task: 'Mark Message as Viewed',
-				notes: '',
-				objectId: input,
-			})
 
 			return res
 		}),
