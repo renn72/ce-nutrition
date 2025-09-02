@@ -60,6 +60,7 @@ const mealColourMap = {
 const Meal = ({
 	date,
 	allPlans,
+  activePlans,
 	todaysLog,
 	userId,
 	index,
@@ -67,15 +68,13 @@ const Meal = ({
 	date: Date
 	todaysLog: GetDailyLogById | null | undefined
 	allPlans: UserPlan[]
+  activePlans: UserPlan[]
 	userId: string
 	index: number
 }) => {
 	const [selectValue, setSelectValue] = useState<string>('')
 	const [recipeName, setRecipeName] = useState<string>('')
 	const [isAllMeals, _setIsAllMeals] = useAtom(isAllMealsAtom)
-
-	console.log('index', index)
-	console.log('todaysLog', todaysLog)
 
 	useEffect(() => {
 		setRecipeName(() => {
@@ -239,6 +238,34 @@ const Meal = ({
 							if (!plan) return null
 							if (plan.userRecipes?.length === 0) return null
 
+              const activePlan = activePlans.find((p) => p?.id === plan.id)
+              if (!activePlan) return null
+							console.log({ activePlan })
+
+							const { cals, protein, carbs, fat } = activePlan.userMeals.reduce(
+								(acc, _curr, i,) => {
+									const recipes = activePlan.userRecipes
+										.filter((recipe) => recipe.mealIndex === i)
+										.map((recipe) =>
+											getRecipeDetailsForDailyLog(activePlan, recipe.id),
+										)
+									const recipe = recipes[0]
+									if (!recipe) return acc
+									return {
+										cals: acc.cals + Number(recipe.cals),
+										protein: acc.protein + Number(recipe.protein),
+										carbs: acc.carbs + Number(recipe.carbs),
+										fat: acc.fat + Number(recipe.fat),
+									}
+								},
+								{
+									cals: 0,
+									protein: 0,
+									carbs: 0,
+									fat: 0,
+								},
+							)
+
 							return (
 								<div key={plan.id} className='flex flex-col'>
 									<div className='flex gap-4 items-center'>
@@ -246,9 +273,17 @@ const Meal = ({
 											{plan.name}
 										</h3>
 									</div>
+									<div className='flex justify-center w-full'>
+									<div className={cn('text-[0.7rem] flex gap-4 font-medium bg-secondary text-secondary-foreground rounded-full px-2 py-[2px]')}>
+										<div>{`${cals.toFixed(0)}cals`}</div>
+										<div>{`C:${carbs.toFixed(1)}g`}</div>
+										<div>{`P:${protein.toFixed(1)}g`}</div>
+										<div>{`F:${fat.toFixed(1)}g`}</div>
+									</div>
+									</div>
 									<div className='flex gap-2 flex-col items-center py-2 w-full'>
 										{plan.userRecipes?.map((recipe) => {
-                      if (recipe.id === Number(selectValue)) return null
+											if (recipe.id === Number(selectValue)) return null
 											const meal =
 												plan.userMeals.find(
 													(meal) => meal.mealIndex === recipe.mealIndex,
@@ -258,7 +293,7 @@ const Meal = ({
 
 											// @ts-ignore
 											const mealColour =
-											// @ts-ignore
+												// @ts-ignore
 												mealColourMap[recipe.mealIndex ?? 0] ??
 												'text-muted-foreground'
 											return (
@@ -270,7 +305,9 @@ const Meal = ({
 														'data-[state=on]:text-slate-100 data-[state=on]:shadow-none',
 														'h-full shadow-sm flex flex-col w-[calc(100vw-2rem)] gap-0',
 														'hover:text-primary hover:bg-background',
-                            isAllMeals && recipe.mealIndex % 2 === 1 ? 'bg-secondary' : '',
+														isAllMeals && recipe.mealIndex % 2 === 1
+															? 'bg-secondary'
+															: '',
 													)}
 												>
 													<div className=' flex'>
@@ -333,7 +370,7 @@ const MealList = ({
 	currentUser: GetUserById
 	todaysLog: GetDailyLogById | null | undefined
 	today: Date
-  setDay: React.Dispatch<React.SetStateAction<Date>>
+	setDay: React.Dispatch<React.SetStateAction<Date>>
 }) => {
 	const [currentMeal, setCurrentMeal] = useState(() => _currentMeal)
 	const [isAllMeals, setIsAllMeals] = useAtom(isAllMealsAtom)
@@ -413,10 +450,7 @@ const MealList = ({
 						/>
 					</div>
 					<div className='flex gap-0 pt-2 flex-col border-b-[1px] border-primary pb-2 relative font-medium'>
-						<Popover
-              open={isOpen}
-              onOpenChange={setIsOpen}
-            >
+						<Popover open={isOpen} onOpenChange={setIsOpen}>
 							<PopoverTrigger asChild>
 								<div className='flex items-center justify-center'>
 									<Button
@@ -441,18 +475,19 @@ const MealList = ({
 								</div>
 							</PopoverTrigger>
 							<PopoverContent
-                onFocusOutside={(e) => e.preventDefault()}
-                forceMount
-                className='w-auto p-0 z-[2000]'>
+								onFocusOutside={(e) => e.preventDefault()}
+								forceMount
+								className='w-auto p-0 z-[2000]'
+							>
 								<Calendar
 									mode='single'
-                  disabled={{ after: new Date() }}
+									disabled={{ after: new Date() }}
 									selected={today}
 									onSelect={(date) => {
 										if (!date) return
 										setDay(date)
 										setIsOpen(false)
-                    setCurrentMeal(0)
+										setCurrentMeal(0)
 									}}
 									initialFocus
 								/>
@@ -525,6 +560,7 @@ const MealList = ({
 						<div className='flex flex-col gap-2 mb-2 '>
 							<Meal
 								allPlans={refinedPlans}
+                activePlans={activePlans}
 								date={today}
 								todaysLog={todaysLog}
 								userId={currentUser.id}
@@ -595,10 +631,11 @@ const MealLog = ({
 							)}
 						>
 							<Sheet.Trigger
-                onClick={(e) => {
-                  setDay(new Date())
-                }}
-                disabled={isNotActivePlan}>
+								onClick={(e) => {
+									setDay(new Date())
+								}}
+								disabled={isNotActivePlan}
+							>
 								<Salad
 									size={28}
 									className={cn(
