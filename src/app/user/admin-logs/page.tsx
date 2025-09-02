@@ -6,19 +6,15 @@ import { useRef, useState } from 'react'
 
 import { cn } from '@/lib/utils'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { RefreshCcw } from 'lucide-react'
+import { RefreshCcw, XIcon } from 'lucide-react'
 
-import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger,
-} from '@/components/ui/collapsible'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  PopoverClose
 } from "@/components/ui/popover"
 export default function AdminLogs() {
 	const [isHideMe, setIsHideMe] = useState(false)
@@ -170,10 +166,13 @@ export default function AdminLogs() {
 											</div>
 										</div>
 									</PopoverTrigger>
-									<PopoverContent className='max-w-[90vw] w-full p-0'>
+									<PopoverContent className='max-w-[90vw] w-full px-0 py-0 relative'>
+                    <PopoverClose className='absolute top-1 right-1 z-10 px-1 py-1 text-primary/50 hover:text-primary active:scale-90 transition-transform'>
+                      <XIcon size={12} />
+                    </PopoverClose>
 										<div
 											className={cn(
-												'flex flex-col gap-1 text-[0.7rem] md:text-xs shrink-0 px-4 py-2 z-[1000] ',
+												'flex flex-col gap-1 text-[0.7rem] md:text-xs shrink-0 px-4 py-6 z-[1000] ',
 												'bg-blue-200',
 											)}
 										>
