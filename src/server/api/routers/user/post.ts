@@ -1,6 +1,6 @@
 import {
 	publicProcedure,
-	rootProtectedProcedure,
+	adminProtectedProcedure,
 } from '~/server/api/trpc'
 import { user, userSettings } from '~/server/db/schema/user'
 import { hash } from 'bcryptjs'
@@ -39,7 +39,7 @@ export const post = {
 
 			return { user: input.email, password: input.password }
 		}),
-	deleteUser: rootProtectedProcedure
+	deleteUser: adminProtectedProcedure
 		.input(z.string())
 		.mutation(async ({ ctx, input }) => {
 			const res = await ctx.db.delete(user).where(eq(user.id, input))

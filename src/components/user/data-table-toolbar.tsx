@@ -44,8 +44,8 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       <div className='flex items-center gap-2'>
-        <FormUserCatagories />
         <FormDialog />
+        <FormUserCatagories />
         <DataTableViewOptions table={table} />
       </div>
     </div>

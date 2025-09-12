@@ -1963,6 +1963,32 @@ var protectedProcedure = t.procedure.use(timingMiddleware).use(({ ctx, next }) =
     }
   });
 });
+var adminProtectedProcedure = t.procedure.use(timingMiddleware).use(async ({ ctx, next }) => {
+  if (!ctx.session || !ctx.session.user) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "You are a poohead"
+    });
+  }
+  const sessionUser = ctx.session.user;
+  if (!sessionUser) return next({ ctx });
+  const user3 = await ctx.db.query.user.findFirst({
+    where: (user4, { eq: eq28 }) => eq28(user4.id, sessionUser.id),
+    with: {
+      roles: true
+    }
+  });
+  console.log("user in protected", user3);
+  if (!user3?.roles.find((role3) => role3.name === "admin")) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "You are not poo" });
+  }
+  return next({
+    ctx: {
+      // infers the `session` as non-nullable
+      session: { ...ctx.session, user: ctx.session.user }
+    }
+  });
+});
 var rootProtectedProcedure = t.procedure.use(timingMiddleware).use(async ({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user) {
     throw new TRPCError({
@@ -4701,28 +4727,19 @@ var get = {
     if (!res) throw new TRPCError2({ code: "NOT_FOUND" });
     return res;
   }),
-  getByEmail: protectedProcedure.input(z7.string()).query(async ({ ctx, input }) => {
-    if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
+  getCurrentUser: protectedProcedure.input(z7.object({ id: z7.string() }).optional()).query(async ({ ctx, input }) => {
+    let userId = ctx.session?.user.id;
+    if (input?.id && input.id !== "") userId = input.id;
+    if (!userId) return null;
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq28 }) => eq28(user3.email, input),
-      columns: {
-        password: false
-      }
-    });
-    return res;
-  }),
-  get: protectedProcedure.input(z7.string()).query(async ({ ctx, input }) => {
-    if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
-    const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq28 }) => eq28(user3.id, input),
+      where: (user3, { eq: eq28 }) => eq28(user3.id, userId),
       columns: {
         password: false
       },
       with: {
+        images: true,
         settings: true,
         roles: true,
-        images: true,
-        trainers: true,
         supplementStacks: {
           with: {
             supplements: {
@@ -4748,19 +4765,28 @@ var get = {
     });
     return res;
   }),
-  getCurrentUser: protectedProcedure.input(z7.object({ id: z7.string() }).optional()).query(async ({ ctx, input }) => {
-    let userId = ctx.session?.user.id;
-    if (input?.id && input.id !== "") userId = input.id;
-    if (!userId) return null;
+  getByEmail: protectedProcedure.input(z7.string()).query(async ({ ctx, input }) => {
+    if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
     const res = await ctx.db.query.user.findFirst({
-      where: (user3, { eq: eq28 }) => eq28(user3.id, userId),
+      where: (user3, { eq: eq28 }) => eq28(user3.email, input),
+      columns: {
+        password: false
+      }
+    });
+    return res;
+  }),
+  get: protectedProcedure.input(z7.string()).query(async ({ ctx, input }) => {
+    if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
+    const res = await ctx.db.query.user.findFirst({
+      where: (user3, { eq: eq28 }) => eq28(user3.id, input),
       columns: {
         password: false
       },
       with: {
-        images: true,
         settings: true,
         roles: true,
+        images: true,
+        trainers: true,
         supplementStacks: {
           with: {
             supplements: {
@@ -4869,7 +4895,7 @@ var post = {
     });
     return { user: input.email, password: input.password };
   }),
-  deleteUser: rootProtectedProcedure.input(z8.string()).mutation(async ({ ctx, input }) => {
+  deleteUser: adminProtectedProcedure.input(z8.string()).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.delete(user).where(eq4(user.id, input));
     return res;
   })
@@ -7926,13 +7952,6 @@ var messageRouter = createTRPCRouter({
   }),
   markAsViewed: protectedProcedure.input(z24.number()).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.update(message).set({ isViewed: true }).where(eq18(message.id, input));
-    createLog2({
-      user: ctx.session.user.name,
-      userId: ctx.session.user.id,
-      task: "Mark Message as Viewed",
-      notes: "",
-      objectId: input
-    });
     return res;
   }),
   markAsRead: protectedProcedure.input(z24.number()).mutation(async ({ input, ctx }) => {
