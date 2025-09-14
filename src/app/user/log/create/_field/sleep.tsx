@@ -4,7 +4,7 @@ import { api } from '@/trpc/react'
 
 import { useState } from 'react'
 
-import { GetDailyLogById } from '@/types'
+import type { GetDailyLogById } from '@/types'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -49,6 +49,7 @@ const Sleep = ({
       title='Sleep'
       value={todaysLog?.sleep ?? ''}
       prevValue={prevLog?.sleep ?? ''}
+      fixed={1}
     >
       <DialogHeader>
         <DialogTitle>Sleep</DialogTitle>
