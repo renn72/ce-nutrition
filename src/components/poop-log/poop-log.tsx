@@ -4,104 +4,127 @@ import { api } from '@/trpc/react'
 
 import type { GetAllDailyLogs } from '@/types'
 import NumberFlow from '@number-flow/react'
+// @ts-ignore
+import confetti from 'canvas-confetti'
 import { Toilet } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { PoopBottomSheet } from './poop-bottom-sheet'
 
-// @ts-ignore
-import confetti from 'canvas-confetti'
-
 const PoopLog = ({
-  userId,
-  dailyLogs,
+	userId,
+	dailyLogs,
 }: {
-  userId: string
-  dailyLogs: GetAllDailyLogs | null | undefined
+	userId: string
+	dailyLogs: GetAllDailyLogs | null | undefined
 }) => {
-  const today = new Date()
+	const today = new Date()
 
-  const ctx = api.useUtils()
+	const ctx = api.useUtils()
 
-  const { mutate: addPoopLog } = api.dailyLog.addPoopLog.useMutation({
-    onMutate: async (newPoopLog) => {
-      await ctx.dailyLog.getAllCurrentUser.cancel()
-      const previousLog = ctx.dailyLog.getAllUser.getData(userId)
-      if (!previousLog) return
-      ctx.dailyLog.getAllUser.setData(userId, [
-        ...previousLog.map((log) => {
-          if (log.date === newPoopLog.date) {
-            return {
-              ...log,
-              poopLogs: [
-                ...log.poopLogs,
-                { id: 9999999, createdAt: new Date(newPoopLog.date), dailyLogId: log.id },
-              ],
-            }
-          }
-          return log
-        }),
-      ])
-      return { previousLog }
-    },
-    onSuccess: () => {
-      ctx.dailyLog.invalidate()
-    },
-    onSettled: () => {
-      ctx.dailyLog.invalidate()
-    },
-    onError: (err, newPoopLog, context) => {
-      toast.error('error')
-      ctx.dailyLog.getAllUser.setData(userId, context?.previousLog)
-    },
-  })
-  const { mutate: deletePoopLog } = api.dailyLog.deletePoopLog.useMutation({
-    onSuccess: () => {
-      ctx.dailyLog.invalidate()
-    },
-    onSettled: () => {
-      ctx.dailyLog.invalidate()
-    },
-  })
+	const { mutate: addPoopLog } = api.dailyLog.addPoopLog.useMutation({
+		onMutate: async (newPoopLog) => {
+			await ctx.dailyLog.getAllCurrentUser.cancel()
+			const previousLog = ctx.dailyLog.getAllUser.getData(userId)
+			if (!previousLog) return
+			const rndInt = Math.floor(Math.random() * 1000)
+			ctx.dailyLog.getAllUser.setData(userId, [
+				...previousLog.map((log) => {
+					if (log.date === newPoopLog.date) {
+						return {
+							...log,
+							poopLogs: [
+								...log.poopLogs,
+								{
+									id: 9999999 + rndInt,
+									createdAt: new Date(newPoopLog.date),
+									dailyLogId: log.id,
+								},
+							],
+						}
+					}
+					return log
+				}),
+			])
+			return { previousLog }
+		},
+		onSuccess: () => {},
+		onSettled: () => {
+			setTimeout(() => {
+				ctx.dailyLog.invalidate()
+			}, 500)
+		},
+		onError: (err, newPoopLog, context) => {
+			toast.error('error')
+			ctx.dailyLog.getAllUser.setData(userId, context?.previousLog)
+		},
+	})
 
-  const todaysDailyLog = dailyLogs?.find(
-    (dailyLog) => dailyLog.date === today.toDateString(),
-  )
+	const { mutate: deletePoopLog } = api.dailyLog.deletePoopLog.useMutation({
+		onMutate: async (poopLog) => {
+			await ctx.dailyLog.getAllCurrentUser.cancel()
+			const previousLog = ctx.dailyLog.getAllUser.getData(userId)
+			if (!previousLog) return
+			ctx.dailyLog.getAllUser.setData(userId, [
+				...previousLog.map((log) => {
+					return {
+						...log,
+						poopLogs: log.poopLogs.filter(
+							(currPoopLog) => currPoopLog.id !== poopLog.id,
+						),
+					}
+				}),
+			])
+			return { previousLog }
+		},
+		onSettled: () => {
+			setTimeout(() => {
+				ctx.dailyLog.invalidate()
+			}, 500)
+		},
+	})
 
-  const totalPoop =
-    todaysDailyLog?.poopLogs.reduce((acc, _curr) => {
-      return acc + 1
-    }, 0) ?? 0
+	const todaysDailyLog = dailyLogs?.find(
+		(dailyLog) => dailyLog.date === today.toDateString(),
+	)
 
-  return (
-    <div className='flex flex-col gap-0 w-full items-center'>
-      <div className='w-full text-center font-bold text-lg'>
-        <NumberFlow value={totalPoop ?? 0} />
-      </div>
-      <div className='grid grid-cols-1 place-items-center gap-2 h-12'>
-        <div className='rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center justify-center active:scale-90 transition-transform cursor-pointer shadow-sm'>
-          <Toilet
-            className='ml-[1px]'
-            size={28}
-            onClick={() => {
-              // confetti({
-              //   particleCount: 30 * (totalPoop + 1),
-              //   spread: 30 * (totalPoop + 1),
-              //   origin: { x: 0.6, y: 0.7 },
-              //   disableForReducedMotion: true,
-              // })
-              addPoopLog({
-                date: today.toDateString(),
-              })
-            }}
-          />
-        </div>
-        <div />
-      </div>
-      <PoopBottomSheet dailyLogs={dailyLogs} deletePoopLog={deletePoopLog} addPoopLog={addPoopLog} />
-    </div>
-  )
+	const totalPoop =
+		todaysDailyLog?.poopLogs.reduce((acc, _curr) => {
+			return acc + 1
+		}, 0) ?? 0
+
+	return (
+		<div className='flex flex-col gap-0 w-full items-center'>
+			<div className='w-full text-center font-bold text-lg'>
+				<NumberFlow value={totalPoop ?? 0} />
+			</div>
+			<div className='grid grid-cols-1 place-items-center gap-2 h-12'>
+				<div className='rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center justify-center active:scale-90 transition-transform cursor-pointer shadow-sm'>
+					<Toilet
+						className='ml-[1px]'
+						size={28}
+						onClick={() => {
+							// confetti({
+							//   particleCount: 30 * (totalPoop + 1),
+							//   spread: 30 * (totalPoop + 1),
+							//   origin: { x: 0.6, y: 0.7 },
+							//   disableForReducedMotion: true,
+							// })
+							addPoopLog({
+								date: today.toDateString(),
+							})
+						}}
+					/>
+				</div>
+				<div />
+			</div>
+			<PoopBottomSheet
+				dailyLogs={dailyLogs}
+				deletePoopLog={deletePoopLog}
+				addPoopLog={addPoopLog}
+			/>
+		</div>
+	)
 }
 
 export { PoopLog }
-
