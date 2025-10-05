@@ -11,7 +11,7 @@ import { cn, getRecipeDetails } from '@/lib/utils'
 import type { GetPlanById, UserPlan } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAtom } from 'jotai'
-import { PlusCircle } from 'lucide-react'
+import { Loader, PlusCircle } from 'lucide-react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -86,7 +86,7 @@ const CreateUserPlan = ({
 
 	const [userId] = useAtom(userAtom)
 
-	const { data: allPlans } = api.plan.getAll.useQuery()
+	const { data: allPlans, isLoading } = api.plan.getAll.useQuery()
 
 	const ctx = api.useUtils()
 
@@ -359,6 +359,8 @@ const CreateUserPlan = ({
 			userId: userId,
 		})
 	}
+
+  if (isLoading) return <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'><Loader className=' animate-spin' /></div>
 
 	return (
 		<div className='flex flex-col max-w-screen-xl w-full my-12'>

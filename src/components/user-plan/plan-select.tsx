@@ -59,6 +59,7 @@ const PlanSelect = ({
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>
 				<Button
+          disabled={allPlans.length === 0}
 					variant='outline'
 					role='combobox'
 					aria-expanded={open}
