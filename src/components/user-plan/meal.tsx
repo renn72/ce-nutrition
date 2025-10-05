@@ -6,7 +6,13 @@ import { useState } from 'react'
 
 import { balanceRecipe, cn } from '@/lib/utils'
 import type { GetPlanById } from '@/types'
-import { Check, ChevronsUpDown, CircleMinus, CirclePlus } from 'lucide-react'
+import {
+	Check,
+	ChevronsUpDown,
+	CircleMinus,
+	CirclePlus,
+	EllipsisVertical,
+} from 'lucide-react'
 import {
 	useFieldArray,
 	type UseFieldArrayReturn,
@@ -33,6 +39,17 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import {
 	FormControl,
 	FormField,
@@ -269,29 +286,112 @@ const Meal = ({
 	})
 
 	return (
-		<Card className='pt-0 bg-background'>
-			<CardHeader className='py-4 flex flex-row justify-between bg-secondary items-center'>
-				<CardTitle className='text-xl font-medium'>Meal {index + 1}</CardTitle>
-				<div className='flex gap-2 items-center'>
-					<Button
-						variant='secondary'
-						onClick={(e) => {
-							e.preventDefault()
-							resetMeal()
-						}}
-					>
-						Reset
-					</Button>
-					<Button
-						variant='destructive'
-						onClick={(e) => {
-							e.preventDefault()
-							mealsField.remove(index)
-						}}
-					>
-						Delete Meal
-					</Button>
-				</div>
+		<Card className='pt-0 pb-2 bg-background gap-2'>
+			<CardHeader className='py-2 flex flex-row justify-between bg-secondary items-center'>
+				<CardTitle className='text-xl font-semibold'>
+					Meal {index + 1}
+				</CardTitle>
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<EllipsisVertical
+							size={24}
+							strokeWidth={3}
+							className={cn(
+								' hover:text-foreground/70 hover:scale-110 active:scale-90',
+								' transition-transform cursor-pointer shrink-0',
+							)}
+						/>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent>
+						<DropdownMenuLabel>Action</DropdownMenuLabel>
+						<DropdownMenuSeparator />
+						<DropdownMenuItem
+							className='cursor-pointer'
+							onSelect={() => {
+								resetMeal()
+							}}
+						>
+							Reset
+						</DropdownMenuItem>
+						<DropdownMenuItem
+							className='cursor-pointer'
+							onSelect={() => {
+								console.log('meal', meal)
+								mealsField.insert(index + 1, {
+									mealId: (
+										mealsField.fields.length +
+										1 +
+										Math.random()
+									).toString(),
+									mealTitle: meal.mealTitle,
+									calories: meal.calories,
+									targetCalories: meal.targetCalories,
+									targetProtein: meal.targetProtein,
+									vege: '',
+									vegeCalories: '',
+									vegeNotes: '',
+									protein: meal.protein,
+									note: meal.note,
+									recipes: [...meal.recipes],
+								})
+							}}
+						>
+							Duplicate Meal
+						</DropdownMenuItem>
+						<DropdownMenuItem
+							className='cursor-pointer'
+							onSelect={() => {
+								mealsField.insert(index + 1, {
+									mealId: (
+										mealsField.fields.length +
+										1 +
+										Math.random()
+									).toString(),
+									mealTitle: 'New Meal',
+									calories: '500',
+									targetCalories: '500',
+									targetProtein: '',
+									vege: '',
+									vegeCalories: '',
+									vegeNotes: '',
+									protein: '',
+									note: '',
+									recipes: [],
+								})
+							}}
+						>
+							Add New Meal
+						</DropdownMenuItem>
+						<DropdownMenuSub>
+							<DropdownMenuSubTrigger className='cursor-pointer'>
+								Move to
+							</DropdownMenuSubTrigger>
+							<DropdownMenuSubContent>
+								{[...Array(mealsField.fields.length)].map((_, i) => (
+									<DropdownMenuItem
+										key={i}
+										className={cn('cursor-pointer', i === index ? 'text-accent' : '')}
+                    disabled={i === index}
+										onSelect={() => {
+                      mealsField.move(index, i)
+										}}
+									>
+										{i + 1}
+									</DropdownMenuItem>
+								))}
+							</DropdownMenuSubContent>
+						</DropdownMenuSub>
+						<DropdownMenuSeparator />
+						<DropdownMenuItem
+							className='cursor-pointer'
+							onSelect={() => {
+								mealsField.remove(index)
+							}}
+						>
+							Delete Meal
+						</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
 			</CardHeader>
 			<CardContent className='flex flex-col gap-2 w-full py-0 px-1 lg:px-4 bg-background'>
 				<div className='flex lg:gap-2 lg:items-center flex-col lg:flex-row'>
@@ -349,7 +449,7 @@ const Meal = ({
 					/>
 				</div>
 				<div className='flex gap-4 items-center w-full tracking-tighter'>
-					<div className='flex gap-2 flex-col items-center'>
+					<div className='flex gap-2 flex-row items-center'>
 						<Label>Veg</Label>
 						<Checkbox
 							checked={isVege}
@@ -506,7 +606,7 @@ const Meal = ({
 						</div>
 					</div>
 
-					<div className='flex flex-col gap-8 col-span-4 select-none text-sm md:text-base tracking-tighter md:tracking-tight'>
+					<div className='flex flex-col gap-4 col-span-4 select-none text-sm md:text-base tracking-tighter md:tracking-tight'>
 						{recipeField.fields.map((recipe, recipeIndex) => (
 							<Recipe
 								key={recipe.name}
@@ -519,7 +619,7 @@ const Meal = ({
 								recipesField={recipeField}
 							/>
 						))}
-						<div className='my-8 flex w-full justify-center'>
+						<div className='my-1 flex w-full justify-center'>
 							<Dialog
 								open={isOpen}
 								onOpenChange={(open) => {

@@ -5,7 +5,7 @@ import { api } from '@/trpc/react'
 import { useEffect, useState } from 'react'
 
 import { cn, getRecipeDetailsForUserPlan } from '@/lib/utils'
-import type { GetIngredientById, GetPlanById } from '@/types'
+import type { GetPlanById } from '@/types'
 import {
 	CircleMinus,
 	CirclePlus,
@@ -19,7 +19,6 @@ import {
 } from 'react-hook-form'
 import type { z } from 'zod'
 
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
@@ -143,18 +142,26 @@ const Ingredient = ({
 						</FormItem>
 					)}
 				/>
-				<div>
+				<div
+          className='place-self-center'
+        >
 					{(Number(ingredient.ingredient.caloriesWOFibre) * ratio).toFixed(1)}
 				</div>
-				<div>{(Number(ingredient.ingredient.protein) * ratio).toFixed(1)}</div>
-				<div>
+				<div
+          className='place-self-center'
+        >{(Number(ingredient.ingredient.protein) * ratio).toFixed(1)}</div>
+				<div
+          className='place-self-center'
+        >
 					{(
 						Number(
 							ingredient.ingredient.availableCarbohydrateWithSugarAlcohols,
 						) * ratio
 					).toFixed(1)}
 				</div>
-				<div>{(Number(ingredient.ingredient.fatTotal) * ratio).toFixed(1)}</div>
+				<div
+          className='place-self-center'
+        >{(Number(ingredient.ingredient.fatTotal) * ratio).toFixed(1)}</div>
 
 				<Dialog open={isOpen} onOpenChange={setIsOpen}>
 					<DropdownMenu>
@@ -306,11 +313,11 @@ const Ingredient = ({
 				</Dialog>
 			</div>
 			{ingredient.alternateId && ingredient.alternateIngredient ? (
-				<div className='grid grid-cols-10 gap-1 text-muted-foreground items-center text-sm'>
+				<div className='grid grid-cols-10 gap-1 text-muted-foreground items-center text-xs'>
 					<div className='col-span-4 truncate ml-4'>
 						or {ingredient.alternateIngredient?.name}
 					</div>
-					<div className='place-self-center col-span-2'>
+					<div className='place-self-center col-span-2 text-xs'>
 						{(
 							((Number(ingredient.ingredient.caloriesWOFibre) * ratio) /
 								Number(ingredient.alternateIngredient?.caloriesWOFibre)) *
@@ -383,7 +390,7 @@ const Recipe = ({
 				<div>fat</div>
 			</div>
 			<div className='grid md:grid-cols-10 grid-cols-8 md:gap-1 font-bold'>
-				<div className='md:col-span-4 col-span-2 flex gap-2 justify-between'>
+				<div className='md:col-span-4 col-span-2 flex gap-2 justify-between items-center'>
 					<FormField
 						control={form.control}
 						name={`meals.${mealIndex}.recipes.${recipeIndex}.name`}
@@ -446,7 +453,7 @@ const Recipe = ({
 					<DialogTrigger asChild>
 						<CirclePlus
 							size={20}
-							strokeWidth={4}
+							strokeWidth={3}
 							className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0'
 						/>
 					</DialogTrigger>
