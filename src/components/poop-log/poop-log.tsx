@@ -2,6 +2,8 @@
 
 import { api } from '@/trpc/react'
 
+import { useState } from 'react'
+
 import type { GetAllDailyLogs } from '@/types'
 import NumberFlow from '@number-flow/react'
 // @ts-ignore
@@ -20,11 +22,24 @@ const PoopLog = ({
 }) => {
 	const today = new Date()
 
+  const [timeoutCodeAdd, setTimeoutCodeAdd] = useState<NodeJS.Timeout | null>(null)
+  const [timeoutCodeDelete, setTimeoutCodeDelete] = useState<NodeJS.Timeout | null>(null)
+
+
 	const ctx = api.useUtils()
 
 	const { mutate: addPoopLog } = api.dailyLog.addPoopLog.useMutation({
 		onMutate: async (newPoopLog) => {
 			await ctx.dailyLog.getAllCurrentUser.cancel()
+
+      if (timeoutCodeAdd) clearTimeout(timeoutCodeAdd)
+      const timeout = setTimeout(() => {
+        ctx.dailyLog.invalidate()
+        setTimeoutCodeAdd(null)
+      }, 2000)
+      setTimeoutCodeAdd(timeout)
+
+
 			const previousLog = ctx.dailyLog.getAllUser.getData(userId)
 			if (!previousLog) return
 			const rndInt = Math.floor(Math.random() * 1000)
@@ -48,12 +63,6 @@ const PoopLog = ({
 			])
 			return { previousLog }
 		},
-		onSuccess: () => {},
-		onSettled: () => {
-			setTimeout(() => {
-				ctx.dailyLog.invalidate()
-			}, 500)
-		},
 		onError: (err, newPoopLog, context) => {
 			toast.error('error')
 			ctx.dailyLog.getAllUser.setData(userId, context?.previousLog)
@@ -63,6 +72,14 @@ const PoopLog = ({
 	const { mutate: deletePoopLog } = api.dailyLog.deletePoopLog.useMutation({
 		onMutate: async (poopLog) => {
 			await ctx.dailyLog.getAllCurrentUser.cancel()
+
+      if (timeoutCodeDelete) clearTimeout(timeoutCodeDelete)
+      const timeout = setTimeout(() => {
+        ctx.dailyLog.invalidate()
+        setTimeoutCodeDelete(null)
+      }, 2000)
+      setTimeoutCodeDelete(timeout)
+
 			const previousLog = ctx.dailyLog.getAllUser.getData(userId)
 			if (!previousLog) return
 			ctx.dailyLog.getAllUser.setData(userId, [
@@ -76,11 +93,6 @@ const PoopLog = ({
 				}),
 			])
 			return { previousLog }
-		},
-		onSettled: () => {
-			setTimeout(() => {
-				ctx.dailyLog.invalidate()
-			}, 500)
 		},
 	})
 
