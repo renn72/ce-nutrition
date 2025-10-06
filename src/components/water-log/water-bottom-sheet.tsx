@@ -25,24 +25,22 @@ const WaterBottomSheet = ({
 	addWaterLog,
 	size,
 	setSize,
+  today,
+  setToday,
 }: {
 	dailyLogs: GetAllDailyLogs | null | undefined
 	deleteWaterLog: ({ id }: { id: number }) => void
 	addWaterLog: ({ date, amount }: { date: string; amount: number }) => void
 	size: number
 	setSize: React.Dispatch<React.SetStateAction<number>>
+  today: Date
+  setToday: React.Dispatch<React.SetStateAction<Date>>
 }) => {
 	const [isOpen, setIsOpen] = useState(false)
-	const [today, setToday] = useState<Date>(new Date())
 
 	const todaysDailyLog = dailyLogs?.find((dailyLog) => {
 		return dailyLog.date === today.toDateString()
 	})
-
-	const totalPoop =
-		todaysDailyLog?.poopLogs.reduce((acc, _curr) => {
-			return acc + 1
-		}, 0) ?? 0
 
 	const totalWater =
 		todaysDailyLog?.waterLogs.reduce((acc, curr) => {

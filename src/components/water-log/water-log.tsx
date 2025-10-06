@@ -19,7 +19,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog'
-import { NumberInput } from '@/components/ui/number-input'
 import { NumberInputForm } from '@/components/ui/number-input-form'
 
 import { WaterBottomSheet } from './water-bottom-sheet'
@@ -39,8 +38,20 @@ const WaterLog = ({
 	const [size, setSize] = useState(() => defaultAmount)
   const [isOpen, setIsOpen] = useState(false)
 
+  const [timeoutCodeAdd, setTimeoutCodeAdd] = useState<NodeJS.Timeout | null>(null)
+  const [timeoutCodeDelete, setTimeoutCodeDelete] = useState<NodeJS.Timeout | null>(null)
+
+	const [day, setDay] = useState<Date>(new Date())
+
 	const { mutate: addWaterLog } = api.dailyLog.addWaterLog.useMutation({
 		onMutate: async (newWaterLog) => {
+      if (timeoutCodeAdd) clearTimeout(timeoutCodeAdd)
+      const timeout = setTimeout(() => {
+        ctx.dailyLog.invalidate()
+        setTimeoutCodeAdd(null)
+      }, 2000)
+      setTimeoutCodeAdd(timeout)
+
 			await ctx.dailyLog.getAllCurrentUser.cancel()
 			const previousLog = ctx.dailyLog.getAllUser.getData(userId)
 			if (!previousLog) return
@@ -52,7 +63,7 @@ const WaterLog = ({
 							waterLogs: [
 								...log.waterLogs,
 								{
-									id: -1,
+									id: -1 * Math.floor(Math.random() * 10000),
 									createdAt: new Date(newWaterLog.date),
 									dailyLogId: log.id,
 									amount: newWaterLog.amount.toString(),
@@ -66,11 +77,7 @@ const WaterLog = ({
 			return { previousLog }
 		},
 		onSuccess: () => {
-			ctx.dailyLog.invalidate()
       setIsOpen(false)
-		},
-		onSettled: () => {
-			ctx.dailyLog.invalidate()
 		},
 		onError: (_err, _newPoopLog, context) => {
 			toast.error('error')
@@ -78,12 +85,30 @@ const WaterLog = ({
 		},
 	})
 	const { mutate: deleteWaterLog } = api.dailyLog.deleteWaterLog.useMutation({
-		onSuccess: () => {
-			ctx.dailyLog.invalidate()
-		},
-		onSettled: () => {
-			ctx.dailyLog.invalidate()
-		},
+    onMutate: async (waterLog) => {
+      if (timeoutCodeDelete) clearTimeout(timeoutCodeDelete)
+      const timeout = setTimeout(() => {
+        ctx.dailyLog.invalidate()
+        setTimeoutCodeDelete(null)
+      }, 2000)
+      setTimeoutCodeDelete(timeout)
+
+      await ctx.dailyLog.getAllCurrentUser.cancel()
+      const previousLog = ctx.dailyLog.getAllUser.getData(userId)
+      if (!previousLog) return
+      ctx.dailyLog.getAllUser.setData(userId, [
+        ...previousLog.map((log) => {
+          if (log.date === day.toDateString()) {
+            return {
+              ...log,
+              waterLogs: log.waterLogs.filter((log) => log.id !== waterLog.id),
+            }
+          }
+          return log
+        }),
+      ])
+      return { previousLog }
+    },
 	})
 
 	const { mutate: updateWater } = api.user.updateWater.useMutation({
@@ -169,6 +194,8 @@ const WaterLog = ({
 			</div>
 
 			<WaterBottomSheet
+        today={day}
+        setToday={setDay}
         dailyLogs={dailyLogs}
 				deleteWaterLog={deleteWaterLog}
         addWaterLog={addWaterLog}
