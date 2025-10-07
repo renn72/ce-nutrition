@@ -1,0 +1,21 @@
+CREATE INDEX `body_fat_user_id_idx` ON `body_fat` (`user_id`);--> statement-breakpoint
+CREATE INDEX `body_weight_user_id_idx` ON `body_weight` (`user_id`);--> statement-breakpoint
+CREATE INDEX `images_user_id_idx` ON `images` (`user_id`);--> statement-breakpoint
+CREATE INDEX `lean_mass_user_id_idx` ON `lean_mass` (`user_id`);--> statement-breakpoint
+CREATE INDEX `skinfold_user_id_idx` ON `skinfold` (`user_id`);--> statement-breakpoint
+CREATE INDEX `user_ingredient_user_plan_id_idx` ON `user_ingredient` (`user_plan_id`);--> statement-breakpoint
+CREATE INDEX `user_ingredient_daily_log_id_idx` ON `user_ingredient` (`daily_log_id`);--> statement-breakpoint
+CREATE INDEX `user_meal_user_plan_id_idx` ON `user_meal` (`user_plan_id`);--> statement-breakpoint
+CREATE INDEX `user_plan_user_id_idx` ON `user_plan` (`user_id`);--> statement-breakpoint
+CREATE INDEX `user_recipe_user_plan_id_idx` ON `user_recipe` (`user_plan_id`);--> statement-breakpoint
+CREATE INDEX `user_recipe_daily_log_id_idx` ON `user_recipe` (`daily_log_id`);--> statement-breakpoint
+CREATE INDEX `goals_user_id_idx` ON `goals` (`user_id`);--> statement-breakpoint
+CREATE INDEX `notification_toggle_user_id_idx` ON `notification_toggle` (`user_id`);--> statement-breakpoint
+CREATE INDEX `role_user_id_idx` ON `role` (`user_id`);--> statement-breakpoint
+CREATE INDEX `supplement_stack_user_id_idx` ON `supplement_stack` (`user_id`);--> statement-breakpoint
+CREATE INDEX `trainer_notes_user_id_idx` ON `trainer_notes` (`user_id`);--> statement-breakpoint
+CREATE INDEX `user_settings_user_id_idx` ON `user_settings` (`user_id`);--> statement-breakpoint
+CREATE INDEX `user_to_trainer_user_id_idx` ON `user_to_trainer` (`user_id`);--> statement-breakpoint
+CREATE INDEX `user_to_trainer_trainer_id_idx` ON `user_to_trainer` (`trainer_id`);--> statement-breakpoint
+CREATE INDEX `user_to_user_category_user_id_idx` ON `user_to_user_category` (`user_id`);--> statement-breakpoint
+CREATE INDEX `weigh_in_user_id_idx` ON `weigh_in` (`user_id`);

@@ -1,0 +1,1 @@
+CREATE INDEX `daily_log_user_id_index` ON `daily_log` (`user_id`);

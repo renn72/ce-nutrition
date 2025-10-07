@@ -44,117 +44,143 @@ var updateIngredientSchema = z.object({
 
 // src/server/db/schema/ingredient.ts
 import { relations as relations8, sql as sql8 } from "drizzle-orm";
-import { int as int8, sqliteTable as sqliteTable8, text as text8 } from "drizzle-orm/sqlite-core";
+import { int as int8, sqliteTable as sqliteTable8, text as text8, index as index8 } from "drizzle-orm/sqlite-core";
 
 // src/server/db/schema/user.ts
 import { relations as relations6, sql as sql6 } from "drizzle-orm";
-import { int as int6, primaryKey, sqliteTable as sqliteTable6, text as text6 } from "drizzle-orm/sqlite-core";
+import {
+  index as index6,
+  int as int6,
+  primaryKey,
+  sqliteTable as sqliteTable6,
+  text as text6
+} from "drizzle-orm/sqlite-core";
 
 // src/server/db/schema/daily-logs.ts
 import { relations as relations2, sql as sql2 } from "drizzle-orm";
-import {
-  int as int2,
-  sqliteTable as sqliteTable2,
-  text as text2
-} from "drizzle-orm/sqlite-core";
+import { index as index2, int as int2, sqliteTable as sqliteTable2, text as text2 } from "drizzle-orm/sqlite-core";
 
 // src/server/db/schema/user-plan.ts
 import { relations, sql } from "drizzle-orm";
-import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { index, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 var createTable = sqliteTable;
-var userPlan = createTable("user_plan", {
-  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
-  updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
-    () => /* @__PURE__ */ new Date()
-  ),
-  finishedAt: int("finished_at", { mode: "timestamp" }),
-  startAt: int("start_at", { mode: "timestamp" }),
-  isActive: int("is_active", { mode: "boolean" }),
-  name: text("name").notNull(),
-  description: text("description").notNull(),
-  image: text("image").notNull(),
-  notes: text("notes").notNull(),
-  numberOfMeals: int("number_of_meals", { mode: "number" }),
-  creatorId: text("creator_id").references(() => user.id, {
-    onDelete: "cascade"
-  }).notNull(),
-  userId: text("user_id").references(() => user.id, {
-    onDelete: "cascade"
-  }).notNull(),
-  favouriteAt: int("favourite_at", { mode: "timestamp" }),
-  deletedAt: int("deleted_at", { mode: "timestamp" }),
-  hiddenAt: int("hidden_at", { mode: "timestamp" })
-});
-var userMeal = createTable("user_meal", {
-  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
-  updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
-    () => /* @__PURE__ */ new Date()
-  ),
-  userPlanId: int("user_plan_id").references(() => userPlan.id, {
-    onDelete: "cascade"
-  }).notNull(),
-  mealIndex: int("index", { mode: "number" }),
-  mealTitle: text("meal_title"),
-  calories: text("calories"),
-  protein: text("protein"),
-  targetProtein: text("target_protein"),
-  targetCalories: text("target_calories"),
-  vegeCalories: text("vege_calories"),
-  veges: text("veges"),
-  vegeNotes: text("vege_notes"),
-  note: text("note")
-});
-var userRecipe = createTable("user_recipe", {
-  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
-  updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
-    () => /* @__PURE__ */ new Date()
-  ),
-  mealIndex: int("meal_index", { mode: "number" }),
-  recipeIndex: int("recipe_index", { mode: "number" }),
-  userPlanId: int("user_plan_id").references(() => userPlan.id, {
-    onDelete: "cascade"
-  }),
-  dailyMealId: int("daily_meal_id").references(() => dailyMeal.id, {
-    onDelete: "cascade"
-  }),
-  parentId: int("parent_id"),
-  name: text("name"),
-  index: int("index", { mode: "number" }),
-  serve: text("serve"),
-  serveUnit: text("serve_unit"),
-  note: text("note"),
-  isLog: int("is_log", { mode: "boolean" }),
-  dailyLogId: int("daily_log_id").references(() => dailyLog.id),
-  isUserCreated: int("is_user_created", { mode: "boolean" }).default(false)
-});
-var userIngredient = createTable("user_ingredient", {
-  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
-  updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
-    () => /* @__PURE__ */ new Date()
-  ),
-  ingredientId: int("ingredient_id").references(() => ingredient.id, {
-    onDelete: "cascade"
-  }),
-  userPlanId: int("user_plan_id").references(() => userPlan.id, {
-    onDelete: "cascade"
-  }),
-  dailyMealId: int("daily_meal_id").references(() => dailyMeal.id, {
-    onDelete: "cascade"
-  }),
-  name: text("name"),
-  mealIndex: int("meal_index", { mode: "number" }),
-  recipeIndex: int("recipe_index", { mode: "number" }),
-  alternateId: int("alternate_id").references(() => ingredient.id),
-  serve: text("serve"),
-  serveUnit: text("serve_unit"),
-  note: text("note"),
-  dailyLogId: int("daily_log_id").references(() => dailyLog.id),
-  isUserCreated: int("is_user_created", { mode: "boolean" }).default(false)
-});
+var userPlan = createTable(
+  "user_plan",
+  {
+    id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
+    updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
+      () => /* @__PURE__ */ new Date()
+    ),
+    finishedAt: int("finished_at", { mode: "timestamp" }),
+    startAt: int("start_at", { mode: "timestamp" }),
+    isActive: int("is_active", { mode: "boolean" }),
+    name: text("name").notNull(),
+    description: text("description").notNull(),
+    image: text("image").notNull(),
+    notes: text("notes").notNull(),
+    numberOfMeals: int("number_of_meals", { mode: "number" }),
+    creatorId: text("creator_id").references(() => user.id, {
+      onDelete: "cascade"
+    }).notNull(),
+    userId: text("user_id").references(() => user.id, {
+      onDelete: "cascade"
+    }).notNull(),
+    favouriteAt: int("favourite_at", { mode: "timestamp" }),
+    deletedAt: int("deleted_at", { mode: "timestamp" }),
+    hiddenAt: int("hidden_at", { mode: "timestamp" })
+  },
+  (table) => [index("user_plan_user_id_idx").on(table.userId)]
+);
+var userMeal = createTable(
+  "user_meal",
+  {
+    id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
+    updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
+      () => /* @__PURE__ */ new Date()
+    ),
+    userPlanId: int("user_plan_id").references(() => userPlan.id, {
+      onDelete: "cascade"
+    }).notNull(),
+    mealIndex: int("index", { mode: "number" }),
+    mealTitle: text("meal_title"),
+    calories: text("calories"),
+    protein: text("protein"),
+    targetProtein: text("target_protein"),
+    targetCalories: text("target_calories"),
+    vegeCalories: text("vege_calories"),
+    veges: text("veges"),
+    vegeNotes: text("vege_notes"),
+    note: text("note")
+  },
+  (table) => [index("user_meal_user_plan_id_idx").on(table.userPlanId)]
+);
+var userRecipe = createTable(
+  "user_recipe",
+  {
+    id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
+    updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
+      () => /* @__PURE__ */ new Date()
+    ),
+    mealIndex: int("meal_index", { mode: "number" }),
+    recipeIndex: int("recipe_index", { mode: "number" }),
+    userPlanId: int("user_plan_id").references(() => userPlan.id, {
+      onDelete: "cascade"
+    }),
+    dailyMealId: int("daily_meal_id").references(() => dailyMeal.id, {
+      onDelete: "cascade"
+    }),
+    parentId: int("parent_id"),
+    name: text("name"),
+    index: int("index", { mode: "number" }),
+    serve: text("serve"),
+    serveUnit: text("serve_unit"),
+    note: text("note"),
+    isLog: int("is_log", { mode: "boolean" }),
+    dailyLogId: int("daily_log_id").references(() => dailyLog.id),
+    isUserCreated: int("is_user_created", { mode: "boolean" }).default(false)
+  },
+  (table) => [
+    index("user_recipe_daily_meal_id_index").on(table.dailyMealId),
+    index("user_recipe_user_plan_id_idx").on(table.userPlanId),
+    index("user_recipe_daily_log_id_idx").on(table.dailyLogId)
+  ]
+);
+var userIngredient = createTable(
+  "user_ingredient",
+  {
+    id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
+    updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
+      () => /* @__PURE__ */ new Date()
+    ),
+    ingredientId: int("ingredient_id").references(() => ingredient.id, {
+      onDelete: "cascade"
+    }),
+    userPlanId: int("user_plan_id").references(() => userPlan.id, {
+      onDelete: "cascade"
+    }),
+    dailyMealId: int("daily_meal_id").references(() => dailyMeal.id, {
+      onDelete: "cascade"
+    }),
+    name: text("name"),
+    mealIndex: int("meal_index", { mode: "number" }),
+    recipeIndex: int("recipe_index", { mode: "number" }),
+    alternateId: int("alternate_id").references(() => ingredient.id),
+    serve: text("serve"),
+    serveUnit: text("serve_unit"),
+    note: text("note"),
+    dailyLogId: int("daily_log_id").references(() => dailyLog.id),
+    isUserCreated: int("is_user_created", { mode: "boolean" }).default(false)
+  },
+  (table) => [
+    index("user_ingredient_daily_meal_id_index").on(table.dailyMealId),
+    index("user_ingredient_user_plan_id_idx").on(table.userPlanId),
+    index("user_ingredient_daily_log_id_idx").on(table.dailyLogId)
+  ]
+);
 var userPlanRelations = relations(userPlan, ({ one, many }) => ({
   user: one(user, {
     fields: [userPlan.userId],
@@ -254,7 +280,8 @@ var dailyLog = createTable2(
     spareImageTwo: text2("spare_image"),
     waistMeasurement: text2("waist_measurement"),
     nap: text2("nap")
-  }
+  },
+  (table) => [index2("daily_log_user_id_index").on(table.userId)]
 );
 var dailyLogRelations = relations2(dailyLog, ({ one, many }) => ({
   user: one(user, { fields: [dailyLog.userId], references: [user.id] }),
@@ -264,32 +291,39 @@ var dailyLogRelations = relations2(dailyLog, ({ one, many }) => ({
   tags: many(tagToDailyLog),
   supplements: many(dailySupplement)
 }));
-var dailySupplement = createTable2("daily_supplement", {
-  id: int2("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int2("created_at", { mode: "timestamp" }).default(sql2`(unixepoch())`).notNull(),
-  dailyLogId: int2("daily_log_id").notNull().references(() => dailyLog.id, {
-    onDelete: "cascade"
-  }),
-  supplementId: int2("supplement_id").notNull().references(() => ingredient.id, {
-    onDelete: "cascade"
-  }),
-  amount: text2("amount"),
-  unit: text2("unit"),
-  time: text2("time"),
-  notes: text2("notes")
-});
-var dailySupplementRelations = relations2(dailySupplement, ({ one }) => ({
-  dailyLog: one(dailyLog, {
-    fields: [dailySupplement.dailyLogId],
-    references: [dailyLog.id],
-    relationName: "dailyLog"
-  }),
-  supplement: one(ingredient, {
-    fields: [dailySupplement.supplementId],
-    references: [ingredient.id],
-    relationName: "supplement"
+var dailySupplement = createTable2(
+  "daily_supplement",
+  {
+    id: int2("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int2("created_at", { mode: "timestamp" }).default(sql2`(unixepoch())`).notNull(),
+    dailyLogId: int2("daily_log_id").notNull().references(() => dailyLog.id, {
+      onDelete: "cascade"
+    }),
+    supplementId: int2("supplement_id").notNull().references(() => ingredient.id, {
+      onDelete: "cascade"
+    }),
+    amount: text2("amount"),
+    unit: text2("unit"),
+    time: text2("time"),
+    notes: text2("notes")
+  },
+  (table) => [index2("daily_supplement_daily_log_id_index").on(table.dailyLogId)]
+);
+var dailySupplementRelations = relations2(
+  dailySupplement,
+  ({ one }) => ({
+    dailyLog: one(dailyLog, {
+      fields: [dailySupplement.dailyLogId],
+      references: [dailyLog.id],
+      relationName: "dailyLog"
+    }),
+    supplement: one(ingredient, {
+      fields: [dailySupplement.supplementId],
+      references: [ingredient.id],
+      relationName: "supplement"
+    })
   })
-}));
+);
 var tag = createTable2("tag", {
   id: int2("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   createdAt: int2("created_at", { mode: "timestamp" }).default(sql2`(unixepoch())`).notNull(),
@@ -307,67 +341,80 @@ var tagRelations = relations2(tag, ({ one, many }) => ({
   }),
   dailyLogs: many(tagToDailyLog)
 }));
-var tagToDailyLog = createTable2("tag_to_daily_log", {
-  id: int2("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  tagId: int2("tag_id").notNull().references(() => tag.id, {
-    onDelete: "cascade"
-  }),
-  dailyLogId: int2("daily_log_id").notNull().references(() => dailyLog.id, {
-    onDelete: "cascade"
-  })
-});
-var tagToDailyLogRelations = relations2(
-  tagToDailyLog,
-  ({ one }) => ({
-    tag: one(tag, {
-      fields: [tagToDailyLog.tagId],
-      references: [tag.id]
+var tagToDailyLog = createTable2(
+  "tag_to_daily_log",
+  {
+    id: int2("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    tagId: int2("tag_id").notNull().references(() => tag.id, {
+      onDelete: "cascade"
     }),
-    dailyLog: one(dailyLog, {
-      fields: [tagToDailyLog.dailyLogId],
-      references: [dailyLog.id]
+    dailyLogId: int2("daily_log_id").notNull().references(() => dailyLog.id, {
+      onDelete: "cascade"
     })
-  })
+  },
+  (table) => [index2("tag_to_daily_log_tag_id_index").on(table.tagId)]
 );
-var poopLog = createTable2("poop_log", {
-  id: int2("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int2("created_at", { mode: "timestamp" }).default(sql2`(unixepoch())`).notNull(),
-  dailyLogId: int2("daily_log_id").notNull().references(() => dailyLog.id, {
-    onDelete: "cascade"
+var tagToDailyLogRelations = relations2(tagToDailyLog, ({ one }) => ({
+  tag: one(tag, {
+    fields: [tagToDailyLog.tagId],
+    references: [tag.id]
+  }),
+  dailyLog: one(dailyLog, {
+    fields: [tagToDailyLog.dailyLogId],
+    references: [dailyLog.id]
   })
-});
+}));
+var poopLog = createTable2(
+  "poop_log",
+  {
+    id: int2("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int2("created_at", { mode: "timestamp" }).default(sql2`(unixepoch())`).notNull(),
+    dailyLogId: int2("daily_log_id").notNull().references(() => dailyLog.id, {
+      onDelete: "cascade"
+    })
+  },
+  (table) => [index2("poop_log_daily_log_id_index").on(table.dailyLogId)]
+);
 var poopLogRelations = relations2(poopLog, ({ one, many }) => ({
   dailyLog: one(dailyLog, {
     fields: [poopLog.dailyLogId],
     references: [dailyLog.id]
   })
 }));
-var waterLog = createTable2("water_log", {
-  id: int2("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int2("created_at", { mode: "timestamp" }).default(sql2`(unixepoch())`).notNull(),
-  dailyLogId: int2("daily_log_id").notNull().references(() => dailyLog.id, {
-    onDelete: "cascade"
-  }),
-  amount: text2("water")
-});
+var waterLog = createTable2(
+  "water_log",
+  {
+    id: int2("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int2("created_at", { mode: "timestamp" }).default(sql2`(unixepoch())`).notNull(),
+    dailyLogId: int2("daily_log_id").notNull().references(() => dailyLog.id, {
+      onDelete: "cascade"
+    }),
+    amount: text2("water")
+  },
+  (table) => [index2("water_log_daily_log_id_index").on(table.dailyLogId)]
+);
 var waterLogRelations = relations2(waterLog, ({ one, many }) => ({
   dailyLog: one(dailyLog, {
     fields: [waterLog.dailyLogId],
     references: [dailyLog.id]
   })
 }));
-var dailyMeal = createTable2("daily_meal", {
-  id: int2("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int2("created_at", { mode: "timestamp" }).default(sql2`(unixepoch())`).notNull(),
-  dailyLogId: int2("daily_log_id").notNull().references(() => dailyLog.id, {
-    onDelete: "cascade"
-  }),
-  mealIndex: int2("meal_index", { mode: "number" }),
-  date: int2("date", { mode: "timestamp" }),
-  recipeId: int2("recipe_id"),
-  vegeCalories: text2("vege_calories"),
-  veges: text2("veges")
-});
+var dailyMeal = createTable2(
+  "daily_meal",
+  {
+    id: int2("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int2("created_at", { mode: "timestamp" }).default(sql2`(unixepoch())`).notNull(),
+    dailyLogId: int2("daily_log_id").notNull().references(() => dailyLog.id, {
+      onDelete: "cascade"
+    }),
+    mealIndex: int2("meal_index", { mode: "number" }),
+    date: int2("date", { mode: "timestamp" }),
+    recipeId: int2("recipe_id"),
+    vegeCalories: text2("vege_calories"),
+    veges: text2("veges")
+  },
+  (table) => [index2("daily_meal_daily_log_id_index").on(table.dailyLogId)]
+);
 var dailyMealRelations = relations2(dailyMeal, ({ one, many }) => ({
   dailyLog: one(dailyLog, {
     fields: [dailyMeal.dailyLogId],
@@ -379,7 +426,7 @@ var dailyMealRelations = relations2(dailyMeal, ({ one, many }) => ({
 
 // src/server/db/schema/message.ts
 import { relations as relations3, sql as sql3 } from "drizzle-orm";
-import { int as int3, sqliteTable as sqliteTable3, text as text3 } from "drizzle-orm/sqlite-core";
+import { int as int3, sqliteTable as sqliteTable3, text as text3, index as index3 } from "drizzle-orm/sqlite-core";
 var createTable3 = sqliteTable3;
 var message = createTable3(
   "message",
@@ -400,7 +447,12 @@ var message = createTable3(
     fromUserId: text3("from_user_id").references(() => user.id, {
       onDelete: "cascade"
     })
-  }
+  },
+  (table) => [
+    index3("message_user_id_idx").on(table.userId),
+    index3("message_from_user_id_idx").on(table.fromUserId),
+    index3("message_is_read_idx").on(table.isRead)
+  ]
 );
 var messageRelations = relations3(message, ({ one }) => ({
   user: one(user, {
@@ -417,34 +469,38 @@ var messageRelations = relations3(message, ({ one }) => ({
 
 // src/server/db/schema/metrics.ts
 import { relations as relations4, sql as sql4 } from "drizzle-orm";
-import { int as int4, sqliteTable as sqliteTable4, text as text4 } from "drizzle-orm/sqlite-core";
+import { index as index4, int as int4, sqliteTable as sqliteTable4, text as text4 } from "drizzle-orm/sqlite-core";
 var createTable4 = sqliteTable4;
-var skinfold = createTable4("skinfold", {
-  id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
-  userId: text4("user_id").notNull().references(() => user.id),
-  creatorId: text4("creator_id").references(() => user.id),
-  date: text4("date").notNull(),
-  chin: text4("chin"),
-  cheek: text4("cheek"),
-  lowerAbdominal: text4("lower_abdominal"),
-  pectoral: text4("pectoral"),
-  biceps: text4("biceps"),
-  triceps: text4("triceps"),
-  subscapular: text4("subscapular"),
-  midAxillary: text4("mid_axillary"),
-  suprailiac: text4("suprailiac"),
-  umbilical: text4("umbilical"),
-  lowerBack: text4("lower_back"),
-  quadriceps: text4("quadriceps"),
-  hamstrings: text4("hamstrings"),
-  medialCalf: text4("medial_calf"),
-  knee: text4("knee"),
-  shoulder: text4("shoulder"),
-  notes: text4("notes"),
-  formula: text4("formula"),
-  test: text4("test")
-});
+var skinfold = createTable4(
+  "skinfold",
+  {
+    id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
+    userId: text4("user_id").notNull().references(() => user.id),
+    creatorId: text4("creator_id").references(() => user.id),
+    date: text4("date").notNull(),
+    chin: text4("chin"),
+    cheek: text4("cheek"),
+    lowerAbdominal: text4("lower_abdominal"),
+    pectoral: text4("pectoral"),
+    biceps: text4("biceps"),
+    triceps: text4("triceps"),
+    subscapular: text4("subscapular"),
+    midAxillary: text4("mid_axillary"),
+    suprailiac: text4("suprailiac"),
+    umbilical: text4("umbilical"),
+    lowerBack: text4("lower_back"),
+    quadriceps: text4("quadriceps"),
+    hamstrings: text4("hamstrings"),
+    medialCalf: text4("medial_calf"),
+    knee: text4("knee"),
+    shoulder: text4("shoulder"),
+    notes: text4("notes"),
+    formula: text4("formula"),
+    test: text4("test")
+  },
+  (table) => [index4("skinfold_user_id_idx").on(table.userId)]
+);
 var girthMeasurement = createTable4("girth_measurement", {
   id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
@@ -468,17 +524,21 @@ var girthMeasurement = createTable4("girth_measurement", {
   glutePosedImage: text4("glute_posed_image"),
   isDailyLog: int4("is_daily_log", { mode: "boolean" }).default(false)
 });
-var images = createTable4("images", {
-  id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
-  userId: text4("user_id").notNull().references(() => user.id, {
-    onDelete: "cascade"
-  }),
-  name: text4("name").notNull(),
-  date: text4("date").notNull(),
-  image: text4("image").notNull(),
-  svg: text4("svg")
-});
+var images = createTable4(
+  "images",
+  {
+    id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
+    userId: text4("user_id").notNull().references(() => user.id, {
+      onDelete: "cascade"
+    }),
+    name: text4("name").notNull(),
+    date: text4("date").notNull(),
+    image: text4("image").notNull(),
+    svg: text4("svg")
+  },
+  (table) => [index4("images_user_id_idx").on(table.userId)]
+);
 var imagesRelations = relations4(images, ({ one }) => ({
   user: one(user, {
     fields: [images.userId],
@@ -509,18 +569,22 @@ var skinfoldRelations = relations4(skinfold, ({ one, many }) => ({
   leanMass: many(leanMass),
   bodyWeight: many(bodyWeight)
 }));
-var bodyFat = createTable4("body_fat", {
-  id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
-  userId: text4("user_id").notNull().references(() => user.id),
-  date: text4("date").notNull(),
-  bodyFat: text4("body_fat"),
-  notes: text4("notes"),
-  formula: text4("formula"),
-  skinfoldId: int4("skinfold_id").references(() => skinfold.id, {
-    onDelete: "cascade"
-  })
-});
+var bodyFat = createTable4(
+  "body_fat",
+  {
+    id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
+    userId: text4("user_id").notNull().references(() => user.id),
+    date: text4("date").notNull(),
+    bodyFat: text4("body_fat"),
+    notes: text4("notes"),
+    formula: text4("formula"),
+    skinfoldId: int4("skinfold_id").references(() => skinfold.id, {
+      onDelete: "cascade"
+    })
+  },
+  (table) => [index4("body_fat_user_id_idx").on(table.userId)]
+);
 var bodyFatRelations = relations4(bodyFat, ({ one }) => ({
   user: one(user, {
     fields: [bodyFat.userId],
@@ -531,18 +595,22 @@ var bodyFatRelations = relations4(bodyFat, ({ one }) => ({
     references: [skinfold.id]
   })
 }));
-var leanMass = createTable4("lean_mass", {
-  id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
-  userId: text4("user_id").notNull().references(() => user.id),
-  date: text4("date").notNull(),
-  leanMass: text4("lean_mass"),
-  notes: text4("notes"),
-  formula: text4("formula"),
-  skinfoldId: int4("skinfold_id").references(() => skinfold.id, {
-    onDelete: "cascade"
-  })
-});
+var leanMass = createTable4(
+  "lean_mass",
+  {
+    id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
+    userId: text4("user_id").notNull().references(() => user.id),
+    date: text4("date").notNull(),
+    leanMass: text4("lean_mass"),
+    notes: text4("notes"),
+    formula: text4("formula"),
+    skinfoldId: int4("skinfold_id").references(() => skinfold.id, {
+      onDelete: "cascade"
+    })
+  },
+  (table) => [index4("lean_mass_user_id_idx").on(table.userId)]
+);
 var leanMassRelations = relations4(leanMass, ({ one }) => ({
   user: one(user, {
     fields: [leanMass.userId],
@@ -553,18 +621,22 @@ var leanMassRelations = relations4(leanMass, ({ one }) => ({
     references: [skinfold.id]
   })
 }));
-var bodyWeight = createTable4("body_weight", {
-  id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
-  userId: text4("user_id").notNull().references(() => user.id),
-  date: text4("date").notNull(),
-  bodyWeight: text4("body_weight"),
-  source: text4("source"),
-  notes: text4("notes"),
-  skinfoldId: int4("skinfold_id").references(() => skinfold.id, {
-    onDelete: "cascade"
-  })
-});
+var bodyWeight = createTable4(
+  "body_weight",
+  {
+    id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
+    userId: text4("user_id").notNull().references(() => user.id),
+    date: text4("date").notNull(),
+    bodyWeight: text4("body_weight"),
+    source: text4("source"),
+    notes: text4("notes"),
+    skinfoldId: int4("skinfold_id").references(() => skinfold.id, {
+      onDelete: "cascade"
+    })
+  },
+  (table) => [index4("body_weight_user_id_idx").on(table.userId)]
+);
 var bodyWeightRelations = relations4(bodyWeight, ({ one }) => ({
   user: one(user, {
     fields: [bodyWeight.userId],
@@ -578,7 +650,7 @@ var bodyWeightRelations = relations4(bodyWeight, ({ one }) => ({
 
 // src/server/db/schema/notification.ts
 import { relations as relations5, sql as sql5 } from "drizzle-orm";
-import { int as int5, sqliteTable as sqliteTable5, text as text5 } from "drizzle-orm/sqlite-core";
+import { index as index5, int as int5, sqliteTable as sqliteTable5, text as text5 } from "drizzle-orm/sqlite-core";
 var createTable5 = sqliteTable5;
 var notification = createTable5(
   "notification",
@@ -596,50 +668,58 @@ var notification = createTable5(
     isDeleted: int5("is_deleted", { mode: "boolean" }).default(false),
     isNotified: int5("is_notified", { mode: "boolean" }).default(false),
     notes: text5("notes")
-  }
+  },
+  (table) => [
+    index5("notification_user_id_idx").on(table.userId),
+    index5("notification_is_read_idx").on(table.isRead)
+  ]
 );
-var notificationRelations = relations5(
-  notification,
-  ({ one }) => ({
-    user: one(user, {
-      fields: [notification.userId],
-      references: [user.id]
-    })
+var notificationRelations = relations5(notification, ({ one }) => ({
+  user: one(user, {
+    fields: [notification.userId],
+    references: [user.id]
   })
-);
+}));
 
 // src/server/db/schema/user.ts
 var createTable6 = sqliteTable6;
-var user = createTable6("user", {
-  id: text6("id", { length: 255 }).notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
-  name: text6("name"),
-  firstName: text6("first_name"),
-  lastName: text6("last_name"),
-  clerkId: text6("clerk_id"),
-  birthDate: int6("birth_date", { mode: "timestamp" }),
-  gender: text6("gender"),
-  address: text6("address"),
-  notes: text6("notes"),
-  instagram: text6("instagram"),
-  openLifter: text6("open_lifter"),
-  phone: text6("phone"),
-  email: text6("email").unique(),
-  emailVerified: int6("email_verified", {
-    mode: "timestamp"
-  }),
-  password: text6("password"),
-  currentPlanId: int6("current_plan_id"),
-  image: text6("image"),
-  isFake: int6("is_fake", { mode: "boolean" }).default(false),
-  isTrainer: int6("is_trainer", { mode: "boolean" }).default(false),
-  isRoot: int6("is_root", { mode: "boolean" }).default(false),
-  isCreator: int6("is_creator", { mode: "boolean" }).default(false),
-  isAllTrainers: int6("is_all_trainers", { mode: "boolean" }).default(false),
-  createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
-  updatedAt: int6("updated_at", { mode: "timestamp" }).$onUpdate(
-    () => /* @__PURE__ */ new Date()
-  )
-});
+var user = createTable6(
+  "user",
+  {
+    id: text6("id", { length: 255 }).notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+    name: text6("name"),
+    firstName: text6("first_name"),
+    lastName: text6("last_name"),
+    clerkId: text6("clerk_id"),
+    birthDate: int6("birth_date", { mode: "timestamp" }),
+    gender: text6("gender"),
+    address: text6("address"),
+    notes: text6("notes"),
+    instagram: text6("instagram"),
+    openLifter: text6("open_lifter"),
+    phone: text6("phone"),
+    email: text6("email").unique(),
+    emailVerified: int6("email_verified", {
+      mode: "timestamp"
+    }),
+    password: text6("password"),
+    currentPlanId: int6("current_plan_id"),
+    image: text6("image"),
+    isFake: int6("is_fake", { mode: "boolean" }).default(false),
+    isTrainer: int6("is_trainer", { mode: "boolean" }).default(false),
+    isRoot: int6("is_root", { mode: "boolean" }).default(false),
+    isCreator: int6("is_creator", { mode: "boolean" }).default(false),
+    isAllTrainers: int6("is_all_trainers", { mode: "boolean" }).default(false),
+    createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
+    updatedAt: int6("updated_at", { mode: "timestamp" }).$onUpdate(
+      () => /* @__PURE__ */ new Date()
+    )
+  },
+  (table) => [
+    index6("user_email_idx").on(table.email),
+    index6("user_is_creator_idx").on(table.isCreator)
+  ]
+);
 var userRelations = relations6(user, ({ one, many }) => ({
   roles: many(role),
   notifications: many(notification),
@@ -673,41 +753,55 @@ var userRelations = relations6(user, ({ one, many }) => ({
   supplementStacks: many(supplementStack),
   category: many(userToUserCategory)
 }));
-var notificationToggle = createTable6("notification_toggle", {
-  id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
-  userId: text6("user_id").notNull().references(() => user.id, {
-    onDelete: "cascade"
-  }),
-  type: text6("type"),
-  interval: text6("interval"),
-  sleep: text6("sleep")
-});
-var notificationToggleRelations = relations6(notificationToggle, ({ one }) => ({
-  user: one(user, {
-    fields: [notificationToggle.userId],
-    references: [user.id],
-    relationName: "user"
+var notificationToggle = createTable6(
+  "notification_toggle",
+  {
+    id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
+    userId: text6("user_id").notNull().references(() => user.id, {
+      onDelete: "cascade"
+    }),
+    type: text6("type"),
+    interval: text6("interval"),
+    sleep: text6("sleep")
+  },
+  (table) => [index6("notification_toggle_user_id_idx").on(table.userId)]
+);
+var notificationToggleRelations = relations6(
+  notificationToggle,
+  ({ one }) => ({
+    user: one(user, {
+      fields: [notificationToggle.userId],
+      references: [user.id],
+      relationName: "user"
+    })
   })
-}));
-var userToUserCategory = createTable6("user_to_user_category", {
-  userId: text6("user_id").notNull().references(() => user.id, {
-    onDelete: "cascade"
-  }),
-  categoryId: int6("category_id").notNull().references(() => userCategory.id, {
-    onDelete: "cascade"
+);
+var userToUserCategory = createTable6(
+  "user_to_user_category",
+  {
+    userId: text6("user_id").notNull().references(() => user.id, {
+      onDelete: "cascade"
+    }),
+    categoryId: int6("category_id").notNull().references(() => userCategory.id, {
+      onDelete: "cascade"
+    })
+  },
+  (table) => [index6("user_to_user_category_user_id_idx").on(table.userId)]
+);
+var usertoUserCategoryRelations = relations6(
+  userToUserCategory,
+  ({ one }) => ({
+    user: one(user, {
+      fields: [userToUserCategory.userId],
+      references: [user.id]
+    }),
+    category: one(userCategory, {
+      fields: [userToUserCategory.categoryId],
+      references: [userCategory.id]
+    })
   })
-});
-var usertoUserCategoryRelations = relations6(userToUserCategory, ({ one }) => ({
-  user: one(user, {
-    fields: [userToUserCategory.userId],
-    references: [user.id]
-  }),
-  category: one(userCategory, {
-    fields: [userToUserCategory.categoryId],
-    references: [userCategory.id]
-  })
-}));
+);
 var userCategory = createTable6("user_category", {
   id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   name: text6("name")
@@ -715,20 +809,24 @@ var userCategory = createTable6("user_category", {
 var userCategoryRelations = relations6(userCategory, ({ many }) => ({
   users: many(userToUserCategory)
 }));
-var supplementStack = createTable6("supplement_stack", {
-  id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
-  updatedAt: int6("updated_at", { mode: "timestamp" }).$onUpdate(
-    () => /* @__PURE__ */ new Date()
-  ),
-  userId: text6("user_id").notNull().references(() => user.id, {
-    onDelete: "cascade"
-  }),
-  name: text6("name"),
-  time: text6("time"),
-  isTemplate: int6("is_template", { mode: "boolean" }).default(false),
-  order: int6("order").default(0)
-});
+var supplementStack = createTable6(
+  "supplement_stack",
+  {
+    id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
+    updatedAt: int6("updated_at", { mode: "timestamp" }).$onUpdate(
+      () => /* @__PURE__ */ new Date()
+    ),
+    userId: text6("user_id").notNull().references(() => user.id, {
+      onDelete: "cascade"
+    }),
+    name: text6("name"),
+    time: text6("time"),
+    isTemplate: int6("is_template", { mode: "boolean" }).default(false),
+    order: int6("order").default(0)
+  },
+  (table) => [index6("supplement_stack_user_id_idx").on(table.userId)]
+);
 var supplementStackRelations = relations6(
   supplementStack,
   ({ one, many }) => ({
@@ -770,22 +868,26 @@ var supplementToSupplementStackRelations = relations6(
     })
   })
 );
-var trainerNotes = createTable6("trainer_notes", {
-  id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
-  updatedAt: int6("updated_at", { mode: "timestamp" }).$onUpdate(
-    () => /* @__PURE__ */ new Date()
-  ),
-  userId: text6("user_id").notNull().references(() => user.id, {
-    onDelete: "cascade"
-  }),
-  title: text6("title"),
-  description: text6("description"),
-  state: text6("state"),
-  trainerId: text6("trainer_id").notNull().references(() => user.id, {
-    onDelete: "cascade"
-  })
-});
+var trainerNotes = createTable6(
+  "trainer_notes",
+  {
+    id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
+    updatedAt: int6("updated_at", { mode: "timestamp" }).$onUpdate(
+      () => /* @__PURE__ */ new Date()
+    ),
+    userId: text6("user_id").notNull().references(() => user.id, {
+      onDelete: "cascade"
+    }),
+    title: text6("title"),
+    description: text6("description"),
+    state: text6("state"),
+    trainerId: text6("trainer_id").notNull().references(() => user.id, {
+      onDelete: "cascade"
+    })
+  },
+  (table) => [index6("trainer_notes_user_id_idx").on(table.userId)]
+);
 var trainerNotesRelations = relations6(trainerNotes, ({ one }) => ({
   user: one(user, {
     fields: [trainerNotes.userId],
@@ -798,23 +900,27 @@ var trainerNotesRelations = relations6(trainerNotes, ({ one }) => ({
     relationName: "trainer"
   })
 }));
-var goals = createTable6("goals", {
-  id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
-  updatedAt: int6("updated_at", { mode: "timestamp" }).$onUpdate(
-    () => /* @__PURE__ */ new Date()
-  ),
-  userId: text6("user_id").notNull().references(() => user.id, {
-    onDelete: "cascade"
-  }),
-  title: text6("title"),
-  description: text6("description"),
-  state: text6("state"),
-  completedAt: int6("completed_at", { mode: "timestamp" }),
-  trainerId: text6("trainer_id").notNull().references(() => user.id, {
-    onDelete: "cascade"
-  })
-});
+var goals = createTable6(
+  "goals",
+  {
+    id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
+    updatedAt: int6("updated_at", { mode: "timestamp" }).$onUpdate(
+      () => /* @__PURE__ */ new Date()
+    ),
+    userId: text6("user_id").notNull().references(() => user.id, {
+      onDelete: "cascade"
+    }),
+    title: text6("title"),
+    description: text6("description"),
+    state: text6("state"),
+    completedAt: int6("completed_at", { mode: "timestamp" }),
+    trainerId: text6("trainer_id").notNull().references(() => user.id, {
+      onDelete: "cascade"
+    })
+  },
+  (table) => [index6("goals_user_id_idx").on(table.userId)]
+);
 var goalsRelations = relations6(goals, ({ one }) => ({
   user: one(user, {
     fields: [goals.userId],
@@ -827,49 +933,57 @@ var goalsRelations = relations6(goals, ({ one }) => ({
     relationName: "trainer"
   })
 }));
-var userSettings = createTable6("user_settings", {
-  id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
-  updatedAt: int6("updated_at", { mode: "timestamp" }).$onUpdate(
-    () => /* @__PURE__ */ new Date()
-  ),
-  userId: text6("user_id").notNull().references(() => user.id, {
-    onDelete: "cascade"
-  }),
-  defaultWater: text6("default_water"),
-  defaultChartRange: text6("default_chart_range"),
-  isPosing: int6("is_posing", { mode: "boolean" }).default(false),
-  isBloodGlucose: int6("is_blood_glucose", { mode: "boolean" }).default(false),
-  isSleep: int6("is_sleep", { mode: "boolean" }).default(true),
-  isSleepQuality: int6("is_sleep_quality", { mode: "boolean" }).default(true),
-  isNap: int6("is_nap", { mode: "boolean" }).default(true),
-  isWeightTraining: int6("is_weight", { mode: "boolean" }).default(true),
-  isHiit: int6("is_hiit", { mode: "boolean" }).default(true),
-  isLiss: int6("is_liss", { mode: "boolean" }).default(true),
-  isNotes: int6("is_notes", { mode: "boolean" }).default(true),
-  isSteps: int6("is_steps", { mode: "boolean" }).default(true),
-  isSauna: int6("is_sauna", { mode: "boolean" }).default(true),
-  isColdPlunge: int6("is_cold_plunge", { mode: "boolean" }).default(true)
-});
+var userSettings = createTable6(
+  "user_settings",
+  {
+    id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
+    updatedAt: int6("updated_at", { mode: "timestamp" }).$onUpdate(
+      () => /* @__PURE__ */ new Date()
+    ),
+    userId: text6("user_id").notNull().references(() => user.id, {
+      onDelete: "cascade"
+    }),
+    defaultWater: text6("default_water"),
+    defaultChartRange: text6("default_chart_range"),
+    isPosing: int6("is_posing", { mode: "boolean" }).default(false),
+    isBloodGlucose: int6("is_blood_glucose", { mode: "boolean" }).default(false),
+    isSleep: int6("is_sleep", { mode: "boolean" }).default(true),
+    isSleepQuality: int6("is_sleep_quality", { mode: "boolean" }).default(true),
+    isNap: int6("is_nap", { mode: "boolean" }).default(true),
+    isWeightTraining: int6("is_weight", { mode: "boolean" }).default(true),
+    isHiit: int6("is_hiit", { mode: "boolean" }).default(true),
+    isLiss: int6("is_liss", { mode: "boolean" }).default(true),
+    isNotes: int6("is_notes", { mode: "boolean" }).default(true),
+    isSteps: int6("is_steps", { mode: "boolean" }).default(true),
+    isSauna: int6("is_sauna", { mode: "boolean" }).default(true),
+    isColdPlunge: int6("is_cold_plunge", { mode: "boolean" }).default(true)
+  },
+  (table) => [index6("user_settings_user_id_idx").on(table.userId)]
+);
 var userSettingsRelations = relations6(userSettings, ({ one }) => ({
   user: one(user, {
     fields: [userSettings.userId],
     references: [user.id]
   })
 }));
-var weighIn = createTable6("weigh_in", {
-  id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
-  userId: text6("user_id").notNull().references(() => user.id),
-  trainerId: text6("trainer_id").notNull().references(() => user.id),
-  date: int6("date", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
-  bodyWeight: text6("body_weight"),
-  leanMass: text6("lean_mass"),
-  bodyFat: text6("body_fat"),
-  bloodPressure: text6("blood_pressure"),
-  image: text6("image"),
-  notes: text6("notes")
-});
+var weighIn = createTable6(
+  "weigh_in",
+  {
+    id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
+    userId: text6("user_id").notNull().references(() => user.id),
+    trainerId: text6("trainer_id").notNull().references(() => user.id),
+    date: int6("date", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
+    bodyWeight: text6("body_weight"),
+    leanMass: text6("lean_mass"),
+    bodyFat: text6("body_fat"),
+    bloodPressure: text6("blood_pressure"),
+    image: text6("image"),
+    notes: text6("notes")
+  },
+  (table) => [index6("weigh_in_user_id_idx").on(table.userId)]
+);
 var weighInRelations = relations6(weighIn, ({ one }) => ({
   user: one(user, {
     fields: [weighIn.userId],
@@ -882,25 +996,36 @@ var weighInRelations = relations6(weighIn, ({ one }) => ({
     relationName: "trainer"
   })
 }));
-var userToTrainer = createTable6("user_to_trainer", {
-  userId: text6("user_id").notNull().references(() => user.id, {
-    onDelete: "cascade"
-  }),
-  trainerId: text6("trainer_id").notNull().references(() => user.id, {
-    onDelete: "cascade"
-  })
-});
-var role = createTable6("role", {
-  id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
-  updatedAt: int6("updated_at", { mode: "timestamp" }).$onUpdate(
-    () => /* @__PURE__ */ new Date()
-  ),
-  userId: text6("user_id").references(() => user.id, {
-    onDelete: "cascade"
-  }),
-  name: text6("name")
-});
+var userToTrainer = createTable6(
+  "user_to_trainer",
+  {
+    userId: text6("user_id").notNull().references(() => user.id, {
+      onDelete: "cascade"
+    }),
+    trainerId: text6("trainer_id").notNull().references(() => user.id, {
+      onDelete: "cascade"
+    })
+  },
+  (table) => [
+    index6("user_to_trainer_user_id_idx").on(table.userId),
+    index6("user_to_trainer_trainer_id_idx").on(table.trainerId)
+  ]
+);
+var role = createTable6(
+  "role",
+  {
+    id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
+    updatedAt: int6("updated_at", { mode: "timestamp" }).$onUpdate(
+      () => /* @__PURE__ */ new Date()
+    ),
+    userId: text6("user_id").references(() => user.id, {
+      onDelete: "cascade"
+    }),
+    name: text6("name")
+  },
+  (table) => [index6("role_user_id_idx").on(table.userId)]
+);
 var account = createTable6(
   "account",
   {
@@ -965,43 +1090,54 @@ var userToTrainerRelations = relations6(userToTrainer, ({ one }) => ({
 
 // src/server/db/schema/recipe.ts
 import { relations as relations7, sql as sql7 } from "drizzle-orm";
-import { int as int7, sqliteTable as sqliteTable7, text as text7 } from "drizzle-orm/sqlite-core";
+import { index as index7, int as int7, sqliteTable as sqliteTable7, text as text7 } from "drizzle-orm/sqlite-core";
 var createTable7 = sqliteTable7;
-var recipe = createTable7("recipe", {
-  id: int7("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int7("created_at", { mode: "timestamp" }).default(sql7`(unixepoch())`).notNull(),
-  updatedAt: int7("updated_at", { mode: "timestamp" }).$onUpdate(
-    () => /* @__PURE__ */ new Date()
-  ),
-  name: text7("name").notNull(),
-  description: text7("description").notNull(),
-  image: text7("image").notNull(),
-  notes: text7("notes").notNull(),
-  calories: int7("calories", { mode: "number" }).notNull(),
-  creatorId: text7("creator_id").references(() => user.id).notNull(),
-  isUserRecipe: int7("is_user_recipe", { mode: "boolean" }).default(false),
-  isGlobal: int7("is_global", { mode: "boolean" }).default(false),
-  recipeCategory: text7("recipe_category").notNull(),
-  favouriteAt: int7("favourite_at", { mode: "timestamp" }),
-  deletedAt: int7("deleted_at", { mode: "timestamp" }),
-  hiddenAt: int7("hidden_at", { mode: "timestamp" })
-});
-var recipeToIngredient = createTable7("recipe_to_ingredient", {
-  id: int7("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int7("created_at", { mode: "timestamp" }).default(sql7`(unixepoch())`).notNull(),
-  recipeId: int7("recipe_id").references(() => recipe.id, {
-    onDelete: "cascade"
-  }).notNull(),
-  ingredientId: int7("ingredient_id").references(() => ingredient.id, {
-    onDelete: "cascade"
-  }).notNull(),
-  index: int7("index", { mode: "number" }).notNull(),
-  alternateId: int7("alternate_id").references(() => ingredient.id),
-  serveSize: text7("serve").notNull(),
-  serveUnit: text7("serve_unit").notNull(),
-  note: text7("note"),
-  isUserCreated: int7("is_user_created", { mode: "boolean" }).default(false)
-});
+var recipe = createTable7(
+  "recipe",
+  {
+    id: int7("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int7("created_at", { mode: "timestamp" }).default(sql7`(unixepoch())`).notNull(),
+    updatedAt: int7("updated_at", { mode: "timestamp" }).$onUpdate(
+      () => /* @__PURE__ */ new Date()
+    ),
+    name: text7("name").notNull(),
+    description: text7("description").notNull(),
+    image: text7("image").notNull(),
+    notes: text7("notes").notNull(),
+    calories: int7("calories", { mode: "number" }).notNull(),
+    creatorId: text7("creator_id").references(() => user.id).notNull(),
+    isUserRecipe: int7("is_user_recipe", { mode: "boolean" }).default(false),
+    isGlobal: int7("is_global", { mode: "boolean" }).default(false),
+    recipeCategory: text7("recipe_category").notNull(),
+    favouriteAt: int7("favourite_at", { mode: "timestamp" }),
+    deletedAt: int7("deleted_at", { mode: "timestamp" }),
+    hiddenAt: int7("hidden_at", { mode: "timestamp" })
+  },
+  (table) => [
+    index7("recipe_user_id_idx").on(table.creatorId),
+    index7("recipe_is_user_recipe_idx").on(table.isUserRecipe)
+  ]
+);
+var recipeToIngredient = createTable7(
+  "recipe_to_ingredient",
+  {
+    id: int7("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int7("created_at", { mode: "timestamp" }).default(sql7`(unixepoch())`).notNull(),
+    recipeId: int7("recipe_id").references(() => recipe.id, {
+      onDelete: "cascade"
+    }).notNull(),
+    ingredientId: int7("ingredient_id").references(() => ingredient.id, {
+      onDelete: "cascade"
+    }).notNull(),
+    index: int7("index", { mode: "number" }).notNull(),
+    alternateId: int7("alternate_id").references(() => ingredient.id),
+    serveSize: text7("serve").notNull(),
+    serveUnit: text7("serve_unit").notNull(),
+    note: text7("note"),
+    isUserCreated: int7("is_user_created", { mode: "boolean" }).default(false)
+  },
+  (table) => [index7("recipe_to_ingredient_recipe_id_index").on(table.recipeId)]
+);
 var recipeToIngredientRelations = relations7(
   recipeToIngredient,
   ({ one }) => ({
@@ -1323,7 +1459,8 @@ var ingredientToGroceryStore = createTable8(
     groceryStoreId: int8("grocery_store_id").references(() => groceryStore.id, {
       onDelete: "cascade"
     })
-  }
+  },
+  (table) => [index8("ingredient_to_grocery_store_ingredient_id_index").on(table.ingredientId)]
 );
 var groceryStoreRelations = relations8(groceryStore, ({ many }) => ({
   ingredientToGroceryStore: many(ingredientToGroceryStore)
@@ -1461,6 +1598,7 @@ import { cache } from "react";
 import NextAuth from "next-auth";
 
 // src/server/db/index.ts
+import { instrumentDrizzle } from "@kubiks/otel-drizzle";
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { sqliteTableCreator } from "drizzle-orm/sqlite-core";
@@ -1784,6 +1922,7 @@ var client = globalForDb.client ?? createClient({
 });
 if (env.NODE_ENV !== "production") globalForDb.client = client;
 var db = drizzle(client, { schema: schema_exports });
+instrumentDrizzle(client, { dbSystem: "sqlite", maxQueryTextLength: 3e3 });
 
 // src/server/auth/config.ts
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
@@ -1935,15 +2074,6 @@ var timingMiddleware = t.middleware(async (opts) => {
   const input = await opts.getRawInput();
   const end = Date.now();
   if (env.NODE_ENV === "development") {
-    console.log({
-      input: JSON.stringify(input),
-      type: opts.type,
-      path: opts.path,
-      duration: end - start,
-      source: opts.ctx.headers.get("referer"),
-      user: opts.ctx.session?.user.name,
-      userId: opts.ctx.session?.user.id
-    });
   } else {
   }
   return result2;
@@ -2195,7 +2325,7 @@ var groceryStoreRouter = createTRPCRouter({
 import { readFileSync } from "fs";
 import { parse } from "csv-parse/sync";
 
-// node_modules/.pnpm/drizzle-dbml-generator@0.10.0_drizzle-orm@0.41.0_@libsql+client@0.15.11_gel@2.1.1_/node_modules/drizzle-dbml-generator/dist/index.js
+// node_modules/.pnpm/drizzle-dbml-generator@0.10.0_drizzle-orm@0.44.6_@libsql+client@0.15.11_@opentelemetry+api@1.9.0_gel@2.1.1_/node_modules/drizzle-dbml-generator/dist/index.js
 import {
   One,
   Relations,
@@ -2378,9 +2508,9 @@ var BaseGenerator = class {
     const extraConfigBuilder = table[ExtraConfigBuilder];
     const extraConfigColumns = table[ExtraConfigColumns];
     const extraConfig = extraConfigBuilder?.(extraConfigColumns ?? {});
-    const builtIndexes = (Array.isArray(extraConfig) ? extraConfig : Object.values(extraConfig ?? {})).map((b) => b?.build(table)).filter((b) => b !== void 0).filter((index3) => !(is(index3, PgCheck) || is(index3, MySqlCheck) || is(index3, SQLiteCheck)));
+    const builtIndexes = (Array.isArray(extraConfig) ? extraConfig : Object.values(extraConfig ?? {})).map((b) => b?.build(table)).filter((b) => b !== void 0).filter((index10) => !(is(index10, PgCheck) || is(index10, MySqlCheck) || is(index10, SQLiteCheck)));
     const fks = builtIndexes.filter(
-      (index3) => is(index3, PgForeignKey) || is(index3, MySqlForeignKey) || is(index3, SQLiteForeignKey)
+      (index10) => is(index10, PgForeignKey) || is(index10, MySqlForeignKey) || is(index10, SQLiteForeignKey)
     );
     if (!this.relational) {
       this.generateForeignKeys(fks);
@@ -2389,26 +2519,26 @@ var BaseGenerator = class {
       const indexes = extraConfig ?? {};
       dbml.newLine().tab().insert("indexes {").newLine();
       for (const indexName in indexes) {
-        const index3 = indexes[indexName].build(table);
+        const index10 = indexes[indexName].build(table);
         dbml.tab(2);
-        if (is(index3, PgIndex) || is(index3, MySqlIndex) || is(index3, SQLiteIndex)) {
-          const configColumns = index3.config.columns.flatMap(
+        if (is(index10, PgIndex) || is(index10, MySqlIndex) || is(index10, SQLiteIndex)) {
+          const configColumns = index10.config.columns.flatMap(
             (entry) => is(entry, SQL) ? entry.queryChunks.filter((v) => is(v, Column)) : entry
           );
           const idxColumns = wrapColumns(
             configColumns,
             this.buildQueryConfig.escapeName
           );
-          const idxProperties = index3.config.name ? ` [name: '${index3.config.name}'${index3.config.unique ? ", unique" : ""}]` : "";
+          const idxProperties = index10.config.name ? ` [name: '${index10.config.name}'${index10.config.unique ? ", unique" : ""}]` : "";
           dbml.insert(`${idxColumns}${idxProperties}`);
         }
-        if (is(index3, PgPrimaryKey) || is(index3, MySqlPrimaryKey) || is(index3, SQLitePrimaryKey)) {
-          const pkColumns = wrapColumns(index3.columns, this.buildQueryConfig.escapeName);
+        if (is(index10, PgPrimaryKey) || is(index10, MySqlPrimaryKey) || is(index10, SQLitePrimaryKey)) {
+          const pkColumns = wrapColumns(index10.columns, this.buildQueryConfig.escapeName);
           dbml.insert(`${pkColumns} [pk]`);
         }
-        if (is(index3, PgUniqueConstraint) || is(index3, MySqlUniqueConstraint) || is(index3, SQLiteUniqueConstraint)) {
-          const uqColumns = wrapColumns(index3.columns, this.buildQueryConfig.escapeName);
-          const uqProperties = index3.name ? `[name: '${index3.name}', unique]` : "[unique]";
+        if (is(index10, PgUniqueConstraint) || is(index10, MySqlUniqueConstraint) || is(index10, SQLiteUniqueConstraint)) {
+          const uqColumns = wrapColumns(index10.columns, this.buildQueryConfig.escapeName);
+          const uqProperties = index10.name ? `[name: '${index10.name}', unique]` : "[unique]";
           dbml.insert(`${uqColumns} ${uqProperties}`);
         }
         dbml.newLine();

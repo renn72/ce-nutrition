@@ -98,15 +98,15 @@ const timingMiddleware = t.middleware(async (opts) => {
 	const end = Date.now()
 
 	if (env.NODE_ENV === 'development') {
-		console.log({
-			input: JSON.stringify(input),
-			type: opts.type,
-			path: opts.path,
-			duration: end - start,
-			source: opts.ctx.headers.get('referer'),
-			user: opts.ctx.session?.user.name,
-			userId: opts.ctx.session?.user.id,
-		})
+		// console.log({
+		// 	input: JSON.stringify(input),
+		// 	type: opts.type,
+		// 	path: opts.path,
+		// 	duration: end - start,
+		// 	source: opts.ctx.headers.get('referer'),
+		// 	user: opts.ctx.session?.user.name,
+		// 	userId: opts.ctx.session?.user.id,
+		// })
 	} else {
 		// opts.ctx.db.insert(logNew).values({
 		// 	input: JSON.stringify(input),

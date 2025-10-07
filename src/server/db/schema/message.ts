@@ -1,5 +1,5 @@
 import { relations, sql } from 'drizzle-orm'
-import { int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { int, sqliteTable, text, index } from 'drizzle-orm/sqlite-core'
 
 import { user } from './user'
 const createTable = sqliteTable
@@ -26,6 +26,11 @@ export const message = createTable(
       onDelete: 'cascade',
     }),
   },
+  (table) => [
+    index('message_user_id_idx').on(table.userId),
+    index('message_from_user_id_idx').on(table.fromUserId),
+    index('message_is_read_idx').on(table.isRead),
+  ],
 )
 
 export const messageRelations = relations(message, ({ one }) => ({

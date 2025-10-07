@@ -21,9 +21,11 @@
     "@headlessui/tailwindcss": "^0.2.2",
     "@heroui/number-input": "^2.0.15",
     "@hookform/resolvers": "^5.2.1",
+    "@kubiks/otel-drizzle": "^2.1.0",
     "@libsql/client": "^0.15.11",
     "@lucide/lab": "^0.1.2",
     "@number-flow/react": "^0.5.10",
+    "@opentelemetry/api": "^1.9.0",
     "@oslojs/crypto": "^1.0.1",
     "@oslojs/encoding": "^1.1.0",
     "@radix-ui/react-accordion": "^1.2.12",
@@ -66,6 +68,7 @@
     "@types/ua-parser-js": "^0.7.39",
     "@types/web-push": "^3.6.4",
     "@uploadthing/react": "^7.3.2",
+    "@vercel/otel": "^2.0.1",
     "arktype": "^2.1.20",
     "bcryptjs": "^2.4.3",
     "canvas-confetti": "^1.9.3",
@@ -75,7 +78,7 @@
     "csv-parse": "^5.6.0",
     "date-fns": "^3.6.0",
     "dotenv": "^17.2.1",
-    "drizzle-orm": "^0.41.0",
+    "drizzle-orm": "^0.44.6",
     "embla-carousel": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.23.12",
@@ -135,5 +138,5 @@
   "ct3aMetadata": {
     "initVersion": "7.37.0"
   },
-  "packageManager": "pnpm@9.1.2"
+  "packageManager": "pnpm@10.18.1"
 }

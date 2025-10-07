@@ -1,5 +1,5 @@
 import { relations, sql } from 'drizzle-orm'
-import { int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { int, sqliteTable, text, index } from 'drizzle-orm/sqlite-core'
 
 import { supplementToSupplementStack } from './user'
 import { dailySupplement } from './daily-logs'
@@ -321,6 +321,7 @@ export const ingredientToGroceryStore = createTable(
       onDelete: 'cascade',
     }),
   },
+  (table) => [index('ingredient_to_grocery_store_ingredient_id_index').on(table.ingredientId)],
 )
 
 export const groceryStoreRelations = relations(groceryStore, ({ many }) => ({

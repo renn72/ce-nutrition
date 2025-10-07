@@ -1,4 +1,5 @@
 import { env } from '@/env'
+import { instrumentDrizzle } from '@kubiks/otel-drizzle'
 import { createClient, type Client } from '@libsql/client'
 import { drizzle } from 'drizzle-orm/libsql'
 import { sqliteTableCreator } from 'drizzle-orm/sqlite-core'
@@ -24,3 +25,5 @@ export const client =
 if (env.NODE_ENV !== 'production') globalForDb.client = client
 
 export const db = drizzle(client, { schema })
+
+instrumentDrizzle(client, { dbSystem: 'sqlite', maxQueryTextLength: 3000 })

@@ -29,7 +29,11 @@ export const recipe = createTable('recipe', {
   favouriteAt: int('favourite_at', { mode: 'timestamp' }),
   deletedAt: int('deleted_at', { mode: 'timestamp' }),
   hiddenAt: int('hidden_at', { mode: 'timestamp' }),
-})
+},
+  (table) => [index('recipe_user_id_idx').on(table.creatorId),
+    index('recipe_is_user_recipe_idx').on(table.isUserRecipe),
+  ],
+)
 
 export const recipeToIngredient = createTable('recipe_to_ingredient', {
   id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
@@ -52,7 +56,9 @@ export const recipeToIngredient = createTable('recipe_to_ingredient', {
   serveUnit: text('serve_unit').notNull(),
   note: text('note'),
   isUserCreated: int('is_user_created', { mode: 'boolean' }).default(false),
-})
+},
+  (table) => [index('recipe_to_ingredient_recipe_id_index').on(table.recipeId)],
+)
 
 export const recipeToIngredientRelations = relations(
   recipeToIngredient,
