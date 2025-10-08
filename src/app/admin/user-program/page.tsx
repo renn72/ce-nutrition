@@ -18,7 +18,7 @@ import {
 	CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 
-import { getMealCals } from '@/lib/utils'
+import { getMealMacro  } from '@/lib/utils'
 
 const UserInfo = ({ userId }: { userId: string }) => {
 	const ctx = api.useUtils()
@@ -109,13 +109,13 @@ const UserInfo = ({ userId }: { userId: string }) => {
 				<Card
 					key={plan.id}
 					className={cn(
-						'w-full max-w-screen-xl rounded-lg',
+						'w-full max-w-screen-xl rounded-lg px-6 pt-3 pb-6 shadow-sm',
 						plan.isActive ? ' border-green-500/90' : '',
 					)}
 				>
 					<Collapsible>
 						<CardHeader className='pb-2 flex flex-col justify-between relative'>
-							<CollapsibleTrigger className='absolute bottom-0 right-1/2 -translate-x-1/2'>
+							<CollapsibleTrigger className='absolute -bottom-6 right-1/2 -translate-x-1/2'>
 								<ChevronDown size={40} />
 							</CollapsibleTrigger>
 							<div
@@ -232,14 +232,41 @@ const UserInfo = ({ userId }: { userId: string }) => {
 
 							<div className='flex gap-4 items-center'>
 								<div className='text-xl font-medium'>{plan.name}</div>
-								<div className='font-normal rounded-full bg-accent-foreground/10 px-2 py-1 text-sm'>
+								<div className='font-normal rounded-full bg-accent-foreground/10 px-2 py-[2px] text-sm'>
+                  Cals:
 									{plan.userMeals
 										.reduce((acc, meal) => {
                       if (meal.mealIndex === null) return acc
-											return acc + Number(getMealCals(plan, meal.mealIndex))
+											return acc + Number(getMealMacro(plan, meal.mealIndex).cals)
 										}, 0)
 										.toFixed(0)}
-									cal
+								</div>
+								<div className='font-normal rounded-full bg-accent-foreground/10 px-2 py-[2px] text-sm'>
+                  Protein:
+									{plan.userMeals
+										.reduce((acc, meal) => {
+                      if (meal.mealIndex === null) return acc
+											return acc + Number(getMealMacro(plan, meal.mealIndex).protein)
+										}, 0)
+										.toFixed(0)}
+								</div>
+								<div className='font-normal rounded-full bg-accent-foreground/10 px-2 py-[2px] text-sm'>
+									Carbs:
+									{plan.userMeals
+										.reduce((acc, meal) => {
+                      if (meal.mealIndex === null) return acc
+											return acc + Number(getMealMacro(plan, meal.mealIndex).carbs)
+										}, 0)
+										.toFixed(0)}
+								</div>
+								<div className='font-normal rounded-full bg-accent-foreground/10 px-2 py-[2px] text-sm'>
+                  Fat:
+									{plan.userMeals
+										.reduce((acc, meal) => {
+                      if (meal.mealIndex === null) return acc
+											return acc + Number(getMealMacro(plan, meal.mealIndex).fat)
+										}, 0)
+										.toFixed(0)}
 								</div>
 							</div>
 						</CardHeader>
