@@ -98,6 +98,10 @@ const CreateUserPlan = ({
 				router.push(`/admin/user-program?user=${user}`)
 			}, 100)
 		},
+    onError: (e) => {
+      toast.error(JSON.stringify(e))
+      console.log(e)
+    },
 	})
 
 	const { mutate: finishPlan } = api.userPlan.finishPlan.useMutation()
