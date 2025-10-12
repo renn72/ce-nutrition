@@ -138,13 +138,13 @@ export default function Page({
 					</PopoverContent>
 				</Popover>
 			</div>
-			<div className='relative flex gap-2  overflow-x-auto'>
 				<Button
 					onClick={() => router.push(`/admin/user-image?user=${user}`)}
 					className='absolute top-2 left-2 z-20'
 				>
 					Back
 				</Button>
+			<div className='relative flex gap-2  overflow-x-auto'>
 				{images.map((image) => (
 					<ImageView
 						key={image.url}

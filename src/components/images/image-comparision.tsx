@@ -12,14 +12,19 @@ import { skipToken } from '@tanstack/react-query'
 import { atom, useAtom, useAtomValue } from 'jotai'
 import {
 	CirclePlus,
+	Copy,
 	Eraser,
 	Eye,
 	EyeOff,
 	RedoDot,
+	RotateCcw,
 	Save,
 	SquarePen,
+	SquareSquare,
 	Trash,
 	UndoDot,
+	ZoomIn,
+	ZoomOut,
 } from 'lucide-react'
 import {
 	ReactSketchCanvas,
@@ -215,21 +220,56 @@ const Controls = ({
 
 	return (
 		<div className='flex gap-2 items-center justify-center border px-2 py-[5px] my-1 rounded-md bg-primary/60 shadow-sm z-10 h-[24x]'>
-			<Button size='sm' onClick={() => zoomIn()}>
-				Zoom In
-			</Button>
-			<Button size='sm' onClick={() => zoomOut()}>
-				Zoom Out
-			</Button>
-			<Button size='sm' onClick={() => centerView()}>
-				Center
-			</Button>
-			<Button size='sm' onClick={() => resetTransform()}>
-				Reset
-			</Button>
-			<Button size='sm' onClick={handleDuplicate}>
-				Duplicate Position
-			</Button>
+			<Tooltip>
+				<TooltipTrigger asChild>
+					<Button size='sm' onClick={() => zoomIn()}>
+						<ZoomIn size={20}/>
+					</Button>
+				</TooltipTrigger>
+				<TooltipContent>
+					<p>Zoom In</p>
+				</TooltipContent>
+			</Tooltip>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button size='sm' onClick={() => zoomOut()}>
+            <ZoomOut size={20}/>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Zoom Out</p>
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button size='sm' onClick={() => centerView()}>
+            <SquareSquare size={20}/>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Center</p>
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button size='sm' onClick={() => resetTransform()}>
+            <RotateCcw size={20}/>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Reset</p>
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button size='sm' onClick={handleDuplicate}>
+            <Copy size={20} />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Duplicate Position</p>
+        </TooltipContent>
+      </Tooltip>
 		</div>
 	)
 }
@@ -532,7 +572,7 @@ const Overlay = ({
 	overlay: string
 	showOverlay: boolean
 }) => {
-  console.log('in')
+	console.log('in')
 	return (
 		<div
 			className={cn(
@@ -570,7 +610,7 @@ const ImageView = ({
 	const id = useId()
 	const searchParams = useSearchParams()
 	const imageType = searchParams.get('title')?.toLowerCase()
-  const paramsDataId = Number(searchParams.get('dataId'))
+	const paramsDataId = Number(searchParams.get('dataId'))
 
 	const { data: overlayRes } = api.dailyLog.getImageOverlay.useQuery(
 		paramsDataId && imageType
@@ -594,7 +634,7 @@ const ImageView = ({
 					setShowOverlay={setShowOverlay}
 				/>
 			)}
-			<div className='absolute top-14 left-1/2 -translate-x-1/2 z-10 text-sm'>
+			<div className='absolute top-14 left-1/2 -translate-x-1/2 z-10 text-xs bg-background/40 rounded-full px-3 pt-[4px] pb-[1px] leading-none '>
 				{date}
 			</div>
 
