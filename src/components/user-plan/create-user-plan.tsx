@@ -315,6 +315,7 @@ const CreateUserPlan = ({
 
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
 		if (userPlan) finishPlan(userPlan.id)
+    console.log('data', data)
 		createPlan({
 			name: data.name,
 			description: data.description,

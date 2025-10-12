@@ -273,12 +273,12 @@ const Meal = ({
 		return false
 	})
 
-	if (selectValue !== '') {
-		console.log(
-			'recipesData',
-			recipesData?.find((r) => r.id === Number(selectValue)),
-		)
-	}
+	// if (selectValue !== '') {
+	// 	console.log(
+	// 		'recipesData',
+	// 		recipesData?.find((r) => r.id === Number(selectValue)),
+	// 	)
+	// }
 
 	const recipeField = useFieldArray({
 		control: form.control,
@@ -730,6 +730,7 @@ const Meal = ({
 												(r) => r.id === Number(selectValue),
 											)
 											if (!r) return
+                      console.log('r', r)
 
 											recipeField.append({
 												recipeId: r.id.toString(),
@@ -739,18 +740,18 @@ const Meal = ({
 												index: recipeField.fields.length,
 												ingredients: r?.recipeToIngredient.map(
 													(ingredient, _ingredientIndex) => {
-														const serve = (
+														const serve = r?.calories === 0 ? 1 : (
 															(Number(ingredient.serveSize) *
 																Number(formCals)) /
 															Number(r?.calories)
-														).toFixed(2)
+														)
 														return {
 															ingredientId:
 																ingredient.ingredient?.id.toString(),
 															alternateId:
 																ingredient.alternateId?.toString() || null,
 															name: ingredient.ingredient?.name || '',
-															serveSize: serve,
+															serveSize: serve.toFixed(2),
 															serveUnit: ingredient.serveUnit,
 															note: ingredient.note || '',
 															ingredient: {
@@ -765,6 +766,7 @@ const Meal = ({
 											})
 
 											setIsOpen(false)
+                      setSelectValue('')
 										}}
 									>
 										Add

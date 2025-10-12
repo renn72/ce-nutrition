@@ -46,8 +46,6 @@ const UserInfo = ({ userId }: { userId: string }) => {
 			return 0
 		})
 
-	console.log('plans', plans)
-
 	const { mutate: saveAsPlan } = api.plan.saveAsPlan.useMutation({
 		onSuccess: () => {
 			toast.success('Saved as Plan')
@@ -100,8 +98,6 @@ const UserInfo = ({ userId }: { userId: string }) => {
 	}
 
 	if (!plans) return null
-
-  console.log('plans', plans)
 
 	return (
 		<div className='flex flex-col gap-4 items-center my-10 capitalize px-2 '>

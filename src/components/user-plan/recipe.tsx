@@ -75,7 +75,6 @@ const Ingredient = ({
   useEffect(() => {
     setSelected(ingredient?.ingredientId)
     setSelectedAlt(ingredient?.alternateId)
-    console.log('ingredient', ingredient)
   }, [ingredient])
 
 	const { data: allIngredients } = api.ingredient.getAll.useQuery()
@@ -369,12 +368,12 @@ const Recipe = ({
 	// const recipeDetails = getRecipeDetailsForUserPlan(recipe, ingredientsSize)
 	const recipeDetails = getRecipeDetailsForUserPlan(formRecipe, ingredientsSize)
 
-	if (
-		form.watch(`meals.${mealIndex}.recipes.${recipeIndex}`).recipeId === '4829'
-	) {
-		console.log('recipe', formRecipe)
-		console.log('ingredientsSize', ingredientsSize)
-	}
+	// if (
+	// 	form.watch(`meals.${mealIndex}.recipes.${recipeIndex}`).recipeId === '4829'
+	// ) {
+	// 	console.log('recipe', formRecipe)
+	// 	console.log('ingredientsSize', ingredientsSize)
+	// }
 
 	return (
 		<div className='flex flex-col gap-1 border rounded-md p-2 relative'>
