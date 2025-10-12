@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 
 import { userAtom } from '@/app/admin/_sidebar/sidebar'
 import { cn, getRecipeDetails } from '@/lib/utils'
-import type { GetPlanById, UserPlan } from '@/types'
+import type { GetPlanById, UserPlan, UserRecipe } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAtom } from 'jotai'
 import { Loader, PlusCircle } from 'lucide-react'
@@ -96,7 +96,7 @@ const CreateUserPlan = ({
 			ctx.invalidate()
 			setTimeout(() => {
 				router.push(`/admin/user-program?user=${user}`)
-			}, 400)
+			}, 100)
 		},
 	})
 
@@ -213,6 +213,8 @@ const CreateUserPlan = ({
 									description: '',
 									name: recipe.name || '',
 									recipeCategory: '',
+									isGlobal: false,
+									isUserRecipe: false,
 									recipeToIngredient: userPlan?.userIngredients
 										.filter(
 											(ingredient) =>
@@ -223,17 +225,34 @@ const CreateUserPlan = ({
 											id: -1,
 											createdAt: new Date(),
 											index: ingredientIndex,
+											isUserCreated: false,
 											note: '',
 											serveSize: ingredient.serve || '',
 											serveUnit: ingredient.serveUnit || '',
 											recipeId: -1,
 											alternateId: ingredient.alternateId,
 											ingredientId: ingredient.ingredientId || -1,
-											ingredient: {
+											ingredient:{
 												...ingredient.ingredient,
+                        createdAt:  ingredient.ingredient?.createdAt || new Date(),
+                        updatedAt:  ingredient.ingredient?.updatedAt || new Date(),
+                        favouriteAt: ingredient.ingredient?.favouriteAt || null,
+                        userId: ingredient.ingredient?.userId || null,
+												id: ingredient.ingredient?.id || -1,
+												name: ingredient.ingredient?.name || '',
+												notes: '',
+												ingredientToGroceryStore: [],
 											},
 											alternateIngredient: {
 												...ingredient.alternateIngredient,
+                        createdAt:  ingredient.alternateIngredient?.createdAt || new Date(),
+                        updatedAt:  ingredient.alternateIngredient?.updatedAt || new Date(),
+                        favouriteAt: ingredient.alternateIngredient?.favouriteAt || null,
+												notes: '',
+                        userId: ingredient.alternateIngredient?.userId ||null,
+												id: ingredient.alternateIngredient?.id || -1,
+												name: ingredient.alternateIngredient?.name || '',
+												ingredientToGroceryStore: [],
 											},
 										})),
 								},
@@ -315,7 +334,7 @@ const CreateUserPlan = ({
 
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
 		if (userPlan) finishPlan(userPlan.id)
-    console.log('data', data)
+		console.log('data', data)
 		createPlan({
 			name: data.name,
 			description: data.description,
@@ -361,7 +380,12 @@ const CreateUserPlan = ({
 		})
 	}
 
-  if (isLoading) return <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'><Loader className=' animate-spin' /></div>
+	if (isLoading)
+		return (
+			<div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
+				<Loader className=' animate-spin' />
+			</div>
+		)
 
 	return (
 		<div className='flex flex-col max-w-screen-xl w-full my-12'>
@@ -372,9 +396,9 @@ const CreateUserPlan = ({
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)}>
 						<div className='flex flex-col lg:gap-2 '>
-							<Button type='submit'
-                className='w-min mt-8'
-              >Save</Button>
+							<Button type='submit' className='w-min mt-8'>
+								Save
+							</Button>
 							<div className='flex flex-col lg:flex-row justify-between lg:gap-8'>
 								<FormField
 									control={form.control}
