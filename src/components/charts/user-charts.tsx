@@ -164,7 +164,7 @@ const Chart = ({
 	return (
 		<ChartContainer
 			config={chartConfig}
-			className='w-full min-h-[200px] max-h-[340px]'
+			className='w-full min-h-[110px] max-h-[340px]'
 		>
 			<LineChart data={data}>
 				<CartesianGrid vertical={false} />
@@ -396,7 +396,7 @@ const UserCharts = ({
 	return (
 		<div
 			className={cn(
-				'flex flex-col gap-2 p-2',
+				'flex flex-col gap-1 p-2',
 				isMoblie ? 'bg-card shadow-md' : 'rounded-lg border',
         className,
 			)}
@@ -411,7 +411,7 @@ const UserCharts = ({
 					}}
 				>
 					<SelectTrigger
-						className={cn('rounded-lg', isMoblie ? 'h-8 w-40 ' : 'h-10 w-48 ')}
+						className={cn('rounded-lg', isMoblie ? 'h-8 w-40 ' : 'h-8 w-48 ')}
 					>
 						<SelectValue placeholder='Select' />
 					</SelectTrigger>
@@ -430,7 +430,7 @@ const UserCharts = ({
 					}}
 				>
 					<SelectTrigger
-						className={cn('rounded-lg', isMoblie ? 'h-8 w-40 ' : 'h-10 w-48 ')}
+						className={cn('rounded-lg', isMoblie ? 'h-8 w-40 ' : 'h-8 w-48 ')}
 					>
 						<SelectValue placeholder='Select' />
 					</SelectTrigger>
@@ -472,6 +472,7 @@ const UserCharts = ({
 					scale={1}
 					postfix=''
 					isSmall={true}
+          height='h-6'
 				/>
 				<div className='flex gap-2 items-center'>
 					<CirclePlus
