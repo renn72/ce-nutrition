@@ -352,6 +352,7 @@ export const userSettings = createTable(
 		isSteps: int('is_steps', { mode: 'boolean' }).default(true),
 		isSauna: int('is_sauna', { mode: 'boolean' }).default(true),
 		isColdPlunge: int('is_cold_plunge', { mode: 'boolean' }).default(true),
+    isMobility: int('is_mobility', { mode: 'boolean' }).default(false),
 	},
 	(table) => [index('user_settings_user_id_idx').on(table.userId)],
 )
