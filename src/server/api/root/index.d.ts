@@ -1610,6 +1610,23 @@ declare const userSettings: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             identity: undefined;
             generated: undefined;
         }, {}, {}>;
+        isMobility: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "is_mobility";
+            tableName: "user_settings";
+            dataType: "boolean";
+            columnType: "SQLiteBoolean";
+            data: boolean;
+            driverParam: number;
+            notNull: false;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
     };
     dialect: "sqlite";
 }>;
@@ -12425,6 +12442,25 @@ declare const dailyLog: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
         }, {}, {
             length: number | undefined;
         }>;
+        mobility: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "mobility";
+            tableName: "daily_log";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
         coldPlunge: drizzle_orm_sqlite_core.SQLiteColumn<{
             name: "cold_plunge";
             tableName: "daily_log";
@@ -13875,6 +13911,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 posing: string | null;
                 steps: string | null;
                 sauna: string | null;
+                mobility: string | null;
                 coldPlunge: string | null;
                 cardioType: string | null;
                 frontImage: string | null;
@@ -14066,6 +14103,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 posing: string | null;
                 steps: string | null;
                 sauna: string | null;
+                mobility: string | null;
                 coldPlunge: string | null;
                 cardioType: string | null;
                 frontImage: string | null;
@@ -14255,6 +14293,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 posing: string | null;
                 steps: string | null;
                 sauna: string | null;
+                mobility: string | null;
                 coldPlunge: string | null;
                 cardioType: string | null;
                 frontImage: string | null;
@@ -14299,6 +14338,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 posing: string | null;
                 steps: string | null;
                 sauna: string | null;
+                mobility: string | null;
                 coldPlunge: string | null;
                 cardioType: string | null;
                 frontImage: string | null;
@@ -15562,6 +15602,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     isSteps: boolean | null;
                     isSauna: boolean | null;
                     isColdPlunge: boolean | null;
+                    isMobility: boolean | null;
                 };
                 supplementStacks: {
                     id: number;
@@ -15815,6 +15856,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     isSteps: boolean | null;
                     isSauna: boolean | null;
                     isColdPlunge: boolean | null;
+                    isMobility: boolean | null;
                 };
                 supplementStacks: {
                     id: number;
@@ -16099,6 +16141,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     isSteps: boolean | null;
                     isSauna: boolean | null;
                     isColdPlunge: boolean | null;
+                    isMobility: boolean | null;
                 };
                 supplementStacks: {
                     id: number;
@@ -20775,6 +20818,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 posing: string | null;
                 steps: string | null;
                 sauna: string | null;
+                mobility: string | null;
                 coldPlunge: string | null;
                 cardioType: string | null;
                 frontImage: string | null;
@@ -20966,6 +21010,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 posing: string | null;
                 steps: string | null;
                 sauna: string | null;
+                mobility: string | null;
                 coldPlunge: string | null;
                 cardioType: string | null;
                 frontImage: string | null;
@@ -21155,6 +21200,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 posing: string | null;
                 steps: string | null;
                 sauna: string | null;
+                mobility: string | null;
                 coldPlunge: string | null;
                 cardioType: string | null;
                 frontImage: string | null;
@@ -21199,6 +21245,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 posing: string | null;
                 steps: string | null;
                 sauna: string | null;
+                mobility: string | null;
                 coldPlunge: string | null;
                 cardioType: string | null;
                 frontImage: string | null;
@@ -22462,6 +22509,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     isSteps: boolean | null;
                     isSauna: boolean | null;
                     isColdPlunge: boolean | null;
+                    isMobility: boolean | null;
                 };
                 supplementStacks: {
                     id: number;
@@ -22715,6 +22763,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     isSteps: boolean | null;
                     isSauna: boolean | null;
                     isColdPlunge: boolean | null;
+                    isMobility: boolean | null;
                 };
                 supplementStacks: {
                     id: number;
@@ -22999,6 +23048,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     isSteps: boolean | null;
                     isSauna: boolean | null;
                     isColdPlunge: boolean | null;
+                    isMobility: boolean | null;
                 };
                 supplementStacks: {
                     id: number;

@@ -264,6 +264,7 @@ var dailyLog = createTable2(
     posing: text2("posing"),
     steps: text2("steps"),
     sauna: text2("sauna"),
+    mobility: text2("mobility"),
     coldPlunge: text2("cold_plunge"),
     cardioType: text2("cardio_type"),
     image: text2("image"),
@@ -957,7 +958,8 @@ var userSettings = createTable6(
     isNotes: int6("is_notes", { mode: "boolean" }).default(true),
     isSteps: int6("is_steps", { mode: "boolean" }).default(true),
     isSauna: int6("is_sauna", { mode: "boolean" }).default(true),
-    isColdPlunge: int6("is_cold_plunge", { mode: "boolean" }).default(true)
+    isColdPlunge: int6("is_cold_plunge", { mode: "boolean" }).default(true),
+    isMobility: int6("is_mobility", { mode: "boolean" }).default(false)
   },
   (table) => [index6("user_settings_user_id_idx").on(table.userId)]
 );
