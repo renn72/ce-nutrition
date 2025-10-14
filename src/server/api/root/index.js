@@ -5291,6 +5291,12 @@ var update = {
     }).where(eq6(userSettings.userId, input.id));
     return res;
   }),
+  updateIsMobility: protectedProcedure.input(z11.object({ id: z11.string(), isMobility: z11.boolean() })).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.update(userSettings).set({
+      isMobility: input.isMobility
+    }).where(eq6(userSettings.userId, input.id));
+    return res;
+  }),
   updateIsLiss: protectedProcedure.input(z11.object({ id: z11.string(), isLiss: z11.boolean() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.update(userSettings).set({
       isLiss: input.isLiss
@@ -7298,6 +7304,41 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ liss: input.liss }).where(
+      and4(
+        eq14(dailyLog.date, input.date),
+        eq14(dailyLog.userId, ctx.session.user.id)
+      )
+    );
+    return res;
+  }),
+  updateMobility: protectedProcedure.input(
+    z20.object({
+      date: z20.string(),
+      mobility: z20.string()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    const log2 = await ctx.db.query.dailyLog.findFirst({
+      where: and4(
+        eq14(dailyLog.date, input.date),
+        eq14(dailyLog.userId, ctx.session.user.id)
+      )
+    });
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "Update Mobility",
+      notes: JSON.stringify(input),
+      objectId: null
+    });
+    if (!log2) {
+      const res2 = await ctx.db.insert(dailyLog).values({
+        date: input.date,
+        mobility: input.mobility,
+        userId: ctx.session.user.id
+      });
+      return res2;
+    }
+    const res = await ctx.db.update(dailyLog).set({ mobility: input.mobility }).where(
       and4(
         eq14(dailyLog.date, input.date),
         eq14(dailyLog.userId, ctx.session.user.id)

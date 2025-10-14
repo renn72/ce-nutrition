@@ -305,6 +305,42 @@ const Liss = ({ currentUser }: { currentUser: GetUserById }) => {
     </div>
   )
 }
+const Mobility = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isMobility, setIsMobility] = useState(currentUser.settings.isMobility)
+  const { mutate: updateIsLiss } = api.user.updateIsMobility.useMutation({
+    onSuccess: () => {
+      toast.success('Updated')
+    },
+    onSettled: () => {
+      ctx.user.invalidate()
+    },
+    onError: (err) => {
+      toast.error('error')
+      ctx.user.invalidate()
+    },
+  })
+  return (
+    <div className='flex flex-row items-center justify-between rounded-lg border p-3 gap-4 shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>Mobility</Label>
+        <div className='text-sm text-muted-foreground'>
+          Enable mobility tracking.
+        </div>
+      </div>
+      <Switch
+        checked={isMobility === true}
+        onCheckedChange={(checked) => {
+          setIsMobility(checked)
+          updateIsLiss({
+            id: currentUser.id,
+            isMobility: checked,
+          })
+        }}
+      />
+    </div>
+  )
+}
 const Notes = ({ currentUser }: { currentUser: GetUserById }) => {
   const ctx = api.useUtils()
   const [isNote, setIsNote] = useState(currentUser.settings.isNotes)
@@ -547,6 +583,7 @@ const Settings = ({ user }: { user: GetUserById }) => {
         <WeightTraining currentUser={user} />
         <Hiit currentUser={user} />
         <Liss currentUser={user} />
+        <Mobility currentUser={user} />
         <BloodGlucose currentUser={user} />
         <Posing currentUser={user} />
         <Notes currentUser={user} />

@@ -14641,6 +14641,14 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        updateMobility: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                mobility: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         updateWaistMeasurement: _trpc_server.TRPCMutationProcedure<{
             input: {
                 date: string;
@@ -15095,6 +15103,14 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             input: {
                 id: string;
                 isHiit: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateIsMobility: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: string;
+                isMobility: boolean;
             };
             output: _libsql_client.ResultSet;
             meta: object;
@@ -21548,6 +21564,14 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        updateMobility: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                mobility: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         updateWaistMeasurement: _trpc_server.TRPCMutationProcedure<{
             input: {
                 date: string;
@@ -22002,6 +22026,14 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             input: {
                 id: string;
                 isHiit: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateIsMobility: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: string;
+                isMobility: boolean;
             };
             output: _libsql_client.ResultSet;
             meta: object;

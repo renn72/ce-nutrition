@@ -29,6 +29,7 @@ const UserDailyLogsTable = ({ dailyLogs, className }: { dailyLogs: GetAllDailyLo
     cardio: recentLogs.some((log) => log.cardio),
     cardioType: recentLogs.some((log) => log.cardioType),
     liss: recentLogs.some((log) => log.liss),
+    mobility: recentLogs.some((log) => log.mobility),
     hiit: recentLogs.some((log) => log.hiit),
     weightTraining: recentLogs.some((log) => log.weight),
     posing: recentLogs.some((log) => log.posing),
@@ -55,6 +56,7 @@ const UserDailyLogsTable = ({ dailyLogs, className }: { dailyLogs: GetAllDailyLo
             {columnsToShow.cardio && <TableHead>Cardio</TableHead>}
             {columnsToShow.cardioType && <TableHead>Cardio Type</TableHead>}
             {columnsToShow.liss && <TableHead>LISS</TableHead>}
+            {columnsToShow.mobility && <TableHead>Mobility</TableHead>}
             {columnsToShow.hiit && <TableHead>HIIT</TableHead>}
             {columnsToShow.weightTraining && <TableHead>Weight Training</TableHead>}
             {columnsToShow.posing && <TableHead>Posing</TableHead>}
@@ -122,6 +124,7 @@ const UserDailyLogsTable = ({ dailyLogs, className }: { dailyLogs: GetAllDailyLo
                     <TableCell>{log.cardioType}</TableCell>
                   )}
                   {columnsToShow.liss && <TableCell>{log.liss}</TableCell>}
+                  {columnsToShow.mobility && <TableCell>{log.mobility}</TableCell>}
                   {columnsToShow.hiit && <TableCell>{log.hiit}</TableCell>}
                   {columnsToShow.weightTraining && (
                     <TableCell>{log.weight}</TableCell>

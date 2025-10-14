@@ -112,6 +112,18 @@ export const update = {
 
 			return res
 		}),
+	updateIsMobility: protectedProcedure
+		.input(z.object({ id: z.string(), isMobility: z.boolean() }))
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(userSettings)
+				.set({
+          isMobility: input.isMobility,
+				})
+				.where(eq(userSettings.userId, input.id))
+
+			return res
+		}),
 	updateIsLiss: protectedProcedure
 		.input(z.object({ id: z.string(), isLiss: z.boolean() }))
 		.mutation(async ({ ctx, input }) => {

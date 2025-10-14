@@ -3,7 +3,7 @@
 import { api } from '@/trpc/react'
 
 import type { GetDailyLogById, GetUserById } from '@/types'
-import {  Settings } from 'lucide-react'
+import { Settings } from 'lucide-react'
 import { Link } from 'next-view-transitions'
 
 import { BloodGlucose } from './_field/blood-glucose'
@@ -12,6 +12,7 @@ import { Hiit } from './_field/hiit'
 import { ImageBox } from './_field/image-box'
 import { ImageBoxBodyBuilder } from './_field/image-box-bodybuilder'
 import { Liss } from './_field/liss'
+import { Mobility } from './_field/mobility'
 import { Nap } from './_field/nap'
 import { Notes } from './_field/notes'
 import { Posing } from './_field/posing'
@@ -35,11 +36,15 @@ const DailyLogForm = ({
 	date?: string | null
 	currentUser: GetUserById
 }) => {
-  const isBodyBuilderImages = currentUser.roles.find((role) => role.name === 'body-builder-images') ? true : false
+	const isBodyBuilderImages = currentUser.roles.find(
+		(role) => role.name === 'body-builder-images',
+	)
+		? true
+		: false
 
-  const userName = currentUser.name?.replaceAll(' ', '-') ?? ''
+	const userName = currentUser.name?.replaceAll(' ', '-') ?? ''
 
-  if (!todaysLog) return null
+	if (!todaysLog) return null
 
 	return (
 		<div className='flex flex-col gap-3 px-1 relative mt-2 mb-16'>
@@ -75,6 +80,9 @@ const DailyLogForm = ({
 				{currentUser?.settings?.isLiss ? (
 					<Liss todaysLog={todaysLog} prevLog={prevLog} date={date} />
 				) : null}
+				{currentUser?.settings?.isMobility ? (
+					<Mobility todaysLog={todaysLog} prevLog={prevLog} date={date} />
+				) : null}
 				{currentUser?.settings?.isPosing ? (
 					<Posing todaysLog={todaysLog} prevLog={prevLog} date={date} />
 				) : null}
@@ -92,62 +100,60 @@ const DailyLogForm = ({
 				<ImageBox
 					todaysLog={todaysLog}
 					position='front'
-          userName={userName}
-          currentUser={currentUser}
+					userName={userName}
+					currentUser={currentUser}
 				/>
 				<ImageBox
 					todaysLog={todaysLog}
 					position='side'
-          userName={userName}
-          currentUser={currentUser}
+					userName={userName}
+					currentUser={currentUser}
 				/>
 				<ImageBox
 					todaysLog={todaysLog}
 					position='back'
-          userName={userName}
-          currentUser={currentUser}
+					userName={userName}
+					currentUser={currentUser}
 				/>
-        {
-          isBodyBuilderImages ? (
-            <>
-              <ImageBoxBodyBuilder
-                todaysLog={todaysLog}
-                position='frontDouble'
-                currentUser={currentUser}
-              />
-              <ImageBoxBodyBuilder
-                todaysLog={todaysLog}
-                position='sideChest'
-                currentUser={currentUser}
-              />
-              <ImageBoxBodyBuilder
-                todaysLog={todaysLog}
-                position='sideTri'
-                currentUser={currentUser}
-              />
-              <ImageBoxBodyBuilder
-                todaysLog={todaysLog}
-                position='rearDouble'
-                currentUser={currentUser}
-              />
-              <ImageBoxBodyBuilder
-                todaysLog={todaysLog}
-                position='absThighs'
-                currentUser={currentUser}
-              />
-              <ImageBoxBodyBuilder
-                todaysLog={todaysLog}
-                position='frontVacum'
-                currentUser={currentUser}
-              />
-              <ImageBoxBodyBuilder
-                todaysLog={todaysLog}
-                position='favourite'
-                currentUser={currentUser}
-              />
-            </>
-          ) : null
-        }
+				{isBodyBuilderImages ? (
+					<>
+						<ImageBoxBodyBuilder
+							todaysLog={todaysLog}
+							position='frontDouble'
+							currentUser={currentUser}
+						/>
+						<ImageBoxBodyBuilder
+							todaysLog={todaysLog}
+							position='sideChest'
+							currentUser={currentUser}
+						/>
+						<ImageBoxBodyBuilder
+							todaysLog={todaysLog}
+							position='sideTri'
+							currentUser={currentUser}
+						/>
+						<ImageBoxBodyBuilder
+							todaysLog={todaysLog}
+							position='rearDouble'
+							currentUser={currentUser}
+						/>
+						<ImageBoxBodyBuilder
+							todaysLog={todaysLog}
+							position='absThighs'
+							currentUser={currentUser}
+						/>
+						<ImageBoxBodyBuilder
+							todaysLog={todaysLog}
+							position='frontVacum'
+							currentUser={currentUser}
+						/>
+						<ImageBoxBodyBuilder
+							todaysLog={todaysLog}
+							position='favourite'
+							currentUser={currentUser}
+						/>
+					</>
+				) : null}
 			</div>
 		</div>
 	)

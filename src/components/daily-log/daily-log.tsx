@@ -84,6 +84,7 @@ const Logs = ({
 	const isBloodGlucose = isAdmin || currentUser?.settings?.isBloodGlucose
 	const isHiit = isAdmin || currentUser?.settings?.isHiit
 	const isLiss = isAdmin || currentUser?.settings?.isLiss
+  const isMobility = isAdmin || currentUser?.settings?.isMobility
 	const isWeightTraining = isAdmin || currentUser?.settings?.isWeightTraining
 	const isSauna = isAdmin || currentUser?.settings?.isSauna
 	const isColdPlunge = isAdmin || currentUser?.settings?.isColdPlunge
@@ -170,6 +171,14 @@ const Logs = ({
 					<Text
 						title='LISS'
 						text={todaysDailyLog?.liss}
+						isNumber={true}
+						fixed={0}
+					/>
+				)}
+				{isMobility && (
+					<Text
+						title='Mobility'
+						text={todaysDailyLog?.mobility}
 						isNumber={true}
 						fixed={0}
 					/>
