@@ -783,6 +783,41 @@ const Liss = ({ currentUser }: { currentUser: GetUserById }) => {
 		</DailyLogToggleWrapper>
 	)
 }
+const Mobility = ({ currentUser }: { currentUser: GetUserById }) => {
+	const ctx = api.useUtils()
+	const [isMobility, setIsMobility] = useState(
+		currentUser.settings.isMobility,
+	)
+	const { mutate: updateIsMobility } = api.user.updateIsMobility.useMutation({
+		onSuccess: () => {
+			toast.success('Updated')
+		},
+		onSettled: () => {
+			ctx.user.invalidate()
+		},
+		onError: (err) => {
+			toast.error('error')
+			ctx.user.invalidate()
+		},
+	})
+	return (
+		<DailyLogToggleWrapper
+			title='Mobility'
+			description='Enable mobility tracking.'
+		>
+			<Switch
+				checked={isMobility === true}
+				onCheckedChange={(checked) => {
+					setIsMobility(checked)
+					updateIsMobility({
+						id: currentUser.id,
+						isMobility: checked,
+					})
+				}}
+			/>
+		</DailyLogToggleWrapper>
+	)
+}
 const Notes = ({ currentUser }: { currentUser: GetUserById }) => {
 	const ctx = api.useUtils()
 	const [isNote, setIsNote] = useState(currentUser.settings.isNotes)
@@ -947,6 +982,7 @@ const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
 				<WeightTraining currentUser={currentUser} />
 				<Hiit currentUser={currentUser} />
 				<Liss currentUser={currentUser} />
+        <Mobility currentUser={currentUser} />
 				<Sauna currentUser={currentUser} />
 				<ColdPlunge currentUser={currentUser} />
 				<BloodGlucose currentUser={currentUser} />
