@@ -225,7 +225,7 @@ const Ingredient = ({
 											/>
 
 											<XCircle
-												size={18}
+												size={28}
 												className='text-secondary-foreground shrink-0'
 												onClick={() => {
 													setSelected(null)
@@ -263,7 +263,7 @@ const Ingredient = ({
 												size={18}
 												className='text-secondary-foreground shrink-0'
 												onClick={() => {
-													setSelected(null)
+													setSelectedAlt(null)
 												}}
 											/>
 										</div>

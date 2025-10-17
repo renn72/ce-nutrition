@@ -182,7 +182,7 @@ export const userPlanRouter = createTRPCRouter({
           .values(
             ingredients.map((ingredient) => ({
               ...ingredient,
-              alternateId: ingredient.alternateId === 0 ? null : Number(ingredient.alternateId),
+              alternateId: ingredient.alternateId === 0 || ingredient.alternateId === null ? null : Number(ingredient.alternateId),
               userPlanId: resId,
             })),
           )

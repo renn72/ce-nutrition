@@ -6369,7 +6369,7 @@ var userPlanRouter = createTRPCRouter({
       ctx.db.insert(userIngredient).values(
         ingredients.map((ingredient2) => ({
           ...ingredient2,
-          alternateId: ingredient2.alternateId === 0 ? null : Number(ingredient2.alternateId),
+          alternateId: ingredient2.alternateId === 0 || ingredient2.alternateId === null ? null : Number(ingredient2.alternateId),
           userPlanId: resId
         }))
       ).returning({ id: userIngredient.id })

@@ -35,6 +35,13 @@ const UserInfo = ({ userId }: { userId: string }) => {
 			ctx.invalidate()
 		},
 	})
+  const { mutate: deletePlan } = api.userPlan.delete.useMutation({
+    onSuccess: () => {
+      toast.success('Deleted')
+      ctx.invalidate()
+    },
+  })
+
 	const { data: currentUser } = api.user.get.useQuery(userId)
 	const plans = currentUser?.userPlans
 		.filter((_plan) => true)
@@ -162,6 +169,16 @@ const UserInfo = ({ userId }: { userId: string }) => {
 										}}
 									>
 										Reactivate Plan
+									</Button>
+                  <Button
+                    className='font-semibold'
+										variant='destructive'
+										size='sm'
+										onClick={() => {
+											deletePlan(plan.id)
+										}}
+									>
+										Delete
 									</Button>
 								</div>
 							</div>

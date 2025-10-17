@@ -475,7 +475,9 @@ const CreateUserPlan = ({
 							serve: ingredient.serveSize,
 							serveUnit: ingredient.serveUnit,
 							alternateId:
-								ingredient.alternateId === '' || ingredient.alternateId === '0'
+								ingredient.alternateId === '' ||
+								ingredient.alternateId === '0' ||
+								ingredient.alternateId === null
 									? null
 									: Number(ingredient.alternateId),
 							note: ingredient.note || '',
@@ -494,7 +496,7 @@ const CreateUserPlan = ({
 			</div>
 		)
 
-  if (userId === '') return <div>Select a user</div>
+	if (userId === '') return <div>Select a user</div>
 
 	return (
 		<div className='flex flex-col max-w-screen-xl w-full my-12'>
@@ -507,6 +509,15 @@ const CreateUserPlan = ({
 						<div className='flex flex-col lg:gap-2 '>
 							<Button type='submit' className='w-min mt-8'>
 								Save
+							</Button>
+							<Button
+								className='w-min mt-8'
+								onClick={(e) => {
+									e.preventDefault()
+									console.log('form', form.getValues())
+								}}
+							>
+								log
 							</Button>
 							<div className='flex flex-col lg:flex-row justify-between lg:gap-8'>
 								<FormField
