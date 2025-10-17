@@ -494,6 +494,8 @@ const CreateUserPlan = ({
 			</div>
 		)
 
+  if (userId === '') return <div>Select a user</div>
+
 	return (
 		<div className='flex flex-col max-w-screen-xl w-full my-12'>
 			<div className={cn('flex gap-8 items-center', userPlan ? 'hidden' : '')}>
