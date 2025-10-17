@@ -6244,9 +6244,10 @@ var userPlanRouter = createTRPCRouter({
         isActive: false,
         finishedAt: /* @__PURE__ */ new Date()
       }).where(eq12(userPlan.id, input));
+      console.log({ finishPlan: res });
       return res;
     } catch (e) {
-      console.log(e);
+      console.log({ finishPlanError: e });
       return e;
     }
   }),
@@ -6397,6 +6398,7 @@ var userPlanRouter = createTRPCRouter({
         isRead: false
       });
     }
+    console.log({ res, batchRes });
     return { res, batchRes };
   })
 });

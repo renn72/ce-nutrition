@@ -30,9 +30,10 @@ export const userPlanRouter = createTRPCRouter({
             finishedAt: new Date(),
           })
           .where(eq(userPlan.id, input))
+        console.log({ finishPlan: res })
         return res
       } catch (e) {
-        console.log(e)
+        console.log({ finishPlanError: e })
         return e
       }
     }),
@@ -211,6 +212,7 @@ export const userPlanRouter = createTRPCRouter({
           isRead: false,
 				})
 			}
+      console.log({ res, batchRes })
       return { res, batchRes }
     }),
 })
