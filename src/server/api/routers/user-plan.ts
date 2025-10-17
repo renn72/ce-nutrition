@@ -137,8 +137,8 @@ export const userPlanRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const creatorId = ctx.session.user.id
       const { meals, ...data } = input
-      const recipes = meals.map((meal) => meal.recipes).flat()
-      const ingredients = recipes.map((recipe) => recipe.ingredients).flat()
+      const recipes = meals.flatMap((meal) => meal.recipes)
+      const ingredients = recipes.flatMap((recipe) => recipe.ingredients)
 
       const res = await ctx.db
         .insert(userPlan)

@@ -9794,7 +9794,7 @@ declare const userIngredient: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             columnType: "SQLiteInteger";
             data: number;
             driverParam: number;
-            notNull: false;
+            notNull: true;
             hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
@@ -10017,7 +10017,7 @@ declare const userRecipeRelations: drizzle_orm.Relations<"user_recipe", {
     dailyMeal: drizzle_orm.One<"daily_meal", false>;
 }>;
 declare const userIngredientRelations: drizzle_orm.Relations<"user_ingredient", {
-    ingredient: drizzle_orm.One<"ingredient", false>;
+    ingredient: drizzle_orm.One<"ingredient", true>;
     alternateIngredient: drizzle_orm.One<"ingredient", false>;
     userPlan: drizzle_orm.One<"user_plan", false>;
     dailyMeal: drizzle_orm.One<"daily_meal", false>;
@@ -14017,7 +14017,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                         updatedAt: Date | null;
                         serveUnit: string | null;
                         isUserCreated: boolean | null;
-                        ingredientId: number | null;
+                        ingredientId: number;
                         alternateId: number | null;
                         serve: string | null;
                         note: string | null;
@@ -14058,7 +14058,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                             isPrivate: boolean | null;
                             viewableBy: string | null;
                             intervale: string | null;
-                        } | null;
+                        };
                     }[];
                 }[];
                 waterLogs: {
@@ -14209,7 +14209,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                         updatedAt: Date | null;
                         serveUnit: string | null;
                         isUserCreated: boolean | null;
-                        ingredientId: number | null;
+                        ingredientId: number;
                         alternateId: number | null;
                         serve: string | null;
                         note: string | null;
@@ -14250,7 +14250,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                             isPrivate: boolean | null;
                             viewableBy: string | null;
                             intervale: string | null;
-                        } | null;
+                        };
                     }[];
                 }[];
                 waterLogs: {
@@ -14444,7 +14444,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                         updatedAt: Date | null;
                         serveUnit: string | null;
                         isUserCreated: boolean | null;
-                        ingredientId: number | null;
+                        ingredientId: number;
                         alternateId: number | null;
                         serve: string | null;
                         note: string | null;
@@ -14485,7 +14485,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                             isPrivate: boolean | null;
                             viewableBy: string | null;
                             intervale: string | null;
-                        } | null;
+                        };
                     }[];
                 }[];
                 waterLogs: {
@@ -15513,7 +15513,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                         updatedAt: Date | null;
                         serveUnit: string | null;
                         isUserCreated: boolean | null;
-                        ingredientId: number | null;
+                        ingredientId: number;
                         alternateId: number | null;
                         serve: string | null;
                         note: string | null;
@@ -15554,7 +15554,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                             isPrivate: boolean | null;
                             viewableBy: string | null;
                             intervale: string | null;
-                        } | null;
+                        };
                         alternateIngredient: {
                             id: number;
                             name: string | null;
@@ -15767,7 +15767,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                         updatedAt: Date | null;
                         serveUnit: string | null;
                         isUserCreated: boolean | null;
-                        ingredientId: number | null;
+                        ingredientId: number;
                         alternateId: number | null;
                         serve: string | null;
                         note: string | null;
@@ -15808,7 +15808,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                             isPrivate: boolean | null;
                             viewableBy: string | null;
                             intervale: string | null;
-                        } | null;
+                        };
                         alternateIngredient: {
                             id: number;
                             name: string | null;
@@ -16052,7 +16052,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                         updatedAt: Date | null;
                         serveUnit: string | null;
                         isUserCreated: boolean | null;
-                        ingredientId: number | null;
+                        ingredientId: number;
                         alternateId: number | null;
                         serve: string | null;
                         note: string | null;
@@ -16093,7 +16093,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                             isPrivate: boolean | null;
                             viewableBy: string | null;
                             intervale: string | null;
-                        } | null;
+                        };
                         alternateIngredient: {
                             id: number;
                             name: string | null;
@@ -18214,7 +18214,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 updatedAt: Date | null;
                 serveUnit: string | null;
                 isUserCreated: boolean | null;
-                ingredientId: number | null;
+                ingredientId: number;
                 alternateId: number | null;
                 serve: string | null;
                 note: string | null;
@@ -18255,7 +18255,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     isPrivate: boolean | null;
                     viewableBy: string | null;
                     intervale: string | null;
-                } | null;
+                };
                 alternateIngredient: {
                     id: number;
                     name: string | null;
@@ -18352,7 +18352,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     updatedAt: Date | null;
                     serveUnit: string | null;
                     isUserCreated: boolean | null;
-                    ingredientId: number | null;
+                    ingredientId: number;
                     alternateId: number | null;
                     serve: string | null;
                     note: string | null;
@@ -18393,7 +18393,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                         isPrivate: boolean | null;
                         viewableBy: string | null;
                         intervale: string | null;
-                    } | null;
+                    };
                     alternateIngredient: {
                         id: number;
                         name: string | null;
@@ -20940,7 +20940,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                         updatedAt: Date | null;
                         serveUnit: string | null;
                         isUserCreated: boolean | null;
-                        ingredientId: number | null;
+                        ingredientId: number;
                         alternateId: number | null;
                         serve: string | null;
                         note: string | null;
@@ -20981,7 +20981,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                             isPrivate: boolean | null;
                             viewableBy: string | null;
                             intervale: string | null;
-                        } | null;
+                        };
                     }[];
                 }[];
                 waterLogs: {
@@ -21132,7 +21132,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                         updatedAt: Date | null;
                         serveUnit: string | null;
                         isUserCreated: boolean | null;
-                        ingredientId: number | null;
+                        ingredientId: number;
                         alternateId: number | null;
                         serve: string | null;
                         note: string | null;
@@ -21173,7 +21173,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                             isPrivate: boolean | null;
                             viewableBy: string | null;
                             intervale: string | null;
-                        } | null;
+                        };
                     }[];
                 }[];
                 waterLogs: {
@@ -21367,7 +21367,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                         updatedAt: Date | null;
                         serveUnit: string | null;
                         isUserCreated: boolean | null;
-                        ingredientId: number | null;
+                        ingredientId: number;
                         alternateId: number | null;
                         serve: string | null;
                         note: string | null;
@@ -21408,7 +21408,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                             isPrivate: boolean | null;
                             viewableBy: string | null;
                             intervale: string | null;
-                        } | null;
+                        };
                     }[];
                 }[];
                 waterLogs: {
@@ -22436,7 +22436,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                         updatedAt: Date | null;
                         serveUnit: string | null;
                         isUserCreated: boolean | null;
-                        ingredientId: number | null;
+                        ingredientId: number;
                         alternateId: number | null;
                         serve: string | null;
                         note: string | null;
@@ -22477,7 +22477,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                             isPrivate: boolean | null;
                             viewableBy: string | null;
                             intervale: string | null;
-                        } | null;
+                        };
                         alternateIngredient: {
                             id: number;
                             name: string | null;
@@ -22690,7 +22690,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                         updatedAt: Date | null;
                         serveUnit: string | null;
                         isUserCreated: boolean | null;
-                        ingredientId: number | null;
+                        ingredientId: number;
                         alternateId: number | null;
                         serve: string | null;
                         note: string | null;
@@ -22731,7 +22731,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                             isPrivate: boolean | null;
                             viewableBy: string | null;
                             intervale: string | null;
-                        } | null;
+                        };
                         alternateIngredient: {
                             id: number;
                             name: string | null;
@@ -22975,7 +22975,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                         updatedAt: Date | null;
                         serveUnit: string | null;
                         isUserCreated: boolean | null;
-                        ingredientId: number | null;
+                        ingredientId: number;
                         alternateId: number | null;
                         serve: string | null;
                         note: string | null;
@@ -23016,7 +23016,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                             isPrivate: boolean | null;
                             viewableBy: string | null;
                             intervale: string | null;
-                        } | null;
+                        };
                         alternateIngredient: {
                             id: number;
                             name: string | null;
@@ -25137,7 +25137,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 updatedAt: Date | null;
                 serveUnit: string | null;
                 isUserCreated: boolean | null;
-                ingredientId: number | null;
+                ingredientId: number;
                 alternateId: number | null;
                 serve: string | null;
                 note: string | null;
@@ -25178,7 +25178,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     isPrivate: boolean | null;
                     viewableBy: string | null;
                     intervale: string | null;
-                } | null;
+                };
                 alternateIngredient: {
                     id: number;
                     name: string | null;
@@ -25275,7 +25275,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     updatedAt: Date | null;
                     serveUnit: string | null;
                     isUserCreated: boolean | null;
-                    ingredientId: number | null;
+                    ingredientId: number;
                     alternateId: number | null;
                     serve: string | null;
                     note: string | null;
@@ -25316,7 +25316,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                         isPrivate: boolean | null;
                         viewableBy: string | null;
                         intervale: string | null;
-                    } | null;
+                    };
                     alternateIngredient: {
                         id: number;
                         name: string | null;

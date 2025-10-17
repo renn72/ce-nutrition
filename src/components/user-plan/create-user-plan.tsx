@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 
 import { userAtom } from '@/app/admin/_sidebar/sidebar'
 import { cn, getRecipeDetails } from '@/lib/utils'
-import type { GetPlanById, UserPlan, UserRecipe } from '@/types'
+import type { GetPlanById, UserPlan } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAtom } from 'jotai'
 import { Loader, PlusCircle } from 'lucide-react'
@@ -93,15 +93,15 @@ const CreateUserPlan = ({
 	const { mutate: createPlan } = api.userPlan.create.useMutation({
 		onSuccess: () => {
 			toast.success('Created')
-			ctx.invalidate()
+			ctx.user.get.invalidate()
 			setTimeout(() => {
 				router.push(`/admin/user-program?user=${user}`)
 			}, 100)
 		},
-    onError: (e) => {
-      toast.error(JSON.stringify(e))
-      console.log(e)
-    },
+		onError: (e) => {
+			toast.error(JSON.stringify(e))
+			console.log(e)
+		},
 	})
 
 	const { mutate: finishPlan } = api.userPlan.finishPlan.useMutation()
@@ -173,6 +173,17 @@ const CreateUserPlan = ({
 				name: userPlan?.name || '',
 				description: userPlan?.description || '',
 				notes: userPlan?.notes || '',
+				image: userPlan?.image || '',
+				numberOfMeals: userPlan?.numberOfMeals || 0,
+				creatorId: userPlan?.creatorId || '',
+				isGlobal: false,
+				planCategory: '',
+				favouriteAt: userPlan?.favouriteAt || null,
+				deletedAt: userPlan?.deletedAt || null,
+				hiddenAt: userPlan?.hiddenAt || null,
+				createdAt: userPlan?.createdAt || new Date(),
+				updatedAt: userPlan?.updatedAt || new Date(),
+				creator: null,
 				meals:
 					userPlan?.userMeals.map((meal, mealIndex) => ({
 						id: -1,
@@ -225,7 +236,7 @@ const CreateUserPlan = ({
 												ingredient.recipeIndex === recipe.recipeIndex &&
 												ingredient.mealIndex === recipe.mealIndex,
 										)
-										.map((ingredient, ingredientIndex) => ({
+										?.map((ingredient, ingredientIndex) => ({
 											id: -1,
 											createdAt: new Date(),
 											index: ingredientIndex,
@@ -236,27 +247,119 @@ const CreateUserPlan = ({
 											recipeId: -1,
 											alternateId: ingredient.alternateId,
 											ingredientId: ingredient.ingredientId || -1,
-											ingredient:{
+											ingredient: {
 												...ingredient.ingredient,
-                        createdAt:  ingredient.ingredient?.createdAt || new Date(),
-                        updatedAt:  ingredient.ingredient?.updatedAt || new Date(),
-                        favouriteAt: ingredient.ingredient?.favouriteAt || null,
-                        userId: ingredient.ingredient?.userId || null,
+												createdAt:
+													ingredient.ingredient?.createdAt || new Date(),
+												updatedAt:
+													ingredient.ingredient?.updatedAt || new Date(),
+												favouriteAt: ingredient.ingredient?.favouriteAt || null,
+												deletedAt: ingredient.ingredient?.deletedAt || null,
+												hiddenAt: ingredient.ingredient?.hiddenAt || null,
+												isAusFood: ingredient.ingredient?.isAusFood || false,
+												isAllStores: ingredient.ingredient?.isAllStores || true,
+												isUserCreated:
+													ingredient.ingredient?.isUserCreated || false,
+												isSupplement:
+													ingredient.ingredient?.isSupplement || false,
+												isPrivate: ingredient.ingredient?.isPrivate || false,
+												viewableBy: ingredient.ingredient?.viewableBy || null,
+												intervale: ingredient.ingredient?.intervale || null,
+												userId: ingredient.ingredient?.userId || null,
 												id: ingredient.ingredient?.id || -1,
-												name: ingredient.ingredient?.name || '',
 												notes: '',
 												ingredientToGroceryStore: [],
+												serveSize: ingredient.ingredient?.serveSize || '',
+												serveUnit: ingredient.ingredient?.serveUnit || '',
+												publicFoodKey:
+													ingredient.ingredient?.publicFoodKey || '',
+												classification:
+													ingredient.ingredient?.classification || '',
+												foodName: ingredient.ingredient?.foodName || '',
+												name: ingredient.ingredient?.name || '',
+												caloriesWFibre:
+													ingredient.ingredient?.caloriesWFibre || '',
+												caloriesWOFibre:
+													ingredient.ingredient?.caloriesWOFibre || '',
+												protein: ingredient.ingredient?.protein || '',
+												fatTotal: ingredient.ingredient?.fatTotal || '',
+												totalDietaryFibre:
+													ingredient.ingredient?.totalDietaryFibre || '',
+												totalSugars: ingredient.ingredient?.totalSugars || '',
+												starch: ingredient.ingredient?.starch || '',
+												resistantStarch:
+													ingredient.ingredient?.resistantStarch || '',
+												availableCarbohydrateWithoutSugarAlcohols:
+													ingredient.ingredient
+														?.availableCarbohydrateWithoutSugarAlcohols || '',
+												availableCarbohydrateWithSugarAlcohols:
+													ingredient.ingredient
+														?.availableCarbohydrateWithSugarAlcohols || '',
 											},
 											alternateIngredient: {
 												...ingredient.alternateIngredient,
-                        createdAt:  ingredient.alternateIngredient?.createdAt || new Date(),
-                        updatedAt:  ingredient.alternateIngredient?.updatedAt || new Date(),
-                        favouriteAt: ingredient.alternateIngredient?.favouriteAt || null,
+												createdAt:
+													ingredient.alternateIngredient?.createdAt ||
+													new Date(),
+												updatedAt:
+													ingredient.alternateIngredient?.updatedAt ||
+													new Date(),
+												favouriteAt:
+													ingredient.alternateIngredient?.favouriteAt || null,
+												deletedAt:
+													ingredient.alternateIngredient?.deletedAt || null,
+												hiddenAt:
+													ingredient.alternateIngredient?.hiddenAt || null,
+												isAusFood:
+													ingredient.alternateIngredient?.isAusFood || false,
+												isAllStores:
+													ingredient.alternateIngredient?.isAllStores || true,
+												isUserCreated:
+													ingredient.alternateIngredient?.isUserCreated ||
+													false,
+												isSupplement:
+													ingredient.alternateIngredient?.isSupplement || false,
+												isPrivate:
+													ingredient.alternateIngredient?.isPrivate || false,
+												viewableBy:
+													ingredient.alternateIngredient?.viewableBy || null,
+												intervale: null,
 												notes: '',
-                        userId: ingredient.alternateIngredient?.userId ||null,
+												userId: ingredient.alternateIngredient?.userId || null,
 												id: ingredient.alternateIngredient?.id || -1,
 												name: ingredient.alternateIngredient?.name || '',
 												ingredientToGroceryStore: [],
+												serveSize:
+													ingredient.alternateIngredient?.serveSize || '',
+												serveUnit:
+													ingredient.alternateIngredient?.serveUnit || '',
+												publicFoodKey:
+													ingredient.alternateIngredient?.publicFoodKey || '',
+												classification:
+													ingredient.alternateIngredient?.classification || '',
+												foodName:
+													ingredient.alternateIngredient?.foodName || '',
+												caloriesWFibre:
+													ingredient.alternateIngredient?.caloriesWFibre || '',
+												caloriesWOFibre:
+													ingredient.alternateIngredient?.caloriesWOFibre || '',
+												protein: ingredient.alternateIngredient?.protein || '',
+												fatTotal:
+													ingredient.alternateIngredient?.fatTotal || '',
+												totalDietaryFibre:
+													ingredient.alternateIngredient?.totalDietaryFibre ||
+													'',
+												totalSugars:
+													ingredient.alternateIngredient?.totalSugars || '',
+												starch: ingredient.alternateIngredient?.starch || '',
+												resistantStarch:
+													ingredient.alternateIngredient?.resistantStarch || '',
+												availableCarbohydrateWithoutSugarAlcohols:
+													ingredient.alternateIngredient
+														?.availableCarbohydrateWithoutSugarAlcohols || '',
+												availableCarbohydrateWithSugarAlcohols:
+													ingredient.alternateIngredient
+														?.availableCarbohydrateWithSugarAlcohols || '',
 											},
 										})),
 								},

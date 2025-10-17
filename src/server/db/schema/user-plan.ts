@@ -118,7 +118,7 @@ export const userIngredient = createTable(
 		),
 		ingredientId: int('ingredient_id').references(() => ingredient.id, {
 			onDelete: 'cascade',
-		}),
+		}).notNull(),
 		userPlanId: int('user_plan_id').references(() => userPlan.id, {
 			onDelete: 'cascade',
 		}),

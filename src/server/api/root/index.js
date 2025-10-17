@@ -158,7 +158,7 @@ var userIngredient = createTable(
     ),
     ingredientId: int("ingredient_id").references(() => ingredient.id, {
       onDelete: "cascade"
-    }),
+    }).notNull(),
     userPlanId: int("user_plan_id").references(() => userPlan.id, {
       onDelete: "cascade"
     }),
@@ -6338,8 +6338,8 @@ var userPlanRouter = createTRPCRouter({
   ).mutation(async ({ input, ctx }) => {
     const creatorId = ctx.session.user.id;
     const { meals, ...data } = input;
-    const recipes = meals.map((meal2) => meal2.recipes).flat();
-    const ingredients = recipes.map((recipe2) => recipe2.ingredients).flat();
+    const recipes = meals.flatMap((meal2) => meal2.recipes);
+    const ingredients = recipes.flatMap((recipe2) => recipe2.ingredients);
     const res = await ctx.db.insert(userPlan).values({
       ...data,
       isActive: true,

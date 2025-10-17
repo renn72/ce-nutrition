@@ -124,7 +124,7 @@ const PlanSelect = ({
 								<CommandItem
 									className='capitalize grid grid-cols-10 relative'
 									key={plan.id}
-									value={plan.name ?? plan.id.toString()}
+									value={plan.id.toString()}
 									onSelect={() => {
 										onSetPlan(plan.id.toString())
 										setOpen(false)
@@ -142,7 +142,7 @@ const PlanSelect = ({
 										{plan.name}
 									</span>
 									<span className='col-span-2 text-right'>
-										<Badge variant='secondary'>{plan.creator?.name.split(' ')[0]}</Badge>
+										<Badge variant='secondary'>{plan.creator?.name?.split(' ')[0]}</Badge>
 									</span>
 								</CommandItem>
 							))}
