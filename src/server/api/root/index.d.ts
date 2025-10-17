@@ -18155,7 +18155,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
         }>;
         finishPlan: _trpc_server.TRPCMutationProcedure<{
             input: number;
-            output: _libsql_client.ResultSet;
+            output: unknown;
             meta: object;
         }>;
         activePlan: _trpc_server.TRPCMutationProcedure<{
@@ -25078,7 +25078,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         }>;
         finishPlan: _trpc_server.TRPCMutationProcedure<{
             input: number;
-            output: _libsql_client.ResultSet;
+            output: unknown;
             meta: object;
         }>;
         activePlan: _trpc_server.TRPCMutationProcedure<{

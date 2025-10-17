@@ -22,14 +22,19 @@ export const userPlanRouter = createTRPCRouter({
   finishPlan: protectedProcedure
     .input(z.number())
     .mutation(async ({ input, ctx }) => {
-      const res = await ctx.db
-        .update(userPlan)
-        .set({
-          isActive: false,
-          finishedAt: new Date(),
-        })
-        .where(eq(userPlan.id, input))
-      return res
+      try {
+        const res = await ctx.db
+          .update(userPlan)
+          .set({
+            isActive: false,
+            finishedAt: new Date(),
+          })
+          .where(eq(userPlan.id, input))
+        return res
+      } catch (e) {
+        console.log(e)
+        return e
+      }
     }),
   activePlan: protectedProcedure
     .input(z.number())

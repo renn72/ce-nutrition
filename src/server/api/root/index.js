@@ -6239,11 +6239,16 @@ var userPlanRouter = createTRPCRouter({
     return res;
   }),
   finishPlan: protectedProcedure.input(z18.number()).mutation(async ({ input, ctx }) => {
-    const res = await ctx.db.update(userPlan).set({
-      isActive: false,
-      finishedAt: /* @__PURE__ */ new Date()
-    }).where(eq12(userPlan.id, input));
-    return res;
+    try {
+      const res = await ctx.db.update(userPlan).set({
+        isActive: false,
+        finishedAt: /* @__PURE__ */ new Date()
+      }).where(eq12(userPlan.id, input));
+      return res;
+    } catch (e) {
+      console.log(e);
+      return e;
+    }
   }),
   activePlan: protectedProcedure.input(z18.number()).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.update(userPlan).set({
