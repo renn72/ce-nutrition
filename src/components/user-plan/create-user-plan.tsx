@@ -510,15 +510,6 @@ const CreateUserPlan = ({
 							<Button type='submit' className='w-min mt-8'>
 								Save
 							</Button>
-							<Button
-								className='w-min mt-8'
-								onClick={(e) => {
-									e.preventDefault()
-									console.log('form', form.getValues())
-								}}
-							>
-								log
-							</Button>
 							<div className='flex flex-col lg:flex-row justify-between lg:gap-8'>
 								<FormField
 									control={form.control}
