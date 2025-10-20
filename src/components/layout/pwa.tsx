@@ -4,7 +4,6 @@ import { api } from '@/trpc/react'
 
 import { useEffect, useState } from 'react'
 
-import { env } from '@/env'
 import { Share } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -16,9 +15,11 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 
-import { sendNotification, subscribeUser, unsubscribeUser } from './action'
+import { firstTimeAtom } from '@/app/page'
+
+import { useAtom } from 'jotai'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,84 +34,6 @@ export function urlBase64ToUint8Array(base64String: string) {
 		outputArray[i] = rawData.charCodeAt(i)
 	}
 	return outputArray
-}
-
-function PushNotificationManager() {
-	const [isSupported, setIsSupported] = useState(false)
-	const [subscription, setSubscription] = useState<PushSubscription | null>(
-		null,
-	)
-	const [message, setMessage] = useState('')
-
-	useEffect(() => {
-		if ('serviceWorker' in navigator && 'PushManager' in window) {
-			setIsSupported(true)
-			registerServiceWorker()
-		}
-	}, [])
-
-	async function registerServiceWorker() {
-		const registration = await navigator.serviceWorker.register('/sw.js', {
-			scope: '/',
-			updateViaCache: 'none',
-		})
-		const sub = await registration.pushManager.getSubscription()
-		setSubscription(sub)
-	}
-
-	async function subscribeToPush() {
-		const registration = await navigator.serviceWorker.ready
-		const sub = await registration.pushManager.subscribe({
-			userVisibleOnly: true,
-			applicationServerKey: urlBase64ToUint8Array(
-				env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-			),
-		})
-		setSubscription(sub)
-		const serializedSub = JSON.parse(JSON.stringify(sub))
-		await subscribeUser(serializedSub)
-	}
-
-	async function unsubscribeFromPush() {
-		await subscription?.unsubscribe()
-		setSubscription(null)
-		await unsubscribeUser()
-	}
-
-	async function sendTestNotification() {
-		if (subscription) {
-			await sendNotification(message)
-			setMessage('')
-		}
-	}
-
-	if (!isSupported) {
-		return <p>Push notifications are not supported in this browser.</p>
-	}
-
-	return (
-		<div>
-			<h3>Push Notifications</h3>
-			{subscription ? (
-				<>
-					<p>You are subscribed to push notifications.</p>
-					<Button onClick={unsubscribeFromPush}>Unsubscribe</Button>
-					<Input
-						type='text'
-						placeholder='Enter notification message'
-						value={message}
-						onChange={(e) => setMessage(e.target.value)}
-					/>
-					<Button onClick={sendTestNotification}>Send Test</Button>
-				</>
-			) : (
-				<>
-					<p>You are not subscribed to push notifications.</p>
-					<Button onClick={subscribeToPush}>Subscribe</Button>
-				</>
-			)}
-		</div>
-	)
 }
 
 interface BeforeInstallPromptEvent extends Event {
@@ -133,6 +56,8 @@ const PwaInstallButton: React.FC = () => {
 
 	// State to show iOS specific installation instructions
 	const [showIosInstructions, setShowIosInstructions] = useState(false)
+
+  const [firstTime, setFirstTime] = useAtom(firstTimeAtom)
 
 	// Effect hook to handle the 'beforeinstallprompt' event and 'appinstalled' event.
 	// This runs once when the component mounts.
@@ -158,7 +83,8 @@ const PwaInstallButton: React.FC = () => {
 			// Store the event so it can be triggered later by a user gesture
 			setDeferredPrompt(e as BeforeInstallPromptEvent)
 			// Show our custom install button
-			setShowInstallButton(true)
+      if (firstTime) setShowInstallButton(true)
+      console.log('setShowInstallButton true')
 		}
 
 		// Event listener for the 'appinstalled' event
@@ -176,12 +102,20 @@ const PwaInstallButton: React.FC = () => {
 		window.addEventListener('appinstalled', handleAppInstalled)
 
 		// Initial check for iOS and standalone mode
-		if (isIOS() && !isInStandaloneMode()) {
+		if (isIOS() && !isInStandaloneMode() && firstTime) {
 			setShowIosInstructions(true)
 			setShowInstallButton(false) // Hide the generic install button for iOS
 		} else if (isInStandaloneMode()) {
 			setShowInstallButton(false) // Hide the install button if already installed
 		}
+
+		setTimeout(() => {
+			setShowInstallButton(false)
+      setShowIosInstructions(false)
+			console.log('setShowInstallButton', showInstallButton)
+		}, 3000)
+
+    setFirstTime(false)
 
 		// Cleanup function: remove event listeners when the component unmounts
 		return () => {
@@ -218,20 +152,28 @@ const PwaInstallButton: React.FC = () => {
 			}
 		}
 	}
+
+	console.log('setShowInstallButton', showInstallButton)
+
 	return (
-		<div className='w-full'>
+		<div className={cn('w-full transition-all duration-300 ease-in-out',
+      showInstallButton || showIosInstructions ? 'h-10' : 'h-0',
+    )}>
 			{showIosInstructions ? (
 				// Instructions for iOS users
 				<Dialog>
 					<DialogTrigger asChild>
-						<Button size='sm'
-              onClick={() => {
-                mutate({
-                  task: 'Install PWA Apple',
-                  notes: '',
-                })
-              }}
-            >Install App</Button>
+						<Button
+							size='sm'
+							onClick={() => {
+								mutate({
+									task: 'Install PWA Apple',
+									notes: '',
+								})
+							}}
+						>
+							Install App
+						</Button>
 					</DialogTrigger>
 					<DialogContent>
 						<DialogHeader>

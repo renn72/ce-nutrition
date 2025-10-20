@@ -15,7 +15,7 @@ import { impersonatedUserAtom } from '@/atoms'
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
 import type { GetUserById } from '@/types'
-import { useAtom } from 'jotai'
+import { useAtom, atom } from 'jotai'
 import { XIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -33,6 +33,8 @@ import { WaterLog } from '@/components/water-log/water-log'
 import DailyLogCarousel from './_components/dailylog-carousel'
 import { User } from '@/components/auth/user'
 import { Pwa } from '@/components/layout/pwa'
+
+export const firstTimeAtom = atom(true)
 
 export const dynamic = 'force-dynamic'
 
@@ -87,7 +89,7 @@ const Mobile = ({
 	if (dailyLogsLoading) return null
 
 	return (
-		<div className={cn('flex flex-col gap-2 w-full mt-16 items-center mb-16 ')}>
+		<div className={cn('flex flex-col gap-0 w-full mt-16 items-center mb-16 ')}>
 			<MobileHeader isDesktop={false} />
       <Pwa />
 			<div
