@@ -30,6 +30,7 @@ import { Input } from '@/components/ui/input'
 import { Meal } from '@/components/user-plan/meal'
 import { PlanSelect } from '@/components/user-plan/plan-select'
 
+
 export const dynamic = 'force-dynamic'
 
 export const formSchema = z.object({
@@ -184,6 +185,7 @@ const CreateUserPlan = ({
 				createdAt: userPlan?.createdAt || new Date(),
 				updatedAt: userPlan?.updatedAt || new Date(),
 				creator: null,
+        planFolderId: null,
 				meals:
 					userPlan?.userMeals.map((meal, mealIndex) => ({
 						id: -1,

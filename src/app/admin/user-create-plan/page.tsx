@@ -12,7 +12,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
 
   if (isLoadingUser || isLoadingPlans) return null
   return (
-    <div className='flex flex-col items-center p-2 '>
+    <div className='flex flex-col items-center p-2 overflow-y-auto'>
       <CreateUserPlan />
     </div>
   )

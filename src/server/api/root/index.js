@@ -1655,6 +1655,8 @@ __export(schema_exports, {
   notificationToggle: () => notificationToggle,
   notificationToggleRelations: () => notificationToggleRelations,
   plan: () => plan,
+  planFolder: () => planFolder,
+  planFolderRelations: () => planFolderRelations,
   planRelations: () => planRelations,
   planToMeal: () => planToMeal,
   planToMealRelations: () => planToMealRelations,
@@ -1839,7 +1841,8 @@ var plan = createTable11("plan", {
   planCategory: text10("recipe_category"),
   favouriteAt: int11("favourite_at", { mode: "timestamp" }),
   deletedAt: int11("deleted_at", { mode: "timestamp" }),
-  hiddenAt: int11("hidden_at", { mode: "timestamp" })
+  hiddenAt: int11("hidden_at", { mode: "timestamp" }),
+  planFolderId: int11("plan_folder_id").references(() => planFolder.id)
 });
 var planToMeal = createTable11("plan_to_meal", {
   id: int11("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
@@ -1859,7 +1862,11 @@ var planToMeal = createTable11("plan_to_meal", {
 var planRelations = relations10(plan, ({ one, many }) => ({
   creator: one(user, { fields: [plan.creatorId], references: [user.id] }),
   planToMeal: many(planToMeal),
-  meals: many(meal)
+  meals: many(meal),
+  planFolder: one(planFolder, {
+    fields: [plan.planFolderId],
+    references: [planFolder.id]
+  })
 }));
 var planToMealRelations = relations10(planToMeal, ({ one }) => ({
   meal: one(meal, {
@@ -1869,6 +1876,19 @@ var planToMealRelations = relations10(planToMeal, ({ one }) => ({
   plan: one(plan, {
     fields: [planToMeal.planId],
     references: [plan.id]
+  })
+}));
+var planFolder = createTable11("plan_folder", {
+  id: int11("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  createdAt: int11("created_at", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
+  name: text10("name"),
+  parentId: int11("parent_id")
+});
+var planFolderRelations = relations10(planFolder, ({ one, many }) => ({
+  plans: many(plan),
+  parent: one(planFolder, {
+    fields: [planFolder.parentId],
+    references: [planFolder.id]
   })
 }));
 
@@ -5708,6 +5728,30 @@ var recipeRouter = createTRPCRouter({
 import { desc as desc4, eq as eq9 } from "drizzle-orm";
 import { z as z15 } from "zod";
 var planRouter = createTRPCRouter({
+  getFolders: protectedProcedure.query(async ({ ctx }) => {
+    const res = await ctx.db.query.planFolder.findMany({
+      orderBy: [desc4(planFolder.createdAt)],
+      with: {
+        parent: true
+      }
+    });
+    return res;
+  }),
+  createFolder: protectedProcedure.input(
+    z15.object({
+      name: z15.string(),
+      parentId: z15.number().optional()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.insert(planFolder).values({
+      ...input
+    }).returning({ id: planFolder.id });
+    return { res };
+  }),
+  deleteFolder: protectedProcedure.input(z15.object({ id: z15.number() })).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.delete(planFolder).where(eq9(planFolder.id, input.id));
+    return res;
+  }),
   getAllSimple: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.plan.findMany({
       orderBy: [desc4(plan.createdAt)],

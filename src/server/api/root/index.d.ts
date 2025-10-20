@@ -8000,6 +8000,23 @@ declare const plan: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             identity: undefined;
             generated: undefined;
         }, {}, {}>;
+        planFolderId: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "plan_folder_id";
+            tableName: "plan";
+            dataType: "number";
+            columnType: "SQLiteInteger";
+            data: number;
+            driverParam: number;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
     };
     dialect: "sqlite";
 }>;
@@ -8175,10 +8192,92 @@ declare const planRelations: drizzle_orm.Relations<"plan", {
     creator: drizzle_orm.One<"user", false>;
     planToMeal: drizzle_orm.Many<"plan_to_meal">;
     meals: drizzle_orm.Many<"meal">;
+    planFolder: drizzle_orm.One<"plan_folder", false>;
 }>;
 declare const planToMealRelations: drizzle_orm.Relations<"plan_to_meal", {
     meal: drizzle_orm.One<"meal", false>;
     plan: drizzle_orm.One<"plan", false>;
+}>;
+declare const planFolder: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
+    name: "plan_folder";
+    schema: undefined;
+    columns: {
+        id: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "id";
+            tableName: "plan_folder";
+            dataType: "number";
+            columnType: "SQLiteInteger";
+            data: number;
+            driverParam: number;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: true;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        createdAt: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "created_at";
+            tableName: "plan_folder";
+            dataType: "date";
+            columnType: "SQLiteTimestamp";
+            data: Date;
+            driverParam: number;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        name: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "name";
+            tableName: "plan_folder";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        parentId: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "parent_id";
+            tableName: "plan_folder";
+            dataType: "number";
+            columnType: "SQLiteInteger";
+            data: number;
+            driverParam: number;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+    };
+    dialect: "sqlite";
+}>;
+declare const planFolderRelations: drizzle_orm.Relations<"plan_folder", {
+    plans: drizzle_orm.Many<"plan">;
+    parent: drizzle_orm.One<"plan_folder", false>;
 }>;
 
 declare const meal: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
@@ -13552,6 +13651,8 @@ declare const ______db_schema_notificationRelations: typeof notificationRelation
 declare const ______db_schema_notificationToggle: typeof notificationToggle;
 declare const ______db_schema_notificationToggleRelations: typeof notificationToggleRelations;
 declare const ______db_schema_plan: typeof plan;
+declare const ______db_schema_planFolder: typeof planFolder;
+declare const ______db_schema_planFolderRelations: typeof planFolderRelations;
 declare const ______db_schema_planRelations: typeof planRelations;
 declare const ______db_schema_planToMeal: typeof planToMeal;
 declare const ______db_schema_planToMealRelations: typeof planToMealRelations;
@@ -13605,7 +13706,7 @@ declare const ______db_schema_waterLogRelations: typeof waterLogRelations;
 declare const ______db_schema_weighIn: typeof weighIn;
 declare const ______db_schema_weighInRelations: typeof weighInRelations;
 declare namespace ______db_schema {
-  export { ______db_schema_account as account, ______db_schema_accountsRelations as accountsRelations, ______db_schema_bodyFat as bodyFat, ______db_schema_bodyFatRelations as bodyFatRelations, ______db_schema_bodyWeight as bodyWeight, ______db_schema_bodyWeightRelations as bodyWeightRelations, ______db_schema_dailyLog as dailyLog, ______db_schema_dailyLogRelations as dailyLogRelations, ______db_schema_dailyMeal as dailyMeal, ______db_schema_dailyMealRelations as dailyMealRelations, ______db_schema_dailySupplement as dailySupplement, ______db_schema_dailySupplementRelations as dailySupplementRelations, ______db_schema_girthMeasurement as girthMeasurement, ______db_schema_girthMeasurementRelations as girthMeasurementRelations, ______db_schema_goals as goals, ______db_schema_goalsRelations as goalsRelations, ______db_schema_groceryStore as groceryStore, ______db_schema_groceryStoreRelations as groceryStoreRelations, ______db_schema_images as images, ______db_schema_imagesRelations as imagesRelations, ______db_schema_ingredient as ingredient, ______db_schema_ingredientAdditionOne as ingredientAdditionOne, ______db_schema_ingredientAdditionOneRelations as ingredientAdditionOneRelations, ______db_schema_ingredientAdditionThree as ingredientAdditionThree, ______db_schema_ingredientAdditionThreeRelations as ingredientAdditionThreeRelations, ______db_schema_ingredientAdditionTwo as ingredientAdditionTwo, ______db_schema_ingredientAdditionTwoRelations as ingredientAdditionTwoRelations, ______db_schema_ingredientRelations as ingredientRelations, ______db_schema_ingredientToGroceryStore as ingredientToGroceryStore, ______db_schema_ingredientToGroceryStoreRelations as ingredientToGroceryStoreRelations, ______db_schema_leanMass as leanMass, ______db_schema_leanMassRelations as leanMassRelations, ______db_schema_log as log, ______db_schema_logNew as logNew, ______db_schema_meal as meal, ______db_schema_mealRelations as mealRelations, ______db_schema_mealToRecipe as mealToRecipe, ______db_schema_mealToRecipeRelations as mealToRecipeRelations, ______db_schema_mealToVegeStack as mealToVegeStack, ______db_schema_mealToVegeStackRelations as mealToVegeStackRelations, ______db_schema_message as message, ______db_schema_messageRelations as messageRelations, ______db_schema_notification as notification, ______db_schema_notificationRelations as notificationRelations, ______db_schema_notificationToggle as notificationToggle, ______db_schema_notificationToggleRelations as notificationToggleRelations, ______db_schema_plan as plan, ______db_schema_planRelations as planRelations, ______db_schema_planToMeal as planToMeal, ______db_schema_planToMealRelations as planToMealRelations, ______db_schema_poopLog as poopLog, ______db_schema_poopLogRelations as poopLogRelations, ______db_schema_pushSubscription as pushSubscription, ______db_schema_recipe as recipe, ______db_schema_recipeRelations as recipeRelations, ______db_schema_recipeToIngredient as recipeToIngredient, ______db_schema_recipeToIngredientRelations as recipeToIngredientRelations, ______db_schema_role as role, ______db_schema_roleRelations as roleRelations, ______db_schema_session as session, ______db_schema_sessionsRelations as sessionsRelations, ______db_schema_settings as settings, ______db_schema_skinfold as skinfold, ______db_schema_skinfoldRelations as skinfoldRelations, ______db_schema_supplementStack as supplementStack, ______db_schema_supplementStackRelations as supplementStackRelations, ______db_schema_supplementToSupplementStack as supplementToSupplementStack, ______db_schema_supplementToSupplementStackRelations as supplementToSupplementStackRelations, ______db_schema_tag as tag, ______db_schema_tagRelations as tagRelations, ______db_schema_tagToDailyLog as tagToDailyLog, ______db_schema_tagToDailyLogRelations as tagToDailyLogRelations, ______db_schema_trainerNotes as trainerNotes, ______db_schema_trainerNotesRelations as trainerNotesRelations, ______db_schema_user as user, ______db_schema_userCategory as userCategory, ______db_schema_userCategoryRelations as userCategoryRelations, ______db_schema_userIngredient as userIngredient, ______db_schema_userIngredientRelations as userIngredientRelations, ______db_schema_userMeal as userMeal, ______db_schema_userMealRelations as userMealRelations, ______db_schema_userPlan as userPlan, ______db_schema_userPlanRelations as userPlanRelations, ______db_schema_userRecipe as userRecipe, ______db_schema_userRecipeRelations as userRecipeRelations, ______db_schema_userRelations as userRelations, ______db_schema_userSettings as userSettings, ______db_schema_userSettingsRelations as userSettingsRelations, ______db_schema_userToTrainer as userToTrainer, ______db_schema_userToTrainerRelations as userToTrainerRelations, ______db_schema_userToUserCategory as userToUserCategory, ______db_schema_usertoUserCategoryRelations as usertoUserCategoryRelations, ______db_schema_vegeStack as vegeStack, ______db_schema_vegeStackRelations as vegeStackRelations, ______db_schema_verificationToken as verificationToken, ______db_schema_waterLog as waterLog, ______db_schema_waterLogRelations as waterLogRelations, ______db_schema_weighIn as weighIn, ______db_schema_weighInRelations as weighInRelations };
+  export { ______db_schema_account as account, ______db_schema_accountsRelations as accountsRelations, ______db_schema_bodyFat as bodyFat, ______db_schema_bodyFatRelations as bodyFatRelations, ______db_schema_bodyWeight as bodyWeight, ______db_schema_bodyWeightRelations as bodyWeightRelations, ______db_schema_dailyLog as dailyLog, ______db_schema_dailyLogRelations as dailyLogRelations, ______db_schema_dailyMeal as dailyMeal, ______db_schema_dailyMealRelations as dailyMealRelations, ______db_schema_dailySupplement as dailySupplement, ______db_schema_dailySupplementRelations as dailySupplementRelations, ______db_schema_girthMeasurement as girthMeasurement, ______db_schema_girthMeasurementRelations as girthMeasurementRelations, ______db_schema_goals as goals, ______db_schema_goalsRelations as goalsRelations, ______db_schema_groceryStore as groceryStore, ______db_schema_groceryStoreRelations as groceryStoreRelations, ______db_schema_images as images, ______db_schema_imagesRelations as imagesRelations, ______db_schema_ingredient as ingredient, ______db_schema_ingredientAdditionOne as ingredientAdditionOne, ______db_schema_ingredientAdditionOneRelations as ingredientAdditionOneRelations, ______db_schema_ingredientAdditionThree as ingredientAdditionThree, ______db_schema_ingredientAdditionThreeRelations as ingredientAdditionThreeRelations, ______db_schema_ingredientAdditionTwo as ingredientAdditionTwo, ______db_schema_ingredientAdditionTwoRelations as ingredientAdditionTwoRelations, ______db_schema_ingredientRelations as ingredientRelations, ______db_schema_ingredientToGroceryStore as ingredientToGroceryStore, ______db_schema_ingredientToGroceryStoreRelations as ingredientToGroceryStoreRelations, ______db_schema_leanMass as leanMass, ______db_schema_leanMassRelations as leanMassRelations, ______db_schema_log as log, ______db_schema_logNew as logNew, ______db_schema_meal as meal, ______db_schema_mealRelations as mealRelations, ______db_schema_mealToRecipe as mealToRecipe, ______db_schema_mealToRecipeRelations as mealToRecipeRelations, ______db_schema_mealToVegeStack as mealToVegeStack, ______db_schema_mealToVegeStackRelations as mealToVegeStackRelations, ______db_schema_message as message, ______db_schema_messageRelations as messageRelations, ______db_schema_notification as notification, ______db_schema_notificationRelations as notificationRelations, ______db_schema_notificationToggle as notificationToggle, ______db_schema_notificationToggleRelations as notificationToggleRelations, ______db_schema_plan as plan, ______db_schema_planFolder as planFolder, ______db_schema_planFolderRelations as planFolderRelations, ______db_schema_planRelations as planRelations, ______db_schema_planToMeal as planToMeal, ______db_schema_planToMealRelations as planToMealRelations, ______db_schema_poopLog as poopLog, ______db_schema_poopLogRelations as poopLogRelations, ______db_schema_pushSubscription as pushSubscription, ______db_schema_recipe as recipe, ______db_schema_recipeRelations as recipeRelations, ______db_schema_recipeToIngredient as recipeToIngredient, ______db_schema_recipeToIngredientRelations as recipeToIngredientRelations, ______db_schema_role as role, ______db_schema_roleRelations as roleRelations, ______db_schema_session as session, ______db_schema_sessionsRelations as sessionsRelations, ______db_schema_settings as settings, ______db_schema_skinfold as skinfold, ______db_schema_skinfoldRelations as skinfoldRelations, ______db_schema_supplementStack as supplementStack, ______db_schema_supplementStackRelations as supplementStackRelations, ______db_schema_supplementToSupplementStack as supplementToSupplementStack, ______db_schema_supplementToSupplementStackRelations as supplementToSupplementStackRelations, ______db_schema_tag as tag, ______db_schema_tagRelations as tagRelations, ______db_schema_tagToDailyLog as tagToDailyLog, ______db_schema_tagToDailyLogRelations as tagToDailyLogRelations, ______db_schema_trainerNotes as trainerNotes, ______db_schema_trainerNotesRelations as trainerNotesRelations, ______db_schema_user as user, ______db_schema_userCategory as userCategory, ______db_schema_userCategoryRelations as userCategoryRelations, ______db_schema_userIngredient as userIngredient, ______db_schema_userIngredientRelations as userIngredientRelations, ______db_schema_userMeal as userMeal, ______db_schema_userMealRelations as userMealRelations, ______db_schema_userPlan as userPlan, ______db_schema_userPlanRelations as userPlanRelations, ______db_schema_userRecipe as userRecipe, ______db_schema_userRecipeRelations as userRecipeRelations, ______db_schema_userRelations as userRelations, ______db_schema_userSettings as userSettings, ______db_schema_userSettingsRelations as userSettingsRelations, ______db_schema_userToTrainer as userToTrainer, ______db_schema_userToTrainerRelations as userToTrainerRelations, ______db_schema_userToUserCategory as userToUserCategory, ______db_schema_usertoUserCategoryRelations as usertoUserCategoryRelations, ______db_schema_vegeStack as vegeStack, ______db_schema_vegeStackRelations as vegeStackRelations, ______db_schema_verificationToken as verificationToken, ______db_schema_waterLog as waterLog, ______db_schema_waterLogRelations as waterLogRelations, ______db_schema_weighIn as weighIn, ______db_schema_weighInRelations as weighInRelations };
 }
 
 /**
@@ -17152,6 +17253,41 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
         };
         transformer: true;
     }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        getFolders: _trpc_server.TRPCQueryProcedure<{
+            input: void;
+            output: {
+                id: number;
+                name: string | null;
+                createdAt: Date;
+                parentId: number | null;
+                parent: {
+                    id: number;
+                    name: string | null;
+                    createdAt: Date;
+                    parentId: number | null;
+                } | null;
+            }[];
+            meta: object;
+        }>;
+        createFolder: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                name: string;
+                parentId?: number | undefined;
+            };
+            output: {
+                res: {
+                    id: number;
+                }[];
+            };
+            meta: object;
+        }>;
+        deleteFolder: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         getAllSimple: _trpc_server.TRPCQueryProcedure<{
             input: void;
             output: {
@@ -17169,6 +17305,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 hiddenAt: Date | null;
                 isGlobal: boolean | null;
                 planCategory: string | null;
+                planFolderId: number | null;
                 creator: {
                     id: string;
                     name: string | null;
@@ -17215,6 +17352,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 hiddenAt: Date | null;
                 isGlobal: boolean | null;
                 planCategory: string | null;
+                planFolderId: number | null;
                 creator: {
                     id: string;
                     name: string | null;
@@ -17401,6 +17539,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 hiddenAt: Date | null;
                 isGlobal: boolean | null;
                 planCategory: string | null;
+                planFolderId: number | null;
                 creator: {
                     id: string;
                     name: string | null;
@@ -24075,6 +24214,41 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         };
         transformer: true;
     }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        getFolders: _trpc_server.TRPCQueryProcedure<{
+            input: void;
+            output: {
+                id: number;
+                name: string | null;
+                createdAt: Date;
+                parentId: number | null;
+                parent: {
+                    id: number;
+                    name: string | null;
+                    createdAt: Date;
+                    parentId: number | null;
+                } | null;
+            }[];
+            meta: object;
+        }>;
+        createFolder: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                name: string;
+                parentId?: number | undefined;
+            };
+            output: {
+                res: {
+                    id: number;
+                }[];
+            };
+            meta: object;
+        }>;
+        deleteFolder: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         getAllSimple: _trpc_server.TRPCQueryProcedure<{
             input: void;
             output: {
@@ -24092,6 +24266,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 hiddenAt: Date | null;
                 isGlobal: boolean | null;
                 planCategory: string | null;
+                planFolderId: number | null;
                 creator: {
                     id: string;
                     name: string | null;
@@ -24138,6 +24313,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 hiddenAt: Date | null;
                 isGlobal: boolean | null;
                 planCategory: string | null;
+                planFolderId: number | null;
                 creator: {
                     id: string;
                     name: string | null;
@@ -24324,6 +24500,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 hiddenAt: Date | null;
                 isGlobal: boolean | null;
                 planCategory: string | null;
+                planFolderId: number | null;
                 creator: {
                     id: string;
                     name: string | null;
