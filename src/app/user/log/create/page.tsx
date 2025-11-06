@@ -517,16 +517,74 @@ export default function Home() {
 								</Button>
 							</div>
 						</PopoverTrigger>
-						<PopoverContent className='w-auto p-0'>
+						<PopoverContent className='w-full p-0'>
 							<Calendar
 								mode='single'
 								selected={date}
                 disabled={{ after: new Date() }}
+									// @ts-ignore
 								onSelect={(date) => {
 									setDate(date)
 									setIsOpen(false)
 								}}
 								initialFocus
+                className='w-full'
+                formatters={{
+									// @ts-ignore
+                  formatDay: (date) => {
+										const log = dailyLogs?.find(
+											(log) => log.date === date.toDateString(),
+										)
+										const tags = log?.tags?.map((tag) => {
+											return {
+												id: tag.id,
+												name: tag.tag.name,
+												color: tag.tag.color,
+												icon: tag.tag.icon,
+											}
+										})
+										return (
+											<div className='flex flex-col gap-[2px] h-[14vw] w-[12.5vw]'>
+												{log ? (
+													<div className='flex items-center justify-center w-full h-4'>
+														<div className='bg-secondary-foreground h-[6px] w-[6px] rounded-full' />
+													</div>
+												) : <div className='h-4'/>}
+												<div className=''>{date.getDate()}</div>
+
+												<div className='flex justify-center h-[12px] items-center gap-1'>
+													{log?.isStarred === true ? (
+														<Star
+															className='text-yellow-500'
+															fill='currentColor'
+															size={10}
+														/>
+													) : null}
+													{tags?.map((tag) => {
+														const color = tag.color as
+															| 'black'
+															| 'red'
+															| 'green'
+															| 'blue'
+															| 'purple'
+															| 'orange'
+														const icon = tag.icon
+														return (
+															<Icon
+																key={tag.id}
+																icon={icon}
+																size={10}
+																classnames={textDict[color]}
+															/>
+														)
+													})}
+												</div>
+											</div>
+										)
+
+                  }
+
+                  }}
 								components={{
 									// @ts-ignore
 									DayContent: (props) => {
@@ -615,7 +673,7 @@ export default function Home() {
 							<div
 								key={tag.id}
 								className={cn(
-									'text-xs w-24 h-6 text-white rounded-full border flex items-center justify-center gap-0 cursor-pointer border relative',
+									'text-xs w-24 h-6 text-white rounded-full flex items-center justify-center gap-0 cursor-pointer border relative',
 									bgDict[color],
 								)}
 							>
