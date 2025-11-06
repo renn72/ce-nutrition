@@ -29,6 +29,7 @@ import { Input } from '@/components/ui/input'
 
 import { Meal } from '@/components/user-plan/meal'
 import { PlanSelect } from '@/components/user-plan/plan-select'
+import { PlanFolders } from './plan-folders'
 
 
 export const dynamic = 'force-dynamic'
@@ -504,6 +505,9 @@ const CreateUserPlan = ({
 		<div className='flex flex-col max-w-screen-xl w-full my-12'>
 			<div className={cn('flex gap-8 items-center', userPlan ? 'hidden' : '')}>
 				<PlanSelect selectedPlan={selectedPlanId} onSetPlan={onSetPlan} />
+			</div>
+			<div className={cn('flex gap-8 items-center', userPlan ? 'hidden' : 'hidden')}>
+				<PlanFolders selectedPlan={selectedPlanId} onSetPlan={onSetPlan} />
 			</div>
 			{selectedPlanId === '' && userPlan === null ? null : (
 				<Form {...form}>

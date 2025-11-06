@@ -2,115 +2,18 @@
 
 import { useState } from 'react'
 
-import { cn } from '@/lib/utils'
+import { FileCode, FileJson, FileText } from 'lucide-react'
+
 import {
-	createOnDropHandler,
-	dragAndDropFeature,
-	hotkeysCoreFeature,
-	keyboardDragAndDropFeature,
-	selectionFeature,
-	syncDataLoaderFeature,
-} from '@headless-tree/core'
-import { AssistiveTreeDescription, useTree } from '@headless-tree/react'
-import {
-	RiBracesLine,
-	RiCodeSSlashLine,
-	RiFileLine,
-	RiFileTextLine,
-	RiImageLine,
-	RiReactjsLine,
-} from '@remixicon/react'
-
-import { Tree, TreeItem, TreeItemLabel } from '@/components/ui/tree'
-
-interface Item {
-	name: string
-	children?: string[]
-	fileExtension?: string
-}
-
-const initialItems: Record<string, Item> = {
-	app: {
-		name: 'app',
-		children: ['app/layout.tsx', 'app/page.tsx', 'app/(dashboard)', 'app/api'],
-	},
-	'app/layout.tsx': { name: 'layout.tsx', fileExtension: 'tsx' },
-	'app/page.tsx': { name: 'page.tsx', fileExtension: 'tsx' },
-	'app/(dashboard)': {
-		name: '(dashboard)',
-		children: ['app/(dashboard)/dashboard'],
-	},
-	'app/(dashboard)/dashboard': {
-		name: 'dashboard',
-		children: ['app/(dashboard)/dashboard/page.tsx'],
-	},
-	'app/(dashboard)/dashboard/page.tsx': {
-		name: 'page.tsx',
-		fileExtension: 'tsx',
-	},
-	'app/api': { name: 'api', children: ['app/api/hello'] },
-	'app/api/hello': { name: 'hello', children: ['app/api/hello/route.ts'] },
-	'app/api/hello/route.ts': { name: 'route.ts', fileExtension: 'ts' },
-	components: {
-		name: 'components',
-		children: ['components/button.tsx', 'components/card.tsx'],
-	},
-	'components/button.tsx': { name: 'button.tsx', fileExtension: 'tsx' },
-	'components/card.tsx': { name: 'card.tsx', fileExtension: 'tsx' },
-	lib: { name: 'lib', children: ['lib/utils.ts'] },
-	'lib/utils.ts': { name: 'utils.ts', fileExtension: 'ts' },
-	public: {
-		name: 'public',
-		children: ['public/favicon.ico', 'public/vercel.svg'],
-	},
-	'public/favicon.ico': { name: 'favicon.ico', fileExtension: 'ico' },
-	'public/vercel.svg': { name: 'vercel.svg', fileExtension: 'svg' },
-	'package.json': { name: 'package.json', fileExtension: 'json' },
-	'tailwind.config.ts': { name: 'tailwind.config.ts', fileExtension: 'ts' },
-	'tsconfig.json': { name: 'tsconfig.json', fileExtension: 'json' },
-	'next.config.mjs': { name: 'next.config.mjs', fileExtension: 'mjs' },
-	'README.md': { name: 'README.md', fileExtension: 'md' },
-	root: {
-		name: 'Project Root',
-		children: [
-			'app',
-			'components',
-			'lib',
-			'public',
-			'package.json',
-			'tailwind.config.ts',
-			'tsconfig.json',
-			'next.config.mjs',
-			'README.md',
-		],
-	},
-}
-
-// Helper function to get icon based on file extension
-function getFileIcon(extension: string | undefined, className: string) {
-	switch (extension) {
-		case 'tsx':
-		case 'jsx':
-			return <RiReactjsLine className={className} />
-		case 'ts':
-		case 'js':
-		case 'mjs':
-			return <RiCodeSSlashLine className={className} />
-		case 'json':
-			return <RiBracesLine className={className} />
-		case 'svg':
-		case 'ico':
-		case 'png':
-		case 'jpg':
-			return <RiImageLine className={className} />
-		case 'md':
-			return <RiFileTextLine className={className} />
-		default:
-			return <RiFileLine className={className} />
-	}
-}
-
-const indent = 20
+	TreeExpander,
+	TreeIcon,
+	TreeLabel,
+	TreeNode,
+	TreeNodeContent,
+	TreeNodeTrigger,
+	TreeProvider,
+	TreeView,
+} from '@/components/kibo-ui/tree'
 
 const PlanFolders = ({
 	selectedPlan,
@@ -119,92 +22,145 @@ const PlanFolders = ({
 	selectedPlan: string
 	onSetPlan: (planId: string) => void
 }) => {
-	const [items, setItems] = useState(initialItems)
-
-	const tree = useTree<Item>({
-		initialState: {
-			expandedItems: ['app', 'app/(dashboard)', 'app/(dashboard)/dashboard'],
-			selectedItems: ['components'],
-		},
-		indent,
-		rootItemId: 'root',
-		getItemName: (item) => item.getItemData()?.name ?? 'Unknown',
-		isItemFolder: (item) => (item.getItemData()?.children?.length ?? 0) > 0,
-		canReorder: false,
-		onDrop: createOnDropHandler((parentItem, newChildrenIds) => {
-      // @ts-ignore
-			setItems((prevItems) => {
-				// Sort the children alphabetically
-				const sortedChildren = [...newChildrenIds].sort((a, b) => {
-					const itemA = prevItems[a]
-					const itemB = prevItems[b]
-
-					// First sort folders before files
-					const isAFolder = (itemA?.children?.length ?? 0) > 0
-					const isBFolder = (itemB?.children?.length ?? 0) > 0
-
-					if (isAFolder && !isBFolder) return -1
-					if (!isAFolder && isBFolder) return 1
-
-					// Then sort alphabetically by name
-					return (itemA?.name ?? '').localeCompare(itemB?.name ?? '')
-				})
-
-				return {
-					...prevItems,
-					[parentItem.getId()]: {
-						...prevItems[parentItem.getId()],
-						children: sortedChildren,
-					},
-				}
-			})
-		}),
-		dataLoader: {
-      // @ts-ignore
-			getItem: (itemId) => items[itemId],
-			getChildren: (itemId) => items[itemId]?.children ?? [],
-		},
-		features: [
-			syncDataLoaderFeature,
-			selectionFeature,
-			hotkeysCoreFeature,
-			dragAndDropFeature,
-			keyboardDragAndDropFeature,
-		],
-	})
-
+	const [selected, setSelected] = useState(selectedPlan)
 	return (
-		<div className='flex h-full flex-col gap-2 *:first:grow'>
-			<div>
-				<Tree
-					className={cn(
-						'relative before:absolute before:inset-0 before:-ms-1',
-						// 'before:bg-[repeating-linear-gradient(to_right,transparent_0,transparent_calc(var(--tree-indent)-1px),var(--border)_calc(var(--tree-indent)-1px),var(--border)_calc(var(--tree-indent)))]',
-						'before:bg-[repeating-linear-gradient(to_right,transparent_0,transparent_calc(var(--tree-indent)-1px),var(--border)_calc(var(--tree-indent)-1px),var(--border)_calc(var(--tree-indent)))]',
-					)}
-					indent={indent}
-					tree={tree}
-				>
-					<AssistiveTreeDescription tree={tree} />
-					{tree.getItems().map((item) => {
-						return (
-							<TreeItem key={item.getId()} item={item} className='pb-0!'>
-								<TreeItemLabel className='rounded-none py-1'>
-									<span className='flex items-center gap-2'>
-										{!item.isFolder() &&
-											getFileIcon(
-												item.getItemData()?.fileExtension,
-												'text-muted-foreground pointer-events-none size-4',
-											)}
-										{item.getItemName()}
-									</span>
-								</TreeItemLabel>
-							</TreeItem>
-						)
-					})}
-				</Tree>
-			</div>
-		</div>
+		<TreeProvider
+			defaultExpandedIds={['src', 'components', 'ui']}
+			onSelectionChange={(ids) => {
+				console.log('Selected:', ids)
+				const _selected = ids[0]
+				if (_selected) setSelected(_selected)
+			}}
+			selectedIds={[selected]}
+		>
+			{selected}
+			<TreeView>
+				<TreeNode nodeId='src'>
+					<TreeNodeTrigger>
+						<TreeExpander hasChildren />
+						<TreeIcon hasChildren />
+						<TreeLabel>src</TreeLabel>
+					</TreeNodeTrigger>
+					<TreeNodeContent hasChildren>
+						<TreeNode level={1} nodeId='components'>
+							<TreeNodeTrigger>
+								<TreeExpander hasChildren />
+								<TreeIcon hasChildren />
+								<TreeLabel>components</TreeLabel>
+							</TreeNodeTrigger>
+							<TreeNodeContent hasChildren>
+								<TreeNode level={2} nodeId='ui'>
+									<TreeNodeTrigger>
+										<TreeExpander hasChildren />
+										<TreeIcon hasChildren />
+										<TreeLabel>ui</TreeLabel>
+									</TreeNodeTrigger>
+									<TreeNodeContent hasChildren>
+										<TreeNode level={3} nodeId='button.tsx'>
+											<TreeNodeTrigger>
+												<TreeExpander />
+												<TreeIcon icon={<FileCode className='h-4 w-4' />} />
+												<TreeLabel>button.tsx</TreeLabel>
+											</TreeNodeTrigger>
+										</TreeNode>
+										<TreeNode level={3} nodeId='card.tsx'>
+											<TreeNodeTrigger>
+												<TreeExpander />
+												<TreeIcon icon={<FileCode className='h-4 w-4' />} />
+												<TreeLabel>card.tsx</TreeLabel>
+											</TreeNodeTrigger>
+										</TreeNode>
+										<TreeNode isLast level={3} nodeId='dialog.tsx'>
+											<TreeNodeTrigger>
+												<TreeExpander />
+												<TreeIcon icon={<FileCode className='h-4 w-4' />} />
+												<TreeLabel>dialog.tsx</TreeLabel>
+											</TreeNodeTrigger>
+										</TreeNode>
+									</TreeNodeContent>
+								</TreeNode>
+								<TreeNode isLast level={2} nodeId='layout'>
+									<TreeNodeTrigger>
+										<TreeExpander hasChildren />
+										<TreeIcon hasChildren />
+										<TreeLabel>layout</TreeLabel>
+									</TreeNodeTrigger>
+									<TreeNodeContent hasChildren>
+										<TreeNode level={3} nodeId='header.tsx'>
+											<TreeNodeTrigger>
+												<TreeExpander />
+												<TreeIcon icon={<FileCode className='h-4 w-4' />} />
+												<TreeLabel>header.tsx</TreeLabel>
+											</TreeNodeTrigger>
+										</TreeNode>
+										<TreeNode isLast level={3} nodeId='footer.tsx'>
+											<TreeNodeTrigger>
+												<TreeExpander />
+												<TreeIcon icon={<FileCode className='h-4 w-4' />} />
+												<TreeLabel>footer.tsx</TreeLabel>
+											</TreeNodeTrigger>
+										</TreeNode>
+									</TreeNodeContent>
+								</TreeNode>
+							</TreeNodeContent>
+						</TreeNode>
+					</TreeNodeContent>
+				</TreeNode>
+				<TreeNode>
+					<TreeNodeTrigger>
+						<TreeExpander hasChildren />
+						<TreeIcon hasChildren />
+						<TreeLabel>public</TreeLabel>
+					</TreeNodeTrigger>
+					<TreeNodeContent hasChildren>
+						<TreeNode isLast level={1} nodeId='images'>
+							<TreeNodeTrigger>
+								<TreeExpander hasChildren />
+								<TreeIcon hasChildren />
+								<TreeLabel>images</TreeLabel>
+							</TreeNodeTrigger>
+							<TreeNodeContent hasChildren>
+								<TreeNode level={2} nodeId='logo.svg'>
+									<TreeNodeTrigger>
+										<TreeExpander />
+										<TreeIcon icon={<FileText className='h-4 w-4' />} />
+										<TreeLabel>logo.svg</TreeLabel>
+									</TreeNodeTrigger>
+								</TreeNode>
+								<TreeNode isLast level={2} nodeId='hero.png'>
+									<TreeNodeTrigger>
+										<TreeExpander />
+										<TreeIcon icon={<FileText className='h-4 w-4' />} />
+										<TreeLabel>hero.png</TreeLabel>
+									</TreeNodeTrigger>
+								</TreeNode>
+							</TreeNodeContent>
+						</TreeNode>
+					</TreeNodeContent>
+				</TreeNode>
+				<TreeNode nodeId='package.json'>
+					<TreeNodeTrigger>
+						<TreeExpander />
+						<TreeIcon icon={<FileJson className='h-4 w-4' />} />
+						<TreeLabel>package.json</TreeLabel>
+					</TreeNodeTrigger>
+				</TreeNode>
+				<TreeNode nodeId='tsconfig.json'>
+					<TreeNodeTrigger>
+						<TreeExpander />
+						<TreeIcon icon={<FileJson className='h-4 w-4' />} />
+						<TreeLabel>tsconfig.json</TreeLabel>
+					</TreeNodeTrigger>
+				</TreeNode>
+				<TreeNode isLast nodeId='README.md'>
+					<TreeNodeTrigger>
+						<TreeExpander />
+						<TreeIcon icon={<FileText className='h-4 w-4' />} />
+						<TreeLabel>README.md</TreeLabel>
+					</TreeNodeTrigger>
+				</TreeNode>
+			</TreeView>
+		</TreeProvider>
 	)
 }
 
