@@ -205,7 +205,7 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
 							>
 								<div
 									className={cn(
-										'text-sm w-40 h-8 rounded-md border flex items-center justify-center gap-2 cursor-pointer border relative  active:scale-90 transition-transform col-span-3',
+										'text-sm w-40 h-8 rounded-md flex items-center justify-center gap-2 cursor-pointer border relative  active:scale-90 transition-transform col-span-3',
 										isTagged ? 'border-0 text-white' : borderDict[color],
 										isTagged ? bgDict[color] : '',
 									)}
