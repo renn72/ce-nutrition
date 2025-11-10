@@ -111,7 +111,7 @@ const ImageAdd = ({
 					/>
 				</div>
 			</DialogTrigger>
-			<DialogContent className='max-w-screen-2xl'>
+			<DialogContent className='max-w-screen-2xl px-1 xl:px-2'>
 				<DialogHeader className=''>
 					<DialogTitle className='text-center'>Select</DialogTitle>
 					<DialogDescription className='hidden' />
@@ -121,7 +121,7 @@ const ImageAdd = ({
 						direction: 'ltr',
 						startIndex: imagesStore.length - 1,
 					}}
-					className='w-full max-w-screen-xl mx-auto'
+					className='w-full max-w-[900px] xl:max-w-screen-xl mx-auto'
 				>
 					<CarouselContent className='gap-0'>
 						{imagesStore
@@ -129,7 +129,7 @@ const ImageAdd = ({
 							.map((image) => (
 								<CarouselItem
 									key={image.src}
-									className='md:basis-1/2 lg:basis-1/5 pl-1'
+									className='md:basis-1/2 lg:basis-1/4 xl:basis-1/5 pl-1'
 								>
 									<div className='p-1'>
 										<Card
@@ -159,7 +159,7 @@ const ImageAdd = ({
 														alt={image.alt}
 														fill
 														className='object-cover hover:scale-105 transition-transform duration-200'
-														sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw'
+														sizes='(max-width: 1068px) 100vw, (max-width: 1200px) 50vw, 25vw'
 													/>
 												</div>
 											</CardContent>
