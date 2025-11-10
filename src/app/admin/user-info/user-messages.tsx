@@ -77,7 +77,7 @@ const UserMessages = ({
 	return (
 		<div className={cn('flex flex-col gap-4 justify-between rounded-md border p-2 w-full', className)}>
 			<ScrollArea className=''>
-				<div className='flex flex-col gap-4 w-full px-1'>
+				<div className='flex flex-col gap-4 px-1 w-full'>
 					{l.map((message) => (
 						<div
 							key={message.id}
@@ -88,7 +88,7 @@ const UserMessages = ({
 						>
 							<div
 								className={cn(
-									'max-w-[80vw] px-2 py-1  rounded-lg shadow-sm whitespace-pre-line w-max',
+									'max-w-[80vw] px-2 py-1 rounded-lg shadow-sm whitespace-pre-line w-max',
 									message.user.status === 'received'
 										? 'bg-secondary text-secondary-foreground'
 										: 'bg-accent text-accent-foreground',
@@ -116,7 +116,7 @@ const UserMessages = ({
 					rows={2}
 					onChange={(e) => setMessage(e.target.value)}
 				/>
-				<div className='flex items-center justify-center rounded-full h-12 w-12 border-2 border-primary shrink-0'>
+				<div className='flex justify-center items-center w-12 h-12 rounded-full border-2 border-primary shrink-0'>
 					<Send
 						size={28}
 						className='cursor-pointer mr-[3px]'
