@@ -31,8 +31,8 @@ const UserInfo = ({ userId }: { userId: string }) => {
 	if (userNotesLoading) return null
 
 	return (
-		<div className='p-2 lg:p-4 w-full'>
-			<div className='grid grid-cols-1 lg:grid-cols-5 lg:grid-rows-3 gap-2 lg:gap-4 w-[calc(100vw-16px)] lg:w-full lg:h-[calc(100vh-80px)]'>
+		<div className='p-2 xl:p-4 w-full'>
+			<div className='grid grid-cols-1 lg:grid-cols-5 lg:grid-rows-3 gap-2 lg:gap-4 w-[calc(100vw-16px)] lg:w-full lg:h-[calc(100vh-65px)] xl:h-[calc(100vh-80px)] '>
 				<UserMessages
           className='lg:row-span-2'
           currentUser={currentUser} userId={userId} />

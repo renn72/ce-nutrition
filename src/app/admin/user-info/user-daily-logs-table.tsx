@@ -17,6 +17,24 @@ import {
 import { getRecipeDetailsFromDailyLog } from '@/lib/utils'
 import type { GetAllDailyLogs } from '@/types'
 
+const TableHeadWrapper = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <TableHead
+      className='text-xs tracking-normal lg:tracking-tighter xl:text-sm xl:tracking-normal'
+    >
+      {children}
+    </TableHead>
+  )
+}
+
+const TableCellWrapper = ({ children, className }: { children: React.ReactNode, className?: string }) => {
+  return (
+    <TableCell className={cn(className, 'text-xs tracking-normal lg:tracking-tighter xl:text-sm xl:tracking-normal')}>
+      {children}
+    </TableCell>
+  )
+}
+
 const UserDailyLogsTable = ({ dailyLogs, className }: { dailyLogs: GetAllDailyLogs, className?: string }) => {
   const recentLogs = dailyLogs.slice(0, 30)
 
@@ -44,26 +62,51 @@ const UserDailyLogsTable = ({ dailyLogs, className }: { dailyLogs: GetAllDailyLo
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Date</TableHead>
-            <TableHead>Weight</TableHead>
-            {columnsToShow.waistMeasurement && <TableHead>Waist</TableHead>}
-            <TableHead>Calories</TableHead>
-            <TableHead>Protein</TableHead>
-            {columnsToShow.sleep && <TableHead>Sleep</TableHead>}
-            {columnsToShow.sleepQuality && <TableHead>Sleep Quality</TableHead>}
-            {columnsToShow.nap && <TableHead>Nap</TableHead>}
-            {columnsToShow.steps && <TableHead>Steps</TableHead>}
-            {columnsToShow.cardio && <TableHead>Cardio</TableHead>}
-            {columnsToShow.cardioType && <TableHead>Cardio Type</TableHead>}
-            {columnsToShow.liss && <TableHead>LISS</TableHead>}
-            {columnsToShow.mobility && <TableHead>Mobility</TableHead>}
-            {columnsToShow.hiit && <TableHead>HIIT</TableHead>}
-            {columnsToShow.weightTraining && <TableHead>Weight Training</TableHead>}
-            {columnsToShow.posing && <TableHead>Posing</TableHead>}
-            {columnsToShow.sauna && <TableHead>Sauna</TableHead>}
-            {columnsToShow.coldPlunge && <TableHead>Cold Plunge</TableHead>}
-            {columnsToShow.fastedBloodGlucose && <TableHead>Fasted BG</TableHead>}
-            {columnsToShow.notes && <TableHead>Notes</TableHead>}
+            <TableHeadWrapper>
+              Date
+            </TableHeadWrapper>
+            <TableHeadWrapper>
+              Weight
+            </TableHeadWrapper>
+            {columnsToShow.waistMeasurement && <TableHeadWrapper>
+              Waist
+            </TableHeadWrapper>}
+            <TableHeadWrapper>
+              Calories
+            </TableHeadWrapper>
+            <TableHeadWrapper>
+              Protein
+            </TableHeadWrapper>
+            {columnsToShow.sleep && <TableHeadWrapper>
+              Sleep</TableHeadWrapper>}
+            {columnsToShow.sleepQuality && <TableHeadWrapper>
+              Sleep Quality</TableHeadWrapper>}
+            {columnsToShow.nap && <TableHeadWrapper>
+              Nap</TableHeadWrapper>}
+            {columnsToShow.steps && <TableHeadWrapper>
+              Steps</TableHeadWrapper>}
+            {columnsToShow.cardio && <TableHeadWrapper>
+              Cardio</TableHeadWrapper>}
+            {columnsToShow.cardioType && <TableHeadWrapper>
+              Cardio Type</TableHeadWrapper>}
+            {columnsToShow.liss && <TableHeadWrapper>
+              LISS</TableHeadWrapper>}
+            {columnsToShow.mobility && <TableHeadWrapper>
+              Mobility</TableHeadWrapper>}
+            {columnsToShow.hiit && <TableHeadWrapper>
+              HIIT</TableHeadWrapper>}
+            {columnsToShow.weightTraining && <TableHeadWrapper>
+              Weight Training</TableHeadWrapper>}
+            {columnsToShow.posing && <TableHeadWrapper>
+              Posing</TableHeadWrapper>}
+            {columnsToShow.sauna && <TableHeadWrapper>
+              Sauna</TableHeadWrapper>}
+            {columnsToShow.coldPlunge && <TableHeadWrapper>
+              Cold Plunge</TableHeadWrapper>}
+            {columnsToShow.fastedBloodGlucose && <TableHeadWrapper>
+              Fasted BG</TableHeadWrapper>}
+            {columnsToShow.notes && <TableHeadWrapper>
+              Notes</TableHeadWrapper>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -71,74 +114,74 @@ const UserDailyLogsTable = ({ dailyLogs, className }: { dailyLogs: GetAllDailyLo
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
             .map((log) => {
               const mealsMacros = log?.dailyMeals
-                .map((meal) => {
-                  const { cals, protein, carbs, fat } =
-                    getRecipeDetailsFromDailyLog(log, meal.mealIndex ?? 0)
+              .map((meal) => {
+                const { cals, protein, carbs, fat } =
+                getRecipeDetailsFromDailyLog(log, meal.mealIndex ?? 0)
+                return {
+                  cals: Number(cals),
+                  protein: Number(protein),
+                  carbs: Number(carbs),
+                  fat: Number(fat),
+                }
+              })
+              .reduce(
+                (acc, curr) => {
                   return {
-                    cals: Number(cals),
-                    protein: Number(protein),
-                    carbs: Number(carbs),
-                    fat: Number(fat),
+                    cals: acc.cals + curr.cals,
+                    protein: acc.protein + curr.protein,
+                    carbs: acc.carbs + curr.carbs,
+                    fat: acc.fat + curr.fat,
                   }
-                })
-                .reduce(
-                  (acc, curr) => {
-                    return {
-                      cals: acc.cals + curr.cals,
-                      protein: acc.protein + curr.protein,
-                      carbs: acc.carbs + curr.carbs,
-                      fat: acc.fat + curr.fat,
-                    }
-                  },
-                  {
-                    cals: 0,
-                    protein: 0,
-                    carbs: 0,
-                    fat: 0,
-                  },
-                )
+                },
+                {
+                  cals: 0,
+                  protein: 0,
+                  carbs: 0,
+                  fat: 0,
+                },
+              )
               return (
                 <TableRow key={log.id}>
-                  <TableCell>
+                  <TableCellWrapper>
                     {new Date(log.date).toLocaleDateString('en-AU', {
                       day: 'numeric',
                       month: 'short',
                     })}
-                  </TableCell>
-                  <TableCell>{log.morningWeight}</TableCell>
+                  </TableCellWrapper>
+                  <TableCellWrapper>{log.morningWeight}</TableCellWrapper>
                   {columnsToShow.waistMeasurement && (
-                    <TableCell>{log.waistMeasurement}</TableCell>
+                    <TableCellWrapper>{log.waistMeasurement}</TableCellWrapper>
                   )}
-                  <TableCell>{mealsMacros?.cals.toFixed(0)}</TableCell>
-                  <TableCell>{mealsMacros?.protein.toFixed(1)}</TableCell>
-                  {columnsToShow.sleep && <TableCell>{log.sleep}</TableCell>}
+                  <TableCellWrapper>{mealsMacros?.cals.toFixed(0)}</TableCellWrapper>
+                  <TableCellWrapper>{mealsMacros?.protein.toFixed(1)}</TableCellWrapper>
+                  {columnsToShow.sleep && <TableCellWrapper>{log.sleep}</TableCellWrapper>}
                   {columnsToShow.sleepQuality && (
-                    <TableCell>{log.sleepQuality}</TableCell>
+                    <TableCellWrapper>{log.sleepQuality}</TableCellWrapper>
                   )}
                   {columnsToShow.nap && (
-                    <TableCell>{Number(log.nap).toFixed(1)}</TableCell>
+                    <TableCellWrapper>{Number(log.nap).toFixed(1)}</TableCellWrapper>
                   )}
-                  {columnsToShow.steps && <TableCell>{log.steps}</TableCell>}
-                  {columnsToShow.cardio && <TableCell>{log.cardio}</TableCell>}
+                  {columnsToShow.steps && <TableCellWrapper>{log.steps}</TableCellWrapper>}
+                  {columnsToShow.cardio && <TableCellWrapper>{log.cardio}</TableCellWrapper>}
                   {columnsToShow.cardioType && (
-                    <TableCell>{log.cardioType}</TableCell>
+                    <TableCellWrapper>{log.cardioType}</TableCellWrapper>
                   )}
-                  {columnsToShow.liss && <TableCell>{log.liss}</TableCell>}
-                  {columnsToShow.mobility && <TableCell>{log.mobility}</TableCell>}
-                  {columnsToShow.hiit && <TableCell>{log.hiit}</TableCell>}
+                  {columnsToShow.liss && <TableCellWrapper>{log.liss}</TableCellWrapper>}
+                  {columnsToShow.mobility && <TableCellWrapper>{log.mobility}</TableCellWrapper>}
+                  {columnsToShow.hiit && <TableCellWrapper>{log.hiit}</TableCellWrapper>}
                   {columnsToShow.weightTraining && (
-                    <TableCell>{log.weight}</TableCell>
+                    <TableCellWrapper>{log.weight}</TableCellWrapper>
                   )}
-                  {columnsToShow.posing && <TableCell>{log.posing}</TableCell>}
+                  {columnsToShow.posing && <TableCellWrapper>{log.posing}</TableCellWrapper>}
                   {columnsToShow.sauna && <TableCell>{log.sauna}</TableCell>}
                   {columnsToShow.coldPlunge && (
-                    <TableCell>{log.coldPlunge}</TableCell>
+                    <TableCellWrapper>{log.coldPlunge}</TableCellWrapper>
                   )}
                   {columnsToShow.fastedBloodGlucose && (
-                    <TableCell>{log.fastedBloodGlucose}</TableCell>
+                    <TableCellWrapper>{log.fastedBloodGlucose}</TableCellWrapper>
                   )}
                   {columnsToShow.notes && (
-                    <TableCell className="max-w-[200px] truncate">
+                    <TableCellWrapper className="max-w-[200px] truncate">
                       <HoverCard>
                         <HoverCardTrigger asChild>
                           <span>{log.notes}</span>
@@ -147,7 +190,7 @@ const UserDailyLogsTable = ({ dailyLogs, className }: { dailyLogs: GetAllDailyLo
                           {log.notes}
                         </HoverCardContent>
                       </HoverCard>
-                    </TableCell>
+                    </TableCellWrapper>
                   )}
                 </TableRow>
               )

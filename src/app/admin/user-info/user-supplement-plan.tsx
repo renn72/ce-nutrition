@@ -38,7 +38,7 @@ const UserSupplementPlan = ({
 	return (
 		<div
 			className={cn(
-				'border rounded-lg p-4 flex flex-col w-full items-start gap-2',
+				'border rounded-lg p-2 xl:p-4 flex flex-col w-full items-start gap-2',
 				className,
 			)}
 		>
@@ -46,7 +46,7 @@ const UserSupplementPlan = ({
 			<ScrollArea className='h-full w-full'>
 				<div className='flex flex-col gap-2 pr-2'>
 					{supplementStacks.map((stack) => (
-						<Card key={stack.id} className='py-2 px-2 gap-0 w-full'>
+						<Card key={stack.id} className='py-2 px-1 xl:px-2 gap-0 w-full'>
 							<CardHeader className='px-2 py-0'>
 								<CardTitle className='pb-0 text-base capitalize'>
 									{stack.time}
@@ -57,7 +57,7 @@ const UserSupplementPlan = ({
 									{stack.supplements.map((supp) => (
 										<div
 											key={supp.id}
-											className='grid grid-cols-4 gap-2 items-center text-sm py-1'
+											className='grid grid-cols-4 gap-2 items-center py-1 text-xs xl:text-sm'
 										>
 											<div className='col-span-3 truncate flex items-center gap-1'>
 												<span className='truncate'>

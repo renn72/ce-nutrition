@@ -26,7 +26,7 @@ const UserCurrentPlan = ({ user, className }: { user: GetUserById, className?: s
 	}
 
 	return (
-    <div className={cn('border rounded-lg p-4 flex flex-col items-start gap-2 overflow-y-auto', className)}>
+    <div className={cn('border rounded-lg p-2 xl:p-4 flex flex-col items-start gap-2 overflow-y-auto', className)}>
       <h1 className='text-xl font-semibold'>Active Plans</h1>
 			{activePlans.map((plan) => {
         const cals = plan.userMeals.reduce((acc, meal) => acc + Number(meal.targetCalories), 0)
@@ -34,7 +34,7 @@ const UserCurrentPlan = ({ user, className }: { user: GetUserById, className?: s
         const numMeals = plan.userMeals.length
 				return (
 					<Card key={plan.id}
-            className=' py-2 px-2 gap-0 w-full '
+            className='py-2 px-1 xl:py-2 xl:px-2 gap-0 w-full '
           >
 						<CardHeader className='px-0 py-0'>
 							<div className='flex justify-between items-center'>
@@ -43,9 +43,9 @@ const UserCurrentPlan = ({ user, className }: { user: GetUserById, className?: s
 						</CardHeader>
 						<CardContent className='px-0 py-0'>
               <div className='flex justify-between items-center'>
-                <p className='text-sm'>{cals.toFixed(0)} cals</p>
-                <p className='text-sm'>{protein.toFixed(1)} g</p>
-                <p className='text-sm'>{numMeals} meals</p>
+                <p className='text-xs xl:text-sm'>{cals.toFixed(0)} cals</p>
+                <p className='text-xs xl:text-sm'>{protein.toFixed(1)} g</p>
+                <p className='text-xs xl:text-sm'>{numMeals} meals</p>
               </div>
 						</CardContent>
 					</Card>

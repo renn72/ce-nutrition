@@ -138,7 +138,7 @@ const UserWeight = ({
       <div
         className={cn(
           'flex items-center justify-center rounded-full border-[12px] border-blue-600/30',
-          ' w-56 h-56 text-4xl font-bold text-primary/90',
+          ' w-36 h-36 xl:w-56 xl:h-56 text-3xl xl:text-4xl font-bold text-primary/90',
         )}
       >
         <div className='flex items-baseline'>
