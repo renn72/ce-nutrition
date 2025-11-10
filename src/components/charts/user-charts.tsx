@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react'
-
 import { cn, getRecipeDetailsFromDailyLog } from '@/lib/utils'
 import type { GetAllDailyLogs, GetUserById } from '@/types'
 import { useAtom, useAtomValue } from 'jotai'
 import { CircleMinus, CirclePlus } from 'lucide-react'
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts'
+
+import { api } from '@/trpc/react'
+
 
 import {
 	ChartContainer,
@@ -46,6 +47,8 @@ const selectChoices = [
   { value: 'carbs', label: 'Carbohydrates' },
   { value: 'protein', label: 'Protein' },
   { value: 'fat', label: 'Fat' },
+  { value: 'leanMass', label: 'Lean Mass' },
+  { value: 'bodyFat', label: 'Body Fat' },
 	{ value: 'water', label: 'Water' },
 	{ value: 'toilet', label: 'Toilet' },
 	{ value: 'bloodGlucose', label: 'Blood Glucose' },
@@ -68,25 +71,27 @@ const Chart = ({
 	data:
 		| {
 				date: string
-				morningWeight: number | null
-				calories: number | null
-        carbs: number | null
-        protein: number | null
-        fat: number | null
-				bloodGlucose: number | null
-				sleep: number | null
-				sleepQuality: number | null
-				hiit: number | null
-				cardio: number | null
-				weight: number | null
-				liss: number | null
-				posing: number | null
-				steps: number | null
-				sauna: number | null
-				coldPlunge: number | null
-				nap: number | null
-				water: number | null
-				toilet: number | null
+				morningWeight: number | null | undefined
+				calories: number | null | undefined
+        carbs: number | null | undefined
+        protein: number | null | undefined
+        fat: number | null | undefined
+				bloodGlucose: number | null | undefined
+				sleep: number | null | undefined
+				sleepQuality: number | null | undefined
+				hiit: number | null | undefined
+				cardio: number | null | undefined
+				weight: number | null | undefined
+				liss: number | null | undefined
+				posing: number | null | undefined
+				steps: number | null | undefined
+				sauna: number | null | undefined
+				coldPlunge: number | null | undefined
+				nap: number | null | undefined
+				water: number | null | undefined
+				toilet: number | null | undefined
+        bodyFat: number | null | undefined
+        leanMass: number | null | undefined
 		  }[]
 		| undefined
 }) => {
@@ -268,6 +273,11 @@ const UserCharts = ({
 		chartSelectValueRightAtom,
 	)
 
+  const { data: userSkinfolds} =
+    api.metrics.getUserSkinfolds.useQuery(currentUser.id)
+
+  console.log('userSkinfolds', userSkinfolds)
+
 	const [leftChartZoom, setLeftChartZoom] = useAtom(leftChartZoomAtom)
 	const [rightChartZoom, setRightChartZoom] = useAtom(rightChartZoomAtom)
 
@@ -339,59 +349,48 @@ const UserCharts = ({
       protein: log.protein === 0 ? null : Number(log.protein),
       fat: log.fat === 0 ? null : Number(log.fat),
       calories: log.calories === 0 ? null : Number(log.calories),
+      bodyFat: null,
+      leanMass: null,
 			date: new Date(log.date).toLocaleDateString('en-AU', {
-				year: '2-digit',
 				month: 'numeric',
 				day: 'numeric',
 			}),
 		}))
 		.slice(-range)
 
-	const filteredSelectChoices = selectChoices.filter((choice) => {
-		if (
-			currentUser?.settings?.isBloodGlucose &&
-			choice.value === 'bloodGlucose' &&
-			isMoblie
-		)
-			return true
-		if (currentUser?.settings?.isSleep && choice.value === 'sleep' && isMoblie)
-			return true
-		if (
-			currentUser?.settings?.isSleepQuality &&
-			choice.value === 'sleepQuality' &&
-			isMoblie
-		)
-			return true
-		if (currentUser?.settings?.isNap && choice.value === 'nap' && isMoblie)
-			return true
-		if (currentUser?.settings?.isSteps && choice.value === 'steps' && isMoblie)
-			return true
-		if (
-			currentUser?.settings?.isWeightTraining &&
-			choice.value === 'weightTraining' &&
-			isMoblie
-		)
-			return true
-		if (currentUser?.settings?.isHiit && choice.value === 'hiit' && isMoblie)
-			return true
-		if (currentUser?.settings?.isLiss && choice.value === 'liss' && isMoblie)
-			return true
-		if (
-			currentUser?.settings?.isPosing &&
-			choice.value === 'posing' &&
-			isMoblie
-		)
-			return true
-		if (currentUser?.settings?.isSauna && choice.value === 'sauna' && isMoblie)
-			return true
-		if (
-			currentUser?.settings?.isColdPlunge &&
-			choice.value === 'coldPlunge' &&
-			isMoblie
-		)
-			return true
-		return false
-	})
+  const skinfolds = userSkinfolds
+		?.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    ?.map((skinfold) => {
+    return {
+			date: new Date(skinfold.date).toLocaleDateString('en-AU', {
+				month: 'numeric',
+				day: 'numeric',
+			}),
+      morningWeight: null,
+      bloodGlucose: null,
+      sleep: null,
+      sleepQuality: null,
+      hiit: null,
+      cardio: null,
+      weight: null,
+      liss: null,
+      posing: null,
+      steps: null,
+      sauna: null,
+      coldPlunge: null,
+      nap: null,
+      water: null,
+      toilet: null,
+      carbs: null,
+      protein: null,
+      fat: null,
+      calories: null,
+      bodyFat: Number(skinfold.bodyFat?.[0]?.bodyFat),
+      leanMass: Number(skinfold.leanMass?.[0]?.leanMass),
+    }
+  })
+		.slice(-range)
+
 
 	return (
 		<div
@@ -411,7 +410,7 @@ const UserCharts = ({
 					}}
 				>
 					<SelectTrigger
-						className={cn('rounded-lg', isMoblie ? 'h-8 w-40 ' : 'h-8 w-48 ')}
+						className={cn('rounded-lg', isMoblie ? 'h-8 w-40 ' : 'h-8 w-36 xl:w-48 ')}
 					>
 						<SelectValue placeholder='Select' />
 					</SelectTrigger>
@@ -430,7 +429,7 @@ const UserCharts = ({
 					}}
 				>
 					<SelectTrigger
-						className={cn('rounded-lg', isMoblie ? 'h-8 w-40 ' : 'h-8 w-48 ')}
+						className={cn('rounded-lg', isMoblie ? 'h-8 w-40 ' : 'h-8 w-36 xl:w-48 ')}
 					>
 						<SelectValue placeholder='Select' />
 					</SelectTrigger>
@@ -444,7 +443,9 @@ const UserCharts = ({
 					</SelectContent>
 				</Select>
 			</div>
-			<Chart data={data} />
+      {
+        selectValueLeft === 'bodyFat' || selectValueLeft === 'leanMass' ? <Chart data={skinfolds} /> : <Chart data={data} />
+      }
 			<div className='flex gap-2 justify-between w-full'>
 				<div className='flex gap-2 items-center'>
 					<CirclePlus
