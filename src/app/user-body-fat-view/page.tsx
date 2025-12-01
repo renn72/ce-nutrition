@@ -51,7 +51,7 @@ const View = ({ userId }: { userId: string }) => {
 				</div>
 				<div className='flex gap-2 justify-center items-center w-full hover:bg-gray-600'>
 					<input
-						className='w-min text-center text-white hover:bg-gray-600 focus:border-none focus:outline-0'
+						className='py-2 w-min text-center text-white hover:bg-gray-600 focus:border-none focus:outline-0'
 						value={info}
 						onChange={(e) => setInfo(e.target.value)}
 					/>
