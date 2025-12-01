@@ -49,7 +49,7 @@ const View = ({ userId }: { userId: string }) => {
 				</div>
 				<div className='flex gap-2 justify-center items-center w-full hover:bg-gray-600'>
 					<input
-						className='w-min text-center text-white hover:bg-gray-600'
+						className='w-min text-center text-white hover:bg-gray-600 focus:border-none focus:outline-0'
 						value={info}
 						onChange={(e) => setInfo(e.target.value)}
 					/>
@@ -76,7 +76,7 @@ const View = ({ userId }: { userId: string }) => {
 					size === 7 ? 'text-5xl' : '',
 					size === 8 ? 'text-6xl' : '',
 					size === 9 ? 'text-7xl' : '',
-					'font-medium w-full text-center',
+					'font-medium w-full text-center pb-28',
 				)}
 			>
 				{info}
