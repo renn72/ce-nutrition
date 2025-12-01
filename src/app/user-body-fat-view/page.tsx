@@ -5,6 +5,8 @@ import { cn } from '@/lib/utils'
 
 import { api } from '@/trpc/react'
 
+import { Input } from '@/components/ui/input'
+
 import { useSearchParams } from 'next/navigation'
 
 import { CircleMinus, CirclePlus, MoveDown, MoveUp } from 'lucide-react'
@@ -23,13 +25,24 @@ const View = ({ userId }: { userId: string }) => {
 		}))
 		.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
-	const value = (data?.[1]?.value || 0) - (data?.[0]?.value || 0)
+	const [value, setValue] = useState(() =>
+		Math.abs((data?.[1]?.value || 0) - (data?.[0]?.value || 0)).toFixed(1),
+	)
+
+	const [isPositive, setIsPositive] = useState(() => {
+		const i = (data?.[1]?.value || 0) - (data?.[0]?.value || 0)
+		return i > 0
+	})
+
+	const [valueType, setValueType] = useState('body fat')
+
+	const [postfix, setPostfix] = useState('kg')
 
 	if (isLoading) return null
 
 	console.log('data', data?.slice(-2))
 	return (
-		<div className='flex flex-col justify-center items-center w-full w-screen h-screen'>
+		<div className='flex flex-col justify-center items-center w-screen h-screen full'>
 			<div className={cn('font-medium w-full text-3xl ')}>
 				<div className='flex gap-2 justify-center items-center px-24'>
 					<CirclePlus
@@ -57,16 +70,39 @@ const View = ({ userId }: { userId: string }) => {
 					/>
 				</div>
 			</div>
-			<div className='flex justify-center items-center -ml-8 font-bold text-green-600 text-[20rem]'>
-				{value > 0 ? (
-					<MoveDown className='mb-16 -mr-20 text-black' size={250} />
+			<div className='flex justify-center items-center -ml-4 font-bold text-green-600 text-[20rem]'>
+				{isPositive ? (
+					<MoveDown
+						onClick={() => setIsPositive(false)}
+						className='mb-16 -mr-16 text-black'
+						size={250}
+					/>
 				) : (
-					<MoveUp className='mb-16 -mr-20 text-black' size={250} />
+					<MoveUp
+						onClick={() => setIsPositive(true)}
+						className='mb-16 -mr-16 text-black'
+						size={250}
+					/>
 				)}
-				{Math.abs(value).toFixed(1)}%
+				<input
+					className={cn(
+						'w-min h-full text-center field-sizing-content text-[20rem] focus:outline-0',
+					)}
+					value={value}
+					onChange={(e) => setValue(e.target.value)}
+				/>
+				<input
+					value={postfix}
+					onChange={(e) => setPostfix(e.target.value)}
+					className='field-sizing-content focus:outline-0'
+				/>
 			</div>
 			<div className='-mt-36 w-full font-bold text-center uppercase text-[4rem]'>
-				Body Fat
+				<input
+					value={valueType}
+					onChange={(e) => setValueType(e.target.value)}
+					className='text-center uppercase field-sizing-content focus:outline-0'
+				/>
 			</div>
 			<div
 				className={cn(

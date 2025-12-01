@@ -27,7 +27,7 @@ const View = ({ userId }: { userId: string }) => {
 
 	console.log('data', data?.slice(-2))
 	return (
-		<div className='flex flex-col justify-center items-center w-full w-screen h-screen'>
+		<div className='flex flex-col justify-center items-center w-screen h-screen'>
 			<div className={cn('font-medium w-full text-3xl ')}>
 				<div className='flex gap-2 justify-center items-center px-24'>
 					<CirclePlus
