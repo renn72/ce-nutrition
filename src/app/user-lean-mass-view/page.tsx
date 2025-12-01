@@ -28,34 +28,7 @@ const View = ({ userId }: { userId: string }) => {
 	console.log('data', data?.slice(-2))
 	return (
 		<div className='flex flex-col justify-center items-center w-screen h-screen'>
-			<div className={cn('font-medium w-full text-3xl ')}>
-				<div className='flex gap-2 justify-center items-center px-24'>
-					<CirclePlus
-						onClick={() => {
-							if (size === 9) return
-							setSize(size + 1)
-						}}
-						size={60}
-						className='text-white hover:text-black'
-					/>
-					<CircleMinus
-						onClick={() => {
-							if (size === 4) return
-							setSize(size - 1)
-						}}
-						size={60}
-						className='text-white hover:text-black'
-					/>
-				</div>
-				<div className='flex gap-2 justify-center items-center w-full hover:bg-gray-600'>
-					<input
-						className='py-2 w-min text-center text-white hover:bg-gray-600 focus:border-none focus:outline-0'
-						value={info}
-						onChange={(e) => setInfo(e.target.value)}
-					/>
-				</div>
-			</div>
-			<div className='flex justify-center items-center -ml-8 font-bold text-green-600 text-[20rem]'>
+			<div className='flex justify-center items-center mt-24 -ml-8 font-bold text-green-600 text-[20rem]'>
 				{value > 0 ? (
 					<MoveDown className='mb-16 -mr-20 text-black' size={250} />
 				) : (
@@ -76,10 +49,34 @@ const View = ({ userId }: { userId: string }) => {
 					size === 7 ? 'text-5xl' : '',
 					size === 8 ? 'text-6xl' : '',
 					size === 9 ? 'text-7xl' : '',
-					'font-medium w-full text-center',
+					'font-medium w-full text-center pb-28',
 				)}
 			>
-				{info}
+				<div className='flex gap-2 justify-center items-center w-full hover:bg-gray-600'>
+					<input
+						className='py-2 px-24 w-min text-center hover:bg-gray-600 focus:border-none field-sizing-content focus:outline-0'
+						value={info}
+						onChange={(e) => setInfo(e.target.value)}
+					/>
+				</div>
+				<div className='flex gap-2 justify-center items-center px-24'>
+					<CirclePlus
+						onClick={() => {
+							if (size === 9) return
+							setSize(size + 1)
+						}}
+						size={60}
+						className='text-white hover:text-black'
+					/>
+					<CircleMinus
+						onClick={() => {
+							if (size === 4) return
+							setSize(size - 1)
+						}}
+						size={60}
+						className='text-white hover:text-black'
+					/>
+				</div>
 			</div>
 		</div>
 	)
