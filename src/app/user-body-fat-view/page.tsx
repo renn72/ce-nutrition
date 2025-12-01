@@ -5,8 +5,6 @@ import { cn } from '@/lib/utils'
 
 import { api } from '@/trpc/react'
 
-import { Input } from '@/components/ui/input'
-
 import { useSearchParams } from 'next/navigation'
 
 import { CircleMinus, CirclePlus, MoveDown, MoveUp } from 'lucide-react'
@@ -36,7 +34,7 @@ const View = ({ userId }: { userId: string }) => {
 
 	const [valueType, setValueType] = useState('body fat')
 
-	const [postfix, setPostfix] = useState('kg')
+	const [postfix, setPostfix] = useState('%')
 
 	if (isLoading) return null
 
