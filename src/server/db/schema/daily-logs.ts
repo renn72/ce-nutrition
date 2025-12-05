@@ -32,6 +32,7 @@ export const dailyLog = createTable(
 		isCardio: int('is_cardio', { mode: 'boolean' }),
 		isLift: int('is_lift', { mode: 'boolean' }),
 		isLiss: int('is_liss', { mode: 'boolean' }),
+		isPeriod: int('is_period', { mode: 'boolean' }),
 		isStarred: int('is_starred', { mode: 'boolean' }).default(false),
 		hiit: text('hiit'),
 		cardio: text('cardio'),
@@ -40,7 +41,7 @@ export const dailyLog = createTable(
 		posing: text('posing'),
 		steps: text('steps'),
 		sauna: text('sauna'),
-    mobility: text('mobility'),
+		mobility: text('mobility'),
 		coldPlunge: text('cold_plunge'),
 		cardioType: text('cardio_type'),
 		image: text('image'),
@@ -70,27 +71,31 @@ export const dailyLogRelations = relations(dailyLog, ({ one, many }) => ({
 	supplements: many(dailySupplement),
 }))
 
-export const dailySupplement = createTable('daily_supplement', {
-	id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-	createdAt: int('created_at', { mode: 'timestamp' })
-		.default(sql`(unixepoch())`)
-		.notNull(),
-	dailyLogId: int('daily_log_id')
-		.notNull()
-		.references(() => dailyLog.id, {
-			onDelete: 'cascade',
-		}),
-	supplementId: int('supplement_id')
-		.notNull()
-		.references(() => ingredient.id, {
-			onDelete: 'cascade',
-		}),
-	amount: text('amount'),
-	unit: text('unit'),
-	time: text('time'),
-	notes: text('notes'),
-},
-  (table) => [index('daily_supplement_daily_log_id_index').on(table.dailyLogId)],
+export const dailySupplement = createTable(
+	'daily_supplement',
+	{
+		id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+		createdAt: int('created_at', { mode: 'timestamp' })
+			.default(sql`(unixepoch())`)
+			.notNull(),
+		dailyLogId: int('daily_log_id')
+			.notNull()
+			.references(() => dailyLog.id, {
+				onDelete: 'cascade',
+			}),
+		supplementId: int('supplement_id')
+			.notNull()
+			.references(() => ingredient.id, {
+				onDelete: 'cascade',
+			}),
+		amount: text('amount'),
+		unit: text('unit'),
+		time: text('time'),
+		notes: text('notes'),
+	},
+	(table) => [
+		index('daily_supplement_daily_log_id_index').on(table.dailyLogId),
+	],
 )
 
 export const dailySupplementRelations = relations(
@@ -132,20 +137,22 @@ export const tagRelations = relations(tag, ({ one, many }) => ({
 	dailyLogs: many(tagToDailyLog),
 }))
 
-export const tagToDailyLog = createTable('tag_to_daily_log', {
-	id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-	tagId: int('tag_id')
-		.notNull()
-		.references(() => tag.id, {
-			onDelete: 'cascade',
-		}),
-	dailyLogId: int('daily_log_id')
-		.notNull()
-		.references(() => dailyLog.id, {
-			onDelete: 'cascade',
-		}),
-},
-  (table) => [index('tag_to_daily_log_tag_id_index').on(table.tagId)],
+export const tagToDailyLog = createTable(
+	'tag_to_daily_log',
+	{
+		id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+		tagId: int('tag_id')
+			.notNull()
+			.references(() => tag.id, {
+				onDelete: 'cascade',
+			}),
+		dailyLogId: int('daily_log_id')
+			.notNull()
+			.references(() => dailyLog.id, {
+				onDelete: 'cascade',
+			}),
+	},
+	(table) => [index('tag_to_daily_log_tag_id_index').on(table.tagId)],
 )
 
 export const tagToDailyLogRelations = relations(tagToDailyLog, ({ one }) => ({
@@ -159,18 +166,20 @@ export const tagToDailyLogRelations = relations(tagToDailyLog, ({ one }) => ({
 	}),
 }))
 
-export const poopLog = createTable('poop_log', {
-	id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-	createdAt: int('created_at', { mode: 'timestamp' })
-		.default(sql`(unixepoch())`)
-		.notNull(),
-	dailyLogId: int('daily_log_id')
-		.notNull()
-		.references(() => dailyLog.id, {
-			onDelete: 'cascade',
-		}),
-},
-  (table) => [index('poop_log_daily_log_id_index').on(table.dailyLogId)],
+export const poopLog = createTable(
+	'poop_log',
+	{
+		id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+		createdAt: int('created_at', { mode: 'timestamp' })
+			.default(sql`(unixepoch())`)
+			.notNull(),
+		dailyLogId: int('daily_log_id')
+			.notNull()
+			.references(() => dailyLog.id, {
+				onDelete: 'cascade',
+			}),
+	},
+	(table) => [index('poop_log_daily_log_id_index').on(table.dailyLogId)],
 )
 
 export const poopLogRelations = relations(poopLog, ({ one, many }) => ({
@@ -180,19 +189,21 @@ export const poopLogRelations = relations(poopLog, ({ one, many }) => ({
 	}),
 }))
 
-export const waterLog = createTable('water_log', {
-	id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-	createdAt: int('created_at', { mode: 'timestamp' })
-		.default(sql`(unixepoch())`)
-		.notNull(),
-	dailyLogId: int('daily_log_id')
-		.notNull()
-		.references(() => dailyLog.id, {
-			onDelete: 'cascade',
-		}),
-	amount: text('water'),
-},
-  (table) => [index('water_log_daily_log_id_index').on(table.dailyLogId)],
+export const waterLog = createTable(
+	'water_log',
+	{
+		id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+		createdAt: int('created_at', { mode: 'timestamp' })
+			.default(sql`(unixepoch())`)
+			.notNull(),
+		dailyLogId: int('daily_log_id')
+			.notNull()
+			.references(() => dailyLog.id, {
+				onDelete: 'cascade',
+			}),
+		amount: text('water'),
+	},
+	(table) => [index('water_log_daily_log_id_index').on(table.dailyLogId)],
 )
 
 export const waterLogRelations = relations(waterLog, ({ one, many }) => ({
@@ -202,23 +213,25 @@ export const waterLogRelations = relations(waterLog, ({ one, many }) => ({
 	}),
 }))
 
-export const dailyMeal = createTable('daily_meal', {
-	id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-	createdAt: int('created_at', { mode: 'timestamp' })
-		.default(sql`(unixepoch())`)
-		.notNull(),
-	dailyLogId: int('daily_log_id')
-		.notNull()
-		.references(() => dailyLog.id, {
-			onDelete: 'cascade',
-		}),
-	mealIndex: int('meal_index', { mode: 'number' }),
-	date: int('date', { mode: 'timestamp' }),
-	recipeId: int('recipe_id'),
-	vegeCalories: text('vege_calories'),
-	veges: text('veges'),
-},
-  (table) => [index('daily_meal_daily_log_id_index').on(table.dailyLogId)],
+export const dailyMeal = createTable(
+	'daily_meal',
+	{
+		id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+		createdAt: int('created_at', { mode: 'timestamp' })
+			.default(sql`(unixepoch())`)
+			.notNull(),
+		dailyLogId: int('daily_log_id')
+			.notNull()
+			.references(() => dailyLog.id, {
+				onDelete: 'cascade',
+			}),
+		mealIndex: int('meal_index', { mode: 'number' }),
+		date: int('date', { mode: 'timestamp' }),
+		recipeId: int('recipe_id'),
+		vegeCalories: text('vege_calories'),
+		veges: text('veges'),
+	},
+	(table) => [index('daily_meal_daily_log_id_index').on(table.dailyLogId)],
 )
 
 export const dailyMealRelations = relations(dailyMeal, ({ one, many }) => ({

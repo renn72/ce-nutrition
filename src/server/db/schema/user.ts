@@ -352,7 +352,10 @@ export const userSettings = createTable(
 		isSteps: int('is_steps', { mode: 'boolean' }).default(true),
 		isSauna: int('is_sauna', { mode: 'boolean' }).default(true),
 		isColdPlunge: int('is_cold_plunge', { mode: 'boolean' }).default(true),
-    isMobility: int('is_mobility', { mode: 'boolean' }).default(false),
+		isMobility: int('is_mobility', { mode: 'boolean' }).default(false),
+		periodStartAt: int('period_start_at', { mode: 'timestamp' }),
+		periodLength: int('period_length'),
+		periodInterval: int('period_interval'),
 	},
 	(table) => [index('user_settings_user_id_idx').on(table.userId)],
 )
@@ -423,20 +426,22 @@ export const userToTrainer = createTable(
 	],
 )
 
-export const role = createTable('role', {
-	id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-	createdAt: int('created_at', { mode: 'timestamp' })
-		.default(sql`(unixepoch())`)
-		.notNull(),
-	updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-		() => new Date(),
-	),
-	userId: text('user_id').references(() => user.id, {
-		onDelete: 'cascade',
-	}),
-	name: text('name'),
-},
-  (table) => [index('role_user_id_idx').on(table.userId)],
+export const role = createTable(
+	'role',
+	{
+		id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+		createdAt: int('created_at', { mode: 'timestamp' })
+			.default(sql`(unixepoch())`)
+			.notNull(),
+		updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+			() => new Date(),
+		),
+		userId: text('user_id').references(() => user.id, {
+			onDelete: 'cascade',
+		}),
+		name: text('name'),
+	},
+	(table) => [index('role_user_id_idx').on(table.userId)],
 )
 
 export const account = createTable(

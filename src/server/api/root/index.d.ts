@@ -1627,6 +1627,57 @@ declare const userSettings: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             identity: undefined;
             generated: undefined;
         }, {}, {}>;
+        periodStartAt: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "period_start_at";
+            tableName: "user_settings";
+            dataType: "date";
+            columnType: "SQLiteTimestamp";
+            data: Date;
+            driverParam: number;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        periodLength: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "period_length";
+            tableName: "user_settings";
+            dataType: "number";
+            columnType: "SQLiteInteger";
+            data: number;
+            driverParam: number;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        periodInterval: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "period_interval";
+            tableName: "user_settings";
+            dataType: "number";
+            columnType: "SQLiteInteger";
+            data: number;
+            driverParam: number;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
     };
     dialect: "sqlite";
 }>;
@@ -12391,6 +12442,23 @@ declare const dailyLog: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             identity: undefined;
             generated: undefined;
         }, {}, {}>;
+        isPeriod: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "is_period";
+            tableName: "daily_log";
+            dataType: "boolean";
+            columnType: "SQLiteBoolean";
+            data: boolean;
+            driverParam: number;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
         isStarred: drizzle_orm_sqlite_core.SQLiteColumn<{
             name: "is_starred";
             tableName: "daily_log";
@@ -14004,6 +14072,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isCardio: boolean | null;
                 isLift: boolean | null;
                 isLiss: boolean | null;
+                isPeriod: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -14196,6 +14265,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isCardio: boolean | null;
                 isLift: boolean | null;
                 isLiss: boolean | null;
+                isPeriod: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -14386,6 +14456,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isCardio: boolean | null;
                 isLift: boolean | null;
                 isLiss: boolean | null;
+                isPeriod: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -14431,6 +14502,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isCardio: boolean | null;
                 isLift: boolean | null;
                 isLiss: boolean | null;
+                isPeriod: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -15720,6 +15792,9 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     isSauna: boolean | null;
                     isColdPlunge: boolean | null;
                     isMobility: boolean | null;
+                    periodStartAt: Date | null;
+                    periodLength: number | null;
+                    periodInterval: number | null;
                 };
                 supplementStacks: {
                     id: number;
@@ -15974,6 +16049,9 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     isSauna: boolean | null;
                     isColdPlunge: boolean | null;
                     isMobility: boolean | null;
+                    periodStartAt: Date | null;
+                    periodLength: number | null;
+                    periodInterval: number | null;
                 };
                 supplementStacks: {
                     id: number;
@@ -16259,6 +16337,9 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     isSauna: boolean | null;
                     isColdPlunge: boolean | null;
                     isMobility: boolean | null;
+                    periodStartAt: Date | null;
+                    periodLength: number | null;
+                    periodInterval: number | null;
                 };
                 supplementStacks: {
                     id: number;
@@ -20965,6 +21046,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isCardio: boolean | null;
                 isLift: boolean | null;
                 isLiss: boolean | null;
+                isPeriod: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -21157,6 +21239,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isCardio: boolean | null;
                 isLift: boolean | null;
                 isLiss: boolean | null;
+                isPeriod: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -21347,6 +21430,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isCardio: boolean | null;
                 isLift: boolean | null;
                 isLiss: boolean | null;
+                isPeriod: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -21392,6 +21476,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isCardio: boolean | null;
                 isLift: boolean | null;
                 isLiss: boolean | null;
+                isPeriod: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -22681,6 +22766,9 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     isSauna: boolean | null;
                     isColdPlunge: boolean | null;
                     isMobility: boolean | null;
+                    periodStartAt: Date | null;
+                    periodLength: number | null;
+                    periodInterval: number | null;
                 };
                 supplementStacks: {
                     id: number;
@@ -22935,6 +23023,9 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     isSauna: boolean | null;
                     isColdPlunge: boolean | null;
                     isMobility: boolean | null;
+                    periodStartAt: Date | null;
+                    periodLength: number | null;
+                    periodInterval: number | null;
                 };
                 supplementStacks: {
                     id: number;
@@ -23220,6 +23311,9 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     isSauna: boolean | null;
                     isColdPlunge: boolean | null;
                     isMobility: boolean | null;
+                    periodStartAt: Date | null;
+                    periodLength: number | null;
+                    periodInterval: number | null;
                 };
                 supplementStacks: {
                     id: number;

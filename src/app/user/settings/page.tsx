@@ -2,9 +2,8 @@
 
 import { api } from '@/trpc/react'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
-import { env } from '@/env'
 import { cn } from '@/lib/utils'
 import type { GetUserById } from '@/types'
 import { RefreshCw } from 'lucide-react'
@@ -23,90 +22,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 
-import { subscribeUser, unsubscribeUser } from '@/components/layout/action'
-import { urlBase64ToUint8Array } from '@/components/layout/pwa'
-
-const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
-	const [isNotifications, setIsNotifications] = useState(false)
-	const [subscription, setSubscription] = useState<PushSubscription | null>(
-		null,
-	)
-	const [isLoading, setIsLoading] = useState(true)
-  const { mutate } = api.adminLog.create.useMutation()
-
-	useEffect(() => {
-		if ('serviceWorker' in navigator && 'PushManager' in window) {
-			registerServiceWorker()
-		} else {
-			// setIsLoading(false)
-			setIsNotifications(false)
-		}
-	}, [])
-
-	async function registerServiceWorker() {
-		const registration = await navigator.serviceWorker.register('/sw.js', {
-			scope: '/',
-			updateViaCache: 'none',
-		})
-		const sub = await registration.pushManager.getSubscription()
-		setSubscription(sub)
-		setTimeout(() => {
-			setIsLoading(false)
-		}, 50)
-		if (sub) {
-			setIsNotifications(true)
-		} else {
-			setIsNotifications(false)
-		}
-	}
-
-	async function subscribeToPush() {
-		const registration = await navigator.serviceWorker.ready
-		const sub = await registration.pushManager.subscribe({
-			userVisibleOnly: true,
-			applicationServerKey: urlBase64ToUint8Array(
-				env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-			),
-		})
-		const serializedSub = JSON.parse(JSON.stringify(sub))
-		await subscribeUser(serializedSub)
-    mutate({
-      task: 'Subscribe to Push Notifications',
-      notes: '',
-    })
-	}
-
-	async function unsubscribeFromPush() {
-		await subscription?.unsubscribe()
-		setSubscription(null)
-		await unsubscribeUser()
-    mutate({
-      task: 'Unsubscribe from Push Notifications',
-      notes: '',
-    })
-	}
-
-	return (
-		<DailyLogToggleWrapper
-			title='Notifications'
-			description='Enable push notifications.'
-		>
-			{isLoading ? null : (
-				<Switch
-					checked={isNotifications === true}
-					onCheckedChange={(checked) => {
-						setIsNotifications(checked)
-						if (checked) {
-							subscribeToPush()
-						} else {
-							unsubscribeFromPush()
-						}
-					}}
-				/>
-			)}
-		</DailyLogToggleWrapper>
-	)
-}
 const DefaultWater = ({ currentUser }: { currentUser: GetUserById }) => {
 	const [water, setWater] = useState(
 		Number(currentUser?.settings?.defaultWater),
@@ -145,7 +60,7 @@ const DefaultWater = ({ currentUser }: { currentUser: GetUserById }) => {
 				<DialogDescription>Set the default amount of water.</DialogDescription>
 			</DialogHeader>
 			<div className='flex flex-col gap-4 w-full'>
-				<div className='text-sm text-muted-foreground font-medium'>
+				<div className='text-sm font-medium text-muted-foreground'>
 					<Input
 						type='number'
 						className='w-full'
@@ -213,7 +128,7 @@ const FirstName = ({ currentUser }: { currentUser: GetUserById }) => {
 				<DialogDescription>Update your first name.</DialogDescription>
 			</DialogHeader>
 			<div className='flex flex-col gap-4 w-full'>
-				<div className='text-sm text-muted-foreground font-medium'>
+				<div className='text-sm font-medium text-muted-foreground'>
 					<Input
 						type='text'
 						className='w-full'
@@ -281,7 +196,7 @@ const LastName = ({ currentUser }: { currentUser: GetUserById }) => {
 				<DialogDescription>Update your last name.</DialogDescription>
 			</DialogHeader>
 			<div className='flex flex-col gap-4 w-full'>
-				<div className='text-sm text-muted-foreground font-medium'>
+				<div className='text-sm font-medium text-muted-foreground'>
 					<Input
 						type='text'
 						className='w-full'
@@ -340,6 +255,7 @@ const Email = ({ currentUser }: { currentUser: GetUserById }) => {
 	return (
 		<DialogWrapper
 			title='Email'
+			// @ts-ignore
 			id='settings-user-email'
 			value={currentUser?.email ?? ''}
 			isOpen={isOpen}
@@ -350,7 +266,7 @@ const Email = ({ currentUser }: { currentUser: GetUserById }) => {
 				<DialogDescription>Update your email.</DialogDescription>
 			</DialogHeader>
 			<div className='flex flex-col gap-4 w-full'>
-				<div className='text-sm text-muted-foreground font-medium'>
+				<div className='text-sm font-medium text-muted-foreground'>
 					<Input
 						type='text'
 						className='w-full'
@@ -419,7 +335,7 @@ const Password = ({ currentUser }: { currentUser: GetUserById }) => {
 				<DialogDescription>Update your password.</DialogDescription>
 			</DialogHeader>
 			<div className='flex flex-col gap-4 w-full'>
-				<div className='text-sm text-muted-foreground font-medium flex gap-4 flex-col'>
+				<div className='flex flex-col gap-4 text-sm font-medium text-muted-foreground'>
 					<Input
 						type='password'
 						placeholder='New Password'
@@ -485,8 +401,8 @@ const DialogWrapper = ({
 			}}
 		>
 			<DialogTrigger asChild>
-				<div className='flex gap-6 items-center justify-between px-3 py-2 text-sm border rounded-lg'>
-					<div className='text-sm text-muted-foreground font-medium'>
+				<div className='flex gap-6 justify-between items-center py-2 px-3 text-sm rounded-lg border'>
+					<div className='text-sm font-medium text-muted-foreground'>
 						{title}
 					</div>
 					<div className='text-sm font-semibold truncate'>{value}</div>
@@ -507,7 +423,7 @@ const DailyLogToggleWrapper = ({
 	description: string
 }) => {
 	return (
-		<div className='flex flex-row items-center justify-between rounded-lg border py-2 px-2 gap-2 shadow-sm'>
+		<div className='flex flex-row gap-2 justify-between items-center py-2 px-2 rounded-lg border shadow-sm'>
 			<div className='space-y-0.2'>
 				<Label>{title}</Label>
 				<div className='text-sm text-muted-foreground'>{description}</div>
@@ -528,7 +444,7 @@ const Posing = ({ currentUser }: { currentUser: GetUserById }) => {
 		onSettled: () => {
 			ctx.user.invalidate()
 		},
-		onError: (err) => {
+		onError: () => {
 			toast.error('error')
 			ctx.user.invalidate()
 		},
@@ -562,7 +478,7 @@ const BloodGlucose = ({ currentUser }: { currentUser: GetUserById }) => {
 			onSettled: () => {
 				ctx.user.invalidate()
 			},
-			onError: (err) => {
+			onError: (_err) => {
 				toast.error('error')
 				ctx.user.invalidate()
 			},
@@ -595,7 +511,7 @@ const Sleep = ({ currentUser }: { currentUser: GetUserById }) => {
 		onSettled: () => {
 			ctx.user.invalidate()
 		},
-		onError: (err) => {
+		onError: (_err) => {
 			toast.error('error')
 			ctx.user.invalidate()
 		},
@@ -628,7 +544,7 @@ const SleepQuality = ({ currentUser }: { currentUser: GetUserById }) => {
 			onSettled: () => {
 				ctx.user.invalidate()
 			},
-			onError: (err) => {
+			onError: (_err) => {
 				toast.error('error')
 				ctx.user.invalidate()
 			},
@@ -661,7 +577,7 @@ const Nap = ({ currentUser }: { currentUser: GetUserById }) => {
 		onSettled: () => {
 			ctx.user.invalidate()
 		},
-		onError: (err) => {
+		onError: (_err) => {
 			toast.error('error')
 			ctx.user.invalidate()
 		},
@@ -694,7 +610,7 @@ const WeightTraining = ({ currentUser }: { currentUser: GetUserById }) => {
 			onSettled: () => {
 				ctx.user.invalidate()
 			},
-			onError: (err) => {
+			onError: (_err) => {
 				toast.error('error')
 				ctx.user.invalidate()
 			},
@@ -727,7 +643,7 @@ const Hiit = ({ currentUser }: { currentUser: GetUserById }) => {
 		onSettled: () => {
 			ctx.user.invalidate()
 		},
-		onError: (err) => {
+		onError: (_err) => {
 			toast.error('error')
 			ctx.user.invalidate()
 		},
@@ -760,7 +676,7 @@ const Liss = ({ currentUser }: { currentUser: GetUserById }) => {
 		onSettled: () => {
 			ctx.user.invalidate()
 		},
-		onError: (err) => {
+		onError: (_err) => {
 			toast.error('error')
 			ctx.user.invalidate()
 		},
@@ -785,9 +701,7 @@ const Liss = ({ currentUser }: { currentUser: GetUserById }) => {
 }
 const Mobility = ({ currentUser }: { currentUser: GetUserById }) => {
 	const ctx = api.useUtils()
-	const [isMobility, setIsMobility] = useState(
-		currentUser.settings.isMobility,
-	)
+	const [isMobility, setIsMobility] = useState(currentUser.settings.isMobility)
 	const { mutate: updateIsMobility } = api.user.updateIsMobility.useMutation({
 		onSuccess: () => {
 			toast.success('Updated')
@@ -795,7 +709,7 @@ const Mobility = ({ currentUser }: { currentUser: GetUserById }) => {
 		onSettled: () => {
 			ctx.user.invalidate()
 		},
-		onError: (err) => {
+		onError: (_err) => {
 			toast.error('error')
 			ctx.user.invalidate()
 		},
@@ -828,7 +742,7 @@ const Notes = ({ currentUser }: { currentUser: GetUserById }) => {
 		onSettled: () => {
 			ctx.user.invalidate()
 		},
-		onError: (err) => {
+		onError: (_err) => {
 			toast.error('error')
 			ctx.user.invalidate()
 		},
@@ -861,7 +775,7 @@ const Sauna = ({ currentUser }: { currentUser: GetUserById }) => {
 		onSettled: () => {
 			ctx.user.invalidate()
 		},
-		onError: (err) => {
+		onError: (_err) => {
 			toast.error('error')
 			ctx.user.invalidate()
 		},
@@ -894,7 +808,7 @@ const ColdPlunge = ({ currentUser }: { currentUser: GetUserById }) => {
 			onSettled: () => {
 				ctx.user.invalidate()
 			},
-			onError: (err) => {
+			onError: (_err) => {
 				toast.error('error')
 				ctx.user.invalidate()
 			},
@@ -927,7 +841,7 @@ const Steps = ({ currentUser }: { currentUser: GetUserById }) => {
 		onSettled: () => {
 			ctx.user.invalidate()
 		},
-		onError: (err) => {
+		onError: (_err) => {
 			toast.error('error')
 			ctx.user.invalidate()
 		},
@@ -951,27 +865,23 @@ const Steps = ({ currentUser }: { currentUser: GetUserById }) => {
 const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
 	console.log('currentUser', currentUser)
 	return (
-		<div className='flex flex-col gap-4 w-full px-2'>
+		<div className='flex flex-col gap-4 px-2 w-full'>
 			<div className='text-lg font-bold'>Settings</div>
-			<div className='flex flex-col gap-2 w-full p-4 border rounded-lg'>
+			<div className='flex flex-col gap-2 p-4 w-full rounded-lg border'>
 				<h2 className='text-base font-semibold'>Profile</h2>
 				<FirstName currentUser={currentUser} />
 				<LastName currentUser={currentUser} />
 				<Email currentUser={currentUser} />
 				<Password currentUser={currentUser} />
 			</div>
-			<div className='flex flex-col gap-2 w-full p-4 border rounded-lg'>
-				<h2 className='text-base font-semibold'>Notifications</h2>
-				<Notifications currentUser={currentUser} />
-			</div>
 			<div
 				id='settings-water-defaults'
-				className='flex flex-col gap-2 w-full p-4 border rounded-lg'
+				className='flex flex-col gap-2 p-4 w-full rounded-lg border'
 			>
 				<h2 className='text-base font-semibold'>Defaults</h2>
 				<DefaultWater currentUser={currentUser} />
 			</div>
-			<div className='flex flex-col gap-1 w-full p-4 border rounded-lg'>
+			<div className='flex flex-col gap-1 p-4 w-full rounded-lg border'>
 				<h2 className='text-base font-semibold' id='daily-log-settings'>
 					Daily Log
 				</h2>
@@ -982,7 +892,7 @@ const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
 				<WeightTraining currentUser={currentUser} />
 				<Hiit currentUser={currentUser} />
 				<Liss currentUser={currentUser} />
-        <Mobility currentUser={currentUser} />
+				<Mobility currentUser={currentUser} />
 				<Sauna currentUser={currentUser} />
 				<ColdPlunge currentUser={currentUser} />
 				<BloodGlucose currentUser={currentUser} />
@@ -1000,7 +910,7 @@ export default function Home() {
 	if (!currentUser) return null
 
 	return (
-		<div className='w-full my-16'>
+		<div className='my-16 w-full'>
 			<Settings currentUser={currentUser} />
 		</div>
 	)

@@ -393,6 +393,13 @@
       "when": 1760761405561,
       "tag": "0055_parched_medusa",
       "breakpoints": true
+    },
+    {
+      "idx": 56,
+      "version": "6",
+      "when": 1764894114807,
+      "tag": "0056_quick_moonstone",
+      "breakpoints": true
     }
   ]
 }

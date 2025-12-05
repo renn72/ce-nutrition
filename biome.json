@@ -48,7 +48,8 @@
         "useButtonType": "off"
       },
       "correctness": {
-        "useExhaustiveDependencies": "off"
+        "useExhaustiveDependencies": "off",
+        "useUniqueElementIds": "off"
       },
       "complexity": {
         "noUselessTernary": "off",

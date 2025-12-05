@@ -256,6 +256,7 @@ var dailyLog = createTable2(
     isCardio: int2("is_cardio", { mode: "boolean" }),
     isLift: int2("is_lift", { mode: "boolean" }),
     isLiss: int2("is_liss", { mode: "boolean" }),
+    isPeriod: int2("is_period", { mode: "boolean" }),
     isStarred: int2("is_starred", { mode: "boolean" }).default(false),
     hiit: text2("hiit"),
     cardio: text2("cardio"),
@@ -308,7 +309,9 @@ var dailySupplement = createTable2(
     time: text2("time"),
     notes: text2("notes")
   },
-  (table) => [index2("daily_supplement_daily_log_id_index").on(table.dailyLogId)]
+  (table) => [
+    index2("daily_supplement_daily_log_id_index").on(table.dailyLogId)
+  ]
 );
 var dailySupplementRelations = relations2(
   dailySupplement,
@@ -959,7 +962,10 @@ var userSettings = createTable6(
     isSteps: int6("is_steps", { mode: "boolean" }).default(true),
     isSauna: int6("is_sauna", { mode: "boolean" }).default(true),
     isColdPlunge: int6("is_cold_plunge", { mode: "boolean" }).default(true),
-    isMobility: int6("is_mobility", { mode: "boolean" }).default(false)
+    isMobility: int6("is_mobility", { mode: "boolean" }).default(false),
+    periodStartAt: int6("period_start_at", { mode: "timestamp" }),
+    periodLength: int6("period_length"),
+    periodInterval: int6("period_interval")
   },
   (table) => [index6("user_settings_user_id_idx").on(table.userId)]
 );
