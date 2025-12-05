@@ -1027,7 +1027,7 @@ const Period = ({ currentUser }: { currentUser: GetUserById }) => {
 								}}
 							>
 								<SelectTrigger className='font-semibold w-[100px]'>
-									<SelectValue placeholder='Select a fruit' />
+									<SelectValue placeholder='Select a interval' />
 								</SelectTrigger>
 								<SelectContent
 									position='popper'
@@ -1037,6 +1037,40 @@ const Period = ({ currentUser }: { currentUser: GetUserById }) => {
 								>
 									<SelectGroup>
 										{Array.from({ length: 22 }, (_, index) => 18 + index).map(
+											(value) => (
+												<SelectItem key={value} value={value.toString()}>
+													{value}
+												</SelectItem>
+											),
+										)}
+									</SelectGroup>
+								</SelectContent>
+							</Select>
+						</div>
+						<div className='flex gap-2 justify-between items-center'>
+							<Label htmlFor='date' className='px-1'>
+								Duration
+							</Label>
+							<Select
+								value={length.toString()}
+								onValueChange={(value) => {
+									updatePeriodLength({
+										length: Number(value),
+										id: currentUser.settings.id,
+									})
+								}}
+							>
+								<SelectTrigger className='font-semibold w-[100px]'>
+									<SelectValue placeholder='Select a duration' />
+								</SelectTrigger>
+								<SelectContent
+									position='popper'
+									side='left'
+									align='center'
+									className='py-1 max-h-[200px]'
+								>
+									<SelectGroup>
+										{Array.from({ length: 10 }, (_, index) => 1 + index).map(
 											(value) => (
 												<SelectItem key={value} value={value.toString()}>
 													{value}
