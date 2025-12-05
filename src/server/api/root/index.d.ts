@@ -15216,6 +15216,30 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        updatePeriodStart: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                start: Date | null;
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updatePeriodLength: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                length: number;
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updatePeriodInterval: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                interval: number;
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         updateWater: _trpc_server.TRPCMutationProcedure<{
             input: {
                 water: number;
@@ -22185,6 +22209,30 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         updateChartRange: _trpc_server.TRPCMutationProcedure<{
             input: {
                 range: number;
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updatePeriodStart: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                start: Date | null;
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updatePeriodLength: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                length: number;
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updatePeriodInterval: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                interval: number;
                 id: number;
             };
             output: _libsql_client.ResultSet;

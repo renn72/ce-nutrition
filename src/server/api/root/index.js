@@ -5269,6 +5269,24 @@ var update = {
     }).where(eq6(userSettings.id, input.id));
     return res;
   }),
+  updatePeriodStart: protectedProcedure.input(z11.object({ start: z11.date().nullable(), id: z11.number() })).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.update(userSettings).set({
+      periodStartAt: input.start
+    }).where(eq6(userSettings.id, input.id));
+    return res;
+  }),
+  updatePeriodLength: protectedProcedure.input(z11.object({ length: z11.number(), id: z11.number() })).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.update(userSettings).set({
+      periodLength: input.length
+    }).where(eq6(userSettings.id, input.id));
+    return res;
+  }),
+  updatePeriodInterval: protectedProcedure.input(z11.object({ interval: z11.number(), id: z11.number() })).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.update(userSettings).set({
+      periodInterval: input.interval
+    }).where(eq6(userSettings.id, input.id));
+    return res;
+  }),
   updateWater: protectedProcedure.input(z11.object({ water: z11.number(), id: z11.number() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.update(userSettings).set({
       defaultWater: input.water.toString()

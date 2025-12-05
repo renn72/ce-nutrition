@@ -21,6 +21,25 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible'
+
+import { ChevronDownIcon } from 'lucide-react'
+
+import { Calendar } from '@/components/ui/calendar'
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/popover'
+
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select'
 
 const DefaultWater = ({ currentUser }: { currentUser: GetUserById }) => {
 	const [water, setWater] = useState(
@@ -862,6 +881,180 @@ const Steps = ({ currentUser }: { currentUser: GetUserById }) => {
 	)
 }
 
+const Period = ({ currentUser }: { currentUser: GetUserById }) => {
+	const ctx = api.useUtils()
+	const [isPeriod, setIsPeriod] = useState(
+		currentUser.settings.periodStartAt ? true : false,
+	)
+
+	const [popoverOpen, setPopoverOpen] = useState(false)
+	const [date, setDate] = useState<Date | undefined | null>(
+		currentUser.settings.periodStartAt || undefined,
+	)
+	const [length, setLength] = useState(currentUser.settings.periodLength || 5)
+	const [interval, setInterval] = useState(
+		currentUser.settings.periodInterval || 28,
+	)
+
+	const { mutate: updatePeriodStart } = api.user.updatePeriodStart.useMutation({
+		onMutate: async (data) => {
+			setDate(data.start)
+		},
+		onSuccess: () => {
+			ctx.user.invalidate()
+		},
+		onError: (_err) => {
+			toast.error('error')
+			ctx.user.invalidate()
+		},
+	})
+
+	const { mutate: updatePeriodLength } =
+		api.user.updatePeriodLength.useMutation({
+			onMutate: async (data) => {
+				setLength(data.length)
+			},
+			onSuccess: () => {
+				ctx.user.invalidate()
+			},
+			onError: (_err) => {
+				toast.error('error')
+				ctx.user.invalidate()
+			},
+		})
+	const { mutate: updatePeriodInterval } =
+		api.user.updatePeriodInterval.useMutation({
+			onMutate: async (data) => {
+				setInterval(data.interval)
+			},
+			onSuccess: () => {
+				ctx.user.invalidate()
+			},
+			onError: (_err) => {
+				toast.error('error')
+				ctx.user.invalidate()
+			},
+		})
+
+	return (
+		<div className='flex flex-col gap-2 py-2 px-2 rounded-lg border shadow-sm'>
+			<div className='flex flex-row gap-2 justify-between items-center'>
+				<div className='space-y-0.2'>
+					<Label>Period</Label>
+					<div className='text-sm text-muted-foreground'>
+						Enable period tracking.
+					</div>
+				</div>
+				<Switch
+					checked={isPeriod === true}
+					onCheckedChange={(checked) => {
+						setIsPeriod(checked)
+						if (checked) {
+							updatePeriodStart({
+								start: null,
+								id: currentUser.settings.id,
+							})
+						}
+					}}
+				/>
+			</div>
+			<Collapsible open={isPeriod} onOpenChange={setIsPeriod}>
+				<CollapsibleContent>
+					<div className='flex flex-col gap-3'>
+						<div className='flex gap-2 justify-between items-center'>
+							<Label htmlFor='date' className='px-1'>
+								Start
+							</Label>
+							<Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+								<PopoverTrigger asChild>
+									<Button
+										variant='outline'
+										size='sm'
+										id='date'
+										className='justify-between w-48 text-sm'
+									>
+										{date ? date.toLocaleDateString() : 'Select date'}
+										<ChevronDownIcon />
+									</Button>
+								</PopoverTrigger>
+								<PopoverContent
+									className='overflow-hidden p-0 w-auto'
+									align='start'
+								>
+									<Calendar
+										mode='single'
+										selected={date || undefined}
+										captionLayout='dropdown'
+										onSelect={(date) => {
+											if (!date) return
+											updatePeriodStart({
+												start: date,
+												id: currentUser.settings.id,
+											})
+											setPopoverOpen(false)
+										}}
+									/>
+									<div className='flex justify-center py-1 w-full'>
+										<Button
+											size='sm'
+											variant='outline'
+											className='px-4 h-6'
+											onClick={() => {
+												updatePeriodStart({
+													start: null,
+													id: currentUser.settings.id,
+												})
+												setPopoverOpen(false)
+											}}
+										>
+											clear
+										</Button>
+									</div>
+								</PopoverContent>
+							</Popover>
+						</div>
+						<div className='flex gap-2 justify-between items-center'>
+							<Label htmlFor='date' className='px-1'>
+								Interval
+							</Label>
+							<Select
+								value={interval.toString()}
+								onValueChange={(value) => {
+									updatePeriodInterval({
+										interval: Number(value),
+										id: currentUser.settings.id,
+									})
+								}}
+							>
+								<SelectTrigger className='font-semibold w-[100px]'>
+									<SelectValue placeholder='Select a fruit' />
+								</SelectTrigger>
+								<SelectContent
+									position='popper'
+									side='left'
+									align='center'
+									className='py-1 max-h-[200px]'
+								>
+									<SelectGroup>
+										{Array.from({ length: 22 }, (_, index) => 18 + index).map(
+											(value) => (
+												<SelectItem key={value} value={value.toString()}>
+													{value}
+												</SelectItem>
+											),
+										)}
+									</SelectGroup>
+								</SelectContent>
+							</Select>
+						</div>
+						<div className='flex gap-2 justify-between items-center'></div>
+					</div>
+				</CollapsibleContent>
+			</Collapsible>
+		</div>
+	)
+}
+
 const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
 	console.log('currentUser', currentUser)
 	return (
@@ -889,6 +1082,7 @@ const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
 				<SleepQuality currentUser={currentUser} />
 				<Nap currentUser={currentUser} />
 				<Steps currentUser={currentUser} />
+				<Period currentUser={currentUser} />
 				<WeightTraining currentUser={currentUser} />
 				<Hiit currentUser={currentUser} />
 				<Liss currentUser={currentUser} />

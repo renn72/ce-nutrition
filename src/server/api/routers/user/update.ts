@@ -17,6 +17,39 @@ export const update = {
 				.where(eq(userSettings.id, input.id))
 			return res
 		}),
+	updatePeriodStart: protectedProcedure
+		.input(z.object({ start: z.date().nullable(), id: z.number() }))
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(userSettings)
+				.set({
+					periodStartAt: input.start,
+				})
+				.where(eq(userSettings.id, input.id))
+			return res
+		}),
+	updatePeriodLength: protectedProcedure
+		.input(z.object({ length: z.number(), id: z.number() }))
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(userSettings)
+				.set({
+					periodLength: input.length,
+				})
+				.where(eq(userSettings.id, input.id))
+			return res
+		}),
+	updatePeriodInterval: protectedProcedure
+		.input(z.object({ interval: z.number(), id: z.number() }))
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(userSettings)
+				.set({
+					periodInterval: input.interval,
+				})
+				.where(eq(userSettings.id, input.id))
+			return res
+		}),
 	updateWater: protectedProcedure
 		.input(z.object({ water: z.number(), id: z.number() }))
 		.mutation(async ({ ctx, input }) => {
@@ -118,7 +151,7 @@ export const update = {
 			const res = await ctx.db
 				.update(userSettings)
 				.set({
-          isMobility: input.isMobility,
+					isMobility: input.isMobility,
 				})
 				.where(eq(userSettings.userId, input.id))
 
