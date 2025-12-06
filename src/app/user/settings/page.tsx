@@ -902,6 +902,7 @@ const Period = ({ currentUser }: { currentUser: GetUserById }) => {
 		},
 		onSuccess: () => {
 			ctx.user.invalidate()
+			ctx.dailyLog.invalidate()
 		},
 		onError: (_err) => {
 			toast.error('error')
@@ -916,6 +917,7 @@ const Period = ({ currentUser }: { currentUser: GetUserById }) => {
 			},
 			onSuccess: () => {
 				ctx.user.invalidate()
+				ctx.dailyLog.invalidate()
 			},
 			onError: (_err) => {
 				toast.error('error')
@@ -929,6 +931,7 @@ const Period = ({ currentUser }: { currentUser: GetUserById }) => {
 			},
 			onSuccess: () => {
 				ctx.user.invalidate()
+				ctx.dailyLog.invalidate()
 			},
 			onError: (_err) => {
 				toast.error('error')
@@ -953,6 +956,7 @@ const Period = ({ currentUser }: { currentUser: GetUserById }) => {
 							updatePeriodStart({
 								start: null,
 								id: currentUser.settings.id,
+								userId: currentUser.id,
 							})
 						}
 					}}
@@ -990,6 +994,7 @@ const Period = ({ currentUser }: { currentUser: GetUserById }) => {
 											updatePeriodStart({
 												start: date,
 												id: currentUser.settings.id,
+												userId: currentUser.id,
 											})
 											setPopoverOpen(false)
 										}}
@@ -1003,6 +1008,7 @@ const Period = ({ currentUser }: { currentUser: GetUserById }) => {
 												updatePeriodStart({
 													start: null,
 													id: currentUser.settings.id,
+													userId: currentUser.id,
 												})
 												setPopoverOpen(false)
 											}}
@@ -1023,6 +1029,7 @@ const Period = ({ currentUser }: { currentUser: GetUserById }) => {
 									updatePeriodInterval({
 										interval: Number(value),
 										id: currentUser.settings.id,
+										userId: currentUser.id,
 									})
 								}}
 							>
@@ -1057,6 +1064,7 @@ const Period = ({ currentUser }: { currentUser: GetUserById }) => {
 									updatePeriodLength({
 										length: Number(value),
 										id: currentUser.settings.id,
+										userId: currentUser.id,
 									})
 								}}
 							>

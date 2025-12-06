@@ -15220,6 +15220,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             input: {
                 start: Date | null;
                 id: number;
+                userId: string;
             };
             output: _libsql_client.ResultSet;
             meta: object;
@@ -15228,6 +15229,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             input: {
                 length: number;
                 id: number;
+                userId: string;
             };
             output: _libsql_client.ResultSet;
             meta: object;
@@ -15236,6 +15238,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             input: {
                 interval: number;
                 id: number;
+                userId: string;
             };
             output: _libsql_client.ResultSet;
             meta: object;
@@ -22218,6 +22221,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             input: {
                 start: Date | null;
                 id: number;
+                userId: string;
             };
             output: _libsql_client.ResultSet;
             meta: object;
@@ -22226,6 +22230,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             input: {
                 length: number;
                 id: number;
+                userId: string;
             };
             output: _libsql_client.ResultSet;
             meta: object;
@@ -22234,6 +22239,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             input: {
                 interval: number;
                 id: number;
+                userId: string;
             };
             output: _libsql_client.ResultSet;
             meta: object;
