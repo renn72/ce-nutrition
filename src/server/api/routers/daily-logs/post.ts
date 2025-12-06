@@ -1,18 +1,18 @@
 import { createLog } from '@/server/api/routers/admin-log'
 import { db } from '@/server/db'
-import {
-	dailyLog,
-	dailyMeal,
-} from '@/server/db/schema/daily-logs'
+import { dailyLog, dailyMeal } from '@/server/db/schema/daily-logs'
 import {
 	userIngredient,
 	userPlan,
 	userRecipe,
 } from '@/server/db/schema/user-plan'
+import { userSettings } from '@/server/db/schema/user'
 import { TRPCError } from '@trpc/server'
 import { protectedProcedure } from '~/server/api/trpc'
 import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
+
+import { isDuringPeriod } from '@/lib/period'
 
 export const post = {
 	create: protectedProcedure
@@ -44,10 +44,36 @@ export const post = {
 
 			if (log) throw new TRPCError({ code: 'CONFLICT' })
 
+			const userSetting = await ctx.db.query.userSettings.findFirst({
+				where: eq(userSettings.userId, input.userId),
+			})
+
+			console.log(userSetting)
+
+			const isPeriodEnabled = userSetting?.periodStartAt ? true : false
+			const start = userSetting?.periodStartAt ?? new Date()
+			const interval = userSetting?.periodInterval ?? 28
+			const duration = userSetting?.periodLength ?? 5
+			const today = new Date(input.date ?? Date.now())
+
+			const isPeriod = isPeriodEnabled
+				? isDuringPeriod(today, start, interval, duration)
+				: false
+
+			console.log('-------------------')
+
+			console.log({
+				isPeriodEnabled,
+				interval,
+				duration,
+				isPeriod,
+			})
+
 			const res = await ctx.db
 				.insert(dailyLog)
 				.values({
 					...input,
+					isPeriod: isPeriod,
 					date: input.date,
 				})
 				.returning({ id: dailyLog.id })

@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 
-import { firstTimeAtom } from '@/app/page'
+import { firstTimeAtom } from '@/atoms'
 
 import { useAtom } from 'jotai'
 
@@ -57,7 +57,7 @@ const PwaInstallButton: React.FC = () => {
 	// State to show iOS specific installation instructions
 	const [showIosInstructions, setShowIosInstructions] = useState(false)
 
-  const [firstTime, setFirstTime] = useAtom(firstTimeAtom)
+	const [firstTime, setFirstTime] = useAtom(firstTimeAtom)
 
 	// Effect hook to handle the 'beforeinstallprompt' event and 'appinstalled' event.
 	// This runs once when the component mounts.
@@ -83,8 +83,8 @@ const PwaInstallButton: React.FC = () => {
 			// Store the event so it can be triggered later by a user gesture
 			setDeferredPrompt(e as BeforeInstallPromptEvent)
 			// Show our custom install button
-      if (firstTime) setShowInstallButton(true)
-      console.log('setShowInstallButton true')
+			if (firstTime) setShowInstallButton(true)
+			console.log('setShowInstallButton true')
 		}
 
 		// Event listener for the 'appinstalled' event
@@ -111,11 +111,11 @@ const PwaInstallButton: React.FC = () => {
 
 		setTimeout(() => {
 			setShowInstallButton(false)
-      setShowIosInstructions(false)
+			setShowIosInstructions(false)
 			console.log('setShowInstallButton', showInstallButton)
 		}, 3000)
 
-    setFirstTime(false)
+		setFirstTime(false)
 
 		// Cleanup function: remove event listeners when the component unmounts
 		return () => {
@@ -156,9 +156,12 @@ const PwaInstallButton: React.FC = () => {
 	console.log('setShowInstallButton', showInstallButton)
 
 	return (
-		<div className={cn('w-full transition-all duration-300 ease-in-out',
-      showInstallButton || showIosInstructions ? 'h-10' : 'h-0',
-    )}>
+		<div
+			className={cn(
+				'w-full transition-all duration-300 ease-in-out',
+				showInstallButton || showIosInstructions ? 'h-10' : 'h-0',
+			)}
+		>
 			{showIosInstructions ? (
 				// Instructions for iOS users
 				<Dialog>

@@ -23,7 +23,7 @@ import {
 	Star,
 	ThumbsUp,
 	Zap,
-  XIcon,
+	XIcon,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -179,7 +179,7 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
 			</DialogTrigger>
 			<DialogContent
 				onOpenAutoFocus={(e) => e.preventDefault()}
-				className='top-36 translate-y-0 px-2 min-h-[300px]'
+				className='top-36 px-2 translate-y-0 min-h-[300px]'
 			>
 				<DialogHeader>
 					<DialogTitle>Tags</DialogTitle>
@@ -201,7 +201,7 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
 						return (
 							<div
 								key={tag.id}
-								className='w-full grid grid-cols-5 justify-items-center'
+								className='grid grid-cols-5 justify-items-center w-full'
 							>
 								<div
 									className={cn(
@@ -253,7 +253,7 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
 												<Button
 													size='sm'
 													variant='destructive'
-													className=' h-6 active:scale-90 transition-transform'
+													className='h-6 transition-transform active:scale-90'
 													onClick={() => {
 														if (!log) return
 														deleteTag(tag.id)
@@ -288,7 +288,7 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
 							<Button
 								variant='default'
 								size='sm'
-								className='flex gap-2 items-center justify-center  active:scale-90 transition-transform'
+								className='flex gap-2 justify-center items-center transition-transform active:scale-90'
 							>
 								<Plus size={16} />
 								<span className='text-sm mt-[2px]'>Create Tag</span>
@@ -296,8 +296,8 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
 						</CollapsibleTrigger>
 					</div>
 					<CollapsibleContent>
-						<div className='flex flex-col gap-4 w-full mt-4'>
-							<div className='grid grid-cols-4 gap-2 w-full items-center'>
+						<div className='flex flex-col gap-4 mt-4 w-full'>
+							<div className='grid grid-cols-4 gap-2 items-center w-full'>
 								<Label>Name</Label>
 								<Input
 									placeholder='Tag Name'
@@ -308,12 +308,12 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
 									}}
 								/>
 							</div>
-							<div className='grid grid-cols-4 gap-2 w-full items-center'>
+							<div className='grid grid-cols-4 gap-2 items-center w-full'>
 								<Label>Colour</Label>
 								<ToggleGroup
 									type='single'
 									variant='border'
-									className='col-span-3 flex gap-2'
+									className='flex col-span-3 gap-2'
 									value={tagColor}
 									onValueChange={(value) => {
 										setTagColor(value)
@@ -327,7 +327,7 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
 									<ToggleGroupItem value='orange' className='bg-orange-600' />
 								</ToggleGroup>
 							</div>
-							<div className='grid grid-cols-4 gap-2 w-full items-center'>
+							<div className='grid grid-cols-4 gap-2 items-center w-full'>
 								<Label>Icon</Label>
 								<ToggleGroup
 									type='single'
@@ -346,7 +346,7 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
 									}}
 								>
 									<ToggleGroupItem className='px-0' value='bone'>
-										<Bone fill='currentColor' className='h-12 w-12' />
+										<Bone fill='currentColor' className='w-12 h-12' />
 									</ToggleGroupItem>
 									<ToggleGroupItem value='fish'>
 										<Fish fill='currentColor' size={20} />
@@ -365,16 +365,16 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
 									</ToggleGroupItem>
 								</ToggleGroup>
 							</div>
-							<div className='flex w-full justify-center'>
+							<div className='flex justify-center w-full'>
 								<Button
 									variant='default'
-									className='w-40 relative active:scale-90 transition-transform'
+									className='relative w-40 transition-transform active:scale-90'
 									disabled={isSaving || tagName === ''}
 									onClick={handleSubmit}
 								>
 									Save
 									{isSaving ? (
-										<div className='absolute top-1/2 right-4 -translate-y-1/2'>
+										<div className='absolute right-4 top-1/2 -translate-y-1/2'>
 											<Loader size={16} className='animate-spin' />
 										</div>
 									) : null}
@@ -477,10 +477,10 @@ export default function Home() {
 
 	return (
 		<>
-			<div className='mt-16 flex flex-col gap-0 relative'>
+			<div className='flex relative flex-col gap-0 mt-16'>
 				{impersonatedUser.id !== '' ? (
-					<div className='fixed bottom-14 left-1/2 -translate-x-1/2 opacity-80 z-[2009]'>
-						<Badge className='flex gap-4 '>
+					<div className='fixed bottom-14 left-1/2 opacity-80 -translate-x-1/2 z-[2009]'>
+						<Badge className='flex gap-4'>
 							{impersonatedUser.name}
 							<XIcon
 								size={12}
@@ -495,11 +495,11 @@ export default function Home() {
 						</Badge>
 					</div>
 				) : null}
-				<div className='w-full flex items-center justify-center text-center text-xl font-semibold gap-2'>
+				<div className='flex gap-2 justify-center items-center mb-1 w-full text-xl font-semibold text-center'>
 					<Tags log={log} />
 					<Popover open={isOpen} onOpenChange={setIsOpen}>
 						<PopoverTrigger asChild>
-							<div className='flex items-center justify-center'>
+							<div className='flex justify-center items-center'>
 								<Button
 									variant={'secondary'}
 									size={'lg'}
@@ -508,7 +508,7 @@ export default function Home() {
 										!date && 'text-muted-foreground',
 									)}
 								>
-									<CalendarIcon className='mr-4 h-4 w-4 mt-[0px]' />
+									<CalendarIcon className='mr-4 w-4 h-4 mt-[0px]' />
 									{date ? (
 										<span className='mt-[5px]'>{format(date, 'PPP')}</span>
 									) : (
@@ -517,21 +517,21 @@ export default function Home() {
 								</Button>
 							</div>
 						</PopoverTrigger>
-						<PopoverContent className='w-full p-0'>
+						<PopoverContent className='p-0 w-full'>
 							<Calendar
 								mode='single'
 								selected={date}
-                disabled={{ after: new Date() }}
-									// @ts-ignore
+								disabled={{ after: new Date() }}
+								// @ts-ignore
 								onSelect={(date) => {
 									setDate(date)
 									setIsOpen(false)
 								}}
 								initialFocus
-                className='w-full'
-                formatters={{
+								className='w-full'
+								formatters={{
 									// @ts-ignore
-                  formatDay: (date) => {
+									formatDay: (date) => {
 										const log = dailyLogs?.find(
 											(log) => log.date === date.toDateString(),
 										)
@@ -546,13 +546,15 @@ export default function Home() {
 										return (
 											<div className='flex flex-col gap-[2px] h-[14vw] w-[12.5vw]'>
 												{log ? (
-													<div className='flex items-center justify-center w-full h-4'>
-														<div className='bg-secondary-foreground h-[6px] w-[6px] rounded-full' />
+													<div className='flex justify-center items-center w-full h-4'>
+														<div className='rounded-full bg-secondary-foreground h-[6px] w-[6px]' />
 													</div>
-												) : <div className='h-4'/>}
+												) : (
+													<div className='h-4' />
+												)}
 												<div className=''>{date.getDate()}</div>
 
-												<div className='flex justify-center h-[12px] items-center gap-1'>
+												<div className='flex gap-1 justify-center items-center h-[12px]'>
 													{log?.isStarred === true ? (
 														<Star
 															className='text-yellow-500'
@@ -581,10 +583,8 @@ export default function Home() {
 												</div>
 											</div>
 										)
-
-                  }
-
-                  }}
+									},
+								}}
 								components={{
 									// @ts-ignore
 									DayContent: (props) => {
@@ -602,13 +602,13 @@ export default function Home() {
 										return (
 											<div className='flex flex-col gap-[2px]'>
 												{log ? (
-													<div className='flex items-center justify-center w-full'>
-														<div className='bg-secondary-foreground h-[6px] w-[6px] rounded-full' />
+													<div className='flex justify-center items-center w-full'>
+														<div className='rounded-full bg-secondary-foreground h-[6px] w-[6px]' />
 													</div>
 												) : null}
 												<div className=''>{props.date.getDate()}</div>
 
-												<div className='flex justify-center h-[12px] items-center gap-1'>
+												<div className='flex gap-1 justify-center items-center h-[12px]'>
 													{log?.isStarred === true ? (
 														<Star
 															className='text-yellow-500'
@@ -659,7 +659,7 @@ export default function Home() {
 						}}
 					/>
 				</div>
-				<div className='h-8 flex items-center justify-center'>
+				<div className='flex justify-center items-center'>
 					{log?.tags?.map((tag) => {
 						const color = tag.tag.color as
 							| 'black'
@@ -683,7 +683,7 @@ export default function Home() {
 										'text-white absolute top-1/2 -translate-y-1/2 left-1'
 									}
 								/>
-								<div className='mt-[2px] ml-3'>{tag.tag.name}</div>
+								<div className='ml-3 mt-[2px]'>{tag.tag.name}</div>
 							</div>
 						)
 					})}

@@ -1651,8 +1651,8 @@ declare const userSettings: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             columnType: "SQLiteInteger";
             data: number;
             driverParam: number;
-            notNull: false;
-            hasDefault: false;
+            notNull: true;
+            hasDefault: true;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -1668,8 +1668,8 @@ declare const userSettings: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             columnType: "SQLiteInteger";
             data: number;
             driverParam: number;
-            notNull: false;
-            hasDefault: false;
+            notNull: true;
+            hasDefault: true;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -15817,8 +15817,8 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     isColdPlunge: boolean | null;
                     isMobility: boolean | null;
                     periodStartAt: Date | null;
-                    periodLength: number | null;
-                    periodInterval: number | null;
+                    periodLength: number;
+                    periodInterval: number;
                 };
                 supplementStacks: {
                     id: number;
@@ -16074,8 +16074,8 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     isColdPlunge: boolean | null;
                     isMobility: boolean | null;
                     periodStartAt: Date | null;
-                    periodLength: number | null;
-                    periodInterval: number | null;
+                    periodLength: number;
+                    periodInterval: number;
                 };
                 supplementStacks: {
                     id: number;
@@ -16362,8 +16362,8 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     isColdPlunge: boolean | null;
                     isMobility: boolean | null;
                     periodStartAt: Date | null;
-                    periodLength: number | null;
-                    periodInterval: number | null;
+                    periodLength: number;
+                    periodInterval: number;
                 };
                 supplementStacks: {
                     id: number;
@@ -22815,8 +22815,8 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     isColdPlunge: boolean | null;
                     isMobility: boolean | null;
                     periodStartAt: Date | null;
-                    periodLength: number | null;
-                    periodInterval: number | null;
+                    periodLength: number;
+                    periodInterval: number;
                 };
                 supplementStacks: {
                     id: number;
@@ -23072,8 +23072,8 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     isColdPlunge: boolean | null;
                     isMobility: boolean | null;
                     periodStartAt: Date | null;
-                    periodLength: number | null;
-                    periodInterval: number | null;
+                    periodLength: number;
+                    periodInterval: number;
                 };
                 supplementStacks: {
                     id: number;
@@ -23360,8 +23360,8 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     isColdPlunge: boolean | null;
                     isMobility: boolean | null;
                     periodStartAt: Date | null;
-                    periodLength: number | null;
-                    periodInterval: number | null;
+                    periodLength: number;
+                    periodInterval: number;
                 };
                 supplementStacks: {
                     id: number;

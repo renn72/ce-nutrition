@@ -964,8 +964,8 @@ var userSettings = createTable6(
     isColdPlunge: int6("is_cold_plunge", { mode: "boolean" }).default(true),
     isMobility: int6("is_mobility", { mode: "boolean" }).default(false),
     periodStartAt: int6("period_start_at", { mode: "timestamp" }),
-    periodLength: int6("period_length"),
-    periodInterval: int6("period_interval")
+    periodLength: int6("period_length").default(5).notNull(),
+    periodInterval: int6("period_interval").default(28).notNull()
   },
   (table) => [index6("user_settings_user_id_idx").on(table.userId)]
 );
@@ -6475,6 +6475,34 @@ var userPlanRouter = createTRPCRouter({
 import { TRPCError as TRPCError3 } from "@trpc/server";
 import { and as and3, eq as eq13 } from "drizzle-orm";
 import { z as z19 } from "zod";
+
+// src/lib/period.ts
+var calculateDayDifference = (dateA, dateB) => {
+  const MS_PER_DAY = 864e5;
+  const utc1 = Date.UTC(dateA.getFullYear(), dateA.getMonth(), dateA.getDate());
+  const utc2 = Date.UTC(dateB.getFullYear(), dateB.getMonth(), dateB.getDate());
+  return Math.floor((utc1 - utc2) / MS_PER_DAY);
+};
+var isDuringPeriod = (checkDate, lastPeriodStart, cycleLengthDays, periodDurationDays) => {
+  if (cycleLengthDays <= 0 || periodDurationDays <= 0) {
+    throw new Error(
+      "Cycle length and period duration must be positive numbers."
+    );
+  }
+  const daysSinceStart = calculateDayDifference(
+    checkDate,
+    lastPeriodStart
+  );
+  if (daysSinceStart < 0) {
+    const daysSincePreviousStart = daysSinceStart + cycleLengthDays;
+    const daysIntoRelevantCycle = (daysSinceStart % cycleLengthDays + cycleLengthDays) % cycleLengthDays;
+    return daysIntoRelevantCycle >= 0 && daysIntoRelevantCycle < periodDurationDays;
+  }
+  const daysIntoCurrentCycle = daysSinceStart % cycleLengthDays;
+  return daysIntoCurrentCycle < periodDurationDays;
+};
+
+// src/server/api/routers/daily-logs/post.ts
 var post2 = {
   create: protectedProcedure.input(
     z19.object({
@@ -6501,8 +6529,26 @@ var post2 = {
       )
     });
     if (log2) throw new TRPCError3({ code: "CONFLICT" });
+    const userSetting = await ctx.db.query.userSettings.findFirst({
+      where: eq13(userSettings.userId, input.userId)
+    });
+    console.log(userSetting);
+    const isPeriodEnabled = userSetting?.periodStartAt ? true : false;
+    const start = userSetting?.periodStartAt ?? /* @__PURE__ */ new Date();
+    const interval = userSetting?.periodInterval ?? 28;
+    const duration = userSetting?.periodLength ?? 5;
+    const today = new Date(input.date ?? Date.now());
+    const isPeriod = isPeriodEnabled ? isDuringPeriod(today, start, interval, duration) : false;
+    console.log("-------------------");
+    console.log({
+      isPeriodEnabled,
+      interval,
+      duration,
+      isPeriod
+    });
     const res = await ctx.db.insert(dailyLog).values({
       ...input,
+      isPeriod,
       date: input.date
     }).returning({ id: dailyLog.id });
     createLog({

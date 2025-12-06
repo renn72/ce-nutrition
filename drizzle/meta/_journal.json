@@ -407,6 +407,20 @@
       "when": 1764910302918,
       "tag": "0057_polite_gorilla_man",
       "breakpoints": true
+    },
+    {
+      "idx": 58,
+      "version": "6",
+      "when": 1764981563253,
+      "tag": "0058_massive_bill_hollister",
+      "breakpoints": true
+    },
+    {
+      "idx": 59,
+      "version": "6",
+      "when": 1764981619100,
+      "tag": "0059_hard_starhawk",
+      "breakpoints": true
     }
   ]
 }

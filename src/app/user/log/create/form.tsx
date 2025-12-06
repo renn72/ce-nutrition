@@ -3,7 +3,7 @@
 import { api } from '@/trpc/react'
 
 import type { GetDailyLogById, GetUserById } from '@/types'
-import { Settings } from 'lucide-react'
+import { CircleParking, Settings } from 'lucide-react'
 import { Link } from 'next-view-transitions'
 
 import { BloodGlucose } from './_field/blood-glucose'
@@ -22,6 +22,10 @@ import { SleepQuality } from './_field/sleep-quality'
 import { Steps } from './_field/steps'
 import { Weight } from './_field/weight'
 import { WeightTraining } from './_field/weight-training'
+
+import { cn } from '@/lib/utils'
+
+import { getPeriodStatusDays } from '@/lib/period'
 
 export const dynamic = 'force-dynamic'
 
@@ -44,17 +48,53 @@ const DailyLogForm = ({
 
 	const userName = currentUser.name?.replaceAll(' ', '-') ?? ''
 
+	const isPeriodEnabled = currentUser.settings?.periodStartAt ?? false
+
+	const isPeriod = todaysLog?.isPeriod ?? false
+
+	const start = currentUser.settings?.periodStartAt ?? new Date()
+	const interval = currentUser.settings?.periodInterval ?? 28
+	const duration = currentUser.settings?.periodLength ?? 5
+	const today = new Date(date ?? Date.now())
+
+	const periodStatus = getPeriodStatusDays(today, start, interval, duration)
+
+	console.log({ periodStatus })
+
 	if (!todaysLog) return null
 
 	return (
-		<div className='flex flex-col gap-3 px-1 relative mt-2 mb-16'>
-			<Link
-				href='/user/settings#settings-water-defaults'
-				className='absolute -top-8 right-8'
-			>
-				<Settings size={24} className='cursor-pointer' />
-			</Link>
-			<div className='flex gap-2 w-full justify-around flex-wrap'>
+		<div className='flex relative flex-col gap-1 px-1 mt-0 mb-16'>
+			<div className='flex justify-between items-center px-6 w-full'>
+				<div>
+					<div
+						className={cn(
+							'text-muted-foreground/10 flex gap-0 items-center',
+							isPeriodEnabled ? '' : 'hidden',
+							isPeriod ? 'text-red-400' : '',
+						)}
+					>
+						<CircleParking strokeWidth={2.2} size={24} />
+						<p className={cn('mt-1 text-[0.7rem]', isPeriod ? '' : 'hidden')}>
+							D{periodStatus}
+						</p>
+						<p
+							className={cn(
+								'mt-1 text-[0.7rem] hidden ml-2',
+								periodStatus === -1 ? 'block text-muted-foreground' : '',
+								periodStatus === -2 ? 'block text-muted-foreground' : '',
+								periodStatus === -3 ? 'block text-muted-foreground' : '',
+							)}
+						>
+							In {Math.abs(periodStatus)}d
+						</p>
+					</div>
+				</div>
+				<Link href='/user/settings#settings-water-defaults'>
+					<Settings size={24} className='cursor-pointer' />
+				</Link>
+			</div>
+			<div className='flex flex-wrap gap-2 justify-around w-full'>
 				<Weight todaysLog={todaysLog} prevLog={prevLog} date={date} />
 				{currentUser?.settings?.isBloodGlucose ? (
 					<BloodGlucose todaysLog={todaysLog} prevLog={prevLog} date={date} />
@@ -96,7 +136,7 @@ const DailyLogForm = ({
 					<Notes todaysLog={todaysLog} prevLog={prevLog} date={date} />
 				) : null}
 			</div>
-			<div className='grid grid-cols-3 gap-1 w-full'>
+			<div className='grid grid-cols-3 gap-1 mt-2 w-full'>
 				<ImageBox
 					todaysLog={todaysLog}
 					position='front'

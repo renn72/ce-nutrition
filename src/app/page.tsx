@@ -15,7 +15,7 @@ import { impersonatedUserAtom } from '@/atoms'
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
 import type { GetUserById } from '@/types'
-import { useAtom, atom } from 'jotai'
+import { useAtom } from 'jotai'
 import { XIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -33,8 +33,6 @@ import { WaterLog } from '@/components/water-log/water-log'
 import DailyLogCarousel from './_components/dailylog-carousel'
 import { User } from '@/components/auth/user'
 import { Pwa } from '@/components/layout/pwa'
-
-export const firstTimeAtom = atom(true)
 
 export const dynamic = 'force-dynamic'
 
@@ -91,7 +89,7 @@ const Mobile = ({
 	return (
 		<div className={cn('flex flex-col gap-0 w-full mt-16 items-center mb-16 ')}>
 			<MobileHeader isDesktop={false} />
-      <Pwa />
+			<Pwa />
 			<div
 				className={cn(
 					'flex flex-col gap-4 w-full max-w-screen-xl main-content',
@@ -103,8 +101,8 @@ const Mobile = ({
 					currentUser={currentUser}
 				/>
 
-				<Card className='py-2 '>
-					<CardContent className='px-0 py-0'>
+				<Card className='py-2'>
+					<CardContent className='py-0 px-0'>
 						<div className='flex justify-between w-full'>
 							<WaterLog
 								userId={userId}
@@ -131,7 +129,7 @@ const Mobile = ({
 
 const Desktop = ({
 	userId,
-	currentUser : user,
+	currentUser: user,
 }: {
 	userId: string
 	currentUser: GetUserById
@@ -145,32 +143,28 @@ const Desktop = ({
 	if (userGoalsLoading) return null
 
 	return (
-		<div className='p-4 flex flex-wrap gap-4 w-screen lg:h-screen relative'>
-      <div className='absolute top-1 right-1 z-100'>
-      <User />
-      </div>
+		<div className='flex relative flex-wrap gap-4 p-4 w-screen lg:h-screen'>
+			<div className='absolute top-1 right-1 z-100'>
+				<User />
+			</div>
 
 			<div className='grid grid-cols-5 grid-rows-3 gap-4 w-full h-[calc(100vh-32px)]'>
-				<UserWeight
-          user={user} dailyLogs={dailyLogs} />
-				<UserGoals
-          user={user} userGoals={userGoals} />
-				<UserCurrentPlan
-          user={user} />
-				<UserSupplementPlan
-          user={user} />
-				<UserRecentMetrics
-          user={user} />
+				<UserWeight user={user} dailyLogs={dailyLogs} />
+				<UserGoals user={user} userGoals={userGoals} />
+				<UserCurrentPlan user={user} />
+				<UserSupplementPlan user={user} />
+				<UserRecentMetrics user={user} />
 				<UserCharts
-          className='col-span-3 row-span-1'
-          dailyLogs={dailyLogs} currentUser={user} />
+					className='col-span-3 row-span-1'
+					dailyLogs={dailyLogs}
+					currentUser={user}
+				/>
 				<UserMeals
-          className='col-span-2'
-          dailyLogs={dailyLogs} currentUser={user} />
-				<UserDailyLogsTable
-          className='col-span-5'
-          dailyLogs={dailyLogs}
-        />
+					className='col-span-2'
+					dailyLogs={dailyLogs}
+					currentUser={user}
+				/>
+				<UserDailyLogsTable className='col-span-5' dailyLogs={dailyLogs} />
 			</div>
 		</div>
 	)
@@ -186,14 +180,14 @@ export default function Home() {
 	if (isLoading) return null
 	if (!currentUser) return null
 	return (
-		<div className='flex min-h-screen flex-col relative'>
+		<div className='flex relative flex-col min-h-screen'>
 			{isMobile ? (
 				<Mobile userId={currentUser.id} currentUser={currentUser} />
 			) : (
 				<Desktop userId={currentUser.id} currentUser={currentUser} />
 			)}
 			{impersonatedUser.id !== '' ? (
-				<div className='fixed bottom-14 left-1/2 -translate-x-1/2 opacity-80'>
+				<div className='fixed bottom-14 left-1/2 opacity-80 -translate-x-1/2'>
 					<Badge className='flex gap-4'>
 						{impersonatedUser.name}
 						<XIcon

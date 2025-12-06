@@ -354,8 +354,8 @@ export const userSettings = createTable(
 		isColdPlunge: int('is_cold_plunge', { mode: 'boolean' }).default(true),
 		isMobility: int('is_mobility', { mode: 'boolean' }).default(false),
 		periodStartAt: int('period_start_at', { mode: 'timestamp' }),
-		periodLength: int('period_length').default(5),
-		periodInterval: int('period_interval').default(28),
+		periodLength: int('period_length').default(5).notNull(),
+		periodInterval: int('period_interval').default(28).notNull(),
 	},
 	(table) => [index('user_settings_user_id_idx').on(table.userId)],
 )
