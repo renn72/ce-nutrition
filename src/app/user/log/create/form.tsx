@@ -59,7 +59,7 @@ const DailyLogForm = ({
 
 	const periodStatus = getPeriodStatusDays(today, start, interval, duration)
 
-	console.log({ periodStatus })
+	console.log({ periodStatus, isPeriod })
 
 	if (!todaysLog) return null
 
@@ -75,7 +75,13 @@ const DailyLogForm = ({
 						)}
 					>
 						<CircleParking strokeWidth={2.2} size={24} />
-						<p className={cn('mt-1 text-[0.7rem]', isPeriod ? '' : 'hidden')}>
+						<p
+							className={cn(
+								'mt-1 text-[0.7rem]',
+								isPeriod ? '' : 'hidden',
+								periodStatus < 0 ? 'hidden' : '',
+							)}
+						>
 							D{periodStatus}
 						</p>
 						<p
@@ -84,6 +90,7 @@ const DailyLogForm = ({
 								periodStatus === -1 ? 'block text-muted-foreground' : '',
 								periodStatus === -2 ? 'block text-muted-foreground' : '',
 								periodStatus === -3 ? 'block text-muted-foreground' : '',
+								isPeriod ? 'hidden' : '',
 							)}
 						>
 							In {Math.abs(periodStatus)}d
