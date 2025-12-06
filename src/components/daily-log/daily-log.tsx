@@ -233,23 +233,12 @@ const Logs = ({
 							<CircleParking strokeWidth={2.2} size={24} />
 							<p
 								className={cn(
-									'mt-1 text-[0.7rem]',
-									isPeriod ? '' : 'hidden',
-									periodStatus < 0 ? 'hidden' : '',
-								)}
-							>
-								D{periodStatus}
-							</p>
-							<p
-								className={cn(
 									'mt-1 text-[0.7rem] hidden ml-2',
 									periodStatus === -1 ? 'block text-muted-foreground' : '',
-									periodStatus === -2 ? 'block text-muted-foreground' : '',
-									periodStatus === -3 ? 'block text-muted-foreground' : '',
 									isPeriod ? 'hidden' : '',
 								)}
 							>
-								In {Math.abs(periodStatus)}d
+								tomorrow
 							</p>
 						</div>
 					</div>

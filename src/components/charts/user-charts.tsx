@@ -176,8 +176,6 @@ const Chart = ({
 
 		const isPeriod = payload?.isPeriod ?? false
 
-		console.log({ isPeriod, cx, cy })
-
 		let stroke = _stroke?.slice(0, 7)
 		let adjust = 1
 		if (isPeriod) {
@@ -188,11 +186,11 @@ const Chart = ({
 		const size = isMobile ? 4 * adjust : 6 * adjust
 		const doubleSize = size * 2
 
-		if (cx === null || cy === null) return <g />
+		if (cx === null || cy === null) return <g key={cx || cy} />
 
 		return (
 			<svg
-				key={uuidv4()}
+				key={cx}
 				width={doubleSize}
 				height={doubleSize}
 				viewBox={`0 0 ${doubleSize} ${doubleSize}`}
@@ -323,8 +321,6 @@ const UserCharts = ({
 		currentUser.id,
 	)
 
-	console.log('userSkinfolds', userSkinfolds)
-
 	const [leftChartZoom, setLeftChartZoom] = useAtom(leftChartZoomAtom)
 	const [rightChartZoom, setRightChartZoom] = useAtom(rightChartZoomAtom)
 
@@ -434,6 +430,7 @@ const UserCharts = ({
 				protein: null,
 				fat: null,
 				calories: null,
+				isPeriod: false,
 				bodyFat: Number(skinfold.bodyFat?.[0]?.bodyFat),
 				leanMass: Number(skinfold.leanMass?.[0]?.leanMass),
 			}

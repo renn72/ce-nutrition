@@ -10,7 +10,6 @@ import { protectedProcedure } from '~/server/api/trpc'
 import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
-
 export const updateDl = {
 	update: protectedProcedure
 		.input(
@@ -114,6 +113,50 @@ export const updateDl = {
 			const res = await ctx.db
 				.update(dailyLog)
 				.set({ isStarred: input.isStarred })
+				.where(
+					and(
+						eq(dailyLog.date, input.date),
+						eq(dailyLog.userId, ctx.session.user.id),
+					),
+				)
+
+			return res
+		}),
+	updateIsPeriod: protectedProcedure
+		.input(
+			z.object({
+				date: z.string(),
+				isPeriod: z.boolean(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const log = await ctx.db.query.dailyLog.findFirst({
+				where: and(
+					eq(dailyLog.date, input.date),
+					eq(dailyLog.userId, ctx.session.user.id),
+				),
+			})
+
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				task: 'toggle period',
+				notes: JSON.stringify(input),
+				objectId: null,
+			})
+
+			if (!log) {
+				const res = await ctx.db.insert(dailyLog).values({
+					date: input.date,
+					isPeriod: input.isPeriod,
+					userId: ctx.session.user.id,
+				})
+				return res
+			}
+
+			const res = await ctx.db
+				.update(dailyLog)
+				.set({ isPeriod: input.isPeriod })
 				.where(
 					and(
 						eq(dailyLog.date, input.date),
@@ -694,7 +737,7 @@ export const updateDl = {
 			if (!log) {
 				const res = await ctx.db.insert(dailyLog).values({
 					date: input.date,
-          mobility: input.mobility,
+					mobility: input.mobility,
 					userId: ctx.session.user.id,
 				})
 				return res
@@ -702,7 +745,7 @@ export const updateDl = {
 
 			const res = await ctx.db
 				.update(dailyLog)
-        .set({ mobility: input.mobility })
+				.set({ mobility: input.mobility })
 				.where(
 					and(
 						eq(dailyLog.date, input.date),

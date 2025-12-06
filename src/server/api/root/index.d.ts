@@ -14706,6 +14706,14 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        updateIsPeriod: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                isPeriod: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         updateSupplement: _trpc_server.TRPCMutationProcedure<{
             input: {
                 date: string;
@@ -21703,6 +21711,14 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             input: {
                 date: string;
                 isStarred: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateIsPeriod: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                isPeriod: boolean;
             };
             output: _libsql_client.ResultSet;
             meta: object;

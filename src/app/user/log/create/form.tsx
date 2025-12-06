@@ -46,6 +46,13 @@ const DailyLogForm = ({
 		? true
 		: false
 
+	const ctx = api.useUtils()
+	const { mutate: updateIsPeriod } = api.dailyLog.updateIsPeriod.useMutation({
+		onSettled: () => {
+			ctx.dailyLog.invalidate()
+		},
+	})
+
 	const userName = currentUser.name?.replaceAll(' ', '-') ?? ''
 
 	const isPeriodEnabled = currentUser.settings?.periodStartAt ?? false
@@ -68,6 +75,12 @@ const DailyLogForm = ({
 			<div className='flex justify-between items-center px-6 w-full'>
 				<div>
 					<div
+						onClick={() => {
+							updateIsPeriod({
+								date: todaysLog.date,
+								isPeriod: !isPeriod,
+							})
+						}}
 						className={cn(
 							'text-muted-foreground/10 flex gap-0 items-center',
 							isPeriodEnabled ? '' : 'hidden',
@@ -77,23 +90,12 @@ const DailyLogForm = ({
 						<CircleParking strokeWidth={2.2} size={24} />
 						<p
 							className={cn(
-								'mt-1 text-[0.7rem]',
-								isPeriod ? '' : 'hidden',
-								periodStatus < 0 ? 'hidden' : '',
-							)}
-						>
-							D{periodStatus}
-						</p>
-						<p
-							className={cn(
 								'mt-1 text-[0.7rem] hidden ml-2',
 								periodStatus === -1 ? 'block text-muted-foreground' : '',
-								periodStatus === -2 ? 'block text-muted-foreground' : '',
-								periodStatus === -3 ? 'block text-muted-foreground' : '',
 								isPeriod ? 'hidden' : '',
 							)}
 						>
-							In {Math.abs(periodStatus)}d
+							tomorrow
 						</p>
 					</div>
 				</div>

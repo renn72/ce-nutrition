@@ -7080,6 +7080,41 @@ var updateDl = {
     );
     return res;
   }),
+  updateIsPeriod: protectedProcedure.input(
+    z20.object({
+      date: z20.string(),
+      isPeriod: z20.boolean()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    const log2 = await ctx.db.query.dailyLog.findFirst({
+      where: and5(
+        eq14(dailyLog.date, input.date),
+        eq14(dailyLog.userId, ctx.session.user.id)
+      )
+    });
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "toggle period",
+      notes: JSON.stringify(input),
+      objectId: null
+    });
+    if (!log2) {
+      const res2 = await ctx.db.insert(dailyLog).values({
+        date: input.date,
+        isPeriod: input.isPeriod,
+        userId: ctx.session.user.id
+      });
+      return res2;
+    }
+    const res = await ctx.db.update(dailyLog).set({ isPeriod: input.isPeriod }).where(
+      and5(
+        eq14(dailyLog.date, input.date),
+        eq14(dailyLog.userId, ctx.session.user.id)
+      )
+    );
+    return res;
+  }),
   updateSupplement: protectedProcedure.input(
     z20.object({
       date: z20.string(),
