@@ -118,6 +118,7 @@
     "tailwindcss-animate": "^1.0.7",
     "ua-parser-js": "^2.0.4",
     "uploadthing": "^7.7.3",
+    "uuid": "^13.0.0",
     "valtio": "^2.1.5",
     "vaul": "^1.1.2",
     "web-push": "^3.6.7",

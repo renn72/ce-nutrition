@@ -6,8 +6,11 @@ import { useAtom, useAtomValue } from 'jotai'
 import { CircleMinus, CirclePlus } from 'lucide-react'
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts'
 
-import { api } from '@/trpc/react'
+import { useIsMobile } from '@/hooks/use-mobile'
 
+import { v4 as uuidv4 } from 'uuid'
+
+import { api } from '@/trpc/react'
 
 import {
 	ChartContainer,
@@ -44,11 +47,11 @@ const chartConfig = {
 const selectChoices = [
 	{ value: 'morningWeight', label: 'Body Weight' },
 	{ value: 'calories', label: 'Calories' },
-  { value: 'carbs', label: 'Carbohydrates' },
-  { value: 'protein', label: 'Protein' },
-  { value: 'fat', label: 'Fat' },
-  { value: 'leanMass', label: 'Lean Mass' },
-  { value: 'bodyFat', label: 'Body Fat' },
+	{ value: 'carbs', label: 'Carbohydrates' },
+	{ value: 'protein', label: 'Protein' },
+	{ value: 'fat', label: 'Fat' },
+	{ value: 'leanMass', label: 'Lean Mass' },
+	{ value: 'bodyFat', label: 'Body Fat' },
 	{ value: 'water', label: 'Water' },
 	{ value: 'toilet', label: 'Toilet' },
 	{ value: 'bloodGlucose', label: 'Blood Glucose' },
@@ -73,9 +76,9 @@ const Chart = ({
 				date: string
 				morningWeight: number | null | undefined
 				calories: number | null | undefined
-        carbs: number | null | undefined
-        protein: number | null | undefined
-        fat: number | null | undefined
+				carbs: number | null | undefined
+				protein: number | null | undefined
+				fat: number | null | undefined
 				bloodGlucose: number | null | undefined
 				sleep: number | null | undefined
 				sleepQuality: number | null | undefined
@@ -90,8 +93,9 @@ const Chart = ({
 				nap: number | null | undefined
 				water: number | null | undefined
 				toilet: number | null | undefined
-        bodyFat: number | null | undefined
-        leanMass: number | null | undefined
+				bodyFat: number | null | undefined
+				leanMass: number | null | undefined
+				isPeriod: boolean | null | undefined
 		  }[]
 		| undefined
 }) => {
@@ -104,16 +108,17 @@ const Chart = ({
 	let leftChartZoomConst = leftValue === 'water' ? 100 : 1
 	let rightChartZoomConst = rightValue === 'water' ? 100 : 1
 
-  leftChartZoomConst = leftValue === 'carbs' ? 10 : leftChartZoomConst
-  leftChartZoomConst = leftValue === 'protein' ? 5 : leftChartZoomConst
-  leftChartZoomConst = leftValue === 'fat' ? 1 : leftChartZoomConst
-  leftChartZoomConst = leftValue === 'calories' ? 100 : leftChartZoomConst
+	leftChartZoomConst = leftValue === 'carbs' ? 10 : leftChartZoomConst
+	leftChartZoomConst = leftValue === 'protein' ? 5 : leftChartZoomConst
+	leftChartZoomConst = leftValue === 'fat' ? 1 : leftChartZoomConst
+	leftChartZoomConst = leftValue === 'calories' ? 100 : leftChartZoomConst
 
-  rightChartZoomConst = rightValue === 'carbs' ? 10 : rightChartZoomConst
-  rightChartZoomConst = rightValue === 'protein' ? 5 : rightChartZoomConst
-  rightChartZoomConst = rightValue === 'fat' ? 1 : rightChartZoomConst
-  rightChartZoomConst = rightValue === 'calories' ? 100 : rightChartZoomConst
+	rightChartZoomConst = rightValue === 'carbs' ? 10 : rightChartZoomConst
+	rightChartZoomConst = rightValue === 'protein' ? 5 : rightChartZoomConst
+	rightChartZoomConst = rightValue === 'fat' ? 1 : rightChartZoomConst
+	rightChartZoomConst = rightValue === 'calories' ? 100 : rightChartZoomConst
 
+	const isMobile = useIsMobile()
 
 	if (!data) return null
 
@@ -165,6 +170,47 @@ const Chart = ({
 
 	dataMinLeft = dataMinLeft < 0 ? 0 : dataMinLeft
 	dataMinRight = dataMinRight < 0 ? 0 : dataMinRight
+
+	const renderDot = (props: any) => {
+		const { cx, cy, stroke: _stroke, payload } = props
+
+		const isPeriod = payload?.isPeriod ?? false
+
+		console.log({ isPeriod, cx, cy })
+
+		let stroke = _stroke?.slice(0, 7)
+		let adjust = 1
+		if (isPeriod) {
+			stroke = stroke + '52'
+			adjust = 0.8
+		}
+
+		const size = isMobile ? 4 * adjust : 6 * adjust
+		const doubleSize = size * 2
+
+		if (cx === null || cy === null) return <g />
+
+		return (
+			<svg
+				key={uuidv4()}
+				width={doubleSize}
+				height={doubleSize}
+				viewBox={`0 0 ${doubleSize} ${doubleSize}`}
+				xmlns='http://www.w3.org/2000/svg'
+				x={cx - size}
+				y={cy - size}
+			>
+				<circle
+					cx={size}
+					cy={size}
+					r={size - 1}
+					stroke={stroke}
+					strokeWidth='1'
+					fill={stroke}
+				/>
+			</svg>
+		)
+	}
 
 	return (
 		<ChartContainer
@@ -227,7 +273,7 @@ const Chart = ({
 				<Line
 					yAxisId='left'
 					dataKey={leftValue}
-					dot={true}
+					dot={renderDot}
 					strokeWidth={2}
 					stroke='#8884d895'
 					type='monotone'
@@ -258,12 +304,12 @@ const UserCharts = ({
 	currentUser,
 	dailyLogs,
 	isMoblie = false,
-  className,
+	className,
 }: {
 	dailyLogs: GetAllDailyLogs | undefined
 	isMoblie?: boolean
 	currentUser: GetUserById
-  className?: string
+	className?: string
 }) => {
 	const [range, setRange] = useAtom(chartRangeAtom)
 	const [selectValueLeft, setSelectValueLeft] = useAtom(
@@ -273,10 +319,11 @@ const UserCharts = ({
 		chartSelectValueRightAtom,
 	)
 
-  const { data: userSkinfolds} =
-    api.metrics.getUserSkinfolds.useQuery(currentUser.id)
+	const { data: userSkinfolds } = api.metrics.getUserSkinfolds.useQuery(
+		currentUser.id,
+	)
 
-  console.log('userSkinfolds', userSkinfolds)
+	console.log('userSkinfolds', userSkinfolds)
 
 	const [leftChartZoom, setLeftChartZoom] = useAtom(leftChartZoomAtom)
 	const [rightChartZoom, setRightChartZoom] = useAtom(rightChartZoomAtom)
@@ -299,6 +346,7 @@ const UserCharts = ({
 				nap: log.nap,
 				date: log.date,
 				toilet: log.poopLogs.length,
+				isPeriod: log.isPeriod,
 				water: log.waterLogs.reduce((acc, log) => acc + Number(log.amount), 0),
 				calories: log.dailyMeals.reduce((acc, meal) => {
 					const { cals } = getRecipeDetailsFromDailyLog(
@@ -345,12 +393,13 @@ const UserCharts = ({
 			nap: log.nap === null ? null : Number(log.nap),
 			toilet: log.toilet === 0 ? null : Number(log.toilet),
 			water: log.water === 0 ? null : Number(log.water),
-      carbs: log.carbs === 0 ? null : Number(log.carbs),
-      protein: log.protein === 0 ? null : Number(log.protein),
-      fat: log.fat === 0 ? null : Number(log.fat),
-      calories: log.calories === 0 ? null : Number(log.calories),
-      bodyFat: null,
-      leanMass: null,
+			carbs: log.carbs === 0 ? null : Number(log.carbs),
+			protein: log.protein === 0 ? null : Number(log.protein),
+			fat: log.fat === 0 ? null : Number(log.fat),
+			calories: log.calories === 0 ? null : Number(log.calories),
+			isPeriod: log.isPeriod,
+			bodyFat: null,
+			leanMass: null,
 			date: new Date(log.date).toLocaleDateString('en-AU', {
 				month: 'numeric',
 				day: 'numeric',
@@ -358,46 +407,45 @@ const UserCharts = ({
 		}))
 		.slice(-range)
 
-  const skinfolds = userSkinfolds
+	const skinfolds = userSkinfolds
 		?.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    ?.map((skinfold) => {
-    return {
-			date: new Date(skinfold.date).toLocaleDateString('en-AU', {
-				month: 'numeric',
-				day: 'numeric',
-			}),
-      morningWeight: null,
-      bloodGlucose: null,
-      sleep: null,
-      sleepQuality: null,
-      hiit: null,
-      cardio: null,
-      weight: null,
-      liss: null,
-      posing: null,
-      steps: null,
-      sauna: null,
-      coldPlunge: null,
-      nap: null,
-      water: null,
-      toilet: null,
-      carbs: null,
-      protein: null,
-      fat: null,
-      calories: null,
-      bodyFat: Number(skinfold.bodyFat?.[0]?.bodyFat),
-      leanMass: Number(skinfold.leanMass?.[0]?.leanMass),
-    }
-  })
+		?.map((skinfold) => {
+			return {
+				date: new Date(skinfold.date).toLocaleDateString('en-AU', {
+					month: 'numeric',
+					day: 'numeric',
+				}),
+				morningWeight: null,
+				bloodGlucose: null,
+				sleep: null,
+				sleepQuality: null,
+				hiit: null,
+				cardio: null,
+				weight: null,
+				liss: null,
+				posing: null,
+				steps: null,
+				sauna: null,
+				coldPlunge: null,
+				nap: null,
+				water: null,
+				toilet: null,
+				carbs: null,
+				protein: null,
+				fat: null,
+				calories: null,
+				bodyFat: Number(skinfold.bodyFat?.[0]?.bodyFat),
+				leanMass: Number(skinfold.leanMass?.[0]?.leanMass),
+			}
+		})
 		.slice(-range)
-
 
 	return (
 		<div
 			className={cn(
 				'flex flex-col gap-1 p-2',
 				isMoblie ? 'bg-card shadow-md' : 'rounded-lg border',
-        className,
+				className,
 			)}
 		>
 			<div
@@ -410,7 +458,10 @@ const UserCharts = ({
 					}}
 				>
 					<SelectTrigger
-						className={cn('rounded-lg', isMoblie ? 'h-8 w-40 ' : 'h-8 w-36 xl:w-48 ')}
+						className={cn(
+							'rounded-lg',
+							isMoblie ? 'h-8 w-40 ' : 'h-8 w-36 xl:w-48 ',
+						)}
 					>
 						<SelectValue placeholder='Select' />
 					</SelectTrigger>
@@ -429,7 +480,10 @@ const UserCharts = ({
 					}}
 				>
 					<SelectTrigger
-						className={cn('rounded-lg', isMoblie ? 'h-8 w-40 ' : 'h-8 w-36 xl:w-48 ')}
+						className={cn(
+							'rounded-lg',
+							isMoblie ? 'h-8 w-40 ' : 'h-8 w-36 xl:w-48 ',
+						)}
 					>
 						<SelectValue placeholder='Select' />
 					</SelectTrigger>
@@ -443,9 +497,11 @@ const UserCharts = ({
 					</SelectContent>
 				</Select>
 			</div>
-      {
-        selectValueLeft === 'bodyFat' || selectValueLeft === 'leanMass' ? <Chart data={skinfolds} /> : <Chart data={data} />
-      }
+			{selectValueLeft === 'bodyFat' || selectValueLeft === 'leanMass' ? (
+				<Chart data={skinfolds} />
+			) : (
+				<Chart data={data} />
+			)}
 			<div className='flex gap-2 justify-between w-full'>
 				<div className='flex gap-2 items-center'>
 					<CirclePlus
@@ -473,7 +529,7 @@ const UserCharts = ({
 					scale={1}
 					postfix=''
 					isSmall={true}
-          height='h-6'
+					height='h-6'
 				/>
 				<div className='flex gap-2 items-center'>
 					<CirclePlus

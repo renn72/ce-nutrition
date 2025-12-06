@@ -45,7 +45,8 @@
         "useKeyWithClickEvents": "off",
         "useSemanticElements": "off",
         "noStaticElementInteractions": "off",
-        "useButtonType": "off"
+        "useButtonType": "off",
+        "noSvgWithoutTitle": "off"
       },
       "correctness": {
         "useExhaustiveDependencies": "off",

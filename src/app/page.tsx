@@ -177,6 +177,8 @@ export default function Home() {
 	})
 	const isMobile = useClientMediaQuery('(max-width: 600px)')
 
+	console.log(isMobile)
+
 	if (isLoading) return null
 	if (!currentUser) return null
 	return (
