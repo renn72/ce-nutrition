@@ -60,6 +60,16 @@ export const userAtom = atom<string>('')
 const data = {
 	navMain: [
 		{
+			title: 'Testing',
+			url: '#',
+			items: [
+				{
+					title: 'Kanban',
+					url: '/admin/kanban',
+				},
+			],
+		},
+		{
 			title: 'User',
 			url: '#',
 			items: [
@@ -160,10 +170,6 @@ const data = {
 			title: 'Admin',
 			url: '#',
 			items: [
-				// {
-				//   title: 'Settings',
-				//   url: '/admin/settings',
-				// },
 				{
 					title: 'Super',
 					url: '/admin/super',
@@ -241,32 +247,32 @@ const AdminSidebarContent = () => {
 								<Button
 									variant='outline'
 									role='combobox'
-									className='w-[200px] justify-between bg-sidebar-background text-sidebar-foreground'
+									className='justify-between w-[200px] bg-sidebar-background text-sidebar-foreground'
 								>
 									{selectedUser
 										? allUsers?.find((user) => user.id === selectedUser)?.name
 										: 'Select user...'}
-									<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+									<ChevronsUpDown className='ml-2 w-4 h-4 opacity-50 shrink-0' />
 								</Button>
 							</PopoverTrigger>
 							<PopoverContent
 								forceMount
-								className='w-[900px] max-w-[100vw] p-0'
+								className='p-0 w-[900px] max-w-[100vw]'
 							>
 								<Command>
-									<div className='flex gap-2 w-full flex-col lg:flex-row '>
+									<div className='flex flex-col gap-2 w-full lg:flex-row'>
 										<CommandInput
 											className='w-full'
 											placeholder='Search users...'
 										/>
-										<div className='flex gap-2 w-full justify-center lg:justify-start '>
+										<div className='flex gap-2 justify-center w-full lg:justify-start'>
 											<Select
 												value={selectedCategory}
 												onValueChange={(value) => {
 													setSelectedCategory(value)
 												}}
 											>
-												<SelectTrigger className='w-[180px] mt-1'>
+												<SelectTrigger className='mt-1 w-[180px]'>
 													<SelectValue placeholder='Category' />
 												</SelectTrigger>
 												<SelectContent>
@@ -326,7 +332,7 @@ const AdminSidebarContent = () => {
 																	: 'opacity-0',
 															)}
 														/>
-														<span className='col-span-2 lg:col-span-1 flex gap-[1px] flex-wrap'>
+														<span className='flex flex-wrap col-span-2 lg:col-span-1 gap-[1px]'>
 															{user.trainers.map((trainer) => (
 																<Badge
 																	key={trainer.trainer.id}
@@ -334,7 +340,7 @@ const AdminSidebarContent = () => {
 																	className={cn(
 																		'text-[0.65rem] lg:text-[0.7rem] py-[3px] px-[2px] lg:px-1 h-min leading-none',
 																		'cursor-pointer hover:text-background hover:bg-foreground tracking-tighter',
-                                    'shadow-sm',
+																		'shadow-sm',
 																	)}
 																>
 																	{trainer.trainer?.firstName}
@@ -344,12 +350,12 @@ const AdminSidebarContent = () => {
 														<span className='col-span-5 lg:col-span-6 truncate'>
 															{user.name ?? user.email}
 														</span>
-														<span className='col-span-3 flex gap-[1px] flex-wrap'>
+														<span className='flex flex-wrap col-span-3 gap-[1px]'>
 															{user.category?.map((category) => (
 																<Badge
 																	key={category.category.id}
 																	variant='accent'
-																	className='text-[0.7rem] py-[3px] px-1 h-min leading-none cursor-pointer hover:text-background hover:bg-foreground tracking-tighter'
+																	className='px-1 tracking-tighter leading-none cursor-pointer text-[0.7rem] py-[3px] h-min hover:text-background hover:bg-foreground'
 																>
 																	{category.category.name}
 																</Badge>
@@ -392,6 +398,9 @@ const AdminSidebarContent = () => {
 						<SidebarGroupContent>
 							<SidebarMenu>
 								{item.items
+									.filter(
+										(item) => item.title !== 'Kanban' || currentUser?.isCreator,
+									)
 									.filter(
 										(item) => item.title !== 'Super' || currentUser?.isCreator,
 									)

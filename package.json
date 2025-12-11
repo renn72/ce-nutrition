@@ -17,6 +17,10 @@
   "dependencies": {
     "@auth/drizzle-adapter": "^1.10.0",
     "@biomejs/biome": "^2.2.0",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@faker-js/faker": "^10.1.0",
     "@headless-tree/core": "^1.5.1",
     "@headless-tree/react": "^1.5.1",
     "@headlessui/react": "^2.2.7",
@@ -116,6 +120,7 @@
     "superjson": "^2.2.2",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
+    "tunnel-rat": "^0.1.2",
     "ua-parser-js": "^2.0.4",
     "uploadthing": "^7.7.3",
     "uuid": "^13.0.0",
