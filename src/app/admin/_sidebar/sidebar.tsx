@@ -67,6 +67,10 @@ const data = {
 					title: 'Kanban',
 					url: '/admin/kanban',
 				},
+				{
+					title: 'Calendar',
+					url: '/admin/calendar',
+				},
 			],
 		},
 		{

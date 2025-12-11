@@ -2,7 +2,7 @@
 
 import { useSearchParams } from 'next/navigation'
 
-import { UserInfo } from './user-info'
+import { Calendar } from './calendar'
 
 export default function Home() {
 	const searchParams = useSearchParams()
@@ -16,5 +16,5 @@ export default function Home() {
 	)
 		return <div>Select a user</div>
 
-	return <UserInfo userId={userId} />
+	return <Calendar />
 }
