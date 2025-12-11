@@ -10,7 +10,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { impersonatedUserAtom } from '@/atoms'
 import { cn } from '@/lib/utils'
 import { atom, useAtom } from 'jotai'
-import { Check, ChevronsUpDown, ShieldUser } from 'lucide-react'
+import { Check, ChevronsUpDown, ShieldUser, ChevronLeft } from 'lucide-react'
 import { Link } from 'next-view-transitions'
 
 import { Badge } from '@/components/ui/badge'
@@ -48,6 +48,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarProvider,
+	SidebarTriggerChevron,
 	SidebarRail,
 	useSidebar,
 } from '@/components/ui/sidebar'
@@ -245,7 +246,7 @@ const AdminSidebarContent = () => {
 		<Sidebar>
 			<SidebarHeader>
 				<SidebarMenu>
-					<SidebarMenuItem>
+					<SidebarMenuItem className='flex justify-between items-center'>
 						<Popover modal={true} open={isOpen} onOpenChange={setIsOpen}>
 							<PopoverTrigger asChild>
 								<Button
@@ -391,6 +392,7 @@ const AdminSidebarContent = () => {
 								</Command>
 							</PopoverContent>
 						</Popover>
+						<SidebarTriggerChevron />
 					</SidebarMenuItem>
 				</SidebarMenu>
 			</SidebarHeader>

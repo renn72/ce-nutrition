@@ -16,5 +16,9 @@ export default function Home() {
 	)
 		return <div>Select a user</div>
 
-	return <Calendar />
+	return (
+		<div className='w-full min-h-[calc(100vh-80px]'>
+			<Calendar />
+		</div>
+	)
 }

@@ -287,11 +287,11 @@ export const CalendarBody = ({ features, children }: CalendarBodyProps) => {
 	}
 
 	return (
-		<div className='grid flex-grow grid-cols-7 m-1 border-r border-b'>
+		<div className='grid flex-grow grid-cols-7 m-1 w-full border-r border-b min-w-[800px]'>
 			{days.map((day, index) => (
 				<div
 					className={cn(
-						'relative aspect-[7/5] overflow-hidden border-t border-r',
+						'relative lg:aspect-[7/5] overflow-hidden border-t border-r min-w-[100px] min-h-[80px]',
 						index % 7 === 6 && 'border-r-0',
 					)}
 					key={index}
