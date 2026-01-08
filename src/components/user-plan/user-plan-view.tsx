@@ -53,7 +53,7 @@ const UserPlanVege = ({
 					<DialogTitle>Vege</DialogTitle>
 					<DialogDescription />
 				</DialogHeader>
-				<div className='flex gap-4 items-center flex-col'>
+				<div className='flex flex-col gap-4 items-center'>
 					<div>{meal.veges}</div>
 					<div>{meal.vegeNotes}</div>
 				</div>
@@ -92,21 +92,21 @@ const UserPlanRecipe = ({
 				</Badge>
 			</Sheet.Trigger>
 			<Sheet.Portal>
-				<Sheet.View className='z-[999] h-[100vh] bg-black/50 '>
-					<Sheet.Content className='min-h-[200px] max-h-[90vh] h-full rounded-t-3xl bg-background relative'>
+				<Sheet.View className='z-[999] h-[100vh] bg-black/50'>
+					<Sheet.Content className='relative h-full rounded-t-3xl min-h-[200px] max-h-[90vh] bg-background'>
 						<div className='flex flex-col justify-between h-full'>
-							<div className='flex flex-col gap-4 '>
+							<div className='flex flex-col gap-4'>
 								<div className='flex justify-center pt-1'>
 									<Sheet.Handle
-										className=' w-[50px] h-[6px] border-0 rounded-full bg-primary/20'
+										className='rounded-full border-0 w-[50px] h-[6px] bg-primary/20'
 										action='dismiss'
 									/>
 								</div>
-								<div className='flex flex-col gap-2 px-4 '>
+								<div className='flex flex-col gap-2 px-4'>
 									<Sheet.Title className='text-lg font-semibold'>
 										{recipe.name}
 									</Sheet.Title>
-									<Sheet.Description className='flex gap-1 items-center justify-between text-xs font-normal bg-primary text-background shadow-md rounded-full py-1 px-4 '>
+									<Sheet.Description className='flex gap-1 justify-between items-center py-1 px-4 text-xs font-normal rounded-full shadow-md bg-primary text-background'>
 										<span>{`${(Number(cals) * scale).toFixed(0)} cals`}</span>
 										<span>{`${(Number(protein) * scale).toFixed(0)} protein`}</span>
 										<span>{`${(Number(carbs) * scale).toFixed(0)} carbs`}</span>
@@ -114,7 +114,7 @@ const UserPlanRecipe = ({
 									</Sheet.Description>
 									<div className='grid grid-cols-4 gap-2 place-items-center mt-4'>
 										<Label>Serves</Label>
-										<div className='flex gap-3 items-center w-full col-span-3'>
+										<div className='flex col-span-3 gap-3 items-center w-full'>
 											<Input
 												placeholder='Scale'
 												className='max-w-[52px]'
@@ -144,7 +144,7 @@ const UserPlanRecipe = ({
 										</div>
 									</div>
 								</div>
-								<ScrollArea className='pt-0 px-0 h-[calc(90vh-190px)]'>
+								<ScrollArea className='px-0 pt-0 h-[calc(90vh-190px)]'>
 									{userPlan.userIngredients
 										.filter(
 											(ingredient) =>
@@ -166,17 +166,23 @@ const UserPlanRecipe = ({
 											return (
 												<div
 													key={ingredient.id}
-													className='flex gap-0 flex-col'
+													className='flex flex-col gap-0'
 												>
-													<div className='grid grid-cols-6 w-full px-1 py-2 bg-secondary text-sm'>
-														<div className='truncate col-span-5'>
+													<div className='grid grid-cols-6 py-2 px-1 w-full text-sm bg-secondary'>
+														<div className='col-span-5 truncate'>
 															{ingredient.name}
 														</div>
-														<div className='place-self-end'>{`${serve.toFixed(0)}${ingredient.serveUnit?.slice(0, 1)}`}</div>
+														<div className='place-self-end'>{`${serve.toFixed(0)}${
+															ingredient.serveUnit === 'each'
+																? 'ea'
+																: ingredient.serveUnit === 'grams'
+																	? 'g'
+																	: ingredient.serveUnit
+														}`}</div>
 													</div>
 													{ingredient.alternateIngredient ? (
-														<div className='grid grid-cols-6 w-full px-1 py-0 bg-secondary text-xs font-light'>
-															<div className='truncate col-span-5'>
+														<div className='grid grid-cols-6 py-0 px-1 w-full text-xs font-light bg-secondary'>
+															<div className='col-span-5 truncate'>
 																or {ingredient.alternateIngredient.name}
 															</div>
 															<div className='place-self-end'>{`${altSize.toFixed(0)}${ingredient.alternateIngredient?.serveUnit?.slice(0, 1)}`}</div>
@@ -188,7 +194,7 @@ const UserPlanRecipe = ({
 								</ScrollArea>
 							</div>
 							<Sheet.Trigger
-								className='w-full flex justify-center'
+								className='flex justify-center w-full'
 								action='dismiss'
 							>
 								<ChevronDown
@@ -213,10 +219,10 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
 			</CardHeader>
 			<CardContent className='flex flex-col gap-2 px-2'>
 				{userPlan?.userMeals.map((meal) => (
-					<div className='flex gap-2 flex-col' key={meal.id}>
-						<div className='flex gap-2 items-center justify-between'>
+					<div className='flex flex-col gap-2' key={meal.id}>
+						<div className='flex gap-2 justify-between items-center'>
 							<Label className=''>{meal.mealTitle}</Label>
-							<div className='text-xs text-muted-foreground tracking-tighter flex gap-1'>
+							<div className='flex gap-1 text-xs tracking-tighter text-muted-foreground'>
 								{meal.targetCalories !== '' ? (
 									<div>{`${meal.targetCalories} cals`}</div>
 								) : null}
@@ -225,7 +231,7 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
 								) : null}
 							</div>
 						</div>
-						<div className='flex gap-2 flex-row pl-0 flex-wrap'>
+						<div className='flex flex-row flex-wrap gap-2 pl-0'>
 							{userPlan.userRecipes
 								.filter((recipe) => recipe.mealIndex === meal.mealIndex)
 								.map((recipe) => (

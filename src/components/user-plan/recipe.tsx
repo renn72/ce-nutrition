@@ -66,21 +66,26 @@ const Ingredient = ({
 	ingredientsSize: number[]
 	ingredientsField: UseFieldArrayReturn<z.infer<typeof formSchema>['meals']>
 }) => {
-  const ingredient  = form.watch(`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}`)
+	const ingredient = form.watch(
+		`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}`,
+	)
 
 	const [isOpen, setIsOpen] = useState(false)
 	const [selected, setSelected] = useState<string | null>(null)
 	const [selectedAlt, setSelectedAlt] = useState<string | null>(null)
 
-  useEffect(() => {
-    setSelected(ingredient?.ingredientId)
-    setSelectedAlt(ingredient?.alternateId)
-  }, [ingredient])
+	useEffect(() => {
+		setSelected(ingredient?.ingredientId)
+		setSelectedAlt(ingredient?.alternateId)
+	}, [ingredient])
 
 	const { data: allIngredients } = api.ingredient.getAll.useQuery()
 
 	const size = form.watch(
 		`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.serveSize`,
+	)
+	const unit = form.watch(
+		`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.serveUnit`,
 	)
 	useEffect(() => {
 		setIngredientsSize((prev) => {
@@ -95,23 +100,22 @@ const Ingredient = ({
 
 	const ratio = Number(size) / Number(ingredient?.ingredient?.serveSize)
 
-
 	return (
 		<div className='flex flex-col gap-1'>
-			<div className='grid md:grid-cols-10 grid-cols-8 md:gap-1 text-muted-foreground items-center relative'>
-				<div className='md:col-span-4 col-span-2 md:ml-2'>
+			<div className='grid relative grid-cols-8 items-center md:grid-cols-10 md:gap-1 text-muted-foreground'>
+				<div className='col-span-2 md:col-span-4 md:ml-2'>
 					{ingredient?.name}
 				</div>
 				<FormField
 					control={form.control}
 					name={`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.serveSize`}
 					render={({ field }) => (
-						<FormItem className='w-full col-span-2'>
+						<FormItem className='col-span-2 w-full'>
 							<FormControl>
-								<div className='w-full flex justify-between items-center gap-2 px-2'>
+								<div className='flex gap-2 justify-between items-center px-2 w-full'>
 									<CircleMinus
 										size={20}
-										className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0 hidden md:block'
+										className='hidden transition-transform cursor-pointer md:block hover:scale-110 active:scale-90 text-muted-foreground shrink-0 hover:text-foreground'
 										onClick={() => {
 											field.onChange(
 												(Math.ceil(Number(field.value)) - 1).toString(),
@@ -128,39 +132,38 @@ const Ingredient = ({
 									/>
 									<CirclePlus
 										size={20}
-										className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0 hidden md:block'
+										className='hidden transition-transform cursor-pointer md:block hover:scale-110 active:scale-90 text-muted-foreground shrink-0 hover:text-foreground'
 										onClick={() => {
 											field.onChange(
 												(Math.floor(Number(field.value)) + 1).toString(),
 											)
 										}}
 									/>
+									<div className='w-12 text-xs'>
+										{unit === 'each' ? 'ea' : unit === 'grams' ? 'g' : unit}
+									</div>
 								</div>
 							</FormControl>
 							<FormMessage />
 						</FormItem>
 					)}
 				/>
-				<div
-          className='place-self-center'
-        >
+				<div className='place-self-center'>
 					{(Number(ingredient.ingredient.caloriesWOFibre) * ratio).toFixed(1)}
 				</div>
-				<div
-          className='place-self-center'
-        >{(Number(ingredient.ingredient.protein) * ratio).toFixed(1)}</div>
-				<div
-          className='place-self-center'
-        >
+				<div className='place-self-center'>
+					{(Number(ingredient.ingredient.protein) * ratio).toFixed(1)}
+				</div>
+				<div className='place-self-center'>
 					{(
 						Number(
 							ingredient.ingredient.availableCarbohydrateWithSugarAlcohols,
 						) * ratio
 					).toFixed(1)}
 				</div>
-				<div
-          className='place-self-center'
-        >{(Number(ingredient.ingredient.fatTotal) * ratio).toFixed(1)}</div>
+				<div className='place-self-center'>
+					{(Number(ingredient.ingredient.fatTotal) * ratio).toFixed(1)}
+				</div>
 
 				<Dialog open={isOpen} onOpenChange={setIsOpen}>
 					<DropdownMenu>
@@ -200,9 +203,9 @@ const Ingredient = ({
 							</DialogHeader>
 							<div className='flex flex-col gap-2 w-full'>
 								<div className='flex flex-col gap-2 w-full'>
-									<h2 className='font-semibold '>Ingredient</h2>
+									<h2 className='font-semibold'>Ingredient</h2>
 									{!allIngredients ? null : (
-										<div className='flex gap-2 items-center w-full lg:w-content col-span-3 mb-8'>
+										<div className='flex col-span-3 gap-2 items-center mb-8 w-full lg:w-content'>
 											<VirtualizedCombobox
 												width='600px'
 												height='800px'
@@ -235,9 +238,9 @@ const Ingredient = ({
 									)}
 								</div>
 								<div className='flex flex-col gap-2 w-full'>
-									<h2 className='font-semibold '>Alt Ingredient</h2>
+									<h2 className='font-semibold'>Alt Ingredient</h2>
 									{!allIngredients ? null : (
-										<div className='flex gap-2 items-center w-full lg:w-content col-span-3 mb-8'>
+										<div className='flex col-span-3 gap-2 items-center mb-8 w-full lg:w-content'>
 											<VirtualizedCombobox
 												width='600px'
 												height='800px'
@@ -270,7 +273,7 @@ const Ingredient = ({
 									)}
 								</div>
 							</div>
-							<div className='flex gap-4 justify-center w-full col-span-3'>
+							<div className='flex col-span-3 gap-4 justify-center w-full'>
 								<Button
 									onClick={(e) => {
 										e.preventDefault()
@@ -281,22 +284,40 @@ const Ingredient = ({
 											(i) => i.id === Number(selectedAlt),
 										)
 										if (!newIngredient) return
-                    if (!selected) return
-                    form.setValue(`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.ingredientId`, selected, { shouldTouch: true })
-                    form.setValue(`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.name`, newIngredient.name ?? 'error', { shouldTouch: true })
-                    form.setValue(`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.alternateId`, selectedAlt ?? null, { shouldTouch: true })
+										if (!selected) return
+										form.setValue(
+											`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.ingredientId`,
+											selected,
+											{ shouldTouch: true },
+										)
+										form.setValue(
+											`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.name`,
+											newIngredient.name ?? 'error',
+											{ shouldTouch: true },
+										)
+										form.setValue(
+											`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.alternateId`,
+											selectedAlt ?? null,
+											{ shouldTouch: true },
+										)
 
-
-
-                    // @ts-ignore
-                    form.setValue(`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.ingredient`, {...newIngredient}, { shouldTouch: true })
-                    // @ts-ignore
-                    form.setValue(`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.alternateIngredient`, {...newAltIngredient}, { shouldTouch: true })
+										// @ts-ignore
+										form.setValue(
+											`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.ingredient`,
+											{ ...newIngredient },
+											{ shouldTouch: true },
+										)
+										// @ts-ignore
+										form.setValue(
+											`meals.${mealIndex}.recipes.${recipeIndex}.ingredients.${ingredientIndex}.alternateIngredient`,
+											{ ...newAltIngredient },
+											{ shouldTouch: true },
+										)
 
 										setIsOpen(false)
 									}}
 								>
-                  Save
+									Save
 								</Button>
 								<Button
 									onClick={(e) => {
@@ -312,11 +333,11 @@ const Ingredient = ({
 				</Dialog>
 			</div>
 			{ingredient.alternateId && ingredient.alternateIngredient ? (
-				<div className='grid grid-cols-10 gap-1 text-muted-foreground items-center text-xs'>
-					<div className='col-span-4 truncate ml-4'>
+				<div className='grid grid-cols-10 gap-1 items-center text-xs text-muted-foreground'>
+					<div className='col-span-4 ml-4 truncate'>
 						or {ingredient.alternateIngredient?.name}
 					</div>
-					<div className='place-self-center col-span-2 text-xs'>
+					<div className='col-span-2 place-self-center text-xs'>
 						{(
 							((Number(ingredient.ingredient.caloriesWOFibre) * ratio) /
 								Number(ingredient.alternateIngredient?.caloriesWOFibre)) *
@@ -376,25 +397,25 @@ const Recipe = ({
 	// }
 
 	return (
-		<div className='flex flex-col gap-1 border rounded-md p-2 relative'>
+		<div className='flex relative flex-col gap-1 p-2 rounded-md border'>
 			<div className='absolute top-1 left-2 text-xs text-muted-foreground'>
 				{recipeIndex + 1}
 			</div>
-			<div className='grid md:grid-cols-10 grid-cols-8 md:gap-1 capitalize place-items-center'>
-				<div className='md:col-span-4 col-span-2 ' />
+			<div className='grid grid-cols-8 place-items-center capitalize md:grid-cols-10 md:gap-1'>
+				<div className='col-span-2 md:col-span-4' />
 				<div className='col-span-2 place-self-center'>size</div>
 				<div>cals</div>
 				<div>protein</div>
 				<div>carbs</div>
 				<div>fat</div>
 			</div>
-			<div className='grid md:grid-cols-10 grid-cols-8 md:gap-1 font-bold'>
-				<div className='md:col-span-4 col-span-2 flex gap-2 justify-between items-center'>
+			<div className='grid grid-cols-8 font-bold md:grid-cols-10 md:gap-1'>
+				<div className='flex col-span-2 gap-2 justify-between items-center md:col-span-4'>
 					<FormField
 						control={form.control}
 						name={`meals.${mealIndex}.recipes.${recipeIndex}.name`}
 						render={({ field }) => (
-							<FormItem className='w-full col-span-2'>
+							<FormItem className='col-span-2 w-full'>
 								<FormControl>
 									<Input
 										placeholder=''
@@ -411,7 +432,7 @@ const Recipe = ({
 					<Button
 						variant='destructive'
 						size='icon'
-						className='rounded-full shrink-0 text-[0.7rem] h-5 w-6'
+						className='w-6 h-5 rounded-full shrink-0 text-[0.7rem]'
 						onClick={(e) => {
 							e.preventDefault()
 							recipesField.remove(recipeIndex)
@@ -421,16 +442,16 @@ const Recipe = ({
 					</Button>
 				</div>
 				<div className='col-span-2 place-self-center' />
-				<div className='text-center bg-secondary rounded-full place-self-center px-6'>
+				<div className='place-self-center px-6 text-center rounded-full bg-secondary'>
 					{recipeDetails.cals}
 				</div>
-				<div className='text-center bg-secondary rounded-full place-self-center px-6'>
+				<div className='place-self-center px-6 text-center rounded-full bg-secondary'>
 					{recipeDetails.protein}
 				</div>
-				<div className='text-center bg-secondary rounded-full place-self-center px-6'>
+				<div className='place-self-center px-6 text-center rounded-full bg-secondary'>
 					{recipeDetails.carbs}
 				</div>
-				<div className='text-center bg-secondary rounded-full place-self-center px-6'>
+				<div className='place-self-center px-6 text-center rounded-full bg-secondary'>
 					{recipeDetails.fat}{' '}
 				</div>
 			</div>
@@ -447,13 +468,13 @@ const Recipe = ({
 					ingredientsField={ingredientsField}
 				/>
 			))}
-			<div className='flex w-full justify-center mt-4'>
+			<div className='flex justify-center mt-4 w-full'>
 				<Dialog open={isOpen} onOpenChange={setIsOpen}>
 					<DialogTrigger asChild>
 						<CirclePlus
 							size={20}
 							strokeWidth={3}
-							className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0'
+							className='transition-transform cursor-pointer hover:scale-110 active:scale-90 text-muted-foreground shrink-0 hover:text-foreground'
 						/>
 					</DialogTrigger>
 					<DialogContent className='top-[30%] max-w-2xl'>
@@ -465,9 +486,9 @@ const Recipe = ({
 						</DialogHeader>
 						<div className='flex flex-col gap-2 w-full'>
 							<div className='flex flex-col gap-2 w-full'>
-								<h2 className='font-semibold '>Ingredient</h2>
+								<h2 className='font-semibold'>Ingredient</h2>
 								{!allIngredients ? null : (
-									<div className='flex gap-2 items-center w-full lg:w-content col-span-3 mb-8'>
+									<div className='flex col-span-3 gap-2 items-center mb-8 w-full lg:w-content'>
 										<VirtualizedCombobox
 											width='600px'
 											height='800px'
@@ -500,9 +521,9 @@ const Recipe = ({
 								)}
 							</div>
 							<div className='flex flex-col gap-2 w-full'>
-								<h2 className='font-semibold '>Alt Ingredient</h2>
+								<h2 className='font-semibold'>Alt Ingredient</h2>
 								{!allIngredients ? null : (
-									<div className='flex gap-2 items-center w-full lg:w-content col-span-3 mb-8'>
+									<div className='flex col-span-3 gap-2 items-center mb-8 w-full lg:w-content'>
 										<VirtualizedCombobox
 											width='600px'
 											height='800px'
@@ -535,7 +556,7 @@ const Recipe = ({
 								)}
 							</div>
 						</div>
-						<div className='flex gap-4 justify-center w-full col-span-3'>
+						<div className='flex col-span-3 gap-4 justify-center w-full'>
 							<Button
 								onClick={(e) => {
 									e.preventDefault()
@@ -558,11 +579,11 @@ const Recipe = ({
 										},
 										name: newIngredient?.name || '',
 										serveSize: '',
-										serveUnit: '',
+										serveUnit: newIngredient?.serveUnit || '',
 										note: '',
 									})
 									setSelected(null)
-                  setSelectedAlt(null)
+									setSelectedAlt(null)
 									setIsOpen(false)
 									setIngredientsSize([...ingredientsSize, 0])
 								}}
