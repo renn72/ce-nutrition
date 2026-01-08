@@ -153,8 +153,6 @@ const PwaInstallButton: React.FC = () => {
 		}
 	}
 
-	console.log('setShowInstallButton', showInstallButton)
-
 	return (
 		<div
 			className={cn(
