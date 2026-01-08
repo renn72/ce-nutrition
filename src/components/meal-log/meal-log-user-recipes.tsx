@@ -2,40 +2,17 @@
 
 import { api } from '@/trpc/react'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
-import {
-	cn,
-	getRecipeDetailsForDailyLog,
-	getRecipeDetailsFromDailyLog,
-} from '@/lib/utils'
-import type {
-	GetAllDailyLogs,
-	GetDailyLogById,
-	GetRecipeById,
-	GetUserById,
-	UserPlan,
-} from '@/types'
+import { cn } from '@/lib/utils'
+import type { GetRecipeById, GetUserById } from '@/types'
 import NumberFlow from '@number-flow/react'
 import { Sheet } from '@silk-hq/components'
-import { useAtom } from 'jotai'
-import {
-	ArrowBigLeftDash,
-	ArrowBigRightDash,
-	ChevronDown,
-	Salad,
-} from 'lucide-react'
-import { toast } from 'sonner'
+import { ChevronDown, Loader, Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
-import { Label } from '../ui/label'
-import { isAllMealsAtom, selectedPlansAtom } from './atoms'
 import { FormRecipe } from './form-recipe'
-import { MealBottomSheet } from './meal-bottom-sheet'
 
 export const dynamic = 'force-dynamic'
 
@@ -48,8 +25,8 @@ const CreateRecipe = ({
 	recipe,
 	setSelectedRecipe,
 	setIsRecipeListOpen,
-  logId,
-  mealIndex,
+	logId,
+	mealIndex,
 }: {
 	calories: number
 	protein: number
@@ -59,8 +36,8 @@ const CreateRecipe = ({
 	recipe: GetRecipeById | null
 	setSelectedRecipe: React.Dispatch<React.SetStateAction<GetRecipeById | null>>
 	setIsRecipeListOpen: React.Dispatch<React.SetStateAction<boolean>>
-  logId: number
-  mealIndex: number
+	logId: number
+	mealIndex: number
 }) => {
 	return (
 		<Sheet.Root
@@ -85,64 +62,65 @@ const CreateRecipe = ({
 			</Sheet.Trigger>
 			<Sheet.Portal>
 				<Sheet.View
-          onClickOutside={(e) => {
-            e.changeDefault({ dismiss: false})
-          }}
-          className='z-[1002] h-[100vh] bg-black/50 '>
-					<Sheet.Content className='min-h-[200px] max-h-[90vh] h-full rounded-t-3xl bg-background relative'>
+					onClickOutside={(e) => {
+						e.changeDefault({ dismiss: false })
+					}}
+					className='z-[1002] h-[100vh] bg-black/50'
+				>
+					<Sheet.Content className='relative h-full rounded-t-3xl min-h-[200px] max-h-[90vh] bg-background'>
 						<div className='flex flex-col justify-between h-full'>
-							<div className='flex flex-col '>
+							<div className='flex flex-col'>
 								<div className='flex justify-center pt-1'>
 									<Sheet.Handle
-										className=' w-[50px] h-[6px] border-0 rounded-full bg-primary/20'
+										className='rounded-full border-0 w-[50px] h-[6px] bg-primary/20'
 										action='dismiss'
 									/>
 								</div>
 								<div className=''>
-									<div className='flex justify-center items-center flex-col '>
-										<Sheet.Title className='text-xl mt-[2px] font-semibold'>
+									<div className='flex flex-col justify-center items-center'>
+										<Sheet.Title className='text-xl font-semibold mt-[2px]'>
 											Recipes
 										</Sheet.Title>
 										<Sheet.Description className='hidden'>
 											create a new meal
 										</Sheet.Description>
-									  <div className='flex gap-4 w-[calc(100vw-2rem)] items-baseline justify-center rounded-full bg-secondary'>
-												<div className='flex items-center  gap-1 text-lg font-bold tracking-tight'>
-                          {`Meal ${mealIndex + 1} Target`}
-												</div>
-												<div className='flex items-center  gap-2'>
-													<NumberFlow
-														value={calories}
-														className='text-lg font-bold text-primary ml-2 '
-													/>
-													<span className='text-xs text-primary/50 ml-[1px]'>
-														cals
-													</span>
-												</div>
-												<div className='flex items-center gap-2'>
-													<NumberFlow
-														value={protein}
-														className='text-lg font-bold text-primary ml-2 '
-													/>
-													<span className='text-xs text-primary/50 ml-[1px]'>
-														protein
-													</span>
-												</div>
+										<div className='flex gap-4 justify-center items-baseline rounded-full w-[calc(100vw-2rem)] bg-secondary'>
+											<div className='flex gap-1 items-center text-lg font-bold tracking-tight'>
+												{`Meal ${mealIndex + 1} Target`}
 											</div>
+											<div className='flex gap-2 items-center'>
+												<NumberFlow
+													value={calories}
+													className='ml-2 text-lg font-bold text-primary'
+												/>
+												<span className='text-xs text-primary/50 ml-[1px]'>
+													cals
+												</span>
+											</div>
+											<div className='flex gap-2 items-center'>
+												<NumberFlow
+													value={protein}
+													className='ml-2 text-lg font-bold text-primary'
+												/>
+												<span className='text-xs text-primary/50 ml-[1px]'>
+													protein
+												</span>
+											</div>
+										</div>
 									</div>
 								</div>
 								<FormRecipe
 									recipe={recipe}
 									setIsOpen={setIsOpen}
 									setIsRecipeListOpen={setIsRecipeListOpen}
-                  logId={logId}
-                  mealIndex={mealIndex}
-                  protein={protein}
-                  calories={calories}
+									logId={logId}
+									mealIndex={mealIndex}
+									protein={protein}
+									calories={calories}
 								/>
 							</div>
 							<Sheet.Trigger
-								className='w-full flex justify-center'
+								className='flex justify-center w-full'
 								action='dismiss'
 							>
 								<ChevronDown
@@ -164,29 +142,68 @@ const UserCreatedRecipes = ({
 	calories,
 	protein,
 	setIsRecipeListOpen,
-  logId,
-  mealIndex,
+	logId,
+	mealIndex,
 }: {
 	currentUser: GetUserById
 	calories: number
 	protein: number
 	setIsRecipeListOpen: React.Dispatch<React.SetStateAction<boolean>>
-  logId: number
-  mealIndex: number
+	logId: number
+	mealIndex: number
 }) => {
+	const [timeoutCodeAdd, setTimeoutCodeAdd] = useState<NodeJS.Timeout | null>(
+		null,
+	)
+
+	const ctx = api.useUtils()
 	const { data: userRecipes, isLoading: isLoadingUserRecipes } =
 		api.recipe.getAllUserCreated.useQuery({
 			userId: currentUser.id,
 		})
+	const { mutate: deleteRecipe } = api.recipe.delete.useMutation({
+		onSuccess: () => {
+			ctx.recipe.invalidate()
+		},
+		onSettled: () => {
+			ctx.recipe.invalidate()
+		},
+		onMutate: async (recipe) => {
+			await ctx.recipe.getAllUserCreated.cancel()
+
+			if (timeoutCodeAdd) clearTimeout(timeoutCodeAdd)
+			const timeout = setTimeout(() => {
+				ctx.dailyLog.invalidate()
+				setTimeoutCodeAdd(null)
+			}, 2000)
+			setTimeoutCodeAdd(timeout)
+
+			const previousRecipes = ctx.recipe.getAllUserCreated.getData({
+				userId: currentUser.id,
+			})
+			ctx.recipe.getAllUserCreated.setData(
+				{ userId: currentUser.id },
+				previousRecipes?.filter((currRecipe) => currRecipe.id !== recipe.id),
+			)
+			return { previousRecipes }
+		},
+		onError: (err, recipe, context) => {
+			ctx.recipe.getAllUserCreated.setData(
+				{ userId: currentUser.id },
+				context?.previousRecipes,
+			)
+		},
+	})
+
 	const [selectedRecipe, setSelectedRecipe] = useState<GetRecipeById | null>(
 		null,
 	)
 	const [isRecipeFormOpen, setIsRecipeFormOpen] = useState(false)
 
 	return (
-		<div className='flex flex-col w-full items-center'>
-			<div className='h-10 w-full border-b-[1px] border-primary/20' />
-			<div className='flex flex-col gap-4 w-full items-center mt-6'>
+		<div className='flex flex-col items-center w-full'>
+			<div className='w-full h-10 border-b-[1px] border-primary/20' />
+			<div className='flex flex-col gap-4 items-center mt-6 w-full'>
 				{userRecipes?.map((recipe) => {
 					const cals = recipe?.recipeToIngredient.reduce((acc, curr) => {
 						const cal = Number(curr?.ingredient?.caloriesWOFibre)
@@ -202,7 +219,7 @@ const UserCreatedRecipes = ({
 						return acc + cal * scale
 					}, 0)
 
-          const carbs = recipe?.recipeToIngredient.reduce((acc, curr) => {
+					const carbs = recipe?.recipeToIngredient.reduce((acc, curr) => {
 						const cal = Number(
 							curr?.ingredient?.availableCarbohydrateWithoutSugarAlcohols,
 						)
@@ -225,21 +242,22 @@ const UserCreatedRecipes = ({
 								'text-sm truncate max-w-[600px]  py-3 px-4 relative border rounded-md',
 								'shadow-sm flex flex-col w-[calc(100vw-2rem)] gap-0',
 								'hover:text-primary hover:bg-background items-center justify-center',
+								'relative',
 							)}
 							onClick={() => {
 								setSelectedRecipe(recipe)
 								setIsRecipeFormOpen(true)
 							}}
 						>
-							<div className=' flex'>
-								<div className='truncate font-semibold'>
+							<div className='flex'>
+								<div className='font-semibold truncate'>
 									{recipe?.name && recipe?.name?.length > 41
 										? `${recipe?.name.slice(0, 41)}...`
 										: recipe?.name}
 								</div>
 								<div
 									className={cn(
-										'absolute -top-1 right-1 text-[0.6rem] font-light',
+										'absolute -top-1 left-1 text-[0.6rem] font-light',
 										'text-muted-foreground',
 									)}
 								>{`${cals.toFixed(0)} cals`}</div>
@@ -255,6 +273,20 @@ const UserCreatedRecipes = ({
 								<div>{`P:${protein.toFixed(1)}g`}</div>
 								<div>{`F:${fat.toFixed(1)}g`}</div>
 							</div>
+							<Button
+								size='icon'
+								className='absolute right-1 top-1/2 h-6 text-xs rounded-full transition-transform transform -translate-y-1/2 cursor-pointer active:scale-90'
+								variant='destructive'
+								onClick={(e) => {
+									e.stopPropagation()
+									e.preventDefault()
+									deleteRecipe({
+										id: recipe.id,
+									})
+								}}
+							>
+								<Trash2 size={16} strokeWidth={2} className='' />
+							</Button>
 						</div>
 					)
 				})}
@@ -267,8 +299,8 @@ const UserCreatedRecipes = ({
 					recipe={selectedRecipe}
 					setSelectedRecipe={setSelectedRecipe}
 					setIsRecipeListOpen={setIsRecipeListOpen}
-          logId={logId}
-          mealIndex={mealIndex}
+					logId={logId}
+					mealIndex={mealIndex}
 				/>
 			</div>
 		</div>
@@ -279,19 +311,19 @@ const MealLogUserRecipes = ({
 	currentUser,
 	calories,
 	protein,
-  logId,
-  mealIndex,
+	logId,
+	mealIndex,
 }: {
 	currentUser: GetUserById
 	calories: number
 	protein: number
-  logId: number
-  mealIndex: number
+	logId: number
+	mealIndex: number
 }) => {
 	const [isOpen, setIsOpen] = useState(false)
 
 	return (
-		<div className='flex flex-col gap-0 w-full items-center'>
+		<div className='flex flex-col gap-0 items-center w-full'>
 			<Sheet.Root
 				license='non-commercial'
 				presented={isOpen}
@@ -305,45 +337,45 @@ const MealLogUserRecipes = ({
 							'hover:text-primary hover:bg-background',
 						)}
 					>
-            Create a Meal
+						Create a Meal
 					</div>
 				</Sheet.Trigger>
 				<Sheet.Portal>
-					<Sheet.View className='z-[1000] h-[100vh] bg-black/50 '>
-						<Sheet.Content className='min-h-[200px] max-h-[90vh] h-full rounded-t-3xl bg-background relative'>
+					<Sheet.View className='z-[1000] h-[100vh] bg-black/50'>
+						<Sheet.Content className='relative h-full rounded-t-3xl min-h-[200px] max-h-[90vh] bg-background'>
 							<div className='flex flex-col justify-between h-full'>
-								<div className='flex flex-col '>
+								<div className='flex flex-col'>
 									<div className='flex justify-center pt-1'>
 										<Sheet.Handle
-											className=' w-[50px] h-[6px] border-0 rounded-full bg-primary/20'
+											className='rounded-full border-0 w-[50px] h-[6px] bg-primary/20'
 											action='dismiss'
 										/>
 									</div>
 									<div className=''>
-										<div className='flex justify-center items-center flex-col '>
-											<Sheet.Title className='text-xl mt-[2px] font-semibold'>
+										<div className='flex flex-col justify-center items-center'>
+											<Sheet.Title className='text-xl font-semibold mt-[2px]'>
 												Recipes
 											</Sheet.Title>
 											<Sheet.Description className='hidden'>
 												create a new meal
 											</Sheet.Description>
-											<div className='flex gap-4 w-[calc(100vw-5rem)] items-baseline justify-center rounded-full bg-secondary'>
-												<div className='flex items-center  gap-2 text-lg font-bold'>
-                          {`Meal ${mealIndex + 1}`}
+											<div className='flex gap-4 justify-center items-baseline rounded-full w-[calc(100vw-5rem)] bg-secondary'>
+												<div className='flex gap-2 items-center text-lg font-bold'>
+													{`Meal ${mealIndex + 1}`}
 												</div>
-												<div className='flex items-center  gap-2'>
+												<div className='flex gap-2 items-center'>
 													<NumberFlow
 														value={calories}
-														className='text-lg font-bold text-primary ml-2 '
+														className='ml-2 text-lg font-bold text-primary'
 													/>
 													<span className='text-xs text-primary/50 ml-[1px]'>
 														cals
 													</span>
 												</div>
-												<div className='flex items-center gap-2'>
+												<div className='flex gap-2 items-center'>
 													<NumberFlow
 														value={protein}
-														className='text-lg font-bold text-primary ml-2 '
+														className='ml-2 text-lg font-bold text-primary'
 													/>
 													<span className='text-xs text-primary/50 ml-[1px]'>
 														protein
@@ -357,12 +389,12 @@ const MealLogUserRecipes = ({
 										calories={calories}
 										protein={protein}
 										setIsRecipeListOpen={setIsOpen}
-                    logId={logId}
-                    mealIndex={mealIndex}
+										logId={logId}
+										mealIndex={mealIndex}
 									/>
 								</div>
 								<Sheet.Trigger
-									className='w-full flex justify-center'
+									className='flex justify-center w-full'
 									action='dismiss'
 								>
 									<ChevronDown

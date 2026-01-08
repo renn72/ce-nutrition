@@ -2,8 +2,6 @@
 
 import { api } from '@/trpc/react'
 
-import { useEffect, useState } from 'react'
-
 import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/lib/utils'
 import type { GetRecipeById } from '@/types'
@@ -56,18 +54,17 @@ const FormRecipe = ({
 	recipe,
 	logId,
 	mealIndex,
-  protein,
-  calories,
+	protein,
+	calories,
 }: {
 	recipe: GetRecipeById | null
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 	setIsRecipeListOpen: React.Dispatch<React.SetStateAction<boolean>>
 	logId: number
 	mealIndex: number
-  protein: number
-  calories: number
+	protein: number
+	calories: number
 }) => {
-
 	return (
 		<MainForm
 			recipe={recipe}
@@ -76,8 +73,8 @@ const FormRecipe = ({
 			setIsRecipeListOpen={setIsRecipeListOpen}
 			logId={logId}
 			mealIndex={mealIndex}
-      protein={protein}
-      calories={calories}
+			protein={protein}
+			calories={calories}
 		/>
 	)
 }
@@ -89,8 +86,8 @@ const MainForm = ({
 	setIsRecipeListOpen,
 	logId,
 	mealIndex,
-  protein,
-  calories,
+	protein,
+	calories,
 }: {
 	recipe: GetRecipeById | null
 	initialData: z.infer<typeof formSchema> | null
@@ -98,11 +95,9 @@ const MainForm = ({
 	setIsRecipeListOpen: React.Dispatch<React.SetStateAction<boolean>>
 	logId: number
 	mealIndex: number
-  protein: number
-  calories: number
+	protein: number
+	calories: number
 }) => {
-	const isMobile = useIsMobile()
-
 	const ctx = api.useUtils()
 
 	const { data: allIngredients, isLoading: isLoadingAllIngredients } =
@@ -110,13 +105,11 @@ const MainForm = ({
 	const { mutate: createRecipe } = api.recipe.create.useMutation({
 		onSuccess: () => {
 			ctx.recipe.invalidate()
-			toast.success('Recipe created')
 		},
 	})
 	const { mutate: updateRecipe } = api.recipe.update.useMutation({
 		onSuccess: () => {
 			ctx.recipe.invalidate()
-			toast.success('Recipe updated successfully')
 		},
 	})
 
@@ -326,69 +319,76 @@ const MainForm = ({
 		setIsRecipeListOpen(false)
 	}
 
-  const isBigCalories = Math.abs(calories - Number(calorieTotal)) / calories > 0.5
-  const isMediumCalories = Math.abs(calories - Number(calorieTotal)) / calories > 0.25
-  const isSmallCalories = Math.abs(calories - Number(calorieTotal)) / calories > 0.1
-  const isTinyCalories = Math.abs(calories - Number(calorieTotal)) / calories > 0.02
+	const isBigCalories =
+		Math.abs(calories - Number(calorieTotal)) / calories > 0.5
+	const isMediumCalories =
+		Math.abs(calories - Number(calorieTotal)) / calories > 0.25
+	const isSmallCalories =
+		Math.abs(calories - Number(calorieTotal)) / calories > 0.1
+	const isTinyCalories =
+		Math.abs(calories - Number(calorieTotal)) / calories > 0.02
 
-  const isBigProtein = Math.abs(protein - Number(proteinTotal)) / protein > 0.5
-  const isMediumProtein = Math.abs(protein - Number(proteinTotal)) / protein > 0.25
-  const isSmallProtein = Math.abs(protein - Number(proteinTotal)) / protein > 0.1
-  const isTinyProtein = Math.abs(protein - Number(proteinTotal)) / protein > 0.02
+	const isBigProtein = Math.abs(protein - Number(proteinTotal)) / protein > 0.5
+	const isMediumProtein =
+		Math.abs(protein - Number(proteinTotal)) / protein > 0.25
+	const isSmallProtein =
+		Math.abs(protein - Number(proteinTotal)) / protein > 0.1
+	const isTinyProtein =
+		Math.abs(protein - Number(proteinTotal)) / protein > 0.02
 
-  console.log({ isBigCalories, isMediumCalories, isSmallCalories })
+	console.log({ isBigCalories, isMediumCalories, isSmallCalories })
 
-  console.log(Math.abs(calories - Number(calorieTotal)) / calories)
+	console.log(Math.abs(calories - Number(calorieTotal)) / calories)
 
 	if (isLoadingAllIngredients) return null
 
 	return (
-		<div className='flex flex-col gap-2 relative'>
-			<div className='flex items-baseline justify-center border-b-[1px] border-primary/20 pb-2'>
-				<div className='flex items-center gap-2'>
+		<div className='flex relative flex-col gap-2'>
+			<div className='flex justify-center items-baseline pb-2 border-b-[1px] border-primary/20'>
+				<div className='flex gap-2 items-center'>
 					<NumberFlow
 						value={Number(calorieTotal)}
-						className={cn('text-xl font-semibold text-primary ml-2 ',
-              isTinyCalories ? 'text-red-900 font-black' : '',
-              isSmallCalories ? 'text-red-800 font-black' : '',
-              isMediumCalories ? 'text-red-700 font-black' : '',
-              isBigCalories ? 'text-red-500 font-black' : '',
-            )}
+						className={cn(
+							'text-xl font-semibold text-primary ml-2 ',
+							isTinyCalories ? 'text-red-900 font-black' : '',
+							isSmallCalories ? 'text-red-800 font-black' : '',
+							isMediumCalories ? 'text-red-700 font-black' : '',
+							isBigCalories ? 'text-red-500 font-black' : '',
+						)}
 					/>
 					<span className='text-xs text-primary/50 ml-[1px]'>cals</span>
 				</div>
-				<div className='flex items-center gap-2'>
+				<div className='flex gap-2 items-center'>
 					<NumberFlow
 						value={Number(carbTotal)}
-						className='text-xl font-semibold text-primary ml-2 '
+						className='ml-2 text-xl font-semibold text-primary'
 					/>
 					<span className='text-xs text-primary/50 ml-[1px]'>carbs</span>
 				</div>
-				<div className='flex items-center gap-2'>
+				<div className='flex gap-2 items-center'>
 					<NumberFlow
 						value={Number(proteinTotal)}
-						className={cn('text-xl font-semibold text-primary ml-2 ',
-              isTinyProtein ? 'text-red-900 font-black' : '',
-              isSmallProtein ? 'text-red-800 font-black' : '',
-              isMediumProtein ? 'text-red-700 font-black' : '',
-              isBigProtein ? 'text-red-500 font-black' : '',
-            )}
+						className={cn(
+							'text-xl font-semibold text-primary ml-2 ',
+							isTinyProtein ? 'text-red-900 font-black' : '',
+							isSmallProtein ? 'text-red-800 font-black' : '',
+							isMediumProtein ? 'text-red-700 font-black' : '',
+							isBigProtein ? 'text-red-500 font-black' : '',
+						)}
 					/>
 					<span className='text-xs text-primary/50 ml-[1px]'>protein</span>
 				</div>
-				<div className='flex items-center gap-2'>
+				<div className='flex gap-2 items-center'>
 					<NumberFlow
 						value={Number(fatTotal)}
-						className='text-xl font-semibold text-primary ml-2 '
+						className='ml-2 text-xl font-semibold text-primary'
 					/>
 					<span className='text-xs text-primary/50 ml-[1px]'>fat</span>
 				</div>
 			</div>
-			<ScrollArea className='pt-4 px-0 h-[calc(90vh-160px)]'>
+			<ScrollArea className='px-0 pt-4 h-[calc(90vh-160px)]'>
 				<Form {...form}>
-					<form
-						onSubmit={form.handleSubmit(onSubmit)}
-					>
+					<form onSubmit={form.handleSubmit(onSubmit)}>
 						<div className='flex flex-col gap-4 px-2'>
 							<FormField
 								control={form.control}
@@ -404,21 +404,21 @@ const MainForm = ({
 								)}
 							/>
 							<div className='flex flex-col gap-4'>
-								<div className='flex flex-col divide-y divide-border border rounded-md shadow-md'>
-										{fields.map((_ingredient, index) => (
-											<FormRecipeIngredient
-												key={_ingredient.id}
-												index={index}
-												form={form}
-												remove={remove}
-												allIngredients={allIngredients}
-											/>
-										))}
+								<div className='flex flex-col rounded-md border divide-y shadow-md divide-border'>
+									{fields.map((_ingredient, index) => (
+										<FormRecipeIngredient
+											key={_ingredient.id}
+											index={index}
+											form={form}
+											remove={remove}
+											allIngredients={allIngredients}
+										/>
+									))}
 								</div>
 								<div className='flex justify-center w-full'>
 									<PlusCircle
 										size={36}
-										className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
+										className='transition-transform cursor-pointer hover:scale-110 active:scale-90 text-muted-foreground hover:text-foreground'
 										onClick={() =>
 											append({
 												ingredientId: '',
