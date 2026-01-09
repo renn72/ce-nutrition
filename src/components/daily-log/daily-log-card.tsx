@@ -145,7 +145,7 @@ const Log = ({
 	)
 
 	return (
-		<Card className='overflow-hidden relative gap-0 py-1 w-full shadow-sm transition-all hover:shadow-md border-border/60'>
+		<Card className='overflow-hidden relative gap-0 py-1 w-full max-w-lg shadow-sm transition-all hover:shadow-md border-border/60'>
 			{isPeriodEnabled && (
 				<div
 					className={cn(
