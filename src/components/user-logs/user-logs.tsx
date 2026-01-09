@@ -43,8 +43,12 @@ const DailyLogs = ({
 		<>
 			{Array.from({ length: days }).map((_, i) => {
 				const date = new Date(today.getTime() - i * 86400000)
+				const yesterdaysDate = new Date(today.getTime() - (i + 1) * 86400000)
 				const dailyLog = dailyLogs?.find(
 					(dailyLog) => dailyLog.date === date.toDateString(),
+				)
+				const yesterdaysDailyLog = dailyLogs?.find(
+					(dailyLog) => dailyLog.date === yesterdaysDate.toDateString(),
 				)
 				const title = `${date.toLocaleDateString('en-AU', {
 					weekday: 'long',
@@ -56,6 +60,7 @@ const DailyLogs = ({
 						title={title}
 						currentUser={user}
 						dailyLog={dailyLog}
+						yesterdaysDailyLog={yesterdaysDailyLog}
 						date={date}
 						isAdmin={isAdmin}
 						isLogPage={true}

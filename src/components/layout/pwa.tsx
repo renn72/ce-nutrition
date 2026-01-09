@@ -112,7 +112,6 @@ const PwaInstallButton: React.FC = () => {
 		setTimeout(() => {
 			setShowInstallButton(false)
 			setShowIosInstructions(false)
-			console.log('setShowInstallButton', showInstallButton)
 		}, 3000)
 
 		setFirstTime(false)

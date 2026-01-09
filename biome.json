@@ -61,7 +61,8 @@
       },
       "suspicious": {
         "noAssignInExpressions": "off",
-        "noTsIgnore": "off"
+        "noTsIgnore": "off",
+        "noArrayIndexKey": "off"
       }
     }
   },

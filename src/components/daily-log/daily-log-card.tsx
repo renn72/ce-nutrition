@@ -21,6 +21,8 @@ import {
 	PersonStanding,
 	Move,
 	Toilet,
+	ArrowUp,
+	ArrowDown,
 } from 'lucide-react'
 import { Link } from 'next-view-transitions'
 
@@ -30,15 +32,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 const MetricItem = ({
 	label,
 	value,
+	prevValue,
 	suffix = '',
 	icon: Icon,
 	isFullWidth = false,
+	accuracy = 1,
 }: {
 	label: string
 	value: string | number | undefined | null
+	prevValue: string | number | undefined | null
 	suffix?: string
 	icon?: React.ElementType
 	isFullWidth?: boolean
+	accuracy?: number
 }) => {
 	if (value === undefined || value === null || value === '' || value === '0') {
 		if (
@@ -49,12 +55,12 @@ const MetricItem = ({
 			return null
 	}
 
-	console.log({ label, value })
+	const change = Number(value) - Number(prevValue)
 
 	return (
 		<div
 			className={cn(
-				'flex items-center gap-2 py-2 px-1 rounded-lg bg-muted/40 border border-primary/15 hover:bg-primary/5',
+				'flex items-center gap-2 py-2 px-1 rounded-lg bg-muted/40 border border-primary/15 hover:bg-primary/5 w-full',
 				isFullWidth ? 'col-span-2 sm:col-span-3' : 'col-span-1',
 			)}
 		>
@@ -63,23 +69,35 @@ const MetricItem = ({
 					<Icon size={16} />
 				</div>
 			)}
-			<div className='flex overflow-hidden flex-col'>
+			<div className='flex overflow-hidden flex-col w-full'>
 				<span className='font-semibold tracking-wider uppercase text-[10px] text-muted-foreground'>
 					{label}
 				</span>
-				<span
-					className={cn(
-						'text-sm font-bold truncate',
-						value === 0 || value === undefined || value === null
-							? 'text-muted-foreground/70'
-							: '',
-					)}
-				>
-					{value === undefined || value === null ? '.' : value}
-					{suffix && !!value && (
-						<span className='ml-0.5 text-xs font-normal'>{suffix}</span>
-					)}
-				</span>
+				<div className='flex gap-2 justify-between items-baseline w-full'>
+					<span
+						className={cn(
+							'text-sm font-bold truncate',
+							value === 0 || value === undefined || value === null
+								? 'text-muted-foreground/70'
+								: '',
+						)}
+					>
+						{value === undefined || value === null ? '.' : value}
+						{suffix && !!value && (
+							<span className='ml-0.5 text-xs font-normal'>{suffix}</span>
+						)}
+					</span>
+					{change ? (
+						<span className='flex font-semibold tracking-wider uppercase text-[10px] text-muted-foreground'>
+							{change === 0 ? null : change < 0 ? (
+								<ArrowDown size={12} strokeWidth={1.5} />
+							) : (
+								<ArrowUp size={12} strokeWidth={1.5} />
+							)}
+							{change.toFixed(accuracy)}
+						</span>
+					) : null}
+				</div>
 			</div>
 		</div>
 	)
@@ -87,6 +105,7 @@ const MetricItem = ({
 
 const Log = ({
 	todaysDailyLog,
+	yesterdaysDailyLog,
 	currentUser,
 	isAdmin,
 	isLogPage,
@@ -94,6 +113,7 @@ const Log = ({
 	className,
 }: {
 	todaysDailyLog: GetDailyLogById | undefined
+	yesterdaysDailyLog: GetDailyLogById | undefined | null
 	currentUser: GetUserById
 	isAdmin?: boolean
 	isLogPage?: boolean
@@ -131,10 +151,16 @@ const Log = ({
 		0,
 	)
 
+	const yesterdaysPoopCount = yesterdaysDailyLog?.poopLogs?.length || 0
+	const yesterdaysWaterAmount = yesterdaysDailyLog?.waterLogs?.reduce(
+		(acc, curr) => acc + Number(curr.amount),
+		0,
+	)
+
 	return (
 		<Card
 			className={cn(
-				'overflow-hidden relative gap-0 py-1 w-full max-w-lg shadow-sm transition-all hover:shadow-md border-border/60',
+				'overflow-hidden relative gap-0 py-1 w-full max-w-sm h-full shadow-sm transition-all hover:shadow-md border-border/60',
 				className,
 			)}
 		>
@@ -158,10 +184,11 @@ const Log = ({
 				<CardTitle className='font-semibold text-medium'>{title}</CardTitle>
 			</CardHeader>
 			<CardContent className='p-2'>
-				<div className='grid grid-cols-2 gap-2 xl:grid-cols-3'>
+				<div className='grid grid-cols-2 gap-2 xl:grid-cols-2'>
 					<MetricItem
 						label='Weight'
 						value={formatNumber(todaysDailyLog?.morningWeight, 2)}
+						prevValue={formatNumber(yesterdaysDailyLog?.morningWeight, 2)}
 						suffix='kg'
 						icon={Scale}
 					/>
@@ -170,6 +197,7 @@ const Log = ({
 						<MetricItem
 							label='Sleep'
 							value={formatNumber(todaysDailyLog?.sleep, 1)}
+							prevValue={formatNumber(yesterdaysDailyLog?.sleep, 1)}
 							suffix='h'
 							icon={Moon}
 						/>
@@ -179,6 +207,7 @@ const Log = ({
 						<MetricItem
 							label='Nap'
 							value={formatNumber(todaysDailyLog?.nap, 1)}
+							prevValue={formatNumber(yesterdaysDailyLog?.nap, 1)}
 							suffix='h'
 							icon={BedDouble}
 						/>
@@ -187,7 +216,8 @@ const Log = ({
 					{isSleepQuality && (
 						<MetricItem
 							label='Sleep Score'
-							value={formatNumber(todaysDailyLog?.sleepQuality, 0)}
+							value={formatNumber(todaysDailyLog?.sleepQuality, 1)}
+							prevValue={formatNumber(yesterdaysDailyLog?.sleepQuality, 1)}
 							icon={Activity}
 						/>
 					)}
@@ -196,7 +226,9 @@ const Log = ({
 						<MetricItem
 							label='Steps'
 							value={formatNumber(todaysDailyLog?.steps, 0)}
+							prevValue={formatNumber(yesterdaysDailyLog?.steps, 0)}
 							icon={Footprints}
+							accuracy={0}
 						/>
 					)}
 
@@ -204,8 +236,13 @@ const Log = ({
 						<MetricItem
 							label='Glucose'
 							value={formatNumber(todaysDailyLog?.fastedBloodGlucose, 1)}
+							prevValue={formatNumber(
+								yesterdaysDailyLog?.fastedBloodGlucose,
+								1,
+							)}
 							suffix='mmol/L'
 							icon={Droplet}
+							accuracy={0}
 						/>
 					)}
 
@@ -213,7 +250,9 @@ const Log = ({
 						<MetricItem
 							label='BM'
 							value={poopCount}
+							prevValue={yesterdaysPoopCount}
 							icon={Toilet} // Placeholder, couldn't find a perfect poop icon
+							accuracy={0}
 						/>
 					)}
 
@@ -221,8 +260,10 @@ const Log = ({
 						<MetricItem
 							label='Water'
 							value={waterAmount}
+							prevValue={yesterdaysWaterAmount}
 							suffix='ml'
 							icon={GlassWater}
+							accuracy={0}
 						/>
 					)}
 
@@ -230,8 +271,10 @@ const Log = ({
 						<MetricItem
 							label='HIIT'
 							value={formatNumber(todaysDailyLog?.hiit, 0)}
+							prevValue={formatNumber(yesterdaysDailyLog?.hiit, 0)}
 							suffix='m'
 							icon={Flame}
+							accuracy={0}
 						/>
 					)}
 
@@ -239,8 +282,10 @@ const Log = ({
 						<MetricItem
 							label='LISS'
 							value={formatNumber(todaysDailyLog?.liss, 0)}
+							prevValue={formatNumber(yesterdaysDailyLog?.liss, 0)}
 							suffix='m'
 							icon={PersonStanding}
+							accuracy={0}
 						/>
 					)}
 
@@ -248,8 +293,10 @@ const Log = ({
 						<MetricItem
 							label='Mobility'
 							value={formatNumber(todaysDailyLog?.mobility, 0)}
+							prevValue={formatNumber(yesterdaysDailyLog?.mobility, 0)}
 							suffix='m'
 							icon={Move}
+							accuracy={0}
 						/>
 					)}
 
@@ -257,8 +304,10 @@ const Log = ({
 						<MetricItem
 							label='Training'
 							value={formatNumber(todaysDailyLog?.weight, 0)}
+							prevValue={formatNumber(yesterdaysDailyLog?.weight, 0)}
 							suffix='m'
 							icon={Dumbbell}
+							accuracy={0}
 						/>
 					)}
 
@@ -266,8 +315,10 @@ const Log = ({
 						<MetricItem
 							label='Sauna'
 							value={formatNumber(todaysDailyLog?.sauna, 0)}
+							prevValue={formatNumber(yesterdaysDailyLog?.sauna, 0)}
 							suffix='m'
 							icon={ThermometerSun}
+							accuracy={0}
 						/>
 					)}
 
@@ -275,8 +326,10 @@ const Log = ({
 						<MetricItem
 							label='Plunge'
 							value={formatNumber(todaysDailyLog?.coldPlunge, 0)}
+							prevValue={formatNumber(yesterdaysDailyLog?.coldPlunge, 0)}
 							suffix='m'
 							icon={Snowflake}
+							accuracy={0}
 						/>
 					)}
 				</div>
@@ -296,6 +349,7 @@ const Log = ({
 
 const DailyLogCard = ({
 	dailyLog,
+	yesterdaysDailyLog,
 	date,
 	currentUser,
 	title,
@@ -305,6 +359,7 @@ const DailyLogCard = ({
 	className,
 }: {
 	dailyLog: GetDailyLogById | undefined
+	yesterdaysDailyLog: GetDailyLogById | undefined
 	date: Date
 	currentUser: GetUserById
 	title: string
@@ -320,6 +375,8 @@ const DailyLogCard = ({
 			ctx.dailyLog.invalidate()
 		},
 	})
+
+	console.log(dailyLog)
 
 	const id = dailyLog?.id || 0
 
@@ -341,6 +398,7 @@ const DailyLogCard = ({
 				isAdmin={isAdmin}
 				currentUser={currentUser}
 				todaysDailyLog={dailyLog}
+				yesterdaysDailyLog={yesterdaysDailyLog}
 				isLogPage={isLogPage}
 				className={className}
 			/>

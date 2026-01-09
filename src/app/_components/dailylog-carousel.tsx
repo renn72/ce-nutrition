@@ -40,9 +40,17 @@ const DailyLogCarousel = ({
 			<div className='embla__viewport' ref={emblaRef}>
 				<div className='flex'>
 					{dayArr.map((day, index) => {
+						const yesterday = new Date(day.getTime() - 86400000)
 						const dailyLog = dailyLogs.find(
 							(dailyLog) => dailyLog?.date === day.toDateString(),
 						)
+						const yesterdayLog = dailyLogs.find(
+							(dailyLog) => dailyLog?.date === yesterday.toDateString(),
+						)
+						if (index === 0) {
+							// console.log(yesterdayLog)
+							// console.log(dailyLog)
+						}
 						return (
 							<div
 								key={index}
@@ -62,6 +70,7 @@ const DailyLogCarousel = ({
 												})
 									}
 									dailyLog={dailyLog}
+									yesterdaysDailyLog={yesterdayLog}
 									date={day}
 									currentUser={currentUser}
 									className='pb-16'
