@@ -91,12 +91,14 @@ const Log = ({
 	isAdmin,
 	isLogPage,
 	title,
+	className,
 }: {
 	todaysDailyLog: GetDailyLogById | undefined
 	currentUser: GetUserById
 	isAdmin?: boolean
 	isLogPage?: boolean
 	title: string
+	className?: string
 }) => {
 	const isSleep = isAdmin || currentUser?.settings?.isSleep
 	const isSleepQuality = isAdmin || currentUser?.settings?.isSleepQuality
@@ -130,7 +132,12 @@ const Log = ({
 	)
 
 	return (
-		<Card className='overflow-hidden relative gap-0 py-1 w-full max-w-lg shadow-sm transition-all hover:shadow-md border-border/60'>
+		<Card
+			className={cn(
+				'overflow-hidden relative gap-0 py-1 w-full max-w-lg shadow-sm transition-all hover:shadow-md border-border/60',
+				className,
+			)}
+		>
 			{isPeriodEnabled && (
 				<div
 					className={cn(
@@ -295,6 +302,7 @@ const DailyLogCard = ({
 	isAdmin = false,
 	isLogPage = false,
 	isDanger = false,
+	className,
 }: {
 	dailyLog: GetDailyLogById | undefined
 	date: Date
@@ -303,6 +311,7 @@ const DailyLogCard = ({
 	isAdmin?: boolean
 	isLogPage?: boolean
 	isDanger?: boolean
+	className?: string
 }) => {
 	const ctx = api.useUtils()
 	const { data: isCreator } = api.user.isCreator.useQuery()
@@ -333,6 +342,7 @@ const DailyLogCard = ({
 				currentUser={currentUser}
 				todaysDailyLog={dailyLog}
 				isLogPage={isLogPage}
+				className={className}
 			/>
 		</div>
 	)

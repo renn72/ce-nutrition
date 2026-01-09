@@ -6,6 +6,7 @@ import useEmblaCarousel from 'embla-carousel-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 import { DailyLog } from '@/components/daily-log/daily-log'
+import { DailyLogCard } from '@/components/daily-log/daily-log-card'
 
 import { DotButton, useDotButton } from './carousel-dots'
 
@@ -43,34 +44,35 @@ const DailyLogCarousel = ({
 							(dailyLog) => dailyLog?.date === day.toDateString(),
 						)
 						return (
-							<Card
+							<div
 								key={index}
 								dir='ltr'
-								className={cn('flex-[0_0_100%]', index === 4 ? '' : 'ml-4')}
+								className={cn(
+									'flex-[0_0_100%]',
+									index === 4 ? '' : 'ml-4',
+									'mb-12',
+								)}
 							>
-								<CardContent className='px-0'>
-									<CardHeader className='pb-0'>
-										<CardTitle className='text-center'>
-											{day.getTime() === today.getTime()
-												? 'Today'
-												: day.toLocaleDateString('en-AU', {
-														weekday: 'long',
-													})}
-										</CardTitle>
-									</CardHeader>
-									<DailyLog
-										dailyLog={dailyLog}
-										date={day}
-										currentUser={currentUser}
-									/>
-								</CardContent>
-							</Card>
+								<DailyLogCard
+									title={
+										day.getTime() === today.getTime()
+											? 'Today'
+											: day.toLocaleDateString('en-AU', {
+													weekday: 'long',
+												})
+									}
+									dailyLog={dailyLog}
+									date={day}
+									currentUser={currentUser}
+									className='pb-16'
+								/>
+							</div>
 						)
 					})}
 				</div>
 			</div>
 
-			<div className='flex absolute bottom-2 left-1/2 gap-2 justify-center w-full -translate-x-1/2'>
+			<div className='flex absolute bottom-16 left-1/2 gap-2 justify-center w-full -translate-x-1/2'>
 				<div className='embla__dots'>
 					{scrollSnaps.map((_, index) => (
 						<DotButton
