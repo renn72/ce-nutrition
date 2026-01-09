@@ -63,7 +63,7 @@ const MetricItem = ({
 	return (
 		<div
 			className={cn(
-				'flex items-center gap-2 py-2 px-1 rounded-lg bg-muted/40 border border-primary/15',
+				'flex items-center gap-2 py-2 px-1 rounded-lg bg-muted/40 border border-primary/15 hover:bg-primary/5',
 				isFullWidth ? 'col-span-2 sm:col-span-3' : 'col-span-1',
 			)}
 		>
