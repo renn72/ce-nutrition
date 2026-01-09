@@ -353,6 +353,10 @@ export const userSettings = createTable(
 		isSauna: int('is_sauna', { mode: 'boolean' }).default(true),
 		isColdPlunge: int('is_cold_plunge', { mode: 'boolean' }).default(true),
 		isMobility: int('is_mobility', { mode: 'boolean' }).default(false),
+		isPeriodOvulaion: int('is_period_ovulaion', { mode: 'boolean' }).default(
+			false,
+		),
+		ovulaionStartAt: int('ovulaion_start_at', { mode: 'timestamp' }),
 		periodStartAt: int('period_start_at', { mode: 'timestamp' }),
 		periodLength: int('period_length').default(5).notNull(),
 		periodInterval: int('period_interval').default(28).notNull(),

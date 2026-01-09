@@ -110,7 +110,7 @@ const UserLogs = ({
 	if (!user) return null
 
 	const content = (
-		<div className='flex flex-col gap-4 items-center px-1 w-full'>
+		<div className='flex flex-col gap-2 items-center px-1 w-full lg:gap-4'>
 			<div className='flex flex-wrap gap-4 justify-center items-center'>
 				<ToggleGroup
 					type='single'
@@ -168,7 +168,7 @@ const UserLogs = ({
 
 	if (isMobile) {
 		return (
-			<div className='flex flex-col gap-4 items-center px-1 mt-2 mb-20 w-full'>
+			<div className='flex flex-col items-center px-1 mt-6 mb-20 w-full'>
 				{content}
 			</div>
 		)

@@ -33,6 +33,7 @@ export const dailyLog = createTable(
 		isLift: int('is_lift', { mode: 'boolean' }),
 		isLiss: int('is_liss', { mode: 'boolean' }),
 		isPeriod: int('is_period', { mode: 'boolean' }),
+		isOvulation: int('is_ovulation', { mode: 'boolean' }),
 		isStarred: int('is_starred', { mode: 'boolean' }).default(false),
 		hiit: text('hiit'),
 		cardio: text('cardio'),

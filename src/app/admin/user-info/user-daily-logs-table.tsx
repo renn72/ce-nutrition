@@ -153,7 +153,10 @@ const UserDailyLogsTable = ({
 							return (
 								<TableRow
 									key={log.id}
-									className={cn(log.isPeriod ? 'bg-red-500/5' : '')}
+									className={cn(
+										log.isPeriod ? 'bg-red-500/10' : '',
+										log.isOvulation ? 'bg-purple-500/10' : '',
+									)}
 								>
 									<TableCellWrapper>
 										{new Date(log.date).toLocaleDateString('en-AU', {

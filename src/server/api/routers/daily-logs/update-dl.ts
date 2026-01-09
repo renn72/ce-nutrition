@@ -166,6 +166,50 @@ export const updateDl = {
 
 			return res
 		}),
+	updateIsOvulation: protectedProcedure
+		.input(
+			z.object({
+				date: z.string(),
+				isOvulation: z.boolean(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const log = await ctx.db.query.dailyLog.findFirst({
+				where: and(
+					eq(dailyLog.date, input.date),
+					eq(dailyLog.userId, ctx.session.user.id),
+				),
+			})
+
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				task: 'toggle ovualtion',
+				notes: JSON.stringify(input),
+				objectId: null,
+			})
+
+			if (!log) {
+				const res = await ctx.db.insert(dailyLog).values({
+					date: input.date,
+					isOvulation: input.isOvulation,
+					userId: ctx.session.user.id,
+				})
+				return res
+			}
+
+			const res = await ctx.db
+				.update(dailyLog)
+				.set({ isOvulation: input.isOvulation })
+				.where(
+					and(
+						eq(dailyLog.date, input.date),
+						eq(dailyLog.userId, ctx.session.user.id),
+					),
+				)
+
+			return res
+		}),
 	updateSupplement: protectedProcedure
 		.input(
 			z.object({

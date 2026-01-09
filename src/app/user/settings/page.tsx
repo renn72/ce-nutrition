@@ -881,20 +881,32 @@ const Steps = ({ currentUser }: { currentUser: GetUserById }) => {
 	)
 }
 
-const Period = ({ currentUser }: { currentUser: GetUserById }) => {
+const PeriodOvulation = ({ currentUser }: { currentUser: GetUserById }) => {
 	const ctx = api.useUtils()
 	const [isPeriod, setIsPeriod] = useState(
-		currentUser.settings.periodStartAt ? true : false,
+		currentUser.settings.isPeriodOvulaion ? true : false,
 	)
 
 	const [popoverOpen, setPopoverOpen] = useState(false)
+	const [popoverOvulationOpen, setPopoverOvulationOpen] = useState(false)
 	const [date, setDate] = useState<Date | undefined | null>(
 		currentUser.settings.periodStartAt || undefined,
+	)
+	const [ovulationDate, setOvulationDate] = useState<Date | undefined | null>(
+		currentUser.settings.ovulaionStartAt || undefined,
 	)
 	const [length, setLength] = useState(currentUser.settings.periodLength || 5)
 	const [interval, setInterval] = useState(
 		currentUser.settings.periodInterval || 28,
 	)
+
+	const { mutate: updateIsPeriodOvualtion } =
+		api.user.updateIsPeriodOvualtion.useMutation({
+			onSettled: () => {
+				ctx.user.invalidate()
+				ctx.dailyLog.invalidate()
+			},
+		})
 
 	const { mutate: updatePeriodStart } = api.user.updatePeriodStart.useMutation({
 		onMutate: async (data) => {
@@ -909,6 +921,20 @@ const Period = ({ currentUser }: { currentUser: GetUserById }) => {
 			ctx.user.invalidate()
 		},
 	})
+	const { mutate: updateOvulationStart } =
+		api.user.updateOvulationStart.useMutation({
+			onMutate: async (data) => {
+				setOvulationDate(data.start)
+			},
+			onSuccess: () => {
+				ctx.user.invalidate()
+				ctx.dailyLog.invalidate()
+			},
+			onError: (_err) => {
+				toast.error('error')
+				ctx.user.invalidate()
+			},
+		})
 
 	const { mutate: updatePeriodLength } =
 		api.user.updatePeriodLength.useMutation({
@@ -943,7 +969,7 @@ const Period = ({ currentUser }: { currentUser: GetUserById }) => {
 		<div className='flex flex-col gap-2 py-2 px-2 rounded-lg border shadow-sm'>
 			<div className='flex flex-row gap-2 justify-between items-center'>
 				<div className='space-y-0.2'>
-					<Label>Period</Label>
+					<Label>Period & Ovulation</Label>
 					<div className='text-sm text-muted-foreground'>
 						Enable period tracking.
 					</div>
@@ -951,14 +977,11 @@ const Period = ({ currentUser }: { currentUser: GetUserById }) => {
 				<Switch
 					checked={isPeriod === true}
 					onCheckedChange={(checked) => {
-						setIsPeriod(checked)
-						if (checked) {
-							updatePeriodStart({
-								start: null,
-								id: currentUser.settings.id,
-								userId: currentUser.id,
-							})
-						}
+						setIsPeriod(checked ? true : false)
+						updateIsPeriodOvualtion({
+							id: currentUser.settings.id,
+							isPeriodOvulaion: checked,
+						})
 					}}
 				/>
 			</div>
@@ -967,7 +990,7 @@ const Period = ({ currentUser }: { currentUser: GetUserById }) => {
 					<div className='flex flex-col gap-3'>
 						<div className='flex gap-2 justify-between items-center'>
 							<Label htmlFor='date' className='px-1'>
-								Start
+								Period Start
 							</Label>
 							<Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
 								<PopoverTrigger asChild>
@@ -1021,6 +1044,63 @@ const Period = ({ currentUser }: { currentUser: GetUserById }) => {
 						</div>
 						<div className='flex gap-2 justify-between items-center'>
 							<Label htmlFor='date' className='px-1'>
+								Ovulation Start
+							</Label>
+							<Popover
+								open={popoverOvulationOpen}
+								onOpenChange={setPopoverOvulationOpen}
+							>
+								<PopoverTrigger asChild>
+									<Button
+										variant='outline'
+										size='sm'
+										id='date'
+										className='justify-between w-48 text-sm'
+									>
+										{ovulationDate
+											? ovulationDate.toLocaleDateString()
+											: 'Select date'}
+										<ChevronDownIcon />
+									</Button>
+								</PopoverTrigger>
+								<PopoverContent
+									className='overflow-hidden p-0 w-auto'
+									align='start'
+								>
+									<Calendar
+										mode='single'
+										selected={ovulationDate || undefined}
+										captionLayout='dropdown'
+										onSelect={(date) => {
+											if (!date) return
+											updateOvulationStart({
+												start: date,
+												id: currentUser.settings.id,
+											})
+											setPopoverOvulationOpen(false)
+										}}
+									/>
+									<div className='flex justify-center py-1 w-full'>
+										<Button
+											size='sm'
+											variant='outline'
+											className='px-4 h-6'
+											onClick={() => {
+												updateOvulationStart({
+													start: null,
+													id: currentUser.settings.id,
+												})
+												setPopoverOvulationOpen(false)
+											}}
+										>
+											clear
+										</Button>
+									</div>
+								</PopoverContent>
+							</Popover>
+						</div>
+						<div className='flex gap-2 justify-between items-center'>
+							<Label htmlFor='date' className='px-1'>
 								Interval
 							</Label>
 							<Select
@@ -1056,7 +1136,7 @@ const Period = ({ currentUser }: { currentUser: GetUserById }) => {
 						</div>
 						<div className='flex gap-2 justify-between items-center'>
 							<Label htmlFor='date' className='px-1'>
-								Duration
+								Peroid Duration
 							</Label>
 							<Select
 								value={length.toString()}
@@ -1124,7 +1204,7 @@ const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
 				<SleepQuality currentUser={currentUser} />
 				<Nap currentUser={currentUser} />
 				<Steps currentUser={currentUser} />
-				<Period currentUser={currentUser} />
+				<PeriodOvulation currentUser={currentUser} />
 				<WeightTraining currentUser={currentUser} />
 				<Hiit currentUser={currentUser} />
 				<Liss currentUser={currentUser} />

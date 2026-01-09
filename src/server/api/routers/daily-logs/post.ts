@@ -50,8 +50,9 @@ export const post = {
 
 			console.log(userSetting)
 
-			const isPeriodEnabled = userSetting?.periodStartAt ? true : false
+			const isPeriodEnabled = userSetting?.isPeriodOvulaion
 			const start = userSetting?.periodStartAt ?? new Date()
+			const ovulaionStart = userSetting?.ovulaionStartAt ?? new Date()
 			const interval = userSetting?.periodInterval ?? 28
 			const duration = userSetting?.periodLength ?? 5
 			const today = new Date(input.date ?? Date.now())
@@ -60,20 +61,16 @@ export const post = {
 				? isDuringPeriod(today, start, interval, duration)
 				: false
 
-			console.log('-------------------')
-
-			console.log({
-				isPeriodEnabled,
-				interval,
-				duration,
-				isPeriod,
-			})
+			const isOvulation = isPeriodEnabled
+				? isDuringPeriod(today, ovulaionStart, interval, 1)
+				: false
 
 			const res = await ctx.db
 				.insert(dailyLog)
 				.values({
 					...input,
 					isPeriod: isPeriod,
+					isOvulation: isOvulation,
 					date: input.date,
 				})
 				.returning({ id: dailyLog.id })

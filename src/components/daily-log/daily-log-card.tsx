@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils'
 import type { GetDailyLogById, GetUserById } from '@/types'
 import {
 	CircleX,
-	CircleParking,
 	Scale,
 	Moon,
 	Footprints,
@@ -26,15 +25,7 @@ import {
 import { Link } from 'next-view-transitions'
 
 import { getPeriodStatusDays } from '@/lib/period'
-import { Badge } from '@/components/ui/badge'
-import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-	CardFooter,
-} from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 const MetricItem = ({
 	label,
@@ -122,13 +113,7 @@ const Log = ({
 
 	const isPeriodEnabled = currentUser.settings?.periodStartAt ?? false
 	const isPeriod = todaysDailyLog?.isPeriod ?? false
-
-	const start = currentUser.settings?.periodStartAt ?? new Date()
-	const interval = currentUser.settings?.periodInterval ?? 28
-	const duration = currentUser.settings?.periodLength ?? 5
-	const today = new Date(todaysDailyLog?.date ?? Date.now())
-
-	const periodStatus = getPeriodStatusDays(today, start, interval, duration)
+	const isOvulation = todaysDailyLog?.isOvulation ?? false
 
 	const formatNumber = (
 		val: string | number | undefined | null,
@@ -149,8 +134,16 @@ const Log = ({
 			{isPeriodEnabled && (
 				<div
 					className={cn(
-						'w-[40px] h-3 -rotate-45 -left-4 top-0 absolute',
+						'w-[80px] h-6 -rotate-45 -left-9 top-0 absolute',
 						isPeriod ? 'bg-red-400/70' : 'bg-transparent',
+					)}
+				/>
+			)}
+			{isPeriodEnabled && (
+				<div
+					className={cn(
+						'w-[80px] h-6 rotate-45 -right-9 top-0 absolute',
+						isOvulation ? 'bg-purple-400/70' : 'bg-transparent',
 					)}
 				/>
 			)}

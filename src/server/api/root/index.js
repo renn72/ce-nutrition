@@ -257,6 +257,7 @@ var dailyLog = createTable2(
     isLift: int2("is_lift", { mode: "boolean" }),
     isLiss: int2("is_liss", { mode: "boolean" }),
     isPeriod: int2("is_period", { mode: "boolean" }),
+    isOvulation: int2("is_ovulation", { mode: "boolean" }),
     isStarred: int2("is_starred", { mode: "boolean" }).default(false),
     hiit: text2("hiit"),
     cardio: text2("cardio"),
@@ -963,6 +964,10 @@ var userSettings = createTable6(
     isSauna: int6("is_sauna", { mode: "boolean" }).default(true),
     isColdPlunge: int6("is_cold_plunge", { mode: "boolean" }).default(true),
     isMobility: int6("is_mobility", { mode: "boolean" }).default(false),
+    isPeriodOvulaion: int6("is_period_ovulaion", { mode: "boolean" }).default(
+      false
+    ),
+    ovulaionStartAt: int6("ovulaion_start_at", { mode: "timestamp" }),
     periodStartAt: int6("period_start_at", { mode: "timestamp" }),
     periodLength: int6("period_length").default(5).notNull(),
     periodInterval: int6("period_interval").default(28).notNull()
@@ -5260,40 +5265,34 @@ var roles = {
 
 // src/server/api/routers/user/update.ts
 import { hash as hash3 } from "bcryptjs";
-import { eq as eq6, and as and2 } from "drizzle-orm";
+import { eq as eq6 } from "drizzle-orm";
 import { z as z11 } from "zod";
-
-// src/lib/period.ts
-var calculateDayDifference = (dateA, dateB) => {
-  const MS_PER_DAY = 864e5;
-  const utc1 = Date.UTC(dateA.getFullYear(), dateA.getMonth(), dateA.getDate());
-  const utc2 = Date.UTC(dateB.getFullYear(), dateB.getMonth(), dateB.getDate());
-  return Math.floor((utc1 - utc2) / MS_PER_DAY);
-};
-var isDuringPeriod = (checkDate, lastPeriodStart, cycleLengthDays, periodDurationDays) => {
-  if (cycleLengthDays <= 0 || periodDurationDays <= 0) {
-    throw new Error(
-      "Cycle length and period duration must be positive numbers."
-    );
-  }
-  const daysSinceStart = calculateDayDifference(
-    checkDate,
-    lastPeriodStart
-  );
-  if (daysSinceStart < 0) {
-    const daysSincePreviousStart = daysSinceStart + cycleLengthDays;
-    const daysIntoRelevantCycle = (daysSinceStart % cycleLengthDays + cycleLengthDays) % cycleLengthDays;
-    return daysIntoRelevantCycle >= 0 && daysIntoRelevantCycle < periodDurationDays;
-  }
-  const daysIntoCurrentCycle = daysSinceStart % cycleLengthDays;
-  return daysIntoCurrentCycle < periodDurationDays;
-};
-
-// src/server/api/routers/user/update.ts
 var update = {
   updateChartRange: protectedProcedure.input(z11.object({ range: z11.number(), id: z11.number() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.update(userSettings).set({
       defaultChartRange: input.range.toString()
+    }).where(eq6(userSettings.id, input.id));
+    return res;
+  }),
+  updateIsPeriodOvualtion: protectedProcedure.input(
+    z11.object({
+      id: z11.number(),
+      isPeriodOvulaion: z11.boolean()
+    })
+  ).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.update(userSettings).set({
+      isPeriodOvulaion: input.isPeriodOvulaion
+    }).where(eq6(userSettings.id, input.id));
+    return res;
+  }),
+  updateOvulationStart: protectedProcedure.input(
+    z11.object({
+      start: z11.date().nullable(),
+      id: z11.number()
+    })
+  ).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.update(userSettings).set({
+      ovulaionStartAt: input.start
     }).where(eq6(userSettings.id, input.id));
     return res;
   }),
@@ -5307,61 +5306,12 @@ var update = {
     const res = await ctx.db.update(userSettings).set({
       periodStartAt: input.start
     }).where(eq6(userSettings.id, input.id));
-    const userSetting = await ctx.db.query.userSettings.findFirst({
-      where: eq6(userSettings.id, input.id)
-    });
-    const today = /* @__PURE__ */ new Date();
-    const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and2(
-        eq6(dailyLog.date, today.toDateString()),
-        eq6(dailyLog.userId, input.userId)
-      )
-    });
-    const isPeriodEnabled = userSetting?.periodStartAt ? true : false;
-    const interval = userSetting?.periodInterval ?? 28;
-    const duration = userSetting?.periodLength ?? 5;
-    const isPeriod = isPeriodEnabled ? isDuringPeriod(today, input.start ?? /* @__PURE__ */ new Date(), interval, duration) : false;
-    console.log({
-      isPeriodEnabled,
-      interval,
-      duration,
-      isPeriod
-    });
-    if (log2 && input.start) {
-      console.log("--- updating log ----");
-      await ctx.db.update(dailyLog).set({ isPeriod }).where(eq6(dailyLog.id, log2.id));
-    }
     return res;
   }),
   updatePeriodLength: protectedProcedure.input(z11.object({ length: z11.number(), id: z11.number(), userId: z11.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.update(userSettings).set({
       periodLength: input.length
     }).where(eq6(userSettings.id, input.id));
-    const userSetting = await ctx.db.query.userSettings.findFirst({
-      where: eq6(userSettings.id, input.id)
-    });
-    const today = /* @__PURE__ */ new Date();
-    const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and2(
-        eq6(dailyLog.date, today.toDateString()),
-        eq6(dailyLog.userId, input.userId)
-      )
-    });
-    const isPeriodEnabled = userSetting?.periodStartAt ? true : false;
-    const start = userSetting?.periodStartAt ?? /* @__PURE__ */ new Date();
-    const interval = userSetting?.periodInterval ?? 28;
-    const duration = input.length;
-    const isPeriod = isPeriodEnabled ? isDuringPeriod(today, start, interval, duration) : false;
-    console.log({
-      isPeriodEnabled,
-      interval,
-      duration,
-      isPeriod
-    });
-    if (log2) {
-      console.log("--- updating log ----");
-      await ctx.db.update(dailyLog).set({ isPeriod }).where(eq6(dailyLog.id, log2.id));
-    }
     return res;
   }),
   updatePeriodInterval: protectedProcedure.input(
@@ -5370,31 +5320,6 @@ var update = {
     const res = await ctx.db.update(userSettings).set({
       periodInterval: input.interval
     }).where(eq6(userSettings.id, input.id));
-    const userSetting = await ctx.db.query.userSettings.findFirst({
-      where: eq6(userSettings.id, input.id)
-    });
-    const today = /* @__PURE__ */ new Date();
-    const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and2(
-        eq6(dailyLog.date, today.toDateString()),
-        eq6(dailyLog.userId, input.userId)
-      )
-    });
-    const isPeriodEnabled = userSetting?.periodStartAt ? true : false;
-    const start = userSetting?.periodStartAt ?? /* @__PURE__ */ new Date();
-    const interval = input.interval;
-    const duration = userSetting?.periodLength ?? 5;
-    const isPeriod = isPeriodEnabled ? isDuringPeriod(today, start, interval, duration) : false;
-    console.log({
-      isPeriodEnabled,
-      interval,
-      duration,
-      isPeriod
-    });
-    if (log2) {
-      console.log("--- updating log ----");
-      await ctx.db.update(dailyLog).set({ isPeriod }).where(eq6(dailyLog.id, log2.id));
-    }
     return res;
   }),
   updateWater: protectedProcedure.input(z11.object({ water: z11.number(), id: z11.number() })).mutation(async ({ ctx, input }) => {
@@ -6585,6 +6510,34 @@ var userPlanRouter = createTRPCRouter({
 import { TRPCError as TRPCError3 } from "@trpc/server";
 import { and as and4, eq as eq13 } from "drizzle-orm";
 import { z as z19 } from "zod";
+
+// src/lib/period.ts
+var calculateDayDifference = (dateA, dateB) => {
+  const MS_PER_DAY = 864e5;
+  const utc1 = Date.UTC(dateA.getFullYear(), dateA.getMonth(), dateA.getDate());
+  const utc2 = Date.UTC(dateB.getFullYear(), dateB.getMonth(), dateB.getDate());
+  return Math.floor((utc1 - utc2) / MS_PER_DAY);
+};
+var isDuringPeriod = (checkDate, lastPeriodStart, cycleLengthDays, periodDurationDays) => {
+  if (cycleLengthDays <= 0 || periodDurationDays <= 0) {
+    throw new Error(
+      "Cycle length and period duration must be positive numbers."
+    );
+  }
+  const daysSinceStart = calculateDayDifference(
+    checkDate,
+    lastPeriodStart
+  );
+  if (daysSinceStart < 0) {
+    const daysSincePreviousStart = daysSinceStart + cycleLengthDays;
+    const daysIntoRelevantCycle = (daysSinceStart % cycleLengthDays + cycleLengthDays) % cycleLengthDays;
+    return daysIntoRelevantCycle >= 0 && daysIntoRelevantCycle < periodDurationDays;
+  }
+  const daysIntoCurrentCycle = daysSinceStart % cycleLengthDays;
+  return daysIntoCurrentCycle < periodDurationDays;
+};
+
+// src/server/api/routers/daily-logs/post.ts
 var post2 = {
   create: protectedProcedure.input(
     z19.object({
@@ -6615,22 +6568,18 @@ var post2 = {
       where: eq13(userSettings.userId, input.userId)
     });
     console.log(userSetting);
-    const isPeriodEnabled = userSetting?.periodStartAt ? true : false;
+    const isPeriodEnabled = userSetting?.isPeriodOvulaion;
     const start = userSetting?.periodStartAt ?? /* @__PURE__ */ new Date();
+    const ovulaionStart = userSetting?.ovulaionStartAt ?? /* @__PURE__ */ new Date();
     const interval = userSetting?.periodInterval ?? 28;
     const duration = userSetting?.periodLength ?? 5;
     const today = new Date(input.date ?? Date.now());
     const isPeriod = isPeriodEnabled ? isDuringPeriod(today, start, interval, duration) : false;
-    console.log("-------------------");
-    console.log({
-      isPeriodEnabled,
-      interval,
-      duration,
-      isPeriod
-    });
+    const isOvulation = isPeriodEnabled ? isDuringPeriod(today, ovulaionStart, interval, 1) : false;
     const res = await ctx.db.insert(dailyLog).values({
       ...input,
       isPeriod,
+      isOvulation,
       date: input.date
     }).returning({ id: dailyLog.id });
     createLog({
@@ -7108,6 +7057,41 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ isPeriod: input.isPeriod }).where(
+      and5(
+        eq14(dailyLog.date, input.date),
+        eq14(dailyLog.userId, ctx.session.user.id)
+      )
+    );
+    return res;
+  }),
+  updateIsOvulation: protectedProcedure.input(
+    z20.object({
+      date: z20.string(),
+      isOvulation: z20.boolean()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    const log2 = await ctx.db.query.dailyLog.findFirst({
+      where: and5(
+        eq14(dailyLog.date, input.date),
+        eq14(dailyLog.userId, ctx.session.user.id)
+      )
+    });
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "toggle ovualtion",
+      notes: JSON.stringify(input),
+      objectId: null
+    });
+    if (!log2) {
+      const res2 = await ctx.db.insert(dailyLog).values({
+        date: input.date,
+        isOvulation: input.isOvulation,
+        userId: ctx.session.user.id
+      });
+      return res2;
+    }
+    const res = await ctx.db.update(dailyLog).set({ isOvulation: input.isOvulation }).where(
       and5(
         eq14(dailyLog.date, input.date),
         eq14(dailyLog.userId, ctx.session.user.id)

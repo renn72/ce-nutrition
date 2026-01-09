@@ -1627,6 +1627,40 @@ declare const userSettings: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             identity: undefined;
             generated: undefined;
         }, {}, {}>;
+        isPeriodOvulaion: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "is_period_ovulaion";
+            tableName: "user_settings";
+            dataType: "boolean";
+            columnType: "SQLiteBoolean";
+            data: boolean;
+            driverParam: number;
+            notNull: false;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        ovulaionStartAt: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "ovulaion_start_at";
+            tableName: "user_settings";
+            dataType: "date";
+            columnType: "SQLiteTimestamp";
+            data: Date;
+            driverParam: number;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
         periodStartAt: drizzle_orm_sqlite_core.SQLiteColumn<{
             name: "period_start_at";
             tableName: "user_settings";
@@ -12459,6 +12493,23 @@ declare const dailyLog: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             identity: undefined;
             generated: undefined;
         }, {}, {}>;
+        isOvulation: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "is_ovulation";
+            tableName: "daily_log";
+            dataType: "boolean";
+            columnType: "SQLiteBoolean";
+            data: boolean;
+            driverParam: number;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
         isStarred: drizzle_orm_sqlite_core.SQLiteColumn<{
             name: "is_starred";
             tableName: "daily_log";
@@ -14073,6 +14124,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isLift: boolean | null;
                 isLiss: boolean | null;
                 isPeriod: boolean | null;
+                isOvulation: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -14266,6 +14318,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isLift: boolean | null;
                 isLiss: boolean | null;
                 isPeriod: boolean | null;
+                isOvulation: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -14457,6 +14510,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isLift: boolean | null;
                 isLiss: boolean | null;
                 isPeriod: boolean | null;
+                isOvulation: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -14503,6 +14557,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isLift: boolean | null;
                 isLiss: boolean | null;
                 isPeriod: boolean | null;
+                isOvulation: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -14710,6 +14765,14 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             input: {
                 date: string;
                 isPeriod: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateIsOvulation: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                isOvulation: boolean;
             };
             output: _libsql_client.ResultSet;
             meta: object;
@@ -15219,6 +15282,22 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
         updateChartRange: _trpc_server.TRPCMutationProcedure<{
             input: {
                 range: number;
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateIsPeriodOvualtion: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+                isPeriodOvulaion: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateOvulationStart: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                start: Date | null;
                 id: number;
             };
             output: _libsql_client.ResultSet;
@@ -15827,6 +15906,8 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     isSauna: boolean | null;
                     isColdPlunge: boolean | null;
                     isMobility: boolean | null;
+                    isPeriodOvulaion: boolean | null;
+                    ovulaionStartAt: Date | null;
                     periodStartAt: Date | null;
                     periodLength: number;
                     periodInterval: number;
@@ -16084,6 +16165,8 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     isSauna: boolean | null;
                     isColdPlunge: boolean | null;
                     isMobility: boolean | null;
+                    isPeriodOvulaion: boolean | null;
+                    ovulaionStartAt: Date | null;
                     periodStartAt: Date | null;
                     periodLength: number;
                     periodInterval: number;
@@ -16372,6 +16455,8 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     isSauna: boolean | null;
                     isColdPlunge: boolean | null;
                     isMobility: boolean | null;
+                    isPeriodOvulaion: boolean | null;
+                    ovulaionStartAt: Date | null;
                     periodStartAt: Date | null;
                     periodLength: number;
                     periodInterval: number;
@@ -21082,6 +21167,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isLift: boolean | null;
                 isLiss: boolean | null;
                 isPeriod: boolean | null;
+                isOvulation: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -21275,6 +21361,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isLift: boolean | null;
                 isLiss: boolean | null;
                 isPeriod: boolean | null;
+                isOvulation: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -21466,6 +21553,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isLift: boolean | null;
                 isLiss: boolean | null;
                 isPeriod: boolean | null;
+                isOvulation: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -21512,6 +21600,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isLift: boolean | null;
                 isLiss: boolean | null;
                 isPeriod: boolean | null;
+                isOvulation: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -21719,6 +21808,14 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             input: {
                 date: string;
                 isPeriod: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateIsOvulation: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                isOvulation: boolean;
             };
             output: _libsql_client.ResultSet;
             meta: object;
@@ -22228,6 +22325,22 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         updateChartRange: _trpc_server.TRPCMutationProcedure<{
             input: {
                 range: number;
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateIsPeriodOvualtion: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+                isPeriodOvulaion: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateOvulationStart: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                start: Date | null;
                 id: number;
             };
             output: _libsql_client.ResultSet;
@@ -22836,6 +22949,8 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     isSauna: boolean | null;
                     isColdPlunge: boolean | null;
                     isMobility: boolean | null;
+                    isPeriodOvulaion: boolean | null;
+                    ovulaionStartAt: Date | null;
                     periodStartAt: Date | null;
                     periodLength: number;
                     periodInterval: number;
@@ -23093,6 +23208,8 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     isSauna: boolean | null;
                     isColdPlunge: boolean | null;
                     isMobility: boolean | null;
+                    isPeriodOvulaion: boolean | null;
+                    ovulaionStartAt: Date | null;
                     periodStartAt: Date | null;
                     periodLength: number;
                     periodInterval: number;
@@ -23381,6 +23498,8 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     isSauna: boolean | null;
                     isColdPlunge: boolean | null;
                     isMobility: boolean | null;
+                    isPeriodOvulaion: boolean | null;
+                    ovulaionStartAt: Date | null;
                     periodStartAt: Date | null;
                     periodLength: number;
                     periodInterval: number;

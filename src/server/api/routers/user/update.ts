@@ -20,6 +20,40 @@ export const update = {
 				.where(eq(userSettings.id, input.id))
 			return res
 		}),
+	updateIsPeriodOvualtion: protectedProcedure
+		.input(
+			z.object({
+				id: z.number(),
+				isPeriodOvulaion: z.boolean(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(userSettings)
+				.set({
+					isPeriodOvulaion: input.isPeriodOvulaion,
+				})
+				.where(eq(userSettings.id, input.id))
+
+			return res
+		}),
+	updateOvulationStart: protectedProcedure
+		.input(
+			z.object({
+				start: z.date().nullable(),
+				id: z.number(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(userSettings)
+				.set({
+					ovulaionStartAt: input.start,
+				})
+				.where(eq(userSettings.id, input.id))
+			return res
+		}),
+
 	updatePeriodStart: protectedProcedure
 		.input(
 			z.object({
@@ -35,41 +69,6 @@ export const update = {
 					periodStartAt: input.start,
 				})
 				.where(eq(userSettings.id, input.id))
-			const userSetting = await ctx.db.query.userSettings.findFirst({
-				where: eq(userSettings.id, input.id),
-			})
-
-			const today = new Date()
-
-			const log = await ctx.db.query.dailyLog.findFirst({
-				where: and(
-					eq(dailyLog.date, today.toDateString()),
-					eq(dailyLog.userId, input.userId),
-				),
-			})
-
-			const isPeriodEnabled = userSetting?.periodStartAt ? true : false
-			const interval = userSetting?.periodInterval ?? 28
-			const duration = userSetting?.periodLength ?? 5
-
-			const isPeriod = isPeriodEnabled
-				? isDuringPeriod(today, input.start ?? new Date(), interval, duration)
-				: false
-
-			console.log({
-				isPeriodEnabled,
-				interval,
-				duration,
-				isPeriod,
-			})
-
-			if (log && input.start) {
-				console.log('--- updating log ----')
-				await ctx.db
-					.update(dailyLog)
-					.set({ isPeriod: isPeriod })
-					.where(eq(dailyLog.id, log.id))
-			}
 			return res
 		}),
 	updatePeriodLength: protectedProcedure
@@ -81,44 +80,6 @@ export const update = {
 					periodLength: input.length,
 				})
 				.where(eq(userSettings.id, input.id))
-
-			const userSetting = await ctx.db.query.userSettings.findFirst({
-				where: eq(userSettings.id, input.id),
-			})
-
-			const today = new Date()
-
-			const log = await ctx.db.query.dailyLog.findFirst({
-				where: and(
-					eq(dailyLog.date, today.toDateString()),
-					eq(dailyLog.userId, input.userId),
-				),
-			})
-
-			const isPeriodEnabled = userSetting?.periodStartAt ? true : false
-			const start = userSetting?.periodStartAt ?? new Date()
-			const interval = userSetting?.periodInterval ?? 28
-			const duration = input.length
-
-			const isPeriod = isPeriodEnabled
-				? isDuringPeriod(today, start, interval, duration)
-				: false
-
-			console.log({
-				isPeriodEnabled,
-				interval,
-				duration,
-				isPeriod,
-			})
-
-			if (log) {
-				console.log('--- updating log ----')
-				await ctx.db
-					.update(dailyLog)
-					.set({ isPeriod: isPeriod })
-					.where(eq(dailyLog.id, log.id))
-			}
-
 			return res
 		}),
 	updatePeriodInterval: protectedProcedure
@@ -132,43 +93,6 @@ export const update = {
 					periodInterval: input.interval,
 				})
 				.where(eq(userSettings.id, input.id))
-
-			const userSetting = await ctx.db.query.userSettings.findFirst({
-				where: eq(userSettings.id, input.id),
-			})
-
-			const today = new Date()
-
-			const log = await ctx.db.query.dailyLog.findFirst({
-				where: and(
-					eq(dailyLog.date, today.toDateString()),
-					eq(dailyLog.userId, input.userId),
-				),
-			})
-
-			const isPeriodEnabled = userSetting?.periodStartAt ? true : false
-			const start = userSetting?.periodStartAt ?? new Date()
-			const interval = input.interval
-			const duration = userSetting?.periodLength ?? 5
-
-			const isPeriod = isPeriodEnabled
-				? isDuringPeriod(today, start, interval, duration)
-				: false
-
-			console.log({
-				isPeriodEnabled,
-				interval,
-				duration,
-				isPeriod,
-			})
-
-			if (log) {
-				console.log('--- updating log ----')
-				await ctx.db
-					.update(dailyLog)
-					.set({ isPeriod: isPeriod })
-					.where(eq(dailyLog.id, log.id))
-			}
 			return res
 		}),
 	updateWater: protectedProcedure
