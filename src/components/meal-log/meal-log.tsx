@@ -631,12 +631,12 @@ const MealLog = ({
 						</div>
 						<div
 							className={cn(
-								'rounded-full border w-11 h-11 flex items-center bg-background',
+								'rounded-full border w-11 h-11 flex items-center bg-background shadow-inner',
 								'justify-center active:scale-75 transition-transform cursor-pointer',
 							)}
 						>
 							<Sheet.Trigger
-								onClick={(e) => {
+								onClick={() => {
 									setDay(new Date())
 								}}
 								disabled={isNotActivePlan}
@@ -645,7 +645,7 @@ const MealLog = ({
 									size={28}
 									strokeWidth={1}
 									className={cn(
-										'text-primary/80 hover:text-primary active:scale-90 transition-transform cursor-pointer',
+										'text-primary hover:text-primary active:scale-90 transition-transform cursor-pointer',
 									)}
 								/>
 							</Sheet.Trigger>

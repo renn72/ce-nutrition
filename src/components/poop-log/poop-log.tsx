@@ -113,10 +113,11 @@ const PoopLog = ({
 				<NumberFlow value={totalPoop ?? 0} />
 			</div>
 			<div className='grid grid-cols-1 gap-2 place-items-center h-12'>
-				<div className='flex justify-center items-center w-11 h-11 rounded-full border shadow-sm transition-transform cursor-pointer active:scale-90 bg-background'>
+				<div className='flex justify-center items-center w-11 h-11 rounded-full border shadow-inner transition-transform cursor-pointer active:scale-90 bg-background'>
 					<ToiletPaperIcon
 						className='ml-[1px]'
 						size={28}
+						weight='regular'
 						onClick={() => {
 							confetti({
 								particleCount: 10,

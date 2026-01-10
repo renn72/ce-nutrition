@@ -583,7 +583,7 @@ const SuppLog = ({
 						<div className={cn('text-lg font-semibold opacity-0')}>0</div>
 						<div
 							className={cn(
-								'rounded-full border w-11 h-11 flex items-center bg-background',
+								'rounded-full border w-11 h-11 flex items-center bg-background shadow-inner',
 								'justify-center active:scale-75 transition-transform cursor-pointer',
 							)}
 						>
@@ -595,7 +595,7 @@ const SuppLog = ({
 								<PillIcon
 									size={28}
 									className={cn(
-										'text-primary/80 hover:text-primary active:scale-90 transition-transform cursor-pointer',
+										' hover:text-primary active:scale-90 transition-transform cursor-pointer',
 									)}
 								/>
 							</Sheet.Trigger>

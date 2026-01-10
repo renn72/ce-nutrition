@@ -90,7 +90,7 @@ const MetricItem = memo(
 				)}
 			>
 				{Icon && (
-					<div className='p-2 rounded-full border shadow-sm bg-background text-primary'>
+					<div className='p-2 rounded-full border shadow-inner bg-background text-primary'>
 						<Icon size={16} />
 					</div>
 				)}

@@ -141,7 +141,7 @@ const WaterLog = ({
 			<div className='grid grid-cols-1 gap-2 place-items-center h-12'>
 				<Dialog open={isOpen} onOpenChange={setIsOpen}>
 					<DialogTrigger asChild>
-						<div className='flex justify-center items-center w-11 h-11 rounded-full border shadow-sm transition-transform cursor-pointer active:scale-90 bg-background'>
+						<div className='flex justify-center items-center w-11 h-11 rounded-full border shadow-inner transition-transform cursor-pointer active:scale-90 bg-background'>
 							<PintGlassIcon size={28} strokeWidth={1} />
 						</div>
 					</DialogTrigger>
