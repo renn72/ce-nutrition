@@ -1,6 +1,9 @@
 'use client'
 
 import { api } from '@/trpc/react'
+import { PeriodIcon } from '@/components/period-icon'
+import { OvulationIcon } from '@/components/ovulation-icon'
+import { getPeriodStatusDays } from '@/lib/period'
 
 import { useEffect, useState } from 'react'
 
@@ -53,6 +56,7 @@ import {
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 import { DailyLogForm } from './form'
+import { BookmarksIcon } from '@phosphor-icons/react'
 
 export const dynamic = 'force-dynamic'
 
@@ -175,7 +179,13 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				<Bookmark size={20} className='cursor-pointer' />
+				<div className='flex justify-center items-center w-8 h-8 rounded-full border bg-background'>
+					<BookmarksIcon
+						size={20}
+						strokeWidth={1.5}
+						className='cursor-pointer'
+					/>
+				</div>
 			</DialogTrigger>
 			<DialogContent
 				onOpenAutoFocus={(e) => e.preventDefault()}
@@ -415,6 +425,13 @@ export default function Home() {
 		},
 	})
 
+	const { mutate: updateTagToDailyLog } =
+		api.tag.updateTagToDailyLog.useMutation({
+			onSettled: () => {
+				ctx.dailyLog.invalidate()
+			},
+		})
+
 	const { mutate: updateIsStarred } = api.dailyLog.updateIsStarred.useMutation({
 		onMutate: async (data) => {
 			await ctx.dailyLog.getAllCurrentUser.cancel()
@@ -436,11 +453,23 @@ export default function Home() {
 		onSettled: () => {
 			ctx.dailyLog.invalidate()
 		},
-		onError: (err, newPoopLog, context) => {
+		onError: (_err, _newPoopLog, context) => {
 			toast.error('error')
 			ctx.dailyLog.getAllCurrentUser.setData(undefined, context?.previousLog)
 		},
 	})
+
+	const { mutate: updateIsPeriod } = api.dailyLog.updateIsPeriod.useMutation({
+		onSettled: () => {
+			ctx.dailyLog.invalidate()
+		},
+	})
+	const { mutate: updateIsOvulation } =
+		api.dailyLog.updateIsOvulation.useMutation({
+			onSettled: () => {
+				ctx.dailyLog.invalidate()
+			},
+		})
 
 	const log = dailyLogs?.find((log) => log.date === date?.toDateString())
 
@@ -472,12 +501,32 @@ export default function Home() {
 		return log.date === new Date(date?.getTime() - 86400000).toDateString()
 	})
 
-	if (!date) return null
 	if (!currentUser) return null
+
+	const isPeriodEnabled = currentUser?.settings?.isPeriodOvulaion ?? false
+
+	const isPeriod = log?.isPeriod ?? false
+	const isOvulation = log?.isOvulation ?? false
+
+	const ovulaionStartAt = currentUser.settings?.ovulaionStartAt ?? new Date()
+	const start = currentUser.settings?.periodStartAt ?? new Date()
+	const interval = currentUser.settings?.periodInterval ?? 28
+	const duration = currentUser.settings?.periodLength ?? 5
+	const today = new Date(date ?? Date.now())
+
+	const periodStatus = getPeriodStatusDays(today, start, interval, duration)
+	const ovulationStatus = getPeriodStatusDays(
+		today,
+		ovulaionStartAt,
+		interval,
+		1,
+	)
+
+	if (!date) return null
 
 	return (
 		<>
-			<div className='flex relative flex-col gap-0 mt-16'>
+			<div className='flex relative flex-col gap-1 mt-16 transition-transform px-[2px]'>
 				{impersonatedUser.id !== '' ? (
 					<div className='fixed bottom-14 left-1/2 opacity-80 -translate-x-1/2 z-[2009]'>
 						<Badge className='flex gap-4'>
@@ -495,16 +544,16 @@ export default function Home() {
 						</Badge>
 					</div>
 				) : null}
-				<div className='flex gap-2 justify-center items-center mb-1 w-full text-xl font-semibold text-center'>
+				<div className='flex gap-2 justify-around items-center py-2 w-full text-xl font-semibold text-center rounded-md border bg-card'>
 					<Tags log={log} />
 					<Popover open={isOpen} onOpenChange={setIsOpen}>
 						<PopoverTrigger asChild>
 							<div className='flex justify-center items-center'>
 								<Button
-									variant={'secondary'}
-									size={'lg'}
+									variant={'outline'}
+									size={'sm'}
 									className={cn(
-										'w-[280px] font-semibold text-base mt-[2px] flex items-center justify-center shadow-sm',
+										'w-[240px] font-semibold text-base mt-[2px] flex items-center justify-center shadow-sm',
 										!date && 'text-muted-foreground',
 									)}
 								>
@@ -642,51 +691,124 @@ export default function Home() {
 							/>
 						</PopoverContent>
 					</Popover>
-					<Star
-						size={20}
-						className={cn(
-							'cursor-pointer active:scale-75 transition-transform',
-							log?.isStarred === true
-								? 'text-yellow-500'
-								: 'text-muted-foreground',
-						)}
-						fill={log?.isStarred === true ? 'currentColor' : 'none'}
-						onClick={() => {
-							updateIsStarred({
-								date: date.toDateString(),
-								isStarred: log?.isStarred === true ? false : true,
-							})
-						}}
-					/>
+					<div className='flex justify-center items-center w-8 h-8 rounded-full border bg-background'>
+						<Star
+							size={20}
+							className={cn(
+								'cursor-pointer active:scale-75 transition-transform',
+								log?.isStarred === true ? 'text-yellow-500' : 'text-primary',
+							)}
+							fill={log?.isStarred === true ? 'currentColor' : 'none'}
+							strokeWidth={1.5}
+							onClick={() => {
+								updateIsStarred({
+									date: date.toDateString(),
+									isStarred: log?.isStarred === true ? false : true,
+								})
+							}}
+						/>
+					</div>
 				</div>
-				<div className='flex justify-center items-center'>
-					{log?.tags?.map((tag) => {
-						const color = tag.tag.color as
-							| 'black'
-							| 'red'
-							| 'green'
-							| 'blue'
-							| 'purple'
-							| 'orange'
-						const icon = tag.tag.icon
-						return (
-							<div
-								key={tag.id}
+				<div
+					className={cn(
+						'flex justify-between items-center py-1 px-1 w-full rounded-lg border bg-card',
+						!isPeriodEnabled && log?.tags.length === 0 ? 'hidden' : '',
+					)}
+				>
+					<div>
+						<div
+							onClick={() => {
+								if (!log) return
+								updateIsPeriod({
+									date: log.date,
+									isPeriod: !isPeriod,
+								})
+							}}
+							className={cn(
+								'text-muted-foreground/10 flex gap-0 items-center justify-center h-8 w-8 rounded-full bg-background border shadow-inner',
+								isPeriodEnabled ? '' : 'hidden',
+								isPeriod ? 'border-[#E11D48]' : '',
+							)}
+						>
+							<PeriodIcon
+								color={isPeriod ? '#E11D48' : '#88888855'}
+								size={36}
+							/>
+							<p
 								className={cn(
-									'text-xs w-24 h-6 text-white rounded-full flex items-center justify-center gap-0 cursor-pointer border relative',
-									bgDict[color],
+									'mt-1 text-[0.7rem] hidden ml-2',
+									periodStatus === -1 ? 'block text-muted-foreground' : '',
+									isPeriod ? 'hidden' : '',
 								)}
 							>
-								<Icon
-									icon={icon}
-									classnames={
-										'text-white absolute top-1/2 -translate-y-1/2 left-1'
-									}
-								/>
-								<div className='ml-3 mt-[2px]'>{tag.tag.name}</div>
-							</div>
-						)
-					})}
+								tomorrow
+							</p>
+						</div>
+					</div>
+					<div className='flex gap-2 items-center'>
+						{log?.tags?.map((tag) => {
+							const color = tag.tag.color as
+								| 'black'
+								| 'red'
+								| 'green'
+								| 'blue'
+								| 'purple'
+								| 'orange'
+							const icon = tag.tag.icon
+							console.log(tag)
+							return (
+								<div
+									key={tag.id}
+									className={cn(
+										'flex items-center justify-center h-8 w-8 rounded-lg bg-background border shadow-inner',
+									)}
+									onClick={() => {
+										if (!log) return
+										updateTagToDailyLog({
+											tagId: tag.tag.id,
+											dailyLogId: log.id,
+										})
+									}}
+								>
+									<Icon
+										icon={icon}
+										classnames={cn(textDict[color])}
+										size={16}
+									/>
+								</div>
+							)
+						})}
+					</div>
+					<div>
+						<div
+							onClick={() => {
+								if (!log) return
+								updateIsOvulation({
+									date: log.date,
+									isOvulation: !isOvulation,
+								})
+							}}
+							className={cn(
+								'text-muted-foreground/10 flex gap-0 items-center justify-center h-8 w-8 rounded-full bg-background border shadow-inner',
+								isPeriodEnabled ? '' : 'hidden',
+								isOvulation ? 'border-[#8B5CF6]' : '',
+							)}
+						>
+							<OvulationIcon
+								color={isOvulation ? '#8B5CF6' : '#88888855'}
+								size={26}
+							/>
+							<p
+								className={cn(
+									'mt-1 text-[0.7rem] hidden ml-2',
+									ovulationStatus === -1 ? 'block text-muted-foreground' : '',
+									isPeriod ? 'hidden' : '',
+								)}
+							>
+								tomorrow
+							</p>
+						</div>
+					</div>
 				</div>
 				<DailyLogForm
 					todaysLog={log}

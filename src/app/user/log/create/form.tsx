@@ -1,10 +1,6 @@
 'use client'
 
-import { api } from '@/trpc/react'
-
 import type { GetDailyLogById, GetUserById } from '@/types'
-import { CircleParking, Settings } from 'lucide-react'
-import { Link } from 'next-view-transitions'
 
 import { Card, CardContent } from '@/components/ui/card'
 
@@ -25,11 +21,7 @@ import { Steps } from './_field/steps'
 import { Weight } from './_field/weight'
 import { WeightTraining } from './_field/weight-training'
 
-import { PeriodIcon } from '@/components/period-icon'
-import { OvulationIcon } from '@/components/ovulation-icon'
 import { cn } from '@/lib/utils'
-
-import { getPeriodStatusDays } from '@/lib/period'
 
 export const dynamic = 'force-dynamic'
 
@@ -50,109 +42,12 @@ const DailyLogForm = ({
 		? true
 		: false
 
-	const ctx = api.useUtils()
-	const { mutate: updateIsPeriod } = api.dailyLog.updateIsPeriod.useMutation({
-		onSettled: () => {
-			ctx.dailyLog.invalidate()
-		},
-	})
-	const { mutate: updateIsOvulation } =
-		api.dailyLog.updateIsOvulation.useMutation({
-			onSettled: () => {
-				ctx.dailyLog.invalidate()
-			},
-		})
-
 	const userName = currentUser.name?.replaceAll(' ', '-') ?? ''
-
-	const isPeriodEnabled = currentUser.settings?.isPeriodOvulaion ?? false
-
-	const isPeriod = todaysLog?.isPeriod ?? false
-	const isOvulation = todaysLog?.isOvulation ?? false
-
-	const ovulaionStartAt = currentUser.settings?.ovulaionStartAt ?? new Date()
-	const start = currentUser.settings?.periodStartAt ?? new Date()
-	const interval = currentUser.settings?.periodInterval ?? 28
-	const duration = currentUser.settings?.periodLength ?? 5
-	const today = new Date(date ?? Date.now())
-
-	const periodStatus = getPeriodStatusDays(today, start, interval, duration)
-	const ovulationStatus = getPeriodStatusDays(
-		today,
-		ovulaionStartAt,
-		interval,
-		1,
-	)
-
-	console.log({ periodStatus, isPeriod })
 
 	if (!todaysLog) return null
 
 	return (
-		<div className='flex relative flex-col gap-1 px-1 mt-0 mb-16'>
-			<div className='flex justify-between items-center px-6 w-full'>
-				<div className='flex gap-2 items-center'>
-					<div>
-						<div
-							onClick={() => {
-								updateIsPeriod({
-									date: todaysLog.date,
-									isPeriod: !isPeriod,
-								})
-							}}
-							className={cn(
-								'text-muted-foreground/10 flex gap-0 items-center',
-								isPeriodEnabled ? '' : 'hidden',
-							)}
-						>
-							<PeriodIcon
-								color={isPeriod ? '#E11D48' : '#88888855'}
-								size={36}
-							/>
-							<p
-								className={cn(
-									'mt-1 text-[0.7rem] hidden ml-2',
-									periodStatus === -1 ? 'block text-muted-foreground' : '',
-									isPeriod ? 'hidden' : '',
-								)}
-							>
-								tomorrow
-							</p>
-						</div>
-					</div>
-					<div>
-						<div
-							onClick={() => {
-								updateIsOvulation({
-									date: todaysLog.date,
-									isOvulation: !isOvulation,
-								})
-							}}
-							className={cn(
-								'text-muted-foreground/10 flex gap-0 items-center',
-								isPeriodEnabled ? '' : 'hidden',
-							)}
-						>
-							<OvulationIcon
-								color={isOvulation ? '#8B5CF6' : '#88888855'}
-								size={36}
-							/>
-							<p
-								className={cn(
-									'mt-1 text-[0.7rem] hidden ml-2',
-									ovulationStatus === -1 ? 'block text-muted-foreground' : '',
-									isPeriod ? 'hidden' : '',
-								)}
-							>
-								tomorrow
-							</p>
-						</div>
-					</div>
-				</div>
-				<Link href='/user/settings#settings-water-defaults'>
-					<Settings size={24} className='cursor-pointer' />
-				</Link>
-			</div>
+		<div className='flex relative flex-col gap-1 mt-0 mb-16'>
 			<Card
 				className={cn(
 					'overflow-hidden relative gap-0 py-1 w-full h-full shadow-sm transition-all hover:shadow-md border-border/60',
