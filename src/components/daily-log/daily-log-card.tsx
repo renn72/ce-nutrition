@@ -2,7 +2,7 @@
 
 import { api } from '@/trpc/react'
 
-import { cn } from '@/lib/utils'
+import { cn, getRecipeDetailsFromDailyLog } from '@/lib/utils'
 import type { GetDailyLogById, GetUserById } from '@/types'
 import {
 	CircleX,
@@ -23,10 +23,13 @@ import {
 	Toilet,
 	ArrowUp,
 	ArrowDown,
+	Beef,
 } from 'lucide-react'
+
+import { BreadIcon, FireIcon, DropIcon } from '@phosphor-icons/react'
+
 import { Link } from 'next-view-transitions'
 
-import { getPeriodStatusDays } from '@/lib/period'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 const MetricItem = ({
@@ -88,11 +91,11 @@ const MetricItem = ({
 						)}
 					</span>
 					{change ? (
-						<span className='flex font-semibold tracking-wider uppercase text-[10px] text-muted-foreground'>
+						<span className='flex items-baseline font-semibold tracking-wider leading-none uppercase text-[10px] text-muted-foreground'>
 							{change === 0 ? null : change < 0 ? (
-								<ArrowDown size={12} strokeWidth={1.5} />
+								<ArrowDown size={11} strokeWidth={1.5} className='pt-[2px]' />
 							) : (
-								<ArrowUp size={12} strokeWidth={1.5} />
+								<ArrowUp size={11} strokeWidth={1.5} className='pt-[2px]' />
 							)}
 							{change.toFixed(accuracy)}
 						</span>
@@ -156,6 +159,65 @@ const Log = ({
 		(acc, curr) => acc + Number(curr.amount),
 		0,
 	)
+
+	const mealsMacros = todaysDailyLog?.dailyMeals
+		.map((meal) => {
+			const { cals, protein, carbs, fat } = getRecipeDetailsFromDailyLog(
+				todaysDailyLog,
+				meal.mealIndex ?? 0,
+			)
+			return {
+				cals: Number(cals),
+				protein: Number(protein),
+				carbs: Number(carbs),
+				fat: Number(fat),
+			}
+		})
+		.reduce(
+			(acc, curr) => {
+				return {
+					cals: acc.cals + curr.cals,
+					protein: acc.protein + curr.protein,
+					carbs: acc.carbs + curr.carbs,
+					fat: acc.fat + curr.fat,
+				}
+			},
+			{
+				cals: 0,
+				protein: 0,
+				carbs: 0,
+				fat: 0,
+			},
+		)
+	const yesterdayMealsMacros = yesterdaysDailyLog?.dailyMeals
+		.map((meal) => {
+			const { cals, protein, carbs, fat } = getRecipeDetailsFromDailyLog(
+				yesterdaysDailyLog,
+				meal.mealIndex ?? 0,
+			)
+			return {
+				cals: Number(cals),
+				protein: Number(protein),
+				carbs: Number(carbs),
+				fat: Number(fat),
+			}
+		})
+		.reduce(
+			(acc, curr) => {
+				return {
+					cals: acc.cals + curr.cals,
+					protein: acc.protein + curr.protein,
+					carbs: acc.carbs + curr.carbs,
+					fat: acc.fat + curr.fat,
+				}
+			},
+			{
+				cals: 0,
+				protein: 0,
+				carbs: 0,
+				fat: 0,
+			},
+		)
 
 	return (
 		<Card
@@ -332,6 +394,40 @@ const Log = ({
 							accuracy={0}
 						/>
 					)}
+					<MetricItem
+						label='Calories'
+						value={formatNumber(mealsMacros?.cals, 0)}
+						prevValue={formatNumber(yesterdayMealsMacros?.cals, 0)}
+						suffix='cals'
+						icon={FireIcon}
+						accuracy={0}
+					/>
+					<div className='grid grid-cols-3 col-span-2 gap-1'>
+						<MetricItem
+							label='Carbs'
+							value={formatNumber(mealsMacros?.carbs, 0)}
+							prevValue={formatNumber(yesterdayMealsMacros?.carbs, 0)}
+							suffix='g'
+							icon={BreadIcon}
+							accuracy={0}
+						/>
+						<MetricItem
+							label='Protein'
+							value={formatNumber(mealsMacros?.protein, 0)}
+							prevValue={formatNumber(yesterdayMealsMacros?.protein, 0)}
+							suffix='g'
+							icon={Beef}
+							accuracy={0}
+						/>
+						<MetricItem
+							label='Fat'
+							value={formatNumber(mealsMacros?.fat, 0)}
+							prevValue={formatNumber(yesterdayMealsMacros?.fat, 0)}
+							suffix='g'
+							icon={DropIcon}
+							accuracy={0}
+						/>
+					</div>
 				</div>
 
 				{isNotes && todaysDailyLog?.notes && (

@@ -60,7 +60,7 @@ const mealColourMap = {
 const Meal = ({
 	date,
 	allPlans,
-  activePlans,
+	activePlans,
 	todaysLog,
 	userId,
 	index,
@@ -68,7 +68,7 @@ const Meal = ({
 	date: Date
 	todaysLog: GetDailyLogById | null | undefined
 	allPlans: UserPlan[]
-  activePlans: UserPlan[]
+	activePlans: UserPlan[]
 	userId: string
 	index: number
 }) => {
@@ -126,14 +126,14 @@ const Meal = ({
 	const selectedRecipeMacros = getRecipeDetailsFromDailyLog(todaysLog, index)
 
 	return (
-		<div className='flex gap-0 flex flex-col items-start w-full'>
+		<div className='flex flex-col gap-0 items-start w-full'>
 			<div className='pb-4'>
 				<ToggleGroup
 					orientation='vertical'
 					size='sm'
 					variant='outline'
 					type='multiple'
-					className='w-full justify-start flex flex-wrap'
+					className='flex flex-wrap justify-start w-full'
 					value={selectedPlans}
 					onValueChange={setSelectedPlans}
 				>
@@ -160,7 +160,7 @@ const Meal = ({
 				size='sm'
 				variant='outline'
 				type='single'
-				className='w-full justify-start'
+				className='justify-start w-full'
 				value={selectValue}
 				onValueChange={(value) => {
 					console.log({ value, selectValue })
@@ -193,7 +193,7 @@ const Meal = ({
 					})
 				}}
 			>
-				<div className='flex flex-col ml-2 gap-2'>
+				<div className='flex flex-col gap-2 ml-2'>
 					{selectValue !== '' ? (
 						<ToggleGroupItem
 							value={selectValue}
@@ -204,8 +204,8 @@ const Meal = ({
 								'hover:text-primary hover:bg-background',
 							)}
 						>
-							<div className=' flex'>
-								<div className='truncate font-semibold'>
+							<div className='flex'>
+								<div className='font-semibold truncate'>
 									{recipeName && recipeName?.length > 41
 										? `${recipeName.slice(0, 41)}...`
 										: recipeName}
@@ -238,12 +238,12 @@ const Meal = ({
 							if (!plan) return null
 							if (plan.userRecipes?.length === 0) return null
 
-              const activePlan = activePlans.find((p) => p?.id === plan.id)
-              if (!activePlan) return null
+							const activePlan = activePlans.find((p) => p?.id === plan.id)
+							if (!activePlan) return null
 							console.log({ activePlan })
 
 							const { cals, protein, carbs, fat } = activePlan.userMeals.reduce(
-								(acc, _curr, i,) => {
+								(acc, _curr, i) => {
 									const recipes = activePlan.userRecipes
 										.filter((recipe) => recipe.mealIndex === i)
 										.map((recipe) =>
@@ -274,14 +274,18 @@ const Meal = ({
 										</h3>
 									</div>
 									<div className='flex justify-center w-full'>
-									<div className={cn('text-[0.7rem] flex gap-4 font-medium bg-secondary text-secondary-foreground rounded-full px-2 py-[2px]')}>
-										<div>{`${cals.toFixed(0)}cals`}</div>
-										<div>{`C:${carbs.toFixed(1)}g`}</div>
-										<div>{`P:${protein.toFixed(1)}g`}</div>
-										<div>{`F:${fat.toFixed(1)}g`}</div>
+										<div
+											className={cn(
+												'text-[0.7rem] flex gap-4 font-medium bg-secondary text-secondary-foreground rounded-full px-2 py-[2px]',
+											)}
+										>
+											<div>{`${cals.toFixed(0)}cals`}</div>
+											<div>{`C:${carbs.toFixed(1)}g`}</div>
+											<div>{`P:${protein.toFixed(1)}g`}</div>
+											<div>{`F:${fat.toFixed(1)}g`}</div>
+										</div>
 									</div>
-									</div>
-									<div className='flex gap-2 flex-col items-center py-2 w-full'>
+									<div className='flex flex-col gap-2 items-center py-2 w-full'>
 										{plan.userRecipes?.map((recipe) => {
 											if (recipe.id === Number(selectValue)) return null
 											const meal =
@@ -310,8 +314,8 @@ const Meal = ({
 															: '',
 													)}
 												>
-													<div className=' flex'>
-														<div className='truncate font-semibold'>
+													<div className='flex'>
+														<div className='font-semibold truncate'>
 															{recipe?.name && recipe?.name?.length > 41
 																? `${recipe?.name.slice(0, 41)}...`
 																: recipe?.name}
@@ -440,19 +444,19 @@ const MealList = ({
 	}, 0)
 
 	return (
-		<Sheet.Content className='min-h-[200px] max-h-[95vh] h-full rounded-t-3xl bg-background relative'>
+		<Sheet.Content className='relative h-full rounded-t-3xl min-h-[200px] max-h-[95vh] bg-background'>
 			<div className='flex flex-col justify-between h-full'>
-				<div className='flex flex-col '>
+				<div className='flex flex-col'>
 					<div className='flex justify-center pt-1'>
 						<Sheet.Handle
-							className=' w-[50px] h-[6px] border-0 rounded-full bg-primary/20'
+							className='rounded-full border-0 w-[50px] h-[6px] bg-primary/20'
 							action='dismiss'
 						/>
 					</div>
-					<div className='flex gap-0 pt-2 flex-col border-b-[1px] border-primary pb-2 relative font-medium'>
+					<div className='flex relative flex-col gap-0 pt-2 pb-2 font-medium border-b-[1px] border-primary'>
 						<Popover open={isOpen} onOpenChange={setIsOpen}>
 							<PopoverTrigger asChild>
-								<div className='flex items-center justify-center'>
+								<div className='flex justify-center items-center'>
 									<Button
 										variant={'outline'}
 										onClick={(e) => {
@@ -465,7 +469,7 @@ const MealList = ({
 											!today && 'text-muted-foreground',
 										)}
 									>
-										<CalendarIcon className='mr-4 h-4 w-4 mt-[0px] shrink-0' />
+										<CalendarIcon className='mr-4 w-4 h-4 mt-[0px] shrink-0' />
 										{today ? (
 											<span className='mt-[5px]'>{format(today, 'PPP')}</span>
 										) : (
@@ -477,7 +481,7 @@ const MealList = ({
 							<PopoverContent
 								onFocusOutside={(e) => e.preventDefault()}
 								forceMount
-								className='w-auto p-0 z-[2000]'
+								className='p-0 w-auto z-[2000]'
 							>
 								<Calendar
 									mode='single'
@@ -493,20 +497,20 @@ const MealList = ({
 								/>
 							</PopoverContent>
 						</Popover>
-						<div className='flex justify-center items-center gap-6 mt-1'>
+						<div className='flex gap-6 justify-center items-center mt-1'>
 							<ArrowBigLeftDash
 								size={28}
-								className='active:scale-90 transition-transform cursor-pointer active:text-muted-foreground'
+								className='transition-transform cursor-pointer active:scale-90 active:text-muted-foreground'
 								onClick={() => {
 									currentMeal > 0 && setCurrentMeal(currentMeal - 1)
 								}}
 							/>
-							<Sheet.Title className='text-xl mt-[2px] font-semibold'>
+							<Sheet.Title className='text-xl font-semibold mt-[2px]'>
 								Meal {currentMeal + 1}
 							</Sheet.Title>
 							<ArrowBigRightDash
 								size={28}
-								className='active:scale-90 transition-transform cursor-pointer active:text-muted-foreground'
+								className='transition-transform cursor-pointer active:scale-90 active:text-muted-foreground'
 								onClick={() => {
 									setCurrentMeal(currentMeal + 1)
 								}}
@@ -514,40 +518,40 @@ const MealList = ({
 
 							<Sheet.Description className='hidden'>Meal Log</Sheet.Description>
 						</div>
-						<div className='flex items-baseline justify-center'>
-							<div className='flex items-center gap-2'>
+						<div className='flex justify-center items-baseline'>
+							<div className='flex gap-2 items-center'>
 								<NumberFlow
 									value={mealsMacros?.cals ?? 0}
-									className='text-xl font-semibold text-primary ml-2 '
+									className='ml-2 text-xl font-semibold text-primary'
 								/>
 								<span className='text-xs text-primary/50 ml-[1px]'>cals</span>
 							</div>
-							<div className='flex items-center gap-2'>
+							<div className='flex gap-2 items-center'>
 								<NumberFlow
 									value={mealsMacros?.carbs ?? 0}
-									className='text-xl font-semibold text-primary ml-2 '
+									className='ml-2 text-xl font-semibold text-primary'
 								/>
 								<span className='text-xs text-primary/50 ml-[1px]'>carbs</span>
 							</div>
-							<div className='flex items-center gap-2'>
+							<div className='flex gap-2 items-center'>
 								<NumberFlow
 									value={mealsMacros?.protein ?? 0}
-									className='text-xl font-semibold text-primary ml-2 '
+									className='ml-2 text-xl font-semibold text-primary'
 								/>
 								<span className='text-xs text-primary/50 ml-[1px]'>
 									protein
 								</span>
 							</div>
-							<div className='flex items-center gap-2'>
+							<div className='flex gap-2 items-center'>
 								<NumberFlow
 									value={mealsMacros?.fat ?? 0}
-									className='text-xl font-semibold text-primary ml-2 '
+									className='ml-2 text-xl font-semibold text-primary'
 								/>
 								<span className='text-xs text-primary/50 ml-[1px]'>fat</span>
 							</div>
 						</div>
-						<div className='flex items-center gap-2 absolute top-14 right-2'>
-							<Label className='text-xs mt-1'>All Meals</Label>
+						<div className='flex absolute right-2 top-14 gap-2 items-center'>
+							<Label className='mt-1 text-xs'>All Meals</Label>
 							<Checkbox
 								checked={isAllMeals}
 								onCheckedChange={(checked) => {
@@ -556,11 +560,11 @@ const MealList = ({
 							/>
 						</div>
 					</div>
-					<ScrollArea className='pt-4 px-2 h-[calc(95vh-130px)]'>
-						<div className='flex flex-col gap-2 mb-2 '>
+					<ScrollArea className='px-2 pt-4 h-[calc(95vh-130px)]'>
+						<div className='flex flex-col gap-2 mb-2'>
 							<Meal
 								allPlans={refinedPlans}
-                activePlans={activePlans}
+								activePlans={activePlans}
 								date={today}
 								todaysLog={todaysLog}
 								userId={currentUser.id}
@@ -578,7 +582,7 @@ const MealList = ({
 						</div>
 					</ScrollArea>
 				</div>
-				<Sheet.Trigger className='w-full flex justify-center' action='dismiss'>
+				<Sheet.Trigger className='flex justify-center w-full' action='dismiss'>
 					<ChevronDown
 						size={32}
 						strokeWidth={2}
@@ -617,10 +621,10 @@ const MealLog = ({
 	const currentMeal = lastMeal + 1
 
 	return (
-		<div className='flex flex-col gap-0 w-full items-center'>
+		<div className='flex flex-col gap-0 items-center w-full'>
 			<SheetStack.Root>
 				<Sheet.Root license='non-commercial'>
-					<div className='flex flex-col gap-0 items-center justify-start w-full'>
+					<div className='flex flex-col gap-0 justify-start items-center w-full'>
 						<div className={cn('text-lg font-semibold')}>
 							Meal {currentMeal + 1}
 						</div>
@@ -646,7 +650,7 @@ const MealLog = ({
 						</div>
 					</div>
 					<Sheet.Portal>
-						<Sheet.View className='z-[999] h-[100vh] bg-black/50 '>
+						<Sheet.View className='z-[999] h-[100vh] bg-black/50'>
 							<MealList
 								currentMeal={currentMeal}
 								todaysLog={todaysLog}
