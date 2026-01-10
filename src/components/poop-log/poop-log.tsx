@@ -22,9 +22,11 @@ const PoopLog = ({
 }) => {
 	const today = new Date()
 
-  const [timeoutCodeAdd, setTimeoutCodeAdd] = useState<NodeJS.Timeout | null>(null)
-  const [timeoutCodeDelete, setTimeoutCodeDelete] = useState<NodeJS.Timeout | null>(null)
-
+	const [timeoutCodeAdd, setTimeoutCodeAdd] = useState<NodeJS.Timeout | null>(
+		null,
+	)
+	const [timeoutCodeDelete, setTimeoutCodeDelete] =
+		useState<NodeJS.Timeout | null>(null)
 
 	const ctx = api.useUtils()
 
@@ -32,13 +34,12 @@ const PoopLog = ({
 		onMutate: async (newPoopLog) => {
 			await ctx.dailyLog.getAllCurrentUser.cancel()
 
-      if (timeoutCodeAdd) clearTimeout(timeoutCodeAdd)
-      const timeout = setTimeout(() => {
-        ctx.dailyLog.invalidate()
-        setTimeoutCodeAdd(null)
-      }, 2000)
-      setTimeoutCodeAdd(timeout)
-
+			if (timeoutCodeAdd) clearTimeout(timeoutCodeAdd)
+			const timeout = setTimeout(() => {
+				ctx.dailyLog.invalidate()
+				setTimeoutCodeAdd(null)
+			}, 2000)
+			setTimeoutCodeAdd(timeout)
 
 			const previousLog = ctx.dailyLog.getAllUser.getData(userId)
 			if (!previousLog) return
@@ -73,12 +74,12 @@ const PoopLog = ({
 		onMutate: async (poopLog) => {
 			await ctx.dailyLog.getAllCurrentUser.cancel()
 
-      if (timeoutCodeDelete) clearTimeout(timeoutCodeDelete)
-      const timeout = setTimeout(() => {
-        ctx.dailyLog.invalidate()
-        setTimeoutCodeDelete(null)
-      }, 2000)
-      setTimeoutCodeDelete(timeout)
+			if (timeoutCodeDelete) clearTimeout(timeoutCodeDelete)
+			const timeout = setTimeout(() => {
+				ctx.dailyLog.invalidate()
+				setTimeoutCodeDelete(null)
+			}, 2000)
+			setTimeoutCodeDelete(timeout)
 
 			const previousLog = ctx.dailyLog.getAllUser.getData(userId)
 			if (!previousLog) return
@@ -106,22 +107,22 @@ const PoopLog = ({
 		}, 0) ?? 0
 
 	return (
-		<div className='flex flex-col gap-0 w-full items-center'>
-			<div className='w-full text-center font-bold text-lg'>
+		<div className='flex flex-col gap-0 items-center w-full'>
+			<div className='w-full text-lg font-bold text-center'>
 				<NumberFlow value={totalPoop ?? 0} />
 			</div>
-			<div className='grid grid-cols-1 place-items-center gap-2 h-12'>
-				<div className='rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center justify-center active:scale-90 transition-transform cursor-pointer shadow-sm'>
+			<div className='grid grid-cols-1 gap-2 place-items-center h-12'>
+				<div className='flex justify-center items-center w-11 h-11 rounded-full shadow-sm transition-transform cursor-pointer active:scale-90 border-[3px] border-primary/80'>
 					<Toilet
 						className='ml-[1px]'
 						size={28}
 						onClick={() => {
-							// confetti({
-							//   particleCount: 30 * (totalPoop + 1),
-							//   spread: 30 * (totalPoop + 1),
-							//   origin: { x: 0.6, y: 0.7 },
-							//   disableForReducedMotion: true,
-							// })
+							confetti({
+								particleCount: 10,
+								spread: 45,
+								origin: { x: 0.9, y: 0.9 },
+								disableForReducedMotion: true,
+							})
 							addPoopLog({
 								date: today.toDateString(),
 							})
