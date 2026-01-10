@@ -2,10 +2,8 @@
 
 import { cn } from '@/lib/utils'
 import useEmblaCarousel from 'embla-carousel-react'
+import { memo, useMemo } from 'react'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-
-import { DailyLog } from '@/components/daily-log/daily-log'
 import { DailyLogCard } from '@/components/daily-log/daily-log-card'
 
 import { DotButton, useDotButton } from './carousel-dots'
@@ -13,6 +11,8 @@ import { DotButton, useDotButton } from './carousel-dots'
 import '~/styles/embla.css'
 
 import type { GetDailyLogById, GetUserById } from '@/types'
+
+const MemoizedDailyLogCard = memo(DailyLogCard)
 
 const DailyLogCarousel = ({
 	dailyLogs,
@@ -29,11 +29,19 @@ const DailyLogCarousel = ({
 	const { selectedIndex, scrollSnaps, onDotButtonClick } =
 		useDotButton(emblaApi)
 
+	const dayArr = useMemo(() => {
+		const today = new Date()
+		return Array.from({ length: 5 }).map(
+			(_, index) => new Date(today.getTime() - index * 86400000),
+		)
+	}, [])
+
+	const logMap = useMemo(() => {
+		if (!dailyLogs) return new Map<string, GetDailyLogById>()
+		return new Map(dailyLogs.map((log) => [log?.date, log]))
+	}, [dailyLogs])
+
 	if (!dailyLogs) return null
-	const today = new Date()
-	const dayArr = Array.from({ length: 5 }).map(
-		(_, index) => new Date(today.getTime() - index * 86400000),
-	)
 
 	return (
 		<section className='relative embla h-min' dir='rtl'>
@@ -41,12 +49,9 @@ const DailyLogCarousel = ({
 				<div className='flex'>
 					{dayArr.map((day, index) => {
 						const yesterday = new Date(day.getTime() - 86400000)
-						const dailyLog = dailyLogs.find(
-							(dailyLog) => dailyLog?.date === day.toDateString(),
-						)
-						const yesterdayLog = dailyLogs.find(
-							(dailyLog) => dailyLog?.date === yesterday.toDateString(),
-						)
+						const dailyLog = logMap.get(day.toDateString())
+						const yesterdayLog = logMap.get(yesterday.toDateString())
+
 						if (index === 0) {
 							// console.log(yesterdayLog)
 							// console.log(dailyLog)
@@ -61,9 +66,9 @@ const DailyLogCarousel = ({
 									'mb-12',
 								)}
 							>
-								<DailyLogCard
+								<MemoizedDailyLogCard
 									title={
-										day.getTime() === today.getTime()
+										index === 0
 											? 'Today'
 											: day.toLocaleDateString('en-AU', {
 													weekday: 'long',

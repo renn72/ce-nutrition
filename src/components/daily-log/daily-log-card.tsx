@@ -472,8 +472,6 @@ const DailyLogCard = ({
 		},
 	})
 
-	console.log(dailyLog)
-
 	const id = dailyLog?.id || 0
 
 	const content = (
