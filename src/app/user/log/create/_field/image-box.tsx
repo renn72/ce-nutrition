@@ -103,6 +103,13 @@ const ImageTake = ({
 			})
 		}
 	}
+	if (isUploading) {
+		return (
+			<div className='flex relative flex-col gap-4 justify-center items-center px-2 w-full h-56 rounded-md border shadow-md'>
+				<Loader2 size={36} className='animate-spin text-primary/70' />
+			</div>
+		)
+	}
 
 	return (
 		<div className='flex relative flex-col gap-4 justify-between items-center px-2 w-full h-56 rounded-md border shadow-md'>
@@ -122,12 +129,7 @@ const ImageTake = ({
 							<File size={20} className='shrink-0' />
 						</Button>
 					</DialogTrigger>
-					<DialogContent>
-						{isUploading ? (
-							<div className='flex absolute top-0 right-0 left-0 z-50 flex-col justify-center items-center w-full h-full text-white bg-black/50 backdrop-blur-sm'>
-								<Loader2 size={24} className='animate-spin' />
-							</div>
-						) : null}
+					<DialogContent forceMount>
 						<DialogHeader>
 							<DialogTitle>Upload Image File</DialogTitle>
 							<DialogDescription className=''>
@@ -146,6 +148,7 @@ const ImageTake = ({
 							endpoint='imageUploader'
 							onUploadBegin={() => {
 								setIsUploading(true)
+								setIsOpen(false)
 							}}
 							onUploadError={(e) => {
 								setIsUploading(false)
