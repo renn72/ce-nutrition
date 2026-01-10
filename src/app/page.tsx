@@ -34,6 +34,8 @@ import DailyLogCarousel from './_components/dailylog-carousel'
 import { User } from '@/components/auth/user'
 import { Pwa } from '@/components/layout/pwa'
 
+export const dynamic = 'force-dynamic'
+
 const Mobile = ({
 	userId,
 	currentUser,
