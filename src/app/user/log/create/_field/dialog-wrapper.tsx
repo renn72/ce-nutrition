@@ -27,7 +27,7 @@ const DialogWrapper = ({
 	postfix?: string
 	icon?: React.ElementType
 }) => {
-	const change = Number(prevValue) - Number(value)
+	const change = Number(value) - Number(prevValue)
 	const [isOpen, setIsOpen] = useState(false)
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -63,7 +63,7 @@ const DialogWrapper = ({
 									<span className='ml-0.5 text-xs font-normal'>{postfix}</span>
 								)}
 							</span>
-							{change ? (
+							{change && value !== '' ? (
 								<span className='flex items-baseline font-semibold tracking-wider leading-none uppercase text-[10px] text-muted-foreground'>
 									{change === 0 ? null : change < 0 ? (
 										<ArrowDown
