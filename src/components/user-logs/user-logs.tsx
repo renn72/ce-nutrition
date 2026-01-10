@@ -65,6 +65,7 @@ const DailyLogs = ({
 						isAdmin={isAdmin}
 						isLogPage={true}
 						isDanger={isDanger}
+						isCreator={false}
 					/>
 				)
 			})}

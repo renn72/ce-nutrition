@@ -3,7 +3,11 @@
 import { api } from '@/trpc/react'
 import { memo, useMemo } from 'react'
 
-import { cn, getRecipeDetailsFromDailyLog } from '@/lib/utils'
+import {
+	cn,
+	calculateMealMacros,
+	getRecipeDetailsFromDailyLog,
+} from '@/lib/utils'
 import type { GetDailyLogById, GetUserById } from '@/types'
 import {
 	Activity,
@@ -194,69 +198,45 @@ const Log = memo(
 
 		const mealsMacros = useMemo(
 			() =>
-				todaysDailyLog?.dailyMeals
-					.map((meal) => {
-						const { cals, protein, carbs, fat } = getRecipeDetailsFromDailyLog(
-							todaysDailyLog,
-							meal.mealIndex ?? 0,
-						)
+				todaysDailyLog?.dailyMeals.reduce(
+					(acc, meal) => {
+						const macros = calculateMealMacros(meal.ingredients)
 						return {
-							cals: Number(cals),
-							protein: Number(protein),
-							carbs: Number(carbs),
-							fat: Number(fat),
+							cals: acc.cals + macros.cals,
+							protein: acc.protein + macros.protein,
+							carbs: acc.carbs + macros.carbs,
+							fat: acc.fat + macros.fat,
 						}
-					})
-					.reduce(
-						(acc, curr) => {
-							return {
-								cals: acc.cals + curr.cals,
-								protein: acc.protein + curr.protein,
-								carbs: acc.carbs + curr.carbs,
-								fat: acc.fat + curr.fat,
-							}
-						},
-						{
-							cals: 0,
-							protein: 0,
-							carbs: 0,
-							fat: 0,
-						},
-					),
+					},
+					{
+						cals: 0,
+						protein: 0,
+						carbs: 0,
+						fat: 0,
+					},
+				),
 			[todaysDailyLog],
 		)
 
 		const yesterdayMealsMacros = useMemo(
 			() =>
-				yesterdaysDailyLog?.dailyMeals
-					.map((meal) => {
-						const { cals, protein, carbs, fat } = getRecipeDetailsFromDailyLog(
-							yesterdaysDailyLog,
-							meal.mealIndex ?? 0,
-						)
+				yesterdaysDailyLog?.dailyMeals.reduce(
+					(acc, meal) => {
+						const macros = calculateMealMacros(meal.ingredients)
 						return {
-							cals: Number(cals),
-							protein: Number(protein),
-							carbs: Number(carbs),
-							fat: Number(fat),
+							cals: acc.cals + macros.cals,
+							protein: acc.protein + macros.protein,
+							carbs: acc.carbs + macros.carbs,
+							fat: acc.fat + macros.fat,
 						}
-					})
-					.reduce(
-						(acc, curr) => {
-							return {
-								cals: acc.cals + curr.cals,
-								protein: acc.protein + curr.protein,
-								carbs: acc.carbs + curr.carbs,
-								fat: acc.fat + curr.fat,
-							}
-						},
-						{
-							cals: 0,
-							protein: 0,
-							carbs: 0,
-							fat: 0,
-						},
-					),
+					},
+					{
+						cals: 0,
+						protein: 0,
+						carbs: 0,
+						fat: 0,
+					},
+				),
 			[yesterdaysDailyLog],
 		)
 
@@ -506,6 +486,7 @@ const DailyLogCard = ({
 	isAdmin = false,
 	isLogPage = false,
 	isDanger = false,
+	isCreator = false,
 	className,
 }: {
 	dailyLog: GetDailyLogById | undefined
@@ -516,10 +497,10 @@ const DailyLogCard = ({
 	isAdmin?: boolean
 	isLogPage?: boolean
 	isDanger?: boolean
+	isCreator?: boolean
 	className?: string
 }) => {
 	const ctx = api.useUtils()
-	const { data: isCreator } = api.user.isCreator.useQuery()
 	const { mutate: deleteDailyLog } = api.dailyLog.delete.useMutation({
 		onSuccess: () => {
 			ctx.dailyLog.invalidate()
@@ -530,7 +511,7 @@ const DailyLogCard = ({
 
 	const content = (
 		<div className='relative group'>
-			{isAdmin && isCreator?.isCreator && isDanger && (
+			{isAdmin && isCreator && isDanger && (
 				<button
 					onClick={(e) => {
 						e.preventDefault()

@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { api } from '@/trpc/react'
 import useEmblaCarousel from 'embla-carousel-react'
 import { memo, useMemo } from 'react'
 
@@ -24,6 +25,8 @@ const DailyLogCarousel = ({
 	const [emblaRef, emblaApi] = useEmblaCarousel({
 		direction: 'rtl',
 	})
+
+	const { data: isCreator } = api.user.isCreator.useQuery()
 
 	// @ts-ignore
 	const { selectedIndex, scrollSnaps, onDotButtonClick } =
@@ -78,6 +81,7 @@ const DailyLogCarousel = ({
 									yesterdaysDailyLog={yesterdayLog}
 									date={day}
 									currentUser={currentUser}
+									isCreator={isCreator?.isCreator ? true : false}
 									className='pb-16'
 								/>
 							</div>
