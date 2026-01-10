@@ -61,6 +61,7 @@ const Steps = ({
 					fixed={0}
 					scale={50}
 					postfix='steps'
+					isWide={true}
 				/>
 			</div>
 			<DialogClose asChild>
