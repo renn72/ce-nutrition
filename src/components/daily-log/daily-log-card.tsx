@@ -27,7 +27,14 @@ import {
 	Toilet,
 } from 'lucide-react'
 
-import { BreadIcon, DropIcon, FireIcon } from '@phosphor-icons/react'
+import {
+	BreadIcon,
+	DropIcon,
+	FireIcon,
+	PersonSimpleHikeIcon,
+	PersonSimpleTaiChiIcon,
+	PersonSimpleIcon,
+} from '@phosphor-icons/react'
 
 import { Link } from 'next-view-transitions'
 
@@ -153,6 +160,7 @@ const Log = memo(
 		const isColdPlunge = isAdmin || currentUser?.settings?.isColdPlunge
 		const isNotes = isAdmin || currentUser?.settings?.isNotes
 		const isSteps = isAdmin || currentUser?.settings?.isSteps
+		const isPosing = isAdmin || currentUser?.settings?.isPosing
 
 		const isPeriodEnabled = currentUser.settings?.periodStartAt ?? false
 		const isPeriod = todaysDailyLog?.isPeriod ?? false
@@ -379,7 +387,7 @@ const Log = memo(
 								value={formatNumber(todaysDailyLog?.liss, 0)}
 								prevValue={formatNumber(yesterdaysDailyLog?.liss, 0)}
 								suffix='m'
-								icon={PersonStanding}
+								icon={PersonSimpleHikeIcon}
 								accuracy={0}
 							/>
 						)}
@@ -390,7 +398,18 @@ const Log = memo(
 								value={formatNumber(todaysDailyLog?.mobility, 0)}
 								prevValue={formatNumber(yesterdaysDailyLog?.mobility, 0)}
 								suffix='m'
-								icon={Move}
+								icon={PersonSimpleTaiChiIcon}
+								accuracy={0}
+							/>
+						)}
+
+						{isPosing && (
+							<MetricItem
+								label='Posing'
+								value={formatNumber(todaysDailyLog?.posing, 0)}
+								prevValue={formatNumber(yesterdaysDailyLog?.posing, 0)}
+								suffix='m'
+								icon={PersonSimpleIcon}
 								accuracy={0}
 							/>
 						)}

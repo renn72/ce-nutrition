@@ -4,6 +4,8 @@ import { api } from '@/trpc/react'
 
 import { useState } from 'react'
 
+import { BedDouble } from 'lucide-react'
+
 import type { GetDailyLogById } from '@/types'
 
 import { Button } from '@/components/ui/button'
@@ -32,7 +34,7 @@ const Nap = ({
 			: prevLog?.nap
 				? Number(Number(prevLog?.nap).toFixed(0))
 				: 30
-    r = r === 0 ? 30 : r
+		r = r === 0 ? 30 : r
 		return r
 	})
 
@@ -48,6 +50,7 @@ const Nap = ({
 	return (
 		<DialogWrapper
 			title='Nap'
+			icon={BedDouble}
 			value={todaysLog?.nap ?? ''}
 			prevValue={prevLog?.nap ?? ''}
 		>
@@ -55,7 +58,7 @@ const Nap = ({
 				<DialogTitle>Nap</DialogTitle>
 				<DialogDescription>Enter your nap today</DialogDescription>
 			</DialogHeader>
-			<div className='flex justify-center '>
+			<div className='flex justify-center'>
 				<NumberInput
 					value={nap}
 					setValue={setNap}
@@ -65,7 +68,7 @@ const Nap = ({
 				/>
 			</div>
 			<DialogClose asChild>
-				<div className='flex  w-full items-center justify-around'>
+				<div className='flex justify-around items-center w-full'>
 					<Button
 						variant='default'
 						onClick={() => {

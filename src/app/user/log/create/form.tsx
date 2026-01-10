@@ -6,6 +6,8 @@ import type { GetDailyLogById, GetUserById } from '@/types'
 import { CircleParking, Settings } from 'lucide-react'
 import { Link } from 'next-view-transitions'
 
+import { Card, CardContent } from '@/components/ui/card'
+
 import { BloodGlucose } from './_field/blood-glucose'
 import { ColdPlunge } from './_field/cold-plunge'
 import { Hiit } from './_field/hiit'
@@ -151,48 +153,68 @@ const DailyLogForm = ({
 					<Settings size={24} className='cursor-pointer' />
 				</Link>
 			</div>
-			<div className='flex flex-wrap gap-2 justify-around w-full'>
-				<Weight todaysLog={todaysLog} prevLog={prevLog} date={date} />
-				{currentUser?.settings?.isBloodGlucose ? (
-					<BloodGlucose todaysLog={todaysLog} prevLog={prevLog} date={date} />
-				) : null}
-				{currentUser?.settings?.isSleep ? (
-					<Sleep todaysLog={todaysLog} prevLog={prevLog} date={date} />
-				) : null}
-				{currentUser?.settings?.isSleepQuality ? (
-					<SleepQuality todaysLog={todaysLog} prevLog={prevLog} date={date} />
-				) : null}
-				{currentUser?.settings?.isNap ? (
-					<Nap todaysLog={todaysLog} prevLog={prevLog} date={date} />
-				) : null}
-				{currentUser?.settings?.isSteps ? (
-					<Steps todaysLog={todaysLog} prevLog={prevLog} date={date} />
-				) : null}
-				{currentUser?.settings?.isWeightTraining ? (
-					<WeightTraining todaysLog={todaysLog} prevLog={prevLog} date={date} />
-				) : null}
-				{currentUser?.settings?.isHiit ? (
-					<Hiit todaysLog={todaysLog} prevLog={prevLog} date={date} />
-				) : null}
-				{currentUser?.settings?.isLiss ? (
-					<Liss todaysLog={todaysLog} prevLog={prevLog} date={date} />
-				) : null}
-				{currentUser?.settings?.isMobility ? (
-					<Mobility todaysLog={todaysLog} prevLog={prevLog} date={date} />
-				) : null}
-				{currentUser?.settings?.isPosing ? (
-					<Posing todaysLog={todaysLog} prevLog={prevLog} date={date} />
-				) : null}
-				{currentUser?.settings?.isSauna ? (
-					<Sauna todaysLog={todaysLog} prevLog={prevLog} date={date} />
-				) : null}
-				{currentUser?.settings?.isColdPlunge ? (
-					<ColdPlunge todaysLog={todaysLog} prevLog={prevLog} date={date} />
-				) : null}
-				{currentUser?.settings?.isNotes ? (
-					<Notes todaysLog={todaysLog} prevLog={prevLog} date={date} />
-				) : null}
-			</div>
+			<Card
+				className={cn(
+					'overflow-hidden relative gap-0 py-1 w-full h-full shadow-sm transition-all hover:shadow-md border-border/60',
+				)}
+			>
+				<CardContent className='p-2'>
+					<div className='grid grid-cols-2 gap-2 xl:grid-cols-2'>
+						<Weight todaysLog={todaysLog} prevLog={prevLog} date={date} />
+						{currentUser?.settings?.isBloodGlucose ? (
+							<BloodGlucose
+								todaysLog={todaysLog}
+								prevLog={prevLog}
+								date={date}
+							/>
+						) : null}
+						{currentUser?.settings?.isSleep ? (
+							<Sleep todaysLog={todaysLog} prevLog={prevLog} date={date} />
+						) : null}
+						{currentUser?.settings?.isSleepQuality ? (
+							<SleepQuality
+								todaysLog={todaysLog}
+								prevLog={prevLog}
+								date={date}
+							/>
+						) : null}
+						{currentUser?.settings?.isNap ? (
+							<Nap todaysLog={todaysLog} prevLog={prevLog} date={date} />
+						) : null}
+						{currentUser?.settings?.isSteps ? (
+							<Steps todaysLog={todaysLog} prevLog={prevLog} date={date} />
+						) : null}
+						{currentUser?.settings?.isWeightTraining ? (
+							<WeightTraining
+								todaysLog={todaysLog}
+								prevLog={prevLog}
+								date={date}
+							/>
+						) : null}
+						{currentUser?.settings?.isHiit ? (
+							<Hiit todaysLog={todaysLog} prevLog={prevLog} date={date} />
+						) : null}
+						{currentUser?.settings?.isLiss ? (
+							<Liss todaysLog={todaysLog} prevLog={prevLog} date={date} />
+						) : null}
+						{currentUser?.settings?.isMobility ? (
+							<Mobility todaysLog={todaysLog} prevLog={prevLog} date={date} />
+						) : null}
+						{currentUser?.settings?.isPosing ? (
+							<Posing todaysLog={todaysLog} prevLog={prevLog} date={date} />
+						) : null}
+						{currentUser?.settings?.isSauna ? (
+							<Sauna todaysLog={todaysLog} prevLog={prevLog} date={date} />
+						) : null}
+						{currentUser?.settings?.isColdPlunge ? (
+							<ColdPlunge todaysLog={todaysLog} prevLog={prevLog} date={date} />
+						) : null}
+						{currentUser?.settings?.isNotes ? (
+							<Notes todaysLog={todaysLog} prevLog={prevLog} date={date} />
+						) : null}
+					</div>
+				</CardContent>
+			</Card>
 			<div className='grid grid-cols-3 gap-1 mt-2 w-full'>
 				<ImageBox
 					todaysLog={todaysLog}
