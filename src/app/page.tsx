@@ -34,8 +34,6 @@ import DailyLogCarousel from './_components/dailylog-carousel'
 import { User } from '@/components/auth/user'
 import { Pwa } from '@/components/layout/pwa'
 
-export const dynamic = 'force-dynamic'
-
 const Mobile = ({
 	userId,
 	currentUser,
@@ -87,7 +85,7 @@ const Mobile = ({
 	if (dailyLogsLoading) return null
 
 	return (
-		<div className={cn('flex flex-col gap-0 w-full mt-16 items-center mb-16 ')}>
+		<div className={cn('flex flex-col gap-0 w-full mt-16 items-center mb-1 ')}>
 			<MobileHeader isDesktop={false} />
 			<Pwa />
 			<div
