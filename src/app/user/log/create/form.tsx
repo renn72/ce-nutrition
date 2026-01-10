@@ -110,7 +110,7 @@ const DailyLogForm = ({
 					</div>
 				</CardContent>
 			</Card>
-			<div className='grid grid-cols-3 gap-1 mt-2 w-full'>
+			<div className='grid grid-cols-3 gap-1 py-2 px-2 w-full rounded-lg border bg-card'>
 				<ImageBox
 					todaysLog={todaysLog}
 					position='front'

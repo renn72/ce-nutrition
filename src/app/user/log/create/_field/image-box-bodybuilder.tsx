@@ -8,7 +8,8 @@ import Image from 'next/image'
 
 import { UploadButton } from '@/lib/uploadthing'
 import type { GetDailyLogById, GetUserById } from '@/types'
-import { File, ImageIcon, Loader2, XSquare } from 'lucide-react'
+import { File, Loader2, XSquare } from 'lucide-react'
+import { ImageIcon } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 import {
@@ -48,7 +49,7 @@ const ImageTake = ({
 	todaysLog,
 	position,
 	currentUser,
-  isNotifyTrainer,
+	isNotifyTrainer,
 }: {
 	todaysLog: GetDailyLogById
 	position:
@@ -60,7 +61,7 @@ const ImageTake = ({
 		| 'frontVacum'
 		| 'favourite'
 	currentUser: GetUserById
-  isNotifyTrainer: boolean
+	isNotifyTrainer: boolean
 }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [isUploading, setIsUploading] = useState(false)
@@ -75,34 +76,36 @@ const ImageTake = ({
 
 	const onUpdateImage = (url: string) => {
 		if (!todaysLog) return
-    updateImage({
-      date: todaysLog.date,
-      userId: currentUser.id,
-      image: url,
-      name: position,
-      isNotifyTrainer: isNotifyTrainer,
-    })
+		updateImage({
+			date: todaysLog.date,
+			userId: currentUser.id,
+			image: url,
+			name: position,
+			isNotifyTrainer: isNotifyTrainer,
+		})
 	}
 
 	return (
-		<div className='flex gap-4 flex-col w-full items-center justify-between rounded-md shadow-sm border-2 border-dashed border-gray-300 px-2 h-56 relative'>
+		<div className='flex relative flex-col gap-4 justify-between items-center px-2 w-full h-56 rounded-md border shadow-md'>
 			<ImageIcon
-				className='text-muted-foreground absolute top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2'
-				size={64}
-				strokeWidth={1}
+				className='text-muted-foreground/20 absolute top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2'
+				size={80}
+				weight='thin'
 			/>
-			<h2 className='text-center text-base font-semibold'>{title}</h2>
-			<div className='flex gap-4 justify-around w-full mb-1'>
+			<h2 className='mt-4 font-semibold tracking-wider text-center uppercase text-[12px] text-muted-foreground'>
+				{title}
+			</h2>
+			<div className='flex gap-4 justify-around mb-1 w-full'>
 				<Camera onUpload={onUpdateImage} />
 				<Dialog open={isOpen} onOpenChange={setIsOpen}>
 					<DialogTrigger asChild>
-						<Button variant='secondary' className='h-10 w-10'>
+						<Button variant='outline' size='icon' className='rounded-full'>
 							<File size={20} className='shrink-0' />
 						</Button>
 					</DialogTrigger>
 					<DialogContent>
 						{isUploading ? (
-							<div className='absolute top-0 left-0 right-0 z-50 h-full w-full bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center text-white'>
+							<div className='flex absolute top-0 right-0 left-0 z-50 flex-col justify-center items-center w-full h-full text-white bg-black/50 backdrop-blur-sm'>
 								<Loader2 size={24} className='animate-spin' />
 							</div>
 						) : null}
@@ -131,7 +134,7 @@ const ImageTake = ({
 							}}
 							onBeforeUploadBegin={(files) => {
 								setIsUploading(true)
-                return files
+								return files
 							}}
 							onClientUploadComplete={(res) => {
 								console.log('onClientUploadComplete', res)
@@ -167,7 +170,11 @@ const ImageBoxBodyBuilder = ({
 		| 'favourite'
 	currentUser: GetUserById
 }) => {
-  let isNotifyTrainer = currentUser.roles.find((role) => role.name === 'notify-trainer-all-images') ? true : false
+	let isNotifyTrainer = currentUser.roles.find(
+		(role) => role.name === 'notify-trainer-all-images',
+	)
+		? true
+		: false
 	const [isOpen, setIsOpen] = useState(false)
 	const ctx = api.useUtils()
 	const title = titlesMap[position]
@@ -180,18 +187,18 @@ const ImageBoxBodyBuilder = ({
 		})
 
 	const image = currentUser?.images?.find(
-		(image) => image.name === position && image.date === todaysLog?.date
+		(image) => image.name === position && image.date === todaysLog?.date,
 	)?.image
 
 	const onDeleteImage = () => {
 		if (!todaysLog) return
-    updateImage({
-      date: todaysLog.date,
-      userId: currentUser.id,
-      image: '',
-      name: position,
-      isNotifyTrainer: false,
-    })
+		updateImage({
+			date: todaysLog.date,
+			userId: currentUser.id,
+			image: '',
+			name: position,
+			isNotifyTrainer: false,
+		})
 	}
 
 	return (
@@ -201,19 +208,19 @@ const ImageBoxBodyBuilder = ({
 					todaysLog={todaysLog}
 					position={position}
 					currentUser={currentUser}
-          isNotifyTrainer={isNotifyTrainer}
+					isNotifyTrainer={isNotifyTrainer}
 				/>
 			) : (
 				<Dialog open={isOpen} onOpenChange={setIsOpen}>
 					<DialogTrigger asChild>
-						<div className='flex gap-4 flex-col h-56 rounded-md relative '>
+						<div className='flex relative flex-col gap-4 h-56 rounded-md'>
 							<AlertDialog>
 								<AlertDialogTrigger asChild>
 									<div
 										onClick={(e) => {
 											e.stopPropagation()
 										}}
-										className='absolute top-1 right-1 p-[1px] bg-white/20 rounded-sm'
+										className='absolute top-1 right-1 rounded-sm p-[1px] bg-white/20'
 									>
 										<XSquare size={16} strokeWidth={1} className='black' />
 									</div>
@@ -252,17 +259,17 @@ const ImageBoxBodyBuilder = ({
 								alt='img'
 								width={128}
 								height={224}
-								className='object-cover h-full w-full rounded-md'
+								className='object-cover w-full h-full rounded-md'
 							/>
 						</div>
 					</DialogTrigger>
 					<DialogContent
 						onOpenAutoFocus={(e) => e.preventDefault()}
-						className='px-0 py-0 bg-background/10 border-none rounded-md shadow-lg '
+						className='py-0 px-0 rounded-md border-none shadow-lg bg-background/10'
 					>
-              <div className='absolute -top-10 right-1/2 translate-x-1/2 text-white/80 font-bold text-center'>
-                {titlesMap[position]}
-              </div>
+						<div className='absolute -top-10 right-1/2 font-bold text-center translate-x-1/2 text-white/80'>
+							{titlesMap[position]}
+						</div>
 						<DialogHeader className='hidden'>
 							<DialogTitle />
 							<DialogDescription />
@@ -272,7 +279,7 @@ const ImageBoxBodyBuilder = ({
 							alt='img'
 							width={128}
 							height={224}
-							className='object-cover h-full w-full rounded-md'
+							className='object-cover w-full h-full rounded-md'
 						/>
 					</DialogContent>
 				</Dialog>
