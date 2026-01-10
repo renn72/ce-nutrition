@@ -9,6 +9,7 @@ import NumberFlow from '@number-flow/react'
 // @ts-ignore
 import confetti from 'canvas-confetti'
 import { Toilet } from 'lucide-react'
+import { ToiletPaperIcon } from '@phosphor-icons/react/dist/ssr'
 import { toast } from 'sonner'
 
 import { PoopBottomSheet } from './poop-bottom-sheet'
@@ -64,7 +65,7 @@ const PoopLog = ({
 			])
 			return { previousLog }
 		},
-		onError: (err, newPoopLog, context) => {
+		onError: (_err, _newPoopLog, context) => {
 			toast.error('error')
 			ctx.dailyLog.getAllUser.setData(userId, context?.previousLog)
 		},
@@ -112,8 +113,8 @@ const PoopLog = ({
 				<NumberFlow value={totalPoop ?? 0} />
 			</div>
 			<div className='grid grid-cols-1 gap-2 place-items-center h-12'>
-				<div className='flex justify-center items-center w-11 h-11 rounded-full shadow-sm transition-transform cursor-pointer active:scale-90 border-[3px] border-primary/80'>
-					<Toilet
+				<div className='flex justify-center items-center w-11 h-11 rounded-full border shadow-sm transition-transform cursor-pointer active:scale-90 bg-background'>
+					<ToiletPaperIcon
 						className='ml-[1px]'
 						size={28}
 						onClick={() => {

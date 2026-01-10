@@ -14,12 +14,7 @@ import type {
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { Sheet, SheetStack } from '@silk-hq/components'
-import {
-	ChevronDown,
-	LockIcon,
-	Pill,
-	XIcon,
-} from 'lucide-react'
+import { ChevronDown, LockIcon, Pill, XIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -49,6 +44,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { DateSelect } from '@/components/date-select'
 
 import { SuppBottomSheet } from './supp-bottom-sheet'
+import { PillIcon } from '@phosphor-icons/react'
 
 const formSchema = z.object({
 	name: z.string().min(1, { message: 'name is required' }),
@@ -96,7 +92,7 @@ const SuppUserCreate = ({ user }: { user: GetUserById }) => {
 	}
 
 	return (
-		<div className='flex flex-col gap-0 w-full items-center'>
+		<div className='flex flex-col gap-0 items-center w-full'>
 			<Sheet.Root
 				license='non-commercial'
 				presented={isOpen}
@@ -114,18 +110,18 @@ const SuppUserCreate = ({ user }: { user: GetUserById }) => {
 					</div>
 				</Sheet.Trigger>
 				<Sheet.Portal>
-					<Sheet.View className='z-[1000] h-[100vh] bg-black/50 '>
-						<Sheet.Content className='min-h-[200px] max-h-[90vh] h-full rounded-t-3xl bg-background relative'>
+					<Sheet.View className='z-[1000] h-[100vh] bg-black/50'>
+						<Sheet.Content className='relative h-full rounded-t-3xl min-h-[200px] max-h-[90vh] bg-background'>
 							<div className='flex flex-col justify-between h-full'>
-								<div className='flex flex-col '>
+								<div className='flex flex-col'>
 									<div className='flex justify-center pt-1'>
 										<Sheet.Handle
-											className=' w-[50px] h-[6px] border-0 rounded-full bg-primary/20'
+											className='rounded-full border-0 w-[50px] h-[6px] bg-primary/20'
 											action='dismiss'
 										/>
 									</div>
-									<div className='flex justify-center items-center flex-col '>
-										<Sheet.Title className='text-xl mt-[2px] font-semibold'>
+									<div className='flex flex-col justify-center items-center'>
+										<Sheet.Title className='text-xl font-semibold mt-[2px]'>
 											Supplement
 										</Sheet.Title>
 										<Sheet.Description className='hidden'>
@@ -133,7 +129,7 @@ const SuppUserCreate = ({ user }: { user: GetUserById }) => {
 										</Sheet.Description>
 										<Form {...form}>
 											<form onSubmit={form.handleSubmit(onSubmit)}>
-												<div className='flex flex-col gap-4 w-full px-8'>
+												<div className='flex flex-col gap-4 px-8 w-full'>
 													<FormField
 														control={form.control}
 														name='name'
@@ -201,7 +197,7 @@ const SuppUserCreate = ({ user }: { user: GetUserById }) => {
 																		size='sm'
 																		variant='outline'
 																		type='single'
-																		className='w-full justify-start'
+																		className='justify-start w-full'
 																		value={field.value}
 																		onValueChange={(value) => {
 																			field.onChange(value)
@@ -255,7 +251,7 @@ const SuppUserCreate = ({ user }: { user: GetUserById }) => {
 									</div>
 								</div>
 								<Sheet.Trigger
-									className='w-full flex justify-center'
+									className='flex justify-center w-full'
 									action='dismiss'
 								>
 									<ChevronDown
@@ -285,7 +281,7 @@ const SuppUser = ({ user }: { user: GetUserById }) => {
 		})
 
 	return (
-		<div className='flex flex-col gap-0 w-full items-center'>
+		<div className='flex flex-col gap-0 items-center w-full'>
 			<Sheet.Root
 				license='non-commercial'
 				presented={isOpen}
@@ -303,18 +299,18 @@ const SuppUser = ({ user }: { user: GetUserById }) => {
 					</div>
 				</Sheet.Trigger>
 				<Sheet.Portal>
-					<Sheet.View className='z-[1000] h-[100vh] bg-black/50 '>
-						<Sheet.Content className='min-h-[200px] max-h-[90vh] h-full rounded-t-3xl bg-background relative'>
+					<Sheet.View className='z-[1000] h-[100vh] bg-black/50'>
+						<Sheet.Content className='relative h-full rounded-t-3xl min-h-[200px] max-h-[90vh] bg-background'>
 							<div className='flex flex-col justify-between h-full'>
-								<div className='flex flex-col '>
+								<div className='flex flex-col'>
 									<div className='flex justify-center pt-1'>
 										<Sheet.Handle
-											className=' w-[50px] h-[6px] border-0 rounded-full bg-primary/20'
+											className='rounded-full border-0 w-[50px] h-[6px] bg-primary/20'
 											action='dismiss'
 										/>
 									</div>
-									<div className='flex justify-center items-center flex-col '>
-										<Sheet.Title className='text-xl mt-[2px] font-semibold'>
+									<div className='flex flex-col justify-center items-center'>
+										<Sheet.Title className='text-xl font-semibold mt-[2px]'>
 											Your Supplement
 										</Sheet.Title>
 										<Sheet.Description className='hidden'>
@@ -322,7 +318,7 @@ const SuppUser = ({ user }: { user: GetUserById }) => {
 										</Sheet.Description>
 									</div>
 								</div>
-								<ScrollArea className='pt-4 px-2 h-[calc(95vh-130px)]'>
+								<ScrollArea className='px-2 pt-4 h-[calc(95vh-130px)]'>
 									<div className='flex flex-col'>
 										{user.supplementStacks.map((stack) => {
 											const time = stack.time
@@ -344,21 +340,21 @@ const SuppUser = ({ user }: { user: GetUserById }) => {
 														return (
 															<div
 																key={supp.id}
-																className='bg-secondary rounded-full bg-secondary grid grid-cols-6 my-2 mx-2 p-2'
+																className='grid grid-cols-6 p-2 my-2 mx-2 rounded-full bg-secondary'
 															>
-																<div className='text-sm truncate col-span-3 capitalize'>
+																<div className='col-span-3 text-sm capitalize truncate'>
 																	{supp.supplement?.name}
 																</div>
-																<div className='text-sm truncate justify-self-end'>
+																<div className='justify-self-end text-sm truncate'>
 																	{supp.supplement?.serveSize}
 																</div>
-																<div className='text-sm truncate pl-2'>
+																<div className='pl-2 text-sm truncate'>
 																	{supp.supplement?.serveUnit}
 																</div>
 																<XIcon
 																	size={16}
 																	strokeWidth={3}
-																	className='text-red-500 justify-self-end'
+																	className='justify-self-end text-red-500'
 																	onClick={() => {
 																		deleteSuppFromUser({
 																			suppId: supp.supplementId,
@@ -377,7 +373,7 @@ const SuppUser = ({ user }: { user: GetUserById }) => {
 									</div>
 								</ScrollArea>
 								<Sheet.Trigger
-									className='w-full flex justify-center'
+									className='flex justify-center w-full'
 									action='dismiss'
 								>
 									<ChevronDown
@@ -463,7 +459,7 @@ const Supp = ({
 		} else {
 			logSupplement({
 				suppId: supp.supplementId,
-        suppName: supp.supplement?.name || '',
+				suppName: supp.supplement?.name || '',
 				date: date.toDateString(),
 				time: time,
 				amount: supp.size,
@@ -475,8 +471,7 @@ const Supp = ({
 
 	const isPrivateAndUser =
 		supp?.supplement?.isPrivate && supp?.supplement?.isUserCreated
-	const isUser =
-		supp?.supplement?.isUserCreated
+	const isUser = supp?.supplement?.isUserCreated
 
 	if (!supp) return null
 	return (
@@ -484,8 +479,8 @@ const Supp = ({
 			className={cn(
 				' px-1 py-1 rounded-full border active:shadow-none active:inset-shadow-sm text-sm',
 				isTaken ? 'inset-shadow-sm bg-backound' : 'bg-background shadow-md',
-        isUser ? 'bg-yellow-300/50' : '',
-        isUser && isTaken ? 'bg-yellow-400/60' : '',
+				isUser ? 'bg-yellow-300/50' : '',
+				isUser && isTaken ? 'bg-yellow-400/60' : '',
 			)}
 			key={supp.id}
 			onClick={handleClick}
@@ -496,13 +491,13 @@ const Supp = ({
 					isTaken ? 'bg-accent' : 'bg-card',
 				)}
 			>
-				<div className='col-span-4 truncate capitalize'>
+				<div className='col-span-4 capitalize truncate'>
 					{supp.supplement?.name}
 				</div>
 				<div className='place-self-end'>{supp.size}</div>
 				<div className='place-self-start truncate'>{supp.unit}</div>
 				{isTaken && takenSupplement ? (
-					<div className='absolute -bottom-1 right-1/2 translate-x-1/2 opacity-80 text-[0.6rem]'>
+					<div className='absolute -bottom-1 right-1/2 opacity-80 translate-x-1/2 text-[0.6rem]'>
 						{new Date(takenSupplement.createdAt).toLocaleTimeString('en-AU', {
 							hour: '2-digit', // 'numeric', '2-digit'
 							minute: '2-digit', // 'numeric', '2-digit'
@@ -514,7 +509,7 @@ const Supp = ({
 				{isPrivateAndUser && (
 					<LockIcon
 						size={10}
-						className='text-red-500 absolute right-2 top-1/2 -translate-y-1/2'
+						className='absolute right-2 top-1/2 text-red-500 -translate-y-1/2'
 					/>
 				)}
 			</div>
@@ -534,12 +529,12 @@ const SuppTimes = ({
 	todaysDailyLog: GetDailyLogById | null | undefined
 }) => {
 	return (
-		<Card className='w-full px-0 py-2 gap-2'>
+		<Card className='gap-2 py-2 px-0 w-full'>
 			<CardHeader className='py-0'>
 				<CardTitle className='capitalize'>{time}</CardTitle>
 				<CardDescription>Supplements</CardDescription>
 			</CardHeader>
-			<CardContent className='px-4 py-0'>
+			<CardContent className='py-0 px-4'>
 				<div className={cn('flex flex-col gap-1')}>
 					{user.supplementStacks
 						.find((stack) => stack.time === time)
@@ -581,14 +576,14 @@ const SuppLog = ({
 		.filter((item, pos, self) => self.indexOf(item) === pos)
 
 	return (
-		<div className='flex flex-col gap-0 w-full items-center'>
+		<div className='flex flex-col gap-0 items-center w-full'>
 			<SheetStack.Root>
 				<Sheet.Root license='non-commercial'>
-					<div className='flex flex-col gap-0 items-center justify-start w-full'>
+					<div className='flex flex-col gap-0 justify-start items-center w-full'>
 						<div className={cn('text-lg font-semibold opacity-0')}>0</div>
 						<div
 							className={cn(
-								'rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center',
+								'rounded-full border w-11 h-11 flex items-center bg-background',
 								'justify-center active:scale-75 transition-transform cursor-pointer',
 							)}
 						>
@@ -597,7 +592,7 @@ const SuppLog = ({
 									setDay(new Date())
 								}}
 							>
-								<Pill
+								<PillIcon
 									size={28}
 									className={cn(
 										'text-primary/80 hover:text-primary active:scale-90 transition-transform cursor-pointer',
@@ -607,20 +602,20 @@ const SuppLog = ({
 						</div>
 					</div>
 					<Sheet.Portal>
-						<Sheet.View className='z-[999] h-[100vh] bg-black/50 '>
-							<Sheet.Content className='min-h-[200px] max-h-[95vh] h-full rounded-t-3xl bg-background relative'>
+						<Sheet.View className='z-[999] h-[100vh] bg-black/50'>
+							<Sheet.Content className='relative h-full rounded-t-3xl min-h-[200px] max-h-[95vh] bg-background'>
 								<div className='flex flex-col justify-between h-full'>
-									<div className='flex flex-col '>
+									<div className='flex flex-col'>
 										<div className='flex justify-center pt-1'>
 											<Sheet.Handle
-												className=' w-[50px] h-[6px] border-0 rounded-full bg-primary/20'
+												className='rounded-full border-0 w-[50px] h-[6px] bg-primary/20'
 												action='dismiss'
 											/>
 										</div>
-										<div className='flex gap-0 pt-2 flex-col border-b-[1px] border-primary pb-2 relative font-medium'>
+										<div className='flex relative flex-col gap-0 pt-2 pb-2 font-medium border-b-[1px] border-primary'>
 											<DateSelect today={day} setDay={setDay} />
-											<div className='flex justify-center items-center gap-6 mt-1'>
-												<Sheet.Title className='text-xl mt-[2px] font-semibold'>
+											<div className='flex gap-6 justify-center items-center mt-1'>
+												<Sheet.Title className='text-xl font-semibold mt-[2px]'>
 													Supps
 												</Sheet.Title>
 												<Sheet.Description className='hidden'>
@@ -628,7 +623,7 @@ const SuppLog = ({
 												</Sheet.Description>
 											</div>
 										</div>
-										<ScrollArea className='pt-4 px-2 h-[calc(95vh-130px)]'>
+										<ScrollArea className='px-2 pt-4 h-[calc(95vh-130px)]'>
 											<div className='flex flex-col gap-2'>
 												{suppTimes?.map((time) => {
 													return time && user ? (
@@ -646,7 +641,7 @@ const SuppLog = ({
 										</ScrollArea>
 									</div>
 									<Sheet.Trigger
-										className='w-full flex justify-center'
+										className='flex justify-center w-full'
 										action='dismiss'
 									>
 										<ChevronDown

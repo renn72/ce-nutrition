@@ -26,6 +26,7 @@ import {
 	ChevronDown,
 	Salad,
 } from 'lucide-react'
+import { BowlSteamIcon } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -630,7 +631,7 @@ const MealLog = ({
 						</div>
 						<div
 							className={cn(
-								'rounded-full border-[3px] border-primary/80 w-11 h-11 flex items-center',
+								'rounded-full border w-11 h-11 flex items-center bg-background',
 								'justify-center active:scale-75 transition-transform cursor-pointer',
 							)}
 						>
@@ -640,8 +641,9 @@ const MealLog = ({
 								}}
 								disabled={isNotActivePlan}
 							>
-								<Salad
+								<BowlSteamIcon
 									size={28}
+									strokeWidth={1}
 									className={cn(
 										'text-primary/80 hover:text-primary active:scale-90 transition-transform cursor-pointer',
 									)}
