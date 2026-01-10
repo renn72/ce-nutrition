@@ -291,7 +291,7 @@ const Log = memo(
 								label='Nap'
 								value={formatNumber(todaysDailyLog?.nap, 1)}
 								prevValue={formatNumber(yesterdaysDailyLog?.nap, 1)}
-								suffix='h'
+								suffix='min'
 								icon={BedDouble}
 							/>
 						)}
