@@ -79,7 +79,11 @@ const MetricItem = memo(
 			if (
 				label.toLowerCase() !== 'weight' &&
 				label.toLowerCase() !== 'bm' &&
-				label.toLowerCase() !== 'water'
+				label.toLowerCase() !== 'water' &&
+				label.toLowerCase() !== 'calories' &&
+				label.toLowerCase() !== 'carbs' &&
+				label.toLowerCase() !== 'protein' &&
+				label.toLowerCase() !== 'fat'
 			)
 				return null
 		}
@@ -195,6 +199,8 @@ const Log = memo(
 				),
 			[yesterdaysDailyLog?.waterLogs],
 		)
+
+		console.log(todaysDailyLog)
 
 		const mealsMacros = useMemo(
 			() =>

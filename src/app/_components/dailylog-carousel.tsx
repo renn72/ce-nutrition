@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils'
 import { api } from '@/trpc/react'
 import useEmblaCarousel from 'embla-carousel-react'
-import { memo, useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { DailyLogCard } from '@/components/daily-log/daily-log-card'
 
@@ -12,8 +12,6 @@ import { DotButton, useDotButton } from './carousel-dots'
 import '~/styles/embla.css'
 
 import type { GetDailyLogById, GetUserById } from '@/types'
-
-const MemoizedDailyLogCard = memo(DailyLogCard)
 
 const DailyLogCarousel = ({
 	dailyLogs,
@@ -53,14 +51,14 @@ const DailyLogCarousel = ({
 	if (!dailyLogs) return null
 	return (
 		<>
-			<MemoizedDailyLogCard
+			<DailyLogCard
 				title={'Today'}
 				dailyLog={todaysDailyLog}
 				yesterdaysDailyLog={yesterdaysDailyLog}
 				date={today}
 				currentUser={currentUser}
-				isCreator={isCreator?.isCreator ? true : false}
-				className='mb-20'
+				isCreator={false}
+				className='pb-10 mb-20'
 			/>
 		</>
 	)
