@@ -1,22 +1,22 @@
 import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
-  return {
-    name: 'CE Nutrition',
-    short_name: 'CEN',
-    description: 'Your Nutrition',
-    start_url: '/',
-    scope: '/',
-    display: 'standalone',
-    prefer_related_applications: false,
-    background_color: '#ffffff',
-    theme_color: '#000000',
-    icons: [
-      {
-        src: '/ce.png',
-        sizes: '192x192',
-        type: 'image/png',
-      },
-    ],
-  }
+	return {
+		name: 'CE Nutrition',
+		short_name: 'CEN',
+		description: 'Your Nutrition',
+		start_url: '/',
+		scope: '/',
+		display: 'standalone',
+		prefer_related_applications: false,
+		background_color: '#ffffff',
+		theme_color: '#000000',
+		icons: [
+			{
+				src: '/ce.png',
+				sizes: '192x192',
+				type: 'image/png',
+			},
+		],
+	}
 }

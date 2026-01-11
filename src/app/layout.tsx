@@ -1,6 +1,6 @@
 import { TRPCReactProvider } from '@/trpc/react'
 
-import type {  Metadata } from 'next'
+import type { Metadata } from 'next'
 
 import { epilogue } from '@/lib/font'
 
@@ -20,59 +20,58 @@ import '../styles/globals.css'
 import { Disclaimers } from '@/components/disclamier/disclamiers'
 
 export const metadata: Metadata = {
-  title: 'CE Nutrition',
+	title: 'CE Nutrition',
 
-  description: 'CE Nutrition',
-  icons: [{ rel: 'icon', url: '/favicon.ico' }],
+	description: 'CE Nutrition',
+	icons: [{ rel: 'icon', url: '/favicon.ico' }],
 }
-
 
 export const dynamic = 'force-dynamic'
 
 export default async function RootLayout({
-  children,
+	children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const session = await auth()
+	const session = await auth()
 
-  return (
-    <ViewTransitions>
-      <html
-        lang='en'
-        className={`${epilogue.className} relative`}
-        suppressHydrationWarning
-      >
-        <body>
-          <ThemeProvider
-            attribute='class'
-            defaultTheme='light'
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Providers>
-              <NextSSRPlugin
-                routerConfig={extractRouterConfig(ourFileRouter)}
-              />
-              <TRPCReactProvider>
-                {!session?.user?.id ? (
-                  <div className='flex min-h-screen flex-col items-center justify-center'>
-                    <div className='flex flex-col items-center justify-center'>
-                      <h2 className='text-3xl font-bold'>CE Nutrition</h2>
-                      <h3 className='text-xl font-bold'>Sign in</h3>
-                      <SignIn />
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    {children}
-                    <Disclaimers />
-                  </>
-                )}
-                <Toaster />
-              </TRPCReactProvider>
-            </Providers>
-          </ThemeProvider>
-        </body>
-      </html>
-    </ViewTransitions>
-  )
+	return (
+		<ViewTransitions>
+			<html
+				lang='en'
+				className={`${epilogue.className} relative`}
+				suppressHydrationWarning
+			>
+				<body>
+					<ThemeProvider
+						attribute='class'
+						defaultTheme='light'
+						enableSystem
+						disableTransitionOnChange
+					>
+						<Providers>
+							<NextSSRPlugin
+								routerConfig={extractRouterConfig(ourFileRouter)}
+							/>
+							<TRPCReactProvider>
+								{!session?.user?.id ? (
+									<div className='flex flex-col justify-center items-center min-h-screen'>
+										<div className='flex flex-col justify-center items-center'>
+											<h2 className='text-3xl font-bold'>CE Nutrition</h2>
+											<h3 className='text-xl font-bold'>Sign in</h3>
+											<SignIn />
+										</div>
+									</div>
+								) : (
+									<>
+										{children}
+										<Disclaimers />
+									</>
+								)}
+								<Toaster />
+							</TRPCReactProvider>
+						</Providers>
+					</ThemeProvider>
+				</body>
+			</html>
+		</ViewTransitions>
+	)
 }

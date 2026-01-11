@@ -2,7 +2,7 @@
 
 import { api } from '@/trpc/react'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { cn } from '@/lib/utils'
 import type { GetUserById } from '@/types'
@@ -1177,8 +1177,61 @@ const PeriodOvulation = ({ currentUser }: { currentUser: GetUserById }) => {
 	)
 }
 
+interface BeforeInstallPromptEvent extends Event {
+	readonly platforms: Array<string>
+	readonly userChoice: Promise<{
+		outcome: 'accepted' | 'dismissed'
+		platform: string
+	}>
+	prompt(): Promise<void>
+}
+
 const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
-	console.log('currentUser', currentUser)
+	const [deferredPrompt, setDeferredPrompt] =
+		useState<BeforeInstallPromptEvent | null>(null)
+
+	const onClickInstall = async () => {
+		console.log('Install button clicked.', deferredPrompt)
+		if (deferredPrompt) {
+			// Hide the button immediately after click
+			// Show the browser's install prompt
+			deferredPrompt.prompt()
+			// Wait for the user to respond to the prompt
+			const { outcome } = await deferredPrompt.userChoice
+			console.log(`User response to PWA install prompt: ${outcome}`)
+			// The prompt can only be used once, so clear the reference
+			setDeferredPrompt(null)
+			// If the user dismisses it, you might want to show the button again or log
+			if (outcome === 'dismissed') {
+				console.log('User dismissed the PWA installation.')
+			}
+		}
+	}
+
+	useEffect(() => {
+		const handleBeforeInstallPrompt = (e: Event) => {
+			// e.preventDefault()
+			setDeferredPrompt(e as BeforeInstallPromptEvent)
+			console.log('setShowInstallButton true')
+		}
+
+		const handleAppInstalled = () => {
+			setDeferredPrompt(null)
+			console.log('PWA was successfully installed!')
+		}
+
+		window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+		window.addEventListener('appinstalled', handleAppInstalled)
+
+		return () => {
+			window.removeEventListener(
+				'beforeinstallprompt',
+				handleBeforeInstallPrompt,
+			)
+			window.removeEventListener('appinstalled', handleAppInstalled)
+		}
+	}, []) // Empty dependency array means this effect runs once after the initial render
+
 	return (
 		<div className='flex flex-col gap-4 px-2 w-full'>
 			<div className='text-lg font-bold'>Settings</div>
@@ -1214,6 +1267,12 @@ const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
 				<BloodGlucose currentUser={currentUser} />
 				<Posing currentUser={currentUser} />
 				<Notes currentUser={currentUser} />
+			</div>
+			<div className='flex flex-col gap-2 p-4 w-full rounded-lg border'>
+				<h2 className='text-sm font-semibold'>Install to Home Screen</h2>
+				<Button onClick={onClickInstall} className='w-full' variant='outline'>
+					Install
+				</Button>
 			</div>
 		</div>
 	)
