@@ -44,7 +44,26 @@ const DailyLogCarousel = ({
 		return new Map(dailyLogs.map((log) => [log?.date, log]))
 	}, [dailyLogs])
 
+	const today = new Date()
+	const yesterday = new Date(today.getTime() - 86400000)
+
+	const todaysDailyLog = logMap.get(today.toDateString())
+	const yesterdaysDailyLog = logMap.get(yesterday.toDateString())
+
 	if (!dailyLogs) return null
+	return (
+		<>
+			<MemoizedDailyLogCard
+				title={'Today'}
+				dailyLog={todaysDailyLog}
+				yesterdaysDailyLog={yesterdaysDailyLog}
+				date={today}
+				currentUser={currentUser}
+				isCreator={isCreator?.isCreator ? true : false}
+				className='mb-20'
+			/>
+		</>
+	)
 
 	return (
 		<section className='relative embla h-min' dir='rtl'>
