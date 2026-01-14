@@ -236,8 +236,9 @@ function VirtualizedCombobox({
 				onFocusOutside={(e) => {
 					e.preventDefault()
 				}}
-				className='p-0 h-[300px] z-[2010]'
-				style={{ width: width }}
+				side='bottom'
+				sideOffset={-100}
+				className='p-0 w-screen h-[300px] z-[2010] border-primary/60'
 			>
 				<VirtualizedCommand
 					height={height}
