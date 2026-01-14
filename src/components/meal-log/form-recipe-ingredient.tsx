@@ -85,11 +85,11 @@ const FormRecipeIngredient = ({
 					control={form.control}
 					name={`ingredients.${index}.ingredientId`}
 					render={({ field }) => (
-						<FormItem className='grid grid-cols-4 gap-2 items-center w-full lg:flex lg:flex-col lg:gap-0'>
-							<FormLabel className='block mt-2 lg:hidden text-muted-foreground'>
+						<FormItem className='grid grid-cols-5 gap-2 items-center w-full lg:flex lg:flex-col lg:gap-0'>
+							<FormLabel className='block mt-2 tracking-tighter lg:hidden text-muted-foreground'>
 								Ingredient
 							</FormLabel>
-							<div className='flex col-span-3 gap-2 items-center w-full lg:w-content'>
+							<div className='flex col-span-4 gap-2 items-center w-full lg:w-content'>
 								<VirtualizedCombobox
 									options={allIngredients
 										?.sort((a, b) => {
@@ -141,11 +141,11 @@ const FormRecipeIngredient = ({
 					control={form.control}
 					name={`ingredients.${index}.serveSize`}
 					render={({ field }) => (
-						<FormItem className='grid relative grid-cols-4 gap-2 justify-start items-center w-full lg:flex'>
+						<FormItem className='grid relative grid-cols-5 gap-2 justify-start items-center w-full lg:flex'>
 							<FormLabel className='block mt-2 lg:hidden text-muted-foreground'>
 								Size
 							</FormLabel>
-							<FormControl className='col-span-3'>
+							<FormControl className='col-span-4'>
 								<NumberInputForm
 									placeholder='Serve Size'
 									value={field.value}
