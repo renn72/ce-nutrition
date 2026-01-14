@@ -75,37 +75,41 @@ const FormRecipeIngredient = ({
 
 	const serveSize = form.watch(`ingredients.${index}.serveSize`)
 
+	console.log({ serveSize, selected })
+
 	return (
 		<div
 			key={index}
-			className='grid grid-cols-4 lg:grid-cols-15 w-full lg:divide-x divide-border relative'
+			className='grid relative grid-cols-4 w-full lg:divide-x divide-border lg:grid-cols-15'
 		>
 			<GridWrapper className='col-span-4'>
 				<FormField
 					control={form.control}
 					name={`ingredients.${index}.ingredientId`}
 					render={({ field }) => (
-						<FormItem className='grid grid-cols-4 lg:flex lg:flex-col w-full items-center gap-2 lg:gap-0'>
-							<FormLabel className='block lg:hidden mt-2 text-muted-foreground'>
+						<FormItem className='grid grid-cols-4 gap-2 items-center w-full lg:flex lg:flex-col lg:gap-0'>
+							<FormLabel className='block mt-2 lg:hidden text-muted-foreground'>
 								Ingredient
 							</FormLabel>
-							<div className='flex gap-2 items-center w-full lg:w-content col-span-3'>
+							<div className='flex col-span-3 gap-2 items-center w-full lg:w-content'>
 								<VirtualizedCombobox
 									options={allIngredients
-                    ?.sort((a, b) => {
-                      if (a.favouriteAt) return -1
-                      if (b.favouriteAt) return 1
-                      return 0
-                    })
-                    ?.map((i) => {
-										return {
-											value: i.id.toString(),
-											label: i.name ?? '',
-										}
-									})}
+										?.sort((a, b) => {
+											if (a.favouriteAt) return -1
+											if (b.favouriteAt) return 1
+											return 0
+										})
+										?.map((i) => {
+											return {
+												value: i.id.toString(),
+												label: i.name ?? '',
+											}
+										})}
 									selectedOption={field.value}
 									onSelectOption={(value) => {
-                    setSelected(allIngredients?.find((i) => i.id === Number(value)))
+										setSelected(
+											allIngredients?.find((i) => i.id === Number(value)),
+										)
 										field.onChange(value)
 										form.setValue(
 											`ingredients.${index}.serveSize`,
@@ -134,13 +138,13 @@ const FormRecipeIngredient = ({
 					)}
 				/>
 			</GridWrapper>
-			<GridWrapper className='col-span-4 lg:col-span-2 '>
+			<GridWrapper className='col-span-4 lg:col-span-2'>
 				<FormField
 					control={form.control}
 					name={`ingredients.${index}.serveSize`}
 					render={({ field }) => (
-						<FormItem className='grid grid-cols-4 lg:flex items-center justify-start gap-2 w-full relative'>
-							<FormLabel className='block lg:hidden mt-2 text-muted-foreground'>
+						<FormItem className='grid relative grid-cols-4 gap-2 justify-start items-center w-full lg:flex'>
+							<FormLabel className='block mt-2 lg:hidden text-muted-foreground'>
 								Size
 							</FormLabel>
 							<FormControl className='col-span-3'>
@@ -152,7 +156,7 @@ const FormRecipeIngredient = ({
 								/>
 							</FormControl>
 							<FormMessage />
-							<div className='absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pb-1'>
+							<div className='absolute right-3 top-1/2 pb-1 text-xs -translate-y-1/2 text-muted-foreground'>
 								{selected?.serveUnit}
 							</div>
 						</FormItem>
@@ -160,20 +164,20 @@ const FormRecipeIngredient = ({
 				/>
 			</GridWrapper>
 			<div className='col-span-4 px-2 mt-2'>
-				<div className='grid grid-cols-4 w-full border divide-x divide-border col-span-4 text-muted-foreground text-sm'>
-					<div className='text-center py-1'>Cals</div>
-					<div className='text-center py-1'>Protein</div>
-					<div className='text-center py-1'>Carbs</div>
-					<div className='text-center py-1'>Fat</div>
+				<div className='grid grid-cols-4 col-span-4 w-full text-sm border divide-x divide-border text-muted-foreground'>
+					<div className='py-1 text-center'>Cals</div>
+					<div className='py-1 text-center'>Protein</div>
+					<div className='py-1 text-center'>Carbs</div>
+					<div className='py-1 text-center'>Fat</div>
 				</div>
 			</div>
 			<div className='col-span-4 px-2 mb-1'>
 				{selected && (
-					<div className='grid grid-cols-4 w-full border-l border-r border-b divide-x divide-border'>
+					<div className='grid grid-cols-4 w-full border-r border-b border-l divide-x divide-border'>
 						<GridWrapper className={cn('text-sm')}>
 							{selected &&
 								(
-									Number(selected.caloriesWFibre) *
+									Number(selected.caloriesWOFibre) *
 									(Number(serveSize) / Number(selected.serveSize))
 								).toFixed(1)}
 						</GridWrapper>
@@ -201,7 +205,7 @@ const FormRecipeIngredient = ({
 					</div>
 				)}
 			</div>
-			<GridWrapper className='col-span-4 lg:col-span-1 pb-1'>
+			<GridWrapper className='col-span-4 pb-1 lg:col-span-1'>
 				<Badge
 					variant='destructive'
 					className='active:scale-90'

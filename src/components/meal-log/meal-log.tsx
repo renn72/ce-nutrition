@@ -122,8 +122,6 @@ const Meal = ({
 		(recipe) => recipe?.id === Number(selectValue),
 	)
 
-	console.log('selectValue', selectValue)
-
 	const selectedRecipeMacros = getRecipeDetailsFromDailyLog(todaysLog, index)
 
 	return (
@@ -241,7 +239,6 @@ const Meal = ({
 
 							const activePlan = activePlans.find((p) => p?.id === plan.id)
 							if (!activePlan) return null
-							console.log({ activePlan })
 
 							const { cals, protein, carbs, fat } = activePlan.userMeals.reduce(
 								(acc, _curr, i) => {
@@ -429,8 +426,6 @@ const MealList = ({
 	const selectedPlans = refinedPlans.filter((plan) =>
 		selectedPlansId.includes(plan.id.toString()),
 	)
-
-	console.log({ selectedPlans })
 
 	const calories = selectedPlans.reduce((acc, curr) => {
 		let cals = selectedPlans?.[0]?.userMeals?.[currentMeal]?.targetCalories || 0

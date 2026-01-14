@@ -66,7 +66,10 @@ const VirtualizedCommand = ({
 		setIsKeyboardNavActive(false)
 		setFilteredOptions(
 			options.filter((option) =>
-				option.label.toLowerCase().replace(',', '').includes(search.toLowerCase() ?? []),
+				option.label
+					.toLowerCase()
+					.replace(',', '')
+					.includes(search.toLowerCase() ?? []),
 			),
 		)
 	}
@@ -131,7 +134,7 @@ const VirtualizedCommand = ({
 					height: height,
 					width: '100%',
 					overflow: 'auto',
-          zIndex: 1010,
+					zIndex: 1010,
 				}}
 				onMouseDown={() => setIsKeyboardNavActive(false)}
 				onMouseMove={() => setIsKeyboardNavActive(false)}
@@ -158,7 +161,11 @@ const VirtualizedCommand = ({
 										'aria-selected:bg-transparent aria-selected:text-primary',
 								)}
 								style={{
-                  height: (filteredOptions[virtualOption.index]?.value?.length ?? 0) > 90 ? `${virtualOption.size}px` : `${virtualOption.size}px` ,
+									height:
+										(filteredOptions[virtualOption.index]?.value?.length ?? 0) >
+										90
+											? `${virtualOption.size}px`
+											: `${virtualOption.size}px`,
 									transform: `translateY(${virtualOption.start}px)`,
 								}}
 								value={filteredOptions[virtualOption.index].value}
@@ -192,17 +199,17 @@ interface VirtualizedComboboxProps {
 	searchPlaceholder?: string
 	width?: string
 	height?: string
-  selectedOption: string
-  onSelectOption: (option: string) => void
+	selectedOption: string
+	onSelectOption: (option: string) => void
 }
 
 function VirtualizedCombobox({
 	options,
 	searchPlaceholder = 'Search items...',
-	width = '400px',
+	width = '350px',
 	height = '400px',
-  selectedOption,
-  onSelectOption,
+	selectedOption,
+	onSelectOption,
 }: VirtualizedComboboxProps) {
 	const [open, setOpen] = React.useState(false)
 
@@ -212,33 +219,33 @@ function VirtualizedCombobox({
 				<Button
 					variant='outline'
 					aria-expanded={open}
-					className='justify-between flex truncate'
+					className='flex justify-between truncate'
 					style={{
 						width: width,
 					}}
 				>
-          <span className='truncate'>
-					{selectedOption
-						? options.find((option) => option.value === selectedOption)?.label
-						: searchPlaceholder}
-            </span>
-					<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+					<span className='truncate'>
+						{selectedOption
+							? options.find((option) => option.value === selectedOption)?.label
+							: searchPlaceholder}
+					</span>
+					<ChevronsUpDown className='ml-2 w-4 h-4 opacity-50 shrink-0' />
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent
-        onFocusOutside={(e) => {
-          e.preventDefault()
-          }}
-        className='p-0 z-[2010]' style={{ width: width }}>
+				onFocusOutside={(e) => {
+					e.preventDefault()
+				}}
+				className='p-0 h-[300px] z-[2010]'
+				style={{ width: width }}
+			>
 				<VirtualizedCommand
 					height={height}
 					options={options}
 					placeholder={searchPlaceholder}
 					selectedOption={selectedOption}
 					onSelectOption={(currentValue) => {
-						onSelectOption(
-							currentValue === selectedOption ? '' : currentValue,
-						)
+						onSelectOption(currentValue === selectedOption ? '' : currentValue)
 						setOpen(false)
 					}}
 				/>

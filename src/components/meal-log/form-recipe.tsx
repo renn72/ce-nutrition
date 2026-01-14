@@ -336,10 +336,6 @@ const MainForm = ({
 	const isTinyProtein =
 		Math.abs(protein - Number(proteinTotal)) / protein > 0.02
 
-	console.log({ isBigCalories, isMediumCalories, isSmallCalories })
-
-	console.log(Math.abs(calories - Number(calorieTotal)) / calories)
-
 	if (isLoadingAllIngredients) return null
 
 	return (
