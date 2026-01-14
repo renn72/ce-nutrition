@@ -430,18 +430,21 @@ const MealList = ({
 		selectedPlansId.includes(plan.id.toString()),
 	)
 
+	console.log({ selectedPlans })
+
 	const calories = selectedPlans.reduce((acc, curr) => {
-		let cals = 0
+		let cals = selectedPlans?.[0]?.userMeals?.[currentMeal]?.targetCalories || 0
 		if (isAllMeals && selectedPlans?.[0] && selectedPlans[0].userMeals?.[0])
 			cals = Number(selectedPlans[0].userMeals[0].targetCalories)
-		return acc === 0 ? cals : acc
+		return acc === 0 ? Number(cals) : acc
 	}, 0)
 
 	const protein = selectedPlans.reduce((acc, curr) => {
-		let protein = 0
+		let protein =
+			selectedPlans?.[0]?.userMeals?.[currentMeal]?.targetProtein || 0
 		if (isAllMeals && selectedPlans?.[0] && selectedPlans[0].userMeals?.[0])
 			protein = Number(selectedPlans[0].userMeals[0].targetProtein)
-		return acc === 0 ? protein : acc
+		return acc === 0 ? Number(protein) : acc
 	}, 0)
 
 	return (
