@@ -121,9 +121,15 @@ const SuppUserCreate = ({ user }: { user: GetUserById }) => {
 										/>
 									</div>
 									<div className='flex flex-col justify-center items-center'>
-										<Sheet.Title className='text-xl font-semibold mt-[2px]'>
-											Supplement
-										</Sheet.Title>
+										{user.supplementStacks.length === 0 ? (
+											<Sheet.Title className='px-6 mx-4 text-xl font-bold text-center rounded-lg border-4 mt-[2px] text-destructive border-destructive/50 bg-muted'>
+												Get your trainer to create your a stack timing
+											</Sheet.Title>
+										) : (
+											<Sheet.Title className='text-xl font-semibold mt-[2px]'>
+												Supplement
+											</Sheet.Title>
+										)}
 										<Sheet.Description className='hidden'>
 											create a new supplement
 										</Sheet.Description>
@@ -244,7 +250,12 @@ const SuppUserCreate = ({ user }: { user: GetUserById }) => {
 															</FormItem>
 														)}
 													/>
-													<Button type='submit'>Save</Button>
+													<Button
+														disabled={user.supplementStacks.length === 0}
+														type='submit'
+													>
+														Save
+													</Button>
 												</div>
 											</form>
 										</Form>

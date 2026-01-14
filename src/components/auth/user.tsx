@@ -47,7 +47,7 @@ const ImpersonateUser = () => {
 
 	return (
 		<DropdownMenuSub>
-			<DropdownMenuSubTrigger className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'>
+			<DropdownMenuSubTrigger className='flex gap-6 items-center py-4 px-4 -m-1 rounded-none cursor-pointer'>
 				<VenetianMask size={20} />
 				Impersonate
 			</DropdownMenuSubTrigger>
@@ -57,23 +57,29 @@ const ImpersonateUser = () => {
 				className='max-h-84'
 			>
 				<DropdownMenuSub>
-					<ScrollArea className='h-[450px] w-full'>
-						{users?.map((user) => (
-							<DropdownMenuItem
-								key={user.id}
-								className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-2'
-								onClick={() =>
-									setImpersonatedUser((prev) => ({
-										...prev,
-										id: user.id,
-										name: user.name ?? '',
-									}))
-								}
-							>
-								<UserCircle size={20} />
-								<span className='truncate'>{user.name}</span>
-							</DropdownMenuItem>
-						))}
+					<ScrollArea className='w-full h-[450px]'>
+						{users
+							?.sort((a, b) => {
+								if (!a.name) return 1
+								if (!b.name) return -1
+								return a.name.localeCompare(b.name)
+							})
+							?.map((user) => (
+								<DropdownMenuItem
+									key={user.id}
+									className='flex gap-2 items-center py-4 px-4 -m-1 rounded-none cursor-pointer'
+									onClick={() =>
+										setImpersonatedUser((prev) => ({
+											...prev,
+											id: user.id,
+											name: user.name ?? '',
+										}))
+									}
+								>
+									<UserCircle size={20} />
+									<span className='truncate'>{user.name}</span>
+								</DropdownMenuItem>
+							))}
 					</ScrollArea>
 				</DropdownMenuSub>
 			</DropdownMenuSubContent>
@@ -86,7 +92,7 @@ const User = () => {
 	const { data: user, isLoading } = api.user.getCurrentUser.useQuery()
 	const [isOpen, setIsOpen] = useState(false)
 
-  const isMobile = useClientMediaQuery({ query: '(max-width: 768px)' })
+	const isMobile = useClientMediaQuery({ query: '(max-width: 768px)' })
 
 	const { theme, setTheme } = useTheme()
 	const isTrainer = user?.isTrainer
@@ -145,7 +151,7 @@ const User = () => {
 				<Link href='/'>
 					<DropdownMenuItem
 						onClick={() => setIsOpen(false)}
-						className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'
+						className='flex gap-6 items-center py-4 px-4 -m-1 rounded-none cursor-pointer'
 					>
 						<House size={20} />
 						Home{' '}
@@ -155,11 +161,9 @@ const User = () => {
 					<>
 						<DropdownMenuSeparator />
 						<Link href={`/user/user-image`}>
-							<DropdownMenuItem
-								className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'
-							>
-                <ImageIcon size={20} />
-                Gallery
+							<DropdownMenuItem className='flex gap-6 items-center py-4 px-4 -m-1 rounded-none cursor-pointer'>
+								<ImageIcon size={20} />
+								Gallery
 							</DropdownMenuItem>
 						</Link>
 					</>
@@ -171,7 +175,7 @@ const User = () => {
 						<Link href={`/admin/user-info?user=${user.id}`}>
 							<DropdownMenuItem
 								onClick={() => setIsOpen(false)}
-								className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'
+								className='flex gap-6 items-center py-4 px-4 -m-1 rounded-none cursor-pointer'
 							>
 								<UserRoundCog size={20} />
 								Admin
@@ -185,7 +189,7 @@ const User = () => {
 						<Link href='/user/admin-logs'>
 							<DropdownMenuItem
 								onClick={() => setIsOpen(false)}
-								className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'
+								className='flex gap-6 items-center py-4 px-4 -m-1 rounded-none cursor-pointer'
 							>
 								<Warehouse size={20} />
 								Admin Logs
@@ -203,7 +207,7 @@ const User = () => {
 				<Link href='/user/message'>
 					<DropdownMenuItem
 						onClick={() => setIsOpen(false)}
-						className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'
+						className='flex gap-6 items-center py-4 px-4 -m-1 rounded-none cursor-pointer'
 					>
 						<MessageSquareMore size={20} />
 						Messages
@@ -213,7 +217,7 @@ const User = () => {
 				<Link href='/user/settings'>
 					<DropdownMenuItem
 						onClick={() => setIsOpen(false)}
-						className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'
+						className='flex gap-6 items-center py-4 px-4 -m-1 rounded-none cursor-pointer'
 					>
 						<Settings size={20} />
 						Settings
@@ -221,20 +225,20 @@ const User = () => {
 				</Link>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
-					className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'
+					className='flex gap-6 items-center py-4 px-4 -m-1 rounded-none cursor-pointer'
 					onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
 				>
 					{theme === 'light' ? (
-						<MoonIcon className='h-4 w-4' />
+						<MoonIcon className='w-4 h-4' />
 					) : (
-						<SunIcon className='h-4 w-4' />
+						<SunIcon className='w-4 h-4' />
 					)}
 					<span className=''>Toggle theme</span>
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					onClick={() => onLogout()}
-					className='-m-1 rounded-none px-4 py-4 cursor-pointer flex items-center gap-6'
+					className='flex gap-6 items-center py-4 px-4 -m-1 rounded-none cursor-pointer'
 				>
 					<LogOutIcon size={20} />
 					<span className=''>Logout</span>

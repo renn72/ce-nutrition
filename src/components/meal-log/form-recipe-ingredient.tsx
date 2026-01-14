@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/form'
 import { NumberInputForm } from '@/components/ui/number-input-form'
 
-import { VirtualizedCombobox } from '@/components/ui/virtualized-combobox'
+import { VirtualizedCombobox } from '@/components/ui/virtualized-combobox-user-recipes'
 import type { formSchema } from './form-recipe'
 
 export const dynamic = 'force-dynamic'
@@ -74,8 +74,6 @@ const FormRecipeIngredient = ({
 	if (!allIngredients) return <div />
 
 	const serveSize = form.watch(`ingredients.${index}.serveSize`)
-
-	console.log({ serveSize, selected })
 
 	return (
 		<div
