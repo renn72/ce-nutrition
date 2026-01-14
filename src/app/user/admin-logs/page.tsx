@@ -8,14 +8,15 @@ import { cn } from '@/lib/utils'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { RefreshCcw, XIcon } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  PopoverClose
-} from "@/components/ui/popover"
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+	PopoverClose,
+} from '@/components/ui/popover'
 export default function AdminLogs() {
 	const [isHideMe, setIsHideMe] = useState(false)
 	const [filter, setFilter] = useState('')
@@ -24,6 +25,11 @@ export default function AdminLogs() {
 	const { data: logs } = api.user.getAdminLogs.useQuery(undefined, {
 		refetchInterval: 1000 * 60 * 1,
 	})
+	const { mutate: deleteAllLogs } = api.user.deleteAllAdminLogs.useMutation({
+		onSuccess: () => {
+			ctx.user.invalidate()
+		},
+	})
 
 	const parentRef = useRef(null)
 
@@ -31,7 +37,7 @@ export default function AdminLogs() {
 		count: 4000,
 		getScrollElement: () => parentRef.current,
 		estimateSize: () => 20,
-    overscan: 100,
+		overscan: 100,
 	})
 
 	if (!logs) return null
@@ -63,8 +69,8 @@ export default function AdminLogs() {
 		.filter((log) => log.user?.toLowerCase().includes(userFilter.toLowerCase()))
 
 	return (
-		<div className='flex flex-col gap-0 my-16  lg:my-0 px-1 w-full tracking-tight md:tracking-normal '>
-			<div className='flex items-center gap-2 lg:gap-8 w-full py-2 justify-between lg:justify-start'>
+		<div className='flex flex-col gap-0 px-1 my-16 w-full tracking-tight md:tracking-normal lg:my-0'>
+			<div className='flex gap-2 justify-between items-center py-2 w-full lg:gap-8 lg:justify-start'>
 				<Switch
 					checked={isHideMe}
 					onCheckedChange={(checked) => {
@@ -77,7 +83,7 @@ export default function AdminLogs() {
 						setFilter(e.target.value)
 					}}
 					placeholder='filter'
-					className='w-full lg:w-48 h-8 lg:h-10'
+					className='w-full h-8 lg:w-48 lg:h-10'
 				/>
 				<Input
 					value={userFilter}
@@ -85,24 +91,27 @@ export default function AdminLogs() {
 						setUserFilter(e.target.value)
 					}}
 					placeholder='user filter'
-					className='w-full lg:w-48  h-8 lg:h-10'
+					className='w-full h-8 lg:w-48 lg:h-10'
 				/>
 				<RefreshCcw
 					size={20}
-					className='cursor-pointer text-primary/50 hover:text-primary active:scale-90 transition-transform shrink-0'
+					className='transition-transform cursor-pointer active:scale-90 text-primary/50 shrink-0 hover:text-primary'
 					onClick={() => {
 						ctx.user.invalidate()
 					}}
 				/>
+				<Button variant='destructive' onClick={() => deleteAllLogs()}>
+					Delete all
+				</Button>
 			</div>
-			<div className='flex items-center gap-8 w-full lg:w-min py-0 text-sm'>
-				<div className='flex items-center gap-0 w-full py-0 text-sm'>
+			<div className='flex gap-8 items-center py-0 w-full text-sm lg:w-min'>
+				<div className='flex gap-0 items-center py-0 w-full text-sm'>
 					<div className='mr-4'>Today</div>
 					<div>{l.length}</div>
 					<div>/</div>
 					<div>{u.length}</div>
 				</div>
-				<div className='flex items-center gap-0 w-full py-0 text-sm'>
+				<div className='flex gap-0 items-center py-0 w-full text-sm'>
 					<div className='mr-4'>Yesterday</div>
 					<div>{logYesterday.length}</div>
 					<div>/</div>
@@ -111,7 +120,7 @@ export default function AdminLogs() {
 			</div>
 			<div
 				ref={parentRef}
-				className='h-[calc(100vh-190px)] lg:h-[calc(100vh-80px)] overflow-y-auto'
+				className='overflow-y-auto h-[calc(100vh-190px)] lg:h-[calc(100vh-80px)]'
 			>
 				<div
 					className={cn(
@@ -121,17 +130,17 @@ export default function AdminLogs() {
 					)}
 				>
 					{virtualizer.getVirtualItems().map((virtualItem) => {
-            const log = sortedFilterLogs[virtualItem.index]
-            if (!log) return null
+						const log = sortedFilterLogs[virtualItem.index]
+						if (!log) return null
 						return (
 							<div
-                key={virtualItem.key}
-                className={cn('absolute top-0 left-0 w-full z-20')}
+								key={virtualItem.key}
+								className={cn('absolute top-0 left-0 w-full z-20')}
 								style={{
-                  height: `${virtualItem.size}px`,
+									height: `${virtualItem.size}px`,
 									transform: `translateY(${virtualItem.start}px)`,
 								}}
-              >
+							>
 								<Popover>
 									<PopoverTrigger asChild>
 										<div
@@ -142,7 +151,7 @@ export default function AdminLogs() {
 													: 'bg-primary/5',
 											)}
 										>
-											<div className='md:col-span-1 col-span-2 truncate'>
+											<div className='col-span-2 md:col-span-1 truncate'>
 												{log.createdAt.toLocaleString('en-AU', {
 													hour: 'numeric',
 													minute: 'numeric',
@@ -161,15 +170,15 @@ export default function AdminLogs() {
 											<div className='col-span-3 md:col-span-1 truncate'>
 												{log.task}
 											</div>
-											<div className='truncate col-span-2 md:col-span-6'>
+											<div className='col-span-2 md:col-span-6 truncate'>
 												{log.notes}
 											</div>
 										</div>
 									</PopoverTrigger>
-									<PopoverContent className='max-w-[90vw] w-full px-0 py-0 relative'>
-                    <PopoverClose className='absolute top-1 right-1 z-10 px-1 py-1 text-primary/50 hover:text-primary active:scale-90 transition-transform'>
-                      <XIcon size={12} />
-                    </PopoverClose>
+									<PopoverContent className='relative py-0 px-0 w-full max-w-[90vw]'>
+										<PopoverClose className='absolute top-1 right-1 z-10 py-1 px-1 transition-transform active:scale-90 text-primary/50 hover:text-primary'>
+											<XIcon size={12} />
+										</PopoverClose>
 										<div
 											className={cn(
 												'flex flex-col gap-1 text-[0.7rem] md:text-xs shrink-0 px-4 py-6 z-[1000] ',
@@ -186,9 +195,9 @@ export default function AdminLogs() {
 													hour12: false,
 												})}
 											</div>
-											<div className='col-span-2 '>{log.user}</div>
-											<div className='col-span-3 '>{log.task}</div>
-											<div className=' col-span-2'>{log.notes}</div>
+											<div className='col-span-2'>{log.user}</div>
+											<div className='col-span-3'>{log.task}</div>
+											<div className='col-span-2'>{log.notes}</div>
 										</div>
 									</PopoverContent>
 								</Popover>

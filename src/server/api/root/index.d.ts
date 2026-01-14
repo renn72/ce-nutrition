@@ -15153,6 +15153,11 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        deleteAllAdminLogs: _trpc_server.TRPCMutationProcedure<{
+            input: void;
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         createUser: _trpc_server.TRPCMutationProcedure<{
             input: {
                 email: string;
@@ -22193,6 +22198,11 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         }>;
         deleteAdminLog: _trpc_server.TRPCMutationProcedure<{
             input: number;
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        deleteAllAdminLogs: _trpc_server.TRPCMutationProcedure<{
+            input: void;
             output: _libsql_client.ResultSet;
             meta: object;
         }>;

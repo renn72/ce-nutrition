@@ -3322,6 +3322,10 @@ var adminLogs = {
   deleteAdminLog: protectedProcedure.input(z6.number()).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.delete(log).where(eq3(log.id, input));
     return res;
+  }),
+  deleteAllAdminLogs: protectedProcedure.mutation(async ({ ctx }) => {
+    const res = await ctx.db.delete(log);
+    return res;
   })
 };
 

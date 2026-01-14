@@ -1,6 +1,4 @@
-import {
-	protectedProcedure,
-} from '~/server/api/trpc'
+import { protectedProcedure } from '~/server/api/trpc'
 import { log } from '~/server/db/schema/log'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
@@ -19,4 +17,8 @@ export const adminLogs = {
 			const res = await ctx.db.delete(log).where(eq(log.id, input))
 			return res
 		}),
+	deleteAllAdminLogs: protectedProcedure.mutation(async ({ ctx }) => {
+		const res = await ctx.db.delete(log)
+		return res
+	}),
 }
