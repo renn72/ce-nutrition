@@ -31,7 +31,6 @@ import { Meal } from '@/components/user-plan/meal'
 import { PlanSelect } from '@/components/user-plan/plan-select'
 import { PlanFolders } from './plan-folders'
 
-
 export const dynamic = 'force-dynamic'
 
 export const formSchema = z.object({
@@ -168,6 +167,17 @@ const CreateUserPlan = ({
 		name: 'meals',
 	})
 
+	const recipeFieldArrays = [
+		...Array.from({ length: mealsField.fields.length }, (_, i) => i).map((i) =>
+			useFieldArray({
+				control: form.control,
+				name: `meals.${i}.recipes`,
+			}),
+		),
+	]
+
+	console.log('form', form.watch())
+
 	useEffect(() => {
 		if (userPlan) {
 			setSelectedPlan({
@@ -186,7 +196,7 @@ const CreateUserPlan = ({
 				createdAt: userPlan?.createdAt || new Date(),
 				updatedAt: userPlan?.updatedAt || new Date(),
 				creator: null,
-        planFolderId: null,
+				planFolderId: null,
 				meals:
 					userPlan?.userMeals.map((meal, mealIndex) => ({
 						id: -1,
@@ -495,28 +505,33 @@ const CreateUserPlan = ({
 	if (isLoading)
 		return (
 			<div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
-				<Loader className=' animate-spin' />
+				<Loader className='animate-spin' />
 			</div>
 		)
 
 	if (userId === '') return <div>Select a user</div>
 
 	return (
-		<div className='flex flex-col max-w-screen-xl w-full my-12'>
+		<div className='flex flex-col my-12 w-full max-w-screen-xl'>
 			<div className={cn('flex gap-8 items-center', userPlan ? 'hidden' : '')}>
 				<PlanSelect selectedPlan={selectedPlanId} onSetPlan={onSetPlan} />
 			</div>
-			<div className={cn('flex gap-8 items-center', userPlan ? 'hidden' : 'hidden')}>
+			<div
+				className={cn(
+					'flex gap-8 items-center',
+					userPlan ? 'hidden' : 'hidden',
+				)}
+			>
 				<PlanFolders selectedPlan={selectedPlanId} onSetPlan={onSetPlan} />
 			</div>
 			{selectedPlanId === '' && userPlan === null ? null : (
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)}>
-						<div className='flex flex-col lg:gap-2 '>
-							<Button type='submit' className='w-min mt-8'>
+						<div className='flex flex-col lg:gap-2'>
+							<Button type='submit' className='mt-8 w-min'>
 								Save
 							</Button>
-							<div className='flex flex-col lg:flex-row justify-between lg:gap-8'>
+							<div className='flex flex-col justify-between lg:flex-row lg:gap-8'>
 								<FormField
 									control={form.control}
 									name='name'
@@ -562,8 +577,7 @@ const CreateUserPlan = ({
 								/>
 							</div>
 							<div className='flex flex-col gap-2 mt-4'>
-								<h2 className='text-2xl font-bold'>Meals</h2>
-								<div className='flex flex-col gap-3 '>
+								<div className='flex flex-col gap-3 rounded-lg'>
 									{mealsField.fields.map((field, index) => (
 										<Meal
 											key={field.mealId}
@@ -572,11 +586,12 @@ const CreateUserPlan = ({
 											meal={field}
 											plan={selectedPlan}
 											mealsField={mealsField}
+											recipeFieldArrays={recipeFieldArrays}
 										/>
 									))}
 								</div>
 							</div>
-							<div className='my-8 flex w-full justify-center'>
+							<div className='flex justify-center my-8 w-full'>
 								<Button
 									onClick={(e) => {
 										e.preventDefault()
@@ -596,7 +611,7 @@ const CreateUserPlan = ({
 									}}
 								>
 									Add Meal
-									<PlusCircle size={20} className='ml-4 mb-1' />
+									<PlusCircle size={20} className='mb-1 ml-4' />
 								</Button>
 							</div>
 							<div className='my-8'>

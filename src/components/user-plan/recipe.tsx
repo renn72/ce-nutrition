@@ -5,6 +5,7 @@ import { api } from '@/trpc/react'
 import { useEffect, useState } from 'react'
 
 import { cn, getRecipeDetailsForUserPlan } from '@/lib/utils'
+import { toast } from 'sonner'
 import type { GetPlanById } from '@/types'
 import {
 	CircleMinus,
@@ -35,6 +36,9 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
 	FormControl,
@@ -359,6 +363,7 @@ const Recipe = ({
 	calories,
 	recipesField,
 	recipe,
+	recipeFieldArrays,
 }: {
 	form: UseFormReturn<z.infer<typeof formSchema>>
 	mealIndex: number
@@ -367,6 +372,7 @@ const Recipe = ({
 	calories: string
 	recipesField: UseFieldArrayReturn
 	recipe: any
+	recipeFieldArrays: any
 }) => {
 	const { data: allIngredients } = api.ingredient.getAll.useQuery()
 
@@ -374,6 +380,20 @@ const Recipe = ({
 		control: form.control,
 		name: `meals.${mealIndex}.recipes.${recipeIndex}.ingredients`,
 	})
+	const mealsField = useFieldArray({
+		control: form.control,
+		name: `meals`,
+	})
+
+	const ctx = api.useUtils()
+	const { mutate: createRecipe } = api.recipe.create.useMutation({
+		onSuccess: () => {
+			ctx.recipe.invalidate()
+			toast.success('Recipe saved')
+		},
+	})
+
+	const mealsLength = mealsField.fields.length
 
 	const [ingredientsSize, setIngredientsSize] = useState<number[]>(
 		() =>
@@ -397,9 +417,174 @@ const Recipe = ({
 	// }
 
 	return (
-		<div className='flex relative flex-col gap-1 p-2 rounded-md border'>
-			<div className='absolute top-1 left-2 text-xs text-muted-foreground'>
-				{recipeIndex + 1}
+		<div className='flex relative flex-col gap-1 p-2 rounded-md border bg-card'>
+			<div className='flex justify-between items-baseline'>
+				<div className='text-base font-medium text-muted-foreground'>
+					Recipe {recipeIndex + 1}
+				</div>
+				<div className='text-sm text-muted-foreground'>
+					<Dialog open={isOpen} onOpenChange={setIsOpen}>
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<EllipsisVertical
+									size={22}
+									className={cn(
+										'text-foreground/90 hover:text-foreground hover:scale-110 active:scale-90',
+										' transition-transform cursor-pointer shrink-0',
+									)}
+								/>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent>
+								<DropdownMenuLabel>Action</DropdownMenuLabel>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem
+									onMouseDown={(e) => {
+										recipesField.remove(recipeIndex)
+									}}
+								>
+									Delete
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									onMouseDown={(e) => {
+										e.preventDefault()
+										createRecipe({
+											name: formRecipe.name,
+											description: formRecipe.description,
+											image: '',
+											notes: '',
+											recipeCategory: '',
+											calories: Number(recipeDetails.cals),
+											ingredients: formRecipe.ingredients.map((i, idx) => {
+												return {
+													index: idx,
+													ingredientId: Number(i.ingredientId),
+													note: i.note,
+													serveSize: i.serveSize,
+													serveUnit: i.serveUnit,
+													alternateId: i.alternateId || '',
+												}
+											}),
+										})
+									}}
+								>
+									Save to Recipes
+								</DropdownMenuItem>
+								<DropdownMenuSub>
+									<DropdownMenuSubTrigger>Duplicate</DropdownMenuSubTrigger>
+									<DropdownMenuSubContent>
+										<DropdownMenuItem
+											onMouseDown={(e) => {
+												e.preventDefault()
+												recipesField.append({
+													recipeId: formRecipe.recipeId,
+													name: formRecipe.name + '-copy' || '',
+													note: '',
+													description: formRecipe.description || '',
+													index: recipesField.fields.length,
+													ingredients: formRecipe.ingredients.map(
+														(ingredient, _ingredientIndex) => {
+															return {
+																ingredientId:
+																	ingredient.ingredientId.toString(),
+																alternateId:
+																	ingredient.alternateId?.toString() || null,
+																name: ingredient.name || '',
+																serveSize: ingredient.serveSize || '',
+																serveUnit: ingredient.serveUnit,
+																note: ingredient.note || '',
+																ingredient: {
+																	...ingredient.ingredient,
+																},
+																alternateIngredient: {
+																	...ingredient.alternateIngredient,
+																},
+															}
+														},
+													),
+												})
+											}}
+										>
+											This Meal
+										</DropdownMenuItem>
+										<DropdownMenuSub>
+											<DropdownMenuSubTrigger
+												onClick={(e) => {
+													console.log(mealIndex)
+												}}
+											>
+												Other Meal
+											</DropdownMenuSubTrigger>
+											<DropdownMenuSubContent>
+												{Array.from({ length: mealsLength }, (_, i) => i)
+													.filter((i) => i !== mealIndex)
+													.map((i) => (
+														<DropdownMenuItem
+															key={i}
+															onMouseDown={(e) => {
+																e.preventDefault()
+																// @ts-ignore
+																console.log(
+																	'recipeFieldArrays[i]',
+																	recipeFieldArrays,
+																)
+																const recipeData = {
+																	recipeId: formRecipe.recipeId,
+																	name: formRecipe.name || '',
+																	note: '',
+																	description: formRecipe.description || '',
+																	index: recipesField.fields.length,
+																	ingredients: formRecipe.ingredients.map(
+																		(ingredient, _ingredientIndex) => {
+																			return {
+																				ingredientId:
+																					ingredient.ingredientId.toString(),
+																				alternateId:
+																					ingredient.alternateId?.toString() ||
+																					null,
+																				name: ingredient.name || '',
+																				serveSize: ingredient.serveSize || '',
+																				serveUnit: ingredient.serveUnit,
+																				note: ingredient.note || '',
+																				ingredient: {
+																					...ingredient.ingredient,
+																				},
+																				alternateIngredient: {
+																					...ingredient.alternateIngredient,
+																				},
+																			}
+																		},
+																	),
+																}
+																const currentRecipes = form.getValues(
+																	`meals.${i}.recipes`,
+																)
+																form.setValue(`meals.${i}.recipes`, [
+																	...currentRecipes,
+																	{
+																		...recipeData,
+																	},
+																])
+															}}
+														>
+															{i + 1}
+														</DropdownMenuItem>
+													))}
+											</DropdownMenuSubContent>
+										</DropdownMenuSub>
+									</DropdownMenuSubContent>
+								</DropdownMenuSub>
+							</DropdownMenuContent>
+							<DialogContent className='top-[30%] max-w-2xl'>
+								<DialogHeader className='col-span-3 mb-6'>
+									<DialogTitle>Add a new ingredient</DialogTitle>
+									<DialogDescription>
+										Select an ingredient to add to this recipe
+									</DialogDescription>
+								</DialogHeader>
+							</DialogContent>
+						</DropdownMenu>
+					</Dialog>
+				</div>
 			</div>
 			<div className='grid grid-cols-8 place-items-center capitalize md:grid-cols-10 md:gap-1'>
 				<div className='col-span-2 md:col-span-4' />
@@ -429,17 +614,6 @@ const Recipe = ({
 							</FormItem>
 						)}
 					/>
-					<Button
-						variant='destructive'
-						size='icon'
-						className='w-6 h-5 rounded-full shrink-0 text-[0.7rem]'
-						onClick={(e) => {
-							e.preventDefault()
-							recipesField.remove(recipeIndex)
-						}}
-					>
-						Del
-					</Button>
 				</div>
 				<div className='col-span-2 place-self-center' />
 				<div className='place-self-center px-6 text-center rounded-full bg-secondary'>

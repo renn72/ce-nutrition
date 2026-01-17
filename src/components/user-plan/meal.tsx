@@ -65,6 +65,8 @@ import {
 	PopoverTrigger,
 } from '@/components/ui/popover'
 
+import { v4 as uuidv4 } from 'uuid'
+
 import type { formSchema } from './create-user-plan'
 import { Recipe } from './recipe'
 
@@ -76,12 +78,14 @@ const Meal = ({
 	plan,
 	mealsField,
 	meal,
+	recipeFieldArrays,
 }: {
 	form: UseFormReturn<z.infer<typeof formSchema>>
 	index: number
 	plan: GetPlanById
 	mealsField: UseFieldArrayReturn
 	meal: any
+	recipeFieldArrays: any
 }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [cmdIsOpen, setCmdIsOpen] = useState(false)
@@ -286,8 +290,8 @@ const Meal = ({
 	})
 
 	return (
-		<Card className='pt-0 pb-2 bg-background gap-2'>
-			<CardHeader className='py-2 flex flex-row justify-between bg-secondary items-center'>
+		<Card className='gap-2 pt-2 pb-2 bg-background'>
+			<CardHeader className='flex flex-row justify-between items-center py-2 bg-background'>
 				<CardTitle className='text-xl font-semibold'>
 					Meal {index + 1}
 				</CardTitle>
@@ -370,10 +374,13 @@ const Meal = ({
 								{[...Array(mealsField.fields.length)].map((_, i) => (
 									<DropdownMenuItem
 										key={i}
-										className={cn('cursor-pointer', i === index ? 'text-accent' : '')}
-                    disabled={i === index}
+										className={cn(
+											'cursor-pointer',
+											i === index ? 'text-accent' : '',
+										)}
+										disabled={i === index}
 										onSelect={() => {
-                      mealsField.move(index, i)
+											mealsField.move(index, i)
 										}}
 									>
 										{i + 1}
@@ -393,8 +400,8 @@ const Meal = ({
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</CardHeader>
-			<CardContent className='flex flex-col gap-2 w-full py-0 px-1 lg:px-4 bg-background'>
-				<div className='flex lg:gap-2 lg:items-center flex-col lg:flex-row'>
+			<CardContent className='flex flex-col gap-2 py-0 px-1 w-full lg:px-4 bg-background'>
+				<div className='flex flex-col lg:flex-row lg:gap-2 lg:items-center'>
 					<FormField
 						control={form.control}
 						name={`meals.${index}.mealTitle`}
@@ -449,7 +456,7 @@ const Meal = ({
 					/>
 				</div>
 				<div className='flex gap-4 items-center w-full tracking-tighter'>
-					<div className='flex gap-2 flex-row items-center'>
+					<div className='flex flex-row gap-2 items-center'>
 						<Label>Veg</Label>
 						<Checkbox
 							checked={isVege}
@@ -517,15 +524,15 @@ const Meal = ({
 						/>
 					</div>
 				</div>
-				<div className='grid md:grid-cols-5 grid-cols-2 gap-2 w-full items-center '>
-					<div className='flex flex-col gap-2 w-full col-span-2 md:col-span-1'>
-						<div className='flex flex-col gap-2 px-2 py-4 rounded-md border border-border w-full'>
-							<div className='flex gap-1 flex-col items-center'>
+				<div className='grid grid-cols-2 gap-2 items-center w-full md:grid-cols-5'>
+					<div className='flex flex-col col-span-2 gap-2 w-full md:col-span-1'>
+						<div className='flex flex-col gap-2 py-4 px-2 w-full rounded-md border border-border'>
+							<div className='flex flex-col gap-1 items-center'>
 								<Label>Calories</Label>
-								<div className='w-full flex justify-between items-center gap-4'>
+								<div className='flex gap-4 justify-between items-center w-full'>
 									<CircleMinus
 										size={24}
-										className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0'
+										className='transition-transform cursor-pointer hover:scale-110 active:scale-90 text-muted-foreground shrink-0 hover:text-foreground'
 										onClick={() => {
 											setCalories((Number(calories) - 1).toString())
 											form.setValue(
@@ -545,7 +552,7 @@ const Meal = ({
 									/>
 									<CirclePlus
 										size={24}
-										className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0'
+										className='transition-transform cursor-pointer hover:scale-110 active:scale-90 text-muted-foreground shrink-0 hover:text-foreground'
 										onClick={() => {
 											setCalories((Number(calories) + 1).toString())
 											form.setValue(
@@ -563,10 +570,10 @@ const Meal = ({
 									<FormItem className='flex flex-col items-center'>
 										<FormLabel className=''>Protein</FormLabel>
 										<FormControl>
-											<div className='w-full flex justify-between items-center gap-4'>
+											<div className='flex gap-4 justify-between items-center w-full'>
 												<CircleMinus
 													size={24}
-													className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0'
+													className='transition-transform cursor-pointer hover:scale-110 active:scale-90 text-muted-foreground shrink-0 hover:text-foreground'
 													onClick={() =>
 														field.onChange(Number(field.value) - 1)
 													}
@@ -574,7 +581,7 @@ const Meal = ({
 												<Input placeholder='Protein' {...field} type='number' />
 												<CirclePlus
 													size={24}
-													className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0'
+													className='transition-transform cursor-pointer hover:scale-110 active:scale-90 text-muted-foreground shrink-0 hover:text-foreground'
 													onClick={() =>
 														field.onChange(Number(field.value) + 1)
 													}
@@ -606,7 +613,7 @@ const Meal = ({
 						</div>
 					</div>
 
-					<div className='flex flex-col gap-4 col-span-4 select-none text-sm md:text-base tracking-tighter md:tracking-tight'>
+					<div className='flex flex-col col-span-4 gap-4 text-sm tracking-tighter select-none md:text-base md:tracking-tight'>
 						{recipeField.fields.map((recipe, recipeIndex) => (
 							<Recipe
 								key={recipe.name}
@@ -617,9 +624,10 @@ const Meal = ({
 								calories={formCals}
 								recipe={recipe}
 								recipesField={recipeField}
+								recipeFieldArrays={recipeFieldArrays}
 							/>
 						))}
-						<div className='my-1 flex w-full justify-center'>
+						<div className='flex justify-center my-1 w-full'>
 							<Dialog
 								open={isOpen}
 								onOpenChange={(open) => {
@@ -628,13 +636,13 @@ const Meal = ({
 							>
 								<DialogTrigger asChild>
 									<Button
-										onClick={(e) => {
+										onMouseDown={(e) => {
 											e.preventDefault()
 											setIsOpen(true)
 										}}
 									>
 										Add Recipe
-										<CirclePlus size={20} className='ml-4 mb-1' />
+										<CirclePlus size={20} className='mb-1 ml-4' />
 									</Button>
 								</DialogTrigger>
 								<DialogContent className='top-[30%]'>
@@ -645,7 +653,7 @@ const Meal = ({
 										</DialogDescription>
 									</DialogHeader>
 
-									<div className='flex gap-2 items-center max-w-md w-full'>
+									<div className='flex gap-2 items-center w-full max-w-md'>
 										<Popover
 											modal={true}
 											open={cmdIsOpen}
@@ -662,10 +670,12 @@ const Meal = ({
 														)}
 													>
 														{selectValue
-															? recipesData?.find(
-																	(recipe) =>
-																		recipe.id.toString() === selectValue,
-																)?.name
+															? selectValue === 'blank'
+																? 'Blank'
+																: recipesData?.find(
+																		(recipe) =>
+																			recipe.id.toString() === selectValue,
+																	)?.name
 															: 'Select recipe'}
 														<ChevronsUpDown
 															className='opacity-50'
@@ -674,7 +684,7 @@ const Meal = ({
 													</Button>
 												</FormControl>
 											</PopoverTrigger>
-											<PopoverContent className='w-[800px] p-0'>
+											<PopoverContent className='p-0 w-[800px]'>
 												<Command>
 													<CommandInput
 														placeholder='Search recipes...'
@@ -683,6 +693,28 @@ const Meal = ({
 													<CommandList className='w-[800px]'>
 														<CommandEmpty>...</CommandEmpty>
 														<CommandGroup>
+															<CommandItem
+																value={`blank`}
+																className={cn(
+																	'grid grid-cols-10',
+																	'blank' === selectValue ? 'bg-muted' : '',
+																)}
+																onSelect={() => {
+																	setSelectValue('blank')
+																	setCmdIsOpen(false)
+																}}
+															>
+																<div className='col-span-6'>Blank</div>
+																<div className='col-span-3'></div>
+																<Check
+																	className={cn(
+																		'ml-auto',
+																		'blank' === selectValue
+																			? 'opacity-100'
+																			: 'opacity-0',
+																	)}
+																/>
+															</CommandItem>
 															{recipesData?.map((recipe) => (
 																<CommandItem
 																	value={`${recipe.name} ${/^\d+$/.test(recipe.recipeCategory) ? '' : recipe.recipeCategory}`}
@@ -723,14 +755,29 @@ const Meal = ({
 										</Popover>
 									</div>
 									<Button
-										onClick={(e) => {
+										onMouseDown={(e) => {
 											e.preventDefault()
 											if (selectValue === '') return
+
+											if (selectValue === 'blank') {
+												const id = uuidv4()
+												recipeField.append({
+													recipeId: id,
+													name: '',
+													note: '',
+													description: '',
+													index: recipeField.fields.length,
+													ingredients: [],
+												})
+												setIsOpen(false)
+												setSelectValue('')
+												return
+											}
+
 											const r = recipesData?.find(
 												(r) => r.id === Number(selectValue),
 											)
 											if (!r) return
-                      console.log('r', r)
 
 											recipeField.append({
 												recipeId: r.id.toString(),
@@ -740,11 +787,12 @@ const Meal = ({
 												index: recipeField.fields.length,
 												ingredients: r?.recipeToIngredient.map(
 													(ingredient, _ingredientIndex) => {
-														const serve = r?.calories === 0 ? 1 : (
-															(Number(ingredient.serveSize) *
-																Number(formCals)) /
-															Number(r?.calories)
-														)
+														const serve =
+															r?.calories === 0
+																? 1
+																: (Number(ingredient.serveSize) *
+																		Number(formCals)) /
+																	Number(r?.calories)
 														return {
 															ingredientId:
 																ingredient.ingredient?.id.toString(),
@@ -766,7 +814,7 @@ const Meal = ({
 											})
 
 											setIsOpen(false)
-                      setSelectValue('')
+											setSelectValue('')
 										}}
 									>
 										Add
