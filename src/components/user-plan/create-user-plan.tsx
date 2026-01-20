@@ -167,15 +167,6 @@ const CreateUserPlan = ({
 		name: 'meals',
 	})
 
-	const recipeFieldArrays = [
-		...Array.from({ length: mealsField.fields.length }, (_, i) => i).map((i) =>
-			useFieldArray({
-				control: form.control,
-				name: `meals.${i}.recipes`,
-			}),
-		),
-	]
-
 	console.log('form', form.watch())
 
 	useEffect(() => {
@@ -586,7 +577,6 @@ const CreateUserPlan = ({
 											meal={field}
 											plan={selectedPlan}
 											mealsField={mealsField}
-											recipeFieldArrays={recipeFieldArrays}
 										/>
 									))}
 								</div>

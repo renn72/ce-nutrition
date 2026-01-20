@@ -363,7 +363,6 @@ const Recipe = ({
 	calories,
 	recipesField,
 	recipe,
-	recipeFieldArrays,
 }: {
 	form: UseFormReturn<z.infer<typeof formSchema>>
 	mealIndex: number
@@ -372,7 +371,6 @@ const Recipe = ({
 	calories: string
 	recipesField: UseFieldArrayReturn
 	recipe: any
-	recipeFieldArrays: any
 }) => {
 	const { data: allIngredients } = api.ingredient.getAll.useQuery()
 
@@ -523,10 +521,6 @@ const Recipe = ({
 															onMouseDown={(e) => {
 																e.preventDefault()
 																// @ts-ignore
-																console.log(
-																	'recipeFieldArrays[i]',
-																	recipeFieldArrays,
-																)
 																const recipeData = {
 																	recipeId: formRecipe.recipeId,
 																	name: formRecipe.name || '',

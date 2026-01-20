@@ -78,14 +78,12 @@ const Meal = ({
 	plan,
 	mealsField,
 	meal,
-	recipeFieldArrays,
 }: {
 	form: UseFormReturn<z.infer<typeof formSchema>>
 	index: number
 	plan: GetPlanById
 	mealsField: UseFieldArrayReturn
 	meal: any
-	recipeFieldArrays: any
 }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [cmdIsOpen, setCmdIsOpen] = useState(false)
@@ -624,7 +622,6 @@ const Meal = ({
 								calories={formCals}
 								recipe={recipe}
 								recipesField={recipeField}
-								recipeFieldArrays={recipeFieldArrays}
 							/>
 						))}
 						<div className='flex justify-center my-1 w-full'>
