@@ -306,87 +306,91 @@ const AdminSidebarContent = () => {
 									<CommandList className='max-h-[calc(100vh-100px)]'>
 										<CommandEmpty>No user found.</CommandEmpty>
 										<CommandGroup>
-											{allUsers?.map((user) => {
-												const isTrainer = user.isTrainer
-												const isAdmin = user.roles?.find(
-													(role) => role.name === 'admin',
+											{allUsers
+												?.sort(
+													(a, b) => a.name?.localeCompare(b.name ?? '') ?? 0,
 												)
-													? true
-													: false
-												return (
-													<CommandItem
-														key={user.id}
-														value={user.name ?? user.id}
-														onSelect={(currentValue) => {
-															router.push(`${pathname}?user=${user.id}`)
+												?.map((user) => {
+													const isTrainer = user.isTrainer
+													const isAdmin = user.roles?.find(
+														(role) => role.name === 'admin',
+													)
+														? true
+														: false
+													return (
+														<CommandItem
+															key={user.id}
+															value={user.id}
+															onSelect={(currentValue) => {
+																router.push(`${pathname}?user=${user.id}`)
 
-															setSelectedUser(currentValue)
-															setIsOpen(false)
-														}}
-														className={cn(
-															'grid grid-cols-13',
-															'px-0 lg:px-2',
-															selectedUser === user.id ? 'bg-muted' : '',
-														)}
-													>
-														<Check
+																setSelectedUser(currentValue)
+																setIsOpen(false)
+															}}
 															className={cn(
-																'mr-2 h-4 w-4',
-																selectedUser === user.id
-																	? 'opacity-100'
-																	: 'opacity-0',
+																'grid grid-cols-13',
+																'px-0 lg:px-2',
+																selectedUser === user.id ? 'bg-muted' : '',
 															)}
-														/>
-														<span className='flex flex-wrap col-span-2 lg:col-span-1 gap-[1px]'>
-															{user.trainers.map((trainer) => (
-																<Badge
-																	key={trainer.trainer.id}
-																	variant='secondary'
-																	className={cn(
-																		'text-[0.65rem] lg:text-[0.7rem] py-[3px] px-[2px] lg:px-1 h-min leading-none',
-																		'cursor-pointer hover:text-background hover:bg-foreground tracking-tighter',
-																		'shadow-sm',
-																	)}
-																>
-																	{trainer.trainer?.firstName}
-																</Badge>
-															))}
-														</span>
-														<span className='col-span-5 lg:col-span-6 truncate'>
-															{user.name ?? user.email}
-														</span>
-														<span className='flex flex-wrap col-span-3 gap-[1px]'>
-															{user.category?.map((category) => (
-																<Badge
-																	key={category.category.id}
-																	variant='accent'
-																	className='px-1 tracking-tighter leading-none cursor-pointer text-[0.7rem] py-[3px] h-min hover:text-background hover:bg-foreground'
-																>
-																	{category.category.name}
-																</Badge>
-															))}
-														</span>
-														<span
-															className={cn(isTrainer ? 'text-blue-600' : '')}
 														>
-															{isTrainer ? (
-																<WhistleIcon
-																	size={20}
-																	strokeWidth={6}
-																	className='-rotate-[15deg]'
-																/>
-															) : null}
-														</span>
-														<span
-															className={cn(isAdmin ? 'text-red-900/80' : '')}
-														>
-															{isAdmin ? (
-																<ShieldUser size={20} strokeWidth={2} />
-															) : null}
-														</span>
-													</CommandItem>
-												)
-											})}
+															<Check
+																className={cn(
+																	'mr-2 h-4 w-4',
+																	selectedUser === user.id
+																		? 'opacity-100'
+																		: 'opacity-0',
+																)}
+															/>
+															<span className='flex flex-wrap col-span-2 lg:col-span-1 gap-[1px]'>
+																{user.trainers.map((trainer) => (
+																	<Badge
+																		key={trainer.trainer.id}
+																		variant='secondary'
+																		className={cn(
+																			'text-[0.65rem] lg:text-[0.7rem] py-[3px] px-[2px] lg:px-1 h-min leading-none',
+																			'cursor-pointer hover:text-background hover:bg-foreground tracking-tighter',
+																			'shadow-sm',
+																		)}
+																	>
+																		{trainer.trainer?.firstName}
+																	</Badge>
+																))}
+															</span>
+															<span className='col-span-5 lg:col-span-6 truncate'>
+																{user.name ?? user.email}
+															</span>
+															<span className='flex flex-wrap col-span-3 gap-[1px]'>
+																{user.category?.map((category) => (
+																	<Badge
+																		key={category.category.id}
+																		variant='accent'
+																		className='px-1 tracking-tighter leading-none cursor-pointer text-[0.7rem] py-[3px] h-min hover:text-background hover:bg-foreground'
+																	>
+																		{category.category.name}
+																	</Badge>
+																))}
+															</span>
+															<span
+																className={cn(isTrainer ? 'text-blue-600' : '')}
+															>
+																{isTrainer ? (
+																	<WhistleIcon
+																		size={20}
+																		strokeWidth={6}
+																		className='-rotate-[15deg]'
+																	/>
+																) : null}
+															</span>
+															<span
+																className={cn(isAdmin ? 'text-red-900/80' : '')}
+															>
+																{isAdmin ? (
+																	<ShieldUser size={20} strokeWidth={2} />
+																) : null}
+															</span>
+														</CommandItem>
+													)
+												})}
 										</CommandGroup>
 									</CommandList>
 								</Command>

@@ -167,8 +167,6 @@ const CreateUserPlan = ({
 		name: 'meals',
 	})
 
-	console.log('form', form.watch())
-
 	useEffect(() => {
 		if (userPlan) {
 			setSelectedPlan({
