@@ -264,7 +264,16 @@ const AdminSidebarContent = () => {
 								forceMount
 								className='p-0 w-[900px] max-w-[100vw]'
 							>
-								<Command>
+								<Command
+									filter={(value, search, keywords) => {
+										const extendValue =
+											value.toLowerCase() +
+											' ' +
+											keywords?.join(' ').toLowerCase()
+										if (extendValue.includes(search)) return 1
+										return 0
+									}}
+								>
 									<div className='flex flex-col gap-2 w-full lg:flex-row'>
 										<CommandInput
 											className='w-full'
@@ -321,6 +330,7 @@ const AdminSidebarContent = () => {
 														<CommandItem
 															key={user.id}
 															value={user.id}
+															keywords={[user.name || '']}
 															onSelect={(currentValue) => {
 																router.push(`${pathname}?user=${user.id}`)
 
