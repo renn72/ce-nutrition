@@ -23,7 +23,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
 				}
 				onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
 				aria-label='Select all'
-				className='translate-y-[2px] mx-2'
+				className='mx-2 translate-y-[2px]'
 			/>
 		),
 		cell: ({ row }) => (
@@ -31,7 +31,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
 				checked={row.getIsSelected()}
 				onCheckedChange={(value) => row.toggleSelected(!!value)}
 				aria-label='Select row'
-				className='translate-y-[2px] mx-2'
+				className='mx-2 translate-y-[2px]'
 			/>
 		),
 		enableSorting: false,
@@ -52,7 +52,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
 		cell: ({ row }) => {
 			return (
 				<div className='flex space-x-2'>
-					<span className='max-w-[500px] truncate font-medium'>
+					<span className='font-medium max-w-[500px] truncate'>
 						{formatDate(row.getValue('createdAt'))}
 					</span>
 				</div>
@@ -67,7 +67,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
 		cell: ({ row }) => {
 			return (
 				<div className='flex space-x-2'>
-					<span className='min-w-[250px] max-w-[500px] truncate font-medium'>
+					<span className='font-medium min-w-[250px] max-w-[500px] truncate'>
 						{row.getValue('name')}
 					</span>
 				</div>
@@ -82,7 +82,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
 		cell: ({ row }) => {
 			return (
 				<div className='flex space-x-2'>
-					<span className='w-[100px] truncate font-medium'>
+					<span className='font-medium w-[100px] truncate'>
 						{row.getValue('notes')}
 					</span>
 				</div>
@@ -95,10 +95,9 @@ export const columns: ColumnDef<GetRecipeById>[] = [
 			<DataTableColumnHeader column={column} title='Category' />
 		),
 		cell: ({ row }) => {
-      console.log('row', row.original)
 			return (
 				<div className='flex space-x-2'>
-					<span className='max-w-[300px] truncate font-medium'>
+					<span className='font-medium max-w-[300px] truncate'>
 						{row.getValue('recipeCategory')}
 					</span>
 				</div>
@@ -113,7 +112,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
 		cell: ({ row }) => {
 			return (
 				<div className='flex space-x-2'>
-					<span className='max-w-[300px] truncate font-medium'>
+					<span className='font-medium max-w-[300px] truncate'>
 						{row.getValue('recipeDescription')}
 					</span>
 				</div>
@@ -132,7 +131,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
 			}, 0)
 			return (
 				<div className='flex space-x-2'>
-					<span className='w-[90px] truncate font-medium'>
+					<span className='font-medium w-[90px] truncate'>
 						{size} {recipe?.recipeToIngredient[0]?.ingredient?.serveUnit}
 					</span>
 				</div>
@@ -155,7 +154,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
 
 			return (
 				<div className='flex space-x-2'>
-					<span className='w-[100px] truncate font-medium'>
+					<span className='font-medium w-[100px] truncate'>
 						{size?.toFixed(2)}
 					</span>
 				</div>
@@ -177,7 +176,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
 			}, 0)
 			return (
 				<div className='flex space-x-2'>
-					<span className='w-[100px] truncate font-medium'>
+					<span className='font-medium w-[100px] truncate'>
 						{size?.toFixed(2)}
 					</span>
 				</div>
@@ -199,7 +198,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
 			}, 0)
 			return (
 				<div className='flex space-x-2'>
-					<span className='w-[100px] truncate font-medium'>
+					<span className='font-medium w-[100px] truncate'>
 						{size?.toFixed(2)}
 					</span>
 				</div>
@@ -223,7 +222,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
 			}, 0)
 			return (
 				<div className='flex space-x-2'>
-					<span className='w-[100px] truncate font-medium'>
+					<span className='font-medium w-[100px] truncate'>
 						{size?.toFixed(2)}
 					</span>
 				</div>
@@ -245,7 +244,7 @@ export const columns: ColumnDef<GetRecipeById>[] = [
 			}, 0)
 			return (
 				<div className='flex space-x-2'>
-					<span className='w-[100px] truncate font-medium'>
+					<span className='font-medium w-[100px] truncate'>
 						{size?.toFixed(2)}
 					</span>
 				</div>
@@ -261,37 +260,31 @@ export const columns: ColumnDef<GetRecipeById>[] = [
 			const recipe = row.original as GetRecipeById
 			return (
 				<div className='flex space-x-2'>
-					<Badge
-            variant='secondary'
-            className='truncate'
-          >{recipe?.creator?.name}</Badge>
+					<Badge variant='secondary' className='truncate'>
+						{recipe?.creator?.name}
+					</Badge>
 				</div>
 			)
 		},
 	},
-  {
-    accessorKey: 'isGlobal',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Global' />
-    ),
-    cell: ({ row }) => {
-      const recipe = row.original as GetRecipeById
-      return (
-        <div className='flex space-x-2 justify-center'>
-          {
-            recipe?.isGlobal ? (
-              <Badge
-                variant='secondary'
-                className='truncate'
-              >
-                <CheckCircle size={16} />
-              </Badge>
-            ) : null
-          }
-        </div>
-      )
-    },
-  },
+	{
+		accessorKey: 'isGlobal',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Global' />
+		),
+		cell: ({ row }) => {
+			const recipe = row.original as GetRecipeById
+			return (
+				<div className='flex justify-center space-x-2'>
+					{recipe?.isGlobal ? (
+						<Badge variant='secondary' className='truncate'>
+							<CheckCircle size={16} />
+						</Badge>
+					) : null}
+				</div>
+			)
+		},
+	},
 	{
 		id: 'actions',
 		cell: ({ row }) => <DataTableRowActions row={row} />,

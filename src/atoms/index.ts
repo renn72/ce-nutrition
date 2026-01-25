@@ -9,4 +9,7 @@ export const impersonatedUserAtom = atomWithStorage('impersonatedUser', {
 export const isNavbarOpenAtom = atom(true)
 export const isFooterOpenAtom = atom(true)
 
+export const isAllPlansAtom = atom(false)
+export const isAllRecipesAtom = atom(false)
+
 export const firstTimeAtom = atom(true)

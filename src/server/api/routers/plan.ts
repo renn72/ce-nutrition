@@ -48,6 +48,41 @@ export const planRouter = createTRPCRouter({
 		})
 		return res
 	}),
+	getAllMy: protectedProcedure
+		.input(z.object({ userId: z.string() }))
+		.query(async ({ ctx, input }) => {
+			const res = await ctx.db.query.plan.findMany({
+				orderBy: [desc(plan.createdAt)],
+				where: (plan, { eq }) => eq(plan.creatorId, input.userId),
+				with: {
+					creator: true,
+					meals: {
+						with: {
+							mealToRecipe: {
+								with: {
+									recipe: {
+										with: {
+											recipeToIngredient: {
+												with: {
+													ingredient: true,
+													alternateIngredient: true,
+												},
+											},
+										},
+									},
+								},
+							},
+							mealToVegeStack: {
+								with: {
+									vegeStack: true,
+								},
+							},
+						},
+					},
+				},
+			})
+			return res
+		}),
 	getAll: protectedProcedure.query(async ({ ctx }) => {
 		const res = await ctx.db.query.plan.findMany({
 			orderBy: [desc(plan.createdAt)],

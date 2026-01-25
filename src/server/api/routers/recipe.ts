@@ -42,6 +42,7 @@ export const recipeRouter = createTRPCRouter({
 					creator: true,
 					recipeToIngredient: {
 						with: {
+							alternateIngredient: true,
 							ingredient: {
 								with: {
 									ingredientToGroceryStore: {

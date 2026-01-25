@@ -101,15 +101,22 @@ const User = () => {
 	const onLogout = async () => {
 		try {
 			await signOut()
-		} catch (error) {
+		} catch (_e) {
 			toast.error('Error logging out')
 			return
 		}
 		ctx.user.isUser.refetch()
 	}
 
-	// @ts-ignore
-	if (isLoading) return <div className='w-8' />
+	if (isLoading)
+		return (
+			<div
+				className={cn(
+					'flex items-center justify-center rounded-full cursor-pointer ',
+					'bg-secondary-foreground/40 h-8 w-8 pt-1 text-sm font-bold',
+				)}
+			/>
+		)
 	if (!user) return <SignInUp />
 	return (
 		<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>

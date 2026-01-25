@@ -5619,6 +5619,7 @@ var recipeRouter = createTRPCRouter({
         creator: true,
         recipeToIngredient: {
           with: {
+            alternateIngredient: true,
             ingredient: {
               with: {
                 ingredientToGroceryStore: {
@@ -5820,6 +5821,39 @@ var planRouter = createTRPCRouter({
       orderBy: [desc4(plan.createdAt)],
       with: {
         creator: true
+      }
+    });
+    return res;
+  }),
+  getAllMy: protectedProcedure.input(z15.object({ userId: z15.string() })).query(async ({ ctx, input }) => {
+    const res = await ctx.db.query.plan.findMany({
+      orderBy: [desc4(plan.createdAt)],
+      where: (plan2, { eq: eq28 }) => eq28(plan2.creatorId, input.userId),
+      with: {
+        creator: true,
+        meals: {
+          with: {
+            mealToRecipe: {
+              with: {
+                recipe: {
+                  with: {
+                    recipeToIngredient: {
+                      with: {
+                        ingredient: true,
+                        alternateIngredient: true
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            mealToVegeStack: {
+              with: {
+                vegeStack: true
+              }
+            }
+          }
+        }
       }
     });
     return res;
