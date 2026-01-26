@@ -1,5 +1,6 @@
 'use client'
 
+import { Switch } from '@/components/ui/switch'
 import { api } from '@/trpc/react'
 
 import { useState } from 'react'
@@ -268,9 +269,18 @@ const Meal = ({
 		}
 	}
 
+	const { data: userAdmin } = api.user.isUser.useQuery()
 	const { data: _recipesData } = api.recipe.getAll.useQuery()
+	const { data: _yourRecipes } = api.recipe.getAllUserCreated.useQuery({
+		userId: userAdmin?.id || '',
+	})
 
+	const [isAllRecipes, setIsAllRecipes] = useState(false)
 	const recipesData = _recipesData?.filter((recipe) => {
+		if (recipe.hiddenAt === null) return true
+		return false
+	})
+	const yourRecipes = _yourRecipes?.filter((recipe) => {
 		if (recipe.hiddenAt === null) return true
 		return false
 	})
@@ -642,7 +652,7 @@ const Meal = ({
 										<CirclePlus size={20} className='mb-1 ml-4' />
 									</Button>
 								</DialogTrigger>
-								<DialogContent className='top-[30%]'>
+								<DialogContent className='top-[20%]'>
 									<DialogHeader>
 										<DialogTitle>Add a recipe</DialogTitle>
 										<DialogDescription>
@@ -682,12 +692,44 @@ const Meal = ({
 												</FormControl>
 											</PopoverTrigger>
 											<PopoverContent className='p-0 w-[800px]'>
-												<Command>
-													<CommandInput
-														placeholder='Search recipes...'
-														className='h-9'
-													/>
-													<CommandList className='w-[800px]'>
+												<Command
+													filter={(_value, search, keywords) => {
+														const extendValue =
+															keywords?.join(' ').toLowerCase() || ''
+														if (extendValue.includes(search)) return 1
+														return 0
+													}}
+												>
+													<div className='relative w-full'>
+														<CommandInput
+															placeholder='Search recipes...'
+															className='h-9'
+														/>
+														<div className='absolute top-2 right-2 z-100'>
+															<div className='flex gap-1 mb-2 w-full text-sm font-semibold z-100 text-muted-foreground/50'>
+																<div
+																	className={cn(
+																		isAllRecipes ? '' : 'text-foreground',
+																	)}
+																>
+																	My Recipes
+																</div>
+																<Switch
+																	onCheckedChange={setIsAllRecipes}
+																	checked={isAllRecipes}
+																	className='data-[state=unchecked]:bg-foreground data-[state=checked]:bg-foreground'
+																/>
+																<div
+																	className={cn(
+																		isAllRecipes ? 'text-foreground' : '',
+																	)}
+																>
+																	All Recipes
+																</div>
+															</div>
+														</div>
+													</div>
+													<CommandList className='w-[800px] max-h-[500px]'>
 														<CommandEmpty>...</CommandEmpty>
 														<CommandGroup>
 															<CommandItem
@@ -712,39 +754,195 @@ const Meal = ({
 																	)}
 																/>
 															</CommandItem>
-															{recipesData?.map((recipe) => (
-																<CommandItem
-																	value={`${recipe.name} ${/^\d+$/.test(recipe.recipeCategory) ? '' : recipe.recipeCategory}`}
-																	key={recipe.id}
-																	className={cn(
-																		'grid grid-cols-10',
-																		recipe.id.toString() === selectValue
-																			? 'bg-muted'
-																			: '',
-																	)}
-																	onSelect={() => {
-																		setSelectValue(recipe.id.toString())
-																		setCmdIsOpen(false)
-																	}}
-																>
-																	<div className='col-span-6'>
-																		{recipe.name}
-																	</div>
-																	<div className='col-span-3'>
-																		{/^\d+$/.test(recipe.recipeCategory)
-																			? ''
-																			: recipe.recipeCategory}
-																	</div>
-																	<Check
-																		className={cn(
-																			'ml-auto',
-																			recipe.id.toString() === selectValue
-																				? 'opacity-100'
-																				: 'opacity-0',
-																		)}
-																	/>
-																</CommandItem>
-															))}
+															{isAllRecipes
+																? recipesData?.map((recipe) => (
+																		<CommandItem
+																			key={recipe.id}
+																			value={recipe.id.toString()}
+																			keywords={[
+																				recipe.name,
+																				recipe.recipeCategory,
+																			]}
+																			className={cn(
+																				'grid grid-cols-13',
+																				recipe.id.toString() === selectValue
+																					? 'bg-muted'
+																					: '',
+																			)}
+																			onSelect={() => {
+																				setSelectValue(recipe.id.toString())
+																				setCmdIsOpen(false)
+																			}}
+																		>
+																			<div className='col-span-6'>
+																				{recipe.name}
+																			</div>
+																			<div className='col-span-3'>
+																				{/^\d+$/.test(recipe.recipeCategory)
+																					? ''
+																					: recipe.recipeCategory}
+																			</div>
+																			<div className='font-medium text-[0.75rem] text-muted-foreground'>
+																				{recipe?.recipeToIngredient
+																					.reduce((acc, curr) => {
+																						const cal = Number(
+																							curr?.ingredient?.caloriesWOFibre,
+																						)
+																						const scale =
+																							Number(curr?.serveSize) /
+																							Number(
+																								curr?.ingredient?.serveSize,
+																							)
+																						return acc + cal * scale
+																					}, 0)
+																					.toFixed(0)}
+																				cals
+																			</div>
+																			<div className='font-medium text-[0.75rem] text-muted-foreground'>
+																				C:
+																				{recipe?.recipeToIngredient
+																					.reduce((acc, curr) => {
+																						const cal = Number(
+																							curr?.ingredient
+																								?.availableCarbohydrateWithoutSugarAlcohols,
+																						)
+																						const scale =
+																							Number(curr?.serveSize) /
+																							Number(
+																								curr?.ingredient?.serveSize,
+																							)
+																						return acc + cal * scale
+																					}, 0)
+																					.toFixed(1)}
+																			</div>
+																			<div className='font-medium text-[0.75rem] text-muted-foreground'>
+																				P:
+																				{recipe?.recipeToIngredient
+																					.reduce((acc, curr) => {
+																						const cal = Number(
+																							curr?.ingredient?.protein,
+																						)
+																						const scale =
+																							Number(curr?.serveSize) /
+																							Number(
+																								curr?.ingredient?.serveSize,
+																							)
+																						return acc + cal * scale
+																					}, 0)
+																					.toFixed(1)}
+																			</div>
+																			<div className='font-medium text-[0.75rem] text-muted-foreground'>
+																				F:
+																				{recipe?.recipeToIngredient
+																					.reduce((acc, curr) => {
+																						const cal = Number(
+																							curr?.ingredient?.fatTotal,
+																						)
+																						const scale =
+																							Number(curr?.serveSize) /
+																							Number(
+																								curr?.ingredient?.serveSize,
+																							)
+																						return acc + cal * scale
+																					}, 0)
+																					.toFixed(1)}
+																			</div>
+																		</CommandItem>
+																	))
+																: yourRecipes?.map((recipe) => (
+																		<CommandItem
+																			key={recipe.id}
+																			value={recipe.id.toString()}
+																			keywords={[
+																				recipe.name,
+																				recipe.recipeCategory,
+																			]}
+																			className={cn(
+																				'grid grid-cols-13',
+																				recipe.id.toString() === selectValue
+																					? 'bg-muted'
+																					: '',
+																			)}
+																			onSelect={() => {
+																				setSelectValue(recipe.id.toString())
+																				setCmdIsOpen(false)
+																			}}
+																		>
+																			<div className='col-span-6'>
+																				{recipe.name}
+																			</div>
+																			<div className='col-span-3'>
+																				{/^\d+$/.test(recipe.recipeCategory)
+																					? ''
+																					: recipe.recipeCategory}
+																			</div>
+																			<div className='font-medium text-[0.75rem] text-muted-foreground'>
+																				{recipe?.recipeToIngredient
+																					.reduce((acc, curr) => {
+																						const cal = Number(
+																							curr?.ingredient?.caloriesWOFibre,
+																						)
+																						const scale =
+																							Number(curr?.serveSize) /
+																							Number(
+																								curr?.ingredient?.serveSize,
+																							)
+																						return acc + cal * scale
+																					}, 0)
+																					.toFixed(0)}
+																				cals
+																			</div>
+																			<div className='font-medium text-[0.75rem] text-muted-foreground'>
+																				C:
+																				{recipe?.recipeToIngredient
+																					.reduce((acc, curr) => {
+																						const cal = Number(
+																							curr?.ingredient
+																								?.availableCarbohydrateWithoutSugarAlcohols,
+																						)
+																						const scale =
+																							Number(curr?.serveSize) /
+																							Number(
+																								curr?.ingredient?.serveSize,
+																							)
+																						return acc + cal * scale
+																					}, 0)
+																					.toFixed(1)}
+																			</div>
+																			<div className='font-medium text-[0.75rem] text-muted-foreground'>
+																				P:
+																				{recipe?.recipeToIngredient
+																					.reduce((acc, curr) => {
+																						const cal = Number(
+																							curr?.ingredient?.protein,
+																						)
+																						const scale =
+																							Number(curr?.serveSize) /
+																							Number(
+																								curr?.ingredient?.serveSize,
+																							)
+																						return acc + cal * scale
+																					}, 0)
+																					.toFixed(1)}
+																			</div>
+																			<div className='font-medium text-[0.75rem] text-muted-foreground'>
+																				F:
+																				{recipe?.recipeToIngredient
+																					.reduce((acc, curr) => {
+																						const cal = Number(
+																							curr?.ingredient?.fatTotal,
+																						)
+																						const scale =
+																							Number(curr?.serveSize) /
+																							Number(
+																								curr?.ingredient?.serveSize,
+																							)
+																						return acc + cal * scale
+																					}, 0)
+																					.toFixed(1)}
+																			</div>
+																		</CommandItem>
+																	))}
 														</CommandGroup>
 													</CommandList>
 												</Command>

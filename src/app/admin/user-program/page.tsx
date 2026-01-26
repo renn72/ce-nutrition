@@ -18,7 +18,7 @@ import {
 	CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 
-import { getMealMacro  } from '@/lib/utils'
+import { getMealMacro } from '@/lib/utils'
 
 const UserInfo = ({ userId }: { userId: string }) => {
 	const ctx = api.useUtils()
@@ -35,12 +35,12 @@ const UserInfo = ({ userId }: { userId: string }) => {
 			ctx.invalidate()
 		},
 	})
-  const { mutate: deletePlan } = api.userPlan.delete.useMutation({
-    onSuccess: () => {
-      toast.success('Deleted')
-      ctx.invalidate()
-    },
-  })
+	const { mutate: deletePlan } = api.userPlan.delete.useMutation({
+		onSuccess: () => {
+			toast.success('Deleted')
+			ctx.invalidate()
+		},
+	})
 
 	const { data: currentUser } = api.user.get.useQuery(userId)
 	const plans = currentUser?.userPlans
@@ -59,6 +59,16 @@ const UserInfo = ({ userId }: { userId: string }) => {
 			ctx.invalidate()
 		},
 	})
+	const { mutate: createPlan } = api.userPlan.create.useMutation({
+		onSuccess: () => {
+			toast.success('Created')
+			ctx.user.get.invalidate()
+		},
+		onError: (e) => {
+			toast.error(JSON.stringify(e))
+			console.log(e)
+		},
+	})
 
 	const onSaveAsPlan = (id: number) => {
 		const plan = plans?.find((plan) => plan.id === id)
@@ -68,7 +78,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
 			description: plan.description,
 			image: plan.image,
 			notes: plan.notes,
-			planCategory: '',
+			planCategory: `${currentUser?.firstName} ${currentUser?.lastName}`,
 			numberOfMeals: plan.numberOfMeals || plan.userMeals.length,
 			meals: plan.userMeals.map((meal) => ({
 				mealIndex: meal.mealIndex || 0,
@@ -104,10 +114,65 @@ const UserInfo = ({ userId }: { userId: string }) => {
 		})
 	}
 
+	const onDuplicatePlan = (id: number) => {
+		const data = plans?.find((plan) => plan.id === id)
+		console.log('data', data)
+		if (!data) return
+		createPlan({
+			name: data.name + '-dup',
+			description: data.description,
+			image: '',
+			notes: data.notes,
+			meals: data.userMeals.map((meal, mealIndex) => ({
+				mealIndex: mealIndex,
+				mealTitle: meal.mealTitle || '',
+				calories: meal.calories || '',
+				targetCalories: meal.targetCalories || '',
+				targetProtein: meal.targetProtein || '',
+				vegeCalories: meal.vegeCalories || '',
+				veges: meal.veges || '',
+				vegeNotes: meal.vegeNotes || '',
+				protein: meal.protein?.toString(),
+				note: meal.note || '',
+				recipes: data.userRecipes
+					.filter((recipe) => recipe.mealIndex === mealIndex)
+					.map((recipe, recipeIndex) => ({
+						recipeIndex: recipeIndex,
+						mealIndex: mealIndex,
+						name: recipe.name || '',
+						note: recipe.note || '',
+						index: recipeIndex,
+						description: '',
+						ingredients: data?.userIngredients
+							.filter(
+								(ingredient) =>
+									ingredient.recipeIndex === recipe.recipeIndex &&
+									ingredient.mealIndex === recipe.mealIndex,
+							)
+							.map((ingredient, ingredientIndex) => ({
+								ingredientId: Number(ingredient.ingredientId),
+								ingredientIndex: ingredientIndex,
+								recipeIndex: recipeIndex,
+								mealIndex: mealIndex,
+								name: ingredient.name || '',
+								serve: ingredient.serve || '',
+								serveUnit: ingredient.serveUnit || '',
+								alternateId:
+									ingredient.alternateId === null
+										? null
+										: Number(ingredient.alternateId),
+								note: ingredient.note || '',
+							})),
+					})),
+			})),
+			userId: userId,
+		})
+	}
+
 	if (!plans) return null
 
 	return (
-		<div className='flex flex-col gap-4 items-center my-10 capitalize px-2 '>
+		<div className='flex flex-col gap-4 items-center px-2 my-10 capitalize'>
 			{plans.map((plan) => (
 				<Card
 					key={plan.id}
@@ -117,7 +182,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
 					)}
 				>
 					<Collapsible>
-						<CardHeader className='pb-2 flex flex-col justify-between relative'>
+						<CardHeader className='flex relative flex-col justify-between pb-2'>
 							<CollapsibleTrigger className='absolute -bottom-6 right-1/2 -translate-x-1/2'>
 								<ChevronDown size={40} />
 							</CollapsibleTrigger>
@@ -129,9 +194,9 @@ const UserInfo = ({ userId }: { userId: string }) => {
 							>
 								<div className='flex gap-2 items-center'>
 									<CardTitle className={cn('text-xl font-medium')}>
-										<Badge className=' mb-2'>Finished</Badge>
+										<Badge className='mb-2'>Finished</Badge>
 									</CardTitle>
-									<div className='text-[0.8rem] font-light text-muted-foreground flex gap-2 items-center'>
+									<div className='flex gap-2 items-center font-light text-[0.8rem] text-muted-foreground'>
 										<div>
 											{plan.createdAt.toLocaleDateString('en-AU', {
 												day: 'numeric',
@@ -170,8 +235,8 @@ const UserInfo = ({ userId }: { userId: string }) => {
 									>
 										Reactivate Plan
 									</Button>
-                  <Button
-                    className='font-semibold'
+									<Button
+										className='font-semibold'
 										variant='destructive'
 										size='sm'
 										onClick={() => {
@@ -190,9 +255,9 @@ const UserInfo = ({ userId }: { userId: string }) => {
 							>
 								<div className='flex gap-2 items-center'>
 									<CardTitle className={cn('text-xl font-medium')}>
-										<Badge className='bg-green-600 mb-2'>Active</Badge>
+										<Badge className='mb-2 bg-green-600'>Active</Badge>
 									</CardTitle>
-									<div className='text-[0.8rem] font-light text-muted-foreground flex gap-2 items-center'>
+									<div className='flex gap-2 items-center font-light text-[0.8rem] text-muted-foreground'>
 										<div>
 											{plan.createdAt.toLocaleDateString('en-AU', {
 												day: 'numeric',
@@ -232,6 +297,15 @@ const UserInfo = ({ userId }: { userId: string }) => {
 										Save As Plan
 									</Button>
 									<Button
+										variant='outline'
+										size='sm'
+										onClick={() => {
+											onDuplicatePlan(plan.id)
+										}}
+									>
+										Duplicate Plan
+									</Button>
+									<Button
 										variant='destructive'
 										size='sm'
 										onClick={() => {
@@ -245,51 +319,59 @@ const UserInfo = ({ userId }: { userId: string }) => {
 
 							<div className='flex gap-4 items-center'>
 								<div className='text-xl font-medium'>{plan.name}</div>
-								<div className='font-normal rounded-full bg-accent-foreground/10 px-2 py-[2px] text-sm'>
-                  Cals:
+								<div className='px-2 text-sm font-normal rounded-full bg-accent-foreground/10 py-[2px]'>
+									Cals:
 									{plan.userMeals
 										.reduce((acc, meal) => {
-                      if (meal.mealIndex === null) return acc
-											return acc + Number(getMealMacro(plan, meal.mealIndex).cals)
+											if (meal.mealIndex === null) return acc
+											return (
+												acc + Number(getMealMacro(plan, meal.mealIndex).cals)
+											)
 										}, 0)
 										.toFixed(0)}
 								</div>
-								<div className='font-normal rounded-full bg-accent-foreground/10 px-2 py-[2px] text-sm'>
-                  Protein:
+								<div className='px-2 text-sm font-normal rounded-full bg-accent-foreground/10 py-[2px]'>
+									Protein:
 									{plan.userMeals
 										.reduce((acc, meal) => {
-                      if (meal.mealIndex === null) return acc
-											return acc + Number(getMealMacro(plan, meal.mealIndex).protein)
+											if (meal.mealIndex === null) return acc
+											return (
+												acc + Number(getMealMacro(plan, meal.mealIndex).protein)
+											)
 										}, 0)
 										.toFixed(0)}
 								</div>
-								<div className='font-normal rounded-full bg-accent-foreground/10 px-2 py-[2px] text-sm'>
+								<div className='px-2 text-sm font-normal rounded-full bg-accent-foreground/10 py-[2px]'>
 									Carbs:
 									{plan.userMeals
 										.reduce((acc, meal) => {
-                      if (meal.mealIndex === null) return acc
-											return acc + Number(getMealMacro(plan, meal.mealIndex).carbs)
+											if (meal.mealIndex === null) return acc
+											return (
+												acc + Number(getMealMacro(plan, meal.mealIndex).carbs)
+											)
 										}, 0)
 										.toFixed(0)}
 								</div>
-								<div className='font-normal rounded-full bg-accent-foreground/10 px-2 py-[2px] text-sm'>
-                  Fat:
+								<div className='px-2 text-sm font-normal rounded-full bg-accent-foreground/10 py-[2px]'>
+									Fat:
 									{plan.userMeals
 										.reduce((acc, meal) => {
-                      if (meal.mealIndex === null) return acc
-											return acc + Number(getMealMacro(plan, meal.mealIndex).fat)
+											if (meal.mealIndex === null) return acc
+											return (
+												acc + Number(getMealMacro(plan, meal.mealIndex).fat)
+											)
 										}, 0)
 										.toFixed(0)}
 								</div>
 							</div>
 						</CardHeader>
 						<CollapsibleContent className=''>
-							<CardContent className='flex flex-col gap-2 w-full py-4'>
+							<CardContent className='flex flex-col gap-2 py-4 w-full'>
 								<Card>
 									<CardHeader className='pb-0'>
 										<CardTitle className='text-xl font-medium'>Meals</CardTitle>
 									</CardHeader>
-									<CardContent className='flex flex-col gap-2 w-full pt-1 pb-4'>
+									<CardContent className='flex flex-col gap-2 pt-1 pb-4 w-full'>
 										{plan.userMeals.map((meal, mealIndex) => {
 											const recipes = plan.userRecipes.filter(
 												(recipe) => recipe.mealIndex === mealIndex,
@@ -320,7 +402,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
 															) : null}
 														</div>
 													</div>
-													<div className='flex flex-col gap-1 w-full ml-4'>
+													<div className='flex flex-col gap-1 ml-4 w-full'>
 														{recipes.map((recipe) => {
 															return (
 																<div
