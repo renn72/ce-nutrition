@@ -24,7 +24,7 @@ export const columns: ColumnDef<GetPlanById>[] = [
 				}
 				onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
 				aria-label='Select all'
-				className='translate-y-[2px] mx-2'
+				className='mx-2 translate-y-[2px]'
 			/>
 		),
 		cell: ({ row }) => (
@@ -32,7 +32,7 @@ export const columns: ColumnDef<GetPlanById>[] = [
 				checked={row.getIsSelected()}
 				onCheckedChange={(value) => row.toggleSelected(!!value)}
 				aria-label='Select row'
-				className='translate-y-[2px] mx-2'
+				className='mx-2 translate-y-[2px]'
 			/>
 		),
 		enableSorting: false,
@@ -52,7 +52,7 @@ export const columns: ColumnDef<GetPlanById>[] = [
 		cell: ({ row }) => {
 			return (
 				<div className='flex space-x-2'>
-					<span className='max-w-[500px] truncate font-medium'>
+					<span className='font-medium max-w-[500px] truncate'>
 						{formatDate(row.getValue('createdAt'))}
 					</span>
 				</div>
@@ -79,7 +79,7 @@ export const columns: ColumnDef<GetPlanById>[] = [
 		cell: ({ row }) => {
 			return (
 				<div className='flex space-x-2'>
-					<span className='lg:w-[410px] truncate font-medium'>
+					<span className='font-medium truncate lg:w-[410px]'>
 						{row.getValue('name')}
 					</span>
 				</div>
@@ -92,28 +92,31 @@ export const columns: ColumnDef<GetPlanById>[] = [
 			<DataTableColumnHeader column={column} title='Meals' />
 		),
 		cell: ({ row }) => {
-      const plan = row.original as GetPlanById
-      const numberOfMeals = plan?.meals?.length
+			const plan = row.original as GetPlanById
+			const numberOfMeals = plan?.meals?.length
 			return (
 				<div className='flex space-x-2'>
-					<span className='lg:w-[110px] truncate font-medium'>
+					<span className='font-medium truncate lg:w-[110px]'>
 						{numberOfMeals}
 					</span>
 				</div>
 			)
 		},
 	},
-{
+	{
 		accessorKey: 'numberOfRecipes',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Recipes' />
 		),
 		cell: ({ row }) => {
-      const plan = row.original as GetPlanById
-      const numberOfRecipes = plan?.meals?.reduce((acc, meal) => acc + meal.mealToRecipe.length, 0)
+			const plan = row.original as GetPlanById
+			const numberOfRecipes = plan?.meals?.reduce(
+				(acc, meal) => acc + meal.mealToRecipe.length,
+				0,
+			)
 			return (
 				<div className='flex space-x-2'>
-					<span className='lg:w-[110px] truncate font-medium'>
+					<span className='font-medium truncate lg:w-[110px]'>
 						{numberOfRecipes}
 					</span>
 				</div>
@@ -128,7 +131,7 @@ export const columns: ColumnDef<GetPlanById>[] = [
 		cell: ({ row }) => {
 			return (
 				<div className='flex space-x-2'>
-					<span className='max-w-[100px] truncate font-medium'>
+					<span className='text-xs font-medium max-w-[100px] truncate'>
 						{row.getValue('notes')}
 					</span>
 				</div>
@@ -136,60 +139,54 @@ export const columns: ColumnDef<GetPlanById>[] = [
 		},
 	},
 	{
-		accessorKey: 'recipeCategory',
+		accessorKey: 'planCategory',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Category' />
 		),
 		cell: ({ row }) => {
 			return (
 				<div className='flex space-x-2'>
-					<span className='lg:w-[100px] truncate font-medium'>
-						{row.getValue('recipeCategory')}
+					<span className='text-xs font-medium truncate lg:w-[100px]'>
+						{row.getValue('planCategory')}
 					</span>
 				</div>
 			)
 		},
 	},
-  {
-    accessorKey: 'creator',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Creator' />
-    ),
-    cell: ({ row }) => {
-      const plan = row.original as GetPlanById
-      return (
-        <div className='flex space-x-2'>
-          <Badge
-            variant='secondary'
-            className='truncate'
-          >{plan?.creator?.name}</Badge>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'isGlobal',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Global' />
-    ),
-    cell: ({ row }) => {
-      const plan = row.original as GetPlanById
-      return (
-        <div className='flex space-x-2 justify-center'>
-          {
-            plan?.isGlobal ? (
-              <Badge
-                variant='secondary'
-                className='truncate'
-              >
-                <CheckCircle size={16} />
-              </Badge>
-            ) : null
-          }
-        </div>
-      )
-    },
-  },
+	{
+		accessorKey: 'creator',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Creator' />
+		),
+		cell: ({ row }) => {
+			const plan = row.original as GetPlanById
+			return (
+				<div className='flex space-x-2'>
+					<Badge variant='secondary' className='truncate'>
+						{plan?.creator?.name}
+					</Badge>
+				</div>
+			)
+		},
+	},
+	{
+		accessorKey: 'isGlobal',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Global' />
+		),
+		cell: ({ row }) => {
+			const plan = row.original as GetPlanById
+			return (
+				<div className='flex justify-center space-x-2'>
+					{plan?.isGlobal ? (
+						<Badge variant='secondary' className='truncate'>
+							<CheckCircle size={16} />
+						</Badge>
+					) : null}
+				</div>
+			)
+		},
+	},
 	{
 		id: 'actions',
 		cell: ({ row }) => <DataTableRowActions row={row} />,

@@ -11,7 +11,7 @@ import { cn, getRecipeDetails } from '@/lib/utils'
 import type { GetPlanById, UserPlan } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAtom } from 'jotai'
-import { Loader, PlusCircle } from 'lucide-react'
+import { PlusCircle, Undo2 } from 'lucide-react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -87,7 +87,9 @@ const CreateUserPlan = ({
 
 	const [userId] = useAtom(userAtom)
 
-	const { data: allPlans, isLoading } = api.plan.getAll.useQuery()
+	const { data: userAdmin } = api.user.isUser.useQuery()
+
+	const { data: allPlans } = api.plan.getAll.useQuery()
 
 	const ctx = api.useUtils()
 
@@ -491,35 +493,43 @@ const CreateUserPlan = ({
 		})
 	}
 
-	if (isLoading)
-		return (
-			<div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
-				<Loader className='animate-spin' />
-			</div>
-		)
-
 	if (userId === '') return <div>Select a user</div>
 
 	return (
 		<div className='flex flex-col my-12 w-full max-w-screen-xl'>
-			<div className={cn('flex gap-8 items-center', userPlan ? 'hidden' : '')}>
+			<div
+				className={cn('flex gap-8 items-center mb-4', userPlan ? 'hidden' : '')}
+			>
 				<PlanSelect selectedPlan={selectedPlanId} onSetPlan={onSetPlan} />
 			</div>
-			<div
-				className={cn(
-					'flex gap-8 items-center',
-					userPlan ? 'hidden' : 'hidden',
-				)}
-			>
-				<PlanFolders selectedPlan={selectedPlanId} onSetPlan={onSetPlan} />
+			<div className={cn('flex gap-8 items-center', userPlan ? 'hidden' : '')}>
+				<PlanFolders
+					selectedPlan={selectedPlanId}
+					onSetPlan={onSetPlan}
+					userId={userAdmin?.id}
+				/>
 			</div>
 			{selectedPlanId === '' && userPlan === null ? null : (
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)}>
 						<div className='flex flex-col lg:gap-2'>
-							<Button type='submit' className='mt-8 w-min'>
-								Save
-							</Button>
+							<div className='flex justify-between w-full'>
+								<Button type='submit' className=''>
+									Save
+								</Button>
+								<Button
+									variant='outline'
+									className='flex items-center'
+									onMouseDown={(e) => {
+										e.preventDefault()
+										setSelectedPlanId('')
+										setSelectedPlan(null)
+									}}
+								>
+									<Undo2 size={20} className='mr-1 mb-1' />
+									Back
+								</Button>
+							</div>
 							<div className='flex flex-col justify-between lg:flex-row lg:gap-8'>
 								<FormField
 									control={form.control}

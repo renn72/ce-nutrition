@@ -40,7 +40,7 @@ const PlanSelect = ({
 	onSetPlan: (planId: string) => void
 }) => {
 	const [trainer, setTrainer] = useState('all')
-  const [selectValue, setSelectValue] = useState('')
+	const [selectValue, setSelectValue] = useState('')
 	const ctx = api.useUtils()
 	const _allPlans = ctx.plan.getAllSimple.getData()
 
@@ -54,16 +54,17 @@ const PlanSelect = ({
 	const trainers = users?.filter((user) => user.isTrainer)
 
 	const [open, setOpen] = useState(false)
+
 	if (!allPlans) return null
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>
 				<Button
-          disabled={allPlans.length === 0}
+					disabled={allPlans.length === 0}
 					variant='outline'
 					role='combobox'
 					aria-expanded={open}
-					className='w-[350px] justify-between my-2 capitalize flex gap-1 items-center'
+					className='flex gap-1 justify-between items-center my-2 capitalize w-[350px]'
 				>
 					<span className='truncate'>
 						{selectedPlan
@@ -71,24 +72,24 @@ const PlanSelect = ({
 									?.name
 							: 'Select plan...'}
 					</span>
-					<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+					<ChevronsUpDown className='ml-2 w-4 h-4 opacity-50 shrink-0' />
 				</Button>
 			</PopoverTrigger>
-			<PopoverContent className='max-w-[100vw] md:max-w-[600px] p-0 w-full '>
+			<PopoverContent className='p-0 w-full max-w-[100vw] md:max-w-[600px]'>
 				<Command>
-					<div className='flex items-center gap-2 p-1'>
+					<div className='flex gap-2 items-center p-1'>
 						<CommandInput
 							placeholder='Search plans...'
 							className='w-max grow'
 						/>
 						<Select
-              value={selectValue}
-              onValueChange={(e) => {
-                console.log('e', e)
-                setSelectValue(e)
-                setTrainer(e)
-              }}
-            >
+							value={selectValue}
+							onValueChange={(e) => {
+								console.log('e', e)
+								setSelectValue(e)
+								setTrainer(e)
+							}}
+						>
 							<SelectTrigger className='w-[180px]'>
 								<SelectValue placeholder='Trainers' />
 							</SelectTrigger>
@@ -115,14 +116,12 @@ const PlanSelect = ({
 							</SelectContent>
 						</Select>
 					</div>
-					<CommandList
-            className='max-h-[600px] '
-          >
+					<CommandList className='max-h-[600px]'>
 						<CommandEmpty>No plan found.</CommandEmpty>
 						<CommandGroup>
 							{allPlans.map((plan) => (
 								<CommandItem
-									className='capitalize grid grid-cols-10 relative'
+									className='grid relative grid-cols-10 capitalize'
 									key={plan.id}
 									value={plan.id.toString()}
 									onSelect={() => {
@@ -138,11 +137,13 @@ const PlanSelect = ({
 												: 'opacity-0',
 										)}
 									/>
-									<span className='truncate col-span-8 ml-4 cursor-pointer'>
+									<span className='col-span-8 ml-4 cursor-pointer truncate'>
 										{plan.name}
 									</span>
 									<span className='col-span-2 text-right'>
-										<Badge variant='secondary'>{plan.creator?.name?.split(' ')[0]}</Badge>
+										<Badge variant='secondary'>
+											{plan.creator?.name?.split(' ')[0]}
+										</Badge>
 									</span>
 								</CommandItem>
 							))}

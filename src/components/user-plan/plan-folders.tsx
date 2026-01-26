@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { api } from '@/trpc/react'
 
 import { FileCode, FileJson, FileText } from 'lucide-react'
 
@@ -15,152 +16,126 @@ import {
 	TreeView,
 } from '@/components/kibo-ui/tree'
 
-const PlanFolders = ({
+import { isAllPlansCreateUserAtom } from '@/atoms'
+import { useAtom } from 'jotai'
+
+import { cn } from '@/lib/utils'
+import { Switch } from '@/components/ui/switch'
+
+import type { GetAllPlans } from '@/types'
+
+const Tree = ({
+	plans,
+	onSetPlan,
+}: {
+	plans: GetAllPlans
+	onSetPlan: (planId: string) => void
+}) => {
+	const categories = [
+		'uncategorised',
+		...new Set(
+			plans
+				.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
+				.map((plan) => plan.planCategory?.toLowerCase()),
+		),
+	].filter((cat) => cat !== '')
+
+	return (
+		<TreeProvider>
+			<TreeView>
+				{categories.map((category) => {
+					const filteredPlans =
+						category === 'uncategorised'
+							? plans.filter(
+									(plan) =>
+										plan.planCategory === '' || plan.planCategory === null,
+								)
+							: plans.filter(
+									(plan) => plan.planCategory?.toLowerCase() === category,
+								)
+
+					return (
+						<TreeNode key={category}>
+							<TreeNodeTrigger>
+								<TreeExpander hasChildren />
+								<TreeIcon hasChildren />
+								<TreeLabel className='capitalize'>{category}</TreeLabel>
+							</TreeNodeTrigger>
+							<TreeNodeContent hasChildren>
+								{filteredPlans.map((plan) => (
+									<TreeNode key={plan.id} level={1} nodeId='logo.svg'>
+										<TreeNodeTrigger
+											onMouseDown={(e) => {
+												e.preventDefault()
+												console.log('plan', plan)
+												onSetPlan(plan.id.toString())
+											}}
+										>
+											<TreeExpander />
+											<TreeIcon icon={<FileText className='w-4 h-4' />} />
+											<TreeLabel>{plan.name}</TreeLabel>
+										</TreeNodeTrigger>
+									</TreeNode>
+								))}
+							</TreeNodeContent>
+						</TreeNode>
+					)
+				})}
+			</TreeView>
+		</TreeProvider>
+	)
+}
+
+const PlanTree = ({
 	selectedPlan,
 	onSetPlan,
+	userId,
 }: {
 	selectedPlan: string
 	onSetPlan: (planId: string) => void
+	userId: string
 }) => {
-	const [selected, setSelected] = useState(selectedPlan)
+	const [isAll, setIsAll] = useAtom(isAllPlansCreateUserAtom)
+
+	const { data: allPlans } = api.plan.getAll.useQuery()
+	const { data: myPlans, isLoading: isLoadingMyPlans } =
+		api.plan.getAllMy.useQuery({ userId: userId })
+
+	if (selectedPlan) return null
+	if (isLoadingMyPlans) return null
 	return (
-		<TreeProvider
-			defaultExpandedIds={['src', 'components', 'ui']}
-			onSelectionChange={(ids) => {
-				console.log('Selected:', ids)
-				const _selected = ids[0]
-				if (_selected) setSelected(_selected)
-			}}
-			selectedIds={[selected]}
-		>
-			{selected}
-			<TreeView>
-				<TreeNode nodeId='src'>
-					<TreeNodeTrigger>
-						<TreeExpander hasChildren />
-						<TreeIcon hasChildren />
-						<TreeLabel>src</TreeLabel>
-					</TreeNodeTrigger>
-					<TreeNodeContent hasChildren>
-						<TreeNode level={1} nodeId='components'>
-							<TreeNodeTrigger>
-								<TreeExpander hasChildren />
-								<TreeIcon hasChildren />
-								<TreeLabel>components</TreeLabel>
-							</TreeNodeTrigger>
-							<TreeNodeContent hasChildren>
-								<TreeNode level={2} nodeId='ui'>
-									<TreeNodeTrigger>
-										<TreeExpander hasChildren />
-										<TreeIcon hasChildren />
-										<TreeLabel>ui</TreeLabel>
-									</TreeNodeTrigger>
-									<TreeNodeContent hasChildren>
-										<TreeNode level={3} nodeId='button.tsx'>
-											<TreeNodeTrigger>
-												<TreeExpander />
-												<TreeIcon icon={<FileCode className='h-4 w-4' />} />
-												<TreeLabel>button.tsx</TreeLabel>
-											</TreeNodeTrigger>
-										</TreeNode>
-										<TreeNode level={3} nodeId='card.tsx'>
-											<TreeNodeTrigger>
-												<TreeExpander />
-												<TreeIcon icon={<FileCode className='h-4 w-4' />} />
-												<TreeLabel>card.tsx</TreeLabel>
-											</TreeNodeTrigger>
-										</TreeNode>
-										<TreeNode isLast level={3} nodeId='dialog.tsx'>
-											<TreeNodeTrigger>
-												<TreeExpander />
-												<TreeIcon icon={<FileCode className='h-4 w-4' />} />
-												<TreeLabel>dialog.tsx</TreeLabel>
-											</TreeNodeTrigger>
-										</TreeNode>
-									</TreeNodeContent>
-								</TreeNode>
-								<TreeNode isLast level={2} nodeId='layout'>
-									<TreeNodeTrigger>
-										<TreeExpander hasChildren />
-										<TreeIcon hasChildren />
-										<TreeLabel>layout</TreeLabel>
-									</TreeNodeTrigger>
-									<TreeNodeContent hasChildren>
-										<TreeNode level={3} nodeId='header.tsx'>
-											<TreeNodeTrigger>
-												<TreeExpander />
-												<TreeIcon icon={<FileCode className='h-4 w-4' />} />
-												<TreeLabel>header.tsx</TreeLabel>
-											</TreeNodeTrigger>
-										</TreeNode>
-										<TreeNode isLast level={3} nodeId='footer.tsx'>
-											<TreeNodeTrigger>
-												<TreeExpander />
-												<TreeIcon icon={<FileCode className='h-4 w-4' />} />
-												<TreeLabel>footer.tsx</TreeLabel>
-											</TreeNodeTrigger>
-										</TreeNode>
-									</TreeNodeContent>
-								</TreeNode>
-							</TreeNodeContent>
-						</TreeNode>
-					</TreeNodeContent>
-				</TreeNode>
-				<TreeNode>
-					<TreeNodeTrigger>
-						<TreeExpander hasChildren />
-						<TreeIcon hasChildren />
-						<TreeLabel>public</TreeLabel>
-					</TreeNodeTrigger>
-					<TreeNodeContent hasChildren>
-						<TreeNode isLast level={1} nodeId='images'>
-							<TreeNodeTrigger>
-								<TreeExpander hasChildren />
-								<TreeIcon hasChildren />
-								<TreeLabel>images</TreeLabel>
-							</TreeNodeTrigger>
-							<TreeNodeContent hasChildren>
-								<TreeNode level={2} nodeId='logo.svg'>
-									<TreeNodeTrigger>
-										<TreeExpander />
-										<TreeIcon icon={<FileText className='h-4 w-4' />} />
-										<TreeLabel>logo.svg</TreeLabel>
-									</TreeNodeTrigger>
-								</TreeNode>
-								<TreeNode isLast level={2} nodeId='hero.png'>
-									<TreeNodeTrigger>
-										<TreeExpander />
-										<TreeIcon icon={<FileText className='h-4 w-4' />} />
-										<TreeLabel>hero.png</TreeLabel>
-									</TreeNodeTrigger>
-								</TreeNode>
-							</TreeNodeContent>
-						</TreeNode>
-					</TreeNodeContent>
-				</TreeNode>
-				<TreeNode nodeId='package.json'>
-					<TreeNodeTrigger>
-						<TreeExpander />
-						<TreeIcon icon={<FileJson className='h-4 w-4' />} />
-						<TreeLabel>package.json</TreeLabel>
-					</TreeNodeTrigger>
-				</TreeNode>
-				<TreeNode nodeId='tsconfig.json'>
-					<TreeNodeTrigger>
-						<TreeExpander />
-						<TreeIcon icon={<FileJson className='h-4 w-4' />} />
-						<TreeLabel>tsconfig.json</TreeLabel>
-					</TreeNodeTrigger>
-				</TreeNode>
-				<TreeNode isLast nodeId='README.md'>
-					<TreeNodeTrigger>
-						<TreeExpander />
-						<TreeIcon icon={<FileText className='h-4 w-4' />} />
-						<TreeLabel>README.md</TreeLabel>
-					</TreeNodeTrigger>
-				</TreeNode>
-			</TreeView>
-		</TreeProvider>
+		<div>
+			<div className='flex gap-1 mb-2 w-full text-sm font-semibold text-muted-foreground/50'>
+				<div className={cn(isAll ? '' : 'text-foreground')}>My Plans</div>
+				<Switch
+					onCheckedChange={setIsAll}
+					checked={isAll}
+					className='data-[state=unchecked]:bg-foreground data-[state=checked]:bg-foreground'
+				/>
+				<div className={cn(isAll ? 'text-foreground' : '')}>All Plans</div>
+			</div>
+			{/* @ts-ignore */}
+			<Tree plans={isAll ? allPlans : myPlans} onSetPlan={onSetPlan} />
+		</div>
+	)
+}
+
+const PlanFolders = ({
+	selectedPlan,
+	onSetPlan,
+	userId,
+}: {
+	selectedPlan: string
+	onSetPlan: (planId: string) => void
+	userId: string | undefined | null
+}) => {
+	if (!userId) return null
+	return (
+		<PlanTree
+			selectedPlan={selectedPlan}
+			onSetPlan={onSetPlan}
+			userId={userId}
+		/>
 	)
 }
 
