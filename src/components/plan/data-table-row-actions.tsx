@@ -50,7 +50,7 @@ export function DataTableRowActions<TData>({
 				setTimeout(() => {
 					setIsLoading(false)
 					setIsOpen(false)
-				}, 1500)
+				}, 500)
 			},
 			onMutate: () => {
 				setIsLoading(true)
