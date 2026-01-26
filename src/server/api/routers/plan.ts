@@ -359,6 +359,23 @@ export const planRouter = createTRPCRouter({
 
 			return { res }
 		}),
+	updatePlanCategory: protectedProcedure
+		.input(
+			z.object({
+				id: z.number(),
+				planCategory: z.string(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const res = await ctx.db
+				.update(plan)
+				.set({
+					planCategory: input.planCategory,
+				})
+				.where(eq(plan.id, input.id))
+
+			return res
+		}),
 	create: protectedProcedure
 		.input(
 			z.object({

@@ -498,7 +498,10 @@ const CreateUserPlan = ({
 	return (
 		<div className='flex flex-col my-12 w-full max-w-screen-xl'>
 			<div
-				className={cn('flex gap-8 items-center mb-4', userPlan ? 'hidden' : '')}
+				className={cn(
+					'flex gap-8 items-center mb-4',
+					userPlan ? 'hidden' : 'hidden',
+				)}
 			>
 				<PlanSelect selectedPlan={selectedPlanId} onSetPlan={onSetPlan} />
 			</div>

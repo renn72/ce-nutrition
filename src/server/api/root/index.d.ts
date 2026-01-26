@@ -18222,6 +18222,14 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             };
             meta: object;
         }>;
+        updatePlanCategory: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+                planCategory: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         create: _trpc_server.TRPCMutationProcedure<{
             input: {
                 name: string;
@@ -25490,6 +25498,14 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     id: number;
                 }[];
             };
+            meta: object;
+        }>;
+        updatePlanCategory: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+                planCategory: string;
+            };
+            output: _libsql_client.ResultSet;
             meta: object;
         }>;
         create: _trpc_server.TRPCMutationProcedure<{

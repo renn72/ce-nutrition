@@ -6092,6 +6092,17 @@ var planRouter = createTRPCRouter({
     }
     return { res };
   }),
+  updatePlanCategory: protectedProcedure.input(
+    z15.object({
+      id: z15.number(),
+      planCategory: z15.string()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    const res = await ctx.db.update(plan).set({
+      planCategory: input.planCategory
+    }).where(eq9(plan.id, input.id));
+    return res;
+  }),
   create: protectedProcedure.input(
     z15.object({
       name: z15.string(),
