@@ -19,6 +19,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
+import { Loader2 } from 'lucide-react'
 
 const DailyLogs = ({
 	userId,
@@ -35,9 +36,13 @@ const DailyLogs = ({
 	isDanger?: boolean
 	cols?: number
 }) => {
-	const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId || '')
+	const { data: dailyLogs, isLoading } = api.dailyLog.getAllUser.useQuery(
+		userId || '',
+	)
 	const today = new Date()
 	const isMobile = useClientMediaQuery('(max-width: 600px)')
+
+	if (isLoading) return <Loader2 className='animate-spin' />
 
 	const content = (
 		<>
