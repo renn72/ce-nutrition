@@ -30,6 +30,8 @@ export default function Page({
 	const dataId = searchParams.get('dataId') ?? ''
 	const router = useRouter()
 
+	const [toggleLog, setToggleLog] = useState(false)
+
 	const [noteId, setNoteId] = useState('')
 
 	const [images, setImages] = useState([
@@ -38,6 +40,17 @@ export default function Page({
 	const { data: userNotes } = api.trainerNotes.getAllUser.useQuery({
 		userId: user ?? '',
 	})
+	const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(user || '')
+
+	const [day, month, year] = date.split('-').map(Number)
+	const dailyLog = dailyLogs?.find((dailyLog) => {
+		if (day === undefined || month === undefined || year === undefined)
+			return false
+
+		return dailyLog.date === new Date(year, month - 1, day).toDateString()
+	})
+
+	console.log('dailyLog', dailyLog, date)
 
 	const ctx = api.useUtils()
 	const { mutate: createNote } = api.trainerNotes.create.useMutation({
@@ -71,13 +84,13 @@ export default function Page({
 	if (!imageId) return <div>Loading...</div>
 
 	return (
-		<div className='w-full grid justify-center px-2 relative'>
+		<div className='grid relative justify-center px-2 w-full'>
 			<div className='absolute top-1 right-2 z-20'>
 				<Popover>
 					<PopoverTrigger asChild>
 						<Button
 							variant='secondary'
-							className=' hover:outline hover:bg-primary/00 w-10 h-10 rounded-full p-0'
+							className='p-0 w-10 h-10 rounded-full hover:outline hover:bg-primary/00'
 						>
 							<Menu size={24} />
 						</Button>
@@ -85,7 +98,7 @@ export default function Page({
 					<PopoverContent
 						align='end'
 						forceMount
-						className='w-96 flex flex-col gap-1 pl-4 pr-6'
+						className='flex flex-col gap-1 pr-6 pl-4 w-96'
 						onInteractOutside={(e) => {
 							e.preventDefault()
 						}}
@@ -93,7 +106,7 @@ export default function Page({
 						{userNotes?.map((note, i, a) => (
 							<div
 								key={note.id}
-								className='flex gap-2 items-center justify-between w-full flex-col '
+								className='flex flex-col gap-2 justify-between items-center w-full'
 							>
 								{a?.[i - 1]?.createdAt?.toLocaleDateString('en-AU', {
 									day: 'numeric',
@@ -105,9 +118,9 @@ export default function Page({
 									month: 'short',
 									year: 'numeric',
 								}) ? null : (
-									<div className='flex gap-2 items-center justify-between w-full'>
+									<div className='flex gap-2 justify-between items-center w-full'>
 										<div />
-										<div className='text-[0.6rem] rounded-full bg-muted px-2 py-[2px] w-fit'>
+										<div className='px-2 rounded-full text-[0.6rem] bg-muted py-[2px] w-fit'>
 											{note.createdAt?.toLocaleDateString('en-AU', {
 												day: 'numeric',
 												month: 'short',
@@ -116,11 +129,11 @@ export default function Page({
 										</div>
 									</div>
 								)}
-								<div className='text-sm font-medium w-full bg-muted rounded-full px-2 py-1 relative'>
+								<div className='relative py-1 px-2 w-full text-sm font-medium rounded-full bg-muted'>
 									{note.description}
 									<XIcon
 										size={16}
-										className='absolute -right-5 cursor-pointer hover:text-destructive active:scale-90 transition-all top-1/2 -translate-y-1/2'
+										className='absolute -right-5 top-1/2 transition-all -translate-y-1/2 cursor-pointer active:scale-90 hover:text-destructive'
 										onClick={() => {
 											deleteNote({ id: note.id })
 										}}
@@ -138,13 +151,13 @@ export default function Page({
 					</PopoverContent>
 				</Popover>
 			</div>
-				<Button
-					onClick={() => router.push(`/admin/user-image?user=${user}`)}
-					className='absolute top-2 left-2 z-20'
-				>
-					Back
-				</Button>
-			<div className='relative flex gap-2  overflow-x-auto'>
+			<Button
+				onClick={() => router.push(`/admin/user-image?user=${user}`)}
+				className='absolute top-2 left-2 z-20'
+			>
+				Back
+			</Button>
+			<div className='flex overflow-x-auto relative gap-2'>
 				{images.map((image) => (
 					<ImageView
 						key={image.url}
@@ -154,9 +167,16 @@ export default function Page({
 						userId={user ?? ''}
 						isAdmin={true}
 						dataId={image.dataId}
+						isLogs={toggleLog}
+						dailyLog={dailyLog}
 					/>
 				))}
 				<ImageAdd setImages={setImages} images={images} />
+			</div>
+			<div className='absolute bottom-2 left-2 z-20'>
+				<Button variant='outline' onClick={() => setToggleLog(!toggleLog)}>
+					Toggle Logs
+				</Button>
 			</div>
 		</div>
 	)

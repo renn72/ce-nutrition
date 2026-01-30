@@ -200,8 +200,6 @@ const Log = memo(
 			[yesterdaysDailyLog?.waterLogs],
 		)
 
-		console.log(todaysDailyLog)
-
 		const mealsMacros = useMemo(
 			() =>
 				todaysDailyLog?.dailyMeals.reduce(

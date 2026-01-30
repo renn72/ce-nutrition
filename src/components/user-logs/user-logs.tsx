@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { api } from '@/trpc/react'
 
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
@@ -109,9 +109,13 @@ const UserLogs = ({
 }) => {
 	const isMobile = useClientMediaQuery('(max-width: 600px)')
 	const { data: user } = api.user.get.useQuery(userId || '')
-	const [days, setDays] = useState(30)
+	const [days, setDays] = useState(7)
 	const [isDanger, setIsDanger] = useState(false)
 	const [cols, setCols] = useState(3)
+
+	useEffect(() => {
+		setDays(7)
+	}, [userId])
 
 	if (!user) return null
 
