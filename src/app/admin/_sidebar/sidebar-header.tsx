@@ -7,7 +7,7 @@ import { Notifications } from '@/components/layout/notifications'
 import { api } from '@/trpc/react'
 
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 
 import {
 	Breadcrumb,
@@ -26,11 +26,13 @@ import { AdminLoader } from './admin-loader'
 const SidebarHeader = () => {
 	const { data: currentUser } = api.user.getCurrentUser.useQuery()
 	const pathname = usePathname()
+	const searchParams = useSearchParams()
+	const userId = searchParams.get('user')
+	const { data: user } = api.user.getBasic.useQuery(userId || '')
 
 	if (!currentUser) return null
 	return (
 		<header className='flex gap-2 justify-between items-center px-4 h-12 border-b'>
-			<AdminLoader userId={currentUser.id} />
 			<div className='flex gap-2 items-center shrink-0'>
 				<SidebarTrigger className='-ml-1' />
 				<Separator
@@ -53,6 +55,10 @@ const SidebarHeader = () => {
 						</BreadcrumbItem>
 					</BreadcrumbList>
 				</Breadcrumb>
+			</div>
+			<div className='text-lg font-semibold text-center'>
+				{user ? `${user?.firstName} ${user?.lastName}` : null}
+				<AdminLoader userId={currentUser.id} />
 			</div>
 			<div className='flex gap-2 items-center'>
 				<Notifications currentUser={currentUser} />
