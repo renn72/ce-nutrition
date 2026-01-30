@@ -1,7 +1,7 @@
 import { api } from '@/trpc/react'
 
 const BBLoader = ({ userId }: { userId: string }) => {
-	const _ = api.user.get.useQuery(userId)
+	const _d = api.dailyLog.getAllUser.useQuery(userId || '')
 	return <div />
 }
 
