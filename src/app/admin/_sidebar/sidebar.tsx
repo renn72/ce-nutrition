@@ -333,6 +333,7 @@ const AdminSidebarContent = () => {
 															keywords={[user.name || '']}
 															onSelect={(currentValue) => {
 																router.push(`${pathname}?user=${user.id}`)
+																router.refresh()
 
 																setSelectedUser(currentValue)
 																setIsOpen(false)
