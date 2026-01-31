@@ -70,7 +70,7 @@ const DailyLogs = ({
 						isAdmin={isAdmin}
 						isLogPage={true}
 						isDanger={isDanger}
-						isCreator={false}
+						isCreator={isDanger}
 					/>
 				)
 			})}
@@ -118,6 +118,8 @@ const UserLogs = ({
 	const [isDanger, setIsDanger] = useState(false)
 	const [cols, setCols] = useState(3)
 
+	const { data: isRoot } = api.user.isCreator.useQuery()
+
 	useEffect(() => {
 		setDays(7)
 	}, [userId])
@@ -148,7 +150,9 @@ const UserLogs = ({
 						Year
 					</ToggleGroupItem>
 				</ToggleGroup>
-				<Switch checked={isDanger} onCheckedChange={setIsDanger} />
+				{isRoot?.isCreator && (
+					<Switch checked={isDanger} onCheckedChange={setIsDanger} />
+				)}
 				{!isMobile && (
 					<div className='flex gap-2 items-center'>
 						<Label className='text-sm'>Columns</Label>
