@@ -401,7 +401,7 @@ const UserCharts = ({
 				day: 'numeric',
 			}),
 		}))
-		.slice(-range)
+		.slice(-(range > 30 ? 30 : range))
 
 	const skinfolds = userSkinfolds
 		?.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -435,7 +435,7 @@ const UserCharts = ({
 				leanMass: Number(skinfold.leanMass?.[0]?.leanMass),
 			}
 		})
-		.slice(-range)
+		.slice(-(range > 30 ? 30 : range))
 
 	return (
 		<div
@@ -520,7 +520,7 @@ const UserCharts = ({
 					/>
 				</div>
 				<NumberInput
-					value={range}
+					value={range > 30 ? 30 : range}
 					setValue={setRange}
 					fixed={1}
 					scale={1}
