@@ -4925,6 +4925,7 @@ var get = {
         name: true
       },
       with: {
+        settings: true,
         roles: true
       }
     });

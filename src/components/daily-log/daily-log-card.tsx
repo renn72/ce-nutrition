@@ -8,7 +8,7 @@ import {
 	calculateMealMacros,
 	getRecipeDetailsFromDailyLog,
 } from '@/lib/utils'
-import type { GetDailyLogById, GetUserById } from '@/types'
+import type { GetDailyLogById, GetUserWRoles } from '@/types'
 import {
 	Activity,
 	ArrowDown,
@@ -150,7 +150,7 @@ const Log = memo(
 	}: {
 		todaysDailyLog: GetDailyLogById | undefined
 		yesterdaysDailyLog: GetDailyLogById | undefined | null
-		currentUser: GetUserById
+		currentUser: GetUserWRoles
 		isAdmin?: boolean
 		isLogPage?: boolean
 		title: string
@@ -170,7 +170,7 @@ const Log = memo(
 		const isSteps = isAdmin || currentUser?.settings?.isSteps
 		const isPosing = isAdmin || currentUser?.settings?.isPosing
 
-		const isPeriodEnabled = currentUser.settings?.periodStartAt ?? false
+		const isPeriodEnabled = currentUser?.settings?.periodStartAt ?? false
 		const isPeriod = todaysDailyLog?.isPeriod ?? false
 		const isOvulation = todaysDailyLog?.isOvulation ?? false
 
@@ -479,13 +479,14 @@ const Log = memo(
 		)
 	},
 )
+
 Log.displayName = 'Log'
 
 const DailyLogCard = ({
 	dailyLog,
 	yesterdaysDailyLog,
 	date,
-	currentUser,
+	userId,
 	title,
 	isAdmin = false,
 	isLogPage = false,
@@ -496,7 +497,7 @@ const DailyLogCard = ({
 	dailyLog: GetDailyLogById | undefined
 	yesterdaysDailyLog: GetDailyLogById | undefined
 	date: Date
-	currentUser: GetUserById
+	userId: string
 	title: string
 	isAdmin?: boolean
 	isLogPage?: boolean
@@ -510,6 +511,11 @@ const DailyLogCard = ({
 			ctx.dailyLog.invalidate()
 		},
 	})
+	const { data: currentUser } = api.user.getCurrentUserRoles.useQuery({
+		id: userId,
+	})
+
+	if (!currentUser) return null
 
 	const id = dailyLog?.id || 0
 

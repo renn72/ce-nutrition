@@ -5,7 +5,7 @@ import { api } from '@/trpc/react'
 
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { getFormattedDate } from '@/lib/utils'
-import type { GetUserById } from '@/types'
+import type { GetAllDailyLogs } from '@/types'
 
 import { DailyLogCard } from '@/components/daily-log/daily-log-card'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
@@ -19,30 +19,31 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
-import { Loader2 } from 'lucide-react'
+import { SpinnerGapIcon } from '@phosphor-icons/react'
+
+const Spinner = () => (
+	<div className='flex flex-col justify-center items-center mt-20'>
+		<SpinnerGapIcon size={48} className='animate-spin' />
+	</div>
+)
 
 const DailyLogs = ({
 	userId,
-	user,
 	isAdmin = false,
 	days = 7,
 	isDanger = false,
 	cols = 3,
+	dailyLogs,
 }: {
-	user: GetUserById
 	userId: string
 	isAdmin?: boolean
 	days?: number
 	isDanger?: boolean
 	cols?: number
+	dailyLogs: GetAllDailyLogs | undefined
 }) => {
-	const { data: dailyLogs, isLoading } = api.dailyLog.getAllUser.useQuery(
-		userId || '',
-	)
 	const today = new Date()
 	const isMobile = useClientMediaQuery('(max-width: 600px)')
-
-	if (isLoading) return <Loader2 className='animate-spin' />
 
 	const content = (
 		<>
@@ -63,7 +64,7 @@ const DailyLogs = ({
 					<DailyLogCard
 						key={dailyLog.id}
 						title={title}
-						currentUser={user}
+						userId={userId}
 						dailyLog={dailyLog}
 						yesterdaysDailyLog={yesterdaysDailyLog}
 						date={date}
@@ -105,6 +106,74 @@ const DailyLogs = ({
 	)
 }
 
+const DailyLogs7 = ({
+	userId,
+	isAdmin = false,
+	days = 7,
+	isDanger = false,
+	cols = 3,
+}: {
+	userId: string
+	isAdmin?: boolean
+	days?: number
+	isDanger?: boolean
+	cols?: number
+}) => {
+	const ctx = api.useUtils()
+	const { data: dailyLogs, isLoading } = api.dailyLog.getUserLimit.useQuery({
+		id: userId,
+		limit: 7,
+	})
+
+	useEffect(() => {
+		if (dailyLogs) {
+			ctx.dailyLog.getAllUser.prefetch(userId)
+		}
+	}, [dailyLogs])
+
+	if (isLoading) return <Spinner />
+
+	return (
+		<DailyLogs
+			dailyLogs={dailyLogs}
+			isAdmin={isAdmin}
+			userId={userId}
+			days={days}
+			isDanger={isDanger}
+			cols={cols}
+		/>
+	)
+}
+const DailyLogsAll = ({
+	userId,
+	isAdmin = false,
+	days = 7,
+	isDanger = false,
+	cols = 3,
+}: {
+	userId: string
+	isAdmin?: boolean
+	days?: number
+	isDanger?: boolean
+	cols?: number
+}) => {
+	const { data: dailyLogs, isLoading } =
+		api.dailyLog.getAllUser.useQuery(userId)
+
+	if (isLoading) return <Spinner />
+
+	return (
+		<DailyLogs
+			dailyLogs={dailyLogs}
+			isAdmin={isAdmin}
+			userId={userId}
+			days={days}
+			isDanger={isDanger}
+			cols={cols}
+		/>
+	)
+}
+
 const UserLogs = ({
 	userId,
 	isAdmin = false,
@@ -113,7 +182,6 @@ const UserLogs = ({
 	isAdmin?: boolean
 }) => {
 	const isMobile = useClientMediaQuery('(max-width: 600px)')
-	const { data: user } = api.user.get.useQuery(userId || '')
 	const [days, setDays] = useState(7)
 	const [isDanger, setIsDanger] = useState(false)
 	const [cols, setCols] = useState(3)
@@ -123,8 +191,6 @@ const UserLogs = ({
 	useEffect(() => {
 		setDays(7)
 	}, [userId])
-
-	if (!user) return null
 
 	const content = (
 		<div className='flex flex-col gap-2 items-center px-1 w-full lg:gap-4'>
@@ -174,14 +240,23 @@ const UserLogs = ({
 					</div>
 				)}
 			</div>
-			<DailyLogs
-				user={user}
-				isAdmin={isAdmin}
-				userId={userId}
-				days={days}
-				isDanger={isDanger}
-				cols={cols}
-			/>
+			{days === 7 ? (
+				<DailyLogs7
+					userId={userId}
+					isAdmin={isAdmin}
+					days={days}
+					isDanger={isDanger}
+					cols={cols}
+				/>
+			) : (
+				<DailyLogsAll
+					userId={userId}
+					isAdmin={isAdmin}
+					days={days}
+					isDanger={isDanger}
+					cols={cols}
+				/>
+			)}
 		</div>
 	)
 
