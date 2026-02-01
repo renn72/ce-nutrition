@@ -56,7 +56,7 @@ const DailyLogCarousel = ({
 				dailyLog={todaysDailyLog}
 				yesterdaysDailyLog={yesterdaysDailyLog}
 				date={today}
-				currentUser={currentUser}
+				userId={currentUser.id}
 				isCreator={false}
 				className='pb-10 mb-20'
 			/>
