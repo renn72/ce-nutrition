@@ -5878,6 +5878,19 @@ var planRouter = createTRPCRouter({
     const res = await ctx.db.delete(planFolder).where(eq9(planFolder.id, input.id));
     return res;
   }),
+  getAllName: protectedProcedure.query(async ({ ctx }) => {
+    const res = await ctx.db.query.plan.findMany({
+      orderBy: [desc4(plan.createdAt)],
+      columns: {
+        updatedAt: true,
+        name: true,
+        id: true,
+        planCategory: true,
+        creatorId: true
+      }
+    });
+    return res;
+  }),
   getAllSimple: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.plan.findMany({
       orderBy: [desc4(plan.createdAt)],
@@ -5952,9 +5965,11 @@ var planRouter = createTRPCRouter({
     });
     return res;
   }),
-  get: protectedProcedure.input(z15.number()).query(async ({ input, ctx }) => {
+  get: protectedProcedure.input(z15.object({ id: z15.number() })).query(async ({ input, ctx }) => {
+    if (input.id === 0) return null;
+    console.log("input get", input);
     const res = await ctx.db.query.plan.findFirst({
-      where: (plan2, { eq: eq28 }) => eq28(plan2.id, input),
+      where: (plan2, { eq: eq28 }) => eq28(plan2.id, input.id),
       with: {
         creator: true,
         meals: {
@@ -5966,15 +5981,7 @@ var planRouter = createTRPCRouter({
                     recipeToIngredient: {
                       with: {
                         alternateIngredient: true,
-                        ingredient: {
-                          with: {
-                            ingredientToGroceryStore: {
-                              with: {
-                                groceryStore: true
-                              }
-                            }
-                          }
-                        }
+                        ingredient: true
                       }
                     }
                   }

@@ -39,6 +39,19 @@ export const planRouter = createTRPCRouter({
 				.where(eq(planFolder.id, input.id))
 			return res
 		}),
+	getAllName: protectedProcedure.query(async ({ ctx }) => {
+		const res = await ctx.db.query.plan.findMany({
+			orderBy: [desc(plan.createdAt)],
+			columns: {
+				updatedAt: true,
+				name: true,
+				id: true,
+				planCategory: true,
+				creatorId: true,
+			},
+		})
+		return res
+	}),
 	getAllSimple: protectedProcedure.query(async ({ ctx }) => {
 		const res = await ctx.db.query.plan.findMany({
 			orderBy: [desc(plan.createdAt)],
@@ -115,46 +128,42 @@ export const planRouter = createTRPCRouter({
 		})
 		return res
 	}),
-	get: protectedProcedure.input(z.number()).query(async ({ input, ctx }) => {
-		const res = await ctx.db.query.plan.findFirst({
-			where: (plan, { eq }) => eq(plan.id, input),
-			with: {
-				creator: true,
-				meals: {
-					with: {
-						mealToRecipe: {
-							with: {
-								recipe: {
-									with: {
-										recipeToIngredient: {
-											with: {
-												alternateIngredient: true,
-												ingredient: {
-													with: {
-														ingredientToGroceryStore: {
-															with: {
-																groceryStore: true,
-															},
-														},
-													},
+	get: protectedProcedure
+		.input(z.object({ id: z.number() }))
+		.query(async ({ input, ctx }) => {
+			if (input.id === 0) return null
+			console.log('input get', input)
+			const res = await ctx.db.query.plan.findFirst({
+				where: (plan, { eq }) => eq(plan.id, input.id),
+				with: {
+					creator: true,
+					meals: {
+						with: {
+							mealToRecipe: {
+								with: {
+									recipe: {
+										with: {
+											recipeToIngredient: {
+												with: {
+													alternateIngredient: true,
+													ingredient: true,
 												},
 											},
 										},
 									},
 								},
 							},
-						},
-						mealToVegeStack: {
-							with: {
-								vegeStack: true,
+							mealToVegeStack: {
+								with: {
+									vegeStack: true,
+								},
 							},
 						},
 					},
 				},
-			},
-		})
-		return res
-	}),
+			})
+			return res
+		}),
 	update: protectedProcedure
 		.input(
 			z.object({

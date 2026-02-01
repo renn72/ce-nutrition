@@ -17864,6 +17864,17 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        getAllName: _trpc_server.TRPCQueryProcedure<{
+            input: void;
+            output: {
+                id: number;
+                name: string | null;
+                updatedAt: Date | null;
+                creatorId: string | null;
+                planCategory: string | null;
+            }[];
+            meta: object;
+        }>;
         getAllSimple: _trpc_server.TRPCQueryProcedure<{
             input: void;
             output: {
@@ -18288,7 +18299,9 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             meta: object;
         }>;
         get: _trpc_server.TRPCQueryProcedure<{
-            input: number;
+            input: {
+                id: number;
+            };
             output: {
                 id: number;
                 name: string | null;
@@ -18416,18 +18429,6 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                                     isPrivate: boolean | null;
                                     viewableBy: string | null;
                                     intervale: string | null;
-                                    ingredientToGroceryStore: {
-                                        id: number;
-                                        createdAt: Date;
-                                        ingredientId: number | null;
-                                        groceryStoreId: number | null;
-                                        groceryStore: {
-                                            id: number;
-                                            name: string | null;
-                                            createdAt: Date;
-                                            location: string | null;
-                                        } | null;
-                                    }[];
                                 };
                                 alternateIngredient: {
                                     id: number;
@@ -18483,7 +18484,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                         } | null;
                     }[];
                 }[];
-            } | undefined;
+            } | null | undefined;
             meta: object;
         }>;
         update: _trpc_server.TRPCMutationProcedure<{
@@ -25618,6 +25619,17 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        getAllName: _trpc_server.TRPCQueryProcedure<{
+            input: void;
+            output: {
+                id: number;
+                name: string | null;
+                updatedAt: Date | null;
+                creatorId: string | null;
+                planCategory: string | null;
+            }[];
+            meta: object;
+        }>;
         getAllSimple: _trpc_server.TRPCQueryProcedure<{
             input: void;
             output: {
@@ -26042,7 +26054,9 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             meta: object;
         }>;
         get: _trpc_server.TRPCQueryProcedure<{
-            input: number;
+            input: {
+                id: number;
+            };
             output: {
                 id: number;
                 name: string | null;
@@ -26170,18 +26184,6 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                                     isPrivate: boolean | null;
                                     viewableBy: string | null;
                                     intervale: string | null;
-                                    ingredientToGroceryStore: {
-                                        id: number;
-                                        createdAt: Date;
-                                        ingredientId: number | null;
-                                        groceryStoreId: number | null;
-                                        groceryStore: {
-                                            id: number;
-                                            name: string | null;
-                                            createdAt: Date;
-                                            location: string | null;
-                                        } | null;
-                                    }[];
                                 };
                                 alternateIngredient: {
                                     id: number;
@@ -26237,7 +26239,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                         } | null;
                     }[];
                 }[];
-            } | undefined;
+            } | null | undefined;
             meta: object;
         }>;
         update: _trpc_server.TRPCMutationProcedure<{

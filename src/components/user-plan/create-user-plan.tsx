@@ -28,8 +28,8 @@ import {
 import { Input } from '@/components/ui/input'
 
 import { Meal } from '@/components/user-plan/meal'
-import { PlanSelect } from '@/components/user-plan/plan-select'
 import { PlanFolders } from './plan-folders'
+import { Spinner } from '@/components/spinner'
 
 export const dynamic = 'force-dynamic'
 
@@ -82,14 +82,16 @@ const CreateUserPlan = ({
 	const user = searchParams.get('user') ?? ''
 	const router = useRouter()
 
-	const [selectedPlanId, setSelectedPlanId] = useState('')
+	const [selectedPlanId, setSelectedPlanId] = useState(0)
 	const [selectedPlan, setSelectedPlan] = useState<GetPlanById | null>(null)
 
 	const [userId] = useAtom(userAtom)
 
 	const { data: userAdmin } = api.user.isUser.useQuery()
 
-	const { data: allPlans } = api.plan.getAll.useQuery()
+	const { data: plan, isLoading: planLoading } = api.plan.get.useQuery({
+		id: selectedPlanId,
+	})
 
 	const ctx = api.useUtils()
 
@@ -373,27 +375,25 @@ const CreateUserPlan = ({
 		}
 	}, [userPlan])
 
-	const onSetPlan = (planId: string) => {
+	const onSetPlan = async (planId: number) => {
 		setSelectedPlanId(planId)
-		const _selectedPlan = allPlans?.find((plan) => plan.id === Number(planId))
-		console.log('selectedPlan', _selectedPlan)
-		if (!_selectedPlan) return
-		setSelectedPlan(_selectedPlan)
-		console.log('selectedPlan', _selectedPlan)
+	}
+
+	useEffect(() => {
+		if (!plan) return
+		setSelectedPlan(plan)
 		form.reset({
-			name: _selectedPlan?.name || '',
-			description: _selectedPlan?.description || '',
-			image: _selectedPlan?.image || '',
-			notes: _selectedPlan?.notes || '',
+			name: plan?.name || '',
+			description: plan?.description || '',
+			image: plan?.image || '',
+			notes: plan?.notes || '',
 			meals:
-				_selectedPlan?.meals?.map((meal, mealIndex) => {
+				plan?.meals?.map((meal, mealIndex) => {
 					const recipe = meal?.mealToRecipe?.[0]?.recipe
-					console.log('recipe', recipe)
 
 					// @ts-ignore
 					const recipeDetails = recipe ? getRecipeDetails(recipe) : null
 
-					console.log('recipeDetails', recipeDetails)
 					return {
 						mealId: mealIndex.toString(),
 						mealTitle: meal.name || '',
@@ -441,7 +441,7 @@ const CreateUserPlan = ({
 					}
 				}) || [],
 		})
-	}
+	}, [plan])
 
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
 		if (userPlan) finishPlan(userPlan.id)
@@ -495,16 +495,10 @@ const CreateUserPlan = ({
 
 	if (userId === '') return <div>Select a user</div>
 
+	if (planLoading) return <Spinner />
+
 	return (
 		<div className='flex flex-col my-12 w-full max-w-screen-xl'>
-			<div
-				className={cn(
-					'flex gap-8 items-center mb-4',
-					userPlan ? 'hidden' : 'hidden',
-				)}
-			>
-				<PlanSelect selectedPlan={selectedPlanId} onSetPlan={onSetPlan} />
-			</div>
 			<div className={cn('flex gap-8 items-center', userPlan ? 'hidden' : '')}>
 				<PlanFolders
 					selectedPlan={selectedPlanId}
@@ -512,7 +506,7 @@ const CreateUserPlan = ({
 					userId={userAdmin?.id}
 				/>
 			</div>
-			{selectedPlanId === '' && userPlan === null ? null : (
+			{selectedPlan === null && userPlan === null ? null : (
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)}>
 						<div className='flex flex-col lg:gap-2'>
@@ -525,8 +519,9 @@ const CreateUserPlan = ({
 									className='flex items-center'
 									onMouseDown={(e) => {
 										e.preventDefault()
-										setSelectedPlanId('')
+										setSelectedPlanId(0)
 										setSelectedPlan(null)
+										form.reset()
 									}}
 								>
 									<Undo2 size={20} className='mr-1 mb-1' />

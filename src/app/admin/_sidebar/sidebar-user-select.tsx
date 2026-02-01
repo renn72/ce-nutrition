@@ -82,11 +82,13 @@ const SidebarUserSelect = () => {
 			return true
 		})
 		?.sort((a, b) => a.name?.localeCompare(b.name ?? '') ?? 0)
+
 	useEffect(() => {
 		if (user) {
 			setSelectedUser(user)
 		}
 	}, [user])
+
 	return (
 		<Popover modal={true} open={isOpen} onOpenChange={setIsOpen}>
 			<PopoverTrigger asChild>

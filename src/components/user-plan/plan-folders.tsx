@@ -1,9 +1,8 @@
 'use client'
 
-import { useState } from 'react'
 import { api } from '@/trpc/react'
 
-import { FileCode, FileJson, FileText } from 'lucide-react'
+import { FileText } from 'lucide-react'
 
 import {
 	TreeExpander,
@@ -22,20 +21,25 @@ import { useAtom } from 'jotai'
 import { cn } from '@/lib/utils'
 import { Switch } from '@/components/ui/switch'
 
-import type { GetAllPlans } from '@/types'
+import type { GetAllPlansName } from '@/types'
 
 const Tree = ({
 	plans,
 	onSetPlan,
 }: {
-	plans: GetAllPlans
-	onSetPlan: (planId: string) => void
+	plans: GetAllPlansName | undefined
+	onSetPlan: (planId: number) => void
 }) => {
+	if (!plans) return null
+
 	const categories = [
 		'uncategorised',
 		...new Set(
 			plans
-				.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
+				.sort((a, b) => {
+					if (!a.updatedAt || !b.updatedAt) return 0
+					return a.updatedAt > b.updatedAt ? -1 : 1
+				})
 				.map((plan) => plan.planCategory?.toLowerCase()),
 		),
 	].filter((cat) => cat !== '')
@@ -68,7 +72,7 @@ const Tree = ({
 											onMouseDown={(e) => {
 												e.preventDefault()
 												console.log('plan', plan)
-												onSetPlan(plan.id.toString())
+												onSetPlan(plan.id)
 											}}
 										>
 											<TreeExpander />
@@ -91,18 +95,15 @@ const PlanTree = ({
 	onSetPlan,
 	userId,
 }: {
-	selectedPlan: string
-	onSetPlan: (planId: string) => void
+	selectedPlan: number
+	onSetPlan: (planId: number) => void
 	userId: string
 }) => {
 	const [isAll, setIsAll] = useAtom(isAllPlansCreateUserAtom)
 
-	const { data: allPlans } = api.plan.getAll.useQuery()
-	const { data: myPlans, isLoading: isLoadingMyPlans } =
-		api.plan.getAllMy.useQuery({ userId: userId })
+	const { data: allPlans } = api.plan.getAllName.useQuery()
 
 	if (selectedPlan) return null
-	if (isLoadingMyPlans) return null
 	return (
 		<div>
 			<div className='flex gap-1 mb-2 w-full text-sm font-semibold text-muted-foreground/50'>
@@ -115,7 +116,14 @@ const PlanTree = ({
 				<div className={cn(isAll ? 'text-foreground' : '')}>All Plans</div>
 			</div>
 			{/* @ts-ignore */}
-			<Tree plans={isAll ? allPlans : myPlans} onSetPlan={onSetPlan} />
+			<Tree
+				plans={
+					isAll
+						? allPlans
+						: allPlans?.filter((plan) => plan.creatorId === userId)
+				}
+				onSetPlan={onSetPlan}
+			/>
 		</div>
 	)
 }
@@ -125,8 +133,8 @@ const PlanFolders = ({
 	onSetPlan,
 	userId,
 }: {
-	selectedPlan: string
-	onSetPlan: (planId: string) => void
+	selectedPlan: number
+	onSetPlan: (planId: number) => void
 	userId: string | undefined | null
 }) => {
 	if (!userId) return null
