@@ -692,7 +692,7 @@ const ImageView = ({
 			{isLogs && (
 				<DailyLogCard
 					title={''}
-					currentUser={user}
+					userId={user.id}
 					dailyLog={dailyLog}
 					yesterdaysDailyLog={dailyLog}
 					date={new Date(date)}
