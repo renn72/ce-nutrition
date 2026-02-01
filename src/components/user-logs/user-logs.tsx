@@ -8,6 +8,8 @@ import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { getFormattedDate } from '@/lib/utils'
 import type { GetAllDailyLogs } from '@/types'
 
+import { motion, AnimatePresence } from 'framer-motion'
+
 import { DailyLogCard } from '@/components/daily-log/daily-log-card'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Switch } from '@/components/ui/switch'
@@ -331,9 +333,19 @@ const UserLogs = ({
 						</div>
 					)}
 				</div>
-				{toggleValue === 'range' && (
-					<DateRangePicker date={date} setDate={setDate} />
-				)}
+				<AnimatePresence>
+					{toggleValue === 'range' && (
+						<motion.div
+							initial={{ opacity: 0, height: 0 }}
+							animate={{ opacity: 1, height: 'auto' }}
+							exit={{ opacity: 0, height: 0 }}
+							transition={{ duration: 0.1, ease: 'easeIn' }}
+							className='overflow-hidden' // Prevents content pop during height change
+						>
+							<DateRangePicker date={date} setDate={setDate} />
+						</motion.div>
+					)}
+				</AnimatePresence>
 			</div>
 			{toggleValue === 'range' && date ? (
 				<DailyLogsRange
