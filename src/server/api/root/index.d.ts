@@ -14105,6 +14105,201 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        getUserLimit: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                id: string;
+                limit: number;
+            };
+            output: {
+                date: string;
+                id: number;
+                notes: string | null;
+                image: string | null;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string;
+                sleep: string | null;
+                morningWeight: string | null;
+                fastedBloodGlucose: string | null;
+                sleepQuality: string | null;
+                isHiit: boolean | null;
+                isCardio: boolean | null;
+                isLift: boolean | null;
+                isLiss: boolean | null;
+                isPeriod: boolean | null;
+                isOvulation: boolean | null;
+                isStarred: boolean | null;
+                hiit: string | null;
+                cardio: string | null;
+                weight: string | null;
+                liss: string | null;
+                posing: string | null;
+                steps: string | null;
+                sauna: string | null;
+                mobility: string | null;
+                coldPlunge: string | null;
+                cardioType: string | null;
+                frontImage: string | null;
+                sideImage: string | null;
+                backImage: string | null;
+                frontImageSvg: string | null;
+                sideImageSvg: string | null;
+                backImageSvg: string | null;
+                frontPoseImage: string | null;
+                sidePoseImage: string | null;
+                backPoseImage: string | null;
+                spareImageOne: string | null;
+                spareImageTwo: string | null;
+                waistMeasurement: string | null;
+                nap: string | null;
+                tags: {
+                    id: number;
+                    dailyLogId: number;
+                    tagId: number;
+                    tag: {
+                        id: number;
+                        name: string;
+                        createdAt: Date;
+                        userId: string;
+                        icon: string;
+                        color: string;
+                    };
+                }[];
+                supplements: {
+                    id: number;
+                    notes: string | null;
+                    createdAt: Date;
+                    time: string | null;
+                    supplementId: number;
+                    unit: string | null;
+                    dailyLogId: number;
+                    amount: string | null;
+                    supplement: {
+                        id: number;
+                        name: string | null;
+                        notes: string | null;
+                        createdAt: Date;
+                        updatedAt: Date | null;
+                        userId: string | null;
+                        favouriteAt: Date | null;
+                        deletedAt: Date | null;
+                        hiddenAt: Date | null;
+                        isAusFood: boolean | null;
+                        isAllStores: boolean | null;
+                        serveSize: string | null;
+                        serveUnit: string | null;
+                        publicFoodKey: string | null;
+                        classification: string | null;
+                        foodName: string | null;
+                        caloriesWFibre: string | null;
+                        caloriesWOFibre: string | null;
+                        protein: string | null;
+                        fatTotal: string | null;
+                        totalDietaryFibre: string | null;
+                        totalSugars: string | null;
+                        starch: string | null;
+                        resistantStarch: string | null;
+                        availableCarbohydrateWithoutSugarAlcohols: string | null;
+                        availableCarbohydrateWithSugarAlcohols: string | null;
+                        isUserCreated: boolean | null;
+                        isSupplement: boolean | null;
+                        isPrivate: boolean | null;
+                        viewableBy: string | null;
+                        intervale: string | null;
+                    };
+                }[];
+                dailyMeals: {
+                    date: Date | null;
+                    id: number;
+                    createdAt: Date;
+                    recipeId: number | null;
+                    dailyLogId: number;
+                    mealIndex: number | null;
+                    vegeCalories: string | null;
+                    veges: string | null;
+                    recipe: {
+                        id: number;
+                        name: string | null;
+                        createdAt: Date;
+                        updatedAt: Date | null;
+                        serveUnit: string | null;
+                        isUserCreated: boolean | null;
+                        index: number | null;
+                        serve: string | null;
+                        note: string | null;
+                        userPlanId: number | null;
+                        dailyLogId: number | null;
+                        mealIndex: number | null;
+                        dailyMealId: number | null;
+                        recipeIndex: number | null;
+                        parentId: number | null;
+                        isLog: boolean | null;
+                    }[];
+                    ingredients: {
+                        id: number;
+                        name: string | null;
+                        createdAt: Date;
+                        updatedAt: Date | null;
+                        serveUnit: string | null;
+                        isUserCreated: boolean | null;
+                        ingredientId: number;
+                        alternateId: number | null;
+                        serve: string | null;
+                        note: string | null;
+                        userPlanId: number | null;
+                        dailyLogId: number | null;
+                        mealIndex: number | null;
+                        dailyMealId: number | null;
+                        recipeIndex: number | null;
+                        ingredient: {
+                            id: number;
+                            name: string | null;
+                            notes: string | null;
+                            createdAt: Date;
+                            updatedAt: Date | null;
+                            userId: string | null;
+                            favouriteAt: Date | null;
+                            deletedAt: Date | null;
+                            hiddenAt: Date | null;
+                            isAusFood: boolean | null;
+                            isAllStores: boolean | null;
+                            serveSize: string | null;
+                            serveUnit: string | null;
+                            publicFoodKey: string | null;
+                            classification: string | null;
+                            foodName: string | null;
+                            caloriesWFibre: string | null;
+                            caloriesWOFibre: string | null;
+                            protein: string | null;
+                            fatTotal: string | null;
+                            totalDietaryFibre: string | null;
+                            totalSugars: string | null;
+                            starch: string | null;
+                            resistantStarch: string | null;
+                            availableCarbohydrateWithoutSugarAlcohols: string | null;
+                            availableCarbohydrateWithSugarAlcohols: string | null;
+                            isUserCreated: boolean | null;
+                            isSupplement: boolean | null;
+                            isPrivate: boolean | null;
+                            viewableBy: string | null;
+                            intervale: string | null;
+                        };
+                    }[];
+                }[];
+                waterLogs: {
+                    id: number;
+                    createdAt: Date;
+                    dailyLogId: number;
+                    amount: string | null;
+                }[];
+                poopLogs: {
+                    id: number;
+                    createdAt: Date;
+                    dailyLogId: number;
+                }[];
+            }[];
+            meta: object;
+        }>;
         getAllUser: _trpc_server.TRPCQueryProcedure<{
             input: string;
             output: {
@@ -15487,6 +15682,16 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        getName: _trpc_server.TRPCQueryProcedure<{
+            input: string;
+            output: {
+                id: string;
+                name: string | null;
+                firstName: string | null;
+                lastName: string | null;
+            } | undefined;
+            meta: object;
+        }>;
         getBasic: _trpc_server.TRPCQueryProcedure<{
             input: string;
             output: {
@@ -15566,27 +15771,8 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             output: {
                 id: string;
                 name: string | null;
-                firstName: string | null;
-                lastName: string | null;
-                clerkId: string | null;
-                birthDate: Date | null;
-                gender: string | null;
-                address: string | null;
-                notes: string | null;
-                instagram: string | null;
-                openLifter: string | null;
-                phone: string | null;
                 email: string | null;
-                emailVerified: Date | null;
-                currentPlanId: number | null;
-                image: string | null;
-                isFake: boolean | null;
                 isTrainer: boolean | null;
-                isRoot: boolean | null;
-                isCreator: boolean | null;
-                isAllTrainers: boolean | null;
-                createdAt: Date;
-                updatedAt: Date | null;
                 roles: {
                     id: number;
                     name: string | null;
@@ -15969,6 +16155,27 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     }[];
                 }[];
             };
+            meta: object;
+        }>;
+        getCurrentUserRoles: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                id: string;
+            } | undefined;
+            output: {
+                id: string;
+                name: string | null;
+                firstName: string | null;
+                lastName: string | null;
+                isTrainer: boolean | null;
+                isCreator: boolean | null;
+                roles: {
+                    id: number;
+                    name: string | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    userId: string | null;
+                }[];
+            } | null | undefined;
             meta: object;
         }>;
         getCurrentUser: _trpc_server.TRPCQueryProcedure<{
@@ -21383,6 +21590,201 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        getUserLimit: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                id: string;
+                limit: number;
+            };
+            output: {
+                date: string;
+                id: number;
+                notes: string | null;
+                image: string | null;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string;
+                sleep: string | null;
+                morningWeight: string | null;
+                fastedBloodGlucose: string | null;
+                sleepQuality: string | null;
+                isHiit: boolean | null;
+                isCardio: boolean | null;
+                isLift: boolean | null;
+                isLiss: boolean | null;
+                isPeriod: boolean | null;
+                isOvulation: boolean | null;
+                isStarred: boolean | null;
+                hiit: string | null;
+                cardio: string | null;
+                weight: string | null;
+                liss: string | null;
+                posing: string | null;
+                steps: string | null;
+                sauna: string | null;
+                mobility: string | null;
+                coldPlunge: string | null;
+                cardioType: string | null;
+                frontImage: string | null;
+                sideImage: string | null;
+                backImage: string | null;
+                frontImageSvg: string | null;
+                sideImageSvg: string | null;
+                backImageSvg: string | null;
+                frontPoseImage: string | null;
+                sidePoseImage: string | null;
+                backPoseImage: string | null;
+                spareImageOne: string | null;
+                spareImageTwo: string | null;
+                waistMeasurement: string | null;
+                nap: string | null;
+                tags: {
+                    id: number;
+                    dailyLogId: number;
+                    tagId: number;
+                    tag: {
+                        id: number;
+                        name: string;
+                        createdAt: Date;
+                        userId: string;
+                        icon: string;
+                        color: string;
+                    };
+                }[];
+                supplements: {
+                    id: number;
+                    notes: string | null;
+                    createdAt: Date;
+                    time: string | null;
+                    supplementId: number;
+                    unit: string | null;
+                    dailyLogId: number;
+                    amount: string | null;
+                    supplement: {
+                        id: number;
+                        name: string | null;
+                        notes: string | null;
+                        createdAt: Date;
+                        updatedAt: Date | null;
+                        userId: string | null;
+                        favouriteAt: Date | null;
+                        deletedAt: Date | null;
+                        hiddenAt: Date | null;
+                        isAusFood: boolean | null;
+                        isAllStores: boolean | null;
+                        serveSize: string | null;
+                        serveUnit: string | null;
+                        publicFoodKey: string | null;
+                        classification: string | null;
+                        foodName: string | null;
+                        caloriesWFibre: string | null;
+                        caloriesWOFibre: string | null;
+                        protein: string | null;
+                        fatTotal: string | null;
+                        totalDietaryFibre: string | null;
+                        totalSugars: string | null;
+                        starch: string | null;
+                        resistantStarch: string | null;
+                        availableCarbohydrateWithoutSugarAlcohols: string | null;
+                        availableCarbohydrateWithSugarAlcohols: string | null;
+                        isUserCreated: boolean | null;
+                        isSupplement: boolean | null;
+                        isPrivate: boolean | null;
+                        viewableBy: string | null;
+                        intervale: string | null;
+                    };
+                }[];
+                dailyMeals: {
+                    date: Date | null;
+                    id: number;
+                    createdAt: Date;
+                    recipeId: number | null;
+                    dailyLogId: number;
+                    mealIndex: number | null;
+                    vegeCalories: string | null;
+                    veges: string | null;
+                    recipe: {
+                        id: number;
+                        name: string | null;
+                        createdAt: Date;
+                        updatedAt: Date | null;
+                        serveUnit: string | null;
+                        isUserCreated: boolean | null;
+                        index: number | null;
+                        serve: string | null;
+                        note: string | null;
+                        userPlanId: number | null;
+                        dailyLogId: number | null;
+                        mealIndex: number | null;
+                        dailyMealId: number | null;
+                        recipeIndex: number | null;
+                        parentId: number | null;
+                        isLog: boolean | null;
+                    }[];
+                    ingredients: {
+                        id: number;
+                        name: string | null;
+                        createdAt: Date;
+                        updatedAt: Date | null;
+                        serveUnit: string | null;
+                        isUserCreated: boolean | null;
+                        ingredientId: number;
+                        alternateId: number | null;
+                        serve: string | null;
+                        note: string | null;
+                        userPlanId: number | null;
+                        dailyLogId: number | null;
+                        mealIndex: number | null;
+                        dailyMealId: number | null;
+                        recipeIndex: number | null;
+                        ingredient: {
+                            id: number;
+                            name: string | null;
+                            notes: string | null;
+                            createdAt: Date;
+                            updatedAt: Date | null;
+                            userId: string | null;
+                            favouriteAt: Date | null;
+                            deletedAt: Date | null;
+                            hiddenAt: Date | null;
+                            isAusFood: boolean | null;
+                            isAllStores: boolean | null;
+                            serveSize: string | null;
+                            serveUnit: string | null;
+                            publicFoodKey: string | null;
+                            classification: string | null;
+                            foodName: string | null;
+                            caloriesWFibre: string | null;
+                            caloriesWOFibre: string | null;
+                            protein: string | null;
+                            fatTotal: string | null;
+                            totalDietaryFibre: string | null;
+                            totalSugars: string | null;
+                            starch: string | null;
+                            resistantStarch: string | null;
+                            availableCarbohydrateWithoutSugarAlcohols: string | null;
+                            availableCarbohydrateWithSugarAlcohols: string | null;
+                            isUserCreated: boolean | null;
+                            isSupplement: boolean | null;
+                            isPrivate: boolean | null;
+                            viewableBy: string | null;
+                            intervale: string | null;
+                        };
+                    }[];
+                }[];
+                waterLogs: {
+                    id: number;
+                    createdAt: Date;
+                    dailyLogId: number;
+                    amount: string | null;
+                }[];
+                poopLogs: {
+                    id: number;
+                    createdAt: Date;
+                    dailyLogId: number;
+                }[];
+            }[];
+            meta: object;
+        }>;
         getAllUser: _trpc_server.TRPCQueryProcedure<{
             input: string;
             output: {
@@ -22765,6 +23167,16 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        getName: _trpc_server.TRPCQueryProcedure<{
+            input: string;
+            output: {
+                id: string;
+                name: string | null;
+                firstName: string | null;
+                lastName: string | null;
+            } | undefined;
+            meta: object;
+        }>;
         getBasic: _trpc_server.TRPCQueryProcedure<{
             input: string;
             output: {
@@ -22844,27 +23256,8 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             output: {
                 id: string;
                 name: string | null;
-                firstName: string | null;
-                lastName: string | null;
-                clerkId: string | null;
-                birthDate: Date | null;
-                gender: string | null;
-                address: string | null;
-                notes: string | null;
-                instagram: string | null;
-                openLifter: string | null;
-                phone: string | null;
                 email: string | null;
-                emailVerified: Date | null;
-                currentPlanId: number | null;
-                image: string | null;
-                isFake: boolean | null;
                 isTrainer: boolean | null;
-                isRoot: boolean | null;
-                isCreator: boolean | null;
-                isAllTrainers: boolean | null;
-                createdAt: Date;
-                updatedAt: Date | null;
                 roles: {
                     id: number;
                     name: string | null;
@@ -23247,6 +23640,27 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     }[];
                 }[];
             };
+            meta: object;
+        }>;
+        getCurrentUserRoles: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                id: string;
+            } | undefined;
+            output: {
+                id: string;
+                name: string | null;
+                firstName: string | null;
+                lastName: string | null;
+                isTrainer: boolean | null;
+                isCreator: boolean | null;
+                roles: {
+                    id: number;
+                    name: string | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    userId: string | null;
+                }[];
+            } | null | undefined;
             meta: object;
         }>;
         getCurrentUser: _trpc_server.TRPCQueryProcedure<{

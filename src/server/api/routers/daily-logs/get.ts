@@ -5,6 +5,40 @@ import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 export const get = {
+	getUserLimit: protectedProcedure
+		.input(z.object({ id: z.string(), limit: z.number() }))
+		.query(async ({ ctx, input }) => {
+			const res = await ctx.db.query.dailyLog.findMany({
+				where: eq(dailyLog.userId, input.id),
+				with: {
+					waterLogs: true,
+					poopLogs: true,
+					supplements: {
+						with: {
+							supplement: true,
+						},
+					},
+					tags: {
+						with: {
+							tag: true,
+						},
+					},
+					dailyMeals: {
+						with: {
+							recipe: true,
+							ingredients: {
+								with: {
+									ingredient: true,
+								},
+							},
+						},
+					},
+				},
+				orderBy: (data, { desc }) => desc(data.createdAt),
+				limit: input.limit,
+			})
+			return res
+		}),
 	getAllUser: protectedProcedure
 		.input(z.string())
 		.query(async ({ ctx, input }) => {

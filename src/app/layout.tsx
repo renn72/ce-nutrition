@@ -9,7 +9,6 @@ import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin'
 import { ourFileRouter } from '~/app/api/uploadthing/core'
 import { ViewTransitions } from 'next-view-transitions'
 import { extractRouterConfig } from 'uploadthing/server'
-
 import { Toaster } from '@/components/ui/sonner'
 
 import { SignIn } from '@/components/auth/sign-in'

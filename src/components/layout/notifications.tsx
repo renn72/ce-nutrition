@@ -4,7 +4,6 @@ import { api } from '@/trpc/react'
 import { useState } from 'react'
 
 import { cn } from '@/lib/utils'
-import type { GetUserById } from '@/types'
 import { atom } from 'jotai'
 import { Bell, BellDot } from 'lucide-react'
 import { toast } from 'sonner'
@@ -20,8 +19,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { Notification } from './notification'
-import { NotificationTrigger } from './notification-trigger'
-import { PushNotificationManager } from './push-notifications'
 
 export const subscriptionAtom = atom<PushSubscription | null>(null)
 
@@ -39,17 +36,17 @@ export interface Item {
 	state: string
 }
 
-const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
+const NotificationsComp = ({ currentUserId }: { currentUserId: string }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const ctx = api.useUtils()
-  const origin = window.location.origin
-  const timing = origin === 'http://localhost:3000' ? 20 : 2
+	const origin = window.location.origin
+	const timing = origin === 'http://localhost:3000' ? 20 : 2
 	const { data: userNotifications, isLoading } =
-		api.notifications.getAllUserUnread.useQuery(currentUser.id, {
+		api.notifications.getAllUserUnread.useQuery(currentUserId, {
 			refetchInterval: 1000 * 60 * timing,
 		})
 	const { data: userMessages } = api.message.getAllUserUnread.useQuery(
-		currentUser.id,
+		currentUserId,
 		{
 			refetchInterval: 1000 * 60 * timing,
 		},
@@ -66,17 +63,17 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 				ctx.notifications.invalidate()
 			},
 		})
-  const { mutate: markAllMessagesAsViewed } =
-    api.message.markAllAsViewed.useMutation({
-      onSuccess: () => {
-        ctx.message.invalidate()
-        setIsOpen(false)
-      },
-      onError: () => {
-        toast.error('error')
-        ctx.message.invalidate()
-      },
-    })
+	const { mutate: markAllMessagesAsViewed } =
+		api.message.markAllAsViewed.useMutation({
+			onSuccess: () => {
+				ctx.message.invalidate()
+				setIsOpen(false)
+			},
+			onError: () => {
+				toast.error('error')
+				ctx.message.invalidate()
+			},
+		})
 
 	const fullList: Item[] = [
 		...(userMessages?.map((message) => ({
@@ -109,29 +106,25 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 
 	if (isLoading)
 		return (
-			<Bell
-				size={36}
-				className='bg-accentt cursor-pointer rounded-full p-1'
-			/>
+			<Bell size={36} className='p-1 rounded-full cursor-pointer bg-accentt' />
 		)
 
 	return (
 		<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-			<NotificationTrigger currentUser={currentUser} items={fullList} />
 			<DropdownMenuTrigger asChild>
 				{isNotifications ? (
 					<div className={cn('relative', isNotifications ? '' : '')}>
 						<BellDot
 							size={36}
-							className='bg-accentt cursor-pointer rounded-full p-1'
+							className='p-1 rounded-full cursor-pointer bg-accentt'
 						/>
-						<div className='absolute top-[7px] right-[6px] w-3 h-3 bg-red-600 rounded-full '></div>
-						<div className='absolute top-[7px] right-[6px] w-3 h-3 bg-red-600 rounded-full '></div>
+						<div className='absolute w-3 h-3 bg-red-600 rounded-full top-[7px] right-[6px]'></div>
+						<div className='absolute w-3 h-3 bg-red-600 rounded-full top-[7px] right-[6px]'></div>
 					</div>
 				) : (
 					<Bell
 						size={36}
-						className='bg-accentt cursor-pointer rounded-full p-1'
+						className='p-1 rounded-full cursor-pointer bg-accentt'
 					/>
 				)}
 			</DropdownMenuTrigger>
@@ -140,17 +133,17 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 				alignOffset={-28}
 				align='end'
 				sideOffset={8}
-				className='min-w-[240px] px-0 pb-0 max-w-[98vw]'
+				className='px-0 pb-0 min-w-[240px] max-w-[98vw]'
 			>
-				<div className='flex items-center justify-between py-1 px-1'>
+				<div className='flex justify-between items-center py-1 px-1'>
 					<DropdownMenuLabel>Notifications</DropdownMenuLabel>
 					<Button
-						className='text-[0.7rem] font-light h-6'
+						className='h-6 font-light text-[0.7rem]'
 						size='sm'
 						variant='outline'
 						onClick={() => {
-							markAllNotificationsAsViewed(currentUser.id)
-              markAllMessagesAsViewed(currentUser.id)
+							markAllNotificationsAsViewed(currentUserId)
+							markAllMessagesAsViewed(currentUserId)
 						}}
 					>
 						Clear
@@ -164,7 +157,7 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 					.map((message, index) => (
 						<Notification
 							key={message.id}
-							currentUser={currentUser}
+							currentUserId={currentUserId}
 							item={message}
 							isSeparator={
 								fullList?.filter(
@@ -180,13 +173,22 @@ const Notifications = ({ currentUser }: { currentUser: GetUserById }) => {
 				{fullList?.filter(
 					(message) => message.isRead === false || message.isRead === null,
 				)?.length === 0 ? (
-					<div className='w-full flex py-2 px-2 text-muted-foreground text-xs'>
+					<div className='flex py-2 px-2 w-full text-xs text-muted-foreground'>
 						No new notifications
 					</div>
 				) : null}
 			</DropdownMenuContent>
 		</DropdownMenu>
 	)
+}
+
+const Notifications = ({ currentUserId }: { currentUserId: string }) => {
+	if (currentUserId === '')
+		return (
+			<Bell size={36} className='p-1 rounded-full cursor-pointer bg-accentt' />
+		)
+
+	return <NotificationsComp currentUserId={currentUserId} />
 }
 
 export { Notifications }

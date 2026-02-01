@@ -1,29 +1,26 @@
 'use client'
 
-import { api } from '@/trpc/react'
-
 import Image from 'next/image'
 
-import { impersonatedUserAtom } from '@/atoms'
 import { cn } from '@/lib/utils'
-import { useAtom } from 'jotai'
-import {  NotebookText } from 'lucide-react'
+import { NotebookText } from 'lucide-react'
 import { Link } from 'next-view-transitions'
 
 import { Label } from '@/components/ui/label'
 
-
 import { Notifications } from './notifications'
+
+import { impersonatedUserAtom } from '@/atoms'
+import { api } from '@/trpc/react'
+import { useAtomValue } from 'jotai'
 
 export const dynamic = 'force-dynamic'
 
 const MobileHeader = ({ isDesktop = false }: { isDesktop?: boolean }) => {
-	const [impersonatedUser, _setImpersonatedUser] = useAtom(impersonatedUserAtom)
-	const { data: currentUser, isLoading } = api.user.getCurrentUser.useQuery({
+	const impersonatedUser = useAtomValue(impersonatedUserAtom)
+	const { data: currentUser } = api.user.getCurrentUserRoles.useQuery({
 		id: impersonatedUser.id,
 	})
-	if (isLoading) return null
-	if (!currentUser) return null
 	return (
 		<div
 			className={cn(
@@ -31,18 +28,18 @@ const MobileHeader = ({ isDesktop = false }: { isDesktop?: boolean }) => {
 				isDesktop ? 'top-[129px] w-[388px]' : 'top-0 w-full ',
 			)}
 		>
-			<div className='flex flex-col gap-0 items-center justify-center'>
+			<div className='flex flex-col gap-0 justify-center items-center'>
 				<Link href='/user/program'>
 					<NotebookText
 						size={36}
-						className='bg-accentt cursor-pointer rounded-full p-1'
+						className='p-1 rounded-full cursor-pointer bg-accentt'
 					/>
 				</Link>
 				<Label className='text-xs text-muted-foreground'>Plans</Label>
 			</div>
-			<div className='flex items-center justify-center rounded-full border-2 border-primary/50 m-1 w-max place-self-center'>
+			<div className='flex justify-center items-center place-self-center m-1 w-max rounded-full border-2 border-primary/50'>
 				<Link
-					className='hover:opacity-100 opacity-80 transition-all active:scale-90 p-[2px]'
+					className='opacity-80 transition-all hover:opacity-100 active:scale-90 p-[2px]'
 					href='/'
 				>
 					<Image
@@ -57,8 +54,8 @@ const MobileHeader = ({ isDesktop = false }: { isDesktop?: boolean }) => {
 					/>
 				</Link>
 			</div>
-			<div className='flex flex-col gap-0 items-center justify-center'>
-				<Notifications currentUser={currentUser} />
+			<div className='flex flex-col gap-0 justify-center items-center'>
+				<Notifications currentUserId={currentUser?.id || ''} />
 				<Label className='text-xs text-muted-foreground'>Notifications</Label>
 			</div>
 		</div>

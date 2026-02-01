@@ -4,9 +4,6 @@ import { api } from '@/trpc/react'
 
 import { useState } from 'react'
 
-import type { GetUserById } from '@/types'
-
-import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
 	Dialog,
@@ -20,21 +17,31 @@ import { Label } from '@/components/ui/label'
 
 import { toast } from 'sonner'
 
-const Supplements = ({ currentUser }: { currentUser: GetUserById }) => {
+import { useAtomValue } from 'jotai'
+import { impersonatedUserAtom } from '@/atoms'
+
+const Supplements = () => {
 	const [isOpen, setIsOpen] = useState(true)
 	const [checked, setChecked] = useState(false)
+
+	const impersonatedUser = useAtomValue(impersonatedUserAtom)
+
+	const { data: currentUser } = api.user.getCurrentUserRoles.useQuery({
+		id: impersonatedUser.id,
+	})
 
 	const ctx = api.useUtils()
 	const { mutate } = api.user.updateRoleSupplementDisclaimer.useMutation({
 		onSuccess: () => {
 			ctx.user.invalidate()
-      setTimeout(() => {
-			  setIsOpen(false)
-        toast.success('disclaimer accepted')
-      }, 200)
+			setTimeout(() => {
+				setIsOpen(false)
+				toast.success('disclaimer accepted')
+			}, 200)
 		},
 	})
 
+	if (!currentUser) return null
 	if (!currentUser.roles.find((r) => r.name === 'supplements')) return null
 	if (currentUser.roles.find((r) => r.name === 'supplement_disclaimer_v1'))
 		return null
@@ -55,7 +62,7 @@ const Supplements = ({ currentUser }: { currentUser: GetUserById }) => {
 						item mentioned.
 					</DialogDescription>
 					<div className='h-2' />
-					<div className='border p-4 flex flex-col gap-2 items-center rounded-md bg-secondary'>
+					<div className='flex flex-col gap-2 items-center p-4 rounded-md border bg-secondary'>
 						<Label>I understand and agree to the above terms</Label>
 						<Checkbox
 							className='bg-secondary'

@@ -10,7 +10,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { impersonatedUserAtom } from '@/atoms'
 import { cn } from '@/lib/utils'
 import { atom, useAtom } from 'jotai'
-import { Check, ChevronsUpDown, ShieldUser, ChevronLeft } from 'lucide-react'
+import { Check, ChevronsUpDown, ShieldUser } from 'lucide-react'
 import { Link } from 'next-view-transitions'
 
 import { Badge } from '@/components/ui/badge'
@@ -52,28 +52,18 @@ import {
 	SidebarRail,
 	useSidebar,
 } from '@/components/ui/sidebar'
+import { SidebarHeader as AdminSidebarHeader } from './sidebar-header'
 import { Switch } from '@/components/ui/switch'
 
 import WhistleIcon from '@/components/icons/whistle-icon'
+import { SpinnerGapIcon } from '@phosphor-icons/react'
 
 export const userAtom = atom<string>('')
 
+const rootLinks = ['calendar', 'kanban', 'super', 'user-super', 'all skinfolds']
+
 const data = {
 	navMain: [
-		{
-			title: 'Testing',
-			url: '#',
-			items: [
-				{
-					title: 'Kanban',
-					url: '/admin/kanban',
-				},
-				{
-					title: 'Calendar',
-					url: '/admin/calendar',
-				},
-			],
-		},
 		{
 			title: 'User',
 			url: '#',
@@ -81,6 +71,10 @@ const data = {
 				{
 					title: 'Info',
 					url: '/admin/user-info',
+				},
+				{
+					title: 'Calendar',
+					url: '/admin/calendar',
 				},
 				{
 					title: 'Logs',
@@ -172,7 +166,7 @@ const data = {
 			],
 		},
 		{
-			title: 'Admin',
+			title: '',
 			url: '#',
 			items: [
 				{
@@ -204,10 +198,10 @@ const AdminSidebarContent = () => {
 	const [impersonatedUser, _setImpersonatedUser] = useAtom(impersonatedUserAtom)
 
 	const { data: userCategories } = api.userCatagories.getAll.useQuery()
-	const { data: currentUser } = api.user.getCurrentUser.useQuery({
+	const { data: currentUser } = api.user.getCurrentUserRoles.useQuery({
 		id: impersonatedUser.id,
 	})
-	const { data: yourUsers, isLoading } = api.user.getAllYour.useQuery()
+	const { data: yourUsers } = api.user.getAllYour.useQuery(impersonatedUser.id)
 
 	const allUsers = yourUsers
 		?.filter((user) => {
@@ -239,8 +233,6 @@ const AdminSidebarContent = () => {
 			setSelectedUser(user)
 		}
 	}, [user])
-
-	if (isLoading) return null
 
 	return (
 		<Sidebar>
@@ -420,18 +412,9 @@ const AdminSidebarContent = () => {
 							<SidebarMenu>
 								{item.items
 									.filter(
-										(item) => item.title !== 'Kanban' || currentUser?.isCreator,
-									)
-									.filter(
-										(item) => item.title !== 'Super' || currentUser?.isCreator,
-									)
-									.filter(
 										(item) =>
-											item.title !== 'User Super' || currentUser?.isCreator,
-									)
-									.filter(
-										(item) =>
-											item.title !== 'All Skinfolds' || currentUser?.isCreator,
+											!rootLinks.includes(item.title.toLowerCase()) ||
+											currentUser?.isCreator,
 									)
 									.map((item) => {
 										if (item.url === '')
@@ -471,7 +454,10 @@ const AdminSidebar = ({
 	return (
 		<SidebarProvider>
 			<AdminSidebarContent />
-			<SidebarInset className=''>{children}</SidebarInset>
+			<SidebarInset className=''>
+				<AdminSidebarHeader />
+				{children}
+			</SidebarInset>
 		</SidebarProvider>
 	)
 }

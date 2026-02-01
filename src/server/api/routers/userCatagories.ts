@@ -1,37 +1,7 @@
-import { TRPCError } from '@trpc/server'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
-import { db } from '~/server/db'
-import { log } from '~/server/db/schema/log'
-import {
-	role,
-	user,
-	userCategory,
-	userToUserCategory,
-} from '~/server/db/schema/user'
+import { userCategory, userToUserCategory } from '~/server/db/schema/user'
 import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
-
-const createLog = async ({
-	user,
-	task,
-	notes,
-	userId,
-	objectId,
-}: {
-	user: string
-	task: string
-	notes: string
-	userId: string
-	objectId: number | null | undefined
-}) => {
-	await db.insert(log).values({
-		task: task,
-		notes: notes,
-		user: user,
-		userId: userId,
-		objectId: objectId,
-	})
-}
 
 export const userCatagoriesRouter = createTRPCRouter({
 	getAll: protectedProcedure.query(async ({ ctx }) => {

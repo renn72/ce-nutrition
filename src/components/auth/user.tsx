@@ -42,8 +42,8 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { SignInUp } from '@/components/auth/sign-in-up'
 
 const ImpersonateUser = () => {
-	const [impersonatedUser, setImpersonatedUser] = useAtom(impersonatedUserAtom)
-	const { data: users } = api.user.getAll.useQuery()
+	const [_impersonatedUser, setImpersonatedUser] = useAtom(impersonatedUserAtom)
+	const { data: users } = api.user.getAllYour.useQuery()
 
 	return (
 		<DropdownMenuSub>
@@ -89,7 +89,7 @@ const ImpersonateUser = () => {
 
 const User = () => {
 	const ctx = api.useUtils()
-	const { data: user, isLoading } = api.user.getCurrentUser.useQuery()
+	const { data: user, isLoading } = api.user.getCurrentUserRoles.useQuery()
 	const [isOpen, setIsOpen] = useState(false)
 
 	const isMobile = useClientMediaQuery({ query: '(max-width: 768px)' })

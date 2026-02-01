@@ -2,11 +2,8 @@ import { createLog } from '@/server/api/routers/admin-log'
 import { protectedProcedure } from '~/server/api/trpc'
 import { user, userSettings } from '~/server/db/schema/user'
 import { hash } from 'bcryptjs'
-import { eq, and } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { z } from 'zod'
-import { dailyLog } from '~/server/db/schema/daily-logs'
-
-import { isDuringPeriod } from '@/lib/period'
 
 export const update = {
 	updateChartRange: protectedProcedure

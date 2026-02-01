@@ -9,15 +9,14 @@ import { Supplements } from './supplements'
 
 const Disclaimers = () => {
 	const impersonatedUser = useAtomValue(impersonatedUserAtom)
-	const { data: currentUser, isLoading } = api.user.getCurrentUser.useQuery({
+	const { isLoading } = api.user.getCurrentUserRoles.useQuery({
 		id: impersonatedUser.id,
 	})
 
 	if (isLoading) return null
-	if (!currentUser) return null
 	return (
 		<>
-			<Supplements currentUser={currentUser} />
+			<Supplements />
 		</>
 	)
 }

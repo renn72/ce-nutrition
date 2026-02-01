@@ -4,6 +4,21 @@ import { protectedProcedure, publicProcedure } from '~/server/api/trpc'
 import { z } from 'zod'
 
 export const get = {
+	getName: protectedProcedure
+		.input(z.string())
+		.query(async ({ ctx, input }) => {
+			if (input === '') throw new TRPCError({ code: 'BAD_REQUEST' })
+			const res = await ctx.db.query.user.findFirst({
+				where: (user, { eq }) => eq(user.id, input),
+				columns: {
+					id: true,
+					firstName: true,
+					lastName: true,
+					name: true,
+				},
+			})
+			return res
+		}),
 	getBasic: protectedProcedure
 		.input(z.string())
 		.query(async ({ ctx, input }) => {
@@ -31,12 +46,15 @@ export const get = {
 		}),
 	getAllYour: protectedProcedure
 		.input(z.string().optional())
-		.query(async ({ ctx }) => {
-			const userId = ctx.session?.user.id
+		.query(async ({ ctx, input }) => {
+			const userId = input && input !== '' ? input : ctx.session?.user.id
 
 			const res = await ctx.db.query.user.findMany({
 				columns: {
-					password: false,
+					id: true,
+					name: true,
+					isTrainer: true,
+					email: true,
 				},
 				with: {
 					category: {
@@ -130,6 +148,31 @@ export const get = {
 				},
 			})
 			if (!res) throw new TRPCError({ code: 'NOT_FOUND' })
+			return res
+		}),
+	getCurrentUserRoles: protectedProcedure
+		.input(z.object({ id: z.string() }).optional())
+		.query(async ({ ctx, input }) => {
+			let userId = ctx.session?.user.id
+
+			if (input?.id && input.id !== '') userId = input.id
+
+			if (!userId) return null
+
+			const res = await ctx.db.query.user.findFirst({
+				where: (user, { eq }) => eq(user.id, userId),
+				columns: {
+					id: true,
+					isCreator: true,
+					isTrainer: true,
+					firstName: true,
+					lastName: true,
+					name: true,
+				},
+				with: {
+					roles: true,
+				},
+			})
 			return res
 		}),
 	getCurrentUser: protectedProcedure

@@ -3,7 +3,6 @@
 import { api } from '@/trpc/react'
 
 import { cn } from '@/lib/utils'
-import type { GetUserById } from '@/types'
 import { Link } from 'next-view-transitions'
 import { toast } from 'sonner'
 
@@ -23,11 +22,11 @@ import type { Item } from './notifications'
 export const dynamic = 'force-dynamic'
 
 const Notification = ({
-	currentUser,
+	currentUserId,
 	item: message,
 	isSeparator,
 }: {
-	currentUser: GetUserById
+	currentUserId: string
 	item: Item
 	isSeparator: boolean
 }) => {
@@ -36,9 +35,9 @@ const Notification = ({
 		api.notifications.markAsViewed.useMutation({
 			onMutate: async (newMessage) => {
 				await ctx.notifications.getAllUser.cancel()
-				const previousLog = ctx.notifications.getAllUser.getData(currentUser.id)
+				const previousLog = ctx.notifications.getAllUser.getData(currentUserId)
 				if (!previousLog) return
-				ctx.notifications.getAllUser.setData(currentUser.id, [
+				ctx.notifications.getAllUser.setData(currentUserId, [
 					...previousLog.map((message) => {
 						if (message.id === newMessage) {
 							return {
@@ -58,7 +57,7 @@ const Notification = ({
 			onError: (_err, _newNotification, context) => {
 				toast.error('error')
 				ctx.notifications.getAllUser.setData(
-					currentUser.id,
+					currentUserId,
 					context?.previousLog,
 				)
 			},
@@ -66,9 +65,9 @@ const Notification = ({
 	const { mutate: markAsViewed } = api.message.markAsViewed.useMutation({
 		onMutate: async (newMessage) => {
 			await ctx.message.getAllUser.cancel()
-			const previousLog = ctx.message.getAllUser.getData(currentUser.id)
+			const previousLog = ctx.message.getAllUser.getData(currentUserId)
 			if (!previousLog) return
-			ctx.message.getAllUser.setData(currentUser.id, [
+			ctx.message.getAllUser.setData(currentUserId, [
 				...previousLog.map((message) => {
 					if (message.id === newMessage) {
 						return {
@@ -86,15 +85,15 @@ const Notification = ({
 		},
 		onError: (_err, _newPoopLog, context) => {
 			toast.error('error')
-			ctx.message.getAllUser.setData(currentUser.id, context?.previousLog)
+			ctx.message.getAllUser.setData(currentUserId, context?.previousLog)
 		},
 	})
 	const { mutate: markAsRead } = api.message.markAsRead.useMutation({
 		onMutate: async (newMessage) => {
 			await ctx.message.getAllUser.cancel()
-			const previousLog = ctx.message.getAllUser.getData(currentUser.id)
+			const previousLog = ctx.message.getAllUser.getData(currentUserId)
 			if (!previousLog) return
-			ctx.message.getAllUser.setData(currentUser.id, [
+			ctx.message.getAllUser.setData(currentUserId, [
 				...previousLog.map((message) => {
 					if (message.id === newMessage) {
 						return {
@@ -112,7 +111,7 @@ const Notification = ({
 		},
 		onError: (_err, _newPoopLog, context) => {
 			toast.error('error')
-			ctx.message.getAllUser.setData(currentUser.id, context?.previousLog)
+			ctx.message.getAllUser.setData(currentUserId, context?.previousLog)
 		},
 	})
 
@@ -152,7 +151,7 @@ const Notification = ({
 						>
 							{message.state === 'message' ? (
 								<>
-									<div className='truncate text-xs'>
+									<div className='text-xs truncate'>
 										{message.isViewed === false || message.isViewed === null
 											? 'New Message'
 											: `${message.content}`}
@@ -164,7 +163,7 @@ const Notification = ({
 										<div className='text-sm text-muted-foreground'>
 											{message.isViewed === false ||
 											message.isViewed === null ? (
-												<div className='h-2 w-2 rounded-full bg-red-600' />
+												<div className='w-2 h-2 bg-red-600 rounded-full' />
 											) : (
 												<div className='w-2' />
 											)}
@@ -173,10 +172,10 @@ const Notification = ({
 								</>
 							) : (
 								<>
-									<div className='truncate text-sm'>{message.content}</div>
+									<div className='text-sm truncate'>{message.content}</div>
 									<div className='text-sm text-muted-foreground'>
 										{message.isViewed === false || message.isViewed === null ? (
-											<div className='h-2 w-2 rounded-full bg-red-600' />
+											<div className='w-2 h-2 bg-red-600 rounded-full' />
 										) : (
 											<div className='w-2' />
 										)}
@@ -186,7 +185,7 @@ const Notification = ({
 						</div>
 					</CollapsibleTrigger>
 					<CollapsibleContent>
-						<div className='flex gap-2 items-center flex-col'>
+						<div className='flex flex-col gap-2 items-center'>
 							{message.state === 'message' ? (
 								<Link href={`/user/message/${message.userId}`}>
 									<Button

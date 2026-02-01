@@ -16,7 +16,11 @@ import { UserWeight } from './user-weight'
 
 const UserInfo = ({ userId }: { userId: string }) => {
 	const { data: user } = api.user.get.useQuery(userId)
-	const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId)
+	// const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId)
+	const { data: dailyLogs } = api.dailyLog.getUserLimit.useQuery({
+		id: userId,
+		limit: 5,
+	})
 	const { data: userGoals, isLoading: userGoalsLoading } =
 		api.goal.getUser.useQuery({ userId: userId })
 	const { data: currentUser } = api.user.getCurrentUser.useQuery()
@@ -31,33 +35,33 @@ const UserInfo = ({ userId }: { userId: string }) => {
 	if (userNotesLoading) return null
 
 	return (
-		<div className='p-2 xl:p-4 w-full'>
-			<div className='grid grid-cols-1 lg:grid-cols-5 lg:grid-rows-3 gap-2 lg:gap-4 w-[calc(100vw-16px)] lg:w-full lg:h-[calc(100vh-65px)] xl:h-[calc(100vh-80px)] '>
+		<div className='p-2 w-full xl:p-4'>
+			<div className='grid grid-cols-1 gap-2 lg:grid-cols-5 lg:grid-rows-3 lg:gap-4 lg:w-full w-[calc(100vw-16px)] lg:h-[calc(100vh-65px)] xl:h-[calc(100vh-80px)]'>
 				<UserMessages
-          className='lg:row-span-2'
-          currentUser={currentUser} userId={userId} />
-				<UserWeight
-          user={user} dailyLogs={dailyLogs} />
-				<UserGoals
-          user={user} userGoals={userGoals} />
-				<UserCurrentPlan
-          user={user} />
-				<UserSupplementPlan
-          user={user} />
-				<UserRecentMetrics
-          user={user} />
-				<UserNotes
-          user={user} userNotes={userNotes} />
+					className='lg:row-span-2'
+					currentUser={currentUser}
+					userId={userId}
+				/>
+				<UserWeight user={user} dailyLogs={dailyLogs} />
+				<UserGoals user={user} userGoals={userGoals} />
+				<UserCurrentPlan user={user} />
+				<UserSupplementPlan user={user} />
+				<UserRecentMetrics user={user} />
+				<UserNotes user={user} userNotes={userNotes} />
 				<UserCharts
-          className='lg:col-span-2 row-span-1'
-          dailyLogs={dailyLogs} currentUser={user} />
+					className='row-span-1 lg:col-span-2'
+					dailyLogs={dailyLogs}
+					currentUser={user}
+				/>
 				<UserMeals
-          className=' lg:col-span-2 max-h-[450px]'
-          dailyLogs={dailyLogs} currentUser={user} />
+					className='lg:col-span-2 max-h-[450px]'
+					dailyLogs={dailyLogs}
+					currentUser={user}
+				/>
 				<UserDailyLogsTable
-          className=' lg:col-span-3 max-h-[450px]'
-          dailyLogs={dailyLogs}
-        />
+					className='lg:col-span-3 max-h-[450px]'
+					dailyLogs={dailyLogs}
+				/>
 			</div>
 		</div>
 	)
