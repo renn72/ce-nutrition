@@ -55,6 +55,7 @@ export type GetAllUsers = RouterOutputs['user']['getAll']
 export type GetUserBasic = RouterOutputs['user']['getBasic']
 export type GetUserById = RouterOutputs['user']['getGaurenteed']
 export type GetUserWRoles = RouterOutputs['user']['getCurrentUserRoles']
+export type GetUserInfo = RouterOutputs['user']['getInfoPage']
 
 export type GetAllRecipes = RouterOutputs['recipe']['getAll']
 export type GetRecipeById = RouterOutputs['recipe']['get']

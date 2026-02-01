@@ -8,8 +8,6 @@ import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts'
 
 import { useIsMobile } from '@/hooks/use-mobile'
 
-import { v4 as uuidv4 } from 'uuid'
-
 import { api } from '@/trpc/react'
 
 import {

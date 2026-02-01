@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import type { GetUserById } from '@/types'
+import type { GetUserInfo } from '@/types'
 import { LockIcon } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -11,7 +11,7 @@ const UserSupplementPlan = ({
 	user,
 	className,
 }: {
-	user: GetUserById
+	user: GetUserInfo
 	className?: string
 }) => {
 	if (!user || !user.supplementStacks) return null
@@ -43,23 +43,23 @@ const UserSupplementPlan = ({
 			)}
 		>
 			<h1 className='text-xl font-semibold'>Supplement Plan</h1>
-			<ScrollArea className='h-full w-full'>
+			<ScrollArea className='w-full h-full'>
 				<div className='flex flex-col gap-2 pr-2'>
 					{supplementStacks.map((stack) => (
-						<Card key={stack.id} className='py-2 px-1 xl:px-2 gap-0 w-full'>
-							<CardHeader className='px-2 py-0'>
+						<Card key={stack.id} className='gap-0 py-2 px-1 w-full xl:px-2'>
+							<CardHeader className='py-0 px-2'>
 								<CardTitle className='pb-0 text-base capitalize'>
 									{stack.time}
 								</CardTitle>
 							</CardHeader>
-							<CardContent className='px-2 py-0'>
+							<CardContent className='py-0 px-2'>
 								<div className='flex flex-col'>
 									{stack.supplements.map((supp) => (
 										<div
 											key={supp.id}
 											className='grid grid-cols-4 gap-2 items-center py-1 text-xs xl:text-sm'
 										>
-											<div className='col-span-3 truncate flex items-center gap-1'>
+											<div className='flex col-span-3 gap-1 items-center truncate'>
 												<span className='truncate'>
 													{supp.supplement?.name}
 												</span>
@@ -70,7 +70,7 @@ const UserSupplementPlan = ({
 													/>
 												) : null}
 											</div>
-											<div className='place-self-end col-span-1 flex gap-1'>
+											<div className='flex col-span-1 gap-1 place-self-end'>
 												<span>{supp.size}</span>
 												<span className='text-muted-foreground'>
 													{supp.unit}

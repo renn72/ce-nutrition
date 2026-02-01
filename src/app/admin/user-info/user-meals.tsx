@@ -2,9 +2,6 @@
 
 import { cn, getRecipeDetailsFromDailyLog } from '@/lib/utils'
 import type { GetAllDailyLogs, GetUserById } from '@/types'
-import { ArrowDown, ArrowUp, Weight } from 'lucide-react'
-
-import { ScrollArea } from '@/components/ui/scroll-area'
 
 const MacroValue = ({
 	value,
@@ -16,31 +13,34 @@ const MacroValue = ({
 	fixed?: number
 }) => {
 	return (
-		<div className='flex items-baseline gap-0 xl:gap-1'>
-			<span className='text-sm xl:text-lg text-primary ml-2 '>{value.toFixed(fixed)}</span>
+		<div className='flex gap-0 items-baseline xl:gap-1'>
+			<span className='ml-2 text-sm xl:text-lg text-primary'>
+				{value.toFixed(fixed)}
+			</span>
 			<span className='text-xs text-primary/50 ml-[1px]'>{postFix}</span>
 		</div>
 	)
 }
 
 const UserMeals = ({
-	currentUser,
 	dailyLogs,
-  className,
+	className,
 }: {
-	currentUser: GetUserById
 	dailyLogs: GetAllDailyLogs
-  className?: string
+	className?: string
 }) => {
 	const logs = dailyLogs.sort(
 		(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
 	)
 
-
-
 	return (
-		<div className={cn('border rounded-lg py-2 px-1 xl:px-2 w-full overflow-y-auto', className)}>
-        <div className='flex flex-col gap-2 '>
+		<div
+			className={cn(
+				'border rounded-lg py-2 px-1 xl:px-2 w-full overflow-y-auto',
+				className,
+			)}
+		>
+			<div className='flex flex-col gap-2'>
 				{logs.map((log) => {
 					const mealsMacros = log?.dailyMeals
 						.map((meal) => {
@@ -70,8 +70,8 @@ const UserMeals = ({
 							},
 						)
 					return (
-						<div key={log.id} className='flex gap-1 flex-col w-full text-sm'>
-							<div className='text-[0.6rem] rounded-full bg-muted px-2 py-1 w-fit'>
+						<div key={log.id} className='flex flex-col gap-1 w-full text-sm'>
+							<div className='py-1 px-2 rounded-full text-[0.6rem] bg-muted w-fit'>
 								{new Date(log.date).toLocaleDateString('en-AU', {
 									day: 'numeric',
 									month: 'short',
@@ -81,8 +81,8 @@ const UserMeals = ({
 							{mealsMacros?.cals === 0 ? (
 								'nil'
 							) : (
-								<div className='flex gap-1 flex-col w-full'>
-									<div className='flex items-baseline gap-3'>
+								<div className='flex flex-col gap-1 w-full'>
+									<div className='flex gap-3 items-baseline'>
 										<MacroValue
 											value={mealsMacros?.cals ?? 0}
 											postFix='cals'
@@ -100,33 +100,30 @@ const UserMeals = ({
 									</div>
 									{log.dailyMeals.map((meal, i) => {
 										const { cals, protein, carbs, fat } =
-											getRecipeDetailsFromDailyLog(
-												log,
-												meal.mealIndex ?? 0,
-											)
+											getRecipeDetailsFromDailyLog(log, meal.mealIndex ?? 0)
 										return (
 											<div
 												key={meal.id}
-												className='grid grid-cols-5 gap-0 bg-secondary rounded-full w-full px-1 lg:px-2 py-1'
+												className='grid grid-cols-5 gap-0 py-1 px-1 w-full rounded-full lg:px-2 bg-secondary'
 											>
-												<div className='grid grid-cols-6 lg:grid-cols-10 gap-1 text-sm w-full  items-baseline col-span-2 xl:col-span-3'>
-													<div className='text-primary font-normal col-span-1 h-full w-full flex flex-col justify-center items-center'>
-														<div className='rounded-full h-4 w-4  xl:h-5 xl:w-5 text-xs xl:text-sm bg-primary/20 flex justify-center items-center pt-[2px] xl:pt-[1px]'>
+												<div className='grid grid-cols-6 col-span-2 gap-1 items-baseline w-full text-sm lg:grid-cols-10 xl:col-span-3'>
+													<div className='flex flex-col col-span-1 justify-center items-center w-full h-full font-normal text-primary'>
+														<div className='flex justify-center items-center w-4 h-4 text-xs rounded-full xl:w-5 xl:h-5 xl:text-sm bg-primary/20 pt-[2px] xl:pt-[1px]'>
 															{Number(meal.mealIndex) + 1}
 														</div>
 													</div>
-													<div className='text-[0.7rem] font-light col-span-2 hidden xl:block '>
+													<div className='hidden col-span-2 font-light xl:block text-[0.7rem]'>
 														{meal.createdAt.toLocaleTimeString('en-AU', {
 															hour: 'numeric',
 															minute: 'numeric',
 															hour12: true,
 														})}
 													</div>
-													<div className='col-span-5 lg:col-span-7 truncate font-medium text-xs xl:text-sm'>
+													<div className='col-span-5 text-xs font-medium lg:col-span-7 xl:text-sm truncate'>
 														{meal.recipe?.[0]?.name}
 													</div>
 												</div>
-												<div className='grid grid-cols-4 gap-0 text-xs w-full place-items-center px-0 tracking-tighter col-span-3 xl:col-span-2'>
+												<div className='grid grid-cols-4 col-span-3 gap-0 place-items-center px-0 w-full text-xs tracking-tighter xl:col-span-2'>
 													<div>{`${cals} KJ`}</div>
 													<div>{`C:${carbs}g`}</div>
 													<div>{`P:${protein}g`}</div>
@@ -140,7 +137,7 @@ const UserMeals = ({
 						</div>
 					)
 				})}
-        </div>
+			</div>
 		</div>
 	)
 }

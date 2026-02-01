@@ -4979,6 +4979,31 @@ var get = {
     });
     return res;
   }),
+  getInfoPage: protectedProcedure.input(z7.string()).query(async ({ ctx, input }) => {
+    if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
+    const res = await ctx.db.query.user.findFirst({
+      where: (user2, { eq: eq28 }) => eq28(user2.id, input),
+      columns: {
+        id: true
+      },
+      with: {
+        settings: true,
+        roles: true,
+        images: true,
+        trainers: true,
+        supplementStacks: {
+          with: {
+            supplements: {
+              with: {
+                supplement: true
+              }
+            }
+          }
+        }
+      }
+    });
+    return res;
+  }),
   get: protectedProcedure.input(z7.string()).query(async ({ ctx, input }) => {
     if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });
     const res = await ctx.db.query.user.findFirst({
@@ -6465,6 +6490,22 @@ var userPlanRouter = createTRPCRouter({
       with: {
         ingredient: true,
         alternateIngredient: true
+      }
+    });
+    return res;
+  }),
+  getUserActivePlan: protectedProcedure.input(z18.string()).query(async ({ input, ctx }) => {
+    const res = await ctx.db.query.userPlan.findMany({
+      where: and2(eq12(userPlan.userId, input), eq12(userPlan.isActive, true)),
+      with: {
+        userMeals: true,
+        userRecipes: true,
+        userIngredients: {
+          with: {
+            ingredient: true,
+            alternateIngredient: true
+          }
+        }
       }
     });
     return res;

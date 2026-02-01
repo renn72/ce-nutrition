@@ -4,29 +4,29 @@ import { api } from '@/trpc/react'
 
 import { useState, useEffect } from 'react'
 
-
 import { cn } from '@/lib/utils'
 import type { GetUserById } from '@/types'
-import { Send, } from 'lucide-react'
+import { Send } from 'lucide-react'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Textarea } from '@/components/ui/textarea'
 
+import { SpinnerGapIcon } from '@phosphor-icons/react'
+
 const UserMessages = ({
-	currentUser,
+	currentUserId,
 	userId,
-  className,
+	className,
 }: {
-	currentUser: GetUserById
+	currentUserId: string
 	userId: string
-  className?: string
+	className?: string
 }) => {
 	const [message, setMessage] = useState('')
 	const { data: messages, isLoading: messagesLoading } =
-		api.message.getAllUser.useQuery(currentUser.id)
+		api.message.getAllUser.useQuery(currentUserId)
 	const { data: sentMessages, isLoading: sentMessageLoading } =
-		api.message.getAllFromUser.useQuery(currentUser.id)
-
+		api.message.getAllFromUser.useQuery(currentUserId)
 
 	const ctx = api.useUtils()
 	const { mutate: sendMessage } = api.message.create.useMutation({
@@ -36,17 +36,13 @@ const UserMessages = ({
 		},
 	})
 
-  const {mutate: markViewed} = api.message.markFromUserAsViewedAndRead.useMutation({
-    onSuccess: () => {
-      ctx.message.invalidate()
-    },
-  })
-
-  useEffect(() => {
-    markViewed(userId)
-  }, [userId])
-
-	if (messagesLoading || sentMessageLoading) return null
+	const { mutate: markViewed } =
+		api.message.markFromUserAsViewedAndRead.useMutation({
+			onSuccess: () => {
+				console.log('success')
+				ctx.message.invalidate()
+			},
+		})
 
 	const s = sentMessages
 		?.map((message) => {
@@ -68,14 +64,39 @@ const UserMessages = ({
 	const l = [...(s ?? []), ...(m ?? [])]
 		.sort(
 			(a, b) =>
-				new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+				new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
 		)
 		.filter((message, index, self) => {
 			return self.findIndex((t) => t.id === message.id) === index
 		})
 
+	useEffect(() => {
+		const shouldSkip =
+			m?.reduce((acc, curr) => {
+				if (curr.isViewed) return acc
+				return true
+			}, false) || true
+
+		console.log('check')
+		if (shouldSkip) return
+		markViewed(userId)
+		console.log('mark')
+	}, [userId, m])
+
+	if (messagesLoading || sentMessageLoading)
+		return (
+			<div className='flex flex-col justify-center items-center mt-20'>
+				<SpinnerGapIcon size={48} className='animate-spin' />
+			</div>
+		)
+
 	return (
-		<div className={cn('flex flex-col gap-4 justify-between rounded-md border p-2 w-full', className)}>
+		<div
+			className={cn(
+				'flex flex-col gap-4 justify-between rounded-md border p-2 w-full',
+				className,
+			)}
+		>
 			<ScrollArea className=''>
 				<div className='flex flex-col gap-4 px-1 w-full'>
 					{l.map((message) => (
@@ -88,17 +109,22 @@ const UserMessages = ({
 						>
 							<div
 								className={cn(
-									'max-w-[80vw] px-2 py-1 rounded-lg shadow-sm whitespace-pre-line w-max',
+									' px-2 py-1 rounded-lg shadow-sm whitespace-pre-line w-full',
 									message.user.status === 'received'
 										? 'bg-secondary text-secondary-foreground'
 										: 'bg-accent text-accent-foreground',
 									message.user.status === 'received' ? '' : '',
 								)}
 							>
-								<div>{message.message}</div>
-								<div className={cn('text-[0.7rem]',
-                  message.user.status === 'received' ? 'text-secondary-foreground' : 'text-accent-foreground text-end'
-                )}>
+								<div className='word-wrap'>{message.message}</div>
+								<div
+									className={cn(
+										'text-[0.7rem]',
+										message.user.status === 'received'
+											? 'text-secondary-foreground'
+											: 'text-accent-foreground text-end',
+									)}
+								>
 									{message.createdAt.toLocaleDateString('en-AU', {
 										hour: 'numeric',
 										minute: 'numeric',
@@ -126,7 +152,7 @@ const UserMessages = ({
 								message: message,
 								subject: '',
 								userId: userId,
-								fromUserId: currentUser.id,
+								fromUserId: currentUserId,
 								isImportant: false,
 							})
 						}}

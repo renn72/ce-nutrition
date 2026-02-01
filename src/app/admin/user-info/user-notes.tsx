@@ -5,7 +5,7 @@ import { api } from '@/trpc/react'
 import { useState } from 'react'
 
 import { cn } from '@/lib/utils'
-import type { GetTrainerNoteById, GetUserById } from '@/types'
+import type { GetTrainerNoteById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { EllipsisVertical } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -63,29 +63,29 @@ const Note = ({
 	if (!note) return null
 
 	return (
-		<div className='flex gap-0 w-full flex-col leading-none'>
+		<div className='flex flex-col gap-0 w-full leading-none'>
 			<div
 				className={cn(
 					'flex gap-2 items-center justify-between w-full',
 					note.state === 'created' ? '' : 'line-through opacity-50',
 				)}
 			>
-			<div
-				className={cn(
-					'text-sm text-muted-foreground',
-					note.state === 'created' ? '' : 'hidden',
-				)}
-			>
-				{note.description}
-			</div>
-				<div className='text-base font-medium hidden'>{note.title}</div>
+				<div
+					className={cn(
+						'text-sm text-muted-foreground',
+						note.state === 'created' ? '' : 'hidden',
+					)}
+				>
+					{note.description}
+				</div>
+				<div className='hidden text-base font-medium'>{note.title}</div>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button
 							variant='ghost'
 							className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'
 						>
-							<EllipsisVertical className='h-4 w-4' />
+							<EllipsisVertical className='w-4 h-4' />
 							<span className='sr-only'>Open menu</span>
 						</Button>
 					</DropdownMenuTrigger>
@@ -114,15 +114,15 @@ const Note = ({
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</div>
-			<div className='flex gap-2 items-center justify-between w-full'>
-				<div className='text-[0.6rem] rounded-full bg-muted px-2 py-1 w-fit'>
+			<div className='flex gap-2 justify-between items-center w-full'>
+				<div className='py-1 px-2 rounded-full text-[0.6rem] bg-muted w-fit'>
 					{note.updatedAt?.toLocaleDateString('en-AU', {
 						day: 'numeric',
 						month: 'short',
 						year: 'numeric',
 					})}
 				</div>
-				<div className='text-[0.6rem] rounded-full bg-secondary text-secondary-foreground px-2 py-1 w-fit'>
+				<div className='py-1 px-2 rounded-full text-[0.6rem] bg-secondary text-secondary-foreground w-fit'>
 					{note.trainer.name}
 				</div>
 			</div>
@@ -131,12 +131,12 @@ const Note = ({
 }
 
 const UserNotes = ({
-	user,
+	userId,
 	userNotes,
-  className,
+	className,
 }: {
-  className?: string
-	user: GetUserById
+	className?: string
+	userId: string
 	userNotes: GetTrainerNoteById[] | undefined
 }) => {
 	const [isOpen, setIsOpen] = useState(false)
@@ -198,16 +198,21 @@ const UserNotes = ({
 				title: data.title,
 				description: data.description,
 				state: data.state,
-				userId: user.id,
+				userId: userId,
 			})
 		}
 	}
 
 	return (
-		<div className={cn('border rounded-lg p-4 flex flex-col w-full items-center justify-between gap-2 max-h-[450px] h-full', className)}>
-			<div className='flex gap-2 flex-col w-full'>
+		<div
+			className={cn(
+				'border rounded-lg p-4 flex flex-col w-full items-center justify-between gap-2 max-h-[450px] h-full',
+				className,
+			)}
+		>
+			<div className='flex flex-col gap-2 w-full'>
 				<h2 className='text-xl font-semibold'>Notes</h2>
-				<div className='flex gap-2 flex-col'>
+				<div className='flex flex-col gap-2'>
 					<ScrollArea className='max-h-[284px]'>
 						{userNotes
 							?.filter((note) => note?.state === 'created')
@@ -243,8 +248,8 @@ const UserNotes = ({
 						Add Check Up Note
 					</Button>
 				</DialogTrigger>
-				<DialogContent className='p-4 max-w-4xl h-[70vh] overflow-y-auto'>
-					<div className='flex flex-col gap-4 w-full justify-between h-full'>
+				<DialogContent className='overflow-y-auto p-4 max-w-4xl h-[70vh]'>
+					<div className='flex flex-col gap-4 justify-between w-full h-full'>
 						<DialogHeader>
 							<DialogTitle>Add Note</DialogTitle>
 							<DialogDescription>
@@ -259,9 +264,7 @@ const UserNotes = ({
 											control={form.control}
 											name='title'
 											render={({ field }) => (
-												<FormItem
-                          className='hidden'
-                        >
+												<FormItem className='hidden'>
 													<FormLabel>Title</FormLabel>
 													<FormControl>
 														<Input placeholder='Title' {...field} type='text' />
@@ -287,7 +290,7 @@ const UserNotes = ({
 												</FormItem>
 											)}
 										/>
-										<div className='flex w-full gap-4'>
+										<div className='flex gap-4 w-full'>
 											<Button className='w-full' type='submit'>
 												Save
 											</Button>

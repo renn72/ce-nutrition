@@ -231,6 +231,34 @@ export const get = {
 			})
 			return res
 		}),
+
+	getInfoPage: protectedProcedure
+		.input(z.string())
+		.query(async ({ ctx, input }) => {
+			if (input === '') throw new TRPCError({ code: 'BAD_REQUEST' })
+			const res = await ctx.db.query.user.findFirst({
+				where: (user, { eq }) => eq(user.id, input),
+				columns: {
+					id: true,
+				},
+				with: {
+					settings: true,
+					roles: true,
+					images: true,
+					trainers: true,
+					supplementStacks: {
+						with: {
+							supplements: {
+								with: {
+									supplement: true,
+								},
+							},
+						},
+					},
+				},
+			})
+			return res
+		}),
 	get: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
 		if (input === '') throw new TRPCError({ code: 'BAD_REQUEST' })
 		const res = await ctx.db.query.user.findFirst({
