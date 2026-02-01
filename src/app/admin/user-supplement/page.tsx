@@ -40,7 +40,8 @@ const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
 	const [unit, setUnit] = useState<string>('')
 	const [size, setSize] = useState<number>(1)
 
-  const { data: currentUser, isLoading: currentUserLoading } = api.user.getCurrentUser.useQuery()
+	const { data: currentUser, isLoading: currentUserLoading } =
+		api.user.getCurrentUserRoles.useQuery()
 
 	const { data: supplements } = api.supplement.getAll.useQuery()
 
@@ -75,10 +76,8 @@ const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
 		}
 	}
 
-  if (currentUserLoading) return null
-  if (!currentUser) return null
-
-	
+	if (currentUserLoading) return null
+	if (!currentUser) return null
 
 	return (
 		<Card className='min-w-[400px]'>
@@ -87,7 +86,7 @@ const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
 				<CardDescription>Supplements</CardDescription>
 				<CardAction>
 					<CircleX
-						className='hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0'
+						className='transition-transform cursor-pointer hover:scale-110 active:scale-90 shrink-0 hover:text-foreground'
 						onClick={(e) => {
 							e.preventDefault()
 							const timeId = user.supplementStacks.find(
@@ -114,24 +113,28 @@ const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
 					{user.supplementStacks
 						.find((stack) => stack.time === time)
 						?.supplements.map((supp) => {
-              if (supp.supplement.isPrivate && supp.supplement.userId !== currentUser.id) return null
+							if (
+								supp.supplement.isPrivate &&
+								supp.supplement.userId !== currentUser.id
+							)
+								return null
 							return (
 								<div
 									key={supp.id}
-									className='grid grid-cols-6 gap-2 items-center px-2 text-sm py-1'
+									className='grid grid-cols-6 gap-2 items-center py-1 px-2 text-sm'
 								>
-									<div className='col-span-3 truncate flex items-center '>
-                    <span className='flex-grow'>{supp.supplement?.name}</span>
-                    {
-                      supp.supplement.isPrivate ? <LockIcon size={10} className='text-red-500' /> : null
-                    }
+									<div className='flex col-span-3 items-center truncate'>
+										<span className='flex-grow'>{supp.supplement?.name}</span>
+										{supp.supplement.isPrivate ? (
+											<LockIcon size={10} className='text-red-500' />
+										) : null}
 									</div>
 									<div className='place-self-end'>{supp.size}</div>
 									<div className='place-self-start'>{supp.unit}</div>
 									<CircleX
 										size={20}
 										strokeWidth={2}
-										className='text-muted-foreground place-self-end hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer shrink-0'
+										className='place-self-end transition-transform cursor-pointer hover:scale-110 active:scale-90 text-muted-foreground shrink-0 hover:text-foreground'
 										onClick={(e) => {
 											e.preventDefault()
 											if (!supp.supplementStackId) return
@@ -154,7 +157,7 @@ const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
 						<DialogTrigger asChild>
 							<Button variant='outline'>Add Supp</Button>
 						</DialogTrigger>
-						<DialogContent className='flex flex-col items-center gap-4'>
+						<DialogContent className='flex flex-col gap-4 items-center'>
 							<DialogHeader>
 								<DialogTitle>Add Supplement</DialogTitle>
 								<DialogDescription />
@@ -172,8 +175,8 @@ const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
 										return {
 											value: i.id.toString(),
 											label: i.name ?? '',
-                      unit: i.serveUnit ?? '',
-                      isPrivate: i.isPrivate ?? false,
+											unit: i.serveUnit ?? '',
+											isPrivate: i.isPrivate ?? false,
 										}
 									})}
 								selectedOption={selected ?? ''}
@@ -184,7 +187,7 @@ const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
 									)?.serveUnit
 									if (!unit) return
 									setUnit(unit)
-                  const amount = supplements?.find(
+									const amount = supplements?.find(
 										(i) => i.id === Number(value),
 									)?.serveSize
 									if (!amount) return
@@ -263,7 +266,7 @@ const Supps = ({ user }: { user: GetUserById }) => {
 	}
 
 	return (
-		<div className='flex flex-col gap-4 items-center '>
+		<div className='flex flex-col gap-4 items-center'>
 			{suppTimes.length === 0 ? (
 				<Card className='min-w-[400px]'>
 					<CardHeader>
@@ -271,7 +274,7 @@ const Supps = ({ user }: { user: GetUserById }) => {
 						<CardDescription />
 					</CardHeader>
 					<CardContent className='flex flex-col items-center pb-6 text-muted-foreground'>
-           -- Empty --
+						-- Empty --
 					</CardContent>
 				</Card>
 			) : null}
@@ -294,7 +297,7 @@ const Supps = ({ user }: { user: GetUserById }) => {
 						onKeyDown={handleInputKeyDown}
 					/>
 					{isError && (
-						<div className='text-red-500 text-sm'>Time already exists</div>
+						<div className='text-sm text-red-500'>Time already exists</div>
 					)}
 					<Button onClick={handleAdd}>Add</Button>
 				</DialogContent>
