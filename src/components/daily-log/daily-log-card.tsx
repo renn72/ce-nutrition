@@ -146,6 +146,7 @@ const Log = memo(
 		isAdmin,
 		isLogPage,
 		title,
+		isWidthFull,
 		className,
 	}: {
 		todaysDailyLog: GetDailyLogById | undefined
@@ -154,6 +155,7 @@ const Log = memo(
 		isAdmin?: boolean
 		isLogPage?: boolean
 		title: string
+		isWidthFull: boolean
 		className?: string
 	}) => {
 		const isSleep = isAdmin || currentUser?.settings?.isSleep
@@ -247,7 +249,8 @@ const Log = memo(
 		return (
 			<Card
 				className={cn(
-					'overflow-hidden relative gap-0 py-1 w-full max-w-[350px] h-full shadow-sm transition-all hover:shadow-md border-border/60',
+					'overflow-hidden relative gap-0 py-1 w-full  h-full shadow-sm transition-all hover:shadow-md border-border/60',
+					isWidthFull ? 'w-full' : 'max-w-[350px]',
 					className,
 				)}
 			>
@@ -494,6 +497,7 @@ const DailyLogCard = ({
 	isLogPage = false,
 	isDanger = false,
 	isCreator = false,
+	isWidthFull = false,
 	className,
 }: {
 	dailyLog: GetDailyLogById | undefined
@@ -505,6 +509,7 @@ const DailyLogCard = ({
 	isLogPage?: boolean
 	isDanger?: boolean
 	isCreator?: boolean
+	isWidthFull?: boolean
 	className?: string
 }) => {
 	const ctx = api.useUtils()
@@ -542,6 +547,7 @@ const DailyLogCard = ({
 				yesterdaysDailyLog={yesterdaysDailyLog}
 				isLogPage={isLogPage}
 				className={className}
+				isWidthFull={isWidthFull}
 			/>
 		</div>
 	)

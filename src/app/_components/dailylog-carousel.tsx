@@ -59,6 +59,7 @@ const DailyLogCarousel = ({
 				userId={currentUser.id}
 				isCreator={false}
 				className='pb-10 mb-20'
+				isWidthFull={true}
 			/>
 		</>
 	)

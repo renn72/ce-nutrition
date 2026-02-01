@@ -129,12 +129,13 @@ const Mobile = ({
 
 const Desktop = ({
 	userId,
-	currentUser: user,
+	currentUser,
 }: {
 	userId: string
 	currentUser: GetUserById
 }) => {
 	const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId)
+	const { data: user } = api.user.getInfoPage.useQuery(userId)
 	const { data: userGoals, isLoading: userGoalsLoading } =
 		api.goal.getUser.useQuery({ userId: userId })
 
@@ -149,21 +150,18 @@ const Desktop = ({
 			</div>
 
 			<div className='grid grid-cols-5 grid-rows-3 gap-4 w-full h-[calc(100vh-32px)]'>
-				<UserWeight user={user} dailyLogs={dailyLogs} />
-				<UserGoals user={user} userGoals={userGoals} />
-				<UserCurrentPlan user={user} />
+				<UserWeight dailyLogs={dailyLogs} />
+				<UserGoals userId={user.id} userGoals={userGoals} />
+				<UserCurrentPlan userId={user.id} />
 				<UserSupplementPlan user={user} />
-				<UserRecentMetrics user={user} />
+				<UserRecentMetrics userId={user.id} />
 				<UserCharts
 					className='col-span-3 row-span-1'
 					dailyLogs={dailyLogs}
+					// @ts-ignore
 					currentUser={user}
 				/>
-				<UserMeals
-					className='col-span-2'
-					dailyLogs={dailyLogs}
-					currentUser={user}
-				/>
+				<UserMeals className='col-span-2' dailyLogs={dailyLogs} />
 				<UserDailyLogsTable className='col-span-5' dailyLogs={dailyLogs} />
 			</div>
 		</div>
