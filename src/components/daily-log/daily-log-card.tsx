@@ -247,7 +247,7 @@ const Log = memo(
 		return (
 			<Card
 				className={cn(
-					'overflow-hidden relative gap-0 py-1 w-full max-w-sm h-full shadow-sm transition-all hover:shadow-md border-border/60',
+					'overflow-hidden relative gap-0 py-1 w-full max-w-[350px] h-full shadow-sm transition-all hover:shadow-md border-border/60',
 					className,
 				)}
 			>

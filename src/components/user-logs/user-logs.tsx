@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { api } from '@/trpc/react'
+import type { DateRange } from 'react-day-picker'
 
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { getFormattedDate } from '@/lib/utils'
@@ -21,6 +22,8 @@ import {
 import { cn } from '@/lib/utils'
 import { SpinnerGapIcon } from '@phosphor-icons/react'
 
+import { DateRangePicker } from './date-range-picker'
+
 const Spinner = () => (
 	<div className='flex flex-col justify-center items-center mt-20'>
 		<SpinnerGapIcon size={48} className='animate-spin' />
@@ -34,6 +37,9 @@ const DailyLogs = ({
 	isDanger = false,
 	cols = 3,
 	dailyLogs,
+	isRange = false,
+	from,
+	to,
 }: {
 	userId: string
 	isAdmin?: boolean
@@ -41,11 +47,49 @@ const DailyLogs = ({
 	isDanger?: boolean
 	cols?: number
 	dailyLogs: GetAllDailyLogs | undefined
+	isRange?: boolean
+	from?: Date | undefined
+	to?: Date | undefined
 }) => {
 	const today = new Date()
 	const isMobile = useClientMediaQuery('(max-width: 600px)')
 
-	const content = (
+	const content = isRange ? (
+		<>
+			{dailyLogs
+				?.filter((log) => {
+					const logDate = new Date(log.date)
+					const isAfterFrom = !from || logDate >= from
+					const isBeforeTo = !to || logDate <= to
+
+					return isAfterFrom && isBeforeTo
+				})
+				.map((dailyLog) => {
+					const date = new Date(dailyLog.date)
+					const yesterdaysDate = new Date(date.getTime() - 86400000)
+					const yesterdaysDailyLog = dailyLogs?.find(
+						(dailyLog) => dailyLog.date === yesterdaysDate.toDateString(),
+					)
+					const title = `${date.toLocaleDateString('en-AU', {
+						weekday: 'long',
+					})} ${getFormattedDate(date)}`
+					return (
+						<DailyLogCard
+							key={dailyLog.id}
+							title={title}
+							userId={userId}
+							dailyLog={dailyLog}
+							yesterdaysDailyLog={yesterdaysDailyLog}
+							date={date}
+							isAdmin={isAdmin}
+							isLogPage={true}
+							isDanger={isDanger}
+							isCreator={isDanger}
+						/>
+					)
+				})}
+		</>
+	) : (
 		<>
 			{Array.from({ length: days }).map((_, i) => {
 				const date = new Date(today.getTime() - i * 86400000)
@@ -174,6 +218,42 @@ const DailyLogsAll = ({
 	)
 }
 
+const DailyLogsRange = ({
+	userId,
+	isAdmin = false,
+	from,
+	to,
+	isDanger = false,
+	cols = 3,
+}: {
+	userId: string
+	isAdmin?: boolean
+	from: Date | undefined
+	to: Date | undefined
+	isDanger?: boolean
+	cols?: number
+}) => {
+	const { data: dailyLogs, isLoading } =
+		api.dailyLog.getAllUser.useQuery(userId)
+
+	console.log({ from, to })
+
+	if (isLoading) return <Spinner />
+
+	return (
+		<DailyLogs
+			dailyLogs={dailyLogs}
+			isAdmin={isAdmin}
+			userId={userId}
+			isDanger={isDanger}
+			cols={cols}
+			isRange={true}
+			from={from}
+			to={to}
+		/>
+	)
+}
+
 const UserLogs = ({
 	userId,
 	isAdmin = false,
@@ -185,6 +265,12 @@ const UserLogs = ({
 	const [days, setDays] = useState(7)
 	const [isDanger, setIsDanger] = useState(false)
 	const [cols, setCols] = useState(3)
+	const [date, setDate] = useState<DateRange | undefined>({
+		from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+		to: new Date(),
+	})
+
+	const [toggleValue, setToggleValue] = useState('7')
 
 	const { data: isRoot } = api.user.isCreator.useQuery()
 
@@ -194,53 +280,71 @@ const UserLogs = ({
 
 	const content = (
 		<div className='flex flex-col gap-2 items-center px-1 w-full lg:gap-4'>
-			<div className='flex flex-wrap gap-4 justify-center items-center'>
-				<ToggleGroup
-					type='single'
-					variant='outline'
-					value={days.toString()}
-					onValueChange={(value) => {
-						if (value) setDays(Number(value))
-					}}
-				>
-					<ToggleGroupItem value='7' aria-label='Week'>
-						Week
-					</ToggleGroupItem>
-					<ToggleGroupItem value='30' aria-label='Month'>
-						Month
-					</ToggleGroupItem>
-					<ToggleGroupItem value='90' aria-label='3 Months'>
-						3 Months
-					</ToggleGroupItem>
-					<ToggleGroupItem value='365' aria-label='Year'>
-						Year
-					</ToggleGroupItem>
-				</ToggleGroup>
-				{isRoot?.isCreator && (
-					<Switch checked={isDanger} onCheckedChange={setIsDanger} />
-				)}
-				{!isMobile && (
-					<div className='flex gap-2 items-center'>
-						<Label className='text-sm'>Columns</Label>
-						<Select
-							value={cols.toString()}
-							onValueChange={(val) => setCols(Number(val))}
-						>
-							<SelectTrigger className='w-[70px]'>
-								<SelectValue placeholder='Cols' />
-							</SelectTrigger>
-							<SelectContent>
-								{Array.from({ length: 7 }).map((_, i) => (
-									<SelectItem key={i + 1} value={(i + 1).toString()}>
-										{i + 1}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-					</div>
+			<div className='flex flex-col gap-2 items-center w-full lg:gap-4'>
+				<div className='flex flex-wrap gap-4 justify-center items-center'>
+					<ToggleGroup
+						type='single'
+						variant='outline'
+						value={toggleValue}
+						onValueChange={(value) => {
+							setToggleValue(value)
+							if (value && value !== 'range') setDays(Number(value))
+						}}
+					>
+						<ToggleGroupItem value='7' aria-label='Week'>
+							Week
+						</ToggleGroupItem>
+						<ToggleGroupItem value='30' aria-label='Month'>
+							Month
+						</ToggleGroupItem>
+						<ToggleGroupItem value='90' aria-label='3 Months'>
+							3 Months
+						</ToggleGroupItem>
+						<ToggleGroupItem value='365' aria-label='Year'>
+							Year
+						</ToggleGroupItem>
+						<ToggleGroupItem value='range' aria-label='Year'>
+							Range
+						</ToggleGroupItem>
+					</ToggleGroup>
+					{isRoot?.isCreator && (
+						<Switch checked={isDanger} onCheckedChange={setIsDanger} />
+					)}
+					{!isMobile && (
+						<div className='flex gap-2 items-center'>
+							<Label className='text-sm'>Columns</Label>
+							<Select
+								value={cols.toString()}
+								onValueChange={(val) => setCols(Number(val))}
+							>
+								<SelectTrigger className='w-[70px]'>
+									<SelectValue placeholder='Cols' />
+								</SelectTrigger>
+								<SelectContent>
+									{Array.from({ length: 7 }).map((_, i) => (
+										<SelectItem key={i + 1} value={(i + 1).toString()}>
+											{i + 1}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
+					)}
+				</div>
+				{toggleValue === 'range' && (
+					<DateRangePicker date={date} setDate={setDate} />
 				)}
 			</div>
-			{days === 7 ? (
+			{toggleValue === 'range' && date ? (
+				<DailyLogsRange
+					userId={userId}
+					isAdmin={isAdmin}
+					from={date.from}
+					to={date.to}
+					isDanger={isDanger}
+					cols={cols}
+				/>
+			) : days === 7 ? (
 				<DailyLogs7
 					userId={userId}
 					isAdmin={isAdmin}
