@@ -93,7 +93,7 @@ const MetricItem = memo(
 		return (
 			<div
 				className={cn(
-					'flex items-center gap-2 py-2 px-1 rounded-lg bg-muted/40 border border-primary/15 hover:bg-primary/5 w-full',
+					'flex items-center gap-1 py-2 px-1 rounded-lg bg-muted/40 border border-primary/15 hover:bg-primary/5 w-full',
 					isFullWidth ? 'col-span-2 sm:col-span-3' : 'col-span-1',
 				)}
 			>
@@ -106,10 +106,10 @@ const MetricItem = memo(
 					<span className='font-semibold tracking-wider uppercase text-[10px] text-muted-foreground'>
 						{label}
 					</span>
-					<div className='flex gap-2 justify-between items-baseline w-full'>
+					<div className='flex gap-0 justify-between items-baseline w-full'>
 						<span
 							className={cn(
-								'text-sm font-bold truncate',
+								'text-sm font-bold truncate tracking-tight ',
 								value === 0 || value === undefined || value === null
 									? 'text-muted-foreground/70'
 									: '',
@@ -442,7 +442,7 @@ const Log = memo(
 							<MetricItem
 								label='Carbs'
 								value={formatNumber(mealsMacros?.carbs, 0)}
-								prevValue={formatNumber(yesterdayMealsMacros?.carbs, 0)}
+								prevValue={formatNumber(mealsMacros?.carbs, 0)}
 								suffix='g'
 								icon={BreadIcon}
 								accuracy={0}
@@ -450,7 +450,7 @@ const Log = memo(
 							<MetricItem
 								label='Protein'
 								value={formatNumber(mealsMacros?.protein, 0)}
-								prevValue={formatNumber(yesterdayMealsMacros?.protein, 0)}
+								prevValue={formatNumber(mealsMacros?.protein, 0)}
 								suffix='g'
 								icon={Beef}
 								accuracy={0}
@@ -458,7 +458,7 @@ const Log = memo(
 							<MetricItem
 								label='Fat'
 								value={formatNumber(mealsMacros?.fat, 0)}
-								prevValue={formatNumber(yesterdayMealsMacros?.fat, 0)}
+								prevValue={formatNumber(mealsMacros?.fat, 0)}
 								suffix='g'
 								icon={DropIcon}
 								accuracy={0}
@@ -470,7 +470,9 @@ const Log = memo(
 						<div className='pt-3 mt-4 border-t border-primary/10'>
 							<div className='flex gap-2 items-start text-sm text-muted-foreground'>
 								<StickyNote size={14} className='mt-1 shrink-0' />
-								<p className='italic line-clamp-3'>{todaysDailyLog.notes}</p>
+								<p className='pr-1 italic line-clamp-3'>
+									{todaysDailyLog.notes}
+								</p>
 							</div>
 						</div>
 					)}

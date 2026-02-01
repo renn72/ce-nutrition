@@ -97,7 +97,7 @@ const DailyLogs = ({
 	return (
 		<div
 			className={cn(
-				'grid gap-4 w-max place-content-center',
+				'grid gap-2 w-max place-content-center',
 				gridCols[cols] || 'grid-cols-3',
 			)}
 		>
