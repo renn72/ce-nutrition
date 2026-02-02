@@ -29,34 +29,33 @@ const SuppBottomSheet = ({
 		return dailyLog.date === today.toDateString()
 	})
 
-  const ctx = api.useUtils()
-  const { mutate: deleteSuppLog } = api.supplement.unLogSupplement.useMutation({
+	const ctx = api.useUtils()
+	const { mutate: deleteSuppLog } = api.supplement.unLogSupplement.useMutation({
 		onSuccess: () => {
 			ctx.dailyLog.invalidate()
 		},
 		onError: (err) => {},
 	})
 
-
 	return (
 		<Sheet.Root license='non-commercial'>
-			<Sheet.Trigger className='flex gap-2 items-center justify-center mt-2'>
+			<Sheet.Trigger className='flex gap-2 justify-center items-center mt-2'>
 				<ListCollapse size={20} className='text-muted-foreground' />
 			</Sheet.Trigger>
 			<Sheet.Portal>
-				<Sheet.View className='z-[999] h-[100vh] bg-black/50 '>
-					<Sheet.Content className='min-h-[200px] max-h-[90vh] h-full rounded-t-3xl bg-background relative'>
+				<Sheet.View className='z-[999] h-[100vh] bg-black/50'>
+					<Sheet.Content className='relative h-full rounded-t-3xl min-h-[200px] max-h-[90vh] bg-background'>
 						<div className='flex flex-col justify-between h-full'>
-							<div className='flex flex-col gap-2 '>
+							<div className='flex flex-col gap-2'>
 								<div className='flex justify-center pt-1'>
 									<Sheet.Handle
-										className=' w-[50px] h-[6px] border-0 rounded-full bg-primary/20'
+										className='rounded-full border-0 w-[50px] h-[6px] bg-primary/20'
 										action='dismiss'
 									/>
 								</div>
 								<Popover open={isOpen} onOpenChange={setIsOpen}>
 									<PopoverTrigger asChild>
-										<div className='flex items-center justify-center'>
+										<div className='flex justify-center items-center'>
 											<Button
 												variant={'outline'}
 												onClick={(e) => {
@@ -69,7 +68,7 @@ const SuppBottomSheet = ({
 													!today && 'text-muted-foreground',
 												)}
 											>
-												<CalendarIcon className='mr-4 h-4 w-4 mt-[0px] shrink-0' />
+												<CalendarIcon className='mr-4 w-4 h-4 mt-[0px] shrink-0' />
 												{today ? (
 													<span className='mt-[5px]'>
 														{format(today, 'PPP')}
@@ -84,7 +83,7 @@ const SuppBottomSheet = ({
 										onClick={(e) => e.stopPropagation()}
 										onFocusOutside={(e) => e.preventDefault()}
 										forceMount
-										className='w-auto p-0 z-[2000]'
+										className='p-0 w-auto z-[2000]'
 									>
 										<Calendar
 											mode='single'
@@ -112,7 +111,7 @@ const SuppBottomSheet = ({
 															<div className='font-semibold'>
 																{props.date.getDate()}
 															</div>
-															<div className='text-[0.7rem] text-muted-foreground font-medium'>
+															<div className='font-medium text-[0.7rem] text-muted-foreground'>
 																{totalWater === 0
 																	? '.'
 																	: (totalWater / 1000).toFixed(1)}
@@ -125,19 +124,19 @@ const SuppBottomSheet = ({
 										/>
 									</PopoverContent>
 								</Popover>
-								<div className='flex gap-4 pt-4 border-b-[1px] border-primary pb-4 relative font-medium'>
-									<div className='transition-transform '>
-										<Sheet.Title className='text-lg ml-4 '>
+								<div className='flex relative gap-4 pt-4 pb-4 font-medium border-b-[1px] border-primary'>
+									<div className='transition-transform'>
+										<Sheet.Title className='ml-4 text-lg'>
 											Supplements Log
 										</Sheet.Title>
 									</div>
 									<Sheet.Description className='hidden'>
 										Supplement Log
 									</Sheet.Description>
-									<div className='border w-px h-6' />
+									<div className='w-px h-6 border' />
 								</div>
 								<ScrollArea className='px-4 h-[calc(90vh-170px)]'>
-									<div className='flex flex-col gap-2 '>
+									<div className='flex flex-col gap-2'>
 										{todaysDailyLog?.supplements.length === 0 ||
 										!todaysDailyLog ? (
 											<div className='text-center'>...</div>
@@ -145,32 +144,33 @@ const SuppBottomSheet = ({
 											todaysDailyLog?.supplements.map((supp, i) => (
 												<div
 													key={supp.id}
-													className='text-sm w-full bg-secondary rounded-full px-4 py-2 items-center flex flex-col'
+													className='flex flex-col items-center py-2 px-4 w-full text-sm rounded-full bg-secondary'
 												>
-													<div className='grid grid-cols-6 gap-2 text-sm w-full items-center'>
-														<div className='text-primary text-lg font-semibold col-span-2'>
+													<div className='grid grid-cols-6 gap-2 items-center w-full text-sm'>
+														<div className='col-span-2 text-lg font-semibold text-primary'>
 															{supp.supplement?.name}
 														</div>
-														<div className='text-primary font-normal col-span-3 justify-self-end'>
-                                {supp.time}
-                            </div>
-
+														<div className='col-span-3 justify-self-end font-normal text-primary'>
+															{supp.time}
+														</div>
 													</div>
-													<div className='grid grid-cols-6 gap-2 text-sm w-full items-center'>
-														<div className='text-muted-foreground font-medium col-span-2'>
+													<div className='grid grid-cols-6 gap-2 items-center w-full text-sm'>
+														<div className='col-span-2 font-medium text-muted-foreground'>
 															{`${supp.amount} ${supp.unit}`}
 														</div>
-														<div className='text-muted-foreground font-normal col-span-3 justify-self-end'>
-															{supp.createdAt.toLocaleTimeString('en-AU')}
+														<div className='col-span-3 justify-self-end font-normal text-muted-foreground'>
+															{new Date(supp.createdAt).toLocaleTimeString(
+																'en-AU',
+															)}
 														</div>
 														<div className='justify-self-end'>
 															<Trash2
 																size={16}
-																className='cursor-pointer text-destructive hover:text-primary active:scale-90 transition-transform cursor-pointer mb-[1px]'
+																className='transition-transform cursor-pointer active:scale-90 text-destructive mb-[1px] hover:text-primary'
 																onClick={() => {
-                                  deleteSuppLog({
-                                    id: supp.id,
-                                  })
+																	deleteSuppLog({
+																		id: supp.id,
+																	})
 																}}
 															/>
 														</div>
@@ -182,7 +182,7 @@ const SuppBottomSheet = ({
 								</ScrollArea>
 							</div>
 							<Sheet.Trigger
-								className='w-full flex justify-center'
+								className='flex justify-center w-full'
 								action='dismiss'
 							>
 								<ChevronDown
