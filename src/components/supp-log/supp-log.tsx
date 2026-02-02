@@ -14,7 +14,7 @@ import type {
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { Sheet, SheetStack } from '@silk-hq/components'
-import { ChevronDown, LockIcon, Pill, XIcon } from 'lucide-react'
+import { ChevronDown, LockIcon, XIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -347,7 +347,6 @@ const SuppUser = ({ user }: { user: GetUserById }) => {
 													</div>
 													{stack.supplements.map((supp) => {
 														if (!supp.supplement?.isUserCreated) return null
-														console.log(supp)
 														return (
 															<div
 																key={supp.id}
@@ -494,7 +493,7 @@ const Supp = ({
 				isUser && isTaken ? 'bg-yellow-400/60' : '',
 			)}
 			key={supp.id}
-			onClick={handleClick}
+			onMouseDown={handleClick}
 		>
 			<div
 				className={cn(
