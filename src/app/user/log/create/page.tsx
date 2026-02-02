@@ -401,7 +401,7 @@ const Tags = ({ log }: { log: GetDailyLogById }) => {
 export default function Home() {
 	const ctx = api.useUtils()
 	const searchParams = useSearchParams()
-	const id = searchParams.get('id')
+	// const id = searchParams.get('id')
 	const [date, setDate] = useState<Date | undefined>(
 		() => new Date(Number(searchParams.get('date'))),
 	)
@@ -411,8 +411,11 @@ export default function Home() {
 
 	const { data: dailyLogs, isLoading } =
 		api.dailyLog.getAllCurrentUser.useQuery({ id: impersonatedUser.id })
-	const { data: currentUser, isLoading: currentUserLoading } =
-		api.user.getCurrentUser.useQuery({ id: impersonatedUser.id })
+
+	const { data: currentUser } = api.user.getCurrentUser.useQuery({
+		id: impersonatedUser.id,
+	})
+
 	const { mutate: createDailyLog } = api.dailyLog.create.useMutation({
 		onSettled: () => {
 			ctx.dailyLog.invalidate()
@@ -476,7 +479,6 @@ export default function Home() {
 	useEffect(() => {
 		if (isLoading) return
 		if (isCreatingLog) return
-		if (currentUserLoading) return
 		if (!currentUser) return
 		if (!date) return
 		if (!log) {
@@ -493,8 +495,6 @@ export default function Home() {
 			}
 		}
 	}, [dailyLogs, currentUser, date])
-
-	if (isLoading) return null
 
 	const prevLog = dailyLogs?.find((log) => {
 		if (!date) return false
@@ -526,6 +526,7 @@ export default function Home() {
 
 	return (
 		<>
+			hi
 			<div className='flex relative flex-col gap-1 mt-16 transition-transform px-[2px]'>
 				{impersonatedUser.id !== '' ? (
 					<div className='fixed bottom-14 left-1/2 opacity-80 -translate-x-1/2 z-[2009]'>

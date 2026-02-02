@@ -57,7 +57,7 @@ const Mobile = ({
 	const [cachedLogs, setCachedLogs] = useAtom(dailyLogsCacheAtom)
 	const ctx = api.useUtils()
 	const { data: apiDailyLogs, isLoading: dailyLogsLoading } =
-		api.dailyLog.getAllUser.useQuery(userId)
+		api.dailyLog.getAllCurrentUser.useQuery({ id: userId })
 	const [isCreatingLog, setIsCreatingLog] = useState(false)
 
 	const { mutate: createDailyLog } = api.dailyLog.create.useMutation({
