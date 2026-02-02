@@ -8,7 +8,7 @@ import { getRecipeDetailsFromDailyLog } from '@/lib/utils'
 import type { GetDailyLogById } from '@/types'
 import NumberFlow from '@number-flow/react'
 import { Sheet } from '@silk-hq/components'
-import { ChevronDown, ListCollapse, Shuffle, Trash2 } from 'lucide-react'
+import { ChevronDown, ListCollapse, Trash2 } from 'lucide-react'
 import {
 	Popover,
 	PopoverContent,
@@ -201,7 +201,7 @@ const MealBottomSheet = ({
 												.sort(
 													(a, b) => Number(a.mealIndex) - Number(b.mealIndex),
 												)
-												.map((meal, i) => {
+												.map((meal, _i) => {
 													const { cals, protein, carbs, fat } =
 														getRecipeDetailsFromDailyLog(
 															todaysDailyLog,
@@ -219,11 +219,14 @@ const MealBottomSheet = ({
 																	</div>
 																</div>
 																<div className='col-span-2 font-light text-[0.7rem]'>
-																	{meal.createdAt.toLocaleTimeString('en-AU', {
-																		hour: 'numeric',
-																		minute: 'numeric',
-																		hour12: true,
-																	})}
+																	{new Date(meal.createdAt).toLocaleTimeString(
+																		'en-AU',
+																		{
+																			hour: 'numeric',
+																			minute: 'numeric',
+																			hour12: true,
+																		},
+																	)}
 																</div>
 																<div className='col-span-5 font-medium truncate'>
 																	{meal.recipe?.[0]?.name}

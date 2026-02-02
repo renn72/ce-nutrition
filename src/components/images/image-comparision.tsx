@@ -617,7 +617,9 @@ const ImageView = ({
 	const imageType = searchParams.get('title')?.toLowerCase()
 	const paramsDataId = Number(searchParams.get('dataId'))
 	const userId = searchParams.get('user')
-	const { data: user } = api.user.get.useQuery(userId || '')
+	const { data: user } = api.user.getCurrentUserRoles.useQuery({
+		id: _userId,
+	})
 
 	const { data: overlayRes } = api.dailyLog.getImageOverlay.useQuery(
 		paramsDataId && imageType
@@ -692,7 +694,7 @@ const ImageView = ({
 			{isLogs && (
 				<DailyLogCard
 					title={''}
-					userId={user.id}
+					currentUser={user}
 					dailyLog={dailyLog}
 					yesterdaysDailyLog={dailyLog}
 					date={new Date(date)}

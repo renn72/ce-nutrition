@@ -56,6 +56,10 @@ const DailyLogs = ({
 	const today = new Date()
 	const isMobile = useClientMediaQuery('(max-width: 600px)')
 
+	const { data: currentUser } = api.user.getCurrentUserRoles.useQuery({
+		id: userId,
+	})
+
 	const content = isRange ? (
 		<>
 			{dailyLogs
@@ -79,7 +83,7 @@ const DailyLogs = ({
 						<DailyLogCard
 							key={dailyLog.id}
 							title={title}
-							userId={userId}
+							currentUser={currentUser}
 							dailyLog={dailyLog}
 							yesterdaysDailyLog={yesterdaysDailyLog}
 							date={date}
@@ -110,7 +114,7 @@ const DailyLogs = ({
 					<DailyLogCard
 						key={dailyLog.id}
 						title={title}
-						userId={userId}
+						currentUser={currentUser}
 						dailyLog={dailyLog}
 						yesterdaysDailyLog={yesterdaysDailyLog}
 						date={date}

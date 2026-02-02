@@ -89,7 +89,7 @@ const ImpersonateUser = () => {
 
 const User = () => {
 	const ctx = api.useUtils()
-	const { data: user, isLoading } = api.user.getCurrentUserRoles.useQuery()
+	const { data: user } = api.user.getCurrentUserRoles.useQuery({ id: '' })
 	const [isOpen, setIsOpen] = useState(false)
 
 	const isMobile = useClientMediaQuery({ query: '(max-width: 768px)' })
@@ -108,7 +108,7 @@ const User = () => {
 		ctx.user.isUser.refetch()
 	}
 
-	if (isLoading)
+	if (!user)
 		return (
 			<div
 				className={cn(

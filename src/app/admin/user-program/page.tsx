@@ -43,6 +43,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
 	})
 
 	const { data: currentUser } = api.user.get.useQuery(userId)
+
 	const plans = currentUser?.userPlans
 		.filter((_plan) => true)
 		.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())

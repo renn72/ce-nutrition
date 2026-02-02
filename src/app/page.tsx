@@ -14,8 +14,9 @@ import { UserWeight } from '@/app/admin/user-info/user-weight'
 import { impersonatedUserAtom } from '@/atoms'
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
 import { cn } from '@/lib/utils'
-import type { GetUserById } from '@/types'
+import type { GetUserWRoles, GetAllDailyLogs } from '@/types'
 import { useAtom } from 'jotai'
+import { atomWithStorage } from 'jotai/utils'
 import { XIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -33,18 +34,29 @@ import { WaterLog } from '@/components/water-log/water-log'
 import DailyLogCarousel from './_components/dailylog-carousel'
 import { User } from '@/components/auth/user'
 import { Pwa } from '@/components/layout/pwa'
+import { Spinner } from '@/components/spinner'
 
 export const dynamic = 'force-dynamic'
+
+const currentUserAtom = atomWithStorage<GetUserWRoles | null>(
+	'currentUser',
+	null,
+)
+const dailyLogsCacheAtom = atomWithStorage<GetAllDailyLogs | null>(
+	'cached_daily_logs',
+	null,
+)
 
 const Mobile = ({
 	userId,
 	currentUser,
 }: {
 	userId: string
-	currentUser: GetUserById
+	currentUser: GetUserWRoles
 }) => {
+	const [cachedLogs, setCachedLogs] = useAtom(dailyLogsCacheAtom)
 	const ctx = api.useUtils()
-	const { data: dailyLogs, isLoading: dailyLogsLoading } =
+	const { data: apiDailyLogs, isLoading: dailyLogsLoading } =
 		api.dailyLog.getAllUser.useQuery(userId)
 	const [isCreatingLog, setIsCreatingLog] = useState(false)
 
@@ -60,6 +72,14 @@ const Mobile = ({
 		},
 	})
 
+	useEffect(() => {
+		if (apiDailyLogs) {
+			setCachedLogs(apiDailyLogs)
+		}
+	}, [apiDailyLogs, setCachedLogs])
+
+	const dailyLogs = apiDailyLogs ?? cachedLogs
+
 	const dailyLog = dailyLogs?.find(
 		(log) => log.date === new Date().toDateString(),
 	)
@@ -69,6 +89,7 @@ const Mobile = ({
 		if (isCreatingLog) return
 		if (!dailyLog) {
 			setIsCreatingLog(true)
+			if (!currentUser) return
 			try {
 				setTimeout(() => {
 					createDailyLog({
@@ -80,11 +101,12 @@ const Mobile = ({
 		}
 	}, [dailyLogs])
 
+	if (!currentUser) return null
 	const isSupplements = currentUser.roles.find(
 		(role) => role.name === 'supplements',
 	)
 
-	if (dailyLogsLoading) return null
+	if (!dailyLogs) return null
 
 	return (
 		<div className={cn('flex flex-col gap-0 w-full mt-16 items-center mb-1 ')}>
@@ -112,7 +134,7 @@ const Mobile = ({
 								)}
 								settingsId={currentUser.settings.id}
 							/>
-							<MealLog dailyLogs={dailyLogs} currentUser={currentUser} />
+							<MealLog dailyLogs={dailyLogs} currentUserId={userId} />
 							{isSupplements ? (
 								<SuppLog userId={userId} dailyLogs={dailyLogs} />
 							) : null}
@@ -127,13 +149,7 @@ const Mobile = ({
 	)
 }
 
-const Desktop = ({
-	userId,
-	currentUser,
-}: {
-	userId: string
-	currentUser: GetUserById
-}) => {
+const Desktop = ({ userId }: { userId: string }) => {
 	const { data: dailyLogs } = api.dailyLog.getAllUser.useQuery(userId)
 	const { data: user } = api.user.getInfoPage.useQuery(userId)
 	const { data: userGoals, isLoading: userGoalsLoading } =
@@ -170,19 +186,35 @@ const Desktop = ({
 
 export default function Home() {
 	const [impersonatedUser, setImpersonatedUser] = useAtom(impersonatedUserAtom)
-	const { data: currentUser, isLoading } = api.user.getCurrentUser.useQuery({
-		id: impersonatedUser.id,
-	})
+	const [cachedUser, setCachedUser] = useAtom(currentUserAtom) // Our persistent atom
+
+	const { data: currentUser } = api.user.getCurrentUserRoles.useQuery(
+		{ id: impersonatedUser.id },
+		{
+			// Prevents UI from flickering to 'null' when id changes
+			placeholderData: (previousData) => previousData,
+		},
+		// Keep the previous data visible while fetching new data
+	)
+	useEffect(() => {
+		if (currentUser) {
+			setCachedUser(currentUser)
+		}
+	}, [currentUser, setCachedUser])
+
+	// Use the cached version for rendering so it's never "null" if it exists in storage
+	const userToDisplay = currentUser ?? cachedUser
 	const isMobile = useClientMediaQuery('(max-width: 600px)')
 
-	if (isLoading) return null
-	if (!currentUser) return null
+	// Only show null if we have absolutely no data (first time ever visiting)
+	if (!userToDisplay) return <Spinner />
+
 	return (
 		<div className='flex relative flex-col min-h-screen'>
 			{isMobile ? (
-				<Mobile userId={currentUser.id} currentUser={currentUser} />
+				<Mobile userId={userToDisplay.id} currentUser={userToDisplay} />
 			) : (
-				<Desktop userId={currentUser.id} currentUser={currentUser} />
+				<Desktop userId={userToDisplay.id} />
 			)}
 			{impersonatedUser.id !== '' ? (
 				<div className='fixed bottom-14 left-1/2 opacity-80 -translate-x-1/2'>

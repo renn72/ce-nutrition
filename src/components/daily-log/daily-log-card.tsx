@@ -490,9 +490,9 @@ Log.displayName = 'Log'
 const DailyLogCard = ({
 	dailyLog,
 	yesterdaysDailyLog,
-	date,
-	userId,
+	currentUser,
 	title,
+	date,
 	isAdmin = false,
 	isLogPage = false,
 	isDanger = false,
@@ -503,7 +503,7 @@ const DailyLogCard = ({
 	dailyLog: GetDailyLogById | undefined
 	yesterdaysDailyLog: GetDailyLogById | undefined
 	date: Date
-	userId: string
+	currentUser: GetUserWRoles
 	title: string
 	isAdmin?: boolean
 	isLogPage?: boolean
@@ -517,9 +517,6 @@ const DailyLogCard = ({
 		onSuccess: () => {
 			ctx.dailyLog.invalidate()
 		},
-	})
-	const { data: currentUser } = api.user.getCurrentUserRoles.useQuery({
-		id: userId,
 	})
 
 	if (!currentUser) return null

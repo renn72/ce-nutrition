@@ -1,7 +1,7 @@
 'use client'
 
 import { cn, getRecipeDetailsFromDailyLog } from '@/lib/utils'
-import type { GetAllDailyLogs, GetUserById } from '@/types'
+import type { GetAllDailyLogs, GetUserWRoles as GetUserById } from '@/types'
 import { useAtom, useAtomValue } from 'jotai'
 import { CircleMinus, CirclePlus } from 'lucide-react'
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts'
@@ -316,7 +316,7 @@ const UserCharts = ({
 	)
 
 	const { data: userSkinfolds } = api.metrics.getUserSkinfolds.useQuery(
-		currentUser.id,
+		currentUser?.id || '',
 	)
 
 	const [leftChartZoom, setLeftChartZoom] = useAtom(leftChartZoomAtom)

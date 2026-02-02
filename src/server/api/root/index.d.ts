@@ -16239,6 +16239,10 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     updatedAt: Date | null;
                     userId: string | null;
                 }[];
+                trainers: {
+                    userId: string;
+                    trainerId: string;
+                }[];
                 userPlans: {
                     id: number;
                     name: string;
@@ -23993,6 +23997,10 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     createdAt: Date;
                     updatedAt: Date | null;
                     userId: string | null;
+                }[];
+                trainers: {
+                    userId: string;
+                    trainerId: string;
                 }[];
                 userPlans: {
                     id: number;

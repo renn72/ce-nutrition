@@ -4944,6 +4944,7 @@ var get = {
         images: true,
         settings: true,
         roles: true,
+        trainers: true,
         supplementStacks: {
           with: {
             supplements: {

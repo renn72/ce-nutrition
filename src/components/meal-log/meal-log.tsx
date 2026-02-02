@@ -12,7 +12,7 @@ import {
 import type {
 	GetAllDailyLogs,
 	GetDailyLogById,
-	GetUserById,
+	GetCurrentUser,
 	UserPlan,
 } from '@/types'
 import NumberFlow from '@number-flow/react'
@@ -24,7 +24,6 @@ import {
 	ArrowBigRightDash,
 	CalendarIcon,
 	ChevronDown,
-	Salad,
 } from 'lucide-react'
 import { BowlSteamIcon } from '@phosphor-icons/react'
 import { toast } from 'sonner'
@@ -44,6 +43,8 @@ import { Label } from '../ui/label'
 import { isAllMealsAtom, selectedPlansAtom } from './atoms'
 import { MealBottomSheet } from './meal-bottom-sheet'
 import { MealLogUserRecipes } from './meal-log-user-recipes'
+
+import { atomWithStorage } from 'jotai/utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -117,10 +118,6 @@ const Meal = ({
 	})
 
 	const recipes = allPlans.flatMap((plan) => plan?.userRecipes)
-
-	const isSelectedInRecipes = !!recipes.find(
-		(recipe) => recipe?.id === Number(selectValue),
-	)
 
 	const selectedRecipeMacros = getRecipeDetailsFromDailyLog(todaysLog, index)
 
@@ -307,7 +304,7 @@ const Meal = ({
 														'data-[state=on]:text-slate-100 data-[state=on]:shadow-none',
 														'h-full shadow-sm flex flex-col w-[calc(100vw-2rem)] gap-0',
 														'hover:text-primary hover:bg-background',
-														isAllMeals && recipe.mealIndex % 2 === 1
+														isAllMeals && (recipe.mealIndex ?? 0) % 2 === 1
 															? 'bg-secondary'
 															: '',
 													)}
@@ -361,6 +358,11 @@ const Meal = ({
 	)
 }
 
+const currentUserAtom = atomWithStorage<GetCurrentUser | null>(
+	'currentUser',
+	null,
+)
+
 const MealList = ({
 	currentMeal: _currentMeal,
 	todaysLog,
@@ -369,7 +371,7 @@ const MealList = ({
 	setDay,
 }: {
 	currentMeal: number
-	currentUser: GetUserById
+	currentUser: GetCurrentUser
 	todaysLog: GetDailyLogById | null | undefined
 	today: Date
 	setDay: React.Dispatch<React.SetStateAction<Date>>
@@ -380,11 +382,11 @@ const MealList = ({
 
 	const [selectedPlansId] = useAtom(selectedPlansAtom)
 
-	const isUserCreateRecipe = currentUser.roles.find(
+	const isUserCreateRecipe = currentUser?.roles.find(
 		(role) => role.name === 'create-meals',
 	)
 	const activePlans = currentUser?.userPlans.filter((plan) => plan.isActive)
-	const refinedPlans = activePlans.map((plan) => {
+	const refinedPlans = activePlans?.map((plan) => {
 		return {
 			...plan,
 			userRecipes: plan.userRecipes.filter(
@@ -423,24 +425,26 @@ const MealList = ({
 			},
 		)
 
-	const selectedPlans = refinedPlans.filter((plan) =>
+	const selectedPlans = refinedPlans?.filter((plan) =>
 		selectedPlansId.includes(plan.id.toString()),
 	)
 
-	const calories = selectedPlans.reduce((acc, curr) => {
+	const calories = selectedPlans?.reduce((acc, _curr) => {
 		let cals = selectedPlans?.[0]?.userMeals?.[currentMeal]?.targetCalories || 0
 		if (isAllMeals && selectedPlans?.[0] && selectedPlans[0].userMeals?.[0])
 			cals = Number(selectedPlans[0].userMeals[0].targetCalories)
 		return acc === 0 ? Number(cals) : acc
 	}, 0)
 
-	const protein = selectedPlans.reduce((acc, curr) => {
+	const protein = selectedPlans?.reduce((acc, _curr) => {
 		let protein =
 			selectedPlans?.[0]?.userMeals?.[currentMeal]?.targetProtein || 0
 		if (isAllMeals && selectedPlans?.[0] && selectedPlans[0].userMeals?.[0])
 			protein = Number(selectedPlans[0].userMeals[0].targetProtein)
 		return acc === 0 ? Number(protein) : acc
 	}, 0)
+
+	if (!currentUser) return null
 
 	return (
 		<Sheet.Content className='relative h-full rounded-t-3xl min-h-[200px] max-h-[95vh] bg-background'>
@@ -561,18 +565,20 @@ const MealList = ({
 					</div>
 					<ScrollArea className='px-2 pt-4 h-[calc(95vh-130px)]'>
 						<div className='flex flex-col gap-2 mb-2'>
-							<Meal
-								allPlans={refinedPlans}
-								activePlans={activePlans}
-								date={today}
-								todaysLog={todaysLog}
-								userId={currentUser.id}
-								index={currentMeal}
-							/>
+							{refinedPlans && activePlans && (
+								<Meal
+									allPlans={refinedPlans}
+									activePlans={activePlans}
+									date={today}
+									todaysLog={todaysLog}
+									userId={currentUser.id}
+									index={currentMeal}
+								/>
+							)}
 							{isUserCreateRecipe && todaysLog ? (
 								<MealLogUserRecipes
-									calories={calories}
-									protein={protein}
+									calories={calories || 0}
+									protein={protein || 0}
 									currentUser={currentUser}
 									logId={todaysLog.id}
 									mealIndex={currentMeal}
@@ -594,21 +600,37 @@ const MealList = ({
 }
 
 const MealLog = ({
-	currentUser,
+	currentUserId,
 	dailyLogs,
 }: {
-	currentUser: GetUserById
+	currentUserId: string
 	dailyLogs: GetAllDailyLogs | null | undefined
 }) => {
 	const [day, setDay] = useState<Date>(new Date())
 
-	const activePlans = currentUser?.userPlans.filter((plan) => plan.isActive)
-
-	const isNotActivePlan = activePlans.length === 0
-
 	const { data: _userRecipes } = api.recipe.getAllUserCreated.useQuery({
-		userId: currentUser.id,
+		userId: currentUserId,
 	})
+
+	const [cachedUser, setCachedUser] = useAtom(currentUserAtom) // Our persistent atom
+	const { data: apiCurrentUser } = api.user.getCurrentUser.useQuery(
+		{ id: currentUserId },
+		{
+			// Prevents UI from flickering to 'null' when id changes
+			placeholderData: (previousData) => previousData,
+		},
+		// Keep the previous data visible while fetching new data
+	)
+	useEffect(() => {
+		if (apiCurrentUser) {
+			setCachedUser(apiCurrentUser)
+		}
+	}, [apiCurrentUser, setCachedUser])
+	const currentUser = apiCurrentUser ?? cachedUser
+
+	const activePlans = currentUser?.userPlans?.filter((plan) => plan.isActive)
+	const isNotActivePlan = activePlans?.length === 0
+
 	const todaysLog = dailyLogs?.find(
 		(dailyLog) => dailyLog.date === day.toDateString(),
 	)
@@ -651,18 +673,20 @@ const MealLog = ({
 					</div>
 					<Sheet.Portal>
 						<Sheet.View className='z-[999] h-[100vh] bg-black/50'>
-							<MealList
-								currentMeal={currentMeal}
-								todaysLog={todaysLog}
-								currentUser={currentUser}
-								today={day}
-								setDay={setDay}
-							/>
+							{todaysLog && (
+								<MealList
+									currentMeal={currentMeal}
+									todaysLog={todaysLog}
+									currentUser={currentUser}
+									today={day}
+									setDay={setDay}
+								/>
+							)}
 						</Sheet.View>
 					</Sheet.Portal>
 				</Sheet.Root>
 			</SheetStack.Root>
-			<MealBottomSheet dailyLogs={dailyLogs} />
+			{dailyLogs && <MealBottomSheet dailyLogs={dailyLogs} />}
 		</div>
 	)
 }
