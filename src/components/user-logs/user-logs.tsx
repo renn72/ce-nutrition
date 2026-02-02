@@ -343,7 +343,7 @@ const UserLogs = ({
 							initial={{ opacity: 0, height: 0 }}
 							animate={{ opacity: 1, height: 'auto' }}
 							exit={{ opacity: 0, height: 0 }}
-							transition={{ duration: 0.1, ease: 'easeIn' }}
+							transition={{ duration: 0.1, ease: 'easeOut' }}
 							className='overflow-hidden' // Prevents content pop during height change
 						>
 							<DateRangePicker date={date} setDate={setDate} />

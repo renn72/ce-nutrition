@@ -86,7 +86,7 @@ const Item = ({
 						initial={{ opacity: 0, height: 0 }}
 						animate={{ opacity: 1, height: 'auto' }}
 						exit={{ opacity: 0, height: 0 }}
-						transition={{ duration: 0.1, ease: 'easeIn' }}
+						transition={{ duration: 0.3, ease: 'easeIn' }}
 						className='overflow-hidden' // Prevents content pop during height change
 					>
 						<DailyLogCard
