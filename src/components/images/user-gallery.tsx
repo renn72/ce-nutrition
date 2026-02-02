@@ -12,18 +12,25 @@ interface UserImage {
 	src: string
 	date: string
 	alt: string
-  dataId: number
+	dataId: number
 }
 
-const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) => {
+const UserGallery = ({
+	userId,
+	isAdmin,
+}: {
+	userId: string
+	isAdmin: boolean
+}) => {
 	const { data: user, isLoading } = api.user.getCurrentUser.useQuery({
 		id: userId,
 	})
 
-	const { data: logs, isLoading: isLoadingLogs } = api.dailyLog.getAllUser.useQuery(userId)
+	const { data: logs, isLoading: isLoadingLogs } =
+		api.dailyLog.getAllCurrentUser.useQuery({ id: userId })
 
 	if (isLoading) return null
-  if (isLoadingLogs) return null
+	if (isLoadingLogs) return null
 	if (!user) return null
 
 	const frontImages = logs
@@ -32,7 +39,7 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: log.frontImage || '',
 				date: log.date || '',
 				alt: 'alt',
-        dataId: log.id,
+				dataId: log.id,
 			}
 		})
 		.filter((image) => image.src !== '')
@@ -44,7 +51,7 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: log.sideImage || '',
 				date: log.date || '',
 				alt: 'alt',
-        dataId: log.id,
+				dataId: log.id,
 			}
 		})
 		.filter((image) => image.src !== '')
@@ -56,12 +63,11 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: log.backImage || '',
 				date: log.date || '',
 				alt: 'alt',
-        dataId: log.id,
+				dataId: log.id,
 			}
 		})
 		.filter((image) => image.src !== '')
 		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-
 
 	const frontDbl = user.images
 		.filter((image) => image.name === 'frontDouble')
@@ -71,7 +77,7 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: image.image || '',
 				date: image.date || '',
 				alt: 'alt',
-        dataId: image.id,
+				dataId: image.id,
 			}
 		})
 		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -83,7 +89,7 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: image.image || '',
 				date: image.date || '',
 				alt: 'alt',
-        dataId: image.id,
+				dataId: image.id,
 			}
 		})
 		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -95,7 +101,7 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: image.image || '',
 				date: image.date || '',
 				alt: 'alt',
-        dataId: image.id,
+				dataId: image.id,
 			}
 		})
 		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -107,7 +113,7 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: image.image || '',
 				date: image.date || '',
 				alt: 'alt',
-        dataId: image.id,
+				dataId: image.id,
 			}
 		})
 		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -119,7 +125,7 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: image.image || '',
 				date: image.date || '',
 				alt: 'alt',
-        dataId: image.id,
+				dataId: image.id,
 			}
 		})
 		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -131,7 +137,7 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: image.image || '',
 				date: image.date || '',
 				alt: 'alt',
-        dataId: image.id,
+				dataId: image.id,
 			}
 		})
 		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -143,25 +149,77 @@ const UserGallery = ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) 
 				src: image.image || '',
 				date: image.date || '',
 				alt: 'alt',
-        dataId: image.id,
+				dataId: image.id,
 			}
 		})
 		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
+	if (!logs) return null
+
 	return (
-		<div className='flex flex-col gap-2 w-full mt-2 mb-10 items-center '>
-			<ImageCarousel images={frontImages || []} title='Front' isAdmin={isAdmin} />
-			<ImageCarousel images={sideImages || []} title='Side' isAdmin={isAdmin} />
-			<ImageCarousel images={backImages || []} title='Back' isAdmin={isAdmin} />
-			<ImageCarousel images={frontDbl || []} title='Front Double Biceps' isAdmin={isAdmin} />
-			<ImageCarousel images={sideChest || []} title='Side Chest' isAdmin={isAdmin} />
-			<ImageCarousel images={sideTri || []} title='Side Triceps' isAdmin={isAdmin} />
-			<ImageCarousel images={rearDbl || []} title='Rear Double Biceps' isAdmin={isAdmin} />
-			<ImageCarousel images={absThigh || []} title='Abs & Thighs' isAdmin={isAdmin} />
-			<ImageCarousel images={frontVac || []} title='Front Vacuum' isAdmin={isAdmin} />
-			<ImageCarousel images={favorite || []} title='Favourite Pose' isAdmin={isAdmin} />
+		<div className='flex flex-col gap-2 items-center mt-2 mb-10 w-full'>
+			<ImageCarousel
+				images={frontImages || []}
+				title='Front'
+				isAdmin={isAdmin}
+				dailyLogs={logs}
+			/>
+			<ImageCarousel
+				dailyLogs={logs}
+				images={sideImages || []}
+				title='Side'
+				isAdmin={isAdmin}
+			/>
+			<ImageCarousel
+				dailyLogs={logs}
+				images={backImages || []}
+				title='Back'
+				isAdmin={isAdmin}
+			/>
+			<ImageCarousel
+				dailyLogs={logs}
+				images={frontDbl || []}
+				title='Front Double Biceps'
+				isAdmin={isAdmin}
+			/>
+			<ImageCarousel
+				dailyLogs={logs}
+				images={sideChest || []}
+				title='Side Chest'
+				isAdmin={isAdmin}
+			/>
+			<ImageCarousel
+				dailyLogs={logs}
+				images={sideTri || []}
+				title='Side Triceps'
+				isAdmin={isAdmin}
+			/>
+			<ImageCarousel
+				dailyLogs={logs}
+				images={rearDbl || []}
+				title='Rear Double Biceps'
+				isAdmin={isAdmin}
+			/>
+			<ImageCarousel
+				dailyLogs={logs}
+				images={absThigh || []}
+				title='Abs & Thighs'
+				isAdmin={isAdmin}
+			/>
+			<ImageCarousel
+				dailyLogs={logs}
+				images={frontVac || []}
+				title='Front Vacuum'
+				isAdmin={isAdmin}
+			/>
+			<ImageCarousel
+				dailyLogs={logs}
+				images={favorite || []}
+				title='Favourite Pose'
+				isAdmin={isAdmin}
+			/>
 		</div>
 	)
 }
 
-export {UserGallery}
+export { UserGallery }

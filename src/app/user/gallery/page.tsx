@@ -93,7 +93,7 @@ const Gallery = ({ userId }: { userId: string }) => {
 				src: log.frontImage || '',
 				date: log.date || '',
 				alt: 'alt',
-        svg: log.frontImageSvg || null,
+				svg: log.frontImageSvg || null,
 			}
 		})
 		.filter((image) => image.src !== '')
@@ -104,7 +104,7 @@ const Gallery = ({ userId }: { userId: string }) => {
 				src: log.sideImage || '',
 				date: log.date || '',
 				alt: 'alt',
-        svg: log.sideImageSvg || null,
+				svg: log.sideImageSvg || null,
 			}
 		})
 		.filter((image) => image.src !== '')
@@ -115,7 +115,7 @@ const Gallery = ({ userId }: { userId: string }) => {
 				src: log.backImage || '',
 				date: log.date || '',
 				alt: 'alt',
-        svg: log.backImageSvg || null,
+				svg: log.backImageSvg || null,
 			}
 		})
 		.filter((image) => image.src !== '')
@@ -131,7 +131,7 @@ const Gallery = ({ userId }: { userId: string }) => {
 				src: image.image || '',
 				date: image.date || '',
 				alt: 'alt',
-        svg: image.svg || null,
+				svg: image.svg || null,
 			}
 		})
 
@@ -142,7 +142,7 @@ const Gallery = ({ userId }: { userId: string }) => {
 		: false
 
 	return (
-		<div className='flex flex-col gap-2 w-full mt-16 mb-12 h-[calc(100vh-120px)]'>
+		<div className='flex flex-col gap-2 mt-16 mb-12 w-full h-[calc(100vh-120px)]'>
 			<div className='flex justify-center w-full'>
 				<Select
 					value={select}
@@ -172,7 +172,7 @@ const Gallery = ({ userId }: { userId: string }) => {
 					</SelectContent>
 				</Select>
 			</div>
-			<div className='h-full w-full flex flex-col justify-center'>
+			<div className='flex flex-col justify-center w-full h-full'>
 				{select === 'front' ? (
 					<ImageCarousel images={frontImages || []} className='w-full' />
 				) : null}

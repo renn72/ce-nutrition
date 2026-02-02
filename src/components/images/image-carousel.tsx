@@ -1,5 +1,8 @@
 'use client'
 
+import { motion, AnimatePresence } from 'framer-motion'
+import { api } from '@/trpc/react'
+import { DailyLogCard } from '@/components/daily-log/daily-log-card'
 import { useState } from 'react'
 
 import Image from 'next/image'
@@ -8,6 +11,7 @@ import { useSearchParams } from 'next/navigation'
 import { useSetAtom } from 'jotai'
 import { Link } from 'next-view-transitions'
 
+import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import {
 	Carousel,
@@ -18,6 +22,8 @@ import {
 } from '@/components/ui/carousel'
 
 import { userImagesAtom } from './user-gallery'
+
+import type { GetAllDailyLogs, GetUserWRoles } from '@/types'
 
 interface ImageData {
 	src: string
@@ -30,20 +36,25 @@ interface ImageCarouselProps {
 	images: ImageData[]
 	title: string
 	isAdmin: boolean
+	dailyLogs: GetAllDailyLogs
 }
 
 const Item = ({
 	image,
-	user,
 	title,
+	user,
 	images,
 	isAdmin,
+	toggleLog,
+	dailyLogs,
 }: {
 	image: ImageData
-	user: string
 	title: string
 	images: ImageData[]
+	user: GetUserWRoles
 	isAdmin: boolean
+	toggleLog: boolean
+	dailyLogs: GetAllDailyLogs
 }) => {
 	const [isPrefetched, setIsPrefetched] = useState(false)
 
@@ -55,20 +66,50 @@ const Item = ({
 		void fetch(image.src)
 	}
 
+	const dailyLog = dailyLogs?.find(
+		(log) => log.date === new Date(image.date).toDateString(),
+	)
+
 	const d = new Date(image.date)
 		.toLocaleDateString('en-AU')
 		.replaceAll('/', '-')
 	const link = `/${isAdmin ? 'admin' : 'user'}/user-image/${title}%${d}?imageId=${image.src.split('/').pop()}&user=${user}&date=${d}&title=${title}&dataId=${image.dataId}`
 
 	return (
-		<CarouselItem key={image.src} className='md:basis-1/2 lg:basis-1/5 pl-1'>
+		<CarouselItem
+			key={image.src}
+			className='grid content-between pl-1 md:basis-1/2 lg:basis-1/5'
+		>
+			<AnimatePresence>
+				{toggleLog && dailyLog ? (
+					<motion.div
+						initial={{ opacity: 0, height: 0 }}
+						animate={{ opacity: 1, height: 'auto' }}
+						exit={{ opacity: 0, height: 0 }}
+						transition={{ duration: 0.1, ease: 'easeIn' }}
+						className='overflow-hidden' // Prevents content pop during height change
+					>
+						<DailyLogCard
+							title={''}
+							currentUser={user}
+							dailyLog={dailyLog}
+							yesterdaysDailyLog={dailyLog}
+							date={new Date(image.date)}
+							isAdmin={isAdmin}
+							isLogPage={true}
+							isDanger={false}
+							isCreator={false}
+						/>
+					</motion.div>
+				) : null}
+			</AnimatePresence>
 			<div className='p-1'>
-				<Card className='cursor-pointer hover:shadow-lg transition-shadow'>
+				<Card className='transition-shadow cursor-pointer hover:shadow-lg'>
 					<div className='flex flex-col'>
-						<h3 className='text-center text-sm font-medium text-muted-foreground'>
+						<h3 className='text-sm font-medium text-center text-muted-foreground'>
 							{new Date(image.date).toLocaleDateString('en-AU')}
 						</h3>
-						<h3 className='text-center text-sm font-medium text-muted-foreground'>
+						<h3 className='text-sm font-medium text-center text-muted-foreground'>
 							{new Date(image.date).toLocaleDateString('en-AU', {
 								weekday: 'long',
 							})}
@@ -76,9 +117,9 @@ const Item = ({
 					</div>
 					<CardContent
 						onMouseEnter={() => handlePrefetch()}
-						className='flex aspect-[4/7] items-center justify-center p-2'
+						className='flex justify-center items-center p-2 aspect-[4/7]'
 					>
-						<div className='relative w-full h-full overflow-hidden rounded-md'>
+						<div className='overflow-hidden relative w-full h-full rounded-md'>
 							<Link
 								href={link}
 								prefetch={true}
@@ -88,7 +129,7 @@ const Item = ({
 									src={image.src || '/placeholder.svg'}
 									alt={image.alt}
 									fill
-									className='object-cover hover:scale-105 transition-transform duration-200'
+									className='object-cover transition-transform duration-200 hover:scale-105'
 									sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw'
 								/>
 							</Link>
@@ -100,22 +141,41 @@ const Item = ({
 	)
 }
 
-const ImageCarousel = ({ images, title, isAdmin }: ImageCarouselProps) => {
+const ImageCarousel = ({
+	images,
+	title,
+	isAdmin,
+	dailyLogs,
+}: ImageCarouselProps) => {
 	const searchParams = useSearchParams()
-	const user = searchParams.get('user') ?? ''
+	const userId = searchParams.get('user') ?? ''
+	const [toggleLog, setToggleLog] = useState(false)
+
+	const { data: user } = api.user.getCurrentUserRoles.useQuery({
+		id: userId || '',
+	})
 
 	if (images.length === 0)
-		return <div className='w-full text-center my-2'>nil</div>
+		return <div className='my-2 w-full text-center'>nil</div>
 
 	return (
 		<div className='flex flex-col gap-2 w-full'>
-			<h2 className='text-2xl font-medium text-center'>{title}</h2>
+			<div className='flex gap-2 justify-center items-center w-full'>
+				<h2 className='text-2xl font-medium text-center'>{title}</h2>
+				<Button
+					variant={toggleLog ? 'accent' : 'outline'}
+					size='sm'
+					onClick={() => setToggleLog(!toggleLog)}
+				>
+					Toggle Logs
+				</Button>
+			</div>
 			<Carousel
 				opts={{
 					direction: 'ltr',
 					startIndex: images.length - 1,
 				}}
-				className='w-full max-w-screen-xl mx-auto'
+				className='mx-auto w-full max-w-screen-xl'
 			>
 				<CarouselContent className='gap-0'>
 					{images.map((image) => (
@@ -126,6 +186,8 @@ const ImageCarousel = ({ images, title, isAdmin }: ImageCarouselProps) => {
 							user={user}
 							title={title}
 							images={images}
+							toggleLog={toggleLog}
+							dailyLogs={dailyLogs}
 						/>
 					))}
 				</CarouselContent>
