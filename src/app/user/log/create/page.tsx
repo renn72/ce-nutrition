@@ -409,11 +409,13 @@ export default function Home() {
 	const [isCreatingLog, setIsCreatingLog] = useState(false)
 	const [impersonatedUser, setImpersonatedUser] = useAtom(impersonatedUserAtom)
 
+	const userId = impersonatedUser.id
+
 	const { data: dailyLogs, isLoading } =
-		api.dailyLog.getAllCurrentUser.useQuery({ id: impersonatedUser.id })
+		api.dailyLog.getAllCurrentUser.useQuery({ id: userId })
 
 	const { data: currentUser } = api.user.getCurrentUser.useQuery({
-		id: impersonatedUser.id,
+		id: userId,
 	})
 
 	const { mutate: createDailyLog } = api.dailyLog.create.useMutation({
@@ -438,9 +440,9 @@ export default function Home() {
 	const { mutate: updateIsStarred } = api.dailyLog.updateIsStarred.useMutation({
 		onMutate: async (data) => {
 			await ctx.dailyLog.getAllCurrentUser.cancel()
-			const previousLog = ctx.dailyLog.getAllCurrentUser.getData()
+			const previousLog = ctx.dailyLog.getAllCurrentUser.getData({ id: userId })
 			if (!previousLog) return
-			ctx.dailyLog.getAllCurrentUser.setData(undefined, [
+			ctx.dailyLog.getAllCurrentUser.setData({ id: userId }, [
 				...previousLog.map((log) => {
 					if (log.date === data.date) {
 						return {
@@ -458,19 +460,80 @@ export default function Home() {
 		},
 		onError: (_err, _newPoopLog, context) => {
 			toast.error('error')
-			ctx.dailyLog.getAllCurrentUser.setData(undefined, context?.previousLog)
+			ctx.dailyLog.getAllCurrentUser.setData(
+				{ id: userId },
+				context?.previousLog,
+			)
 		},
 	})
 
 	const { mutate: updateIsPeriod } = api.dailyLog.updateIsPeriod.useMutation({
+		onMutate: async (data) => {
+			if (!currentUser) return
+			await ctx.dailyLog.getAllCurrentUser.cancel()
+			const previousLog = ctx.dailyLog.getAllCurrentUser.getData({
+				id: userId,
+			})
+			console.log({ data, previousLog })
+			if (!previousLog) return
+			console.log(data)
+			ctx.dailyLog.getAllCurrentUser.setData({ id: userId }, [
+				...previousLog.map((log) => {
+					if (log.date === data.date) {
+						return {
+							...log,
+							isPeriod: data.isPeriod,
+						}
+					}
+					return log
+				}),
+			])
+			return { previousLog }
+		},
 		onSettled: () => {
 			ctx.dailyLog.invalidate()
+		},
+		onError: (_err, _newPoopLog, context) => {
+			if (!currentUser) return
+			ctx.dailyLog.getAllCurrentUser.setData(
+				{ id: userId },
+				context?.previousLog,
+			)
 		},
 	})
 	const { mutate: updateIsOvulation } =
 		api.dailyLog.updateIsOvulation.useMutation({
+			onMutate: async (data) => {
+				if (!currentUser) return
+				await ctx.dailyLog.getAllCurrentUser.cancel()
+				const previousLog = ctx.dailyLog.getAllCurrentUser.getData({
+					id: userId,
+				})
+				console.log({ data, previousLog })
+				if (!previousLog) return
+				console.log(data)
+				ctx.dailyLog.getAllCurrentUser.setData({ id: userId }, [
+					...previousLog.map((log) => {
+						if (log.date === data.date) {
+							return {
+								...log,
+								isOvulation: data.isOvulation,
+							}
+						}
+						return log
+					}),
+				])
+				return { previousLog }
+			},
 			onSettled: () => {
 				ctx.dailyLog.invalidate()
+			},
+			onError: (_err, _newPoopLog, context) => {
+				if (!currentUser) return
+				ctx.dailyLog.getAllCurrentUser.setData(
+					{ id: userId },
+					context?.previousLog,
+				)
 			},
 		})
 
@@ -526,7 +589,6 @@ export default function Home() {
 
 	return (
 		<>
-			hi
 			<div className='flex relative flex-col gap-1 mt-16 transition-transform px-[2px]'>
 				{impersonatedUser.id !== '' ? (
 					<div className='fixed bottom-14 left-1/2 opacity-80 -translate-x-1/2 z-[2009]'>
