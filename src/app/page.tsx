@@ -73,7 +73,7 @@ const Mobile = ({
 
 	useEffect(() => {
 		if (apiDailyLogs) {
-			setCachedLogs(apiDailyLogs)
+			setCachedLogs(apiDailyLogs.slice(0, 50))
 		}
 	}, [apiDailyLogs, setCachedLogs])
 
