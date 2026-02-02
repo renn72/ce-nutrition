@@ -34,7 +34,6 @@ import { WaterLog } from '@/components/water-log/water-log'
 import DailyLogCarousel from './_components/dailylog-carousel'
 import { User } from '@/components/auth/user'
 import { Pwa } from '@/components/layout/pwa'
-import { Spinner } from '@/components/spinner'
 
 export const dynamic = 'force-dynamic'
 
@@ -191,10 +190,8 @@ export default function Home() {
 	const { data: currentUser } = api.user.getCurrentUserRoles.useQuery(
 		{ id: impersonatedUser.id },
 		{
-			// Prevents UI from flickering to 'null' when id changes
 			placeholderData: (previousData) => previousData,
 		},
-		// Keep the previous data visible while fetching new data
 	)
 	useEffect(() => {
 		if (currentUser) {
@@ -202,12 +199,10 @@ export default function Home() {
 		}
 	}, [currentUser, setCachedUser])
 
-	// Use the cached version for rendering so it's never "null" if it exists in storage
 	const userToDisplay = currentUser ?? cachedUser
 	const isMobile = useClientMediaQuery('(max-width: 600px)')
 
-	// Only show null if we have absolutely no data (first time ever visiting)
-	if (!userToDisplay) return <Spinner />
+	if (!userToDisplay) return null
 
 	return (
 		<div className='flex relative flex-col min-h-screen'>

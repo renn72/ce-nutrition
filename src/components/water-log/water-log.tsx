@@ -56,9 +56,9 @@ const WaterLog = ({
 			setTimeoutCodeAdd(timeout)
 
 			await ctx.dailyLog.getAllCurrentUser.cancel()
-			const previousLog = ctx.dailyLog.getAllUser.getData(userId)
+			const previousLog = ctx.dailyLog.getAllCurrentUser.getData({ id: userId })
 			if (!previousLog) return
-			ctx.dailyLog.getAllUser.setData(userId, [
+			ctx.dailyLog.getAllCurrentUser.setData({ id: userId }, [
 				...previousLog.map((log) => {
 					if (log.date === newWaterLog.date) {
 						return {
@@ -84,7 +84,10 @@ const WaterLog = ({
 		},
 		onError: (_err, _newPoopLog, context) => {
 			toast.error('error')
-			ctx.dailyLog.getAllUser.setData(userId, context?.previousLog)
+			ctx.dailyLog.getAllCurrentUser.setData(
+				{ id: userId },
+				context?.previousLog,
+			)
 		},
 	})
 	const { mutate: deleteWaterLog } = api.dailyLog.deleteWaterLog.useMutation({
@@ -97,9 +100,9 @@ const WaterLog = ({
 			setTimeoutCodeDelete(timeout)
 
 			await ctx.dailyLog.getAllCurrentUser.cancel()
-			const previousLog = ctx.dailyLog.getAllUser.getData(userId)
+			const previousLog = ctx.dailyLog.getAllCurrentUser.getData({ id: userId })
 			if (!previousLog) return
-			ctx.dailyLog.getAllUser.setData(userId, [
+			ctx.dailyLog.getAllCurrentUser.setData({ id: userId }, [
 				...previousLog.map((log) => {
 					if (log.date === day.toDateString()) {
 						return {
@@ -111,6 +114,13 @@ const WaterLog = ({
 				}),
 			])
 			return { previousLog }
+		},
+		onError: (_err, _newPoopLog, context) => {
+			toast.error('error')
+			ctx.dailyLog.getAllCurrentUser.setData(
+				{ id: userId },
+				context?.previousLog,
+			)
 		},
 	})
 

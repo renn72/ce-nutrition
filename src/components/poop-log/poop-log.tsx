@@ -8,7 +8,6 @@ import type { GetAllDailyLogs } from '@/types'
 import NumberFlow from '@number-flow/react'
 // @ts-ignore
 import confetti from 'canvas-confetti'
-import { Toilet } from 'lucide-react'
 import { ToiletPaperIcon } from '@phosphor-icons/react/dist/ssr'
 import { toast } from 'sonner'
 
@@ -42,10 +41,10 @@ const PoopLog = ({
 			}, 2000)
 			setTimeoutCodeAdd(timeout)
 
-			const previousLog = ctx.dailyLog.getAllUser.getData(userId)
+			const previousLog = ctx.dailyLog.getAllCurrentUser.getData({ id: userId })
 			if (!previousLog) return
 			const rndInt = Math.floor(Math.random() * 1000)
-			ctx.dailyLog.getAllUser.setData(userId, [
+			ctx.dailyLog.getAllCurrentUser.setData({ id: userId }, [
 				...previousLog.map((log) => {
 					if (log.date === newPoopLog.date) {
 						return {
@@ -67,7 +66,10 @@ const PoopLog = ({
 		},
 		onError: (_err, _newPoopLog, context) => {
 			toast.error('error')
-			ctx.dailyLog.getAllUser.setData(userId, context?.previousLog)
+			ctx.dailyLog.getAllCurrentUser.setData(
+				{ id: userId },
+				context?.previousLog,
+			)
 		},
 	})
 
@@ -82,9 +84,9 @@ const PoopLog = ({
 			}, 2000)
 			setTimeoutCodeDelete(timeout)
 
-			const previousLog = ctx.dailyLog.getAllUser.getData(userId)
+			const previousLog = ctx.dailyLog.getAllCurrentUser.getData({ id: userId })
 			if (!previousLog) return
-			ctx.dailyLog.getAllUser.setData(userId, [
+			ctx.dailyLog.getAllCurrentUser.setData({ id: userId }, [
 				...previousLog.map((log) => {
 					return {
 						...log,
@@ -95,6 +97,13 @@ const PoopLog = ({
 				}),
 			])
 			return { previousLog }
+		},
+		onError: (_err, _newPoopLog, context) => {
+			toast.error('error')
+			ctx.dailyLog.getAllCurrentUser.setData(
+				{ id: userId },
+				context?.previousLog,
+			)
 		},
 	})
 
