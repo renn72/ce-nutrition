@@ -128,29 +128,29 @@ const PoopBottomSheet = ({
 		<Sheet.Root license='non-commercial'>
 			<Sheet.Trigger
 				onClick={() => {
-          setToday(new Date())
+					setToday(new Date())
 					const rnd = Math.floor(Math.random() * toiletPhrases.length)
 					const phrase = toiletPhrases[rnd] ?? 'Toilet Log'
 					setTitle(phrase)
 				}}
-				className='flex gap-2 items-center justify-center mt-1'
+				className='flex gap-2 justify-center items-center mt-1'
 			>
 				<ListCollapse size={20} className='text-muted-foreground' />
 			</Sheet.Trigger>
 			<Sheet.Portal>
-				<Sheet.View className='z-[999] h-[100vh] bg-black/50 '>
-					<Sheet.Content className='min-h-[200px] max-h-[90vh] h-full rounded-t-3xl bg-background relative'>
+				<Sheet.View className='z-[999] h-[100vh] bg-black/50'>
+					<Sheet.Content className='relative h-full rounded-t-3xl min-h-[200px] max-h-[90vh] bg-background'>
 						<div className='flex flex-col justify-between h-full'>
-							<div className='flex flex-col gap-2 '>
+							<div className='flex flex-col gap-2'>
 								<div className='flex justify-center pt-1'>
 									<Sheet.Handle
-										className=' w-[50px] h-[6px] border-0 rounded-full bg-primary/20'
+										className='rounded-full border-0 w-[50px] h-[6px] bg-primary/20'
 										action='dismiss'
 									/>
 								</div>
 								<Popover open={isOpen} onOpenChange={setIsOpen}>
 									<PopoverTrigger asChild>
-										<div className='flex items-center justify-center'>
+										<div className='flex justify-center items-center'>
 											<Button
 												variant={'outline'}
 												onClick={(e) => {
@@ -163,7 +163,7 @@ const PoopBottomSheet = ({
 													!today && 'text-muted-foreground',
 												)}
 											>
-												<CalendarIcon className='mr-4 h-4 w-4 mt-[0px] shrink-0' />
+												<CalendarIcon className='mr-4 w-4 h-4 mt-[0px] shrink-0' />
 												{today ? (
 													<span className='mt-[5px]'>
 														{format(today, 'PPP')}
@@ -175,10 +175,10 @@ const PoopBottomSheet = ({
 										</div>
 									</PopoverTrigger>
 									<PopoverContent
-                    onClick={(e) => e.stopPropagation()}
+										onClick={(e) => e.stopPropagation()}
 										onFocusOutside={(e) => e.preventDefault()}
-                    forceMount
-										className='w-auto p-0 z-[2000]'
+										forceMount
+										className='p-0 w-auto z-[2000]'
 									>
 										<Calendar
 											mode='single'
@@ -199,11 +199,16 @@ const PoopBottomSheet = ({
 														log?.poopLogs.reduce((acc, _curr) => {
 															return acc + 1
 														}, 0) ?? 0
-                          if (props.date > new Date()) return <div>{props.date.getDate()}</div>
+													if (props.date > new Date())
+														return <div>{props.date.getDate()}</div>
 													return (
 														<div className='flex flex-col gap-[2px]'>
-															<div className='font-semibold '>{props.date.getDate()}</div>
-															<div className='text-[0.7rem] text-muted-foreground font-medium'>{totalPoop === 0 ? '.' : totalPoop}</div>
+															<div className='font-semibold'>
+																{props.date.getDate()}
+															</div>
+															<div className='font-medium text-[0.7rem] text-muted-foreground'>
+																{totalPoop === 0 ? '.' : totalPoop}
+															</div>
 														</div>
 													)
 												},
@@ -212,9 +217,9 @@ const PoopBottomSheet = ({
 										/>
 									</PopoverContent>
 								</Popover>
-								<div className='flex gap-4 pt-4 border-b-[1px] border-primary pb-4 relative font-medium items-center'>
-									<div className='transition-transform '>
-										<Sheet.Title className='text-lg ml-4 '>
+								<div className='flex relative gap-4 items-center pt-4 pb-4 font-medium border-b-[1px] border-primary'>
+									<div className='transition-transform'>
+										<Sheet.Title className='ml-4 text-lg'>
 											<AnimatePresence mode='wait'>
 												<motion.div
 													key={title}
@@ -232,13 +237,13 @@ const PoopBottomSheet = ({
 									<Sheet.Description className='hidden'>
 										Toilet Log
 									</Sheet.Description>
-									<div className='border w-px h-6' />
+									<div className='w-px h-6 border' />
 									<NumberFlow
 										value={totalPoop}
-										className='text-lg text-primary ml-2 '
+										className='ml-2 text-lg text-primary'
 									/>
 
-									<div className='rounded-full border-[3px] border-primary/80 w-9 h-9 flex items-center justify-center active:scale-90 transition-transform cursor-pointer shadow-sm'>
+									<div className='flex justify-center items-center w-9 h-9 rounded-full shadow-sm transition-transform cursor-pointer active:scale-90 border-[3px] border-primary/80'>
 										<Toilet
 											className='ml-[1px]'
 											size={22}
@@ -257,20 +262,22 @@ const PoopBottomSheet = ({
 										todaysDailyLog?.poopLogs.map((poopLog, i) => (
 											<div
 												key={poopLog.id}
-												className='grid grid-cols-4 gap-2 text-sm w-full bg-secondary rounded-full px-4 py-2 items-center'
+												className='grid grid-cols-4 gap-2 items-center py-2 px-4 w-full text-sm rounded-full bg-secondary'
 											>
-												<div className='text-primary font-normal col-span-1'>
-													<div className='rounded-full h-6 w-6 bg-primary/20 flex justify-center items-center pt-[1px]'>
+												<div className='col-span-1 font-normal text-primary'>
+													<div className='flex justify-center items-center w-6 h-6 rounded-full bg-primary/20 pt-[1px]'>
 														{i + 1}
 													</div>
 												</div>
-												<div className='text-muted-foreground font-normal col-span-2'>
-													{poopLog.createdAt.toLocaleTimeString('en-AU')}
+												<div className='col-span-2 font-normal text-muted-foreground'>
+													{new Date(poopLog.createdAt).toLocaleTimeString(
+														'en-AU',
+													)}
 												</div>
 												<div className='justify-self-end'>
 													<Trash2
 														size={16}
-														className='cursor-pointer text-destructive hover:text-primary active:scale-90 transition-transform cursor-pointer mb-[1px]'
+														className='transition-transform cursor-pointer active:scale-90 text-destructive mb-[1px] hover:text-primary'
 														onClick={() => {
 															deletePoopLog({
 																id: poopLog.id,
@@ -284,7 +291,7 @@ const PoopBottomSheet = ({
 								</div>
 							</div>
 							<Sheet.Trigger
-								className='w-full flex justify-center'
+								className='flex justify-center w-full'
 								action='dismiss'
 							>
 								<ChevronDown

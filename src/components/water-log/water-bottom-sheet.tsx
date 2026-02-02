@@ -25,16 +25,16 @@ const WaterBottomSheet = ({
 	addWaterLog,
 	size,
 	setSize,
-  today,
-  setToday,
+	today,
+	setToday,
 }: {
 	dailyLogs: GetAllDailyLogs | null | undefined
 	deleteWaterLog: ({ id }: { id: number }) => void
 	addWaterLog: ({ date, amount }: { date: string; amount: number }) => void
 	size: number
 	setSize: React.Dispatch<React.SetStateAction<number>>
-  today: Date
-  setToday: React.Dispatch<React.SetStateAction<Date>>
+	today: Date
+	setToday: React.Dispatch<React.SetStateAction<Date>>
 }) => {
 	const [isOpen, setIsOpen] = useState(false)
 
@@ -49,23 +49,23 @@ const WaterBottomSheet = ({
 
 	return (
 		<Sheet.Root license='non-commercial'>
-			<Sheet.Trigger className='flex gap-2 items-center justify-center mt-1'>
+			<Sheet.Trigger className='flex gap-2 justify-center items-center mt-1'>
 				<ListCollapse size={20} className='text-muted-foreground' />
 			</Sheet.Trigger>
 			<Sheet.Portal>
-				<Sheet.View className='z-[999] h-[100vh] bg-black/50 '>
-					<Sheet.Content className='min-h-[200px] max-h-[90vh] h-full rounded-t-3xl bg-background relative'>
+				<Sheet.View className='z-[999] h-[100vh] bg-black/50'>
+					<Sheet.Content className='relative h-full rounded-t-3xl min-h-[200px] max-h-[90vh] bg-background'>
 						<div className='flex flex-col justify-between h-full'>
-							<div className='flex flex-col gap-2 '>
+							<div className='flex flex-col gap-2'>
 								<div className='flex justify-center pt-1'>
 									<Sheet.Handle
-										className=' w-[50px] h-[6px] border-0 rounded-full bg-primary/20'
+										className='rounded-full border-0 w-[50px] h-[6px] bg-primary/20'
 										action='dismiss'
 									/>
 								</div>
 								<Popover open={isOpen} onOpenChange={setIsOpen}>
 									<PopoverTrigger asChild>
-										<div className='flex items-center justify-center'>
+										<div className='flex justify-center items-center'>
 											<Button
 												variant={'outline'}
 												onClick={(e) => {
@@ -78,7 +78,7 @@ const WaterBottomSheet = ({
 													!today && 'text-muted-foreground',
 												)}
 											>
-												<CalendarIcon className='mr-4 h-4 w-4 mt-[0px] shrink-0' />
+												<CalendarIcon className='mr-4 w-4 h-4 mt-[0px] shrink-0' />
 												{today ? (
 													<span className='mt-[5px]'>
 														{format(today, 'PPP')}
@@ -93,7 +93,7 @@ const WaterBottomSheet = ({
 										onClick={(e) => e.stopPropagation()}
 										onFocusOutside={(e) => e.preventDefault()}
 										forceMount
-										className='w-auto p-0 z-[2000]'
+										className='p-0 w-auto z-[2000]'
 									>
 										<Calendar
 											mode='single'
@@ -118,8 +118,10 @@ const WaterBottomSheet = ({
 														return <div>{props.date.getDate()}</div>
 													return (
 														<div className='flex flex-col gap-[2px]'>
-															<div className='font-semibold'>{props.date.getDate()}</div>
-															<div className='text-[0.7rem] text-muted-foreground font-medium'>
+															<div className='font-semibold'>
+																{props.date.getDate()}
+															</div>
+															<div className='font-medium text-[0.7rem] text-muted-foreground'>
 																{totalWater === 0
 																	? '.'
 																	: (totalWater / 1000).toFixed(1)}
@@ -132,25 +134,25 @@ const WaterBottomSheet = ({
 										/>
 									</PopoverContent>
 								</Popover>
-								<div className='flex gap-4 pt-4 border-b-[1px] border-primary pb-4 relative font-medium'>
-									<div className='transition-transform '>
-										<Sheet.Title className='text-lg ml-4 '>
+								<div className='flex relative gap-4 pt-4 pb-4 font-medium border-b-[1px] border-primary'>
+									<div className='transition-transform'>
+										<Sheet.Title className='ml-4 text-lg'>
 											Water Log
 										</Sheet.Title>
 									</div>
 									<Sheet.Description className='hidden'>
 										Water Log
 									</Sheet.Description>
-									<div className='border w-px h-6' />
+									<div className='w-px h-6 border' />
 									<div className='flex items-baseline'>
 										<NumberFlow
 											value={totalWater}
-											className='text-lg text-primary ml-2 '
+											className='ml-2 text-lg text-primary'
 										/>
 										<span className='text-xs text-primary/50 ml-[1px]'>ml</span>
 									</div>
 								</div>
-								<div className='flex items-center gap-2 justify-around mx-4'>
+								<div className='flex gap-2 justify-around items-center mx-4'>
 									<div className='relative'>
 										<Input
 											value={size.toString()}
@@ -158,9 +160,9 @@ const WaterBottomSheet = ({
 												setSize(Number(e.target.value))
 											}}
 											type='number'
-											className='w-28 px-4'
+											className='px-4 w-28'
 										/>
-										<span className='text-xs text-primary/50 mt-[1px] absolute right-2 top-1/2 -translate-y-1/2'>
+										<span className='absolute right-2 top-1/2 text-xs -translate-y-1/2 text-primary/50 mt-[1px]'>
 											ml
 										</span>
 									</div>
@@ -178,7 +180,7 @@ const WaterBottomSheet = ({
 								</div>
 
 								<ScrollArea className='p-4 h-[calc(80vh-210px)]'>
-									<div className='flex flex-col gap-2 '>
+									<div className='flex flex-col gap-2'>
 										{todaysDailyLog?.waterLogs.length === 0 ||
 										!todaysDailyLog ? (
 											<div className='text-center'>...</div>
@@ -186,23 +188,25 @@ const WaterBottomSheet = ({
 											todaysDailyLog?.waterLogs.map((waterLog, i) => (
 												<div
 													key={waterLog.id}
-													className='grid grid-cols-6 gap-2 text-sm w-full bg-secondary rounded-full px-4 py-2 items-center'
+													className='grid grid-cols-6 gap-2 items-center py-2 px-4 w-full text-sm rounded-full bg-secondary'
 												>
-													<div className='text-primary font-normal col-span-1'>
-														<div className='rounded-full h-6 w-6 bg-primary/20 flex justify-center items-center pt-[1px]'>
+													<div className='col-span-1 font-normal text-primary'>
+														<div className='flex justify-center items-center w-6 h-6 rounded-full bg-primary/20 pt-[1px]'>
 															{i + 1}
 														</div>
 													</div>
-													<div className='text-muted-foreground font-normal col-span-2'>
-														{waterLog.createdAt.toLocaleTimeString('en-AU')}
+													<div className='col-span-2 font-normal text-muted-foreground'>
+														{new Date(waterLog.createdAt).toLocaleTimeString(
+															'en-AU',
+														)}
 													</div>
-													<div className='text-muted-foreground font-medium col-span-2'>
+													<div className='col-span-2 font-medium text-muted-foreground'>
 														{waterLog.amount}ml
 													</div>
 													<div className='justify-self-end'>
 														<Trash2
 															size={16}
-															className='cursor-pointer text-destructive hover:text-primary active:scale-90 transition-transform cursor-pointer mb-[1px]'
+															className='transition-transform cursor-pointer active:scale-90 text-destructive mb-[1px] hover:text-primary'
 															onClick={() => {
 																deleteWaterLog({
 																	id: waterLog.id,
@@ -217,7 +221,7 @@ const WaterBottomSheet = ({
 								</ScrollArea>
 							</div>
 							<Sheet.Trigger
-								className='w-full flex justify-center'
+								className='flex justify-center w-full'
 								action='dismiss'
 							>
 								<ChevronDown
