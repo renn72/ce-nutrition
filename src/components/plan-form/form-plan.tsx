@@ -55,8 +55,6 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
 	const [initialData, setInitialData] = useState<z.infer<
 		typeof formSchema
 	> | null>()
-	const { data: _recipes, isLoading: isLoadingRecipes } =
-		api.recipe.getAll.useQuery()
 
 	useEffect(() => {
 		const loadFormData = () => {
@@ -79,8 +77,6 @@ const FormPlan = ({ plan }: { plan: GetPlanById | null }) => {
 	}, [])
 
 	if (initialData === undefined) return null
-
-	if (isLoadingRecipes) return null
 
 	return <MainForm plan={plan} initialData={initialData} />
 }

@@ -2,11 +2,13 @@
 
 import { api } from '@/trpc/react'
 
-import { ReactNode, useState } from 'react'
+import { useState } from 'react'
+
+import { SpinnerGapIcon } from '@phosphor-icons/react'
 
 import { useIsMobile } from '@/hooks/use-mobile'
 import { cn, getRecipeDetailsByCals } from '@/lib/utils'
-import type { GetIngredientById, GetRecipeById } from '@/types'
+import type { GetIngredientById } from '@/types'
 import {
 	Check,
 	ChevronsUpDown,
@@ -250,7 +252,7 @@ const FormPlanMeal = ({
 	move: (from: number, to: number) => void
 }) => {
 	const isMobile = useIsMobile()
-	const ctx = api.useUtils()
+	const { data: recipes } = api.recipe.getAll.useQuery()
 
 	const [isVege, setIsVege] = useState(false)
 
@@ -443,27 +445,35 @@ const FormPlanMeal = ({
 					</div>
 
 					<div className='flex flex-col col-span-4 gap-0 divide-y lg:ml-4 divide-border'>
-						{isMobile ? (
-							<div className='mt-1' />
-						) : (
-							<div className='grid grid-cols-9 gap-1 py-1 capitalize'>
-								<div className='col-span-5' />
-								<div>cals</div>
-								<div>protein</div>
-								<div>carbs</div>
-								<div>fat</div>
+						{!recipes ? (
+							<div className='flex justify-center items-center h-32'>
+								<SpinnerGapIcon size={32} className='animate-spin' />
 							</div>
+						) : (
+							<>
+								{isMobile ? (
+									<div className='mt-1' />
+								) : (
+									<div className='grid grid-cols-9 gap-1 py-1 capitalize'>
+										<div className='col-span-5' />
+										<div>cals</div>
+										<div>protein</div>
+										<div>carbs</div>
+										<div>fat</div>
+									</div>
+								)}
+								{fields.map((field, recipeIndex) => (
+									<Recipe
+										mealIndex={index}
+										recipeIndex={recipeIndex}
+										form={form}
+										calories={calories.toFixed(2)}
+										key={field.id}
+										remove={remove}
+									/>
+								))}
+							</>
 						)}
-						{fields.map((field, recipeIndex) => (
-							<Recipe
-								mealIndex={index}
-								recipeIndex={recipeIndex}
-								form={form}
-								calories={calories.toFixed(2)}
-								key={field.id}
-								remove={remove}
-							/>
-						))}
 						<div className='flex justify-center pt-4 w-full'>
 							<CirclePlus
 								size={20}
