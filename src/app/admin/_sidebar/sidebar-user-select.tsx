@@ -7,7 +7,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { impersonatedUserAtom } from '@/atoms'
 import { cn } from '@/lib/utils'
 import { useAtom } from 'jotai'
-import { Check, ChevronsUpDown, ShieldUser } from 'lucide-react'
+import { ChevronsUpDown, ShieldUser } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -35,11 +35,19 @@ import {
 import { Switch } from '@/components/ui/switch'
 
 import WhistleIcon from '@/components/icons/whistle-icon'
+import { atomWithStorage } from 'jotai/utils'
 
 import { userAtom } from './sidebar'
 
-const getRelativeDateLabel = (updatedAt: Date | null): string => {
-	if (!updatedAt) return ''
+import type { GetAllYourUsers } from '@/types'
+
+const allUserAtom = atomWithStorage<GetAllYourUsers | null>('admin-users', null)
+
+const getRelativeDateLabel = (
+	updatedAtString: string | Date | null,
+): string => {
+	if (!updatedAtString) return ''
+	const updatedAt = new Date(updatedAtString)
 	const now = new Date()
 
 	// Reset hours to compare purely based on calendar days
@@ -88,6 +96,8 @@ const SidebarUserSelect = () => {
 
 	const [isOnlyYourClients, setIsOnlyYourClients] = useState(false)
 
+	const [cachedUsers, setCachedUsers] = useAtom(allUserAtom)
+
 	const router = useRouter()
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
@@ -100,9 +110,15 @@ const SidebarUserSelect = () => {
 	const { data: currentUser } = api.user.getCurrentUserRoles.useQuery({
 		id: impersonatedUser.id,
 	})
-	const { data: yourUsers } = api.user.getAllYour.useQuery(impersonatedUser.id)
+	const { data: apiYourUsers } = api.user.getAllYour.useQuery(
+		impersonatedUser.id,
+	)
 
-	console.log({ yourUsers })
+	useEffect(() => {
+		if (apiYourUsers) setCachedUsers(apiYourUsers)
+	}, [apiYourUsers, setCachedUsers])
+
+	const yourUsers = apiYourUsers ?? cachedUsers
 
 	const allUsers = yourUsers
 		?.filter((user) => {
