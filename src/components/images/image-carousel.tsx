@@ -78,7 +78,7 @@ const Item = ({
 	return (
 		<CarouselItem
 			key={image.src}
-			className='grid content-between pl-1 md:basis-1/2 lg:basis-1/5'
+			className='grid content-between pl-1 md:basis-1/2 lg:basis-1/4 xl:basis-1/5'
 		>
 			<AnimatePresence>
 				{toggleLog && dailyLog ? (
