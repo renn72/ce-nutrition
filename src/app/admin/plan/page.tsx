@@ -34,13 +34,13 @@ const LoadTable = ({ userId }: { userId: string }) => {
 	})
 
 	useEffect(() => {
-		if (apiAllPlans) setAllPlansCache(apiAllPlans.slice(-20))
+		if (apiAllPlans) setAllPlansCache(apiAllPlans.slice(0, 20))
 	}, [apiAllPlans, setAllPlansCache])
 
 	const allPlans = apiAllPlans ?? allPlansCache
 
 	useEffect(() => {
-		if (apiMyPlans) setAllMyPlansCache(apiMyPlans.slice(-20))
+		if (apiMyPlans) setAllMyPlansCache(apiMyPlans.slice(0, 20))
 	}, [apiMyPlans, setAllMyPlansCache])
 
 	const myPlans = apiMyPlans ?? allMyPlansCache
