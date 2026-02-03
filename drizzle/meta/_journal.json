@@ -435,6 +435,13 @@
       "when": 1767940586089,
       "tag": "0061_certain_shiva",
       "breakpoints": true
+    },
+    {
+      "idx": 62,
+      "version": "6",
+      "when": 1770079037440,
+      "tag": "0062_sweet_blizzard",
+      "breakpoints": true
     }
   ]
 }

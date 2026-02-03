@@ -49,6 +49,7 @@ export const user = createTable(
 		password: text('password'),
 		currentPlanId: int('current_plan_id'),
 		image: text('image'),
+		isActive: int('is_active', { mode: 'boolean' }).default(true),
 		isFake: int('is_fake', { mode: 'boolean' }).default(false),
 		isTrainer: int('is_trainer', { mode: 'boolean' }).default(false),
 		isRoot: int('is_root', { mode: 'boolean' }).default(false),

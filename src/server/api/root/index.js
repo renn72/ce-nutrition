@@ -710,6 +710,7 @@ var user = createTable6(
     password: text6("password"),
     currentPlanId: int6("current_plan_id"),
     image: text6("image"),
+    isActive: int6("is_active", { mode: "boolean" }).default(true),
     isFake: int6("is_fake", { mode: "boolean" }).default(false),
     isTrainer: int6("is_trainer", { mode: "boolean" }).default(false),
     isRoot: int6("is_root", { mode: "boolean" }).default(false),
