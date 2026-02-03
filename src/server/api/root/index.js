@@ -2218,9 +2218,9 @@ import { z as z3 } from "zod";
 var ingredientRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.ingredient.findMany({
-      where: (ingredient2, { isNull, and: and13, eq: eq29 }) => and13(
-        isNull(ingredient2.hiddenAt),
-        isNull(ingredient2.deletedAt),
+      where: (ingredient2, { isNull: isNull2, and: and14, eq: eq29 }) => and14(
+        isNull2(ingredient2.hiddenAt),
+        isNull2(ingredient2.deletedAt),
         eq29(ingredient2.isSupplement, false),
         eq29(ingredient2.isPrivate, false),
         eq29(ingredient2.isUserCreated, false)
@@ -2244,9 +2244,9 @@ var ingredientRouter = createTRPCRouter({
   }),
   getAllFav: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.ingredient.findMany({
-      where: (ingredient2, { isNull, and: and13, eq: eq29 }) => and13(
-        isNull(ingredient2.hiddenAt),
-        isNull(ingredient2.deletedAt),
+      where: (ingredient2, { isNull: isNull2, and: and14, eq: eq29 }) => and14(
+        isNull2(ingredient2.hiddenAt),
+        isNull2(ingredient2.deletedAt),
         eq29(ingredient2.isSupplement, false),
         eq29(ingredient2.isPrivate, false),
         eq29(ingredient2.isUserCreated, false)
@@ -5234,7 +5234,7 @@ var roles = {
   }),
   updateRoleNotifyFrontImage: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role2, { eq: eq29, and: and13 }) => and13(
+      where: (role2, { eq: eq29, and: and14 }) => and14(
         eq29(role2.userId, input.userId),
         eq29(role2.name, "notify-trainer-front-image")
       )
@@ -5258,7 +5258,7 @@ var roles = {
   }),
   updateRoleNotifyTrainerAllImages: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role2, { eq: eq29, and: and13 }) => and13(
+      where: (role2, { eq: eq29, and: and14 }) => and14(
         eq29(role2.userId, input.userId),
         eq29(role2.name, "notify-trainer-all-images")
       )
@@ -5282,7 +5282,7 @@ var roles = {
   }),
   updateRoleBodyBuilderImages: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role2, { eq: eq29, and: and13 }) => and13(
+      where: (role2, { eq: eq29, and: and14 }) => and14(
         eq29(role2.userId, input.userId),
         eq29(role2.name, "body-builder-images")
       )
@@ -5299,7 +5299,7 @@ var roles = {
   }),
   updateRoleSupplementDisclaimer: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role2, { eq: eq29, and: and13 }) => and13(
+      where: (role2, { eq: eq29, and: and14 }) => and14(
         eq29(role2.userId, input.userId),
         eq29(role2.name, "supplement_disclaimer_v1")
       )
@@ -5323,7 +5323,7 @@ var roles = {
   }),
   updateRoleSupplements: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role2, { eq: eq29, and: and13 }) => and13(eq29(role2.userId, input.userId), eq29(role2.name, "supplements"))
+      where: (role2, { eq: eq29, and: and14 }) => and14(eq29(role2.userId, input.userId), eq29(role2.name, "supplements"))
     });
     if (res) {
       await ctx.db.delete(role).where(eq6(role.id, res.id));
@@ -5344,7 +5344,7 @@ var roles = {
   }),
   updateRoleCreateMeals: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role2, { eq: eq29, and: and13 }) => and13(eq29(role2.userId, input.userId), eq29(role2.name, "create-meals"))
+      where: (role2, { eq: eq29, and: and14 }) => and14(eq29(role2.userId, input.userId), eq29(role2.name, "create-meals"))
     });
     if (res) {
       await ctx.db.delete(role).where(eq6(role.id, res.id));
@@ -5365,7 +5365,7 @@ var roles = {
   }),
   updateRoleAdmin: protectedProcedure.input(z10.object({ userId: z10.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role2, { eq: eq29, and: and13 }) => and13(eq29(role2.userId, input.userId), eq29(role2.name, "admin"))
+      where: (role2, { eq: eq29, and: and14 }) => and14(eq29(role2.userId, input.userId), eq29(role2.name, "admin"))
     });
     if (res) {
       await ctx.db.delete(role).where(eq6(role.id, res.id));
@@ -5636,7 +5636,7 @@ var notifications = {
     })
   ).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.query.notificationToggle.findFirst({
-      where: (toggle, { eq: eq29, and: and13 }) => and13(eq29(toggle.userId, input.userId), eq29(toggle.type, input.type))
+      where: (toggle, { eq: eq29, and: and14 }) => and14(eq29(toggle.userId, input.userId), eq29(toggle.type, input.type))
     });
     createLog({
       user: ctx.session.user.name,
@@ -5700,8 +5700,11 @@ var settingsRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/recipe.ts
-import { desc as desc3, eq as eq9 } from "drizzle-orm";
+import { TRPCError as TRPCError3 } from "@trpc/server";
+import { desc as desc3, eq as eq9, and as and2, isNull } from "drizzle-orm";
 import { z as z14 } from "zod";
+import { aliasedTable } from "drizzle-orm";
+var altIngredient = aliasedTable(ingredient, "alt_ingredient");
 var recipeRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.recipe.findMany({
@@ -5712,24 +5715,94 @@ var recipeRouter = createTRPCRouter({
         recipeToIngredient: {
           with: {
             alternateIngredient: true,
-            ingredient: {
-              with: {
-                ingredientToGroceryStore: {
-                  with: {
-                    groceryStore: true
-                  }
-                }
-              }
-            }
+            ingredient: true
           }
         }
       }
     });
     return res;
   }),
+  getAllForPlan: protectedProcedure.query(async ({ ctx }) => {
+    const rows = await ctx.db.select({
+      // Recipe Fields
+      recipe: {
+        id: recipe.id,
+        name: recipe.name,
+        description: recipe.description,
+        image: recipe.image,
+        createdAt: recipe.createdAt,
+        calories: recipe.calories,
+        recipeCategory: recipe.recipeCategory
+      },
+      // Creator Fields
+      creator: {
+        id: user.id,
+        name: user.name
+      },
+      // Junction/Ingredient Fields
+      recipeToIngredient: {
+        id: recipeToIngredient.id,
+        serveSize: recipeToIngredient.serveSize,
+        serveUnit: recipeToIngredient.serveUnit,
+        index: recipeToIngredient.index
+      },
+      // Ingredient Fields
+      ingredient: {
+        id: ingredient.id,
+        name: ingredient.name,
+        caloriesWFibre: ingredient.caloriesWFibre,
+        caloriesWOFibre: ingredient.caloriesWOFibre,
+        protein: ingredient.protein,
+        fatTotal: ingredient.fatTotal,
+        totalSugars: ingredient.totalSugars,
+        availableCarbohydrateWithSugarAlcohols: ingredient.availableCarbohydrateWithSugarAlcohols,
+        hiddenAt: ingredient.hiddenAt,
+        serveUnit: ingredient.serveUnit,
+        serveSize: ingredient.serveSize
+      },
+      // Alternate Ingredient Fields (aliased)
+      altIngredient: {
+        id: altIngredient.id,
+        name: altIngredient.name,
+        caloriesWFibre: altIngredient.caloriesWFibre,
+        caloriesWOFibre: altIngredient.caloriesWOFibre,
+        protein: altIngredient.protein,
+        fatTotal: altIngredient.fatTotal,
+        totalSugars: altIngredient.totalSugars,
+        availableCarbohydrateWithSugarAlcohols: altIngredient.availableCarbohydrateWithSugarAlcohols,
+        hiddenAt: altIngredient.hiddenAt,
+        serveUnit: altIngredient.serveUnit,
+        serveSize: altIngredient.serveSize
+      }
+    }).from(recipe).leftJoin(user, eq9(recipe.creatorId, user.id)).leftJoin(recipeToIngredient, eq9(recipe.id, recipeToIngredient.recipeId)).leftJoin(ingredient, eq9(recipeToIngredient.ingredientId, ingredient.id)).leftJoin(
+      altIngredient,
+      eq9(recipeToIngredient.alternateId, altIngredient.id)
+    ).where(and2(eq9(recipe.isUserRecipe, false), isNull(recipe.hiddenAt))).orderBy(desc3(recipe.createdAt));
+    const result2 = rows.reduce((acc, row) => {
+      const { recipe: recipe2, creator, recipeToIngredient: recipeToIngredient2, ingredient: ingredient2, altIngredient: altIngredient2 } = row;
+      let recipeEntry = acc.find((r) => r.id === recipe2.id);
+      if (!recipeEntry) {
+        recipeEntry = {
+          ...recipe2,
+          creator,
+          recipeToIngredient: []
+        };
+        acc.push(recipeEntry);
+      }
+      if (recipeToIngredient2) {
+        recipeEntry.recipeToIngredient.push({
+          ...recipeToIngredient2,
+          ingredient: ingredient2?.id ? ingredient2 : null,
+          alternateIngredient: altIngredient2?.id ? altIngredient2 : null
+        });
+      }
+      return acc;
+    }, []);
+    return result2;
+  }),
   getAllUserCreated: protectedProcedure.input(z14.object({ userId: z14.string() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.recipe.findMany({
-      where: (recipe2, { eq: eq29, and: and13 }) => and13(
+      where: (recipe2, { eq: eq29, and: and14 }) => and14(
         eq29(recipe2.creatorId, input.userId),
         eq29(recipe2.isUserRecipe, true)
       ),
@@ -5755,21 +5828,15 @@ var recipeRouter = createTRPCRouter({
     return res;
   }),
   get: protectedProcedure.input(z14.object({ id: z14.number() })).query(async ({ input, ctx }) => {
+    if (input.id === 0) throw new TRPCError3({ code: "BAD_REQUEST" });
     const res = await ctx.db.query.recipe.findFirst({
       where: (recipe2, { eq: eq29 }) => eq29(recipe2.id, input.id),
       with: {
         creator: true,
         recipeToIngredient: {
           with: {
-            ingredient: {
-              with: {
-                ingredientToGroceryStore: {
-                  with: {
-                    groceryStore: true
-                  }
-                }
-              }
-            }
+            ingredient: true,
+            alternateIngredient: true
           }
         }
       }
@@ -6529,7 +6596,7 @@ var vegeRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/user-plan.ts
-import { eq as eq13, and as and2 } from "drizzle-orm";
+import { eq as eq13, and as and3 } from "drizzle-orm";
 import { z as z18 } from "zod";
 var userPlanRouter = createTRPCRouter({
   delete: protectedProcedure.input(z18.number()).mutation(async ({ input, ctx }) => {
@@ -6580,7 +6647,7 @@ var userPlanRouter = createTRPCRouter({
   }),
   getUserActivePlan: protectedProcedure.input(z18.string()).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.userPlan.findMany({
-      where: and2(eq13(userPlan.userId, input), eq13(userPlan.isActive, true)),
+      where: and3(eq13(userPlan.userId, input), eq13(userPlan.isActive, true)),
       with: {
         userMeals: true,
         userRecipes: true,
@@ -6696,7 +6763,7 @@ var userPlanRouter = createTRPCRouter({
       objectId: resId
     });
     const notif = await ctx.db.query.notification.findMany({
-      where: and2(
+      where: and3(
         eq13(notification.userId, input.userId),
         eq13(notification.code, "user-plan_update"),
         eq13(notification.isViewed, false)
@@ -6718,8 +6785,8 @@ var userPlanRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/daily-logs/post.ts
-import { TRPCError as TRPCError3 } from "@trpc/server";
-import { and as and3, eq as eq14 } from "drizzle-orm";
+import { TRPCError as TRPCError4 } from "@trpc/server";
+import { and as and4, eq as eq14 } from "drizzle-orm";
 import { z as z19 } from "zod";
 
 // src/lib/period.ts
@@ -6769,12 +6836,12 @@ var post2 = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and3(
+      where: and4(
         eq14(dailyLog.date, input.date),
         eq14(dailyLog.userId, input.userId)
       )
     });
-    if (log2) throw new TRPCError3({ code: "CONFLICT" });
+    if (log2) throw new TRPCError4({ code: "CONFLICT" });
     const userSetting = await ctx.db.query.userSettings.findFirst({
       where: eq14(userSettings.userId, input.userId)
     });
@@ -6809,19 +6876,19 @@ var post2 = {
     })
   ).mutation(async ({ input, ctx }) => {
     await ctx.db.delete(userIngredient).where(
-      and3(
+      and4(
         eq14(userIngredient.dailyLogId, input.logId),
         eq14(userIngredient.mealIndex, input.mealIndex)
       )
     );
     await ctx.db.delete(userRecipe).where(
-      and3(
+      and4(
         eq14(userRecipe.dailyLogId, input.logId),
         eq14(userRecipe.mealIndex, input.mealIndex)
       )
     );
     await ctx.db.delete(dailyMeal).where(
-      and3(
+      and4(
         eq14(dailyMeal.dailyLogId, input.logId),
         eq14(dailyMeal.mealIndex, input.mealIndex)
       )
@@ -6917,19 +6984,19 @@ var post2 = {
     console.log("input", input);
     await ctx.db.batch([
       ctx.db.delete(userIngredient).where(
-        and3(
+        and4(
           eq14(userIngredient.dailyLogId, input.logId ?? -1),
           eq14(userIngredient.mealIndex, input.mealIndex ?? -1)
         )
       ),
       ctx.db.delete(userRecipe).where(
-        and3(
+        and4(
           eq14(userRecipe.dailyLogId, input.logId ?? -1),
           eq14(userRecipe.mealIndex, input.mealIndex ?? -1)
         )
       ),
       ctx.db.delete(dailyMeal).where(
-        and3(
+        and4(
           eq14(dailyMeal.dailyLogId, input.logId ?? -1),
           eq14(dailyMeal.mealIndex, input.mealIndex ?? -1)
         )
@@ -7065,19 +7132,19 @@ var post2 = {
     }
     await ctx.db.batch([
       ctx.db.delete(userIngredient).where(
-        and3(
+        and4(
           eq14(userIngredient.dailyLogId, input.logId ?? -1),
           eq14(userIngredient.mealIndex, input.mealIndex ?? -1)
         )
       ),
       ctx.db.delete(userRecipe).where(
-        and3(
+        and4(
           eq14(userRecipe.dailyLogId, input.logId ?? -1),
           eq14(userRecipe.mealIndex, input.mealIndex ?? -1)
         )
       ),
       ctx.db.delete(dailyMeal).where(
-        and3(
+        and4(
           eq14(dailyMeal.dailyLogId, input.logId ?? -1),
           eq14(dailyMeal.mealIndex, input.mealIndex ?? -1)
         )
@@ -7133,15 +7200,15 @@ var post2 = {
     return res;
   }),
   deleteAll: protectedProcedure.input(z19.string()).mutation(async ({ input, ctx }) => {
-    if (input === "") throw new TRPCError3({ code: "NOT_FOUND" });
+    if (input === "") throw new TRPCError4({ code: "NOT_FOUND" });
     const res = await ctx.db.delete(dailyLog).where(eq14(dailyLog.userId, input));
     return res;
   })
 };
 
 // src/server/api/routers/daily-logs/update-dl.ts
-import { TRPCError as TRPCError4 } from "@trpc/server";
-import { and as and4, eq as eq15 } from "drizzle-orm";
+import { TRPCError as TRPCError5 } from "@trpc/server";
+import { and as and5, eq as eq15 } from "drizzle-orm";
 import { z as z20 } from "zod";
 var updateDl = {
   update: protectedProcedure.input(
@@ -7212,7 +7279,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7233,7 +7300,7 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ isStarred: input.isStarred }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7247,7 +7314,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7268,7 +7335,7 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ isPeriod: input.isPeriod }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7282,7 +7349,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7303,7 +7370,7 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ isOvulation: input.isOvulation }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7319,7 +7386,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7332,7 +7399,7 @@ var updateDl = {
       objectId: null
     });
     if (!log2) {
-      throw new TRPCError4({ code: "NOT_FOUND" });
+      throw new TRPCError5({ code: "NOT_FOUND" });
     }
     const res = await ctx.db.insert(dailySupplement).values({
       dailyLogId: log2.id,
@@ -7350,7 +7417,7 @@ var updateDl = {
   ).mutation(async ({ input, ctx }) => {
     console.log("-------------------------------------enter");
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7373,7 +7440,7 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ notes: input.notes }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7387,7 +7454,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7408,7 +7475,7 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ posing: input.posing }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7422,7 +7489,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7443,7 +7510,7 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ sleep: input.sleep }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7457,7 +7524,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7478,7 +7545,7 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ sleepQuality: input.sleepQuality }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7492,7 +7559,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7506,7 +7573,7 @@ var updateDl = {
       objectId: log2?.id
     });
     const res = await ctx.db.update(dailyLog).set({ steps: input.steps }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7520,7 +7587,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7534,7 +7601,7 @@ var updateDl = {
       objectId: log2?.id
     });
     const res = await ctx.db.update(dailyLog).set({ sauna: input.sauna }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7548,7 +7615,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7562,7 +7629,7 @@ var updateDl = {
       objectId: log2?.id
     });
     const res = await ctx.db.update(dailyLog).set({ coldPlunge: input.coldPlunge }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7576,7 +7643,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7597,7 +7664,7 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ nap: input.nap }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7611,7 +7678,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7632,7 +7699,7 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ hiit: input.hiit }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7646,7 +7713,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7667,7 +7734,7 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ cardio: input.cardio }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7681,7 +7748,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7702,7 +7769,7 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ weight: input.weight }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7716,7 +7783,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7737,7 +7804,7 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ liss: input.liss }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7751,7 +7818,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7772,7 +7839,7 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ mobility: input.mobility }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7786,7 +7853,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7807,7 +7874,7 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ waistMeasurement: input.waistMeasurement }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7821,7 +7888,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7842,7 +7909,7 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ morningWeight: input.morningWeight }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7856,7 +7923,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7877,7 +7944,7 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ fastedBloodGlucose: input.fastedBloodGlucose }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7891,7 +7958,7 @@ var updateDl = {
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7907,7 +7974,7 @@ var updateDl = {
       throw new Error("Log not found");
     }
     const res = await ctx.db.update(dailyLog).set({ image: input.image }).where(
-      and4(
+      and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7922,7 +7989,7 @@ var updateDl = {
   ).mutation(async ({ input, ctx }) => {
     let isCreateLog = false;
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -7969,7 +8036,7 @@ var updateDl = {
     let isCreateLog = false;
     console.log("input", input);
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and4(
+      where: and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)
       )
@@ -8014,7 +8081,7 @@ var updateDl = {
 };
 
 // src/server/api/routers/daily-logs/get.ts
-import { TRPCError as TRPCError5 } from "@trpc/server";
+import { TRPCError as TRPCError6 } from "@trpc/server";
 import { eq as eq16 } from "drizzle-orm";
 import { z as z21 } from "zod";
 var get2 = {
@@ -8051,7 +8118,7 @@ var get2 = {
     return res;
   }),
   getAllUser: protectedProcedure.input(z21.string()).query(async ({ ctx, input }) => {
-    if (input === "") throw new TRPCError5({ code: "NOT_FOUND" });
+    if (input === "") throw new TRPCError6({ code: "NOT_FOUND" });
     const res = await ctx.db.query.dailyLog.findMany({
       where: eq16(dailyLog.userId, input),
       with: {
@@ -8190,7 +8257,7 @@ async function sendPushNotification(subscription, title, body, url = "/", icon =
 }
 
 // src/server/api/routers/daily-logs/image.ts
-import { and as and5, eq as eq17 } from "drizzle-orm";
+import { and as and6, eq as eq17 } from "drizzle-orm";
 import { z as z22 } from "zod";
 var sendTrainerNotification = async ({
   title,
@@ -8395,7 +8462,7 @@ var image = {
     })
   ).mutation(async ({ input, ctx }) => {
     await ctx.db.delete(images).where(
-      and5(
+      and6(
         eq17(images.date, input.date),
         eq17(images.name, input.name),
         eq17(images.userId, input.userId)
@@ -8449,7 +8516,7 @@ var dailyLogRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/weigh-in.ts
-import { TRPCError as TRPCError6 } from "@trpc/server";
+import { TRPCError as TRPCError7 } from "@trpc/server";
 import { eq as eq18 } from "drizzle-orm";
 import { z as z23 } from "zod";
 var weighInRouter = createTRPCRouter({
@@ -8472,7 +8539,7 @@ var weighInRouter = createTRPCRouter({
     return { res };
   }),
   getAllUser: protectedProcedure.input(z23.string()).query(async ({ ctx, input }) => {
-    if (input === "") throw new TRPCError6({ code: "NOT_FOUND" });
+    if (input === "") throw new TRPCError7({ code: "NOT_FOUND" });
     const res = await ctx.db.query.weighIn.findMany({
       where: eq18(weighIn.userId, input),
       orderBy: (data, { desc: desc10 }) => desc10(data.date)
@@ -8490,14 +8557,14 @@ var weighInRouter = createTRPCRouter({
     return res;
   }),
   deleteAll: protectedProcedure.input(z23.string()).mutation(async ({ input, ctx }) => {
-    if (input === "") throw new TRPCError6({ code: "NOT_FOUND" });
+    if (input === "") throw new TRPCError7({ code: "NOT_FOUND" });
     const res = await ctx.db.delete(weighIn).where(eq18(weighIn.userId, input));
     return res;
   })
 });
 
 // src/server/api/routers/message.ts
-import { and as and6, eq as eq19 } from "drizzle-orm";
+import { and as and7, eq as eq19 } from "drizzle-orm";
 import { z as z24 } from "zod";
 var createLog2 = async ({
   user: user2,
@@ -8558,7 +8625,7 @@ var messageRouter = createTRPCRouter({
       userId = ctx.session?.user.id;
     }
     const res = await ctx.db.query.message.findMany({
-      where: and6(eq19(message.userId, userId), eq19(message.isRead, false)),
+      where: and7(eq19(message.userId, userId), eq19(message.isRead, false)),
       orderBy: (data, { desc: desc10 }) => desc10(data.createdAt),
       with: {
         fromUser: true,
@@ -8783,7 +8850,7 @@ var metricsRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/tag.ts
-import { and as and8, eq as eq21 } from "drizzle-orm";
+import { and as and9, eq as eq21 } from "drizzle-orm";
 import { z as z26 } from "zod";
 var tagRouter = createTRPCRouter({
   getAllTagsCurrentUser: protectedProcedure.query(async ({ ctx }) => {
@@ -8815,14 +8882,14 @@ var tagRouter = createTRPCRouter({
     })
   ).mutation(async ({ input, ctx }) => {
     const isTagged = await ctx.db.query.tagToDailyLog.findFirst({
-      where: and8(
+      where: and9(
         eq21(tagToDailyLog.tagId, input.tagId),
         eq21(tagToDailyLog.dailyLogId, input.dailyLogId)
       )
     });
     if (isTagged) {
       await ctx.db.delete(tagToDailyLog).where(
-        and8(
+        and9(
           eq21(tagToDailyLog.tagId, input.tagId),
           eq21(tagToDailyLog.dailyLogId, input.dailyLogId)
         )
@@ -8909,7 +8976,7 @@ var goalsRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/trainer.ts
-import { and as and9, eq as eq23 } from "drizzle-orm";
+import { and as and10, eq as eq23 } from "drizzle-orm";
 import { z as z29 } from "zod";
 var createLog4 = async ({
   user: user2,
@@ -8953,7 +9020,7 @@ var trainerRouter = createTRPCRouter({
   }),
   delete: protectedProcedure.input(z29.object({ userId: z29.string(), trainerId: z29.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.delete(userToTrainer).where(
-      and9(
+      and10(
         eq23(userToTrainer.userId, input.userId),
         eq23(userToTrainer.trainerId, input.trainerId)
       )
@@ -8970,8 +9037,8 @@ var trainerRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/supplements.ts
-import { TRPCError as TRPCError7 } from "@trpc/server";
-import { and as and10, asc as asc2, eq as eq24 } from "drizzle-orm";
+import { TRPCError as TRPCError8 } from "@trpc/server";
+import { and as and11, asc as asc2, eq as eq24 } from "drizzle-orm";
 import { z as z31 } from "zod";
 
 // src/components/supplements/store.ts
@@ -9424,9 +9491,9 @@ var supplementsRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session?.user?.id;
     const res = await ctx.db.query.ingredient.findMany({
-      where: (ingredient2, { isNull, and: and13, eq: eq29 }) => and13(
-        isNull(ingredient2.hiddenAt),
-        isNull(ingredient2.deletedAt),
+      where: (ingredient2, { isNull: isNull2, and: and14, eq: eq29 }) => and14(
+        isNull2(ingredient2.hiddenAt),
+        isNull2(ingredient2.deletedAt),
         eq29(ingredient2.isSupplement, true),
         eq29(ingredient2.isUserCreated, false)
       ),
@@ -9531,7 +9598,7 @@ var supplementsRouter = createTRPCRouter({
         time: input.time
       }).returning({ id: supplementStack.id });
       if (!res || res[0]?.id === void 0)
-        throw new TRPCError7({ code: "BAD_REQUEST" });
+        throw new TRPCError8({ code: "BAD_REQUEST" });
       timeId = res[0]?.id;
     }
     await ctx.db.insert(supplementToSupplementStack).values({
@@ -9541,7 +9608,7 @@ var supplementsRouter = createTRPCRouter({
       unit: input.unit
     });
     const notif = await ctx.db.query.notification.findMany({
-      where: and10(
+      where: and11(
         eq24(notification.userId, input.userId),
         eq24(notification.code, "supplement_update"),
         eq24(notification.isViewed, false)
@@ -9571,7 +9638,7 @@ var supplementsRouter = createTRPCRouter({
     })
   ).mutation(async ({ input, ctx }) => {
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and10(
+      where: and11(
         eq24(dailyLog.date, input.date),
         eq24(dailyLog.userId, ctx.session.user.id)
       )
@@ -9591,7 +9658,7 @@ var supplementsRouter = createTRPCRouter({
       notes: JSON.stringify(input),
       objectId: logId
     });
-    if (!logId) throw new TRPCError7({ code: "NOT_FOUND" });
+    if (!logId) throw new TRPCError8({ code: "NOT_FOUND" });
     await ctx.db.insert(dailySupplement).values({
       dailyLogId: logId,
       supplementId: input.suppId,
@@ -9615,7 +9682,7 @@ var supplementsRouter = createTRPCRouter({
   }),
   deleteFromUser: protectedProcedure.input(z31.object({ suppId: z31.number(), suppStackId: z31.number() })).mutation(async ({ input, ctx }) => {
     await ctx.db.delete(supplementToSupplementStack).where(
-      and10(
+      and11(
         eq24(supplementToSupplementStack.supplementId, input.suppId),
         eq24(
           supplementToSupplementStack.supplementStackId,
@@ -9651,7 +9718,7 @@ var supplementsRouter = createTRPCRouter({
       isSupplement: true
     }).returning({ id: ingredient.id });
     const suppId = res[0]?.id;
-    if (!suppId) throw new TRPCError7({ code: "NOT_FOUND" });
+    if (!suppId) throw new TRPCError8({ code: "NOT_FOUND" });
     createLog5({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
@@ -10187,7 +10254,7 @@ var trainerNotesRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/userCatagories.ts
-import { and as and11, eq as eq26 } from "drizzle-orm";
+import { and as and12, eq as eq26 } from "drizzle-orm";
 import { z as z33 } from "zod";
 var userCatagoriesRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -10219,7 +10286,7 @@ var userCatagoriesRouter = createTRPCRouter({
   }),
   removeFromUser: protectedProcedure.input(z33.object({ userId: z33.string(), categoryId: z33.number() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.delete(userToUserCategory).where(
-      and11(
+      and12(
         eq26(userToUserCategory.userId, input.userId),
         eq26(userToUserCategory.categoryId, input.categoryId)
       )
@@ -10229,7 +10296,7 @@ var userCatagoriesRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/notification.ts
-import { eq as eq27, and as and12 } from "drizzle-orm";
+import { eq as eq27, and as and13 } from "drizzle-orm";
 import { z as z34 } from "zod";
 var notificationRouter = createTRPCRouter({
   create: protectedProcedure.input(
@@ -10282,7 +10349,7 @@ var notificationRouter = createTRPCRouter({
   }),
   getAllUserUnread: protectedProcedure.input(z34.string()).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.notification.findMany({
-      where: and12(eq27(notification.userId, input), eq27(notification.isRead, false)),
+      where: and13(eq27(notification.userId, input), eq27(notification.isRead, false)),
       orderBy: (data, { desc: desc10 }) => desc10(data.createdAt)
     });
     return res;

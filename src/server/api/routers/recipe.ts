@@ -1,7 +1,13 @@
 import { recipe, recipeToIngredient } from '@/server/db/schema/recipe'
+import { TRPCError } from '@trpc/server'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
-import { desc, eq } from 'drizzle-orm'
+import { desc, eq, and, isNull } from 'drizzle-orm'
 import { z } from 'zod'
+import { user } from '@/server/db/schema/user'
+import { ingredient } from '@/server/db/schema/ingredient'
+import { aliasedTable } from 'drizzle-orm'
+
+const altIngredient = aliasedTable(ingredient, 'alt_ingredient')
 
 export const recipeRouter = createTRPCRouter({
 	getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -13,20 +19,110 @@ export const recipeRouter = createTRPCRouter({
 				recipeToIngredient: {
 					with: {
 						alternateIngredient: true,
-						ingredient: {
-							with: {
-								ingredientToGroceryStore: {
-									with: {
-										groceryStore: true,
-									},
-								},
-							},
-						},
+						ingredient: true,
 					},
 				},
 			},
 		})
 		return res
+	}),
+	getAllForPlan: protectedProcedure.query(async ({ ctx }) => {
+		const rows = await ctx.db
+			.select({
+				// Recipe Fields
+				recipe: {
+					id: recipe.id,
+					name: recipe.name,
+					description: recipe.description,
+					image: recipe.image,
+					createdAt: recipe.createdAt,
+					calories: recipe.calories,
+					recipeCategory: recipe.recipeCategory,
+				},
+				// Creator Fields
+				creator: {
+					id: user.id,
+					name: user.name,
+				},
+				// Junction/Ingredient Fields
+				recipeToIngredient: {
+					id: recipeToIngredient.id,
+					serveSize: recipeToIngredient.serveSize,
+					serveUnit: recipeToIngredient.serveUnit,
+					index: recipeToIngredient.index,
+				},
+				// Ingredient Fields
+				ingredient: {
+					id: ingredient.id,
+					name: ingredient.name,
+					caloriesWFibre: ingredient.caloriesWFibre,
+					caloriesWOFibre: ingredient.caloriesWOFibre,
+					protein: ingredient.protein,
+					fatTotal: ingredient.fatTotal,
+					totalSugars: ingredient.totalSugars,
+					availableCarbohydrateWithSugarAlcohols:
+						ingredient.availableCarbohydrateWithSugarAlcohols,
+					hiddenAt: ingredient.hiddenAt,
+					serveUnit: ingredient.serveUnit,
+					serveSize: ingredient.serveSize,
+				},
+				// Alternate Ingredient Fields (aliased)
+				altIngredient: {
+					id: altIngredient.id,
+					name: altIngredient.name,
+					caloriesWFibre: altIngredient.caloriesWFibre,
+					caloriesWOFibre: altIngredient.caloriesWOFibre,
+					protein: altIngredient.protein,
+					fatTotal: altIngredient.fatTotal,
+					totalSugars: altIngredient.totalSugars,
+					availableCarbohydrateWithSugarAlcohols:
+						altIngredient.availableCarbohydrateWithSugarAlcohols,
+					hiddenAt: altIngredient.hiddenAt,
+					serveUnit: altIngredient.serveUnit,
+					serveSize: altIngredient.serveSize,
+				},
+			})
+			.from(recipe)
+			.leftJoin(user, eq(recipe.creatorId, user.id))
+			.leftJoin(recipeToIngredient, eq(recipe.id, recipeToIngredient.recipeId))
+			.leftJoin(ingredient, eq(recipeToIngredient.ingredientId, ingredient.id))
+			// We alias the ingredient table again to get the alternate
+			.leftJoin(
+				altIngredient,
+				eq(recipeToIngredient.alternateId, altIngredient.id),
+			)
+			.where(and(eq(recipe.isUserRecipe, false), isNull(recipe.hiddenAt)))
+			.orderBy(desc(recipe.createdAt))
+
+		// --- Transform flat rows into nested objects ---
+		const result = rows.reduce<Array<any>>((acc, row) => {
+			const { recipe, creator, recipeToIngredient, ingredient, altIngredient } =
+				row
+
+			// Check if we already started adding this recipe to our array
+			let recipeEntry = acc.find((r) => r.id === recipe.id)
+
+			if (!recipeEntry) {
+				recipeEntry = {
+					...recipe,
+					creator: creator,
+					recipeToIngredient: [],
+				}
+				acc.push(recipeEntry)
+			}
+
+			if (recipeToIngredient) {
+				recipeEntry.recipeToIngredient.push({
+					...recipeToIngredient,
+					ingredient: ingredient?.id ? ingredient : null,
+					alternateIngredient: altIngredient?.id ? altIngredient : null,
+				})
+			}
+
+			return acc
+		}, [])
+
+		return result
 	}),
 	getAllUserCreated: protectedProcedure
 		.input(z.object({ userId: z.string() }))
@@ -61,21 +157,15 @@ export const recipeRouter = createTRPCRouter({
 	get: protectedProcedure
 		.input(z.object({ id: z.number() }))
 		.query(async ({ input, ctx }) => {
+			if (input.id === 0) throw new TRPCError({ code: 'BAD_REQUEST' })
 			const res = await ctx.db.query.recipe.findFirst({
 				where: (recipe, { eq }) => eq(recipe.id, input.id),
 				with: {
 					creator: true,
 					recipeToIngredient: {
 						with: {
-							ingredient: {
-								with: {
-									ingredientToGroceryStore: {
-										with: {
-											groceryStore: true,
-										},
-									},
-								},
-							},
+							ingredient: true,
+							alternateIngredient: true,
 						},
 					},
 				},

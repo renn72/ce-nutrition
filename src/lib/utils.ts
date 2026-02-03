@@ -456,6 +456,7 @@ export function getRecipeDetailsByCals(
 	recipe: GetRecipeById,
 	calories: number,
 ) {
+	console.log({ recipe })
 	const size = recipe?.recipeToIngredient.reduce((acc, curr) => {
 		return acc + Number(curr?.serveSize)
 	}, 0)

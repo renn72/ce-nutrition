@@ -95,16 +95,21 @@ const Recipe = ({
 }) => {
 	const [isOpen, setOpen] = useState(false)
 	const isMobile = useIsMobile()
-	const { data: _recipes } = api.recipe.getAll.useQuery()
+	const { data: _recipes } = api.recipe.getAllForPlan.useQuery()
+
 	const recipeId = form.watch(
 		`meals.${mealIndex}.recipes.${recipeIndex}.recipeId`,
 	)
 
-	const recipes = _recipes?.filter((recipe) => {
-		if (recipe.id.toString() === recipeId) return true
-		if (recipe.hiddenAt === null) return true
-		return false
+	const { data: recipeCheck } = api.recipe.get.useQuery({
+		id: Number(recipeId),
 	})
+
+	const recipes = _recipes?.find((recipe) => recipe.id.toString() === recipeId)
+		? _recipes
+		: _recipes && recipeCheck
+			? [..._recipes, recipeCheck]
+			: _recipes
 
 	const recipe = recipes?.find((recipe) => recipe.id === Number(recipeId))
 	const recipeDetails = getRecipeDetailsByCals(recipe, Number(calories))
@@ -252,7 +257,7 @@ const FormPlanMeal = ({
 	move: (from: number, to: number) => void
 }) => {
 	const isMobile = useIsMobile()
-	const { data: recipes } = api.recipe.getAll.useQuery()
+	const { data: recipes } = api.recipe.getAllForPlan.useQuery()
 
 	const [isVege, setIsVege] = useState(false)
 

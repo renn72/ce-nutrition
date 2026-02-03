@@ -17453,18 +17453,6 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                         isPrivate: boolean | null;
                         viewableBy: string | null;
                         intervale: string | null;
-                        ingredientToGroceryStore: {
-                            id: number;
-                            createdAt: Date;
-                            ingredientId: number | null;
-                            groceryStoreId: number | null;
-                            groceryStore: {
-                                id: number;
-                                name: string | null;
-                                createdAt: Date;
-                                location: string | null;
-                            } | null;
-                        }[];
                     };
                     alternateIngredient: {
                         id: number;
@@ -17501,6 +17489,11 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     } | null;
                 }[];
             }[];
+            meta: object;
+        }>;
+        getAllForPlan: _trpc_server.TRPCQueryProcedure<{
+            input: void;
+            output: any[];
             meta: object;
         }>;
         getAllUserCreated: _trpc_server.TRPCQueryProcedure<{
@@ -17733,19 +17726,40 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                         isPrivate: boolean | null;
                         viewableBy: string | null;
                         intervale: string | null;
-                        ingredientToGroceryStore: {
-                            id: number;
-                            createdAt: Date;
-                            ingredientId: number | null;
-                            groceryStoreId: number | null;
-                            groceryStore: {
-                                id: number;
-                                name: string | null;
-                                createdAt: Date;
-                                location: string | null;
-                            } | null;
-                        }[];
                     };
+                    alternateIngredient: {
+                        id: number;
+                        name: string | null;
+                        notes: string | null;
+                        createdAt: Date;
+                        updatedAt: Date | null;
+                        userId: string | null;
+                        favouriteAt: Date | null;
+                        deletedAt: Date | null;
+                        hiddenAt: Date | null;
+                        isAusFood: boolean | null;
+                        isAllStores: boolean | null;
+                        serveSize: string | null;
+                        serveUnit: string | null;
+                        publicFoodKey: string | null;
+                        classification: string | null;
+                        foodName: string | null;
+                        caloriesWFibre: string | null;
+                        caloriesWOFibre: string | null;
+                        protein: string | null;
+                        fatTotal: string | null;
+                        totalDietaryFibre: string | null;
+                        totalSugars: string | null;
+                        starch: string | null;
+                        resistantStarch: string | null;
+                        availableCarbohydrateWithoutSugarAlcohols: string | null;
+                        availableCarbohydrateWithSugarAlcohols: string | null;
+                        isUserCreated: boolean | null;
+                        isSupplement: boolean | null;
+                        isPrivate: boolean | null;
+                        viewableBy: string | null;
+                        intervale: string | null;
+                    } | null;
                 }[];
             } | undefined;
             meta: object;
@@ -25338,18 +25352,6 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                         isPrivate: boolean | null;
                         viewableBy: string | null;
                         intervale: string | null;
-                        ingredientToGroceryStore: {
-                            id: number;
-                            createdAt: Date;
-                            ingredientId: number | null;
-                            groceryStoreId: number | null;
-                            groceryStore: {
-                                id: number;
-                                name: string | null;
-                                createdAt: Date;
-                                location: string | null;
-                            } | null;
-                        }[];
                     };
                     alternateIngredient: {
                         id: number;
@@ -25386,6 +25388,11 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     } | null;
                 }[];
             }[];
+            meta: object;
+        }>;
+        getAllForPlan: _trpc_server.TRPCQueryProcedure<{
+            input: void;
+            output: any[];
             meta: object;
         }>;
         getAllUserCreated: _trpc_server.TRPCQueryProcedure<{
@@ -25618,19 +25625,40 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                         isPrivate: boolean | null;
                         viewableBy: string | null;
                         intervale: string | null;
-                        ingredientToGroceryStore: {
-                            id: number;
-                            createdAt: Date;
-                            ingredientId: number | null;
-                            groceryStoreId: number | null;
-                            groceryStore: {
-                                id: number;
-                                name: string | null;
-                                createdAt: Date;
-                                location: string | null;
-                            } | null;
-                        }[];
                     };
+                    alternateIngredient: {
+                        id: number;
+                        name: string | null;
+                        notes: string | null;
+                        createdAt: Date;
+                        updatedAt: Date | null;
+                        userId: string | null;
+                        favouriteAt: Date | null;
+                        deletedAt: Date | null;
+                        hiddenAt: Date | null;
+                        isAusFood: boolean | null;
+                        isAllStores: boolean | null;
+                        serveSize: string | null;
+                        serveUnit: string | null;
+                        publicFoodKey: string | null;
+                        classification: string | null;
+                        foodName: string | null;
+                        caloriesWFibre: string | null;
+                        caloriesWOFibre: string | null;
+                        protein: string | null;
+                        fatTotal: string | null;
+                        totalDietaryFibre: string | null;
+                        totalSugars: string | null;
+                        starch: string | null;
+                        resistantStarch: string | null;
+                        availableCarbohydrateWithoutSugarAlcohols: string | null;
+                        availableCarbohydrateWithSugarAlcohols: string | null;
+                        isUserCreated: boolean | null;
+                        isSupplement: boolean | null;
+                        isPrivate: boolean | null;
+                        viewableBy: string | null;
+                        intervale: string | null;
+                    } | null;
                 }[];
             } | undefined;
             meta: object;

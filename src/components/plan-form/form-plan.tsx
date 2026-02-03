@@ -112,7 +112,6 @@ const MainForm = ({
 			notes: plan?.notes || initialData?.notes || '',
 			planCategory: plan?.planCategory || initialData?.planCategory || '',
 			meals: plan?.meals?.map((meal) => {
-				console.log({ meal })
 				return {
 					mealId: meal?.id.toString(),
 					mealTitle: meal?.name || '',
