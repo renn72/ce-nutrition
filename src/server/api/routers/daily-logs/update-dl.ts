@@ -554,6 +554,7 @@ export const updateDl = {
 					eq(dailyLog.userId, ctx.session.user.id),
 				),
 			})
+			console.log('log', log)
 			createLog({
 				user: ctx.session.user.name,
 				userId: ctx.session.user.id,
@@ -563,11 +564,13 @@ export const updateDl = {
 			})
 
 			if (!log) {
+				console.log('create')
 				const res = await ctx.db.insert(dailyLog).values({
 					date: input.date,
 					nap: input.nap,
 					userId: ctx.session.user.id,
 				})
+				console.log('res-c', res)
 				return res
 			}
 
@@ -580,6 +583,7 @@ export const updateDl = {
 						eq(dailyLog.userId, ctx.session.user.id),
 					),
 				)
+			console.log('res', res)
 
 			return res
 		}),
@@ -1034,23 +1038,21 @@ export const updateDl = {
 		.input(
 			z.object({
 				date: z.string(),
+				userId: z.string(),
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
 			let isCreateLog = false
 			console.log('input', input)
+			const userId = input.userId
 
 			const log = await ctx.db.query.dailyLog.findFirst({
-				where: and(
-					eq(dailyLog.date, input.date),
-					eq(dailyLog.userId, ctx.session.user.id),
-				),
+				where: and(eq(dailyLog.date, input.date), eq(dailyLog.userId, userId)),
 			})
 
 			// @ts-ignore
 			let logId = log?.id as number | undefined
-			console.log('logId', logId)
-			console.log('logId', !logId)
+			console.log('logId', log)
 
 			if (!logId) {
 				console.log('create')
@@ -1058,7 +1060,7 @@ export const updateDl = {
 					.insert(dailyLog)
 					.values({
 						date: input.date,
-						userId: ctx.session.user.id,
+						userId: userId,
 					})
 					.returning({ id: dailyLog.id })
 				logId = res[0]?.id

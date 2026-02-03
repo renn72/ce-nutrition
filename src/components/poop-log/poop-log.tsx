@@ -128,14 +128,15 @@ const PoopLog = ({
 						size={28}
 						weight='regular'
 						onClick={() => {
-							confetti({
-								particleCount: 10,
-								spread: 45,
-								origin: { x: 0.9, y: 0.9 },
-								disableForReducedMotion: true,
-							})
+							// confetti({
+							// 	particleCount: 10,
+							// 	spread: 45,
+							// 	origin: { x: 0.9, y: 0.9 },
+							// 	disableForReducedMotion: true,
+							// })
 							addPoopLog({
 								date: today.toDateString(),
+								userId: userId,
 							})
 						}}
 					/>

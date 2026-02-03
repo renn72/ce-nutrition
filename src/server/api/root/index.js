@@ -7648,6 +7648,7 @@ var updateDl = {
         eq15(dailyLog.userId, ctx.session.user.id)
       )
     });
+    console.log("log", log2);
     createLog({
       user: ctx.session.user.name,
       userId: ctx.session.user.id,
@@ -7656,11 +7657,13 @@ var updateDl = {
       objectId: null
     });
     if (!log2) {
+      console.log("create");
       const res2 = await ctx.db.insert(dailyLog).values({
         date: input.date,
         nap: input.nap,
         userId: ctx.session.user.id
       });
+      console.log("res-c", res2);
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ nap: input.nap }).where(
@@ -7669,6 +7672,7 @@ var updateDl = {
         eq15(dailyLog.userId, ctx.session.user.id)
       )
     );
+    console.log("res", res);
     return res;
   }),
   updateHiit: protectedProcedure.input(
@@ -8030,25 +8034,23 @@ var updateDl = {
   }),
   addPoopLog: protectedProcedure.input(
     z20.object({
-      date: z20.string()
+      date: z20.string(),
+      userId: z20.string()
     })
   ).mutation(async ({ input, ctx }) => {
     let isCreateLog = false;
     console.log("input", input);
+    const userId = input.userId;
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and5(
-        eq15(dailyLog.date, input.date),
-        eq15(dailyLog.userId, ctx.session.user.id)
-      )
+      where: and5(eq15(dailyLog.date, input.date), eq15(dailyLog.userId, userId))
     });
     let logId = log2?.id;
-    console.log("logId", logId);
-    console.log("logId", !logId);
+    console.log("logId", log2);
     if (!logId) {
       console.log("create");
       const res = await ctx.db.insert(dailyLog).values({
         date: input.date,
-        userId: ctx.session.user.id
+        userId
       }).returning({ id: dailyLog.id });
       logId = res[0]?.id;
       isCreateLog = true;

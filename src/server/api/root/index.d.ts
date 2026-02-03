@@ -15157,6 +15157,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
         addPoopLog: _trpc_server.TRPCMutationProcedure<{
             input: {
                 date: string;
+                userId: string;
             };
             output: {
                 id: number;
@@ -23056,6 +23057,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         addPoopLog: _trpc_server.TRPCMutationProcedure<{
             input: {
                 date: string;
+                userId: string;
             };
             output: {
                 id: number;
