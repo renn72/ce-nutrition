@@ -84,6 +84,20 @@ const Nap = ({
 					>
 						Save
 					</Button>
+					<Button
+						variant='default'
+						onClick={() => {
+							if (!nap) return
+							setNap(0)
+							updateNap({
+								date: todaysLogDate.toDateString(),
+								nap: '',
+								userId: userId,
+							})
+						}}
+					>
+						Clear
+					</Button>
 					<Button variant='default'>Cancel</Button>
 				</div>
 			</DialogClose>
