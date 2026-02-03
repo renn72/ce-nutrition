@@ -401,13 +401,11 @@ const SuppUser = ({ user }: { user: GetUserById }) => {
 	)
 }
 const Supp = ({
-	user,
 	supp,
 	time,
 	date,
 	todaysDailyLog,
 }: {
-	user: GetUserById
 	supp: GetSupplementFromStack
 	time: string
 	date: Date
@@ -552,7 +550,6 @@ const SuppTimes = ({
 							return (
 								<Supp
 									key={supp.id}
-									user={user}
 									supp={supp}
 									time={time}
 									date={date}
@@ -598,7 +595,7 @@ const SuppLog = ({
 							)}
 						>
 							<Sheet.Trigger
-								onClick={(e) => {
+								onClick={() => {
 									setDay(new Date())
 								}}
 							>

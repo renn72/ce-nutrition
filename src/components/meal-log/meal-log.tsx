@@ -621,15 +621,15 @@ const MealLog = ({
 		},
 		// Keep the previous data visible while fetching new data
 	)
-	const stringifiedData = JSON.stringify(apiCurrentUser)
-
-	const bytes = stringifiedData.length * 2
-	const kb = (bytes / 1024).toFixed(2)
-
-	console.log(`Estimated Size: ${kb} KB`)
 
 	useEffect(() => {
 		if (apiCurrentUser) {
+			const stringifiedData = JSON.stringify(apiCurrentUser)
+
+			const bytes = stringifiedData.length * 2
+			const kb = (bytes / 1024).toFixed(2)
+
+			console.log(`Estimated Size CurrentUser: ${kb} KB`)
 			try {
 				setCachedUser(apiCurrentUser)
 			} catch (_err) {}

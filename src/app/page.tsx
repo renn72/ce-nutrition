@@ -200,6 +200,12 @@ export default function Home() {
 	)
 	useEffect(() => {
 		if (currentUser) {
+			const stringifiedData = JSON.stringify(currentUser)
+
+			const bytes = stringifiedData.length * 2
+			const kb = (bytes / 1024).toFixed(2)
+
+			console.log(`Estimated Size CurrentUserRoles: ${kb} KB`)
 			try {
 				setCachedUser(currentUser)
 			} catch (_err) {
