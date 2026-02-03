@@ -73,7 +73,12 @@ const Mobile = ({
 
 	useEffect(() => {
 		if (apiDailyLogs) {
-			setCachedLogs(apiDailyLogs.slice(-30))
+			try {
+				setCachedLogs(apiDailyLogs.slice(-30))
+			} catch (err) {
+				// @ts-ignore
+				toast(err.toString())
+			}
 		}
 	}, [apiDailyLogs, setCachedLogs])
 
@@ -195,7 +200,11 @@ export default function Home() {
 	)
 	useEffect(() => {
 		if (currentUser) {
-			setCachedUser(currentUser)
+			try {
+				setCachedUser(currentUser)
+			} catch (_err) {
+				toast('error caching user')
+			}
 		}
 	}, [currentUser, setCachedUser])
 
