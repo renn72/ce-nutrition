@@ -74,7 +74,12 @@ const DailyLogForm = ({
 							/>
 						) : null}
 						{currentUser?.settings?.isNap ? (
-							<Nap todaysLog={todaysLog} prevLog={prevLog} date={date} />
+							<Nap
+								todaysLog={todaysLog}
+								prevLog={prevLog}
+								date={date}
+								userId={currentUser.id}
+							/>
 						) : null}
 						{currentUser?.settings?.isSteps ? (
 							<Steps todaysLog={todaysLog} prevLog={prevLog} date={date} />

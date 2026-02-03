@@ -23,10 +23,12 @@ const Nap = ({
 	todaysLog,
 	prevLog,
 	date,
+	userId,
 }: {
 	todaysLog: GetDailyLogById | null
 	prevLog: GetDailyLogById | null
 	date?: string | null
+	userId: string
 }) => {
 	const [nap, setNap] = useState<number>(() => {
 		let r = todaysLog?.nap
@@ -76,6 +78,7 @@ const Nap = ({
 							updateNap({
 								date: todaysLogDate.toDateString(),
 								nap: nap?.toString(),
+								userId: userId,
 							})
 						}}
 					>

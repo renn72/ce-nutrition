@@ -545,14 +545,13 @@ export const updateDl = {
 			z.object({
 				date: z.string(),
 				nap: z.string(),
+				userId: z.string(),
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
+			const userId = input.userId
 			const log = await ctx.db.query.dailyLog.findFirst({
-				where: and(
-					eq(dailyLog.date, input.date),
-					eq(dailyLog.userId, ctx.session.user.id),
-				),
+				where: and(eq(dailyLog.date, input.date), eq(dailyLog.userId, userId)),
 			})
 			console.log('log', log)
 			createLog({
@@ -568,7 +567,7 @@ export const updateDl = {
 				const res = await ctx.db.insert(dailyLog).values({
 					date: input.date,
 					nap: input.nap,
-					userId: ctx.session.user.id,
+					userId: userId,
 				})
 				console.log('res-c', res)
 				return res
@@ -577,12 +576,7 @@ export const updateDl = {
 			const res = await ctx.db
 				.update(dailyLog)
 				.set({ nap: input.nap })
-				.where(
-					and(
-						eq(dailyLog.date, input.date),
-						eq(dailyLog.userId, ctx.session.user.id),
-					),
-				)
+				.where(and(eq(dailyLog.date, input.date), eq(dailyLog.userId, userId)))
 			console.log('res', res)
 
 			return res

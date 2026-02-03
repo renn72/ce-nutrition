@@ -7639,14 +7639,13 @@ var updateDl = {
   updateNap: protectedProcedure.input(
     z20.object({
       date: z20.string(),
-      nap: z20.string()
+      nap: z20.string(),
+      userId: z20.string()
     })
   ).mutation(async ({ input, ctx }) => {
+    const userId = input.userId;
     const log2 = await ctx.db.query.dailyLog.findFirst({
-      where: and5(
-        eq15(dailyLog.date, input.date),
-        eq15(dailyLog.userId, ctx.session.user.id)
-      )
+      where: and5(eq15(dailyLog.date, input.date), eq15(dailyLog.userId, userId))
     });
     console.log("log", log2);
     createLog({
@@ -7661,17 +7660,12 @@ var updateDl = {
       const res2 = await ctx.db.insert(dailyLog).values({
         date: input.date,
         nap: input.nap,
-        userId: ctx.session.user.id
+        userId
       });
       console.log("res-c", res2);
       return res2;
     }
-    const res = await ctx.db.update(dailyLog).set({ nap: input.nap }).where(
-      and5(
-        eq15(dailyLog.date, input.date),
-        eq15(dailyLog.userId, ctx.session.user.id)
-      )
-    );
+    const res = await ctx.db.update(dailyLog).set({ nap: input.nap }).where(and5(eq15(dailyLog.date, input.date), eq15(dailyLog.userId, userId)));
     console.log("res", res);
     return res;
   }),

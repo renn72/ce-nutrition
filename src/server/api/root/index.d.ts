@@ -15061,6 +15061,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             input: {
                 date: string;
                 nap: string;
+                userId: string;
             };
             output: _libsql_client.ResultSet;
             meta: object;
@@ -22961,6 +22962,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             input: {
                 date: string;
                 nap: string;
+                userId: string;
             };
             output: _libsql_client.ResultSet;
             meta: object;
