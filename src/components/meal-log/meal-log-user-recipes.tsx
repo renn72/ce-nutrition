@@ -5,10 +5,10 @@ import { api } from '@/trpc/react'
 import { useState } from 'react'
 
 import { cn } from '@/lib/utils'
-import type { GetRecipeById, GetUserById } from '@/types'
+import type { GetRecipeById, GetCurrentUserMeals } from '@/types'
 import NumberFlow from '@number-flow/react'
 import { Sheet } from '@silk-hq/components'
-import { ChevronDown, Loader, Trash2 } from 'lucide-react'
+import { ChevronDown, Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 
@@ -19,7 +19,6 @@ export const dynamic = 'force-dynamic'
 const CreateRecipe = ({
 	calories,
 	protein,
-	currentUser,
 	isOpen,
 	setIsOpen,
 	recipe,
@@ -30,7 +29,6 @@ const CreateRecipe = ({
 }: {
 	calories: number
 	protein: number
-	currentUser: GetUserById
 	isOpen: boolean
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 	recipe: GetRecipeById | null
@@ -145,7 +143,7 @@ const UserCreatedRecipes = ({
 	logId,
 	mealIndex,
 }: {
-	currentUser: GetUserById
+	currentUser: GetCurrentUserMeals
 	calories: number
 	protein: number
 	setIsRecipeListOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -157,10 +155,10 @@ const UserCreatedRecipes = ({
 	)
 
 	const ctx = api.useUtils()
-	const { data: userRecipes, isLoading: isLoadingUserRecipes } =
-		api.recipe.getAllUserCreated.useQuery({
-			userId: currentUser.id,
-		})
+	const { data: userRecipes } = api.recipe.getAllUserCreated.useQuery({
+		userId: currentUser?.id || '',
+	})
+
 	const { mutate: deleteRecipe } = api.recipe.delete.useMutation({
 		onSuccess: () => {
 			ctx.recipe.invalidate()
@@ -179,17 +177,17 @@ const UserCreatedRecipes = ({
 			setTimeoutCodeAdd(timeout)
 
 			const previousRecipes = ctx.recipe.getAllUserCreated.getData({
-				userId: currentUser.id,
+				userId: currentUser?.id || '',
 			})
 			ctx.recipe.getAllUserCreated.setData(
-				{ userId: currentUser.id },
+				{ userId: currentUser?.id || '' },
 				previousRecipes?.filter((currRecipe) => currRecipe.id !== recipe.id),
 			)
 			return { previousRecipes }
 		},
-		onError: (err, recipe, context) => {
+		onError: (_err, _recipe, context) => {
 			ctx.recipe.getAllUserCreated.setData(
-				{ userId: currentUser.id },
+				{ userId: currentUser?.id || '' },
 				context?.previousRecipes,
 			)
 		},
@@ -293,7 +291,6 @@ const UserCreatedRecipes = ({
 				<CreateRecipe
 					calories={calories}
 					protein={protein}
-					currentUser={currentUser}
 					isOpen={isRecipeFormOpen}
 					setIsOpen={setIsRecipeFormOpen}
 					recipe={selectedRecipe}
@@ -314,7 +311,7 @@ const MealLogUserRecipes = ({
 	logId,
 	mealIndex,
 }: {
-	currentUser: GetUserById
+	currentUser: GetCurrentUserMeals
 	calories: number
 	protein: number
 	logId: number

@@ -9,7 +9,7 @@ import type {
 	GetAllDailyLogs,
 	GetDailyLogById,
 	GetSupplementFromStack,
-	GetUserById,
+	GetUserWRoles,
 } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -55,7 +55,7 @@ const formSchema = z.object({
 	stackId: z.string().min(1, { message: 'time is required' }),
 })
 
-const SuppUserCreate = ({ user }: { user: GetUserById }) => {
+const SuppUserCreate = ({ user }: { user: GetUserWRoles }) => {
 	const [isOpen, setIsOpen] = useState(false)
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -84,6 +84,7 @@ const SuppUserCreate = ({ user }: { user: GetUserById }) => {
 	})
 
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
+		if (!user) return
 		createSupplement({
 			...data,
 			stackId: Number(data.stackId),
@@ -121,7 +122,7 @@ const SuppUserCreate = ({ user }: { user: GetUserById }) => {
 										/>
 									</div>
 									<div className='flex flex-col justify-center items-center'>
-										{user.supplementStacks.length === 0 ? (
+										{user?.supplementStacks.length === 0 ? (
 											<Sheet.Title className='px-6 mx-4 text-xl font-bold text-center rounded-lg border-4 mt-[2px] text-destructive border-destructive/50 bg-muted'>
 												Get your trainer to create your a stack timing
 											</Sheet.Title>
@@ -209,7 +210,7 @@ const SuppUserCreate = ({ user }: { user: GetUserById }) => {
 																			field.onChange(value)
 																		}}
 																	>
-																		{user.supplementStacks.map((stack) => {
+																		{user?.supplementStacks.map((stack) => {
 																			return (
 																				<ToggleGroupItem
 																					key={stack.id}
@@ -251,7 +252,7 @@ const SuppUserCreate = ({ user }: { user: GetUserById }) => {
 														)}
 													/>
 													<Button
-														disabled={user.supplementStacks.length === 0}
+														disabled={user?.supplementStacks.length === 0}
 														type='submit'
 													>
 														Save
@@ -280,7 +281,7 @@ const SuppUserCreate = ({ user }: { user: GetUserById }) => {
 	)
 }
 
-const SuppUser = ({ user }: { user: GetUserById }) => {
+const SuppUser = ({ user }: { user: GetUserWRoles }) => {
 	const [isOpen, setIsOpen] = useState(false)
 
 	const ctx = api.useUtils()
@@ -331,7 +332,7 @@ const SuppUser = ({ user }: { user: GetUserById }) => {
 								</div>
 								<ScrollArea className='px-2 pt-4 h-[calc(95vh-130px)]'>
 									<div className='flex flex-col'>
-										{user.supplementStacks.map((stack) => {
+										{user?.supplementStacks.map((stack) => {
 											const time = stack.time
 											return (
 												<div key={stack.id}>
@@ -531,7 +532,7 @@ const SuppTimes = ({
 	date,
 	todaysDailyLog,
 }: {
-	user: GetUserById
+	user: GetUserWRoles
 	time: string
 	date: Date
 	todaysDailyLog: GetDailyLogById | null | undefined
@@ -544,7 +545,7 @@ const SuppTimes = ({
 			</CardHeader>
 			<CardContent className='py-0 px-4'>
 				<div className={cn('flex flex-col gap-1')}>
-					{user.supplementStacks
+					{user?.supplementStacks
 						.find((stack) => stack.time === time)
 						?.supplements.map((supp) => {
 							return (
@@ -575,7 +576,9 @@ const SuppLog = ({
 	const todaysDailyLog = dailyLogs?.find(
 		(dailyLog) => dailyLog.date === day.toDateString(),
 	)
-	const { data: user } = api.user.getCurrentUser.useQuery({ id: userId || '' })
+	const { data: user } = api.user.getCurrentUserRoles.useQuery({
+		id: userId || '',
+	})
 	const suppTimes = user?.supplementStacks
 		.map((stack) => {
 			return stack.time

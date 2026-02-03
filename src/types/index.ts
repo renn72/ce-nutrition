@@ -53,6 +53,7 @@ export type GetGroceryStoreById = RouterOutputs['groceryStore']['get']
 
 export type GetAllUsers = RouterOutputs['user']['getAll']
 export type GetCurrentUser = RouterOutputs['user']['getCurrentUser']
+export type GetCurrentUserMeals = RouterOutputs['user']['getCurrentUserMeals']
 export type GetUserBasic = RouterOutputs['user']['getBasic']
 export type GetUserById = RouterOutputs['user']['getGaurenteed']
 export type GetUserWRoles = RouterOutputs['user']['getCurrentUserRoles']

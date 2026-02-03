@@ -16227,6 +16227,123 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     periodLength: number;
                     periodInterval: number;
                 };
+                supplementStacks: {
+                    id: number;
+                    name: string | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    userId: string;
+                    time: string | null;
+                    isTemplate: boolean | null;
+                    order: number | null;
+                    supplements: {
+                        id: number;
+                        order: number | null;
+                        supplementId: number;
+                        supplementStackId: number;
+                        size: string | null;
+                        unit: string | null;
+                        supplement: {
+                            id: number;
+                            name: string | null;
+                            serveSize: string | null;
+                            serveUnit: string | null;
+                        };
+                    }[];
+                }[];
+            } | null | undefined;
+            meta: object;
+        }>;
+        getCurrentUserMeals: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                id: string;
+            } | undefined;
+            output: {
+                id: string;
+                roles: {
+                    id: number;
+                    name: string | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    userId: string | null;
+                }[];
+                userPlans: {
+                    id: number;
+                    name: string;
+                    notes: string;
+                    image: string;
+                    isActive: boolean | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    description: string;
+                    userId: string;
+                    finishedAt: Date | null;
+                    startAt: Date | null;
+                    numberOfMeals: number | null;
+                    creatorId: string;
+                    favouriteAt: Date | null;
+                    deletedAt: Date | null;
+                    hiddenAt: Date | null;
+                    userMeals: {
+                        id: number;
+                        createdAt: Date;
+                        updatedAt: Date | null;
+                        protein: string | null;
+                        calories: string | null;
+                        note: string | null;
+                        userPlanId: number;
+                        mealIndex: number | null;
+                        vegeCalories: string | null;
+                        veges: string | null;
+                        vegeNotes: string | null;
+                        mealTitle: string | null;
+                        targetProtein: string | null;
+                        targetCalories: string | null;
+                    }[];
+                    userRecipes: {
+                        id: number;
+                        name: string | null;
+                        createdAt: Date;
+                        updatedAt: Date | null;
+                        serveUnit: string | null;
+                        isUserCreated: boolean | null;
+                        index: number | null;
+                        serve: string | null;
+                        note: string | null;
+                        userPlanId: number | null;
+                        dailyLogId: number | null;
+                        mealIndex: number | null;
+                        dailyMealId: number | null;
+                        recipeIndex: number | null;
+                        parentId: number | null;
+                        isLog: boolean | null;
+                    }[];
+                    userIngredients: {
+                        id: number;
+                        name: string | null;
+                        createdAt: Date;
+                        updatedAt: Date | null;
+                        serveUnit: string | null;
+                        isUserCreated: boolean | null;
+                        ingredientId: number;
+                        alternateId: number | null;
+                        serve: string | null;
+                        note: string | null;
+                        userPlanId: number | null;
+                        dailyLogId: number | null;
+                        mealIndex: number | null;
+                        dailyMealId: number | null;
+                        recipeIndex: number | null;
+                        ingredient: {
+                            serveSize: string | null;
+                            caloriesWFibre: string | null;
+                            caloriesWOFibre: string | null;
+                            protein: string | null;
+                            fatTotal: string | null;
+                            availableCarbohydrateWithSugarAlcohols: string | null;
+                        };
+                    }[];
+                }[];
             } | null | undefined;
             meta: object;
         }>;
@@ -24128,6 +24245,123 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     periodLength: number;
                     periodInterval: number;
                 };
+                supplementStacks: {
+                    id: number;
+                    name: string | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    userId: string;
+                    time: string | null;
+                    isTemplate: boolean | null;
+                    order: number | null;
+                    supplements: {
+                        id: number;
+                        order: number | null;
+                        supplementId: number;
+                        supplementStackId: number;
+                        size: string | null;
+                        unit: string | null;
+                        supplement: {
+                            id: number;
+                            name: string | null;
+                            serveSize: string | null;
+                            serveUnit: string | null;
+                        };
+                    }[];
+                }[];
+            } | null | undefined;
+            meta: object;
+        }>;
+        getCurrentUserMeals: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                id: string;
+            } | undefined;
+            output: {
+                id: string;
+                roles: {
+                    id: number;
+                    name: string | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    userId: string | null;
+                }[];
+                userPlans: {
+                    id: number;
+                    name: string;
+                    notes: string;
+                    image: string;
+                    isActive: boolean | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    description: string;
+                    userId: string;
+                    finishedAt: Date | null;
+                    startAt: Date | null;
+                    numberOfMeals: number | null;
+                    creatorId: string;
+                    favouriteAt: Date | null;
+                    deletedAt: Date | null;
+                    hiddenAt: Date | null;
+                    userMeals: {
+                        id: number;
+                        createdAt: Date;
+                        updatedAt: Date | null;
+                        protein: string | null;
+                        calories: string | null;
+                        note: string | null;
+                        userPlanId: number;
+                        mealIndex: number | null;
+                        vegeCalories: string | null;
+                        veges: string | null;
+                        vegeNotes: string | null;
+                        mealTitle: string | null;
+                        targetProtein: string | null;
+                        targetCalories: string | null;
+                    }[];
+                    userRecipes: {
+                        id: number;
+                        name: string | null;
+                        createdAt: Date;
+                        updatedAt: Date | null;
+                        serveUnit: string | null;
+                        isUserCreated: boolean | null;
+                        index: number | null;
+                        serve: string | null;
+                        note: string | null;
+                        userPlanId: number | null;
+                        dailyLogId: number | null;
+                        mealIndex: number | null;
+                        dailyMealId: number | null;
+                        recipeIndex: number | null;
+                        parentId: number | null;
+                        isLog: boolean | null;
+                    }[];
+                    userIngredients: {
+                        id: number;
+                        name: string | null;
+                        createdAt: Date;
+                        updatedAt: Date | null;
+                        serveUnit: string | null;
+                        isUserCreated: boolean | null;
+                        ingredientId: number;
+                        alternateId: number | null;
+                        serve: string | null;
+                        note: string | null;
+                        userPlanId: number | null;
+                        dailyLogId: number | null;
+                        mealIndex: number | null;
+                        dailyMealId: number | null;
+                        recipeIndex: number | null;
+                        ingredient: {
+                            serveSize: string | null;
+                            caloriesWFibre: string | null;
+                            caloriesWOFibre: string | null;
+                            protein: string | null;
+                            fatTotal: string | null;
+                            availableCarbohydrateWithSugarAlcohols: string | null;
+                        };
+                    }[];
+                }[];
             } | null | undefined;
             meta: object;
         }>;

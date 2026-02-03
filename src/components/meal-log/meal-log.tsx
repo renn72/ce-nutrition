@@ -12,7 +12,7 @@ import {
 import type {
 	GetAllDailyLogs,
 	GetDailyLogById,
-	GetCurrentUser,
+	GetCurrentUserMeals,
 	UserPlan,
 } from '@/types'
 import NumberFlow from '@number-flow/react'
@@ -45,6 +45,11 @@ import { MealBottomSheet } from './meal-bottom-sheet'
 import { MealLogUserRecipes } from './meal-log-user-recipes'
 
 import { atomWithStorage } from 'jotai/utils'
+
+const currentUserAtom = atomWithStorage<GetCurrentUserMeals | null>(
+	'currentUserMeals',
+	null,
+)
 
 export const dynamic = 'force-dynamic'
 
@@ -106,9 +111,6 @@ const Meal = ({
 	const { mutate: addMeal } = api.dailyLog.addMeal.useMutation({
 		onSettled: () => {
 			ctx.dailyLog.invalidate()
-		},
-		onSuccess: () => {
-			toast.success(`${recipeName} Added`)
 		},
 	})
 	const { mutate: deleteMeal } = api.dailyLog.deleteMeal.useMutation({
@@ -358,11 +360,6 @@ const Meal = ({
 	)
 }
 
-const currentUserAtom = atomWithStorage<GetCurrentUser | null>(
-	'currentUser',
-	null,
-)
-
 const MealList = ({
 	currentMeal: _currentMeal,
 	todaysLog,
@@ -371,7 +368,7 @@ const MealList = ({
 	setDay,
 }: {
 	currentMeal: number
-	currentUser: GetCurrentUser
+	currentUser: GetCurrentUserMeals
 	todaysLog: GetDailyLogById | null | undefined
 	today: Date
 	setDay: React.Dispatch<React.SetStateAction<Date>>
@@ -613,7 +610,7 @@ const MealLog = ({
 	})
 
 	const [cachedUser, setCachedUser] = useAtom(currentUserAtom) // Our persistent atom
-	const { data: apiCurrentUser } = api.user.getCurrentUser.useQuery(
+	const { data: apiCurrentUser } = api.user.getCurrentUserMeals.useQuery(
 		{ id: currentUserId },
 		{
 			// Prevents UI from flickering to 'null' when id changes
@@ -624,12 +621,12 @@ const MealLog = ({
 
 	useEffect(() => {
 		if (apiCurrentUser) {
-			const stringifiedData = JSON.stringify(apiCurrentUser)
-
-			const bytes = stringifiedData.length * 2
-			const kb = (bytes / 1024).toFixed(2)
-
-			console.log(`Estimated Size CurrentUser: ${kb} KB`)
+			// const stringifiedData = JSON.stringify(apiCurrentUser)
+			//
+			// const bytes = stringifiedData.length * 2
+			// const kb = (bytes / 1024).toFixed(2)
+			//
+			// console.log(`Estimated Size CurrentUser Meals: ${kb} KB`)
 			try {
 				setCachedUser(apiCurrentUser)
 			} catch (_err) {}

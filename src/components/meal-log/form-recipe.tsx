@@ -2,14 +2,12 @@
 
 import { api } from '@/trpc/react'
 
-import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/lib/utils'
 import type { GetRecipeById } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import NumberFlow from '@number-flow/react'
 import { PlusCircle } from 'lucide-react'
 import { useFieldArray, useForm } from 'react-hook-form'
-import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'

@@ -4982,7 +4982,59 @@ var get = {
       },
       with: {
         settings: true,
-        roles: true
+        roles: true,
+        supplementStacks: {
+          with: {
+            supplements: {
+              with: {
+                supplement: {
+                  columns: {
+                    id: true,
+                    name: true,
+                    serveSize: true,
+                    serveUnit: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+    return res;
+  }),
+  getCurrentUserMeals: protectedProcedure.input(z7.object({ id: z7.string() }).optional()).query(async ({ ctx, input }) => {
+    let userId = ctx.session?.user.id;
+    if (input?.id && input.id !== "") userId = input.id;
+    if (!userId) return null;
+    const res = await ctx.db.query.user.findFirst({
+      where: (user2, { eq: eq29 }) => eq29(user2.id, userId),
+      columns: {
+        id: true
+      },
+      with: {
+        roles: true,
+        userPlans: {
+          where: (plans, { eq: eq29 }) => eq29(plans.isActive, true),
+          with: {
+            userMeals: true,
+            userRecipes: true,
+            userIngredients: {
+              with: {
+                ingredient: {
+                  columns: {
+                    caloriesWOFibre: true,
+                    caloriesWFibre: true,
+                    protein: true,
+                    availableCarbohydrateWithSugarAlcohols: true,
+                    fatTotal: true,
+                    serveSize: true
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     });
     return res;

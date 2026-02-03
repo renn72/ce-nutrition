@@ -38,7 +38,7 @@ import { Pwa } from '@/components/layout/pwa'
 export const dynamic = 'force-dynamic'
 
 const currentUserAtom = atomWithStorage<GetUserWRoles | null>(
-	'currentUser',
+	'currentUserRoles',
 	null,
 )
 const dailyLogsCacheAtom = atomWithStorage<GetAllDailyLogs | null>(
@@ -73,8 +73,14 @@ const Mobile = ({
 
 	useEffect(() => {
 		if (apiDailyLogs) {
+			// const stringifiedData = JSON.stringify(apiDailyLogs.slice(-30))
+			//
+			// const bytes = stringifiedData.length * 2
+			// const kb = (bytes / 1024).toFixed(2)
+			//
+			// console.log(`Estimated Size Logs: ${kb} KB`)
 			try {
-				setCachedLogs(apiDailyLogs.slice(-20))
+				setCachedLogs(apiDailyLogs.slice(-30))
 			} catch (err) {
 				// @ts-ignore
 				toast(err.toString())
@@ -136,7 +142,7 @@ const Mobile = ({
 								defaultAmount={Number(
 									currentUser?.settings?.defaultWater ?? 600,
 								)}
-								settingsId={currentUser.settings.id}
+								settingsId={currentUser.settings.id || 0}
 							/>
 							<MealLog dailyLogs={dailyLogs} currentUserId={userId} />
 							{isSupplements ? (
@@ -200,12 +206,12 @@ export default function Home() {
 	)
 	useEffect(() => {
 		if (currentUser) {
-			const stringifiedData = JSON.stringify(currentUser)
-
-			const bytes = stringifiedData.length * 2
-			const kb = (bytes / 1024).toFixed(2)
-
-			console.log(`Estimated Size CurrentUserRoles: ${kb} KB`)
+			// const stringifiedData = JSON.stringify(currentUser)
+			//
+			// const bytes = stringifiedData.length * 2
+			// const kb = (bytes / 1024).toFixed(2)
+			//
+			// console.log(`Estimated Size CurrentUserRoles: ${kb} KB`)
 			try {
 				setCachedUser(currentUser)
 			} catch (_err) {
