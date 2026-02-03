@@ -1150,7 +1150,10 @@ var recipeToIngredient = createTable7(
     note: text7("note"),
     isUserCreated: int7("is_user_created", { mode: "boolean" }).default(false)
   },
-  (table) => [index7("recipe_to_ingredient_recipe_id_index").on(table.recipeId)]
+  (table) => [
+    index7("recipe_to_ingredient_recipe_id_index").on(table.recipeId),
+    index7("recipe_to_ingredient_ingredient_id_index").on(table.ingredientId)
+  ]
 );
 var recipeToIngredientRelations = relations7(
   recipeToIngredient,
@@ -1733,48 +1736,59 @@ var settings = createTable9("settings", {
 
 // src/server/db/schema/plan.ts
 import { relations as relations10, sql as sql10 } from "drizzle-orm";
-import { int as int11, sqliteTable as sqliteTable11, text as text10 } from "drizzle-orm/sqlite-core";
+import { int as int11, sqliteTable as sqliteTable11, text as text10, index as index10 } from "drizzle-orm/sqlite-core";
 
 // src/server/db/schema/meal.ts
 import { relations as relations9, sql as sql9 } from "drizzle-orm";
-import { int as int10, sqliteTable as sqliteTable10, text as text9 } from "drizzle-orm/sqlite-core";
+import { index as index9, int as int10, sqliteTable as sqliteTable10, text as text9 } from "drizzle-orm/sqlite-core";
 var createTable10 = sqliteTable10;
-var meal = createTable10("meal", {
-  id: int10("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int10("created_at", { mode: "timestamp" }).default(sql9`(unixepoch())`).notNull(),
-  updatedAt: int10("updated_at", { mode: "timestamp" }).$onUpdate(
-    () => /* @__PURE__ */ new Date()
-  ),
-  planId: int10("plan_id").references(() => plan.id, {
-    onDelete: "cascade"
-  }),
-  name: text9("name"),
-  description: text9("description"),
-  image: text9("image"),
-  notes: text9("notes"),
-  creatorId: text9("creator_id").references(() => user.id),
-  mealCategory: text9("meal_category"),
-  favouriteAt: int10("favourite_at", { mode: "timestamp" }),
-  deletedAt: int10("deleted_at", { mode: "timestamp" }),
-  hiddenAt: int10("hidden_at", { mode: "timestamp" }),
-  vegeNotes: text9("vege_notes"),
-  vege: text9("vege"),
-  vegeCalories: text9("vege_calories"),
-  mealIndex: int10("index", { mode: "number" }),
-  calories: text9("calories")
-});
-var mealToRecipe = createTable10("meal_to_recipe", {
-  id: int10("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int10("created_at", { mode: "timestamp" }).default(sql9`(unixepoch())`).notNull(),
-  mealId: int10("meal_id").references(() => meal.id, {
-    onDelete: "cascade"
-  }),
-  recipeId: int10("recipe_id").references(() => recipe.id, {
-    onDelete: "cascade"
-  }),
-  index: int10("index", { mode: "number" }).notNull(),
-  note: text9("note")
-});
+var meal = createTable10(
+  "meal",
+  {
+    id: int10("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int10("created_at", { mode: "timestamp" }).default(sql9`(unixepoch())`).notNull(),
+    updatedAt: int10("updated_at", { mode: "timestamp" }).$onUpdate(
+      () => /* @__PURE__ */ new Date()
+    ),
+    planId: int10("plan_id").references(() => plan.id, {
+      onDelete: "cascade"
+    }),
+    name: text9("name"),
+    description: text9("description"),
+    image: text9("image"),
+    notes: text9("notes"),
+    creatorId: text9("creator_id").references(() => user.id),
+    mealCategory: text9("meal_category"),
+    favouriteAt: int10("favourite_at", { mode: "timestamp" }),
+    deletedAt: int10("deleted_at", { mode: "timestamp" }),
+    hiddenAt: int10("hidden_at", { mode: "timestamp" }),
+    vegeNotes: text9("vege_notes"),
+    vege: text9("vege"),
+    vegeCalories: text9("vege_calories"),
+    mealIndex: int10("index", { mode: "number" }),
+    calories: text9("calories")
+  },
+  (table) => [index9("meal_plan_id_idx").on(table.planId)]
+);
+var mealToRecipe = createTable10(
+  "meal_to_recipe",
+  {
+    id: int10("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int10("created_at", { mode: "timestamp" }).default(sql9`(unixepoch())`).notNull(),
+    mealId: int10("meal_id").references(() => meal.id, {
+      onDelete: "cascade"
+    }),
+    recipeId: int10("recipe_id").references(() => recipe.id, {
+      onDelete: "cascade"
+    }),
+    index: int10("index", { mode: "number" }).notNull(),
+    note: text9("note")
+  },
+  (table) => [
+    index9("meal_to_recipe_meal_id_idx").on(table.mealId),
+    index9("meal_to_recipe_recipe_id_idx").on(table.recipeId)
+  ]
+);
 var vegeStack = createTable10("vege_stack", {
   id: int10("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   createdAt: int10("created_at", { mode: "timestamp" }).default(sql9`(unixepoch())`).notNull(),
@@ -1786,18 +1800,25 @@ var vegeStack = createTable10("vege_stack", {
   notes: text9("notes"),
   calories: text9("calories")
 });
-var mealToVegeStack = createTable10("meal_to_vege_stack", {
-  id: int10("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int10("created_at", { mode: "timestamp" }).default(sql9`(unixepoch())`).notNull(),
-  mealId: int10("meal_id").references(() => meal.id, {
-    onDelete: "cascade"
-  }),
-  vegeStackId: int10("vege_stack_id").references(() => vegeStack.id, {
-    onDelete: "cascade"
-  }),
-  calories: text9("calories"),
-  note: text9("note")
-});
+var mealToVegeStack = createTable10(
+  "meal_to_vege_stack",
+  {
+    id: int10("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int10("created_at", { mode: "timestamp" }).default(sql9`(unixepoch())`).notNull(),
+    mealId: int10("meal_id").references(() => meal.id, {
+      onDelete: "cascade"
+    }),
+    vegeStackId: int10("vege_stack_id").references(() => vegeStack.id, {
+      onDelete: "cascade"
+    }),
+    calories: text9("calories"),
+    note: text9("note")
+  },
+  (table) => [
+    index9("meal_to_vege_meal_id_idx").on(table.mealId),
+    index9("meal_to_vege_vege_id_idx").on(table.vegeStackId)
+  ]
+);
 var mealRelations = relations9(meal, ({ one, many }) => ({
   creator: one(user, { fields: [meal.creatorId], references: [user.id] }),
   mealToRecipe: many(mealToRecipe),
@@ -1837,40 +1858,54 @@ var mealToRecipeRelations = relations9(mealToRecipe, ({ one }) => ({
 
 // src/server/db/schema/plan.ts
 var createTable11 = sqliteTable11;
-var plan = createTable11("plan", {
-  id: int11("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int11("created_at", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
-  updatedAt: int11("updated_at", { mode: "timestamp" }).$onUpdate(
-    () => /* @__PURE__ */ new Date()
-  ),
-  name: text10("name"),
-  description: text10("description"),
-  image: text10("image"),
-  notes: text10("notes"),
-  numberOfMeals: int11("number_of_meals", { mode: "number" }),
-  creatorId: text10("creator_id").references(() => user.id),
-  isGlobal: int11("is_global", { mode: "boolean" }).default(false),
-  planCategory: text10("recipe_category"),
-  favouriteAt: int11("favourite_at", { mode: "timestamp" }),
-  deletedAt: int11("deleted_at", { mode: "timestamp" }),
-  hiddenAt: int11("hidden_at", { mode: "timestamp" }),
-  planFolderId: int11("plan_folder_id").references(() => planFolder.id)
-});
-var planToMeal = createTable11("plan_to_meal", {
-  id: int11("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int11("created_at", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
-  planId: int11("plan_id").references(() => plan.id, {
-    onDelete: "cascade"
-  }),
-  mealId: int11("meal_id").references(() => meal.id, {
-    onDelete: "cascade"
-  }),
-  mealIndex: int11("index", { mode: "number" }),
-  mealTitle: text10("meal_title"),
-  calories: text10("calories"),
-  vegeCalories: text10("vege_calories"),
-  note: text10("note")
-});
+var plan = createTable11(
+  "plan",
+  {
+    id: int11("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int11("created_at", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
+    updatedAt: int11("updated_at", { mode: "timestamp" }).$onUpdate(
+      () => /* @__PURE__ */ new Date()
+    ),
+    name: text10("name"),
+    description: text10("description"),
+    image: text10("image"),
+    notes: text10("notes"),
+    numberOfMeals: int11("number_of_meals", { mode: "number" }),
+    creatorId: text10("creator_id").references(() => user.id),
+    isGlobal: int11("is_global", { mode: "boolean" }).default(false),
+    planCategory: text10("recipe_category"),
+    favouriteAt: int11("favourite_at", { mode: "timestamp" }),
+    deletedAt: int11("deleted_at", { mode: "timestamp" }),
+    hiddenAt: int11("hidden_at", { mode: "timestamp" }),
+    planFolderId: int11("plan_folder_id").references(() => planFolder.id)
+  },
+  (table) => [
+    index10("plan_user_id_idx").on(table.creatorId),
+    index10("plan_createAt_id_idx").on(table.createdAt)
+  ]
+);
+var planToMeal = createTable11(
+  "plan_to_meal",
+  {
+    id: int11("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int11("created_at", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
+    planId: int11("plan_id").references(() => plan.id, {
+      onDelete: "cascade"
+    }),
+    mealId: int11("meal_id").references(() => meal.id, {
+      onDelete: "cascade"
+    }),
+    mealIndex: int11("index", { mode: "number" }),
+    mealTitle: text10("meal_title"),
+    calories: text10("calories"),
+    vegeCalories: text10("vege_calories"),
+    note: text10("note")
+  },
+  (table) => [
+    index10("plan_to_meal_plan_id_idx").on(table.planId),
+    index10("plan_to_meal_meal_id_idx").on(table.mealId)
+  ]
+);
 var planRelations = relations10(plan, ({ one, many }) => ({
   creator: one(user, { fields: [plan.creatorId], references: [user.id] }),
   planToMeal: many(planToMeal),
@@ -2542,9 +2577,9 @@ var BaseGenerator = class {
     const extraConfigBuilder = table[ExtraConfigBuilder];
     const extraConfigColumns = table[ExtraConfigColumns];
     const extraConfig = extraConfigBuilder?.(extraConfigColumns ?? {});
-    const builtIndexes = (Array.isArray(extraConfig) ? extraConfig : Object.values(extraConfig ?? {})).map((b) => b?.build(table)).filter((b) => b !== void 0).filter((index10) => !(is(index10, PgCheck) || is(index10, MySqlCheck) || is(index10, SQLiteCheck)));
+    const builtIndexes = (Array.isArray(extraConfig) ? extraConfig : Object.values(extraConfig ?? {})).map((b) => b?.build(table)).filter((b) => b !== void 0).filter((index11) => !(is(index11, PgCheck) || is(index11, MySqlCheck) || is(index11, SQLiteCheck)));
     const fks = builtIndexes.filter(
-      (index10) => is(index10, PgForeignKey) || is(index10, MySqlForeignKey) || is(index10, SQLiteForeignKey)
+      (index11) => is(index11, PgForeignKey) || is(index11, MySqlForeignKey) || is(index11, SQLiteForeignKey)
     );
     if (!this.relational) {
       this.generateForeignKeys(fks);
@@ -2553,26 +2588,26 @@ var BaseGenerator = class {
       const indexes = extraConfig ?? {};
       dbml.newLine().tab().insert("indexes {").newLine();
       for (const indexName in indexes) {
-        const index10 = indexes[indexName].build(table);
+        const index11 = indexes[indexName].build(table);
         dbml.tab(2);
-        if (is(index10, PgIndex) || is(index10, MySqlIndex) || is(index10, SQLiteIndex)) {
-          const configColumns = index10.config.columns.flatMap(
+        if (is(index11, PgIndex) || is(index11, MySqlIndex) || is(index11, SQLiteIndex)) {
+          const configColumns = index11.config.columns.flatMap(
             (entry) => is(entry, SQL) ? entry.queryChunks.filter((v) => is(v, Column)) : entry
           );
           const idxColumns = wrapColumns(
             configColumns,
             this.buildQueryConfig.escapeName
           );
-          const idxProperties = index10.config.name ? ` [name: '${index10.config.name}'${index10.config.unique ? ", unique" : ""}]` : "";
+          const idxProperties = index11.config.name ? ` [name: '${index11.config.name}'${index11.config.unique ? ", unique" : ""}]` : "";
           dbml.insert(`${idxColumns}${idxProperties}`);
         }
-        if (is(index10, PgPrimaryKey) || is(index10, MySqlPrimaryKey) || is(index10, SQLitePrimaryKey)) {
-          const pkColumns = wrapColumns(index10.columns, this.buildQueryConfig.escapeName);
+        if (is(index11, PgPrimaryKey) || is(index11, MySqlPrimaryKey) || is(index11, SQLitePrimaryKey)) {
+          const pkColumns = wrapColumns(index11.columns, this.buildQueryConfig.escapeName);
           dbml.insert(`${pkColumns} [pk]`);
         }
-        if (is(index10, PgUniqueConstraint) || is(index10, MySqlUniqueConstraint) || is(index10, SQLiteUniqueConstraint)) {
-          const uqColumns = wrapColumns(index10.columns, this.buildQueryConfig.escapeName);
-          const uqProperties = index10.name ? `[name: '${index10.name}', unique]` : "[unique]";
+        if (is(index11, PgUniqueConstraint) || is(index11, MySqlUniqueConstraint) || is(index11, SQLiteUniqueConstraint)) {
+          const uqColumns = wrapColumns(index11.columns, this.buildQueryConfig.escapeName);
+          const uqProperties = index11.name ? `[name: '${index11.name}', unique]` : "[unique]";
           dbml.insert(`${uqColumns} ${uqProperties}`);
         }
         dbml.newLine();
@@ -5913,6 +5948,16 @@ var planRouter = createTRPCRouter({
     });
     return res;
   }),
+  getAllMySimple: protectedProcedure.input(z15.object({ userId: z15.string() })).query(async ({ ctx, input }) => {
+    const res = await ctx.db.query.plan.findMany({
+      orderBy: [desc4(plan.createdAt)],
+      where: (plan2, { eq: eq29 }) => eq29(plan2.creatorId, input.userId),
+      with: {
+        creator: true
+      }
+    });
+    return res;
+  }),
   getAllSimple: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.plan.findMany({
       orderBy: [desc4(plan.createdAt)],
@@ -5983,6 +6028,16 @@ var planRouter = createTRPCRouter({
             }
           }
         }
+      }
+    });
+    return res;
+  }),
+  getSimple: protectedProcedure.input(z15.object({ id: z15.number() })).query(async ({ input, ctx }) => {
+    if (input.id === 0) return null;
+    const res = await ctx.db.query.plan.findFirst({
+      where: (plan2, { eq: eq29 }) => eq29(plan2.id, input.id),
+      with: {
+        creator: true
       }
     });
     return res;

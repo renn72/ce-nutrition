@@ -66,7 +66,9 @@ export type GetAllMeals = RouterOutputs['meal']['getAll']
 export type GetMealById = RouterOutputs['meal']['get']
 
 export type GetAllPlans = RouterOutputs['plan']['getAll']
+export type GetAllPlansSimple = RouterOutputs['plan']['getAllSimple']
 export type GetPlanById = RouterOutputs['plan']['get']
+export type GetPlanByIdSimple = RouterOutputs['plan']['getSimple']
 export type GetAllPlansName = RouterOutputs['plan']['getAllName']
 
 export type UserPlan = RouterOutputs['userPlan']['get']

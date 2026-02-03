@@ -17909,6 +17909,56 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             }[];
             meta: object;
         }>;
+        getAllMySimple: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                id: number;
+                name: string | null;
+                notes: string | null;
+                image: string | null;
+                createdAt: Date;
+                updatedAt: Date | null;
+                description: string | null;
+                numberOfMeals: number | null;
+                creatorId: string | null;
+                favouriteAt: Date | null;
+                deletedAt: Date | null;
+                hiddenAt: Date | null;
+                isGlobal: boolean | null;
+                planCategory: string | null;
+                planFolderId: number | null;
+                creator: {
+                    id: string;
+                    name: string | null;
+                    firstName: string | null;
+                    lastName: string | null;
+                    clerkId: string | null;
+                    birthDate: Date | null;
+                    gender: string | null;
+                    address: string | null;
+                    notes: string | null;
+                    instagram: string | null;
+                    openLifter: string | null;
+                    phone: string | null;
+                    email: string | null;
+                    emailVerified: Date | null;
+                    password: string | null;
+                    currentPlanId: number | null;
+                    image: string | null;
+                    isActive: boolean | null;
+                    isFake: boolean | null;
+                    isTrainer: boolean | null;
+                    isRoot: boolean | null;
+                    isCreator: boolean | null;
+                    isAllTrainers: boolean | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                } | null;
+            }[];
+            meta: object;
+        }>;
         getAllSimple: _trpc_server.TRPCQueryProcedure<{
             input: void;
             output: {
@@ -18333,6 +18383,56 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     }[];
                 }[];
             }[];
+            meta: object;
+        }>;
+        getSimple: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                id: number;
+            };
+            output: {
+                id: number;
+                name: string | null;
+                notes: string | null;
+                image: string | null;
+                createdAt: Date;
+                updatedAt: Date | null;
+                description: string | null;
+                numberOfMeals: number | null;
+                creatorId: string | null;
+                favouriteAt: Date | null;
+                deletedAt: Date | null;
+                hiddenAt: Date | null;
+                isGlobal: boolean | null;
+                planCategory: string | null;
+                planFolderId: number | null;
+                creator: {
+                    id: string;
+                    name: string | null;
+                    firstName: string | null;
+                    lastName: string | null;
+                    clerkId: string | null;
+                    birthDate: Date | null;
+                    gender: string | null;
+                    address: string | null;
+                    notes: string | null;
+                    instagram: string | null;
+                    openLifter: string | null;
+                    phone: string | null;
+                    email: string | null;
+                    emailVerified: Date | null;
+                    password: string | null;
+                    currentPlanId: number | null;
+                    image: string | null;
+                    isActive: boolean | null;
+                    isFake: boolean | null;
+                    isTrainer: boolean | null;
+                    isRoot: boolean | null;
+                    isCreator: boolean | null;
+                    isAllTrainers: boolean | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                } | null;
+            } | null | undefined;
             meta: object;
         }>;
         get: _trpc_server.TRPCQueryProcedure<{
@@ -25694,6 +25794,56 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             }[];
             meta: object;
         }>;
+        getAllMySimple: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                id: number;
+                name: string | null;
+                notes: string | null;
+                image: string | null;
+                createdAt: Date;
+                updatedAt: Date | null;
+                description: string | null;
+                numberOfMeals: number | null;
+                creatorId: string | null;
+                favouriteAt: Date | null;
+                deletedAt: Date | null;
+                hiddenAt: Date | null;
+                isGlobal: boolean | null;
+                planCategory: string | null;
+                planFolderId: number | null;
+                creator: {
+                    id: string;
+                    name: string | null;
+                    firstName: string | null;
+                    lastName: string | null;
+                    clerkId: string | null;
+                    birthDate: Date | null;
+                    gender: string | null;
+                    address: string | null;
+                    notes: string | null;
+                    instagram: string | null;
+                    openLifter: string | null;
+                    phone: string | null;
+                    email: string | null;
+                    emailVerified: Date | null;
+                    password: string | null;
+                    currentPlanId: number | null;
+                    image: string | null;
+                    isActive: boolean | null;
+                    isFake: boolean | null;
+                    isTrainer: boolean | null;
+                    isRoot: boolean | null;
+                    isCreator: boolean | null;
+                    isAllTrainers: boolean | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                } | null;
+            }[];
+            meta: object;
+        }>;
         getAllSimple: _trpc_server.TRPCQueryProcedure<{
             input: void;
             output: {
@@ -26118,6 +26268,56 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     }[];
                 }[];
             }[];
+            meta: object;
+        }>;
+        getSimple: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                id: number;
+            };
+            output: {
+                id: number;
+                name: string | null;
+                notes: string | null;
+                image: string | null;
+                createdAt: Date;
+                updatedAt: Date | null;
+                description: string | null;
+                numberOfMeals: number | null;
+                creatorId: string | null;
+                favouriteAt: Date | null;
+                deletedAt: Date | null;
+                hiddenAt: Date | null;
+                isGlobal: boolean | null;
+                planCategory: string | null;
+                planFolderId: number | null;
+                creator: {
+                    id: string;
+                    name: string | null;
+                    firstName: string | null;
+                    lastName: string | null;
+                    clerkId: string | null;
+                    birthDate: Date | null;
+                    gender: string | null;
+                    address: string | null;
+                    notes: string | null;
+                    instagram: string | null;
+                    openLifter: string | null;
+                    phone: string | null;
+                    email: string | null;
+                    emailVerified: Date | null;
+                    password: string | null;
+                    currentPlanId: number | null;
+                    image: string | null;
+                    isActive: boolean | null;
+                    isFake: boolean | null;
+                    isTrainer: boolean | null;
+                    isRoot: boolean | null;
+                    isCreator: boolean | null;
+                    isAllTrainers: boolean | null;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                } | null;
+            } | null | undefined;
             meta: object;
         }>;
         get: _trpc_server.TRPCQueryProcedure<{

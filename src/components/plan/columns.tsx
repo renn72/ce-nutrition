@@ -5,7 +5,7 @@ import {
 	HoverCardTrigger,
 } from '@/components/ui/hover-card'
 import { formatDate } from '@/lib/utils'
-import type { GetPlanById } from '@/types'
+import type { GetPlanByIdSimple } from '@/types'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { Badge } from '@/components/ui/badge'
@@ -17,7 +17,7 @@ import { DataTableRowActions } from './data-table-row-actions'
 import { PlanPreview } from './plan-preview'
 import { CheckCircle } from 'lucide-react'
 
-export const columns: ColumnDef<GetPlanById>[] = [
+export const columns: ColumnDef<GetPlanByIdSimple>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (
@@ -63,18 +63,18 @@ export const columns: ColumnDef<GetPlanById>[] = [
 			)
 		},
 	},
-	{
-		accessorKey: 'preview',
-		header: ({ column }) => <DataTableColumnHeader column={column} title='' />,
-		cell: ({ row }) => {
-			return (
-				<div className='flex space-x-2'>
-					<PlanPreview plan={row.original as GetPlanById} />
-				</div>
-			)
-		},
-		enableSorting: false,
-	},
+	// {
+	// 	accessorKey: 'preview',
+	// 	header: ({ column }) => <DataTableColumnHeader column={column} title='' />,
+	// 	cell: ({ row }) => {
+	// 		return (
+	// 			<div className='flex space-x-2'>
+	// 				<PlanPreview plan={row.original as GetPlanById} />
+	// 			</div>
+	// 		)
+	// 	},
+	// 	enableSorting: false,
+	// },
 	{
 		accessorKey: 'name',
 		header: ({ column }) => (
@@ -96,37 +96,35 @@ export const columns: ColumnDef<GetPlanById>[] = [
 			<DataTableColumnHeader column={column} title='Meals' />
 		),
 		cell: ({ row }) => {
-			const plan = row.original as GetPlanById
-			const numberOfMeals = plan?.meals?.length
 			return (
 				<div className='flex space-x-2'>
 					<span className='font-medium truncate lg:w-[110px]'>
-						{numberOfMeals}
+						{row.getValue('numberOfMeals')}
 					</span>
 				</div>
 			)
 		},
 	},
-	{
-		accessorKey: 'numberOfRecipes',
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Recipes' />
-		),
-		cell: ({ row }) => {
-			const plan = row.original as GetPlanById
-			const numberOfRecipes = plan?.meals?.reduce(
-				(acc, meal) => acc + meal.mealToRecipe.length,
-				0,
-			)
-			return (
-				<div className='flex space-x-2'>
-					<span className='font-medium truncate lg:w-[110px]'>
-						{numberOfRecipes}
-					</span>
-				</div>
-			)
-		},
-	},
+	// {
+	// 	accessorKey: 'numberOfRecipes',
+	// 	header: ({ column }) => (
+	// 		<DataTableColumnHeader column={column} title='Recipes' />
+	// 	),
+	// 	cell: ({ row }) => {
+	// 		const plan = row.original as GetPlanById
+	// 		const numberOfRecipes = plan?.meals?.reduce(
+	// 			(acc, meal) => acc + meal.mealToRecipe.length,
+	// 			0,
+	// 		)
+	// 		return (
+	// 			<div className='flex space-x-2'>
+	// 				<span className='font-medium truncate lg:w-[110px]'>
+	// 					{numberOfRecipes}
+	// 				</span>
+	// 			</div>
+	// 		)
+	// 	},
+	// },
 	{
 		accessorKey: 'notes',
 		header: ({ column }) => (
@@ -168,7 +166,7 @@ export const columns: ColumnDef<GetPlanById>[] = [
 			<DataTableColumnHeader column={column} title='Creator' />
 		),
 		cell: ({ row }) => {
-			const plan = row.original as GetPlanById
+			const plan = row.original as GetPlanByIdSimple
 			return (
 				<div className='flex space-x-2'>
 					<Badge variant='secondary' className='truncate'>
@@ -184,7 +182,7 @@ export const columns: ColumnDef<GetPlanById>[] = [
 			<DataTableColumnHeader column={column} title='Global' />
 		),
 		cell: ({ row }) => {
-			const plan = row.original as GetPlanById
+			const plan = row.original as GetPlanByIdSimple
 			return (
 				<div className='flex justify-center space-x-2'>
 					{plan?.isGlobal ? (

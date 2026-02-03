@@ -8,16 +8,18 @@ import { Switch } from '@/components/ui/switch'
 import { api } from '@/trpc/react'
 
 import { DataTable } from '@/components/plan/data-table'
-import { DataTableSkeleton } from '@/components/table/data-table-skeleton'
 
-import type { GetAllPlans } from '@/types'
+import type { GetAllPlansSimple } from '@/types'
 
 import { atomWithStorage } from 'jotai/utils'
 
 import { isAllPlansAtom } from '@/atoms'
 
-const allPlansAtom = atomWithStorage<GetAllPlans | null>('all-plans', null)
-const allYourPlansAtom = atomWithStorage<GetAllPlans | null>(
+const allPlansAtom = atomWithStorage<GetAllPlansSimple | null>(
+	'all-plans',
+	null,
+)
+const allYourPlansAtom = atomWithStorage<GetAllPlansSimple | null>(
 	'all-your-plans',
 	null,
 )
@@ -26,8 +28,8 @@ const LoadTable = ({ userId }: { userId: string }) => {
 	const [allPlansCache, setAllPlansCache] = useAtom(allPlansAtom)
 	const [allMyPlansCache, setAllMyPlansCache] = useAtom(allYourPlansAtom)
 
-	const { data: apiAllPlans } = api.plan.getAll.useQuery()
-	const { data: apiMyPlans } = api.plan.getAllMy.useQuery({
+	const { data: apiAllPlans } = api.plan.getAllSimple.useQuery()
+	const { data: apiMyPlans } = api.plan.getAllMySimple.useQuery({
 		userId: userId,
 	})
 

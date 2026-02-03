@@ -7,17 +7,16 @@ import { useSearchParams } from 'next/navigation'
 import { FormPlan } from '@/components/plan-form/form-plan'
 
 export default function Home() {
-  const { data, isLoading } = api.plan.getAll.useQuery()
-  const searchParams = useSearchParams()
-  const i = searchParams.get('plan')
+	const searchParams = useSearchParams()
+	const i = searchParams.get('plan')
+	const { data: plan, isLoading } = api.plan.get.useQuery({ id: Number(i) })
 
-  const plan = data?.find((plan) => plan.id === Number(i))
+	if (isLoading) return null
+	if (!plan) return null
 
-  if (isLoading) return null
-
-  return (
-    <div className='flex flex-col max-w-7xl w-full mx-auto mt-0'>
-      <FormPlan plan={plan} />
-    </div>
-  )
+	return (
+		<div className='flex flex-col mx-auto mt-0 w-full max-w-7xl'>
+			<FormPlan plan={plan} />
+		</div>
+	)
 }

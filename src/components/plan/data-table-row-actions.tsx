@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dialog'
 import { useRouter } from 'next/navigation'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-import { Row } from '@tanstack/react-table'
+import type { Row } from '@tanstack/react-table'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -23,7 +23,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { GetPlanById } from '@/types'
+import type { GetPlanByIdSimple } from '@/types'
 import { Loader2 } from 'lucide-react'
 
 interface DataTableRowActionsProps<TData> {
@@ -56,7 +56,7 @@ export function DataTableRowActions<TData>({
 				setIsLoading(true)
 			},
 		})
-	const data = row.original as GetPlanById
+	const data = row.original as GetPlanByIdSimple
 	const [category, setCategory] = useState(data?.planCategory || '')
 	return (
 		<>

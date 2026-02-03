@@ -52,6 +52,18 @@ export const planRouter = createTRPCRouter({
 		})
 		return res
 	}),
+	getAllMySimple: protectedProcedure
+		.input(z.object({ userId: z.string() }))
+		.query(async ({ ctx, input }) => {
+			const res = await ctx.db.query.plan.findMany({
+				orderBy: [desc(plan.createdAt)],
+				where: (plan, { eq }) => eq(plan.creatorId, input.userId),
+				with: {
+					creator: true,
+				},
+			})
+			return res
+		}),
 	getAllSimple: protectedProcedure.query(async ({ ctx }) => {
 		const res = await ctx.db.query.plan.findMany({
 			orderBy: [desc(plan.createdAt)],
@@ -128,6 +140,18 @@ export const planRouter = createTRPCRouter({
 		})
 		return res
 	}),
+	getSimple: protectedProcedure
+		.input(z.object({ id: z.number() }))
+		.query(async ({ input, ctx }) => {
+			if (input.id === 0) return null
+			const res = await ctx.db.query.plan.findFirst({
+				where: (plan, { eq }) => eq(plan.id, input.id),
+				with: {
+					creator: true,
+				},
+			})
+			return res
+		}),
 	get: protectedProcedure
 		.input(z.object({ id: z.number() }))
 		.query(async ({ input, ctx }) => {

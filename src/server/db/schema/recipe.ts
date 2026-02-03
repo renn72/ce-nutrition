@@ -6,80 +6,88 @@ import { user } from './user'
 
 const createTable = sqliteTable
 
-export const recipe = createTable('recipe', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
-    .default(sql`(unixepoch())`)
-    .notNull(),
-  updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-    () => new Date(),
-  ),
-  name: text('name').notNull(),
-  description: text('description').notNull(),
-  image: text('image').notNull(),
-  notes: text('notes').notNull(),
-  calories: int('calories', { mode: 'number' }).notNull(),
-  creatorId: text('creator_id')
-    .references(() => user.id)
-    .notNull(),
-  isUserRecipe: int('is_user_recipe', { mode: 'boolean' }).default(false),
-  isGlobal: int('is_global', { mode: 'boolean' }).default(false),
-  recipeCategory: text('recipe_category').notNull(),
-  favouriteAt: int('favourite_at', { mode: 'timestamp' }),
-  deletedAt: int('deleted_at', { mode: 'timestamp' }),
-  hiddenAt: int('hidden_at', { mode: 'timestamp' }),
-},
-  (table) => [index('recipe_user_id_idx').on(table.creatorId),
-    index('recipe_is_user_recipe_idx').on(table.isUserRecipe),
-  ],
+export const recipe = createTable(
+	'recipe',
+	{
+		id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+		createdAt: int('created_at', { mode: 'timestamp' })
+			.default(sql`(unixepoch())`)
+			.notNull(),
+		updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+			() => new Date(),
+		),
+		name: text('name').notNull(),
+		description: text('description').notNull(),
+		image: text('image').notNull(),
+		notes: text('notes').notNull(),
+		calories: int('calories', { mode: 'number' }).notNull(),
+		creatorId: text('creator_id')
+			.references(() => user.id)
+			.notNull(),
+		isUserRecipe: int('is_user_recipe', { mode: 'boolean' }).default(false),
+		isGlobal: int('is_global', { mode: 'boolean' }).default(false),
+		recipeCategory: text('recipe_category').notNull(),
+		favouriteAt: int('favourite_at', { mode: 'timestamp' }),
+		deletedAt: int('deleted_at', { mode: 'timestamp' }),
+		hiddenAt: int('hidden_at', { mode: 'timestamp' }),
+	},
+	(table) => [
+		index('recipe_user_id_idx').on(table.creatorId),
+		index('recipe_is_user_recipe_idx').on(table.isUserRecipe),
+	],
 )
 
-export const recipeToIngredient = createTable('recipe_to_ingredient', {
-  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-  createdAt: int('created_at', { mode: 'timestamp' })
-    .default(sql`(unixepoch())`)
-    .notNull(),
-  recipeId: int('recipe_id')
-    .references(() => recipe.id, {
-      onDelete: 'cascade',
-    })
-    .notNull(),
-  ingredientId: int('ingredient_id')
-    .references(() => ingredient.id, {
-      onDelete: 'cascade',
-    })
-    .notNull(),
-  index: int('index', { mode: 'number' }).notNull(),
-  alternateId: int('alternate_id').references(() => ingredient.id),
-  serveSize: text('serve').notNull(),
-  serveUnit: text('serve_unit').notNull(),
-  note: text('note'),
-  isUserCreated: int('is_user_created', { mode: 'boolean' }).default(false),
-},
-  (table) => [index('recipe_to_ingredient_recipe_id_index').on(table.recipeId)],
+export const recipeToIngredient = createTable(
+	'recipe_to_ingredient',
+	{
+		id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+		createdAt: int('created_at', { mode: 'timestamp' })
+			.default(sql`(unixepoch())`)
+			.notNull(),
+		recipeId: int('recipe_id')
+			.references(() => recipe.id, {
+				onDelete: 'cascade',
+			})
+			.notNull(),
+		ingredientId: int('ingredient_id')
+			.references(() => ingredient.id, {
+				onDelete: 'cascade',
+			})
+			.notNull(),
+		index: int('index', { mode: 'number' }).notNull(),
+		alternateId: int('alternate_id').references(() => ingredient.id),
+		serveSize: text('serve').notNull(),
+		serveUnit: text('serve_unit').notNull(),
+		note: text('note'),
+		isUserCreated: int('is_user_created', { mode: 'boolean' }).default(false),
+	},
+	(table) => [
+		index('recipe_to_ingredient_recipe_id_index').on(table.recipeId),
+		index('recipe_to_ingredient_ingredient_id_index').on(table.ingredientId),
+	],
 )
 
 export const recipeToIngredientRelations = relations(
-  recipeToIngredient,
-  ({ one }) => ({
-    recipe: one(recipe, {
-      fields: [recipeToIngredient.recipeId],
-      references: [recipe.id],
-    }),
-    ingredient: one(ingredient, {
-      fields: [recipeToIngredient.ingredientId],
-      references: [ingredient.id],
-      relationName: 'ingredient',
-    }),
-    alternateIngredient: one(ingredient, {
-      fields: [recipeToIngredient.alternateId],
-      references: [ingredient.id],
-      relationName: 'alternateIngredient',
-    })
-  }),
+	recipeToIngredient,
+	({ one }) => ({
+		recipe: one(recipe, {
+			fields: [recipeToIngredient.recipeId],
+			references: [recipe.id],
+		}),
+		ingredient: one(ingredient, {
+			fields: [recipeToIngredient.ingredientId],
+			references: [ingredient.id],
+			relationName: 'ingredient',
+		}),
+		alternateIngredient: one(ingredient, {
+			fields: [recipeToIngredient.alternateId],
+			references: [ingredient.id],
+			relationName: 'alternateIngredient',
+		}),
+	}),
 )
 
 export const recipeRelations = relations(recipe, ({ one, many }) => ({
-  creator: one(user, { fields: [recipe.creatorId], references: [user.id] }),
-  recipeToIngredient: many(recipeToIngredient),
+	creator: one(user, { fields: [recipe.creatorId], references: [user.id] }),
+	recipeToIngredient: many(recipeToIngredient),
 }))

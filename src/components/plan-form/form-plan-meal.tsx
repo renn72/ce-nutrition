@@ -110,12 +110,12 @@ const Recipe = ({
 	if (!recipes) return null
 
 	return (
-		<div className='grid grid-cols-4 lg:grid-cols-9 gap-1 py-1 items-center text-sm relative'>
+		<div className='grid relative grid-cols-4 gap-1 items-center py-1 text-sm lg:grid-cols-9'>
 			<FormField
 				control={form.control}
 				name={`meals.${mealIndex}.recipes.${recipeIndex}.recipeId`}
 				render={({ field }) => (
-					<FormItem className='w-full col-span-5 flex'>
+					<FormItem className='flex col-span-5 w-full'>
 						<Popover open={isOpen} onOpenChange={setOpen}>
 							<PopoverTrigger asChild>
 								<FormControl>
@@ -136,7 +136,7 @@ const Recipe = ({
 									</Button>
 								</FormControl>
 							</PopoverTrigger>
-							<PopoverContent className='w-[800px] p-0'>
+							<PopoverContent className='p-0 w-[800px]'>
 								<Command>
 									<CommandInput
 										placeholder='Search recipes...'
@@ -189,7 +189,7 @@ const Recipe = ({
 						{isMobile ? (
 							<CircleX
 								size={20}
-								className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
+								className='transition-transform cursor-pointer hover:scale-110 active:scale-90 text-muted-foreground hover:text-foreground'
 								onClick={() => remove(recipeIndex)}
 							/>
 						) : null}
@@ -200,8 +200,8 @@ const Recipe = ({
 				// biome-ignore lint/complexity/noUselessFragments: fuck off
 				<>
 					{isMobile ? (
-						<div className='flex flex-col gap-0 col-span-4'>
-							<div className='grid grid-cols-4 gap-1 items-center capitalize place-items-center text-muted-foreground font-medium'>
+						<div className='flex flex-col col-span-4 gap-0'>
+							<div className='grid grid-cols-4 gap-1 items-center place-items-center font-medium capitalize text-muted-foreground'>
 								<div>cals</div>
 								<div>protein</div>
 								<div>carbs</div>
@@ -227,7 +227,7 @@ const Recipe = ({
 			{isMobile ? null : (
 				<CircleX
 					size={20}
-					className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer absolute right-0 top-1/2 -translate-y-1/2'
+					className='absolute right-0 top-1/2 transition-transform -translate-y-1/2 cursor-pointer hover:scale-110 active:scale-90 text-muted-foreground hover:text-foreground'
 					onClick={() => remove(recipeIndex)}
 				/>
 			)}
@@ -251,34 +251,30 @@ const FormPlanMeal = ({
 }) => {
 	const isMobile = useIsMobile()
 	const ctx = api.useUtils()
-	const allMeals = ctx.meal.getAll.getData()
 
 	const [isVege, setIsVege] = useState(false)
 
 	const calories =
 		Number(form.watch(`meals.${index}.calories`)) -
 		Number(form.watch(`meals.${index}.vegeCalories`))
-	const selectedMeal = allMeals?.find((meal) => meal.id === Number(0))
 
 	const { fields, append, remove } = useFieldArray({
 		control: form.control,
 		name: `meals.${index}.recipes`,
 	})
 
-	if (!allMeals) return <div />
-
 	return (
 		<Card key={index} className='w-full'>
-			<CardHeader className='pb-2 pt-4 bg-background  w-full'>
-				<div className='flex w-full justify-between'>
+			<CardHeader className='pt-4 pb-2 w-full bg-background'>
+				<div className='flex justify-between w-full'>
 					<div className='flex gap-0 items-center'>
-						<CardTitle className='text-3xl mr-8'>Meal {index + 1}</CardTitle>
+						<CardTitle className='mr-8 text-3xl'>Meal {index + 1}</CardTitle>
 						<Button
 							variant='ghost'
 							className='w-min'
 							onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
+								e.stopPropagation()
+								e.preventDefault()
 								if (index === 0) return
 								move(index, index - 1)
 							}}
@@ -289,11 +285,11 @@ const FormPlanMeal = ({
 							variant='ghost'
 							className='w-min'
 							onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                console.log(index, fields.length, form.watch('meals').length)
-                const length = form.watch('meals').length - 1
-                if (index === length) return
+								e.stopPropagation()
+								e.preventDefault()
+								console.log(index, fields.length, form.watch('meals').length)
+								const length = form.watch('meals').length - 1
+								if (index === length) return
 								move(index, index + 1)
 							}}
 						>
@@ -302,15 +298,15 @@ const FormPlanMeal = ({
 					</div>
 					<CircleX
 						size={24}
-						className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
+						className='transition-transform cursor-pointer hover:scale-110 active:scale-90 text-muted-foreground hover:text-foreground'
 						onClick={() => removeMeal(index)}
 					/>
 				</div>
 			</CardHeader>
-			<CardContent className='bg-background px-2 lg:px-6'>
+			<CardContent className='px-2 lg:px-6 bg-background'>
 				<div
 					key={index}
-					className='grid grid-cols-1 lg:grid-cols-5 gap-1 w-full py-2 '
+					className='grid grid-cols-1 gap-1 py-2 w-full lg:grid-cols-5'
 				>
 					<div className='flex flex-col gap-2'>
 						<FormField
@@ -422,10 +418,10 @@ const FormPlanMeal = ({
 						)}
 						<Button
 							variant='secondary'
-							className='w-min mt-4'
-							onClick={(e) =>{
-                e.stopPropagation()
-                e.preventDefault()
+							className='mt-4 w-min'
+							onClick={(e) => {
+								e.stopPropagation()
+								e.preventDefault()
 								insertMeal(index + 1, {
 									mealTitle: 'copy',
 									calories: form.getValues(`meals.${index}.calories`),
@@ -446,12 +442,12 @@ const FormPlanMeal = ({
 						</Button>
 					</div>
 
-					<div className='flex flex-col gap-0 col-span-4 lg:ml-4 divide-y divide-border'>
+					<div className='flex flex-col col-span-4 gap-0 divide-y lg:ml-4 divide-border'>
 						{isMobile ? (
 							<div className='mt-1' />
 						) : (
-							<div className='grid grid-cols-9 gap-1 capitalize py-1'>
-								<div className='col-span-5 ' />
+							<div className='grid grid-cols-9 gap-1 py-1 capitalize'>
+								<div className='col-span-5' />
 								<div>cals</div>
 								<div>protein</div>
 								<div>carbs</div>
@@ -468,10 +464,10 @@ const FormPlanMeal = ({
 								remove={remove}
 							/>
 						))}
-						<div className='flex justify-center w-full pt-4'>
+						<div className='flex justify-center pt-4 w-full'>
 							<CirclePlus
 								size={20}
-								className='text-muted-foreground hover:text-foreground hover:scale-110 active:scale-90 transition-transform cursor-pointer'
+								className='transition-transform cursor-pointer hover:scale-110 active:scale-90 text-muted-foreground hover:text-foreground'
 								onClick={() =>
 									append({
 										recipeId: '',
