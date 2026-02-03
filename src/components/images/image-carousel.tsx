@@ -104,7 +104,7 @@ const Item = ({
 				) : null}
 			</AnimatePresence>
 			<div className='p-1'>
-				<Card className='transition-shadow cursor-pointer hover:shadow-lg'>
+				<Card className='cursor-pointer'>
 					<div className='flex flex-col'>
 						<h3 className='text-sm font-medium text-center text-muted-foreground'>
 							{new Date(image.date).toLocaleDateString('en-AU')}
@@ -117,7 +117,7 @@ const Item = ({
 					</div>
 					<CardContent
 						onMouseEnter={() => handlePrefetch()}
-						className='flex justify-center items-center p-2 aspect-[4/7]'
+						className='flex relative justify-center items-center p-2 aspect-[4/7]'
 					>
 						<div className='overflow-hidden relative w-full h-full rounded-md'>
 							<Link
@@ -130,7 +130,7 @@ const Item = ({
 									alt={image.alt}
 									fill
 									className='object-cover'
-									sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw'
+									sizes='(max-width: 768px) 100vw, (max-width: 1200px) 15vw, 15vw'
 								/>
 							</Link>
 						</div>
