@@ -55,6 +55,10 @@ const data = {
 					url: '/admin/user-image',
 				},
 				{
+					title: 'Images Testing',
+					url: '/admin/user-image-2',
+				},
+				{
 					title: 'Skinfolds',
 					url: '/admin/user-skinfolds',
 				},

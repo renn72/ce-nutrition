@@ -76,7 +76,7 @@ const Item = ({
 	const link = `/${isAdmin ? 'admin' : 'user'}/user-image/${title}%${d}?imageId=${image.src.split('/').pop()}&user=${user?.id}&date=${d}&title=${title}&dataId=${image.dataId}`
 
 	return (
-		<CarouselItem
+		<div
 			key={image.src}
 			className='grid content-between pl-1 md:basis-1/2 lg:basis-1/5'
 		>
@@ -130,14 +130,14 @@ const Item = ({
 									alt={image.alt}
 									fill
 									className='object-cover'
-									sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw'
+									sizes='(max-width: 768px) 100vw, (max-width: 1200px) 10vw, 10vw'
 								/>
 							</Link>
 						</div>
 					</CardContent>
 				</Card>
 			</div>
-		</CarouselItem>
+		</div>
 	)
 }
 
@@ -170,30 +170,20 @@ const ImageCarousel = ({
 					Toggle Logs
 				</Button>
 			</div>
-			<Carousel
-				opts={{
-					direction: 'ltr',
-					startIndex: images.length - 1,
-				}}
-				className='mx-auto w-full max-w-screen-xl'
-			>
-				<CarouselContent className='gap-0'>
-					{images.map((image) => (
-						<Item
-							isAdmin={isAdmin}
-							key={image.src}
-							image={image}
-							user={user}
-							title={title}
-							images={images}
-							toggleLog={toggleLog}
-							dailyLogs={dailyLogs}
-						/>
-					))}
-				</CarouselContent>
-				<CarouselNext />
-				<CarouselPrevious />
-			</Carousel>
+			<div className='grid grid-cols-1 gap-2 w-full md:grid-cols-3 lg:grid-cols-5'>
+				{images.slice(-5).map((image) => (
+					<Item
+						isAdmin={isAdmin}
+						key={image.src}
+						image={image}
+						user={user}
+						title={title}
+						images={images}
+						toggleLog={toggleLog}
+						dailyLogs={dailyLogs}
+					/>
+				))}
+			</div>
 		</div>
 	)
 }
