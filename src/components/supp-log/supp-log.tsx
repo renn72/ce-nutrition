@@ -578,7 +578,7 @@ const SuppLog = ({
 	const todaysDailyLog = dailyLogs?.find(
 		(dailyLog) => dailyLog.date === day.toDateString(),
 	)
-	const { data: user } = api.user.get.useQuery(userId || '')
+	const { data: user } = api.user.getCurrentUser.useQuery({ id: userId || '' })
 	const suppTimes = user?.supplementStacks
 		.map((stack) => {
 			return stack.time

@@ -215,7 +215,7 @@ export default function Home() {
 
 	return (
 		<div className='flex relative flex-col min-h-screen'>
-			{isMobile || true ? (
+			{isMobile ? (
 				<Mobile userId={userToDisplay.id} currentUser={userToDisplay} />
 			) : (
 				<Desktop userId={userToDisplay.id} />
