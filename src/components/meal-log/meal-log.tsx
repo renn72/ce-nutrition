@@ -623,7 +623,11 @@ const MealLog = ({
 	)
 	useEffect(() => {
 		if (apiCurrentUser) {
-			setCachedUser(apiCurrentUser)
+			try {
+				setCachedUser(apiCurrentUser)
+			} catch (_err) {
+				toast('error caching user meals')
+			}
 		}
 	}, [apiCurrentUser, setCachedUser])
 	const currentUser = apiCurrentUser ?? cachedUser
