@@ -38,6 +38,50 @@ import WhistleIcon from '@/components/icons/whistle-icon'
 
 import { userAtom } from './sidebar'
 
+const getRelativeDateLabel = (updatedAt: Date | null): string => {
+	if (!updatedAt) return ''
+	const now = new Date()
+
+	// Reset hours to compare purely based on calendar days
+	const startOfToday = new Date(
+		now.getFullYear(),
+		now.getMonth(),
+		now.getDate(),
+	)
+	const startOfUpdated = new Date(
+		updatedAt.getFullYear(),
+		updatedAt.getMonth(),
+		updatedAt.getDate(),
+	)
+
+	// Difference in milliseconds converted to days
+	const diffInMs = startOfToday.getTime() - startOfUpdated.getTime()
+	const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24))
+
+	if (diffInDays === 0) return 'today'
+	if (diffInDays === 1) return `y'day`
+	if (diffInDays === 2) return '2 days'
+	if (diffInDays === 3) return '3 days'
+	if (diffInDays === 4) return '4 days'
+	if (diffInDays === 5) return '5 days'
+	if (diffInDays === 6) return '6 days'
+
+	// Approximation logic for weeks, months, and years
+	const diffInWeeks = Math.floor(diffInDays / 7)
+	if (diffInWeeks === 3) return '3 wks'
+	if (diffInWeeks === 1) return '1 wk'
+	if (diffInWeeks === 2) return '2 wks'
+
+	const diffInMonths =
+		(now.getFullYear() - updatedAt.getFullYear()) * 12 +
+		(now.getMonth() - updatedAt.getMonth())
+	if (diffInMonths <= 11) return `${diffInMonths} mth's`
+
+	const diffInYears = now.getFullYear() - updatedAt.getFullYear()
+	if (diffInYears === 1) return '1 yr'
+	return `${diffInYears}+ yrs`
+}
+
 const SidebarUserSelect = () => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [selectedCategory, setSelectedCategory] = useState<string>('')
@@ -57,6 +101,8 @@ const SidebarUserSelect = () => {
 		id: impersonatedUser.id,
 	})
 	const { data: yourUsers } = api.user.getAllYour.useQuery(impersonatedUser.id)
+
+	console.log({ yourUsers })
 
 	const allUsers = yourUsers
 		?.filter((user) => {
@@ -159,6 +205,7 @@ const SidebarUserSelect = () => {
 									)
 										? true
 										: false
+									const lastLog = getRelativeDateLabel(user.latestLog)
 									return (
 										<CommandItem
 											key={user.id}
@@ -172,19 +219,11 @@ const SidebarUserSelect = () => {
 												setIsOpen(false)
 											}}
 											className={cn(
-												'grid grid-cols-13',
+												'grid grid-cols-14',
 												'px-0 lg:px-2',
 												selectedUser === user.id ? 'bg-muted' : '',
 											)}
 										>
-											<Check
-												className={cn(
-													'mr-2 h-4 w-4',
-													selectedUser === user.id
-														? 'opacity-100'
-														: 'opacity-0',
-												)}
-											/>
 											<span className='flex flex-wrap col-span-2 lg:col-span-1 gap-[1px]'>
 												{user.trainers.map((trainer) => (
 													<Badge
@@ -208,7 +247,7 @@ const SidebarUserSelect = () => {
 													<Badge
 														key={category.category.id}
 														variant='accent'
-														className='px-1 tracking-tighter leading-none cursor-pointer text-[0.7rem] py-[3px] h-min hover:text-background hover:bg-foreground'
+														className='px-1 tracking-tighter leading-none cursor-pointer text-[0.7rem] py-[3px] h-min truncate hover:text-background hover:bg-foreground'
 													>
 														{category.category.name}
 													</Badge>
@@ -227,6 +266,29 @@ const SidebarUserSelect = () => {
 												{isAdmin ? (
 													<ShieldUser size={20} strokeWidth={2} />
 												) : null}
+											</span>
+											<span
+												className={cn(
+													'col-span-2 justify-self-end font-bold tracking-tighter text-[0.65rem] mr-[5px]',
+													'text-muted-foreground',
+													lastLog.includes(`y'day`)
+														? 'text-muted-foreground/85 '
+														: '',
+													lastLog.includes('days')
+														? 'text-muted-foreground/80 '
+														: '',
+													lastLog.includes('wk')
+														? 'text-muted-foreground/70 '
+														: '',
+													lastLog.includes('mth')
+														? 'text-muted-foreground/60 '
+														: '',
+													lastLog.includes('yr')
+														? 'text-muted-foreground/50 '
+														: '',
+												)}
+											>
+												{lastLog}
 											</span>
 										</CommandItem>
 									)

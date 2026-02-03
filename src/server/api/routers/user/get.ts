@@ -1,6 +1,8 @@
 import { auth } from '@/server/auth'
 import { TRPCError } from '@trpc/server'
 import { protectedProcedure, publicProcedure } from '~/server/api/trpc'
+import { dailyLog } from '~/server/db/schema/daily-logs'
+import { eq, sql } from 'drizzle-orm'
 import { z } from 'zod'
 
 export const get = {
@@ -71,6 +73,29 @@ export const get = {
 				},
 			})
 
+			const latestLogsSq = ctx.db.$with('latest_logs').as(
+				ctx.db
+					.select({
+						userId: dailyLog.userId,
+						updatedAt: dailyLog.updatedAt,
+						// Assign 1 to the most recent log for each userId
+						rowNumber:
+							sql`row_number() OVER (PARTITION BY ${dailyLog.userId} ORDER BY ${dailyLog.updatedAt} DESC)`.as(
+								'rn',
+							),
+					})
+					.from(dailyLog),
+			)
+
+			// 2. Select only the top-ranked rows
+			const latestLogs = await ctx.db
+				.with(latestLogsSq)
+				.select()
+				.from(latestLogsSq)
+				.where(eq(latestLogsSq.rowNumber, 1))
+
+			// console.log({ latestLogs })
+
 			const users = res.filter((user) => {
 				if (user.id === userId) return true
 				if (ctx.session.user.isAdmin) return true
@@ -78,8 +103,17 @@ export const get = {
 					return true
 				return false
 			})
+			const logMap = new Map(
+				latestLogs.map((log) => [log.userId, log.updatedAt]),
+			)
 
-			return users
+			// 2. Attach the attribute to the filtered users
+			const usersWithLogs = users.map((user) => ({
+				...user,
+				latestLog: logMap.get(user.id) ?? null, // Returns the updatedAt date or null if no log exists
+			}))
+
+			return usersWithLogs
 		}),
 	getAll: protectedProcedure.query(async ({ ctx }) => {
 		const res = await ctx.db.query.user.findMany({

@@ -15769,6 +15769,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
         getAllYour: _trpc_server.TRPCQueryProcedure<{
             input: string | undefined;
             output: {
+                latestLog: Date | null;
                 id: string;
                 name: string | null;
                 email: string | null;
@@ -23528,6 +23529,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         getAllYour: _trpc_server.TRPCQueryProcedure<{
             input: string | undefined;
             output: {
+                latestLog: Date | null;
                 id: string;
                 name: string | null;
                 email: string | null;
