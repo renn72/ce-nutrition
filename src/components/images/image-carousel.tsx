@@ -129,7 +129,7 @@ const Item = ({
 									src={image.src || '/placeholder.svg'}
 									alt={image.alt}
 									fill
-									className='object-cover transition-transform duration-200 hover:scale-105'
+									className='object-cover'
 									sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw'
 								/>
 							</Link>
