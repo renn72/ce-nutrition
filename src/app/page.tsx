@@ -38,11 +38,11 @@ import { Pwa } from '@/components/layout/pwa'
 export const dynamic = 'force-dynamic'
 
 const currentUserAtom = atomWithStorage<GetUserWRoles | null>(
-	'currentUser',
+	'currentUser_v2',
 	null,
 )
 const dailyLogsCacheAtom = atomWithStorage<GetAllDailyLogs | null>(
-	'cached_daily_logs',
+	'cached_daily_logs_v2',
 	null,
 )
 
@@ -72,10 +72,9 @@ const Mobile = ({
 	})
 
 	useEffect(() => {
-		console.log(apiDailyLogs?.slice(-30))
 		if (apiDailyLogs) {
 			try {
-				setCachedLogs(apiDailyLogs.slice(-30))
+				setCachedLogs(apiDailyLogs.slice(-20))
 			} catch (err) {
 				// @ts-ignore
 				toast(err.toString())
