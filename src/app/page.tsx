@@ -72,6 +72,7 @@ const Mobile = ({
 	})
 
 	useEffect(() => {
+		console.log(apiDailyLogs?.slice(-30))
 		if (apiDailyLogs) {
 			try {
 				setCachedLogs(apiDailyLogs.slice(-30))
@@ -209,13 +210,13 @@ export default function Home() {
 	}, [currentUser, setCachedUser])
 
 	const userToDisplay = currentUser ?? cachedUser
-	const isMobile = useClientMediaQuery('(max-width: 600px)')
+	const isMobile = useClientMediaQuery('(max-width: 800px)')
 
-	if (!userToDisplay) return null
+	if (!userToDisplay || !userToDisplay.id) return null
 
 	return (
 		<div className='flex relative flex-col min-h-screen'>
-			{isMobile ? (
+			{isMobile || true ? (
 				<Mobile userId={userToDisplay.id} currentUser={userToDisplay} />
 			) : (
 				<Desktop userId={userToDisplay.id} />
