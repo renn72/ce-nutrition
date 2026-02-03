@@ -1,5 +1,9 @@
 'use client'
-
+import {
+	HoverCard,
+	HoverCardContent,
+	HoverCardTrigger,
+} from '@/components/ui/hover-card'
 import { formatDate } from '@/lib/utils'
 import type { GetPlanById } from '@/types'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -146,9 +150,14 @@ export const columns: ColumnDef<GetPlanById>[] = [
 		cell: ({ row }) => {
 			return (
 				<div className='flex space-x-2'>
-					<span className='text-xs font-medium truncate lg:w-[100px]'>
-						{row.getValue('planCategory')}
-					</span>
+					<HoverCard openDelay={0} closeDelay={0}>
+						<HoverCardTrigger className='text-xs font-medium truncate lg:w-[100px]'>
+							{row.getValue('planCategory')}
+						</HoverCardTrigger>
+						<HoverCardContent className='py-2 w-max text-xs font-medium'>
+							{row.getValue('planCategory')}
+						</HoverCardContent>
+					</HoverCard>
 				</div>
 			)
 		},
