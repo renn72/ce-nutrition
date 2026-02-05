@@ -4921,7 +4921,23 @@ var get = {
         }
       }
     });
-    return res;
+    const latestLogsSq = ctx.db.$with("latest_logs").as(
+      ctx.db.select({
+        userId: dailyLog.userId,
+        updatedAt: dailyLog.updatedAt,
+        // Assign 1 to the most recent log for each userId
+        rowNumber: sql13`row_number() OVER (PARTITION BY ${dailyLog.userId} ORDER BY ${dailyLog.updatedAt} DESC)`.as(
+          "rn"
+        )
+      }).from(dailyLog)
+    );
+    const latestLogs = await ctx.db.with(latestLogsSq).select().from(latestLogsSq).where(eq4(latestLogsSq.rowNumber, 1));
+    const logMap = new Map(latestLogs.map((log2) => [log2.userId, log2.updatedAt]));
+    const usersWithLogs = res.map((user2) => ({
+      ...user2,
+      latestLog: logMap.get(user2.id) ?? null
+    }));
+    return usersWithLogs;
   }),
   checkEmail: publicProcedure.input(z7.string()).mutation(async ({ ctx, input }) => {
     if (input === "") throw new TRPCError2({ code: "BAD_REQUEST" });

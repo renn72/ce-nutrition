@@ -135,7 +135,34 @@ export const get = {
 				},
 			},
 		})
-		return res
+		const latestLogsSq = ctx.db.$with('latest_logs').as(
+			ctx.db
+				.select({
+					userId: dailyLog.userId,
+					updatedAt: dailyLog.updatedAt,
+					// Assign 1 to the most recent log for each userId
+					rowNumber:
+						sql`row_number() OVER (PARTITION BY ${dailyLog.userId} ORDER BY ${dailyLog.updatedAt} DESC)`.as(
+							'rn',
+						),
+				})
+				.from(dailyLog),
+		)
+
+		const latestLogs = await ctx.db
+			.with(latestLogsSq)
+			.select()
+			.from(latestLogsSq)
+			.where(eq(latestLogsSq.rowNumber, 1))
+
+		const logMap = new Map(latestLogs.map((log) => [log.userId, log.updatedAt]))
+
+		const usersWithLogs = res.map((user) => ({
+			...user,
+			latestLog: logMap.get(user.id) ?? null,
+		}))
+
+		return usersWithLogs
 	}),
 	checkEmail: publicProcedure
 		.input(z.string())

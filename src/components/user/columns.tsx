@@ -1,5 +1,6 @@
 'use client'
 
+import { getRelativeDateLabel } from '@/lib/utils'
 import { useState } from 'react'
 import { api } from '@/trpc/react'
 
@@ -522,6 +523,24 @@ export const columns: ColumnDef<GetUserBasic>[] = [
 							)}
 						</DialogContent>
 					</Dialog>
+				</div>
+			)
+		},
+	},
+	{
+		accessorKey: 'lastLog',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Last Login' />
+		),
+		cell: ({ row }) => {
+			// @ts-ignore
+			const latestLog = row.original?.latestLog
+			const lastLog = getRelativeDateLabel(latestLog)
+			return (
+				<div className='flex space-x-2 text-xs text-muted-foreground'>
+					<span className='flex justify-center items-center font-semibold w-[50px]'>
+						{lastLog}
+					</span>
 				</div>
 			)
 		},

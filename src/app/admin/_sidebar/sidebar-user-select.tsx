@@ -41,54 +41,9 @@ import { userAtom } from './sidebar'
 
 import type { GetAllYourUsers } from '@/types'
 
+import { getRelativeDateLabel } from '@/lib/utils'
+
 const allUserAtom = atomWithStorage<GetAllYourUsers | null>('admin-users', null)
-
-const getRelativeDateLabel = (
-	updatedAtString: string | Date | null,
-): string => {
-	if (!updatedAtString) return ''
-	const updatedAt = new Date(updatedAtString)
-	const now = new Date()
-
-	// Reset hours to compare purely based on calendar days
-	const startOfToday = new Date(
-		now.getFullYear(),
-		now.getMonth(),
-		now.getDate(),
-	)
-	const startOfUpdated = new Date(
-		updatedAt.getFullYear(),
-		updatedAt.getMonth(),
-		updatedAt.getDate(),
-	)
-
-	// Difference in milliseconds converted to days
-	const diffInMs = startOfToday.getTime() - startOfUpdated.getTime()
-	const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24))
-
-	if (diffInDays === 0) return 'today'
-	if (diffInDays === 1) return `y'day`
-	if (diffInDays === 2) return '2 days'
-	if (diffInDays === 3) return '3 days'
-	if (diffInDays === 4) return '4 days'
-	if (diffInDays === 5) return '5 days'
-	if (diffInDays === 6) return '6 days'
-
-	// Approximation logic for weeks, months, and years
-	const diffInWeeks = Math.floor(diffInDays / 7)
-	if (diffInWeeks === 3) return '3 wks'
-	if (diffInWeeks === 1) return '1 wk'
-	if (diffInWeeks === 2) return '2 wks'
-
-	const diffInMonths =
-		(now.getFullYear() - updatedAt.getFullYear()) * 12 +
-		(now.getMonth() - updatedAt.getMonth())
-	if (diffInMonths <= 11) return `${diffInMonths} mth's`
-
-	const diffInYears = now.getFullYear() - updatedAt.getFullYear()
-	if (diffInYears === 1) return '1 yr'
-	return `${diffInYears}+ yrs`
-}
 
 const SidebarUserSelect = () => {
 	const [isOpen, setIsOpen] = useState(false)
