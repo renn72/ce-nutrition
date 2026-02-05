@@ -57,6 +57,7 @@ export const get = {
 					name: true,
 					isTrainer: true,
 					email: true,
+					isActive: true,
 				},
 				with: {
 					category: {

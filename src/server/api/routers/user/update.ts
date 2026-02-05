@@ -6,6 +6,17 @@ import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 export const update = {
+	updateIsUserActive: protectedProcedure
+		.input(z.object({ id: z.string(), isActive: z.boolean() }))
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(user)
+				.set({
+					isActive: input.isActive,
+				})
+				.where(eq(user.id, input.id))
+			return res
+		}),
 	updateChartRange: protectedProcedure
 		.input(z.object({ range: z.number(), id: z.number() }))
 		.mutation(async ({ ctx, input }) => {

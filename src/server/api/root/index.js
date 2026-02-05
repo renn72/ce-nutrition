@@ -4857,7 +4857,8 @@ var get = {
         id: true,
         name: true,
         isTrainer: true,
-        email: true
+        email: true,
+        isActive: true
       },
       with: {
         category: {
@@ -5443,6 +5444,12 @@ import { hash as hash3 } from "bcryptjs";
 import { eq as eq7 } from "drizzle-orm";
 import { z as z11 } from "zod";
 var update = {
+  updateIsUserActive: protectedProcedure.input(z11.object({ id: z11.string(), isActive: z11.boolean() })).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.update(user).set({
+      isActive: input.isActive
+    }).where(eq7(user.id, input.id));
+    return res;
+  }),
   updateChartRange: protectedProcedure.input(z11.object({ range: z11.number(), id: z11.number() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.update(userSettings).set({
       defaultChartRange: input.range.toString()

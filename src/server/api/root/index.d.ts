@@ -15498,6 +15498,14 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             } | undefined;
             meta: object;
         }>;
+        updateIsUserActive: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: string;
+                isActive: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         updateChartRange: _trpc_server.TRPCMutationProcedure<{
             input: {
                 range: number;
@@ -15794,6 +15802,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 id: string;
                 name: string | null;
                 email: string | null;
+                isActive: boolean | null;
                 isTrainer: boolean | null;
                 roles: {
                     id: number;
@@ -23516,6 +23525,14 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             } | undefined;
             meta: object;
         }>;
+        updateIsUserActive: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: string;
+                isActive: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         updateChartRange: _trpc_server.TRPCMutationProcedure<{
             input: {
                 range: number;
@@ -23812,6 +23829,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 id: string;
                 name: string | null;
                 email: string | null;
+                isActive: boolean | null;
                 isTrainer: boolean | null;
                 roles: {
                     id: number;

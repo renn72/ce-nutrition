@@ -115,12 +115,25 @@ const SidebarUserSelect = () => {
 	)
 
 	useEffect(() => {
-		if (apiYourUsers) setCachedUsers(apiYourUsers)
+		if (apiYourUsers) {
+			// const stringifiedData = JSON.stringify(apiYourUsers)
+			//
+			// const bytes = stringifiedData.length * 2
+			// const kb = (bytes / 1024).toFixed(2)
+			//
+			// console.log(`Estimated Size CurrentUserRoles: ${kb} KB`)
+			try {
+				setCachedUsers(apiYourUsers)
+			} catch (_err) {
+				console.log('error caching users')
+			}
+		}
 	}, [apiYourUsers, setCachedUsers])
 
 	const yourUsers = apiYourUsers ?? cachedUsers
 
 	const allUsers = yourUsers
+		?.filter((user) => user.isActive)
 		?.filter((user) => {
 			if (!currentUser?.roles?.find((role) => role.name === 'admin'))
 				return true
