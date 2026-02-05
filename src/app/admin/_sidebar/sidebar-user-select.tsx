@@ -143,7 +143,7 @@ const SidebarUserSelect = () => {
 					}}
 				>
 					<div className='flex flex-col gap-2 w-full lg:flex-row'>
-						<CommandInput className='w-full' placeholder='Search users...' />
+						<CommandInput className='w-[200px]' placeholder='Search users...' />
 						<div className='flex gap-2 justify-center w-full lg:justify-start'>
 							<Select
 								value={selectedCategory}
