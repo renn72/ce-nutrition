@@ -44,14 +44,14 @@ declare module 'next-auth' {
  *
  * @see https://next-auth.js.org/configuration/options
  */
-export const authConfig : NextAuthConfig = {
+export const authConfig: NextAuthConfig = {
 	session: {
 		strategy: 'jwt',
 	},
 	callbacks: {
 		async signIn({ user }) {
 			if (!user) {
-        // throw new Error('Login failed')
+				// throw new Error('Login failed')
 			}
 			return true
 		},

@@ -13,6 +13,7 @@ import { ChevronDown, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 import { FormRecipe } from './form-recipe'
+import { ScrollArea } from '../ui/scroll-area'
 
 export const dynamic = 'force-dynamic'
 
@@ -63,9 +64,9 @@ const CreateRecipe = ({
 					onClickOutside={(e) => {
 						e.changeDefault({ dismiss: false })
 					}}
-					className='z-[1002] h-[100vh] bg-black/50'
+					className='z-[1002] h-[100vh] bg-black/20'
 				>
-					<Sheet.Content className='relative h-full rounded-t-3xl min-h-[200px] max-h-[90vh] bg-background'>
+					<Sheet.Content className='relative h-full rounded-t-3xl min-h-[200px] max-h-[80vh] bg-background'>
 						<div className='flex flex-col justify-between h-full'>
 							<div className='flex flex-col'>
 								<div className='flex justify-center pt-1'>
@@ -201,105 +202,107 @@ const UserCreatedRecipes = ({
 	return (
 		<div className='flex flex-col items-center w-full'>
 			<div className='w-full h-10 border-b-[1px] border-primary/20' />
-			<div className='flex flex-col gap-4 items-center mt-6 w-full'>
-				{userRecipes?.map((recipe) => {
-					const cals = recipe?.recipeToIngredient.reduce((acc, curr) => {
-						const cal = Number(curr?.ingredient?.caloriesWOFibre)
-						const scale =
-							Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
-						return acc + cal * scale
-					}, 0)
+			<ScrollArea className='w-full h-[calc(80vh-150px)]'>
+				<div className='flex flex-col gap-4 items-center mt-6 w-full'>
+					{userRecipes?.map((recipe) => {
+						const cals = recipe?.recipeToIngredient.reduce((acc, curr) => {
+							const cal = Number(curr?.ingredient?.caloriesWOFibre)
+							const scale =
+								Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
+							return acc + cal * scale
+						}, 0)
 
-					const protein = recipe?.recipeToIngredient.reduce((acc, curr) => {
-						const cal = Number(curr?.ingredient?.protein)
-						const scale =
-							Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
-						return acc + cal * scale
-					}, 0)
+						const protein = recipe?.recipeToIngredient.reduce((acc, curr) => {
+							const cal = Number(curr?.ingredient?.protein)
+							const scale =
+								Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
+							return acc + cal * scale
+						}, 0)
 
-					const carbs = recipe?.recipeToIngredient.reduce((acc, curr) => {
-						const cal = Number(
-							curr?.ingredient?.availableCarbohydrateWithoutSugarAlcohols,
-						)
-						const scale =
-							Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
-						return acc + cal * scale
-					}, 0)
+						const carbs = recipe?.recipeToIngredient.reduce((acc, curr) => {
+							const cal = Number(
+								curr?.ingredient?.availableCarbohydrateWithoutSugarAlcohols,
+							)
+							const scale =
+								Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
+							return acc + cal * scale
+						}, 0)
 
-					const fat = recipe?.recipeToIngredient.reduce((acc, curr) => {
-						const cal = Number(curr?.ingredient?.fatTotal)
-						const scale =
-							Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
-						return acc + cal * scale
-					}, 0)
+						const fat = recipe?.recipeToIngredient.reduce((acc, curr) => {
+							const cal = Number(curr?.ingredient?.fatTotal)
+							const scale =
+								Number(curr?.serveSize) / Number(curr?.ingredient?.serveSize)
+							return acc + cal * scale
+						}, 0)
 
-					return (
-						<div
-							key={recipe?.id}
-							className={cn(
-								'text-sm truncate max-w-[600px]  py-3 px-4 relative border rounded-md',
-								'shadow-sm flex flex-col w-[calc(100vw-2rem)] gap-0',
-								'hover:text-primary hover:bg-background items-center justify-center',
-								'relative',
-							)}
-							onClick={() => {
-								setSelectedRecipe(recipe)
-								setIsRecipeFormOpen(true)
-							}}
-						>
-							<div className='flex'>
-								<div className='font-semibold truncate'>
-									{recipe?.name && recipe?.name?.length > 41
-										? `${recipe?.name.slice(0, 41)}...`
-										: recipe?.name}
-								</div>
-								<div
-									className={cn(
-										'absolute -top-1 left-1 text-[0.6rem] font-light',
-										'text-muted-foreground',
-									)}
-								>{`${cals.toFixed(0)} cals`}</div>
-							</div>
-
+						return (
 							<div
+								key={recipe?.id}
 								className={cn(
-									'text-xs flex gap-4 font-medium',
-									'text-muted-foreground',
+									'text-sm truncate max-w-[600px]  py-3 px-4 relative border rounded-md',
+									'shadow-sm flex flex-col w-[calc(100vw-2rem)] gap-0',
+									'hover:text-primary hover:bg-background items-center justify-center',
+									'relative',
 								)}
-							>
-								<div>{`C:${carbs.toFixed(0)}g`}</div>
-								<div>{`P:${protein.toFixed(1)}g`}</div>
-								<div>{`F:${fat.toFixed(1)}g`}</div>
-							</div>
-							<Button
-								size='icon'
-								className='absolute right-1 top-1/2 h-6 text-xs rounded-full transition-transform transform -translate-y-1/2 cursor-pointer active:scale-90'
-								variant='destructive'
-								onClick={(e) => {
-									e.stopPropagation()
-									e.preventDefault()
-									deleteRecipe({
-										id: recipe.id,
-									})
+								onClick={() => {
+									setSelectedRecipe(recipe)
+									setIsRecipeFormOpen(true)
 								}}
 							>
-								<Trash2 size={16} strokeWidth={2} className='' />
-							</Button>
-						</div>
-					)
-				})}
-				<CreateRecipe
-					calories={calories}
-					protein={protein}
-					isOpen={isRecipeFormOpen}
-					setIsOpen={setIsRecipeFormOpen}
-					recipe={selectedRecipe}
-					setSelectedRecipe={setSelectedRecipe}
-					setIsRecipeListOpen={setIsRecipeListOpen}
-					logId={logId}
-					mealIndex={mealIndex}
-				/>
-			</div>
+								<div className='flex'>
+									<div className='font-semibold truncate'>
+										{recipe?.name && recipe?.name?.length > 41
+											? `${recipe?.name.slice(0, 41)}...`
+											: recipe?.name}
+									</div>
+									<div
+										className={cn(
+											'absolute -top-1 left-1 text-[0.6rem] font-light',
+											'text-muted-foreground',
+										)}
+									>{`${cals.toFixed(0)} cals`}</div>
+								</div>
+
+								<div
+									className={cn(
+										'text-xs flex gap-4 font-medium',
+										'text-muted-foreground',
+									)}
+								>
+									<div>{`C:${carbs.toFixed(0)}g`}</div>
+									<div>{`P:${protein.toFixed(1)}g`}</div>
+									<div>{`F:${fat.toFixed(1)}g`}</div>
+								</div>
+								<Button
+									size='icon'
+									className='absolute right-1 top-1/2 h-6 text-xs rounded-full transition-transform transform -translate-y-1/2 cursor-pointer active:scale-90'
+									variant='destructive'
+									onClick={(e) => {
+										e.stopPropagation()
+										e.preventDefault()
+										deleteRecipe({
+											id: recipe.id,
+										})
+									}}
+								>
+									<Trash2 size={16} strokeWidth={2} className='' />
+								</Button>
+							</div>
+						)
+					})}
+					<CreateRecipe
+						calories={calories}
+						protein={protein}
+						isOpen={isRecipeFormOpen}
+						setIsOpen={setIsRecipeFormOpen}
+						recipe={selectedRecipe}
+						setSelectedRecipe={setSelectedRecipe}
+						setIsRecipeListOpen={setIsRecipeListOpen}
+						logId={logId}
+						mealIndex={mealIndex}
+					/>
+				</div>
+			</ScrollArea>
 		</div>
 	)
 }
@@ -338,8 +341,8 @@ const MealLogUserRecipes = ({
 					</div>
 				</Sheet.Trigger>
 				<Sheet.Portal>
-					<Sheet.View className='z-[1000] h-[100vh] bg-black/50'>
-						<Sheet.Content className='relative h-full rounded-t-3xl min-h-[200px] max-h-[90vh] bg-background'>
+					<Sheet.View className='z-[1000] h-[100vh] bg-black/20'>
+						<Sheet.Content className='relative h-full rounded-t-3xl min-h-[200px] max-h-[80vh] bg-background'>
 							<div className='flex flex-col justify-between h-full'>
 								<div className='flex flex-col'>
 									<div className='flex justify-center pt-1'>

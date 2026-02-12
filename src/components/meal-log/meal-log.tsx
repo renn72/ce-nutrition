@@ -444,7 +444,7 @@ const MealList = ({
 	if (!currentUser) return null
 
 	return (
-		<Sheet.Content className='relative h-full rounded-t-3xl min-h-[200px] max-h-[95vh] bg-background'>
+		<Sheet.Content className='relative h-full rounded-t-3xl min-h-[200px] max-h-[98vh] bg-background'>
 			<div className='flex flex-col justify-between h-full'>
 				<div className='flex flex-col'>
 					<div className='flex justify-center pt-1'>
