@@ -380,7 +380,7 @@ const MainForm = ({
 					<span className='text-xs text-primary/50 ml-[1px]'>fat</span>
 				</div>
 			</div>
-			<ScrollArea className='px-0 pt-4 h-[calc(80vh-160px)]'>
+			<ScrollArea className='px-0 pt-4 h-[calc(80vh-150px)]'>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)}>
 						<div className='flex flex-col gap-4 px-2'>
