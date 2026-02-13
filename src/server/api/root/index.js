@@ -4958,6 +4958,7 @@ var get = {
         images: true,
         roles: true,
         supplementStacks: {
+          where: (ss, { eq: eq29 }) => eq29(ss.isTemplate, false),
           with: {
             supplements: {
               with: {
@@ -5001,6 +5002,7 @@ var get = {
         settings: true,
         roles: true,
         supplementStacks: {
+          where: (ss, { eq: eq29 }) => eq29(ss.isTemplate, false),
           with: {
             supplements: {
               with: {
@@ -5071,6 +5073,7 @@ var get = {
         roles: true,
         trainers: true,
         supplementStacks: {
+          where: (ss, { eq: eq29 }) => eq29(ss.isTemplate, false),
           with: {
             supplements: {
               with: {
@@ -5118,6 +5121,7 @@ var get = {
         images: true,
         trainers: true,
         supplementStacks: {
+          where: (ss, { eq: eq29 }) => eq29(ss.isTemplate, false),
           with: {
             supplements: {
               with: {
@@ -5143,6 +5147,7 @@ var get = {
         images: true,
         trainers: true,
         supplementStacks: {
+          where: (ss, { eq: eq29 }) => eq29(ss.isTemplate, false),
           with: {
             supplements: {
               with: {
@@ -9114,6 +9119,15 @@ import { z as z31 } from "zod";
 
 // src/components/supplements/store.ts
 import { z as z30 } from "zod";
+var templateSchema = z30.object({
+  name: z30.string().min(1),
+  time: z30.string()
+});
+var applyTemplateSchema = z30.object({
+  templateId: z30.number(),
+  userId: z30.string(),
+  time: z30.string().optional()
+});
 var updateSchema = z30.object({
   id: z30.number(),
   isPrivate: z30.boolean(),
@@ -9559,6 +9573,67 @@ var supplementsRouter = createTRPCRouter({
     }).where(eq24(ingredient.id, input.id));
     return res;
   }),
+  getAllTemplates: protectedProcedure.query(async ({ ctx }) => {
+    const res = await ctx.db.query.supplementStack.findMany({
+      where: (stack, { eq: eq29 }) => eq29(stack.isTemplate, true),
+      with: {
+        supplements: {
+          with: {
+            supplement: true
+          }
+        }
+      },
+      orderBy: [asc2(supplementStack.name)]
+    });
+    return res;
+  }),
+  createTemplate: protectedProcedure.input(templateSchema).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.insert(supplementStack).values({
+      userId: ctx.session.user.id,
+      name: input.name,
+      time: input.time,
+      isTemplate: true
+    }).returning({ id: supplementStack.id });
+    return res;
+  }),
+  applyTemplateToUser: protectedProcedure.input(
+    z31.object({
+      templateId: z31.number(),
+      userId: z31.string()
+    })
+  ).mutation(async ({ ctx, input }) => {
+    const template = await ctx.db.query.supplementStack.findFirst({
+      where: (stack, { eq: eq29, and: and14 }) => and14(eq29(stack.id, input.templateId), eq29(stack.isTemplate, true)),
+      with: {
+        supplements: true
+      }
+    });
+    if (!template) throw new TRPCError8({ code: "NOT_FOUND" });
+    const userStacks = await ctx.db.query.supplementStack.findMany({
+      where: (stack, { eq: eq29 }) => and11(eq29(stack.userId, input.userId), eq29(stack.isTemplate, false))
+    });
+    let userStackId = userStacks.find((stack) => stack.time === template.time)?.id || null;
+    if (!userStackId) {
+      const res = await ctx.db.insert(supplementStack).values({
+        userId: input.userId,
+        isTemplate: false,
+        time: template.time,
+        name: template.name
+      }).returning({ id: supplementStack.id });
+      if (!res[0]) throw new TRPCError8({ code: "BAD_REQUEST" });
+      userStackId = res[0].id;
+    }
+    for (const supp of template.supplements) {
+      await ctx.db.insert(supplementToSupplementStack).values({
+        supplementId: supp.supplementId,
+        supplementStackId: userStackId,
+        size: supp.size,
+        unit: supp.unit,
+        order: supp.order
+      });
+    }
+    return true;
+  }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session?.user?.id;
     const res = await ctx.db.query.ingredient.findMany({
@@ -9649,6 +9724,22 @@ var supplementsRouter = createTRPCRouter({
       }
     });
     return res;
+  }),
+  addSupplementToTemplate: protectedProcedure.input(
+    z31.object({
+      suppId: z31.number(),
+      stackId: z31.number(),
+      size: z31.string(),
+      unit: z31.string()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    await ctx.db.insert(supplementToSupplementStack).values({
+      supplementId: input.suppId,
+      supplementStackId: input.stackId,
+      size: input.size,
+      unit: input.unit
+    });
+    return true;
   }),
   addToUser: protectedProcedure.input(
     z31.object({

@@ -24,8 +24,9 @@ import {
 type Option = {
 	value: string
 	label: string
-  unit: string
-  isPrivate: boolean
+	unit: string
+	size: string
+	isPrivate: boolean
 }
 
 interface VirtualizedCommandProps {
@@ -186,13 +187,23 @@ const VirtualizedCommand = ({
 											: 'opacity-0',
 									)}
 								/>
-                <div className='flex  gap-4 items-baseline'>
-                  <span className='truncate'>{filteredOptions[virtualOption.index]?.label.slice(0, 80)}</span>
-                  <span className='truncate text-xs'>{filteredOptions[virtualOption.index]?.unit}</span>
-                </div>
-                {
-                  filteredOptions[virtualOption.index]?.isPrivate ? <LockIcon size={10} className='text-red-500 absolute right-2' /> : null
-                }
+								<div className='flex gap-4 items-baseline'>
+									<span className='truncate'>
+										{filteredOptions[virtualOption.index]?.label.slice(0, 80)}
+									</span>
+									<span className='text-xs truncate'>
+										{filteredOptions[virtualOption.index]?.size}
+									</span>
+									<span className='text-xs truncate'>
+										{filteredOptions[virtualOption.index]?.unit}
+									</span>
+								</div>
+								{filteredOptions[virtualOption.index]?.isPrivate ? (
+									<LockIcon
+										size={10}
+										className='absolute right-2 text-red-500'
+									/>
+								) : null}
 							</CommandItem>
 						))}
 					</div>
@@ -227,7 +238,7 @@ function VirtualizedCombobox({
 				<Button
 					variant='outline'
 					aria-expanded={open}
-					className='justify-between flex truncate'
+					className='flex justify-between truncate'
 					style={{
 						width: width,
 					}}
@@ -237,7 +248,7 @@ function VirtualizedCombobox({
 							? options.find((option) => option.value === selectedOption)?.label
 							: searchPlaceholder}
 					</span>
-					<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+					<ChevronsUpDown className='ml-2 w-4 h-4 opacity-50 shrink-0' />
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent

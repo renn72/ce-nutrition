@@ -176,6 +176,7 @@ const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
 											value: i.id.toString(),
 											label: i.name ?? '',
 											unit: i.serveUnit ?? '',
+											size: i.serveSize ?? '',
 											isPrivate: i.isPrivate ?? false,
 										}
 									})}
@@ -231,20 +232,32 @@ const SuppTimes = ({ user, time }: { user: GetUserById; time: string }) => {
 const Supps = ({ user }: { user: GetUserById }) => {
 	const ctx = api.useUtils()
 	const [isOpen, setIsOpen] = useState(false)
+	const [isTemplateOpen, setIsTemplateOpen] = useState(false)
 	const [isError, setIsError] = useState(false)
 	const [timgingInput, setTimgingInput] = useState('')
+
+	const { data: templates } = api.supplement.getAllTemplates.useQuery()
 
 	const suppTimes = user.supplementStacks
 		.map((stack) => {
 			return stack.time
 		})
 		.filter((item, pos, self) => self.indexOf(item) === pos)
+	console.log('suppTimes', suppTimes)
 
 	const { mutate: addTime } = api.supplement.addTime.useMutation({
 		onSuccess: () => {
 			ctx.user.invalidate()
 		},
 	})
+
+	const { mutate: applyTemplate } =
+		api.supplement.applyTemplateToUser.useMutation({
+			onSuccess: () => {
+				ctx.user.invalidate()
+				setIsTemplateOpen(false)
+			},
+		})
 
 	const handleAdd = () => {
 		if (timgingInput === '') return
@@ -281,27 +294,72 @@ const Supps = ({ user }: { user: GetUserById }) => {
 			{suppTimes.map((time) => {
 				return time ? <SuppTimes key={time} user={user} time={time} /> : null
 			})}
-			<Dialog open={isOpen} onOpenChange={setIsOpen}>
-				<DialogTrigger asChild>
-					<Button variant='secondary'>Add Supplement Stack</Button>
-				</DialogTrigger>
-				<DialogContent>
-					<DialogHeader>
-						<DialogTitle>Add Another Time</DialogTitle>
-						<DialogDescription />
-					</DialogHeader>
-					<Input
-						placeholder='Enter time'
-						value={timgingInput}
-						onChange={(e) => setTimgingInput(e.target.value)}
-						onKeyDown={handleInputKeyDown}
-					/>
-					{isError && (
-						<div className='text-sm text-red-500'>Time already exists</div>
-					)}
-					<Button onClick={handleAdd}>Add</Button>
-				</DialogContent>
-			</Dialog>
+			<div className='flex gap-2'>
+				<Dialog open={isOpen} onOpenChange={setIsOpen}>
+					<DialogTrigger asChild>
+						<Button variant='secondary'>Add Supplement Stack</Button>
+					</DialogTrigger>
+					<DialogContent>
+						<DialogHeader>
+							<DialogTitle>Add Another Time</DialogTitle>
+							<DialogDescription />
+						</DialogHeader>
+						<Input
+							placeholder='Enter time'
+							value={timgingInput}
+							onChange={(e) => setTimgingInput(e.target.value)}
+							onKeyDown={handleInputKeyDown}
+						/>
+						{isError && (
+							<div className='text-sm text-red-500'>Time already exists</div>
+						)}
+						<Button onClick={handleAdd}>Add</Button>
+					</DialogContent>
+				</Dialog>
+
+				<Dialog open={isTemplateOpen} onOpenChange={setIsTemplateOpen}>
+					<DialogTrigger asChild>
+						<Button variant='outline'>Apply Template</Button>
+					</DialogTrigger>
+					<DialogContent>
+						<DialogHeader>
+							<DialogTitle>Apply Supplement Template</DialogTitle>
+							<DialogDescription>
+								Choose a template to apply to this user.
+							</DialogDescription>
+						</DialogHeader>
+						<div className='flex flex-col gap-2'>
+							{templates?.map((template) => (
+								<Button
+									key={template.id}
+									variant='outline'
+									className='flex flex-col gap-1 items-start py-3 px-4 h-auto text-left'
+									onClick={() =>
+										applyTemplate({ templateId: template.id, userId: user.id })
+									}
+								>
+									<div className='font-bold uppercase'>
+										{template.name} - {template.time}
+									</div>
+									<div className='flex flex-wrap gap-x-2 text-xs text-muted-foreground'>
+										{template.supplements.map((s: any) => (
+											<span key={s.id}>
+												{s.supplement?.name} ({s.size}
+												{s.unit})
+											</span>
+										))}
+									</div>
+								</Button>
+							))}
+							{templates?.length === 0 && (
+								<div className='py-4 text-center text-muted-foreground'>
+									No templates found.
+								</div>
+							)}
+						</div>
+					</DialogContent>
+				</Dialog>
+			</div>
 		</div>
 	)
 }

@@ -125,6 +125,10 @@ const data = {
 					title: 'Supplements',
 					url: '/admin/supplement',
 				},
+				{
+					title: 'Supp Templates',
+					url: '/admin/supplement-templates',
+				},
 				// {
 				//   title: 'Store',
 				//   url: '/admin/store',

@@ -1833,10 +1833,21 @@ export const fieldsMapWUnit = [
 	},
 ]
 
+export const templateSchema = z.object({
+	name: z.string().min(1),
+	time: z.string(),
+})
+
+export const applyTemplateSchema = z.object({
+	templateId: z.number(),
+	userId: z.string(),
+	time: z.string().optional(),
+})
+
 export const updateSchema = z.object({
-  id: z.number(),
-  isPrivate: z.boolean(),
-  viewableBy: z.string(),
+	id: z.number(),
+	isPrivate: z.boolean(),
+	viewableBy: z.string(),
 	name: z.string().min(1),
 	serveSize: z.number(),
 	serveUnit: z.string().min(1),
@@ -2047,8 +2058,8 @@ export const updateSchema = z.object({
 
 export const formSchema = z.object({
 	name: z.string().min(1),
-  isPrivate: z.boolean(),
-  viewableBy: z.string(),
+	isPrivate: z.boolean(),
+	viewableBy: z.string(),
 	serveSize: z.number(),
 	serveUnit: z.string().min(1),
 	caloriesWFibre: z.number(),

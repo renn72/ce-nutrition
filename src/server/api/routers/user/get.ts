@@ -187,6 +187,7 @@ export const get = {
 					images: true,
 					roles: true,
 					supplementStacks: {
+						where: (ss, { eq }) => eq(ss.isTemplate, false),
 						with: {
 							supplements: {
 								with: {
@@ -235,6 +236,7 @@ export const get = {
 					settings: true,
 					roles: true,
 					supplementStacks: {
+						where: (ss, { eq }) => eq(ss.isTemplate, false),
 						with: {
 							supplements: {
 								with: {
@@ -315,6 +317,7 @@ export const get = {
 					roles: true,
 					trainers: true,
 					supplementStacks: {
+						where: (ss, { eq }) => eq(ss.isTemplate, false),
 						with: {
 							supplements: {
 								with: {
@@ -367,6 +370,7 @@ export const get = {
 					images: true,
 					trainers: true,
 					supplementStacks: {
+						where: (ss, { eq }) => eq(ss.isTemplate, false),
 						with: {
 							supplements: {
 								with: {
@@ -392,6 +396,7 @@ export const get = {
 				images: true,
 				trainers: true,
 				supplementStacks: {
+					where: (ss, { eq }) => eq(ss.isTemplate, false),
 					with: {
 						supplements: {
 							with: {

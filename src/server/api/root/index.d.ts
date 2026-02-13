@@ -20567,6 +20567,79 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        getAllTemplates: _trpc_server.TRPCQueryProcedure<{
+            input: void;
+            output: {
+                id: number;
+                name: string | null;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string;
+                time: string | null;
+                isTemplate: boolean | null;
+                order: number | null;
+                supplements: {
+                    id: number;
+                    order: number | null;
+                    supplementId: number;
+                    supplementStackId: number;
+                    size: string | null;
+                    unit: string | null;
+                    supplement: {
+                        id: number;
+                        name: string | null;
+                        notes: string | null;
+                        createdAt: Date;
+                        updatedAt: Date | null;
+                        userId: string | null;
+                        favouriteAt: Date | null;
+                        deletedAt: Date | null;
+                        hiddenAt: Date | null;
+                        isAusFood: boolean | null;
+                        isAllStores: boolean | null;
+                        serveSize: string | null;
+                        serveUnit: string | null;
+                        publicFoodKey: string | null;
+                        classification: string | null;
+                        foodName: string | null;
+                        caloriesWFibre: string | null;
+                        caloriesWOFibre: string | null;
+                        protein: string | null;
+                        fatTotal: string | null;
+                        totalDietaryFibre: string | null;
+                        totalSugars: string | null;
+                        starch: string | null;
+                        resistantStarch: string | null;
+                        availableCarbohydrateWithoutSugarAlcohols: string | null;
+                        availableCarbohydrateWithSugarAlcohols: string | null;
+                        isUserCreated: boolean | null;
+                        isSupplement: boolean | null;
+                        isPrivate: boolean | null;
+                        viewableBy: string | null;
+                        intervale: string | null;
+                    };
+                }[];
+            }[];
+            meta: object;
+        }>;
+        createTemplate: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                name: string;
+                time: string;
+            };
+            output: {
+                id: number;
+            }[];
+            meta: object;
+        }>;
+        applyTemplateToUser: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                templateId: number;
+                userId: string;
+            };
+            output: boolean;
+            meta: object;
+        }>;
         getAll: _trpc_server.TRPCQueryProcedure<{
             input: void;
             output: {
@@ -20969,6 +21042,16 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     intervale: string | null;
                 };
             } | undefined;
+            meta: object;
+        }>;
+        addSupplementToTemplate: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                suppId: number;
+                stackId: number;
+                size: string;
+                unit: string;
+            };
+            output: boolean;
             meta: object;
         }>;
         addToUser: _trpc_server.TRPCMutationProcedure<{
@@ -28595,6 +28678,79 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        getAllTemplates: _trpc_server.TRPCQueryProcedure<{
+            input: void;
+            output: {
+                id: number;
+                name: string | null;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string;
+                time: string | null;
+                isTemplate: boolean | null;
+                order: number | null;
+                supplements: {
+                    id: number;
+                    order: number | null;
+                    supplementId: number;
+                    supplementStackId: number;
+                    size: string | null;
+                    unit: string | null;
+                    supplement: {
+                        id: number;
+                        name: string | null;
+                        notes: string | null;
+                        createdAt: Date;
+                        updatedAt: Date | null;
+                        userId: string | null;
+                        favouriteAt: Date | null;
+                        deletedAt: Date | null;
+                        hiddenAt: Date | null;
+                        isAusFood: boolean | null;
+                        isAllStores: boolean | null;
+                        serveSize: string | null;
+                        serveUnit: string | null;
+                        publicFoodKey: string | null;
+                        classification: string | null;
+                        foodName: string | null;
+                        caloriesWFibre: string | null;
+                        caloriesWOFibre: string | null;
+                        protein: string | null;
+                        fatTotal: string | null;
+                        totalDietaryFibre: string | null;
+                        totalSugars: string | null;
+                        starch: string | null;
+                        resistantStarch: string | null;
+                        availableCarbohydrateWithoutSugarAlcohols: string | null;
+                        availableCarbohydrateWithSugarAlcohols: string | null;
+                        isUserCreated: boolean | null;
+                        isSupplement: boolean | null;
+                        isPrivate: boolean | null;
+                        viewableBy: string | null;
+                        intervale: string | null;
+                    };
+                }[];
+            }[];
+            meta: object;
+        }>;
+        createTemplate: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                name: string;
+                time: string;
+            };
+            output: {
+                id: number;
+            }[];
+            meta: object;
+        }>;
+        applyTemplateToUser: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                templateId: number;
+                userId: string;
+            };
+            output: boolean;
+            meta: object;
+        }>;
         getAll: _trpc_server.TRPCQueryProcedure<{
             input: void;
             output: {
@@ -28997,6 +29153,16 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     intervale: string | null;
                 };
             } | undefined;
+            meta: object;
+        }>;
+        addSupplementToTemplate: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                suppId: number;
+                stackId: number;
+                size: string;
+                unit: string;
+            };
+            output: boolean;
             meta: object;
         }>;
         addToUser: _trpc_server.TRPCMutationProcedure<{

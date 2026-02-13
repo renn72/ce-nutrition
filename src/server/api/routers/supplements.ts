@@ -19,6 +19,7 @@ import { z } from 'zod'
 
 import {
 	formSchema as createSchema,
+	templateSchema,
 	updateSchema,
 } from '@/components/supplements/store'
 
@@ -55,6 +56,88 @@ export const supplementsRouter = createTRPCRouter({
 				})
 				.where(eq(ingredient.id, input.id))
 			return res
+		}),
+	getAllTemplates: protectedProcedure.query(async ({ ctx }) => {
+		const res = await ctx.db.query.supplementStack.findMany({
+			where: (stack, { eq }) => eq(stack.isTemplate, true),
+			with: {
+				supplements: {
+					with: {
+						supplement: true,
+					},
+				},
+			},
+			orderBy: [asc(supplementStack.name)],
+		})
+		return res
+	}),
+	createTemplate: protectedProcedure
+		.input(templateSchema)
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.insert(supplementStack)
+				.values({
+					userId: ctx.session.user.id,
+					name: input.name,
+					time: input.time,
+					isTemplate: true,
+				})
+				.returning({ id: supplementStack.id })
+			return res
+		}),
+	applyTemplateToUser: protectedProcedure
+		.input(
+			z.object({
+				templateId: z.number(),
+				userId: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const template = await ctx.db.query.supplementStack.findFirst({
+				where: (stack, { eq, and }) =>
+					and(eq(stack.id, input.templateId), eq(stack.isTemplate, true)),
+				with: {
+					supplements: true,
+				},
+			})
+
+			if (!template) throw new TRPCError({ code: 'NOT_FOUND' })
+
+			// Find if user already has a stack with this time
+			const userStacks = await ctx.db.query.supplementStack.findMany({
+				where: (stack, { eq }) =>
+					and(eq(stack.userId, input.userId), eq(stack.isTemplate, false)),
+			})
+
+			let userStackId =
+				userStacks.find((stack) => stack.time === template.time)?.id || null
+
+			if (!userStackId) {
+				const res = await ctx.db
+					.insert(supplementStack)
+					.values({
+						userId: input.userId,
+						isTemplate: false,
+						time: template.time,
+						name: template.name,
+					})
+					.returning({ id: supplementStack.id })
+				if (!res[0]) throw new TRPCError({ code: 'BAD_REQUEST' })
+				userStackId = res[0].id
+			}
+
+			// Clone supplements
+			for (const supp of template.supplements) {
+				await ctx.db.insert(supplementToSupplementStack).values({
+					supplementId: supp.supplementId,
+					supplementStackId: userStackId,
+					size: supp.size,
+					unit: supp.unit,
+					order: supp.order,
+				})
+			}
+
+			return true
 		}),
 	getAll: protectedProcedure.query(async ({ ctx }) => {
 		const userId = ctx.session?.user?.id
@@ -164,6 +247,24 @@ export const supplementsRouter = createTRPCRouter({
 			})
 			return res
 		}),
+	addSupplementToTemplate: protectedProcedure
+		.input(
+			z.object({
+				suppId: z.number(),
+				stackId: z.number(),
+				size: z.string(),
+				unit: z.string(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			await ctx.db.insert(supplementToSupplementStack).values({
+				supplementId: input.suppId,
+				supplementStackId: input.stackId,
+				size: input.size,
+				unit: input.unit,
+			})
+			return true
+		}),
 	addToUser: protectedProcedure
 		.input(
 			z.object({
@@ -216,7 +317,7 @@ export const supplementsRouter = createTRPCRouter({
 					title: 'Your supplements have been updated',
 					description: 'You have a new supplement update',
 					isViewed: false,
-          isRead: false,
+					isRead: false,
 				})
 			}
 
@@ -226,7 +327,7 @@ export const supplementsRouter = createTRPCRouter({
 		.input(
 			z.object({
 				suppId: z.number(),
-        suppName: z.string(),
+				suppName: z.string(),
 				date: z.string(),
 				time: z.string(),
 				amount: z.string(),
