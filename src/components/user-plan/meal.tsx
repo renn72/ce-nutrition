@@ -691,7 +691,7 @@ const Meal = ({
 													</Button>
 												</FormControl>
 											</PopoverTrigger>
-											<PopoverContent className='p-0 w-[800px]'>
+											<PopoverContent className='p-0 w-[800px] max-w-[100vw]'>
 												<Command
 													filter={(_value, search, keywords) => {
 														const extendValue =
@@ -729,7 +729,7 @@ const Meal = ({
 															</div>
 														</div>
 													</div>
-													<CommandList className='w-[800px] max-h-[500px]'>
+													<CommandList className='w-[800px] max-h-[500px] max-w-[100vw]'>
 														<CommandEmpty>...</CommandEmpty>
 														<CommandGroup>
 															<CommandItem

@@ -138,7 +138,7 @@ const SidebarUserSelect = () => {
 					filter={(value, search, keywords) => {
 						const extendValue =
 							value.toLowerCase() + ' ' + keywords?.join(' ').toLowerCase()
-						if (extendValue.includes(search)) return 1
+						if (extendValue.includes(search.toLowerCase())) return 1
 						return 0
 					}}
 				>
