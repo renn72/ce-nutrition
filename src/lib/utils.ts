@@ -555,7 +555,7 @@ export function getRecipeDetails(recipe: GetRecipeById) {
 }
 
 /**
- * Solves for ingredient quantities to meet calorie and protein targets.
+ * Solves for ingredient quantities to meet calorie and protein targets best with 2 ingredients.
  *
  * @param proteinPerGram - Array of protein contribution per gram for each ingredient.
  * @param caloriesPerGram - Array of calorie contribution per gram for each ingredient.
