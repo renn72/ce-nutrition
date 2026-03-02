@@ -73,6 +73,10 @@ const PoopLog = ({
 		},
 	})
 
+	const addPoopHandler = ({ date }: { date: string }) => {
+		addPoopLog({ date: date, userId: userId })
+	}
+
 	const { mutate: deletePoopLog } = api.dailyLog.deletePoopLog.useMutation({
 		onMutate: async (poopLog) => {
 			await ctx.dailyLog.getAllCurrentUser.cancel()
@@ -146,7 +150,7 @@ const PoopLog = ({
 			<PoopBottomSheet
 				dailyLogs={dailyLogs}
 				deletePoopLog={deletePoopLog}
-				addPoopLog={addPoopLog}
+				addPoopLog={addPoopHandler}
 			/>
 		</div>
 	)

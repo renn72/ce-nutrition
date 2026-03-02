@@ -12,7 +12,6 @@ import {
 	CalendarIcon,
 	ChevronDown,
 	ListCollapse,
-	Shuffle,
 	Toilet,
 	Trash2,
 } from 'lucide-react'
@@ -248,6 +247,7 @@ const PoopBottomSheet = ({
 											className='ml-[1px]'
 											size={22}
 											onClick={() => {
+												console.log(today.toDateString())
 												addPoopLog({
 													date: today.toDateString(),
 												})
