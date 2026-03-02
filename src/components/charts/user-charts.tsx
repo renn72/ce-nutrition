@@ -518,7 +518,7 @@ const UserCharts = ({
 					/>
 				</div>
 				<NumberInput
-					value={range > 30 ? 30 : range}
+					value={range}
 					setValue={setRange}
 					fixed={1}
 					scale={1}

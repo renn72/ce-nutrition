@@ -21,7 +21,7 @@ const UserInfo = ({ userId }: { userId: string }) => {
 	const { data: user } = api.user.getInfoPage.useQuery(userId)
 	const { data: dailyLogs } = api.dailyLog.getUserLimit.useQuery({
 		id: userId,
-		limit: 30,
+		limit: 60,
 	})
 	const { data: userGoals, isLoading: userGoalsLoading } =
 		api.goal.getUser.useQuery({ userId: userId })
