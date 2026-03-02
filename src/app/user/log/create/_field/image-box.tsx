@@ -346,8 +346,8 @@ const ImageBox = ({
 						<Image
 							src={image}
 							alt='img'
-							width={128}
-							height={224}
+							width={350}
+							height={450}
 							className='object-cover w-full h-full rounded-md'
 						/>
 					</DialogContent>
