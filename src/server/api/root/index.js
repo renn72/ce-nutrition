@@ -9831,6 +9831,55 @@ var supplementsRouter = createTRPCRouter({
     });
     return true;
   }),
+  logMultipleSupplements: protectedProcedure.input(
+    z31.object({
+      date: z31.string(),
+      supplements: z31.array(
+        z31.object({
+          suppId: z31.number(),
+          suppName: z31.string(),
+          time: z31.string(),
+          amount: z31.string(),
+          unit: z31.string(),
+          stackId: z31.string()
+        })
+      ).min(1)
+    })
+  ).mutation(async ({ input, ctx }) => {
+    const existingLog = await ctx.db.query.dailyLog.findFirst({
+      where: and11(
+        eq24(dailyLog.date, input.date),
+        eq24(dailyLog.userId, ctx.session.user.id)
+      )
+    });
+    let logId = existingLog?.id;
+    if (!existingLog) {
+      const res = await ctx.db.insert(dailyLog).values({
+        date: input.date,
+        userId: ctx.session.user.id
+      }).returning({ id: dailyLog.id });
+      logId = res[0]?.id;
+    }
+    if (!logId) throw new TRPCError8({ code: "NOT_FOUND" });
+    createLog5({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "Log Multiple Supplements",
+      notes: JSON.stringify(input),
+      objectId: logId
+    });
+    await ctx.db.insert(dailySupplement).values(
+      input.supplements.map((supplement) => ({
+        dailyLogId: logId,
+        supplementId: supplement.suppId,
+        amount: supplement.amount,
+        unit: supplement.unit,
+        time: supplement.time,
+        notes: supplement.stackId.toString()
+      }))
+    );
+    return true;
+  }),
   unLogSupplement: protectedProcedure.input(z31.object({ id: z31.number() })).mutation(async ({ input, ctx }) => {
     createLog5({
       user: ctx.session.user.name,

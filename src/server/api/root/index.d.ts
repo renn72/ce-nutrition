@@ -21078,6 +21078,21 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             output: boolean;
             meta: object;
         }>;
+        logMultipleSupplements: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                supplements: {
+                    suppId: number;
+                    suppName: string;
+                    time: string;
+                    amount: string;
+                    unit: string;
+                    stackId: string;
+                }[];
+            };
+            output: boolean;
+            meta: object;
+        }>;
         unLogSupplement: _trpc_server.TRPCMutationProcedure<{
             input: {
                 id: number;
@@ -29185,6 +29200,21 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 amount: string;
                 unit: string;
                 stackId: string;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        logMultipleSupplements: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                supplements: {
+                    suppId: number;
+                    suppName: string;
+                    time: string;
+                    amount: string;
+                    unit: string;
+                    stackId: string;
+                }[];
             };
             output: boolean;
             meta: object;

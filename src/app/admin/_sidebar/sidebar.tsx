@@ -71,6 +71,10 @@ const data = {
 					url: '/admin/user-supplement',
 				},
 				{
+					title: 'Supplement Log',
+					url: '/admin/user-supplement-log',
+				},
+				{
 					title: 'break-1',
 					url: '',
 				},
