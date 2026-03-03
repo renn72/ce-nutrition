@@ -537,27 +537,85 @@ const SuppTimes = ({
 	date: Date
 	todaysDailyLog: GetDailyLogById | null | undefined
 }) => {
+	const ctx = api.useUtils()
+	const supplementsForTime =
+		user?.supplementStacks.find((stack) => stack.time === time)?.supplements ??
+		[]
+
+	const unloggedSupplements = supplementsForTime
+		.filter((supp) => {
+			if (!supp.supplementId) return false
+			if (!supp.supplementStackId) return false
+			if (!supp.size) return false
+			if (!supp.unit) return false
+
+			const alreadyLogged = todaysDailyLog?.supplements.some((loggedSupp) => {
+				return (
+					loggedSupp.supplementId === supp.supplementId &&
+					loggedSupp.time?.toLowerCase() === time.toLowerCase()
+				)
+			})
+
+			return !alreadyLogged
+		})
+		.map((supp) => ({
+			suppId: supp.supplementId,
+			suppName: supp.supplement?.name || '',
+			time: time,
+			amount: supp.size,
+			unit: supp.unit,
+			stackId: supp.supplementStackId.toString(),
+		}))
+
+	const { mutate: logMultipleSupplements, isPending: isLogAllPending } =
+		api.supplement.logMultipleSupplements.useMutation({
+			onSuccess: async () => {
+				await ctx.dailyLog.invalidate()
+			},
+			onError: () => {
+				toast.error('Could not log all supplements')
+			},
+		})
+
+	const onLogAll = () => {
+		if (unloggedSupplements.length === 0) return
+		logMultipleSupplements({
+			date: date.toDateString(),
+			supplements: unloggedSupplements,
+		})
+	}
+
 	return (
 		<Card className='gap-2 py-2 px-0 w-full'>
 			<CardHeader className='py-0'>
-				<CardTitle className='capitalize'>{time}</CardTitle>
-				<CardDescription>Supplements</CardDescription>
+				<div className='flex gap-2 justify-between items-center'>
+					<div>
+						<CardTitle className='capitalize'>{time}</CardTitle>
+						<CardDescription>Supplements</CardDescription>
+					</div>
+					<Button
+						size='sm'
+						variant='outline'
+						onClick={onLogAll}
+						disabled={isLogAllPending || unloggedSupplements.length === 0}
+					>
+						{isLogAllPending ? 'Logging...' : 'Log All'}
+					</Button>
+				</div>
 			</CardHeader>
 			<CardContent className='py-0 px-4'>
 				<div className={cn('flex flex-col gap-1')}>
-					{user?.supplementStacks
-						.find((stack) => stack.time === time)
-						?.supplements.map((supp) => {
-							return (
-								<Supp
-									key={supp.id}
-									supp={supp}
-									time={time}
-									date={date}
-									todaysDailyLog={todaysDailyLog}
-								/>
-							)
-						})}
+					{supplementsForTime.map((supp) => {
+						return (
+							<Supp
+								key={supp.id}
+								supp={supp}
+								time={time}
+								date={date}
+								todaysDailyLog={todaysDailyLog}
+							/>
+						)
+					})}
 				</div>
 			</CardContent>
 		</Card>
