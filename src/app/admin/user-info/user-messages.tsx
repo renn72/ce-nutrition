@@ -5,7 +5,6 @@ import { api } from '@/trpc/react'
 import { useState, useEffect } from 'react'
 
 import { cn } from '@/lib/utils'
-import type { GetUserById } from '@/types'
 import { Send } from 'lucide-react'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -77,10 +76,8 @@ const UserMessages = ({
 				return true
 			}, false) || true
 
-		console.log('check')
 		if (shouldSkip) return
 		markViewed(userId)
-		console.log('mark')
 	}, [userId, m])
 
 	if (messagesLoading || sentMessageLoading)

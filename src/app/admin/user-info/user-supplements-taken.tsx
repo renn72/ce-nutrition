@@ -48,7 +48,7 @@ const UserSupplementsTaken = ({
 					{logsWithSupplements.map((log) => (
 						<Card key={log.id} className='gap-0 py-2 px-2 w-full'>
 							<CardHeader className='py-0 px-2'>
-								<div className='flex justify-between items-center gap-2'>
+								<div className='flex gap-2 justify-between items-center'>
 									<CardTitle className='pb-0 text-sm xl:text-base'>
 										{new Date(log.date).toLocaleDateString('en-AU', {
 											day: 'numeric',
@@ -56,7 +56,7 @@ const UserSupplementsTaken = ({
 											year: 'numeric',
 										})}
 									</CardTitle>
-									<div className='py-1 px-2 rounded-full text-[0.6rem] bg-muted leading-none'>
+									<div className='py-1 px-2 leading-none rounded-full text-[0.6rem] bg-muted'>
 										{log.supplements.length} logged
 									</div>
 								</div>
@@ -75,7 +75,7 @@ const UserSupplementsTaken = ({
 												.join(' ')
 
 											return (
-												<div key={supp.id} className='flex flex-col py-1 gap-1'>
+												<div key={supp.id} className='flex flex-col gap-1 py-1'>
 													<div className='grid grid-cols-5 gap-2 items-center text-xs xl:text-sm'>
 														<div className='flex col-span-3 gap-1 items-center truncate'>
 															<span className='truncate'>
@@ -88,7 +88,7 @@ const UserSupplementsTaken = ({
 																/>
 															) : null}
 														</div>
-														<div className='flex col-span-2 justify-end gap-1 whitespace-nowrap'>
+														<div className='flex col-span-2 gap-1 justify-end whitespace-nowrap'>
 															{amountUnit ? <span>{amountUnit}</span> : null}
 															{supp.time ? (
 																<span className='text-muted-foreground'>
@@ -97,11 +97,6 @@ const UserSupplementsTaken = ({
 															) : null}
 														</div>
 													</div>
-													{supp.notes ? (
-														<div className='text-[0.65rem] text-muted-foreground truncate'>
-															{supp.notes}
-														</div>
-													) : null}
 												</div>
 											)
 										})}
