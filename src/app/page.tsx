@@ -5,6 +5,7 @@ import { api } from '@/trpc/react'
 import { useEffect, useState } from 'react'
 
 import { UserCurrentPlan } from '@/app/admin/user-info/user-current-plan'
+import { UserStatusGantt } from '@/app/admin/user-info/user-status-gantt'
 import { UserDailyLogsTable } from '@/app/admin/user-info/user-daily-logs-table'
 import { UserGoals } from '@/app/admin/user-info/user-goals'
 import { UserMeals } from '@/app/admin/user-info/user-meals'
@@ -169,6 +170,9 @@ const Desktop = ({ userId }: { userId: string }) => {
 	if (!dailyLogs) return null
 	if (userGoalsLoading) return null
 
+	const isCategoryThree =
+		user.category?.some((item) => item.category?.id === 3) ?? false
+
 	return (
 		<div className='flex relative flex-wrap gap-4 p-4 w-screen lg:h-screen'>
 			<div className='absolute top-1 right-1 z-100'>
@@ -176,6 +180,11 @@ const Desktop = ({ userId }: { userId: string }) => {
 			</div>
 
 			<div className='grid grid-cols-5 grid-rows-3 gap-4 w-full h-[calc(100vh-32px)]'>
+				<UserStatusGantt
+					dailyLogs={dailyLogs}
+					settings={user.settings}
+					isCategoryThree={isCategoryThree}
+				/>
 				<UserWeight dailyLogs={dailyLogs} />
 				<UserGoals userId={user.id} userGoals={userGoals} />
 				<UserCurrentPlan userId={user.id} />
