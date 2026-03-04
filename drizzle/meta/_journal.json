@@ -470,6 +470,13 @@
       "when": 1772584612032,
       "tag": "0066_useful_lockheed",
       "breakpoints": true
+    },
+    {
+      "idx": 67,
+      "version": "6",
+      "when": 1772664047608,
+      "tag": "0067_tired_outlaw_kid",
+      "breakpoints": true
     }
   ]
 }

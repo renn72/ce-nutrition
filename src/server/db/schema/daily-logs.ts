@@ -26,6 +26,7 @@ export const dailyLog = createTable(
 		morningWeight: text('morning_weight'),
 		notes: text('notes'),
 		fastedBloodGlucose: text('fasted_blood_glucose'),
+		fastedBloodGlucoseTiming: text('fasted_blood_glucose_time'),
 		sleep: text('sleep'),
 		sleepQuality: text('sleep_quality'),
 		isHiit: int('is_hiit', { mode: 'boolean' }),

@@ -4,6 +4,7 @@ import { api } from '@/trpc/react'
 
 import { useEffect, useState } from 'react'
 
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { UserCurrentPlan } from '@/app/admin/user-info/user-current-plan'
 import { UserStatusGantt } from '@/app/admin/user-info/user-status-gantt'
 import { UserDailyLogsTable } from '@/app/admin/user-info/user-daily-logs-table'
@@ -174,31 +175,45 @@ const Desktop = ({ userId }: { userId: string }) => {
 		user.category?.some((item) => item.category?.id === 3) ?? false
 
 	return (
-		<div className='flex relative flex-wrap gap-4 p-4 w-screen lg:h-screen'>
+		<div className='flex relative flex-wrap gap-4 p-4 w-screen lg:h-[calc(100vh-32px)]'>
 			<div className='absolute top-1 right-1 z-100'>
 				<User />
 			</div>
 
-			<div className='grid grid-cols-5 grid-rows-3 gap-4 w-full h-[calc(100vh-32px)]'>
+			<ScrollArea className='px-3 lg:h-[calc(100vh-65px)] xl:h-[calc(100vh-80px)]'>
 				<UserStatusGantt
 					dailyLogs={dailyLogs}
 					settings={user.settings}
 					isCategoryThree={isCategoryThree}
+					className='col-span-5'
 				/>
-				<UserWeight dailyLogs={dailyLogs} />
-				<UserGoals userId={user.id} userGoals={userGoals} />
-				<UserCurrentPlan userId={user.id} />
-				<UserSupplementPlan user={user} />
-				<UserRecentMetrics userId={user.id} />
-				<UserCharts
-					className='col-span-3 row-span-1'
-					dailyLogs={dailyLogs}
-					// @ts-ignore
-					currentUser={user}
-				/>
-				<UserMeals className='col-span-2' dailyLogs={dailyLogs} />
-				<UserDailyLogsTable className='col-span-5' dailyLogs={dailyLogs} />
-			</div>
+
+				<div className='grid grid-cols-5 grid-rows-3 gap-4 w-[calc(100vw-16px)]'>
+					<UserWeight className='max-h-[450px]' dailyLogs={dailyLogs} />
+					<UserGoals
+						className='max-h-[450px]'
+						userId={user.id}
+						userGoals={userGoals}
+					/>
+					<UserCurrentPlan className='max-h-[450px]' userId={user.id} />
+					<UserSupplementPlan className='max-h-[450px]' user={user} />
+					<UserRecentMetrics className='max-h-[450px]' userId={user.id} />
+					<UserCharts
+						className='col-span-3 row-span-1'
+						dailyLogs={dailyLogs}
+						// @ts-ignore
+						currentUser={user}
+					/>
+					<UserMeals
+						className='col-span-2 max-h-[450px]'
+						dailyLogs={dailyLogs}
+					/>
+					<UserDailyLogsTable
+						className='col-span-5 max-h-[450px]'
+						dailyLogs={dailyLogs}
+					/>
+				</div>
+			</ScrollArea>
 		</div>
 	)
 }

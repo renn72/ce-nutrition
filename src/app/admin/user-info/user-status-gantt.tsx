@@ -96,10 +96,12 @@ const UserStatusGantt = ({
 	dailyLogs,
 	settings,
 	isCategoryThree,
+	className,
 }: {
 	dailyLogs: DailyLogForGantt[]
 	settings: SettingsForGantt
 	isCategoryThree: boolean
+	className?: string
 }) => {
 	const today = useMemo(() => getDayStart(new Date()), [])
 	const todayStamp = getDayStamp(today)
@@ -290,7 +292,7 @@ const UserStatusGantt = ({
 	}, [canShowBulkCutRows, showPeriodRows, statusByDay])
 
 	return (
-		<div className='p-3 mb-2 w-full rounded-xl border bg-card'>
+		<div className={cn('p-3 mb-2 w-full rounded-xl border bg-card', className)}>
 			<div
 				className='grid gap-1'
 				style={{ gridTemplateColumns: '84px minmax(0, 1fr)' }}

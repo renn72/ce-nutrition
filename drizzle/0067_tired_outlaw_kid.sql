@@ -1,0 +1,1 @@
+ALTER TABLE `daily_log` ADD `fasted_blood_glucose_time` text;
