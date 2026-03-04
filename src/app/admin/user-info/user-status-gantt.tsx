@@ -27,6 +27,8 @@ type DailyLogForGantt = {
 	isOvulation: boolean | null
 	isBulk: boolean | null
 	isCut: boolean | null
+	weight: string | null
+	liss: string | null
 }
 
 const DAYS_AROUND_TODAY = 7
@@ -153,6 +155,8 @@ const UserStatusGantt = ({
 						ovulation: log?.isOvulation === true,
 						bulk: log?.isBulk === true,
 						cut: log?.isCut === true,
+						weightTraining: log?.weight !== null && log?.weight !== '',
+						liss: log?.liss !== null && log?.liss !== '',
 					}
 				}
 
@@ -179,6 +183,8 @@ const UserStatusGantt = ({
 						start: cutStart,
 						finish: cutFinish,
 					}),
+					weightTraining: false,
+					liss: false,
 				}
 			}),
 		[
@@ -236,6 +242,26 @@ const UserStatusGantt = ({
 					values: statusByDay.map((day) => day.cut),
 				},
 			)
+		}
+
+		const weightValues = statusByDay.map((day) => day.weightTraining)
+		if (weightValues.some(Boolean)) {
+			nextRows.push({
+				key: 'weight-training',
+				label: 'Weight',
+				activeClass: 'bg-[#2563EB] border-[#2563EB]',
+				values: weightValues,
+			})
+		}
+
+		const lissValues = statusByDay.map((day) => day.liss)
+		if (lissValues.some(Boolean)) {
+			nextRows.push({
+				key: 'liss-training',
+				label: 'LISS',
+				activeClass: 'bg-[#14B8A6] border-[#14B8A6]',
+				values: lissValues,
+			})
 		}
 
 		return nextRows

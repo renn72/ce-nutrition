@@ -47,22 +47,22 @@ const UserInfo = ({ userId }: { userId: string }) => {
 				<UserStatusGantt dailyLogs={dailyLogs} settings={user.settings} />
 				<div className='grid grid-cols-1 gap-2 lg:grid-cols-5 lg:grid-rows-3 lg:gap-4 lg:w-full w-[calc(100vw-16px)]'>
 					<UserMessages
-						className='lg:row-span-1'
+						className='lg:row-span-1 max-h-[450px]'
 						currentUserId={currentUser.id}
 						userId={userId}
 					/>
-					<UserWeight dailyLogs={dailyLogs} />
+					<UserWeight className='max-h-[450px]' dailyLogs={dailyLogs} />
 					<UserSupplementsTaken
 						dailyLogs={dailyLogs}
-						className='lg:col-span-1 max-h-[450px]'
+						className='lg:col-span-2 max-h-[450px]'
 					/>
-					<UserSupplementPlan user={user} />
-					<UserCurrentPlan userId={userId} />
-					<UserRecentMetrics userId={userId} />
+					<UserSupplementPlan className='max-h-[450px]' user={user} />
+					<UserCurrentPlan className='max-h-[450px]' userId={userId} />
+					<UserRecentMetrics className='max-h-[450px]' userId={userId} />
 					{/* <UserNotes userId={userId} userNotes={userNotes} /> */}
 					<UserGoals userId={userId} userGoals={userGoals} />
 					<UserCharts
-						className='row-span-1 lg:col-span-3'
+						className='row-span-1 lg:col-span-2'
 						dailyLogs={dailyLogs}
 						// @ts-ignore
 						currentUser={user}
