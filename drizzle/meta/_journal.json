@@ -456,6 +456,13 @@
       "when": 1770087442013,
       "tag": "0064_tidy_miracleman",
       "breakpoints": true
+    },
+    {
+      "idx": 65,
+      "version": "6",
+      "when": 1772582467421,
+      "tag": "0065_narrow_master_chief",
+      "breakpoints": true
     }
   ]
 }
