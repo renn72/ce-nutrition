@@ -656,7 +656,7 @@ export default function Home() {
 						userId: currentUser.id,
 					})
 				}, 50)
-			} catch (err) {
+			} catch (_err) {
 				// toast.error('error', err.message)
 			}
 		}
@@ -667,16 +667,16 @@ export default function Home() {
 		return log.date === new Date(date?.getTime() - 86400000).toDateString()
 	})
 
-	if (!currentUser) return null
-
 	const isPeriodEnabled = currentUser?.settings?.isPeriodOvulaion ?? false
-	const isBulkCutEnabled = currentUser?.settings?.isBulkCut ?? false
-	const isHighLowEnabled = currentUser?.settings?.isHighLow ?? false
 	const isCategoryThree =
 		currentUser?.category?.some(
 			(userCategory) =>
 				userCategory.categoryId === 3 || userCategory.category?.id === 3,
 		) ?? false
+	const isBulkCutEnabled =
+		isCategoryThree || (currentUser?.settings?.isBulkCut ?? false)
+	const isHighLowEnabled =
+		isCategoryThree || (currentUser?.settings?.isHighLow ?? false)
 	const isPeriodCardEnabled =
 		isPeriodEnabled || isCategoryThree || isBulkCutEnabled || isHighLowEnabled
 
@@ -687,6 +687,45 @@ export default function Home() {
 	const isHigh = log?.isHigh ?? false
 	const isLow = log?.isLow ?? false
 
+	useEffect(() => {
+		if (!isCategoryThree) return
+		if (!log) return
+
+		if (log.isBulk === null) {
+			updateIsBulk({
+				date: log.date,
+				isBulk: true,
+			})
+		}
+
+		if (log.isCut === null) {
+			updateIsCut({
+				date: log.date,
+				isCut: true,
+			})
+		}
+
+		if (log.isHigh === null && log.isLow === null) {
+			updateIsLowOrHigh({
+				date: log.date,
+				isHigh: true,
+				isLow: false,
+			})
+		}
+	}, [
+		isCategoryThree,
+		log?.id,
+		log?.date,
+		log?.isBulk,
+		log?.isCut,
+		log?.isHigh,
+		log?.isLow,
+		updateIsBulk,
+		updateIsCut,
+		updateIsLowOrHigh,
+	])
+
+	if (!currentUser) return null
 	const ovulaionStartAt = currentUser.settings?.ovulaionStartAt ?? new Date()
 	const start = currentUser.settings?.periodStartAt ?? new Date()
 	const interval = currentUser.settings?.periodInterval ?? 28
@@ -894,154 +933,176 @@ export default function Home() {
 						!isPeriodCardEnabled ? 'hidden' : '',
 					)}
 				>
-					<div
-						onClick={() => {
-							if (!log) return
-							updateIsPeriod({
-								date: log.date,
-								isPeriod: !isPeriod,
-							})
-						}}
-						className={cn(
-							'text-muted-foreground/10 flex gap-0 items-center justify-center h-8 w-8 rounded-full bg-background border shadow-inner',
-							isPeriod ? 'border-[#E11D48]' : '',
-						)}
-					>
-						<PeriodIcon color={isPeriod ? '#E11D48' : '#88888855'} size={36} />
-						<p
+					{isPeriodEnabled ? (
+						<div
+							onClick={() => {
+								if (!log) return
+								updateIsPeriod({
+									date: log.date,
+									isPeriod: !isPeriod,
+								})
+							}}
 							className={cn(
-								'mt-1 text-[0.7rem] hidden ml-2',
-								periodStatus === -1 ? 'block text-muted-foreground' : '',
-								isPeriod ? 'hidden' : '',
+								'text-muted-foreground/10 flex gap-0 items-center justify-center h-8 w-8 rounded-full bg-background border shadow-inner',
+								isPeriod ? 'border-[#E11D48]' : '',
 							)}
 						>
-							tomorrow
-						</p>
-					</div>
-					<div
-						onClick={() => {
-							if (!log) return
-							updateIsBulk({
-								date: log.date,
-								isBulk: !isBulk,
-							})
-						}}
-						className={cn(
-							'text-muted-foreground/10 flex items-center justify-center h-8 w-8 rounded-full bg-background border shadow-inner active:scale-90 transition-transform',
-							isBulk ? 'border-[#0EA5E9]' : '',
-						)}
-					>
-						<BicepsFlexed
-							color={isBulk ? '#0EA5E9' : '#88888855'}
-							size={18}
-						/>
-					</div>
-					<div
-						onClick={() => {
-							if (!log) return
-							if (isHigh) {
+							<PeriodIcon
+								color={isPeriod ? '#E11D48' : '#88888855'}
+								size={36}
+							/>
+							<p
+								className={cn(
+									'mt-1 text-[0.7rem] hidden ml-2',
+									periodStatus === -1 ? 'block text-muted-foreground' : '',
+									isPeriod ? 'hidden' : '',
+								)}
+							>
+								tomorrow
+							</p>
+						</div>
+					) : null}
+					{isBulkCutEnabled ? (
+						<div
+							onClick={() => {
+								if (!log) return
+								updateIsBulk({
+									date: log.date,
+									isBulk: !isBulk,
+								})
+							}}
+							className={cn(
+								'text-muted-foreground/10 flex items-center justify-center h-8 w-8 rounded-full bg-background border shadow-inner active:scale-90 transition-transform',
+								isBulk ? 'border-[#0EA5E9]' : '',
+							)}
+						>
+							<BicepsFlexed
+								color={isBulk ? '#0EA5E9' : '#88888855'}
+								size={18}
+							/>
+						</div>
+					) : null}
+					{isHighLowEnabled ? (
+						<div
+							onClick={() => {
+								if (!log) return
+								if (isHigh) {
+									updateIsLowOrHigh({
+										date: log.date,
+										isHigh: false,
+										isLow: false,
+									})
+									return
+								}
+								if (!isHigh && !isLow) {
+									updateIsLowOrHigh({
+										date: log.date,
+										isHigh: false,
+										isLow: true,
+									})
+									return
+								}
 								updateIsLowOrHigh({
 									date: log.date,
-									isHigh: false,
+									isHigh: true,
 									isLow: false,
 								})
-								return
-							}
-							if (!isHigh && !isLow) {
-								updateIsLowOrHigh({
+							}}
+							className={cn(
+								'relative flex items-center h-8 w-[120px] rounded-full bg-background border shadow-inner px-1 active:scale-95 transition-transform',
+								isHigh ? 'border-[#0EA5E9]' : '',
+								isLow ? 'border-[#C9A54A]' : '',
+							)}
+						>
+							<span
+								className={cn(
+									'absolute left-2 text-[10px] font-medium select-none transition-transform duration-400',
+									!isHigh && !isLow
+										? 'text-muted-foreground/40 opacity-100'
+										: isHigh
+											? 'opacity-0'
+											: 'text-muted-foreground/50 opacity-100',
+								)}
+							>
+								High
+							</span>
+							<span
+								className={cn(
+									'absolute right-2 text-[10px] font-medium select-none transition-transform duration-400',
+									!isHigh && !isLow
+										? 'text-muted-foreground/40 opacity-100'
+										: isLow
+											? 'text-primary opacity-0'
+											: 'text-muted-foreground/50 opacity-100',
+								)}
+							>
+								Low
+							</span>
+							<span
+								className={cn(
+									'absolute left-0 top-1 h-[23px] w-[40px] rounded-full border bg-card transition-transform',
+									'duration-200 flex items-center justify-center text-[10px] font-semibold',
+									isHigh
+										? 'translate-x-0 text-[#0EA5E9] text-opacity-100 w-[44px]'
+										: '',
+									!isHigh && !isLow
+										? 'translate-x-[39px] text-opacity-0 '
+										: 'translate-x-[3px]',
+									isLow
+										? 'translate-x-[70px] text-[#C9A54A] text-opacity-100 w-[44px]'
+										: '',
+								)}
+							>
+								{isHigh ? 'High' : isLow ? 'Low' : ''}
+							</span>
+						</div>
+					) : null}
+					{isBulkCutEnabled ? (
+						<div
+							onClick={() => {
+								if (!log) return
+								updateIsCut({
 									date: log.date,
-									isHigh: false,
-									isLow: true,
+									isCut: !isCut,
 								})
-								return
-							}
-							updateIsLowOrHigh({
-								date: log.date,
-								isHigh: true,
-								isLow: false,
-							})
-						}}
-						className={cn(
-							'relative flex items-center h-8 w-24 rounded-full bg-background border shadow-inner px-1 active:scale-95 transition-transform',
-							isHigh ? 'border-[#0EA5E9]' : '',
-							isLow ? 'border-[#F97316]' : '',
-						)}
-					>
-						<span
+							}}
 							className={cn(
-								'absolute left-2 text-[10px] font-medium select-none',
-								!isHigh && !isLow
-									? 'text-muted-foreground/40'
-									: isHigh
-										? 'text-primary'
-										: 'text-muted-foreground/50',
+								'text-muted-foreground/10 flex items-center justify-center h-8 w-8 rounded-full bg-background border shadow-inner active:scale-90 transition-transform',
+								isCut ? 'border-[#C9A54A]' : '',
 							)}
 						>
-							High
-						</span>
-						<span
+							<Scissors color={isCut ? '#C9A54A' : '#88888855'} size={18} />
+						</div>
+					) : null}
+					{isPeriodEnabled ? (
+						<div
+							onClick={() => {
+								if (!log) return
+								updateIsOvulation({
+									date: log.date,
+									isOvulation: !isOvulation,
+								})
+							}}
 							className={cn(
-								'absolute right-2 text-[10px] font-medium select-none',
-								!isHigh && !isLow
-									? 'text-muted-foreground/40'
-									: isLow
-										? 'text-primary'
-										: 'text-muted-foreground/50',
+								'text-muted-foreground/10 flex gap-0 items-center justify-center h-8 w-8 rounded-full bg-background border shadow-inner',
+								isOvulation ? 'border-[#8B5CF6]' : '',
 							)}
 						>
-							Low
-						</span>
-						<span
-							className={cn(
-								'h-6 w-7 rounded-full border bg-card transition-transform duration-200',
-								isHigh ? 'translate-x-0' : '',
-								!isHigh && !isLow ? 'translate-x-[30px]' : '',
-								isLow ? 'translate-x-[60px]' : '',
-							)}
-						/>
-					</div>
-					<div
-						onClick={() => {
-							if (!log) return
-							updateIsCut({
-								date: log.date,
-								isCut: !isCut,
-							})
-						}}
-						className={cn(
-							'text-muted-foreground/10 flex items-center justify-center h-8 w-8 rounded-full bg-background border shadow-inner active:scale-90 transition-transform',
-							isCut ? 'border-[#F97316]' : '',
-						)}
-					>
-						<Scissors color={isCut ? '#F97316' : '#88888855'} size={18} />
-					</div>
-					<div
-						onClick={() => {
-							if (!log) return
-							updateIsOvulation({
-								date: log.date,
-								isOvulation: !isOvulation,
-							})
-						}}
-						className={cn(
-							'text-muted-foreground/10 flex gap-0 items-center justify-center h-8 w-8 rounded-full bg-background border shadow-inner',
-							isOvulation ? 'border-[#8B5CF6]' : '',
-						)}
-					>
-						<OvulationIcon
-							color={isOvulation ? '#8B5CF6' : '#88888855'}
-							size={26}
-						/>
-						<p
-							className={cn(
-								'mt-1 text-[0.7rem] hidden ml-2',
-								ovulationStatus === -1 ? 'block text-muted-foreground' : '',
-								isPeriod ? 'hidden' : '',
-							)}
-						>
-							tomorrow
-						</p>
-					</div>
+							<OvulationIcon
+								color={isOvulation ? '#8B5CF6' : '#88888855'}
+								size={26}
+							/>
+							<p
+								className={cn(
+									'mt-1 text-[0.7rem] hidden ml-2',
+									ovulationStatus === -1 ? 'block text-muted-foreground' : '',
+									isPeriod ? 'hidden' : '',
+								)}
+							>
+								tomorrow
+							</p>
+						</div>
+					) : null}
 				</div>
 				<div
 					className={cn(
