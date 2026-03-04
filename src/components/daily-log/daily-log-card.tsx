@@ -271,31 +271,41 @@ const Log = memo(
 					<div
 						className={cn(
 							'w-[80px] h-6 rotate-45 -right-9 top-0 absolute',
-							isOvulation ? 'bg-purple-400/70' : 'bg-transparent',
+							isOvulation ? 'bg-purple-300/70' : 'bg-transparent',
 						)}
 					/>
 				)}
 				<CardHeader className='pt-4 pb-0'>
-					<CardTitle className='flex gap-2 justify-between items-center font-semibold text-medium'>
-						<span>{title}</span>
-						<div className='flex gap-2 items-center'>
+					<CardTitle className='flex gap-2 justify-between items-end font-semibold text-medium'>
+						<span className='tracking-tight'>{title}</span>
+						<div className='flex gap-2 items-center pb-[1px]'>
 							{(isHighDay || isLowDay) && (
 								<Badge
 									variant='secondary'
 									className={cn(
-										'px-2 py-0.5 text-[11px] font-semibold leading-none',
+										'px-2 py-0.5 text-[12px] font-extrabold leading-none',
 										isHighDay
 											? 'bg-[#0EA5E9] text-white border border-[#0EA5E9]'
-											: 'bg-[#A8862C] text-white border border-[#A8862C]',
+											: 'bg-[#8B5CF6] text-white border border-[#8B5CF6]',
 									)}
 								>
 									{isHighDay ? 'High' : 'Low'}
 								</Badge>
 							)}
 							{isBulkDay && (
-								<BicepsFlexed size={16} className='text-[#0EA5E9]' />
+								<BicepsFlexed
+									size={16}
+									strokeWidth={2.5}
+									className='text-[#22C55E]'
+								/>
 							)}
-							{isCutDay && <Scissors size={16} className='text-[#C9A54A]' />}
+							{isCutDay && (
+								<Scissors
+									strokeWidth={2.5}
+									size={16}
+									className='text-[#EAB308]'
+								/>
+							)}
 						</div>
 					</CardTitle>
 				</CardHeader>

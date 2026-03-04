@@ -973,11 +973,11 @@ export default function Home() {
 							}}
 							className={cn(
 								'text-muted-foreground/10 flex items-center justify-center h-8 w-8 rounded-full bg-background border shadow-inner active:scale-90 transition-transform',
-								isBulk ? 'border-[#0EA5E9]' : '',
+								isBulk ? 'border-[#22C55E]' : '',
 							)}
 						>
 							<BicepsFlexed
-								color={isBulk ? '#0EA5E9' : '#88888855'}
+								color={isBulk ? '#22C55E' : '#88888855'}
 								size={18}
 							/>
 						</div>
@@ -1011,7 +1011,7 @@ export default function Home() {
 							className={cn(
 								'relative flex items-center h-8 w-[120px] rounded-full bg-background border shadow-inner px-1 active:scale-95 transition-transform',
 								isHigh ? 'border-[#0EA5E9]' : '',
-								isLow ? 'border-[#C9A54A]' : '',
+								isLow ? 'border-[#EC4899]' : '',
 							)}
 						>
 							<span
@@ -1049,7 +1049,7 @@ export default function Home() {
 										? 'translate-x-[39px] text-opacity-0 '
 										: 'translate-x-[3px]',
 									isLow
-										? 'translate-x-[70px] text-[#C9A54A] text-opacity-100 w-[44px]'
+										? 'translate-x-[70px] text-[#EC4899] text-opacity-100 w-[44px]'
 										: '',
 								)}
 							>
@@ -1068,10 +1068,10 @@ export default function Home() {
 							}}
 							className={cn(
 								'text-muted-foreground/10 flex items-center justify-center h-8 w-8 rounded-full bg-background border shadow-inner active:scale-90 transition-transform',
-								isCut ? 'border-[#C9A54A]' : '',
+								isCut ? 'border-[#EAB308]' : '',
 							)}
 						>
-							<Scissors color={isCut ? '#C9A54A' : '#88888855'} size={18} />
+							<Scissors color={isCut ? '#EAB308' : '#88888855'} size={18} />
 						</div>
 					) : null}
 					{isPeriodEnabled ? (
