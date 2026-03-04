@@ -972,8 +972,14 @@ var userSettings = createTable6(
     isPeriodOvulaion: int6("is_period_ovulaion", { mode: "boolean" }).default(
       false
     ),
+    isHighLow: int6("is_high_low", { mode: "boolean" }).default(false),
+    isBulkCut: int6("is_bulk_cut", { mode: "boolean" }).default(false),
     ovulaionStartAt: int6("ovulaion_start_at", { mode: "timestamp" }),
     periodStartAt: int6("period_start_at", { mode: "timestamp" }),
+    cutStartAt: int6("cut_start_at", { mode: "timestamp" }),
+    cutFinishAt: int6("cut_finish_at", { mode: "timestamp" }),
+    bulkStartAt: int6("bulk_start_at", { mode: "timestamp" }),
+    bulkFinishAt: int6("bulk_finish_at", { mode: "timestamp" }),
     periodLength: int6("period_length").default(5).notNull(),
     periodInterval: int6("period_interval").default(28).notNull()
   },
