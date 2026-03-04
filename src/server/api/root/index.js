@@ -6972,6 +6972,31 @@ var isDuringPeriod = (checkDate, lastPeriodStart, cycleLengthDays, periodDuratio
 };
 
 // src/server/api/routers/daily-logs/post.ts
+var isDateWithinRange = ({
+  date,
+  start,
+  finish
+}) => {
+  if (!start || !finish) return false;
+  const target = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate()
+  ).getTime();
+  const startDay = new Date(
+    start.getFullYear(),
+    start.getMonth(),
+    start.getDate()
+  ).getTime();
+  const finishDay = new Date(
+    finish.getFullYear(),
+    finish.getMonth(),
+    finish.getDate()
+  ).getTime();
+  const min = Math.min(startDay, finishDay);
+  const max = Math.max(startDay, finishDay);
+  return target >= min && target <= max;
+};
 var post2 = {
   create: protectedProcedure.input(
     z19.object({
@@ -7010,10 +7035,22 @@ var post2 = {
     const today = new Date(input.date ?? Date.now());
     const isPeriod = isPeriodEnabled ? isDuringPeriod(today, start, interval, duration) : false;
     const isOvulation = isPeriodEnabled ? isDuringPeriod(today, ovulaionStart, interval, 1) : false;
+    const isBulk = isDateWithinRange({
+      date: today,
+      start: userSetting?.bulkStartAt,
+      finish: userSetting?.bulkFinishAt
+    });
+    const isCut = isDateWithinRange({
+      date: today,
+      start: userSetting?.cutStartAt,
+      finish: userSetting?.cutFinishAt
+    });
     const res = await ctx.db.insert(dailyLog).values({
       ...input,
       isPeriod,
       isOvulation,
+      isBulk,
+      isCut,
       date: input.date
     }).returning({ id: dailyLog.id });
     createLog({
