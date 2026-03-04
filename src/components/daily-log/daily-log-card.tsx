@@ -55,6 +55,20 @@ const formatNumber = (
 	return Number(val).toFixed(fixed)
 }
 
+const formatBloodGlucoseTiming = (timing?: string | null) => {
+	if (!timing) return undefined
+	const match = timing.match(/^(\d{1,2}):(\d{2})$/)
+	if (!match) return timing
+
+	const hour24 = Number(match[1])
+	const minute = match[2]
+	if (Number.isNaN(hour24) || hour24 < 0 || hour24 > 23) return timing
+
+	const period = hour24 >= 12 ? 'PM' : 'AM'
+	const hour12 = hour24 % 12 || 12
+	return `${hour12}:${minute} ${period}`
+}
+
 const MetricItem = memo(
 	({
 		label,
@@ -64,6 +78,7 @@ const MetricItem = memo(
 		icon: Icon,
 		isFullWidth = false,
 		accuracy = 1,
+		subtitle,
 	}: {
 		label: string
 		value: string | number | undefined | null
@@ -72,6 +87,7 @@ const MetricItem = memo(
 		icon?: React.ElementType
 		isFullWidth?: boolean
 		accuracy?: number
+		subtitle?: string | null
 	}) => {
 		if (
 			value === undefined ||
@@ -109,20 +125,27 @@ const MetricItem = memo(
 					<span className='font-semibold tracking-wider uppercase text-[10px] text-muted-foreground'>
 						{label}
 					</span>
-					<div className='flex gap-0 justify-between items-baseline w-full'>
-						<span
-							className={cn(
-								'text-sm font-bold truncate tracking-tight ',
-								value === 0 || value === undefined || value === null
-									? 'text-muted-foreground/70'
-									: '',
-							)}
-						>
-							{value === undefined || value === null ? '.' : value}
-							{suffix && !!value && (
-								<span className='ml-0.5 text-xs font-normal'>{suffix}</span>
-							)}
-						</span>
+					<div className='flex gap-0 justify-between items-start w-full'>
+						<div className='flex overflow-hidden flex-col'>
+							<span
+								className={cn(
+									'text-sm font-bold truncate tracking-tight ',
+									value === 0 || value === undefined || value === null
+										? 'text-muted-foreground/70'
+										: '',
+								)}
+							>
+								{value === undefined || value === null ? '.' : value}
+								{suffix && !!value && (
+									<span className='ml-0.5 text-xs font-normal'>{suffix}</span>
+								)}
+							</span>
+							{subtitle ? (
+								<span className='font-medium leading-none text-[10px] text-muted-foreground'>
+									{subtitle}
+								</span>
+							) : null}
+						</div>
 						{change ? (
 							<span className='flex items-baseline font-semibold tracking-wider leading-none uppercase text-[10px] text-muted-foreground'>
 								{change === 0 ? null : change < 0 ? (
@@ -369,6 +392,9 @@ const Log = memo(
 								suffix='mmol/L'
 								icon={Droplet}
 								accuracy={0}
+								subtitle={formatBloodGlucoseTiming(
+									todaysDailyLog?.fastedBloodGlucoseTiming,
+								)}
 							/>
 						)}
 

@@ -51,7 +51,7 @@ const DialogWrapper = ({
 							<span
 								className={cn(
 									'text-sm font-bold truncate',
-									value == 0 || value === undefined || value === null
+									value === '0' || value === undefined || value === null
 										? 'text-muted-foreground/70'
 										: '',
 								)}

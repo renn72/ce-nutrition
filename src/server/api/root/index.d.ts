@@ -12489,6 +12489,25 @@ declare const dailyLog: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
         }, {}, {
             length: number | undefined;
         }>;
+        fastedBloodGlucoseTiming: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "fasted_blood_glucose_time";
+            tableName: "daily_log";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
         sleep: drizzle_orm_sqlite_core.SQLiteColumn<{
             name: "sleep";
             tableName: "daily_log";
@@ -14308,6 +14327,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 sleep: string | null;
                 morningWeight: string | null;
                 fastedBloodGlucose: string | null;
+                fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
                 isHiit: boolean | null;
                 isCardio: boolean | null;
@@ -14504,6 +14524,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 sleep: string | null;
                 morningWeight: string | null;
                 fastedBloodGlucose: string | null;
+                fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
                 isHiit: boolean | null;
                 isCardio: boolean | null;
@@ -14702,6 +14723,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 sleep: string | null;
                 morningWeight: string | null;
                 fastedBloodGlucose: string | null;
+                fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
                 isHiit: boolean | null;
                 isCardio: boolean | null;
@@ -14898,6 +14920,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 sleep: string | null;
                 morningWeight: string | null;
                 fastedBloodGlucose: string | null;
+                fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
                 isHiit: boolean | null;
                 isCardio: boolean | null;
@@ -14949,6 +14972,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 sleep: string | null;
                 morningWeight: string | null;
                 fastedBloodGlucose: string | null;
+                fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
                 isHiit: boolean | null;
                 isCardio: boolean | null;
@@ -15341,6 +15365,14 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             input: {
                 date: string;
                 fastedBloodGlucose: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateBloodGlucoseTiming: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                fastedBloodGlucoseTiming: string;
             };
             output: _libsql_client.ResultSet;
             meta: object;
@@ -22581,6 +22613,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 sleep: string | null;
                 morningWeight: string | null;
                 fastedBloodGlucose: string | null;
+                fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
                 isHiit: boolean | null;
                 isCardio: boolean | null;
@@ -22777,6 +22810,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 sleep: string | null;
                 morningWeight: string | null;
                 fastedBloodGlucose: string | null;
+                fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
                 isHiit: boolean | null;
                 isCardio: boolean | null;
@@ -22975,6 +23009,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 sleep: string | null;
                 morningWeight: string | null;
                 fastedBloodGlucose: string | null;
+                fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
                 isHiit: boolean | null;
                 isCardio: boolean | null;
@@ -23171,6 +23206,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 sleep: string | null;
                 morningWeight: string | null;
                 fastedBloodGlucose: string | null;
+                fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
                 isHiit: boolean | null;
                 isCardio: boolean | null;
@@ -23222,6 +23258,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 sleep: string | null;
                 morningWeight: string | null;
                 fastedBloodGlucose: string | null;
+                fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
                 isHiit: boolean | null;
                 isCardio: boolean | null;
@@ -23614,6 +23651,14 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             input: {
                 date: string;
                 fastedBloodGlucose: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateBloodGlucoseTiming: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                fastedBloodGlucoseTiming: string;
             };
             output: _libsql_client.ResultSet;
             meta: object;
