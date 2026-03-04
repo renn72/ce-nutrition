@@ -95,9 +95,11 @@ const isDuringRecurringRange = ({
 const UserStatusGantt = ({
 	dailyLogs,
 	settings,
+	isCategoryThree,
 }: {
 	dailyLogs: DailyLogForGantt[]
 	settings: SettingsForGantt
+	isCategoryThree: boolean
 }) => {
 	const today = useMemo(() => getDayStart(new Date()), [])
 	const todayStamp = getDayStamp(today)
@@ -140,16 +142,49 @@ const UserStatusGantt = ({
 	const periodInterval = settings?.periodInterval ?? 28
 	const periodDuration = settings?.periodLength ?? 5
 	const showPeriodRows = settings?.isPeriodOvulaion === true
-	const showBulkCutRows = settings?.isBulkCut === true
+	const canShowBulkCutRows = settings?.isBulkCut === true || isCategoryThree
 
 	const statusByDay = useMemo(
 		() =>
 			days.map((day) => {
 				const dayStamp = getDayStamp(day)
 				const isPastOrToday = dayStamp <= todayStamp
+				const predictedPeriod = isDuringRecurringRange({
+					date: day,
+					start: periodStart,
+					interval: periodInterval,
+					duration: periodDuration,
+				})
+				const predictedOvulation = isDuringRecurringRange({
+					date: day,
+					start: ovulationStart,
+					interval: periodInterval,
+					duration: 1,
+				})
+				const predictedBulk = isDateWithinRange({
+					date: day,
+					start: bulkStart,
+					finish: bulkFinish,
+				})
+				const predictedCut = isDateWithinRange({
+					date: day,
+					start: cutStart,
+					finish: cutFinish,
+				})
 
 				if (isPastOrToday) {
 					const log = logMapByDate.get(dayStamp)
+					if (!log) {
+						return {
+							period: predictedPeriod,
+							ovulation: predictedOvulation,
+							bulk: predictedBulk,
+							cut: predictedCut,
+							weightTraining: false,
+							liss: false,
+						}
+					}
+
 					return {
 						period: log?.isPeriod === true,
 						ovulation: log?.isOvulation === true,
@@ -161,28 +196,10 @@ const UserStatusGantt = ({
 				}
 
 				return {
-					period: isDuringRecurringRange({
-						date: day,
-						start: periodStart,
-						interval: periodInterval,
-						duration: periodDuration,
-					}),
-					ovulation: isDuringRecurringRange({
-						date: day,
-						start: ovulationStart,
-						interval: periodInterval,
-						duration: 1,
-					}),
-					bulk: isDateWithinRange({
-						date: day,
-						start: bulkStart,
-						finish: bulkFinish,
-					}),
-					cut: isDateWithinRange({
-						date: day,
-						start: cutStart,
-						finish: cutFinish,
-					}),
+					period: predictedPeriod,
+					ovulation: predictedOvulation,
+					bulk: predictedBulk,
+					cut: predictedCut,
 					weightTraining: false,
 					liss: false,
 				}
@@ -227,21 +244,26 @@ const UserStatusGantt = ({
 			)
 		}
 
-		if (showBulkCutRows) {
-			nextRows.push(
-				{
+		if (canShowBulkCutRows) {
+			const bulkValues = statusByDay.map((day) => day.bulk)
+			if (bulkValues.some(Boolean)) {
+				nextRows.push({
 					key: 'bulk',
 					label: 'Bulk',
 					activeClass: 'bg-[#22C55E] border-[#22C55E]',
-					values: statusByDay.map((day) => day.bulk),
-				},
-				{
+					values: bulkValues,
+				})
+			}
+
+			const cutValues = statusByDay.map((day) => day.cut)
+			if (cutValues.some(Boolean)) {
+				nextRows.push({
 					key: 'cut',
 					label: 'Cut',
 					activeClass: 'bg-[#EAB308] border-[#EAB308]',
-					values: statusByDay.map((day) => day.cut),
-				},
-			)
+					values: cutValues,
+				})
+			}
 		}
 
 		const weightValues = statusByDay.map((day) => day.weightTraining)
@@ -265,10 +287,10 @@ const UserStatusGantt = ({
 		}
 
 		return nextRows
-	}, [showBulkCutRows, showPeriodRows, statusByDay])
+	}, [canShowBulkCutRows, showPeriodRows, statusByDay])
 
 	return (
-		<div className='p-3 mb-2 w-full rounded-xl border min-h-[90px] bg-card'>
+		<div className='p-3 mb-2 w-full rounded-xl border bg-card'>
 			<div
 				className='grid gap-1'
 				style={{ gridTemplateColumns: '84px minmax(0, 1fr)' }}

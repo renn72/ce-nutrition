@@ -32,19 +32,22 @@ const UserInfo = ({ userId }: { userId: string }) => {
 		impersonatedUser || '',
 	)
 
-	const { data: userNotes, isLoading: userNotesLoading } =
-		api.trainerNotes.getAllUser.useQuery({ userId: userId })
-
 	if (!currentUser) return null
 	if (!user) return null
 	if (!dailyLogs) return null
 	if (userGoalsLoading) return null
-	if (userNotesLoading) return null
+
+	const isCategoryThree =
+		user.category?.some((item) => item.category?.id === 3) ?? false
 
 	return (
 		<div className='py-2 w-full'>
 			<ScrollArea className='px-3 lg:h-[calc(100vh-65px)] xl:h-[calc(100vh-80px)]'>
-				<UserStatusGantt dailyLogs={dailyLogs} settings={user.settings} />
+				<UserStatusGantt
+					dailyLogs={dailyLogs}
+					settings={user.settings}
+					isCategoryThree={isCategoryThree}
+				/>
 				<div className='grid grid-cols-1 gap-2 lg:grid-cols-5 lg:grid-rows-3 lg:gap-4 lg:w-full w-[calc(100vw-16px)]'>
 					<UserMessages
 						className='lg:row-span-1 max-h-[450px]'

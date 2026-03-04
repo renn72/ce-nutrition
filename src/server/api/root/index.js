@@ -5138,6 +5138,11 @@ var get = {
       with: {
         settings: true,
         roles: true,
+        category: {
+          with: {
+            category: true
+          }
+        },
         images: true,
         trainers: true,
         supplementStacks: {
