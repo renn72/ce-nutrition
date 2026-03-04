@@ -15,6 +15,7 @@ import {
 	ArrowUp,
 	BedDouble,
 	Beef,
+	BicepsFlexed,
 	CircleX,
 	Droplet,
 	Dumbbell,
@@ -25,6 +26,7 @@ import {
 	Move,
 	PersonStanding,
 	Scale,
+	Scissors,
 	Snowflake,
 	StickyNote,
 	ThermometerSun,
@@ -42,6 +44,7 @@ import {
 
 import { Link } from 'next-view-transitions'
 
+import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 const formatNumber = (
@@ -173,6 +176,10 @@ const Log = memo(
 		const isPeriodEnabled = currentUser?.settings?.periodStartAt ?? false
 		const isPeriod = todaysDailyLog?.isPeriod ?? false
 		const isOvulation = todaysDailyLog?.isOvulation ?? false
+		const isHighDay = todaysDailyLog?.isHigh === true
+		const isLowDay = todaysDailyLog?.isLow === true
+		const isBulkDay = todaysDailyLog?.isBulk === true
+		const isCutDay = todaysDailyLog?.isCut === true
 
 		const poopCount = useMemo(
 			() => todaysDailyLog?.poopLogs?.length || 0,
@@ -269,7 +276,28 @@ const Log = memo(
 					/>
 				)}
 				<CardHeader className='pt-4 pb-0'>
-					<CardTitle className='font-semibold text-medium'>{title}</CardTitle>
+					<CardTitle className='flex gap-2 justify-between items-center font-semibold text-medium'>
+						<span>{title}</span>
+						<div className='flex gap-2 items-center'>
+							{(isHighDay || isLowDay) && (
+								<Badge
+									variant='secondary'
+									className={cn(
+										'px-2 py-0.5 text-[11px] font-semibold leading-none',
+										isHighDay
+											? 'bg-[#0EA5E9] text-white border border-[#0EA5E9]'
+											: 'bg-[#A8862C] text-white border border-[#A8862C]',
+									)}
+								>
+									{isHighDay ? 'High' : 'Low'}
+								</Badge>
+							)}
+							{isBulkDay && (
+								<BicepsFlexed size={16} className='text-[#0EA5E9]' />
+							)}
+							{isCutDay && <Scissors size={16} className='text-[#C9A54A]' />}
+						</div>
+					</CardTitle>
 				</CardHeader>
 				<CardContent className='p-2'>
 					<div className='grid grid-cols-2 gap-2 xl:grid-cols-2'>
