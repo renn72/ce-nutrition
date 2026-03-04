@@ -184,6 +184,11 @@ export const get = {
 				},
 				with: {
 					settings: true,
+					category: {
+						with: {
+							category: true,
+						},
+					},
 					images: true,
 					roles: true,
 					supplementStacks: {

@@ -41,6 +41,11 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 
+const formatDateDdMmYyyy = (date: Date | null | undefined) => {
+	if (!date) return 'Select date'
+	return new Intl.DateTimeFormat('en-GB').format(date)
+}
+
 const DefaultWater = ({ currentUser }: { currentUser: GetUserById }) => {
 	const [water, setWater] = useState(
 		Number(currentUser?.settings?.defaultWater),
@@ -1177,6 +1182,307 @@ const PeriodOvulation = ({ currentUser }: { currentUser: GetUserById }) => {
 	)
 }
 
+const BulkCutDates = ({ currentUser }: { currentUser: GetUserById }) => {
+	const ctx = api.useUtils()
+
+	const [popoverCutStartOpen, setPopoverCutStartOpen] = useState(false)
+	const [popoverCutFinishOpen, setPopoverCutFinishOpen] = useState(false)
+	const [popoverBulkStartOpen, setPopoverBulkStartOpen] = useState(false)
+	const [popoverBulkFinishOpen, setPopoverBulkFinishOpen] = useState(false)
+
+	const [cutStartDate, setCutStartDate] = useState<Date | undefined | null>(
+		currentUser.settings.cutStartAt || undefined,
+	)
+	const [cutFinishDate, setCutFinishDate] = useState<Date | undefined | null>(
+		currentUser.settings.cutFinishAt || undefined,
+	)
+	const [bulkStartDate, setBulkStartDate] = useState<Date | undefined | null>(
+		currentUser.settings.bulkStartAt || undefined,
+	)
+	const [bulkFinishDate, setBulkFinishDate] = useState<Date | undefined | null>(
+		currentUser.settings.bulkFinishAt || undefined,
+	)
+
+	const { mutate: updateCutStart } = api.user.updateCutStart.useMutation({
+		onMutate: async (data) => {
+			setCutStartDate(data.start)
+		},
+		onSuccess: () => {
+			ctx.user.invalidate()
+			ctx.dailyLog.invalidate()
+		},
+		onError: (_err) => {
+			toast.error('error')
+			ctx.user.invalidate()
+		},
+	})
+
+	const { mutate: updateCutFinish } = api.user.updateCutFinish.useMutation({
+		onMutate: async (data) => {
+			setCutFinishDate(data.finish)
+		},
+		onSuccess: () => {
+			ctx.user.invalidate()
+			ctx.dailyLog.invalidate()
+		},
+		onError: (_err) => {
+			toast.error('error')
+			ctx.user.invalidate()
+		},
+	})
+
+	const { mutate: updateBulkStart } = api.user.updateBulkStart.useMutation({
+		onMutate: async (data) => {
+			setBulkStartDate(data.start)
+		},
+		onSuccess: () => {
+			ctx.user.invalidate()
+			ctx.dailyLog.invalidate()
+		},
+		onError: (_err) => {
+			toast.error('error')
+			ctx.user.invalidate()
+		},
+	})
+
+	const { mutate: updateBulkFinish } = api.user.updateBulkFinish.useMutation({
+		onMutate: async (data) => {
+			setBulkFinishDate(data.finish)
+		},
+		onSuccess: () => {
+			ctx.user.invalidate()
+			ctx.dailyLog.invalidate()
+		},
+		onError: (_err) => {
+			toast.error('error')
+			ctx.user.invalidate()
+		},
+	})
+
+	return (
+		<div className='flex flex-col gap-2 py-2 px-2 rounded-lg border shadow-sm'>
+			<div className='space-y-0.2'>
+				<Label>Cut & Bulk Dates</Label>
+				<div className='text-sm text-muted-foreground'>
+					Set phase start and finish dates.
+				</div>
+			</div>
+
+			<div className='flex gap-2 justify-between items-center'>
+				<Label htmlFor='cut-start' className='px-1'>
+					Cut Start
+				</Label>
+				<Popover
+					open={popoverCutStartOpen}
+					onOpenChange={setPopoverCutStartOpen}
+				>
+					<PopoverTrigger asChild>
+						<Button
+							variant='outline'
+							size='sm'
+							id='cut-start'
+							className='justify-between w-48 text-sm'
+						>
+							{formatDateDdMmYyyy(cutStartDate)}
+							<ChevronDownIcon />
+						</Button>
+					</PopoverTrigger>
+					<PopoverContent className='overflow-hidden p-0 w-auto' align='start'>
+						<Calendar
+							mode='single'
+							selected={cutStartDate || undefined}
+							captionLayout='dropdown'
+							onSelect={(date) => {
+								if (!date) return
+								updateCutStart({
+									start: date,
+									id: currentUser.settings.id,
+								})
+								setPopoverCutStartOpen(false)
+							}}
+						/>
+						<div className='flex justify-center py-1 w-full'>
+							<Button
+								size='sm'
+								variant='outline'
+								className='px-4 h-6'
+								onClick={() => {
+									updateCutStart({
+										start: null,
+										id: currentUser.settings.id,
+									})
+									setPopoverCutStartOpen(false)
+								}}
+							>
+								clear
+							</Button>
+						</div>
+					</PopoverContent>
+				</Popover>
+			</div>
+
+			<div className='flex gap-2 justify-between items-center'>
+				<Label htmlFor='cut-finish' className='px-1'>
+					Cut Finish
+				</Label>
+				<Popover
+					open={popoverCutFinishOpen}
+					onOpenChange={setPopoverCutFinishOpen}
+				>
+					<PopoverTrigger asChild>
+						<Button
+							variant='outline'
+							size='sm'
+							id='cut-finish'
+							className='justify-between w-48 text-sm'
+						>
+							{formatDateDdMmYyyy(cutFinishDate)}
+							<ChevronDownIcon />
+						</Button>
+					</PopoverTrigger>
+					<PopoverContent className='overflow-hidden p-0 w-auto' align='start'>
+						<Calendar
+							mode='single'
+							selected={cutFinishDate || undefined}
+							captionLayout='dropdown'
+							onSelect={(date) => {
+								if (!date) return
+								updateCutFinish({
+									finish: date,
+									id: currentUser.settings.id,
+								})
+								setPopoverCutFinishOpen(false)
+							}}
+						/>
+						<div className='flex justify-center py-1 w-full'>
+							<Button
+								size='sm'
+								variant='outline'
+								className='px-4 h-6'
+								onClick={() => {
+									updateCutFinish({
+										finish: null,
+										id: currentUser.settings.id,
+									})
+									setPopoverCutFinishOpen(false)
+								}}
+							>
+								clear
+							</Button>
+						</div>
+					</PopoverContent>
+				</Popover>
+			</div>
+
+			<div className='flex gap-2 justify-between items-center'>
+				<Label htmlFor='bulk-start' className='px-1'>
+					Bulk Start
+				</Label>
+				<Popover
+					open={popoverBulkStartOpen}
+					onOpenChange={setPopoverBulkStartOpen}
+				>
+					<PopoverTrigger asChild>
+						<Button
+							variant='outline'
+							size='sm'
+							id='bulk-start'
+							className='justify-between w-48 text-sm'
+						>
+							{formatDateDdMmYyyy(bulkStartDate)}
+							<ChevronDownIcon />
+						</Button>
+					</PopoverTrigger>
+					<PopoverContent className='overflow-hidden p-0 w-auto' align='start'>
+						<Calendar
+							mode='single'
+							selected={bulkStartDate || undefined}
+							captionLayout='dropdown'
+							onSelect={(date) => {
+								if (!date) return
+								updateBulkStart({
+									start: date,
+									id: currentUser.settings.id,
+								})
+								setPopoverBulkStartOpen(false)
+							}}
+						/>
+						<div className='flex justify-center py-1 w-full'>
+							<Button
+								size='sm'
+								variant='outline'
+								className='px-4 h-6'
+								onClick={() => {
+									updateBulkStart({
+										start: null,
+										id: currentUser.settings.id,
+									})
+									setPopoverBulkStartOpen(false)
+								}}
+							>
+								clear
+							</Button>
+						</div>
+					</PopoverContent>
+				</Popover>
+			</div>
+
+			<div className='flex gap-2 justify-between items-center'>
+				<Label htmlFor='bulk-finish' className='px-1'>
+					Bulk Finish
+				</Label>
+				<Popover
+					open={popoverBulkFinishOpen}
+					onOpenChange={setPopoverBulkFinishOpen}
+				>
+					<PopoverTrigger asChild>
+						<Button
+							variant='outline'
+							size='sm'
+							id='bulk-finish'
+							className='justify-between w-48 text-sm'
+						>
+							{formatDateDdMmYyyy(bulkFinishDate)}
+							<ChevronDownIcon />
+						</Button>
+					</PopoverTrigger>
+					<PopoverContent className='overflow-hidden p-0 w-auto' align='start'>
+						<Calendar
+							mode='single'
+							selected={bulkFinishDate || undefined}
+							captionLayout='dropdown'
+							onSelect={(date) => {
+								if (!date) return
+								updateBulkFinish({
+									finish: date,
+									id: currentUser.settings.id,
+								})
+								setPopoverBulkFinishOpen(false)
+							}}
+						/>
+						<div className='flex justify-center py-1 w-full'>
+							<Button
+								size='sm'
+								variant='outline'
+								className='px-4 h-6'
+								onClick={() => {
+									updateBulkFinish({
+										finish: null,
+										id: currentUser.settings.id,
+									})
+									setPopoverBulkFinishOpen(false)
+								}}
+							>
+								clear
+							</Button>
+						</div>
+					</PopoverContent>
+				</Popover>
+			</div>
+		</div>
+	)
+}
+
 interface BeforeInstallPromptEvent extends Event {
 	readonly platforms: Array<string>
 	readonly userChoice: Promise<{
@@ -1189,6 +1495,12 @@ interface BeforeInstallPromptEvent extends Event {
 const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
 	const [deferredPrompt, setDeferredPrompt] =
 		useState<BeforeInstallPromptEvent | null>(null)
+	const isCategoryThree =
+		currentUser.category?.some(
+			(userCategory) =>
+				userCategory.categoryId === 3 || userCategory.category?.id === 3,
+		) ?? false
+	const canSetBulkCutDates = isCategoryThree || currentUser.settings.isBulkCut
 
 	const onClickInstall = async () => {
 		console.log('Install button clicked.', deferredPrompt)
@@ -1260,6 +1572,7 @@ const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
 				<Nap currentUser={currentUser} />
 				<Steps currentUser={currentUser} />
 				<PeriodOvulation currentUser={currentUser} />
+				{canSetBulkCutDates && <BulkCutDates currentUser={currentUser} />}
 				<WeightTraining currentUser={currentUser} />
 				<Hiit currentUser={currentUser} />
 				<Liss currentUser={currentUser} />
