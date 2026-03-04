@@ -258,6 +258,10 @@ var dailyLog = createTable2(
     isLiss: int2("is_liss", { mode: "boolean" }),
     isPeriod: int2("is_period", { mode: "boolean" }),
     isOvulation: int2("is_ovulation", { mode: "boolean" }),
+    isBulk: int2("is_bulk", { mode: "boolean" }),
+    isCut: int2("is_cut", { mode: "boolean" }),
+    isHigh: int2("is_high", { mode: "boolean" }),
+    isLow: int2("is_low", { mode: "boolean" }),
     isStarred: int2("is_starred", { mode: "boolean" }).default(false),
     hiit: text2("hiit"),
     cardio: text2("cardio"),
@@ -7450,6 +7454,118 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ isOvulation: input.isOvulation }).where(
+      and5(
+        eq15(dailyLog.date, input.date),
+        eq15(dailyLog.userId, ctx.session.user.id)
+      )
+    );
+    return res;
+  }),
+  updateIsBulk: protectedProcedure.input(
+    z20.object({
+      date: z20.string(),
+      isBulk: z20.boolean()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    const log2 = await ctx.db.query.dailyLog.findFirst({
+      where: and5(
+        eq15(dailyLog.date, input.date),
+        eq15(dailyLog.userId, ctx.session.user.id)
+      )
+    });
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "toggle bulk",
+      notes: JSON.stringify(input),
+      objectId: null
+    });
+    if (!log2) {
+      const res2 = await ctx.db.insert(dailyLog).values({
+        date: input.date,
+        isBulk: input.isBulk,
+        userId: ctx.session.user.id
+      });
+      return res2;
+    }
+    const res = await ctx.db.update(dailyLog).set({ isBulk: input.isBulk }).where(
+      and5(
+        eq15(dailyLog.date, input.date),
+        eq15(dailyLog.userId, ctx.session.user.id)
+      )
+    );
+    return res;
+  }),
+  updateIsCut: protectedProcedure.input(
+    z20.object({
+      date: z20.string(),
+      isCut: z20.boolean()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    const log2 = await ctx.db.query.dailyLog.findFirst({
+      where: and5(
+        eq15(dailyLog.date, input.date),
+        eq15(dailyLog.userId, ctx.session.user.id)
+      )
+    });
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "toggle cut",
+      notes: JSON.stringify(input),
+      objectId: null
+    });
+    if (!log2) {
+      const res2 = await ctx.db.insert(dailyLog).values({
+        date: input.date,
+        isCut: input.isCut,
+        userId: ctx.session.user.id
+      });
+      return res2;
+    }
+    const res = await ctx.db.update(dailyLog).set({ isCut: input.isCut }).where(
+      and5(
+        eq15(dailyLog.date, input.date),
+        eq15(dailyLog.userId, ctx.session.user.id)
+      )
+    );
+    return res;
+  }),
+  updateIsLowOrHigh: protectedProcedure.input(
+    z20.object({
+      date: z20.string(),
+      isLow: z20.boolean(),
+      isHigh: z20.boolean()
+    }).refine((value) => !(value.isLow && value.isHigh), {
+      message: "isLow and isHigh cannot both be true"
+    })
+  ).mutation(async ({ input, ctx }) => {
+    const log2 = await ctx.db.query.dailyLog.findFirst({
+      where: and5(
+        eq15(dailyLog.date, input.date),
+        eq15(dailyLog.userId, ctx.session.user.id)
+      )
+    });
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "toggle low or high",
+      notes: JSON.stringify(input),
+      objectId: null
+    });
+    if (!log2) {
+      const res2 = await ctx.db.insert(dailyLog).values({
+        date: input.date,
+        isLow: input.isLow,
+        isHigh: input.isHigh,
+        userId: ctx.session.user.id
+      });
+      return res2;
+    }
+    const res = await ctx.db.update(dailyLog).set({
+      isLow: input.isLow,
+      isHigh: input.isHigh
+    }).where(
       and5(
         eq15(dailyLog.date, input.date),
         eq15(dailyLog.userId, ctx.session.user.id)

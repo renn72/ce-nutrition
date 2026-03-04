@@ -12527,6 +12527,74 @@ declare const dailyLog: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
             identity: undefined;
             generated: undefined;
         }, {}, {}>;
+        isBulk: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "is_bulk";
+            tableName: "daily_log";
+            dataType: "boolean";
+            columnType: "SQLiteBoolean";
+            data: boolean;
+            driverParam: number;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        isCut: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "is_cut";
+            tableName: "daily_log";
+            dataType: "boolean";
+            columnType: "SQLiteBoolean";
+            data: boolean;
+            driverParam: number;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        isHigh: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "is_high";
+            tableName: "daily_log";
+            dataType: "boolean";
+            columnType: "SQLiteBoolean";
+            data: boolean;
+            driverParam: number;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        isLow: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "is_low";
+            tableName: "daily_log";
+            dataType: "boolean";
+            columnType: "SQLiteBoolean";
+            data: boolean;
+            driverParam: number;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
         isStarred: drizzle_orm_sqlite_core.SQLiteColumn<{
             name: "is_starred";
             tableName: "daily_log";
@@ -14145,6 +14213,10 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isLiss: boolean | null;
                 isPeriod: boolean | null;
                 isOvulation: boolean | null;
+                isBulk: boolean | null;
+                isCut: boolean | null;
+                isHigh: boolean | null;
+                isLow: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -14337,6 +14409,10 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isLiss: boolean | null;
                 isPeriod: boolean | null;
                 isOvulation: boolean | null;
+                isBulk: boolean | null;
+                isCut: boolean | null;
+                isHigh: boolean | null;
+                isLow: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -14531,6 +14607,10 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isLiss: boolean | null;
                 isPeriod: boolean | null;
                 isOvulation: boolean | null;
+                isBulk: boolean | null;
+                isCut: boolean | null;
+                isHigh: boolean | null;
+                isLow: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -14723,6 +14803,10 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isLiss: boolean | null;
                 isPeriod: boolean | null;
                 isOvulation: boolean | null;
+                isBulk: boolean | null;
+                isCut: boolean | null;
+                isHigh: boolean | null;
+                isLow: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -14770,6 +14854,10 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isLiss: boolean | null;
                 isPeriod: boolean | null;
                 isOvulation: boolean | null;
+                isBulk: boolean | null;
+                isCut: boolean | null;
+                isHigh: boolean | null;
+                isLow: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -14985,6 +15073,31 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             input: {
                 date: string;
                 isOvulation: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateIsBulk: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                isBulk: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateIsCut: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                isCut: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateIsLowOrHigh: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                isLow: boolean;
+                isHigh: boolean;
             };
             output: _libsql_client.ResultSet;
             meta: object;
@@ -22271,6 +22384,10 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isLiss: boolean | null;
                 isPeriod: boolean | null;
                 isOvulation: boolean | null;
+                isBulk: boolean | null;
+                isCut: boolean | null;
+                isHigh: boolean | null;
+                isLow: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -22463,6 +22580,10 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isLiss: boolean | null;
                 isPeriod: boolean | null;
                 isOvulation: boolean | null;
+                isBulk: boolean | null;
+                isCut: boolean | null;
+                isHigh: boolean | null;
+                isLow: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -22657,6 +22778,10 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isLiss: boolean | null;
                 isPeriod: boolean | null;
                 isOvulation: boolean | null;
+                isBulk: boolean | null;
+                isCut: boolean | null;
+                isHigh: boolean | null;
+                isLow: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -22849,6 +22974,10 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isLiss: boolean | null;
                 isPeriod: boolean | null;
                 isOvulation: boolean | null;
+                isBulk: boolean | null;
+                isCut: boolean | null;
+                isHigh: boolean | null;
+                isLow: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -22896,6 +23025,10 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isLiss: boolean | null;
                 isPeriod: boolean | null;
                 isOvulation: boolean | null;
+                isBulk: boolean | null;
+                isCut: boolean | null;
+                isHigh: boolean | null;
+                isLow: boolean | null;
                 isStarred: boolean | null;
                 hiit: string | null;
                 cardio: string | null;
@@ -23111,6 +23244,31 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             input: {
                 date: string;
                 isOvulation: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateIsBulk: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                isBulk: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateIsCut: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                isCut: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateIsLowOrHigh: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                isLow: boolean;
+                isHigh: boolean;
             };
             output: _libsql_client.ResultSet;
             meta: object;

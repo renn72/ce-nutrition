@@ -210,6 +210,147 @@ export const updateDl = {
 
 			return res
 		}),
+	updateIsBulk: protectedProcedure
+		.input(
+			z.object({
+				date: z.string(),
+				isBulk: z.boolean(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const log = await ctx.db.query.dailyLog.findFirst({
+				where: and(
+					eq(dailyLog.date, input.date),
+					eq(dailyLog.userId, ctx.session.user.id),
+				),
+			})
+
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				task: 'toggle bulk',
+				notes: JSON.stringify(input),
+				objectId: null,
+			})
+
+			if (!log) {
+				const res = await ctx.db.insert(dailyLog).values({
+					date: input.date,
+					isBulk: input.isBulk,
+					userId: ctx.session.user.id,
+				})
+				return res
+			}
+
+			const res = await ctx.db
+				.update(dailyLog)
+				.set({ isBulk: input.isBulk })
+				.where(
+					and(
+						eq(dailyLog.date, input.date),
+						eq(dailyLog.userId, ctx.session.user.id),
+					),
+				)
+
+			return res
+		}),
+	updateIsCut: protectedProcedure
+		.input(
+			z.object({
+				date: z.string(),
+				isCut: z.boolean(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const log = await ctx.db.query.dailyLog.findFirst({
+				where: and(
+					eq(dailyLog.date, input.date),
+					eq(dailyLog.userId, ctx.session.user.id),
+				),
+			})
+
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				task: 'toggle cut',
+				notes: JSON.stringify(input),
+				objectId: null,
+			})
+
+			if (!log) {
+				const res = await ctx.db.insert(dailyLog).values({
+					date: input.date,
+					isCut: input.isCut,
+					userId: ctx.session.user.id,
+				})
+				return res
+			}
+
+			const res = await ctx.db
+				.update(dailyLog)
+				.set({ isCut: input.isCut })
+				.where(
+					and(
+						eq(dailyLog.date, input.date),
+						eq(dailyLog.userId, ctx.session.user.id),
+					),
+				)
+
+			return res
+		}),
+	updateIsLowOrHigh: protectedProcedure
+		.input(
+			z
+				.object({
+					date: z.string(),
+					isLow: z.boolean(),
+					isHigh: z.boolean(),
+				})
+				.refine((value) => !(value.isLow && value.isHigh), {
+					message: 'isLow and isHigh cannot both be true',
+				}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const log = await ctx.db.query.dailyLog.findFirst({
+				where: and(
+					eq(dailyLog.date, input.date),
+					eq(dailyLog.userId, ctx.session.user.id),
+				),
+			})
+
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				task: 'toggle low or high',
+				notes: JSON.stringify(input),
+				objectId: null,
+			})
+
+			if (!log) {
+				const res = await ctx.db.insert(dailyLog).values({
+					date: input.date,
+					isLow: input.isLow,
+					isHigh: input.isHigh,
+					userId: ctx.session.user.id,
+				})
+				return res
+			}
+
+			const res = await ctx.db
+				.update(dailyLog)
+				.set({
+					isLow: input.isLow,
+					isHigh: input.isHigh,
+				})
+				.where(
+					and(
+						eq(dailyLog.date, input.date),
+						eq(dailyLog.userId, ctx.session.user.id),
+					),
+				)
+
+			return res
+		}),
 	updateSupplement: protectedProcedure
 		.input(
 			z.object({
