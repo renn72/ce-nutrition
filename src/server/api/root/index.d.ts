@@ -15772,6 +15772,54 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        updateIsHighLow: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: string;
+                isHighLow: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateIsBulkCut: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: string;
+                isBulkCut: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateCutStart: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                start: Date | null;
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateCutFinish: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                finish: Date | null;
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateBulkStart: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                start: Date | null;
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateBulkFinish: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                finish: Date | null;
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         updateWater: _trpc_server.TRPCMutationProcedure<{
             input: {
                 water: number;
@@ -23969,6 +24017,54 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 interval: number;
                 id: number;
                 userId: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateIsHighLow: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: string;
+                isHighLow: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateIsBulkCut: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: string;
+                isBulkCut: boolean;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateCutStart: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                start: Date | null;
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateCutFinish: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                finish: Date | null;
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateBulkStart: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                start: Date | null;
+                id: number;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateBulkFinish: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                finish: Date | null;
+                id: number;
             };
             output: _libsql_client.ResultSet;
             meta: object;

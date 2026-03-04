@@ -5535,6 +5535,62 @@ var update = {
     }).where(eq7(userSettings.id, input.id));
     return res;
   }),
+  updateIsHighLow: protectedProcedure.input(z11.object({ id: z11.string(), isHighLow: z11.boolean() })).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.update(userSettings).set({
+      isHighLow: input.isHighLow
+    }).where(eq7(userSettings.userId, input.id));
+    return res;
+  }),
+  updateIsBulkCut: protectedProcedure.input(z11.object({ id: z11.string(), isBulkCut: z11.boolean() })).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.update(userSettings).set({
+      isBulkCut: input.isBulkCut
+    }).where(eq7(userSettings.userId, input.id));
+    return res;
+  }),
+  updateCutStart: protectedProcedure.input(
+    z11.object({
+      start: z11.date().nullable(),
+      id: z11.number()
+    })
+  ).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.update(userSettings).set({
+      cutStartAt: input.start
+    }).where(eq7(userSettings.id, input.id));
+    return res;
+  }),
+  updateCutFinish: protectedProcedure.input(
+    z11.object({
+      finish: z11.date().nullable(),
+      id: z11.number()
+    })
+  ).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.update(userSettings).set({
+      cutFinishAt: input.finish
+    }).where(eq7(userSettings.id, input.id));
+    return res;
+  }),
+  updateBulkStart: protectedProcedure.input(
+    z11.object({
+      start: z11.date().nullable(),
+      id: z11.number()
+    })
+  ).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.update(userSettings).set({
+      bulkStartAt: input.start
+    }).where(eq7(userSettings.id, input.id));
+    return res;
+  }),
+  updateBulkFinish: protectedProcedure.input(
+    z11.object({
+      finish: z11.date().nullable(),
+      id: z11.number()
+    })
+  ).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.update(userSettings).set({
+      bulkFinishAt: input.finish
+    }).where(eq7(userSettings.id, input.id));
+    return res;
+  }),
   updateWater: protectedProcedure.input(z11.object({ water: z11.number(), id: z11.number() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.update(userSettings).set({
       defaultWater: input.water.toString()

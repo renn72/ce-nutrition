@@ -103,6 +103,92 @@ export const update = {
 				.where(eq(userSettings.id, input.id))
 			return res
 		}),
+	updateIsHighLow: protectedProcedure
+		.input(z.object({ id: z.string(), isHighLow: z.boolean() }))
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(userSettings)
+				.set({
+					isHighLow: input.isHighLow,
+				})
+				.where(eq(userSettings.userId, input.id))
+			return res
+		}),
+	updateIsBulkCut: protectedProcedure
+		.input(z.object({ id: z.string(), isBulkCut: z.boolean() }))
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(userSettings)
+				.set({
+					isBulkCut: input.isBulkCut,
+				})
+				.where(eq(userSettings.userId, input.id))
+			return res
+		}),
+	updateCutStart: protectedProcedure
+		.input(
+			z.object({
+				start: z.date().nullable(),
+				id: z.number(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(userSettings)
+				.set({
+					cutStartAt: input.start,
+				})
+				.where(eq(userSettings.id, input.id))
+			return res
+		}),
+	updateCutFinish: protectedProcedure
+		.input(
+			z.object({
+				finish: z.date().nullable(),
+				id: z.number(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(userSettings)
+				.set({
+					cutFinishAt: input.finish,
+				})
+				.where(eq(userSettings.id, input.id))
+			return res
+		}),
+	updateBulkStart: protectedProcedure
+		.input(
+			z.object({
+				start: z.date().nullable(),
+				id: z.number(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(userSettings)
+				.set({
+					bulkStartAt: input.start,
+				})
+				.where(eq(userSettings.id, input.id))
+			return res
+		}),
+	updateBulkFinish: protectedProcedure
+		.input(
+			z.object({
+				finish: z.date().nullable(),
+				id: z.number(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db
+				.update(userSettings)
+				.set({
+					bulkFinishAt: input.finish,
+				})
+				.where(eq(userSettings.id, input.id))
+			return res
+		}),
 	updateWater: protectedProcedure
 		.input(z.object({ water: z.number(), id: z.number() }))
 		.mutation(async ({ ctx, input }) => {
