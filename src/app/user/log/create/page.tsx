@@ -15,6 +15,7 @@ import type { GetDailyLogById } from '@/types'
 import { format } from 'date-fns'
 import { useAtom } from 'jotai'
 import {
+	BicepsFlexed,
 	Bone,
 	Bookmark,
 	Calendar as CalendarIcon,
@@ -23,6 +24,7 @@ import {
 	Loader,
 	Pencil,
 	Plus,
+	Scissors,
 	Star,
 	ThumbsUp,
 	Zap,
@@ -537,6 +539,107 @@ export default function Home() {
 			},
 		})
 
+	const { mutate: updateIsBulk } = api.dailyLog.updateIsBulk.useMutation({
+		onMutate: async (data) => {
+			if (!currentUser) return
+			await ctx.dailyLog.getAllCurrentUser.cancel()
+			const previousLog = ctx.dailyLog.getAllCurrentUser.getData({
+				id: userId,
+			})
+			if (!previousLog) return
+			ctx.dailyLog.getAllCurrentUser.setData({ id: userId }, [
+				...previousLog.map((log) => {
+					if (log.date === data.date) {
+						return {
+							...log,
+							isBulk: data.isBulk,
+						}
+					}
+					return log
+				}),
+			])
+			return { previousLog }
+		},
+		onSettled: () => {
+			ctx.dailyLog.invalidate()
+		},
+		onError: (_err, _newPoopLog, context) => {
+			if (!currentUser) return
+			ctx.dailyLog.getAllCurrentUser.setData(
+				{ id: userId },
+				context?.previousLog,
+			)
+		},
+	})
+
+	const { mutate: updateIsCut } = api.dailyLog.updateIsCut.useMutation({
+		onMutate: async (data) => {
+			if (!currentUser) return
+			await ctx.dailyLog.getAllCurrentUser.cancel()
+			const previousLog = ctx.dailyLog.getAllCurrentUser.getData({
+				id: userId,
+			})
+			if (!previousLog) return
+			ctx.dailyLog.getAllCurrentUser.setData({ id: userId }, [
+				...previousLog.map((log) => {
+					if (log.date === data.date) {
+						return {
+							...log,
+							isCut: data.isCut,
+						}
+					}
+					return log
+				}),
+			])
+			return { previousLog }
+		},
+		onSettled: () => {
+			ctx.dailyLog.invalidate()
+		},
+		onError: (_err, _newPoopLog, context) => {
+			if (!currentUser) return
+			ctx.dailyLog.getAllCurrentUser.setData(
+				{ id: userId },
+				context?.previousLog,
+			)
+		},
+	})
+
+	const { mutate: updateIsLowOrHigh } =
+		api.dailyLog.updateIsLowOrHigh.useMutation({
+			onMutate: async (data) => {
+				if (!currentUser) return
+				await ctx.dailyLog.getAllCurrentUser.cancel()
+				const previousLog = ctx.dailyLog.getAllCurrentUser.getData({
+					id: userId,
+				})
+				if (!previousLog) return
+				ctx.dailyLog.getAllCurrentUser.setData({ id: userId }, [
+					...previousLog.map((log) => {
+						if (log.date === data.date) {
+							return {
+								...log,
+								isHigh: data.isHigh,
+								isLow: data.isLow,
+							}
+						}
+						return log
+					}),
+				])
+				return { previousLog }
+			},
+			onSettled: () => {
+				ctx.dailyLog.invalidate()
+			},
+			onError: (_err, _newPoopLog, context) => {
+				if (!currentUser) return
+				ctx.dailyLog.getAllCurrentUser.setData(
+					{ id: userId },
+					context?.previousLog,
+				)
+			},
+		})
+
 	const log = dailyLogs?.find((log) => log.date === date?.toDateString())
 
 	useEffect(() => {
@@ -567,9 +670,22 @@ export default function Home() {
 	if (!currentUser) return null
 
 	const isPeriodEnabled = currentUser?.settings?.isPeriodOvulaion ?? false
+	const isBulkCutEnabled = currentUser?.settings?.isBulkCut ?? false
+	const isHighLowEnabled = currentUser?.settings?.isHighLow ?? false
+	const isCategoryThree =
+		currentUser?.category?.some(
+			(userCategory) =>
+				userCategory.categoryId === 3 || userCategory.category?.id === 3,
+		) ?? false
+	const isPeriodCardEnabled =
+		isPeriodEnabled || isCategoryThree || isBulkCutEnabled || isHighLowEnabled
 
 	const isPeriod = log?.isPeriod ?? false
 	const isOvulation = log?.isOvulation ?? false
+	const isBulk = log?.isBulk ?? false
+	const isCut = log?.isCut ?? false
+	const isHigh = log?.isHigh ?? false
+	const isLow = log?.isLow ?? false
 
 	const ovulaionStartAt = currentUser.settings?.ovulaionStartAt ?? new Date()
 	const start = currentUser.settings?.periodStartAt ?? new Date()
@@ -775,39 +891,164 @@ export default function Home() {
 				<div
 					className={cn(
 						'flex justify-between items-center py-1 px-1 w-full rounded-lg border bg-card',
-						!isPeriodEnabled && log?.tags.length === 0 ? 'hidden' : '',
+						!isPeriodCardEnabled ? 'hidden' : '',
 					)}
 				>
-					<div>
-						<div
-							onClick={() => {
-								if (!log) return
-								updateIsPeriod({
-									date: log.date,
-									isPeriod: !isPeriod,
-								})
-							}}
+					<div
+						onClick={() => {
+							if (!log) return
+							updateIsPeriod({
+								date: log.date,
+								isPeriod: !isPeriod,
+							})
+						}}
+						className={cn(
+							'text-muted-foreground/10 flex gap-0 items-center justify-center h-8 w-8 rounded-full bg-background border shadow-inner',
+							isPeriod ? 'border-[#E11D48]' : '',
+						)}
+					>
+						<PeriodIcon color={isPeriod ? '#E11D48' : '#88888855'} size={36} />
+						<p
 							className={cn(
-								'text-muted-foreground/10 flex gap-0 items-center justify-center h-8 w-8 rounded-full bg-background border shadow-inner',
-								isPeriodEnabled ? '' : 'hidden',
-								isPeriod ? 'border-[#E11D48]' : '',
+								'mt-1 text-[0.7rem] hidden ml-2',
+								periodStatus === -1 ? 'block text-muted-foreground' : '',
+								isPeriod ? 'hidden' : '',
 							)}
 						>
-							<PeriodIcon
-								color={isPeriod ? '#E11D48' : '#88888855'}
-								size={36}
-							/>
-							<p
-								className={cn(
-									'mt-1 text-[0.7rem] hidden ml-2',
-									periodStatus === -1 ? 'block text-muted-foreground' : '',
-									isPeriod ? 'hidden' : '',
-								)}
-							>
-								tomorrow
-							</p>
-						</div>
+							tomorrow
+						</p>
 					</div>
+					<div
+						onClick={() => {
+							if (!log) return
+							updateIsBulk({
+								date: log.date,
+								isBulk: !isBulk,
+							})
+						}}
+						className={cn(
+							'text-muted-foreground/10 flex items-center justify-center h-8 w-8 rounded-full bg-background border shadow-inner active:scale-90 transition-transform',
+							isBulk ? 'border-[#0EA5E9]' : '',
+						)}
+					>
+						<BicepsFlexed
+							color={isBulk ? '#0EA5E9' : '#88888855'}
+							size={18}
+						/>
+					</div>
+					<div
+						onClick={() => {
+							if (!log) return
+							if (isHigh) {
+								updateIsLowOrHigh({
+									date: log.date,
+									isHigh: false,
+									isLow: false,
+								})
+								return
+							}
+							if (!isHigh && !isLow) {
+								updateIsLowOrHigh({
+									date: log.date,
+									isHigh: false,
+									isLow: true,
+								})
+								return
+							}
+							updateIsLowOrHigh({
+								date: log.date,
+								isHigh: true,
+								isLow: false,
+							})
+						}}
+						className={cn(
+							'relative flex items-center h-8 w-24 rounded-full bg-background border shadow-inner px-1 active:scale-95 transition-transform',
+							isHigh ? 'border-[#0EA5E9]' : '',
+							isLow ? 'border-[#F97316]' : '',
+						)}
+					>
+						<span
+							className={cn(
+								'absolute left-2 text-[10px] font-medium select-none',
+								!isHigh && !isLow
+									? 'text-muted-foreground/40'
+									: isHigh
+										? 'text-primary'
+										: 'text-muted-foreground/50',
+							)}
+						>
+							High
+						</span>
+						<span
+							className={cn(
+								'absolute right-2 text-[10px] font-medium select-none',
+								!isHigh && !isLow
+									? 'text-muted-foreground/40'
+									: isLow
+										? 'text-primary'
+										: 'text-muted-foreground/50',
+							)}
+						>
+							Low
+						</span>
+						<span
+							className={cn(
+								'h-6 w-7 rounded-full border bg-card transition-transform duration-200',
+								isHigh ? 'translate-x-0' : '',
+								!isHigh && !isLow ? 'translate-x-[30px]' : '',
+								isLow ? 'translate-x-[60px]' : '',
+							)}
+						/>
+					</div>
+					<div
+						onClick={() => {
+							if (!log) return
+							updateIsCut({
+								date: log.date,
+								isCut: !isCut,
+							})
+						}}
+						className={cn(
+							'text-muted-foreground/10 flex items-center justify-center h-8 w-8 rounded-full bg-background border shadow-inner active:scale-90 transition-transform',
+							isCut ? 'border-[#F97316]' : '',
+						)}
+					>
+						<Scissors color={isCut ? '#F97316' : '#88888855'} size={18} />
+					</div>
+					<div
+						onClick={() => {
+							if (!log) return
+							updateIsOvulation({
+								date: log.date,
+								isOvulation: !isOvulation,
+							})
+						}}
+						className={cn(
+							'text-muted-foreground/10 flex gap-0 items-center justify-center h-8 w-8 rounded-full bg-background border shadow-inner',
+							isOvulation ? 'border-[#8B5CF6]' : '',
+						)}
+					>
+						<OvulationIcon
+							color={isOvulation ? '#8B5CF6' : '#88888855'}
+							size={26}
+						/>
+						<p
+							className={cn(
+								'mt-1 text-[0.7rem] hidden ml-2',
+								ovulationStatus === -1 ? 'block text-muted-foreground' : '',
+								isPeriod ? 'hidden' : '',
+							)}
+						>
+							tomorrow
+						</p>
+					</div>
+				</div>
+				<div
+					className={cn(
+						'flex justify-center items-center py-1 px-1 w-full rounded-lg border bg-card',
+						log?.tags.length === 0 ? 'hidden' : '',
+					)}
+				>
 					<div className='flex gap-2 items-center'>
 						{log?.tags?.map((tag) => {
 							const color = tag.tag.color as
@@ -841,36 +1082,6 @@ export default function Home() {
 								</div>
 							)
 						})}
-					</div>
-					<div>
-						<div
-							onClick={() => {
-								if (!log) return
-								updateIsOvulation({
-									date: log.date,
-									isOvulation: !isOvulation,
-								})
-							}}
-							className={cn(
-								'text-muted-foreground/10 flex gap-0 items-center justify-center h-8 w-8 rounded-full bg-background border shadow-inner',
-								isPeriodEnabled ? '' : 'hidden',
-								isOvulation ? 'border-[#8B5CF6]' : '',
-							)}
-						>
-							<OvulationIcon
-								color={isOvulation ? '#8B5CF6' : '#88888855'}
-								size={26}
-							/>
-							<p
-								className={cn(
-									'mt-1 text-[0.7rem] hidden ml-2',
-									ovulationStatus === -1 ? 'block text-muted-foreground' : '',
-									isPeriod ? 'hidden' : '',
-								)}
-							>
-								tomorrow
-							</p>
-						</div>
 					</div>
 				</div>
 				<DailyLogForm
