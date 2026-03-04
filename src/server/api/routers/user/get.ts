@@ -316,6 +316,11 @@ export const get = {
 					settings: true,
 					roles: true,
 					trainers: true,
+					category: {
+						with: {
+							category: true,
+						},
+					},
 					supplementStacks: {
 						where: (ss, { eq }) => eq(ss.isTemplate, false),
 						with: {

@@ -5082,6 +5082,11 @@ var get = {
         settings: true,
         roles: true,
         trainers: true,
+        category: {
+          with: {
+            category: true
+          }
+        },
         supplementStacks: {
           where: (ss, { eq: eq29 }) => eq29(ss.isTemplate, false),
           with: {

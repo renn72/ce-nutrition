@@ -1232,6 +1232,8 @@ const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
 		}
 	}, []) // Empty dependency array means this effect runs once after the initial render
 
+	console.log({ currentUser })
+
 	return (
 		<div className='flex flex-col gap-4 px-2 w-full'>
 			<div className='text-lg font-bold'>Settings</div>
