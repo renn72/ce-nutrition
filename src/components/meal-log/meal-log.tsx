@@ -13,7 +13,6 @@ import type {
 	GetAllDailyLogs,
 	GetDailyLogById,
 	GetCurrentUserMeals,
-	UserPlan,
 } from '@/types'
 import NumberFlow from '@number-flow/react'
 import { Sheet, SheetStack } from '@silk-hq/components'
@@ -64,6 +63,57 @@ const mealColourMap = {
 	7: 'text-sky-700/70',
 }
 
+type PlanMealToLog = {
+	mealIndex: number
+	recipeId: number
+	recipeIndex: number | null
+}
+
+type CurrentUserPlan = NonNullable<GetCurrentUserMeals>['userPlans'][number]
+type DailyLogRecipePlan = Parameters<typeof getRecipeDetailsForDailyLog>[0]
+
+const getNextMealIndex = (todaysLog: GetDailyLogById | null | undefined) => {
+	const lastMealIndex =
+		todaysLog?.dailyMeals
+			?.map((meal) => meal.mealIndex ?? -1)
+			.reduce((acc, curr) => Math.max(acc, curr), -1) ?? -1
+
+	return lastMealIndex + 1
+}
+
+const getPlanMealsToLog = (
+	plan: CurrentUserPlan,
+	startingMealIndex: number,
+) => {
+	const mealIndices = [
+		...new Set(
+			plan.userMeals
+				.map((meal) => meal.mealIndex)
+				.filter(
+					(mealIndex): mealIndex is number =>
+						mealIndex !== null && mealIndex !== undefined,
+				),
+		),
+	].sort((a, b) => a - b)
+
+	return mealIndices
+		.filter((mealIndex) => mealIndex >= startingMealIndex)
+		.map((mealIndex) => {
+			const recipe = [...plan.userRecipes]
+				.filter((userRecipe) => userRecipe.mealIndex === mealIndex)
+				.sort((a, b) => (a.recipeIndex ?? 0) - (b.recipeIndex ?? 0))[0]
+
+			if (!recipe) return null
+
+			return {
+				mealIndex,
+				recipeId: recipe.id,
+				recipeIndex: recipe.recipeIndex ?? null,
+			}
+		})
+		.filter((meal): meal is PlanMealToLog => meal !== null)
+}
+
 const Meal = ({
 	date,
 	allPlans,
@@ -71,16 +121,19 @@ const Meal = ({
 	todaysLog,
 	userId,
 	index,
+	setIsSheetOpen,
 }: {
 	date: Date
 	todaysLog: GetDailyLogById | null | undefined
-	allPlans: UserPlan[]
-	activePlans: UserPlan[]
+	allPlans: CurrentUserPlan[]
+	activePlans: CurrentUserPlan[]
 	userId: string
 	index: number
+	setIsSheetOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
 	const [selectValue, setSelectValue] = useState<string>('')
 	const [recipeName, setRecipeName] = useState<string>('')
+	const [loggingPlanId, setLoggingPlanId] = useState<number | null>(null)
 	const [isAllMeals, _setIsAllMeals] = useAtom(isAllMealsAtom)
 
 	useEffect(() => {
@@ -108,11 +161,12 @@ const Meal = ({
 	}, [])
 
 	const ctx = api.useUtils()
-	const { mutate: addMeal } = api.dailyLog.addMeal.useMutation({
-		onSettled: () => {
-			ctx.dailyLog.invalidate()
-		},
-	})
+	const { mutate: addMeal, mutateAsync: addMealAsync } =
+		api.dailyLog.addMeal.useMutation({
+			onSettled: () => {
+				ctx.dailyLog.invalidate()
+			},
+		})
 	const { mutate: deleteMeal } = api.dailyLog.deleteMeal.useMutation({
 		onSuccess: () => {
 			ctx.dailyLog.invalidate()
@@ -120,6 +174,7 @@ const Meal = ({
 	})
 
 	const recipes = allPlans.flatMap((plan) => plan?.userRecipes)
+	const nextMealIndex = getNextMealIndex(todaysLog)
 
 	const selectedRecipeMacros = getRecipeDetailsFromDailyLog(todaysLog, index)
 
@@ -131,24 +186,76 @@ const Meal = ({
 					size='sm'
 					variant='outline'
 					type='multiple'
-					className='flex flex-wrap justify-start w-full'
+					className='flex flex-col justify-start items-start w-full'
 					value={selectedPlans}
 					onValueChange={setSelectedPlans}
 				>
 					{allPlans?.map((plan) => {
 						if (!plan) return null
+						const activePlan = activePlans.find((p) => p?.id === plan.id)
+						if (!activePlan) return null
+
+						const planMealsToLog = getPlanMealsToLog(activePlan, nextMealIndex)
+						const logId = todaysLog?.id ?? null
+						const isLogPlanDisabled = !logId || planMealsToLog.length === 0
+
 						return (
-							<ToggleGroupItem
-								key={plan.id}
-								value={plan.id.toString()}
-								className={cn(
-									'text-xs truncate max-w-32 py-1 px-2 tracking-tight h-min',
-									'data-[state=on]:bg-foreground data-[state=on]:text-background data-[state=on]:shadow-none',
-									'block rounded-full font-semibold',
-								)}
-							>
-								{plan.name}
-							</ToggleGroupItem>
+							<div key={plan.id} className='flex gap-2 items-center w-full'>
+								<ToggleGroupItem
+									value={plan.id.toString()}
+									className={cn(
+										'text-xs py-1 px-2 tracking-tight h-min',
+										'data-[state=on]:bg-foreground data-[state=on]:text-background data-[state=on]:shadow-none',
+										'rounded-full font-semibold flex-1 min-w-0 justify-start',
+									)}
+								>
+									<span className='truncate'>{plan.name}</span>
+								</ToggleGroupItem>
+								<Button
+									type='button'
+									variant='outline'
+									size='sm'
+									disabled={
+										isLogPlanDisabled || loggingPlanId === activePlan.id
+									}
+									className='px-3 h-7 text-xs font-semibold rounded-full'
+									onClick={async (e) => {
+										e.preventDefault()
+										e.stopPropagation()
+
+										if (!logId || planMealsToLog.length === 0) return
+
+										setLoggingPlanId(activePlan.id)
+
+										try {
+											for (const meal of planMealsToLog) {
+												await addMealAsync({
+													userId,
+													planId: activePlan.id,
+													mealIndex: meal.mealIndex,
+													recipeIndex: meal.recipeIndex,
+													recipeId: meal.recipeId,
+													date,
+													logId,
+												})
+											}
+
+											toast.success(
+												`Logged ${planMealsToLog.length} meals from ${activePlan.name}`,
+											)
+											setIsSheetOpen(false)
+										} catch (_error) {
+											toast.error(
+												`Failed to log remaining meals from ${activePlan.name}`,
+											)
+										} finally {
+											setLoggingPlanId(null)
+										}
+									}}
+								>
+									Log Plan
+								</Button>
+							</div>
 						)
 					})}
 				</ToggleGroup>
@@ -161,7 +268,6 @@ const Meal = ({
 				className='justify-start w-full'
 				value={selectValue}
 				onValueChange={(value) => {
-					console.log({ value, selectValue })
 					if (value === '' && selectValue !== '') {
 						if (!todaysLog) return
 						deleteMeal({
@@ -235,16 +341,21 @@ const Meal = ({
 						?.map((plan) => {
 							if (!plan) return null
 							if (plan.userRecipes?.length === 0) return null
+							const planForMacros = plan as DailyLogRecipePlan
 
 							const activePlan = activePlans.find((p) => p?.id === plan.id)
 							if (!activePlan) return null
+							const activePlanForMacros = activePlan as DailyLogRecipePlan
 
 							const { cals, protein, carbs, fat } = activePlan.userMeals.reduce(
 								(acc, _curr, i) => {
 									const recipes = activePlan.userRecipes
 										.filter((recipe) => recipe.mealIndex === i)
 										.map((recipe) =>
-											getRecipeDetailsForDailyLog(activePlan, recipe.id),
+											getRecipeDetailsForDailyLog(
+												activePlanForMacros,
+												recipe.id,
+											),
 										)
 									const recipe = recipes[0]
 									if (!recipe) return acc
@@ -290,7 +401,7 @@ const Meal = ({
 													(meal) => meal.mealIndex === recipe.mealIndex,
 												)?.mealTitle ?? ''
 											const { cals, protein, carbs, fat } =
-												getRecipeDetailsForDailyLog(plan, recipe.id)
+												getRecipeDetailsForDailyLog(planForMacros, recipe.id)
 
 											// @ts-ignore
 											const mealColour =
@@ -366,12 +477,14 @@ const MealList = ({
 	currentUser,
 	today,
 	setDay,
+	setIsSheetOpen,
 }: {
 	currentMeal: number
 	currentUser: GetCurrentUserMeals
 	todaysLog: GetDailyLogById | null | undefined
 	today: Date
 	setDay: React.Dispatch<React.SetStateAction<Date>>
+	setIsSheetOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
 	const [currentMeal, setCurrentMeal] = useState(() => _currentMeal)
 	const [isAllMeals, setIsAllMeals] = useAtom(isAllMealsAtom)
@@ -564,6 +677,7 @@ const MealList = ({
 						<div className='flex flex-col gap-2 mb-2'>
 							{refinedPlans && activePlans && (
 								<Meal
+									setIsSheetOpen={setIsSheetOpen}
 									allPlans={refinedPlans}
 									activePlans={activePlans}
 									date={today}
@@ -604,6 +718,8 @@ const MealLog = ({
 	dailyLogs: GetAllDailyLogs | null | undefined
 }) => {
 	const [day, setDay] = useState<Date>(new Date())
+
+	const [isSheetOpen, setIsSheetOpen] = useState(false)
 
 	const { data: _userRecipes } = api.recipe.getAllUserCreated.useQuery({
 		userId: currentUserId,
@@ -650,7 +766,11 @@ const MealLog = ({
 	return (
 		<div className='flex flex-col gap-0 items-center w-full'>
 			<SheetStack.Root>
-				<Sheet.Root license='non-commercial'>
+				<Sheet.Root
+					presented={isSheetOpen}
+					onPresentedChange={setIsSheetOpen}
+					license='non-commercial'
+				>
 					<div className='flex flex-col gap-0 justify-start items-center w-full'>
 						<div className={cn('text-lg font-semibold')}>
 							Meal {currentMeal + 1}
@@ -686,6 +806,7 @@ const MealLog = ({
 									currentUser={currentUser}
 									today={day}
 									setDay={setDay}
+									setIsSheetOpen={setIsSheetOpen}
 								/>
 							)}
 						</Sheet.View>
