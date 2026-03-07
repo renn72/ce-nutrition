@@ -1,4 +1,5 @@
 'use client'
+import { useEffect, useState } from 'react'
 
 import { Minus, PlusIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -14,12 +15,26 @@ const NumberInput = ({
 	isWide = false,
 }: {
 	value: number | null
-	setValue: (value: number) => void
+	setValue: (value: number | null) => void
 	fixed?: number
 	scale: number
 	postfix?: string
 	isWide?: boolean
 }) => {
+	const formatValue = (nextValue: number | null) => {
+		if (nextValue === null) return ''
+
+		return nextValue % 1 === 0
+			? nextValue.toString()
+			: nextValue.toFixed(fixed)
+	}
+
+	const [inputValue, setInputValue] = useState(() => formatValue(value))
+
+	useEffect(() => {
+		setInputValue(formatValue(value))
+	}, [fixed, value])
+
 	return (
 		<div className='flex relative items-center w-60 h-16 rounded-lg border'>
 			<Input
@@ -30,9 +45,14 @@ const NumberInput = ({
 					isWide ? '-ml-4' : '',
 				)}
 				type='number'
-				value={value && value % 1 === 0 ? value : (value?.toFixed(fixed) ?? '')}
+				value={inputValue}
 				onChange={(e) => {
-					setValue(Number(e.target.value))
+					const nextValue = e.target.value
+					setInputValue(nextValue)
+
+					if (nextValue === '') return
+
+					setValue(Number(nextValue))
 				}}
 			/>
 
@@ -42,11 +62,16 @@ const NumberInput = ({
 
 			<div
 				onClick={() => {
-					if (!value) {
-						setValue(scale)
+					if (inputValue === '' || value === null) {
+						const nextValue = Number(scale.toFixed(fixed))
+						setValue(nextValue)
+						setInputValue(formatValue(nextValue))
 						return
 					}
-					setValue(Number((value + scale).toFixed(fixed)))
+
+					const nextValue = Number((value + scale).toFixed(fixed))
+					setValue(nextValue)
+					setInputValue(formatValue(nextValue))
 				}}
 				className='flex absolute right-0 top-1/2 gap-0 items-start text-xs rounded-r-lg border-l -translate-y-1/2 text-secondary-foreground active:bg-primary/60'
 			>
@@ -56,8 +81,11 @@ const NumberInput = ({
 			</div>
 			<div
 				onClick={() => {
-					if (!value) return
-					setValue(Number((value - scale).toFixed(fixed)))
+					if (inputValue === '' || value === null) return
+
+					const nextValue = Number((value - scale).toFixed(fixed))
+					setValue(nextValue)
+					setInputValue(formatValue(nextValue))
 				}}
 				className='flex absolute left-0 top-1/2 gap-0 items-start text-xs rounded-l-lg border-r -translate-y-1/2 text-secondary-foreground active:bg-primary/30'
 			>
