@@ -629,7 +629,7 @@ const ShoppingListView = ({
                   </Button>
                 </div>
                 <CollapsibleContent className='overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
-                  <div className='mt-3 grid gap-2 sm:grid-cols-[auto_minmax(0,140px)_auto_auto_auto]'>
+                  <div className='mt-3 grid grid-cols-[auto_minmax(0,1fr)_auto] gap-2'>
                     <Button
                       size='icon'
                       variant='outline'
@@ -648,6 +648,7 @@ const ShoppingListView = ({
                       type='number'
                       min='0'
                       step={item.unit === 'grams' ? '10' : '0.25'}
+                      className='min-w-[120px] flex-1'
                       value={amountDrafts[item.id] ?? String(item.amount)}
                       onChange={(event) =>
                         setAmountDrafts((currentDrafts) => ({
@@ -666,20 +667,22 @@ const ShoppingListView = ({
                     >
                       <Plus className='h-4 w-4' />
                     </Button>
-                    <Button
-                      size='sm'
-                      onClick={() => void handleSaveItemAmount(item)}
-                      disabled={updateItemAmount.isPending}
-                    >
-                      Save
-                    </Button>
-                    <Button
-                      size='sm'
-                      variant='ghost'
-                      onClick={() => setEditingItemId(null)}
-                    >
-                      Cancel
-                    </Button>
+                    <div className='col-start-2 col-end-4 flex flex-wrap gap-2'>
+                      <Button
+                        size='sm'
+                        onClick={() => void handleSaveItemAmount(item)}
+                        disabled={updateItemAmount.isPending}
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        size='sm'
+                        variant='ghost'
+                        onClick={() => setEditingItemId(null)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
                   </div>
                 </CollapsibleContent>
               </Collapsible>
@@ -879,6 +882,7 @@ const ShoppingListView = ({
             className={cn(isFullHeight ? 'min-h-0 flex-1' : 'h-[70svh]')}
           >
             {body}
+            {addIngredientForm}
             {showHistory ? (
               <ShoppingListHistory
                 lists={historicalLists}
@@ -888,11 +892,11 @@ const ShoppingListView = ({
                 deletingListId={deletingHistoryListId}
               />
             ) : null}
-            {addIngredientForm}
           </ScrollArea>
         ) : (
           <>
             {body}
+            {addIngredientForm}
             {showHistory ? (
               <ShoppingListHistory
                 lists={historicalLists}
@@ -902,7 +906,6 @@ const ShoppingListView = ({
                 deletingListId={deletingHistoryListId}
               />
             ) : null}
-            {addIngredientForm}
           </>
         )}
       </CardContent>
