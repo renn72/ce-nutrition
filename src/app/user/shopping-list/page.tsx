@@ -22,6 +22,7 @@ export default function ShoppingListPage() {
         userName={user.name}
         allowItemEditing={true}
         showHistory={true}
+        partner={user.partner}
       />
     </div>
   )

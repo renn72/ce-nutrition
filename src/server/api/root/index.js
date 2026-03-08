@@ -1386,6 +1386,9 @@ var user = createTable9(
     password: text9("password"),
     currentPlanId: int9("current_plan_id"),
     image: text9("image"),
+    partnerId: text9("partner_id").references(() => user.id, {
+      onDelete: "set null"
+    }),
     isActive: int9("is_active", { mode: "boolean" }).default(true),
     isFake: int9("is_fake", { mode: "boolean" }).default(false),
     isTrainer: int9("is_trainer", { mode: "boolean" }).default(false),
@@ -1399,10 +1402,17 @@ var user = createTable9(
   },
   (table) => [
     index9("user_email_idx").on(table.email),
-    index9("user_is_creator_idx").on(table.isCreator)
+    index9("user_is_creator_idx").on(table.isCreator),
+    index9("user_partner_id_idx").on(table.partnerId)
   ]
 );
 var userRelations = relations9(user, ({ one, many }) => ({
+  partner: one(user, {
+    fields: [user.partnerId],
+    references: [user.id],
+    relationName: "userPartner"
+  }),
+  partneredUsers: many(user, { relationName: "userPartner" }),
   roles: many(role),
   notifications: many(notification),
   notificationsToggles: many(notificationToggle),
@@ -5947,6 +5957,15 @@ var createShoppingListName = () => `Shopping List ${new Intl.DateTimeFormat("en-
   month: "short",
   year: "numeric"
 }).format(/* @__PURE__ */ new Date())}`;
+var createSharedShoppingListName = (names) => {
+  const label = names.map((name) => name?.trim()).filter((name) => Boolean(name)).join(" & ");
+  return label ? `Shared Shopping List ${new Intl.DateTimeFormat("en-AU", {
+    day: "numeric",
+    month: "short",
+    year: "numeric"
+  }).format(/* @__PURE__ */ new Date())} - ${label}` : `Shared ${createShoppingListName()}`;
+};
+var normalizeShoppingText = (value) => value?.trim().toLowerCase() ?? "";
 var mergeTextList = (...values) => {
   const mergedValues = Array.from(
     new Set(
@@ -5957,8 +5976,41 @@ var mergeTextList = (...values) => {
 };
 var getItemMergeKey = ({
   ingredientId,
+  name,
   unit
-}) => `${ingredientId ?? "unknown"}:${unit ?? ""}`;
+}) => `${ingredientId ?? `manual:${normalizeShoppingText(name)}`}:${normalizeShoppingText(unit)}`;
+var mergeShoppingItems = (items) => {
+  const mergedItems = /* @__PURE__ */ new Map();
+  for (const item of items) {
+    const key = getItemMergeKey({
+      ingredientId: item.ingredientId,
+      name: item.name,
+      unit: item.unit
+    });
+    const existingItem = mergedItems.get(key);
+    if (!existingItem) {
+      mergedItems.set(key, {
+        ingredientId: item.ingredientId,
+        name: item.name.trim() || "Ingredient",
+        amount: formatShoppingAmount(item.amount),
+        amountNumber: toShoppingAmountNumber(item.amount),
+        unit: item.unit?.trim() ?? "",
+        source: item.source ?? null,
+        note: item.note ?? null
+      });
+      continue;
+    }
+    existingItem.amountNumber += toShoppingAmountNumber(item.amount);
+    existingItem.amount = formatShoppingAmount(existingItem.amountNumber);
+    existingItem.source = mergeTextList(existingItem.source, item.source);
+    existingItem.note = mergeTextList(existingItem.note, item.note);
+  }
+  return Array.from(mergedItems.values()).map(
+    ({ amountNumber: _amountNumber, ...item }) => ({
+      ...item
+    })
+  );
+};
 var assertAuthenticated = (ctx) => {
   const sessionUser = ctx.session?.user;
   if (!sessionUser) {
@@ -5976,9 +6028,17 @@ var assertUserAccess = async (ctx, userId) => {
     columns: {
       id: true,
       name: true,
-      email: true
+      email: true,
+      partnerId: true
     },
     with: {
+      partner: {
+        columns: {
+          id: true,
+          name: true,
+          email: true
+        }
+      },
       trainers: {
         columns: {
           trainerId: true
@@ -6003,29 +6063,51 @@ var assertUserAccess = async (ctx, userId) => {
   }
   return targetUser;
 };
+var ensureActiveShoppingList = async (ctx, userId) => {
+  let activeList = await getActiveShoppingList(ctx, userId);
+  if (activeList) return activeList;
+  const activeListId = await createActiveShoppingList({
+    ctx,
+    userId
+  });
+  activeList = await getShoppingListWithItems(ctx, activeListId);
+  if (!activeList) {
+    throw new TRPCError6({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Unable to access active shopping list"
+    });
+  }
+  return activeList;
+};
 var getShoppingListWithItems = async (ctx, listId) => {
-  return ctx.db.query.shoppingList.findFirst({
+  return await ctx.db.query.shoppingList.findFirst({
     where: eq14(shoppingList.id, listId),
     with: {
       items: {
-        orderBy: [asc2(shoppingListItem.isChecked), asc2(shoppingListItem.name)]
+        orderBy: [
+          asc2(shoppingListItem.isChecked),
+          asc2(shoppingListItem.name)
+        ]
       }
     }
-  });
+  }) ?? null;
 };
 var getActiveShoppingList = async (ctx, userId) => {
-  return ctx.db.query.shoppingList.findFirst({
+  return await ctx.db.query.shoppingList.findFirst({
     where: and9(
       eq14(shoppingList.userId, userId),
       eq14(shoppingList.isActive, true)
     ),
     with: {
       items: {
-        orderBy: [asc2(shoppingListItem.isChecked), asc2(shoppingListItem.name)]
+        orderBy: [
+          asc2(shoppingListItem.isChecked),
+          asc2(shoppingListItem.name)
+        ]
       }
     },
     orderBy: [desc6(shoppingList.updatedAt), desc6(shoppingList.createdAt)]
-  });
+  }) ?? null;
 };
 var createActiveShoppingList = async ({
   ctx,
@@ -6107,24 +6189,12 @@ var shoppingListRouter = createTRPCRouter({
     })
   ).mutation(async ({ ctx, input }) => {
     await assertUserAccess(ctx, input.userId);
-    let activeList = await getActiveShoppingList(ctx, input.userId);
-    if (!activeList) {
-      const activeListId = await createActiveShoppingList({
-        ctx,
-        userId: input.userId
-      });
-      activeList = await getShoppingListWithItems(ctx, activeListId);
-    }
-    if (!activeList) {
-      throw new TRPCError6({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Unable to access active shopping list"
-      });
-    }
+    const activeList = await ensureActiveShoppingList(ctx, input.userId);
     const existingItemsByKey = new Map(
       activeList.items.map((item) => [
         getItemMergeKey({
           ingredientId: item.ingredientId,
+          name: item.name,
           unit: item.unit
         }),
         item
@@ -6134,6 +6204,7 @@ var shoppingListRouter = createTRPCRouter({
     for (const incomingItem of input.items) {
       const key = getItemMergeKey({
         ingredientId: incomingItem.ingredientId,
+        name: incomingItem.name,
         unit: incomingItem.unit
       });
       const existingItem = existingItemsByKey.get(key);
@@ -6163,6 +6234,131 @@ var shoppingListRouter = createTRPCRouter({
     }
     await touchShoppingList(ctx, activeList.id);
     return getShoppingListWithItems(ctx, activeList.id);
+  }),
+  addCustomItem: protectedProcedure.input(
+    z20.object({
+      userId: z20.string(),
+      name: z20.string().trim().min(1),
+      amount: z20.number().positive(),
+      unit: z20.string().trim().max(40).optional().default("")
+    })
+  ).mutation(async ({ ctx, input }) => {
+    await assertUserAccess(ctx, input.userId);
+    const activeList = await ensureActiveShoppingList(ctx, input.userId);
+    const itemKey = getItemMergeKey({
+      ingredientId: null,
+      name: input.name,
+      unit: input.unit
+    });
+    const existingItem = activeList.items.find(
+      (item) => getItemMergeKey({
+        ingredientId: item.ingredientId,
+        name: item.name,
+        unit: item.unit
+      }) === itemKey
+    );
+    if (existingItem) {
+      await ctx.db.update(shoppingListItem).set({
+        amount: formatShoppingAmount(
+          toShoppingAmountNumber(existingItem.amount) + input.amount
+        ),
+        isChecked: false
+      }).where(eq14(shoppingListItem.id, existingItem.id));
+    } else {
+      await ctx.db.insert(shoppingListItem).values({
+        shoppingListId: activeList.id,
+        ingredientId: null,
+        name: input.name.trim(),
+        amount: formatShoppingAmount(input.amount),
+        unit: input.unit.trim(),
+        source: null,
+        note: null
+      });
+    }
+    await touchShoppingList(ctx, activeList.id);
+    return getShoppingListWithItems(ctx, activeList.id);
+  }),
+  mergeWithPartner: protectedProcedure.input(z20.object({ userId: z20.string() })).mutation(async ({ ctx, input }) => {
+    const targetUser = await assertUserAccess(ctx, input.userId);
+    const partnerUser = targetUser.partner;
+    if (!partnerUser) {
+      throw new TRPCError6({
+        code: "BAD_REQUEST",
+        message: "This user does not have a linked partner"
+      });
+    }
+    const [activeList, partnerActiveList] = await Promise.all([
+      getActiveShoppingList(ctx, targetUser.id),
+      getActiveShoppingList(ctx, partnerUser.id)
+    ]);
+    const mergedItems = mergeShoppingItems([
+      ...activeList?.items.filter((item) => !item.isChecked).map((item) => ({
+        ingredientId: item.ingredientId,
+        name: item.name,
+        amount: item.amount,
+        unit: item.unit,
+        source: item.source,
+        note: item.note
+      })) ?? [],
+      ...partnerActiveList?.items.filter((item) => !item.isChecked).map((item) => ({
+        ingredientId: item.ingredientId,
+        name: item.name,
+        amount: item.amount,
+        unit: item.unit,
+        source: item.source,
+        note: item.note
+      })) ?? []
+    ]);
+    if (mergedItems.length === 0) {
+      throw new TRPCError6({
+        code: "BAD_REQUEST",
+        message: "There are no active shopping list items to merge"
+      });
+    }
+    const listName = createSharedShoppingListName([
+      targetUser.name,
+      partnerUser.name
+    ]);
+    const [userListId, partnerListId] = await Promise.all([
+      createActiveShoppingList({
+        ctx,
+        userId: targetUser.id,
+        name: listName
+      }),
+      createActiveShoppingList({
+        ctx,
+        userId: partnerUser.id,
+        name: listName
+      })
+    ]);
+    await ctx.db.insert(shoppingListItem).values(
+      mergedItems.flatMap((item) => [
+        {
+          shoppingListId: userListId,
+          ingredientId: item.ingredientId,
+          name: item.name,
+          amount: item.amount,
+          unit: item.unit,
+          isChecked: false,
+          source: item.source,
+          note: item.note
+        },
+        {
+          shoppingListId: partnerListId,
+          ingredientId: item.ingredientId,
+          name: item.name,
+          amount: item.amount,
+          unit: item.unit,
+          isChecked: false,
+          source: item.source,
+          note: item.note
+        }
+      ])
+    );
+    return {
+      success: true,
+      partnerUserId: partnerUser.id
+    };
   }),
   setItemChecked: protectedProcedure.input(
     z20.object({
@@ -10363,6 +10559,13 @@ var get3 = {
       },
       with: {
         settings: true,
+        partner: {
+          columns: {
+            id: true,
+            name: true,
+            email: true
+          }
+        },
         category: {
           with: {
             category: true
@@ -10483,6 +10686,13 @@ var get3 = {
       with: {
         images: true,
         settings: true,
+        partner: {
+          columns: {
+            id: true,
+            name: true,
+            email: true
+          }
+        },
         roles: true,
         trainers: true,
         category: {
@@ -10535,6 +10745,13 @@ var get3 = {
       },
       with: {
         settings: true,
+        partner: {
+          columns: {
+            id: true,
+            name: true,
+            email: true
+          }
+        },
         roles: true,
         category: {
           with: {
@@ -10566,7 +10783,19 @@ var get3 = {
       },
       with: {
         settings: true,
+        partner: {
+          columns: {
+            id: true,
+            name: true,
+            email: true
+          }
+        },
         roles: true,
+        category: {
+          with: {
+            category: true
+          }
+        },
         images: true,
         trainers: true,
         supplementStacks: {
@@ -10905,9 +11134,55 @@ var roles = {
 };
 
 // src/server/api/routers/user/update.ts
+import { TRPCError as TRPCError9 } from "@trpc/server";
 import { hash as hash3 } from "bcryptjs";
-import { eq as eq25 } from "drizzle-orm";
+import { eq as eq25, inArray } from "drizzle-orm";
 import { z as z33 } from "zod";
+var assertAuthenticated2 = (ctx) => {
+  const sessionUser = ctx.session?.user;
+  if (!sessionUser) {
+    throw new TRPCError9({
+      code: "UNAUTHORIZED",
+      message: "You must be signed in to update users"
+    });
+  }
+  return sessionUser;
+};
+var assertCanManageUser = async ({
+  ctx,
+  userId
+}) => {
+  const sessionUser = assertAuthenticated2(ctx);
+  const targetUser = await ctx.db.query.user.findFirst({
+    where: eq25(user.id, userId),
+    columns: {
+      id: true,
+      name: true,
+      partnerId: true
+    },
+    with: {
+      trainers: {
+        columns: {
+          trainerId: true
+        }
+      }
+    }
+  });
+  if (!targetUser) {
+    throw new TRPCError9({
+      code: "NOT_FOUND",
+      message: "User not found"
+    });
+  }
+  const canManage = sessionUser.isAdmin || targetUser.id === sessionUser.id || targetUser.trainers.some((trainer) => trainer.trainerId === sessionUser.id);
+  if (!canManage) {
+    throw new TRPCError9({
+      code: "FORBIDDEN",
+      message: "You do not have permission to update this user"
+    });
+  }
+  return targetUser;
+};
 var update = {
   updateIsUserActive: protectedProcedure.input(z33.object({ id: z33.string(), isActive: z33.boolean() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.update(user).set({
@@ -11194,6 +11469,63 @@ var update = {
       notes: JSON.stringify(input)
     });
     return res;
+  }),
+  setPartner: protectedProcedure.input(
+    z33.object({
+      userId: z33.string(),
+      partnerId: z33.string().nullable()
+    })
+  ).mutation(async ({ ctx, input }) => {
+    if (input.partnerId === input.userId) {
+      throw new TRPCError9({
+        code: "BAD_REQUEST",
+        message: "A user cannot be their own partner"
+      });
+    }
+    const targetUser = await assertCanManageUser({
+      ctx,
+      userId: input.userId
+    });
+    const partnerUser = input.partnerId ? await assertCanManageUser({
+      ctx,
+      userId: input.partnerId
+    }) : null;
+    await ctx.db.transaction(async (tx) => {
+      const impactedUserIds = Array.from(
+        new Set(
+          [
+            targetUser.id,
+            targetUser.partnerId,
+            partnerUser?.id ?? null,
+            partnerUser?.partnerId ?? null
+          ].filter((value) => Boolean(value))
+        )
+      );
+      if (impactedUserIds.length > 0) {
+        await tx.update(user).set({
+          partnerId: null
+        }).where(inArray(user.id, impactedUserIds));
+        await tx.update(user).set({
+          partnerId: null
+        }).where(inArray(user.partnerId, impactedUserIds));
+      }
+      if (partnerUser) {
+        await tx.update(user).set({
+          partnerId: partnerUser.id
+        }).where(eq25(user.id, targetUser.id));
+        await tx.update(user).set({
+          partnerId: targetUser.id
+        }).where(eq25(user.id, partnerUser.id));
+      }
+    });
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      objectId: null,
+      task: "Set Partner",
+      notes: JSON.stringify(input)
+    });
+    return { success: true };
   })
 };
 
@@ -11470,7 +11802,7 @@ var vegeRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/weigh-in.ts
-import { TRPCError as TRPCError9 } from "@trpc/server";
+import { TRPCError as TRPCError10 } from "@trpc/server";
 import { eq as eq29 } from "drizzle-orm";
 import { z as z37 } from "zod";
 var weighInRouter = createTRPCRouter({
@@ -11493,7 +11825,7 @@ var weighInRouter = createTRPCRouter({
     return { res };
   }),
   getAllUser: protectedProcedure.input(z37.string()).query(async ({ ctx, input }) => {
-    if (input === "") throw new TRPCError9({ code: "NOT_FOUND" });
+    if (input === "") throw new TRPCError10({ code: "NOT_FOUND" });
     const res = await ctx.db.query.weighIn.findMany({
       where: eq29(weighIn.userId, input),
       orderBy: (data, { desc: desc11 }) => desc11(data.date)
@@ -11511,7 +11843,7 @@ var weighInRouter = createTRPCRouter({
     return res;
   }),
   deleteAll: protectedProcedure.input(z37.string()).mutation(async ({ input, ctx }) => {
-    if (input === "") throw new TRPCError9({ code: "NOT_FOUND" });
+    if (input === "") throw new TRPCError10({ code: "NOT_FOUND" });
     const res = await ctx.db.delete(weighIn).where(eq29(weighIn.userId, input));
     return res;
   })

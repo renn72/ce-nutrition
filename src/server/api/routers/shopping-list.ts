@@ -27,6 +27,26 @@ const createShoppingListName = () =>
     year: 'numeric',
   }).format(new Date())}`
 
+const createSharedShoppingListName = (
+  names: Array<string | null | undefined>,
+) => {
+  const label = names
+    .map((name) => name?.trim())
+    .filter((name): name is string => Boolean(name))
+    .join(' & ')
+
+  return label
+    ? `Shared Shopping List ${new Intl.DateTimeFormat('en-AU', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      }).format(new Date())} - ${label}`
+    : `Shared ${createShoppingListName()}`
+}
+
+const normalizeShoppingText = (value: string | null | undefined) =>
+  value?.trim().toLowerCase() ?? ''
+
 const mergeTextList = (...values: (string | null | undefined)[]) => {
   const mergedValues = Array.from(
     new Set(
@@ -42,11 +62,72 @@ const mergeTextList = (...values: (string | null | undefined)[]) => {
 
 const getItemMergeKey = ({
   ingredientId,
+  name,
   unit,
 }: {
   ingredientId: number | null
+  name: string | null | undefined
   unit: string | null
-}) => `${ingredientId ?? 'unknown'}:${unit ?? ''}`
+}) =>
+  `${ingredientId ?? `manual:${normalizeShoppingText(name)}`}:${normalizeShoppingText(unit)}`
+
+type MergeableShoppingItem = {
+  ingredientId: number | null
+  name: string
+  amount: number | string
+  unit: string | null
+  source?: string | null
+  note?: string | null
+}
+
+type ShoppingListItemInsert = {
+  ingredientId: number | null
+  name: string
+  amount: string
+  unit: string
+  source: string | null
+  note: string | null
+}
+
+const mergeShoppingItems = (items: MergeableShoppingItem[]) => {
+  const mergedItems = new Map<
+    string,
+    ShoppingListItemInsert & { amountNumber: number }
+  >()
+
+  for (const item of items) {
+    const key = getItemMergeKey({
+      ingredientId: item.ingredientId,
+      name: item.name,
+      unit: item.unit,
+    })
+    const existingItem = mergedItems.get(key)
+
+    if (!existingItem) {
+      mergedItems.set(key, {
+        ingredientId: item.ingredientId,
+        name: item.name.trim() || 'Ingredient',
+        amount: formatShoppingAmount(item.amount),
+        amountNumber: toShoppingAmountNumber(item.amount),
+        unit: item.unit?.trim() ?? '',
+        source: item.source ?? null,
+        note: item.note ?? null,
+      })
+      continue
+    }
+
+    existingItem.amountNumber += toShoppingAmountNumber(item.amount)
+    existingItem.amount = formatShoppingAmount(existingItem.amountNumber)
+    existingItem.source = mergeTextList(existingItem.source, item.source)
+    existingItem.note = mergeTextList(existingItem.note, item.note)
+  }
+
+  return Array.from(mergedItems.values()).map(
+    ({ amountNumber: _amountNumber, ...item }) => ({
+      ...item,
+    }),
+  )
+}
 
 const assertAuthenticated = (ctx: TRPCContext) => {
   const sessionUser = ctx.session?.user
@@ -69,8 +150,16 @@ const assertUserAccess = async (ctx: TRPCContext, userId: string) => {
       id: true,
       name: true,
       email: true,
+      partnerId: true,
     },
     with: {
+      partner: {
+        columns: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
       trainers: {
         columns: {
           trainerId: true,
@@ -103,15 +192,42 @@ const assertUserAccess = async (ctx: TRPCContext, userId: string) => {
   return targetUser
 }
 
-const getShoppingListWithItems = async (ctx: TRPCContext, listId: number) => {
-  return ctx.db.query.shoppingList.findFirst({
-    where: eq(shoppingList.id, listId),
-    with: {
-      items: {
-        orderBy: [asc(shoppingListItem.isChecked), asc(shoppingListItem.name)],
-      },
-    },
+const ensureActiveShoppingList = async (ctx: TRPCContext, userId: string) => {
+  let activeList = await getActiveShoppingList(ctx, userId)
+
+  if (activeList) return activeList
+
+  const activeListId = await createActiveShoppingList({
+    ctx,
+    userId,
   })
+
+  activeList = await getShoppingListWithItems(ctx, activeListId)
+
+  if (!activeList) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'Unable to access active shopping list',
+    })
+  }
+
+  return activeList
+}
+
+const getShoppingListWithItems = async (ctx: TRPCContext, listId: number) => {
+  return (
+    (await ctx.db.query.shoppingList.findFirst({
+      where: eq(shoppingList.id, listId),
+      with: {
+        items: {
+          orderBy: [
+            asc(shoppingListItem.isChecked),
+            asc(shoppingListItem.name),
+          ],
+        },
+      },
+    })) ?? null
+  )
 }
 
 type ShoppingListWithItems = NonNullable<
@@ -120,18 +236,23 @@ type ShoppingListWithItems = NonNullable<
 type ShoppingListItemRecord = ShoppingListWithItems['items'][number]
 
 const getActiveShoppingList = async (ctx: TRPCContext, userId: string) => {
-  return ctx.db.query.shoppingList.findFirst({
-    where: and(
-      eq(shoppingList.userId, userId),
-      eq(shoppingList.isActive, true),
-    ),
-    with: {
-      items: {
-        orderBy: [asc(shoppingListItem.isChecked), asc(shoppingListItem.name)],
+  return (
+    (await ctx.db.query.shoppingList.findFirst({
+      where: and(
+        eq(shoppingList.userId, userId),
+        eq(shoppingList.isActive, true),
+      ),
+      with: {
+        items: {
+          orderBy: [
+            asc(shoppingListItem.isChecked),
+            asc(shoppingListItem.name),
+          ],
+        },
       },
-    },
-    orderBy: [desc(shoppingList.updatedAt), desc(shoppingList.createdAt)],
-  })
+      orderBy: [desc(shoppingList.updatedAt), desc(shoppingList.createdAt)],
+    })) ?? null
+  )
 }
 
 const createActiveShoppingList = async ({
@@ -245,28 +366,13 @@ export const shoppingListRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       await assertUserAccess(ctx, input.userId)
-
-      let activeList = await getActiveShoppingList(ctx, input.userId)
-
-      if (!activeList) {
-        const activeListId = await createActiveShoppingList({
-          ctx,
-          userId: input.userId,
-        })
-        activeList = await getShoppingListWithItems(ctx, activeListId)
-      }
-
-      if (!activeList) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Unable to access active shopping list',
-        })
-      }
+      const activeList = await ensureActiveShoppingList(ctx, input.userId)
 
       const existingItemsByKey = new Map<string, ShoppingListItemRecord>(
         activeList.items.map((item): [string, ShoppingListItemRecord] => [
           getItemMergeKey({
             ingredientId: item.ingredientId,
+            name: item.name,
             unit: item.unit,
           }),
           item,
@@ -286,6 +392,7 @@ export const shoppingListRouter = createTRPCRouter({
       for (const incomingItem of input.items) {
         const key = getItemMergeKey({
           ingredientId: incomingItem.ingredientId,
+          name: incomingItem.name,
           unit: incomingItem.unit,
         })
         const existingItem = existingItemsByKey.get(key)
@@ -323,6 +430,155 @@ export const shoppingListRouter = createTRPCRouter({
       await touchShoppingList(ctx, activeList.id)
 
       return getShoppingListWithItems(ctx, activeList.id)
+    }),
+  addCustomItem: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        name: z.string().trim().min(1),
+        amount: z.number().positive(),
+        unit: z.string().trim().max(40).optional().default(''),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await assertUserAccess(ctx, input.userId)
+
+      const activeList = await ensureActiveShoppingList(ctx, input.userId)
+      const itemKey = getItemMergeKey({
+        ingredientId: null,
+        name: input.name,
+        unit: input.unit,
+      })
+      const existingItem = activeList.items.find(
+        (item) =>
+          getItemMergeKey({
+            ingredientId: item.ingredientId,
+            name: item.name,
+            unit: item.unit,
+          }) === itemKey,
+      )
+
+      if (existingItem) {
+        await ctx.db
+          .update(shoppingListItem)
+          .set({
+            amount: formatShoppingAmount(
+              toShoppingAmountNumber(existingItem.amount) + input.amount,
+            ),
+            isChecked: false,
+          })
+          .where(eq(shoppingListItem.id, existingItem.id))
+      } else {
+        await ctx.db.insert(shoppingListItem).values({
+          shoppingListId: activeList.id,
+          ingredientId: null,
+          name: input.name.trim(),
+          amount: formatShoppingAmount(input.amount),
+          unit: input.unit.trim(),
+          source: null,
+          note: null,
+        })
+      }
+
+      await touchShoppingList(ctx, activeList.id)
+
+      return getShoppingListWithItems(ctx, activeList.id)
+    }),
+  mergeWithPartner: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const targetUser = await assertUserAccess(ctx, input.userId)
+      const partnerUser = targetUser.partner
+
+      if (!partnerUser) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'This user does not have a linked partner',
+        })
+      }
+
+      const [activeList, partnerActiveList] = await Promise.all([
+        getActiveShoppingList(ctx, targetUser.id),
+        getActiveShoppingList(ctx, partnerUser.id),
+      ])
+
+      const mergedItems = mergeShoppingItems([
+        ...(activeList?.items
+          .filter((item) => !item.isChecked)
+          .map((item) => ({
+            ingredientId: item.ingredientId,
+            name: item.name,
+            amount: item.amount,
+            unit: item.unit,
+            source: item.source,
+            note: item.note,
+          })) ?? []),
+        ...(partnerActiveList?.items
+          .filter((item) => !item.isChecked)
+          .map((item) => ({
+            ingredientId: item.ingredientId,
+            name: item.name,
+            amount: item.amount,
+            unit: item.unit,
+            source: item.source,
+            note: item.note,
+          })) ?? []),
+      ])
+
+      if (mergedItems.length === 0) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'There are no active shopping list items to merge',
+        })
+      }
+
+      const listName = createSharedShoppingListName([
+        targetUser.name,
+        partnerUser.name,
+      ])
+
+      const [userListId, partnerListId] = await Promise.all([
+        createActiveShoppingList({
+          ctx,
+          userId: targetUser.id,
+          name: listName,
+        }),
+        createActiveShoppingList({
+          ctx,
+          userId: partnerUser.id,
+          name: listName,
+        }),
+      ])
+
+      await ctx.db.insert(shoppingListItem).values(
+        mergedItems.flatMap((item) => [
+          {
+            shoppingListId: userListId,
+            ingredientId: item.ingredientId,
+            name: item.name,
+            amount: item.amount,
+            unit: item.unit,
+            isChecked: false,
+            source: item.source,
+            note: item.note,
+          },
+          {
+            shoppingListId: partnerListId,
+            ingredientId: item.ingredientId,
+            name: item.name,
+            amount: item.amount,
+            unit: item.unit,
+            isChecked: false,
+            source: item.source,
+            note: item.note,
+          },
+        ]),
+      )
+
+      return {
+        success: true,
+        partnerUserId: partnerUser.id,
+      }
     }),
   setItemChecked: protectedProcedure
     .input(

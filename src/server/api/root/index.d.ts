@@ -328,6 +328,25 @@ declare const user: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
         }, {}, {
             length: number | undefined;
         }>;
+        partnerId: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "partner_id";
+            tableName: "user";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
         isActive: drizzle_orm_sqlite_core.SQLiteColumn<{
             name: "is_active";
             tableName: "user";
@@ -468,6 +487,8 @@ declare const user: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
     dialect: "sqlite";
 }>;
 declare const userRelations: drizzle_orm.Relations<"user", {
+    partner: drizzle_orm.One<"user", false>;
+    partneredUsers: drizzle_orm.Many<"user">;
     roles: drizzle_orm.Many<"role">;
     notifications: drizzle_orm.Many<"notification">;
     notificationsToggles: drizzle_orm.Many<"notification_toggle">;
@@ -16390,6 +16411,16 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        setPartner: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                partnerId: string | null;
+            };
+            output: {
+                success: boolean;
+            };
+            meta: object;
+        }>;
         getName: _trpc_server.TRPCQueryProcedure<{
             input: string;
             output: {
@@ -16419,6 +16450,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 emailVerified: Date | null;
                 currentPlanId: number | null;
                 image: string | null;
+                partnerId: string | null;
                 isActive: boolean | null;
                 isFake: boolean | null;
                 isTrainer: boolean | null;
@@ -16455,6 +16487,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                         password: string | null;
                         currentPlanId: number | null;
                         image: string | null;
+                        partnerId: string | null;
                         isActive: boolean | null;
                         isFake: boolean | null;
                         isTrainer: boolean | null;
@@ -16513,6 +16546,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                         password: string | null;
                         currentPlanId: number | null;
                         image: string | null;
+                        partnerId: string | null;
                         isActive: boolean | null;
                         isFake: boolean | null;
                         isTrainer: boolean | null;
@@ -16554,6 +16588,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 emailVerified: Date | null;
                 currentPlanId: number | null;
                 image: string | null;
+                partnerId: string | null;
                 isActive: boolean | null;
                 isFake: boolean | null;
                 isTrainer: boolean | null;
@@ -16590,6 +16625,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                         password: string | null;
                         currentPlanId: number | null;
                         image: string | null;
+                        partnerId: string | null;
                         isActive: boolean | null;
                         isFake: boolean | null;
                         isTrainer: boolean | null;
@@ -16635,6 +16671,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 emailVerified: Date | null;
                 currentPlanId: number | null;
                 image: string | null;
+                partnerId: string | null;
                 isActive: boolean | null;
                 isFake: boolean | null;
                 isTrainer: boolean | null;
@@ -16643,6 +16680,11 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isAllTrainers: boolean | null;
                 createdAt: Date;
                 updatedAt: Date | null;
+                partner: {
+                    id: string;
+                    name: string | null;
+                    email: string | null;
+                } | null;
                 roles: {
                     id: number;
                     name: string | null;
@@ -17079,6 +17121,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 emailVerified: Date | null;
                 currentPlanId: number | null;
                 image: string | null;
+                partnerId: string | null;
                 isActive: boolean | null;
                 isFake: boolean | null;
                 isTrainer: boolean | null;
@@ -17087,6 +17130,11 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isAllTrainers: boolean | null;
                 createdAt: Date;
                 updatedAt: Date | null;
+                partner: {
+                    id: string;
+                    name: string | null;
+                    email: string | null;
+                } | null;
                 roles: {
                     id: number;
                     name: string | null;
@@ -17355,6 +17403,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 emailVerified: Date | null;
                 currentPlanId: number | null;
                 image: string | null;
+                partnerId: string | null;
                 isActive: boolean | null;
                 isFake: boolean | null;
                 isTrainer: boolean | null;
@@ -17370,6 +17419,11 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             input: string;
             output: {
                 id: string;
+                partner: {
+                    id: string;
+                    name: string | null;
+                    email: string | null;
+                } | null;
                 roles: {
                     id: number;
                     name: string | null;
@@ -17503,6 +17557,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 emailVerified: Date | null;
                 currentPlanId: number | null;
                 image: string | null;
+                partnerId: string | null;
                 isActive: boolean | null;
                 isFake: boolean | null;
                 isTrainer: boolean | null;
@@ -17511,6 +17566,11 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 isAllTrainers: boolean | null;
                 createdAt: Date;
                 updatedAt: Date | null;
+                partner: {
+                    id: string;
+                    name: string | null;
+                    email: string | null;
+                } | null;
                 roles: {
                     id: number;
                     name: string | null;
@@ -17748,6 +17808,14 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                             intervale: string | null;
                         };
                     }[];
+                }[];
+                category: {
+                    userId: string;
+                    categoryId: number;
+                    category: {
+                        id: number;
+                        name: string | null;
+                    };
                 }[];
             } | undefined;
             meta: object;
@@ -18265,6 +18333,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -18398,6 +18467,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -18538,6 +18608,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -18825,6 +18896,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -18873,6 +18945,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -18923,6 +18996,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -19111,6 +19185,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -19301,6 +19376,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -19351,6 +19427,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -20712,6 +20789,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -20739,6 +20817,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -20784,6 +20863,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -20811,6 +20891,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -20856,6 +20937,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -20883,6 +20965,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -21086,6 +21169,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -22350,6 +22434,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -22393,6 +22478,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -22781,7 +22867,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     shoppingListId: number;
                     isChecked: boolean;
                 }[];
-            } | undefined;
+            } | null;
             meta: object;
         }>;
         addRecipe: _trpc_server.TRPCMutationProcedure<{
@@ -22819,7 +22905,50 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     shoppingListId: number;
                     isChecked: boolean;
                 }[];
-            } | undefined;
+            } | null;
+            meta: object;
+        }>;
+        addCustomItem: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                name: string;
+                amount: number;
+                unit?: string | undefined;
+            };
+            output: {
+                id: number;
+                name: string;
+                isActive: boolean;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string;
+                creatorId: string;
+                archivedAt: Date | null;
+                emailedAt: Date | null;
+                items: {
+                    id: number;
+                    name: string;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    source: string | null;
+                    unit: string;
+                    ingredientId: number | null;
+                    note: string | null;
+                    amount: string;
+                    shoppingListId: number;
+                    isChecked: boolean;
+                }[];
+            } | null;
+            meta: object;
+        }>;
+        mergeWithPartner: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                success: boolean;
+                partnerUserId: string;
+            };
             meta: object;
         }>;
         setItemChecked: _trpc_server.TRPCMutationProcedure<{
@@ -22879,7 +23008,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     shoppingListId: number;
                     isChecked: boolean;
                 }[];
-            } | undefined;
+            } | null;
             meta: object;
         }>;
         duplicate: _trpc_server.TRPCMutationProcedure<{
@@ -22909,7 +23038,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     shoppingListId: number;
                     isChecked: boolean;
                 }[];
-            } | undefined;
+            } | null;
             meta: object;
         }>;
         email: _trpc_server.TRPCMutationProcedure<{
@@ -24896,6 +25025,16 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        setPartner: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                partnerId: string | null;
+            };
+            output: {
+                success: boolean;
+            };
+            meta: object;
+        }>;
         getName: _trpc_server.TRPCQueryProcedure<{
             input: string;
             output: {
@@ -24925,6 +25064,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 emailVerified: Date | null;
                 currentPlanId: number | null;
                 image: string | null;
+                partnerId: string | null;
                 isActive: boolean | null;
                 isFake: boolean | null;
                 isTrainer: boolean | null;
@@ -24961,6 +25101,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                         password: string | null;
                         currentPlanId: number | null;
                         image: string | null;
+                        partnerId: string | null;
                         isActive: boolean | null;
                         isFake: boolean | null;
                         isTrainer: boolean | null;
@@ -25019,6 +25160,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                         password: string | null;
                         currentPlanId: number | null;
                         image: string | null;
+                        partnerId: string | null;
                         isActive: boolean | null;
                         isFake: boolean | null;
                         isTrainer: boolean | null;
@@ -25060,6 +25202,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 emailVerified: Date | null;
                 currentPlanId: number | null;
                 image: string | null;
+                partnerId: string | null;
                 isActive: boolean | null;
                 isFake: boolean | null;
                 isTrainer: boolean | null;
@@ -25096,6 +25239,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                         password: string | null;
                         currentPlanId: number | null;
                         image: string | null;
+                        partnerId: string | null;
                         isActive: boolean | null;
                         isFake: boolean | null;
                         isTrainer: boolean | null;
@@ -25141,6 +25285,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 emailVerified: Date | null;
                 currentPlanId: number | null;
                 image: string | null;
+                partnerId: string | null;
                 isActive: boolean | null;
                 isFake: boolean | null;
                 isTrainer: boolean | null;
@@ -25149,6 +25294,11 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isAllTrainers: boolean | null;
                 createdAt: Date;
                 updatedAt: Date | null;
+                partner: {
+                    id: string;
+                    name: string | null;
+                    email: string | null;
+                } | null;
                 roles: {
                     id: number;
                     name: string | null;
@@ -25585,6 +25735,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 emailVerified: Date | null;
                 currentPlanId: number | null;
                 image: string | null;
+                partnerId: string | null;
                 isActive: boolean | null;
                 isFake: boolean | null;
                 isTrainer: boolean | null;
@@ -25593,6 +25744,11 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isAllTrainers: boolean | null;
                 createdAt: Date;
                 updatedAt: Date | null;
+                partner: {
+                    id: string;
+                    name: string | null;
+                    email: string | null;
+                } | null;
                 roles: {
                     id: number;
                     name: string | null;
@@ -25861,6 +26017,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 emailVerified: Date | null;
                 currentPlanId: number | null;
                 image: string | null;
+                partnerId: string | null;
                 isActive: boolean | null;
                 isFake: boolean | null;
                 isTrainer: boolean | null;
@@ -25876,6 +26033,11 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             input: string;
             output: {
                 id: string;
+                partner: {
+                    id: string;
+                    name: string | null;
+                    email: string | null;
+                } | null;
                 roles: {
                     id: number;
                     name: string | null;
@@ -26009,6 +26171,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 emailVerified: Date | null;
                 currentPlanId: number | null;
                 image: string | null;
+                partnerId: string | null;
                 isActive: boolean | null;
                 isFake: boolean | null;
                 isTrainer: boolean | null;
@@ -26017,6 +26180,11 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 isAllTrainers: boolean | null;
                 createdAt: Date;
                 updatedAt: Date | null;
+                partner: {
+                    id: string;
+                    name: string | null;
+                    email: string | null;
+                } | null;
                 roles: {
                     id: number;
                     name: string | null;
@@ -26254,6 +26422,14 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                             intervale: string | null;
                         };
                     }[];
+                }[];
+                category: {
+                    userId: string;
+                    categoryId: number;
+                    category: {
+                        id: number;
+                        name: string | null;
+                    };
                 }[];
             } | undefined;
             meta: object;
@@ -26771,6 +26947,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -26904,6 +27081,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -27044,6 +27222,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -27331,6 +27510,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -27379,6 +27559,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -27429,6 +27610,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -27617,6 +27799,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -27807,6 +27990,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -27857,6 +28041,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -29218,6 +29403,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -29245,6 +29431,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -29290,6 +29477,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -29317,6 +29505,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -29362,6 +29551,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -29389,6 +29579,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -29592,6 +29783,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -30856,6 +31048,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -30899,6 +31092,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     password: string | null;
                     currentPlanId: number | null;
                     image: string | null;
+                    partnerId: string | null;
                     isActive: boolean | null;
                     isFake: boolean | null;
                     isTrainer: boolean | null;
@@ -31287,7 +31481,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     shoppingListId: number;
                     isChecked: boolean;
                 }[];
-            } | undefined;
+            } | null;
             meta: object;
         }>;
         addRecipe: _trpc_server.TRPCMutationProcedure<{
@@ -31325,7 +31519,50 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     shoppingListId: number;
                     isChecked: boolean;
                 }[];
-            } | undefined;
+            } | null;
+            meta: object;
+        }>;
+        addCustomItem: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                name: string;
+                amount: number;
+                unit?: string | undefined;
+            };
+            output: {
+                id: number;
+                name: string;
+                isActive: boolean;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string;
+                creatorId: string;
+                archivedAt: Date | null;
+                emailedAt: Date | null;
+                items: {
+                    id: number;
+                    name: string;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    source: string | null;
+                    unit: string;
+                    ingredientId: number | null;
+                    note: string | null;
+                    amount: string;
+                    shoppingListId: number;
+                    isChecked: boolean;
+                }[];
+            } | null;
+            meta: object;
+        }>;
+        mergeWithPartner: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                success: boolean;
+                partnerUserId: string;
+            };
             meta: object;
         }>;
         setItemChecked: _trpc_server.TRPCMutationProcedure<{
@@ -31385,7 +31622,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     shoppingListId: number;
                     isChecked: boolean;
                 }[];
-            } | undefined;
+            } | null;
             meta: object;
         }>;
         duplicate: _trpc_server.TRPCMutationProcedure<{
@@ -31415,7 +31652,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     shoppingListId: number;
                     isChecked: boolean;
                 }[];
-            } | undefined;
+            } | null;
             meta: object;
         }>;
         email: _trpc_server.TRPCMutationProcedure<{

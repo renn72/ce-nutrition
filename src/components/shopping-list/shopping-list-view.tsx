@@ -2,6 +2,8 @@
 
 import { api } from '@/trpc/react'
 
+import { useState } from 'react'
+
 import {
   formatShoppingQuantity,
   getShoppingAmountStep,
@@ -10,12 +12,14 @@ import {
 import { cn, formatDate } from '@/lib/utils'
 import type { GetShoppingList, GetShoppingLists } from '@/types'
 import {
+  ChevronDown,
   Copy,
   LoaderCircle,
   Mail,
   Minus,
   Plus,
   ShoppingCart,
+  SquarePen,
   Trash2,
 } from 'lucide-react'
 import { Link } from 'next-view-transitions'
@@ -24,10 +28,20 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
+import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
 type ShoppingListRecord = NonNullable<GetShoppingList>
 type ShoppingListItemRecord = ShoppingListRecord['items'][number]
+type ShoppingListPartner = {
+  id: string
+  name: string | null
+} | null
 
 const formatShoppingTextList = (value?: string | null, separator = ', ') =>
   (value ?? '')
@@ -36,40 +50,57 @@ const formatShoppingTextList = (value?: string | null, separator = ', ') =>
     .filter(Boolean)
     .join(separator)
 
-const ShoppingListHistory = ({
-  lists,
+const ShoppingListHistoryCard = ({
+  list,
   onDuplicate,
+  onDelete,
   isDuplicating,
+  isDeleting,
 }: {
-  lists: GetShoppingLists
+  list: GetShoppingLists[number]
   onDuplicate: (listId: number) => void
+  onDelete: (listId: number) => void
   isDuplicating: boolean
+  isDeleting: boolean
 }) => {
-  if (lists.length === 0) return null
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className='border-t p-4 space-y-3'>
-      <div className='text-sm font-semibold'>Previous Lists</div>
-      {lists.map((list) => (
-        <Card
-          key={list.id}
-          className='gap-0'
-        >
-          <CardHeader className='gap-3 border-b py-4'>
-            <div className='flex flex-col gap-3 md:flex-row md:items-start md:justify-between'>
-              <div className='space-y-1'>
-                <CardTitle className='text-base'>{list.name}</CardTitle>
-                <div className='text-xs text-muted-foreground'>
-                  {list.items.length} items
-                  <span className='mx-2'>•</span>
-                  Updated{' '}
-                  {formatDate(list.updatedAt ?? list.createdAt, {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })}
-                </div>
+    <Collapsible
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
+      <Card className='gap-0'>
+        <CardHeader className='gap-3 border-b py-4'>
+          <div className='flex flex-col gap-3 md:flex-row md:items-start md:justify-between'>
+            <div className='space-y-1'>
+              <CardTitle className='text-base'>{list.name}</CardTitle>
+              <div className='text-xs text-muted-foreground'>
+                {list.items.length} items
+                <span className='mx-2'>•</span>
+                Updated{' '}
+                {formatDate(list.updatedAt ?? list.createdAt, {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
               </div>
+            </div>
+            <div className='flex flex-wrap gap-2'>
+              <CollapsibleTrigger asChild>
+                <Button
+                  size='sm'
+                  variant='outline'
+                >
+                  Ingredients
+                  <ChevronDown
+                    className={cn(
+                      'ml-2 h-4 w-4 transition-transform duration-200',
+                      isOpen && 'rotate-180',
+                    )}
+                  />
+                </Button>
+              </CollapsibleTrigger>
               <Button
                 size='sm'
                 variant='outline'
@@ -83,8 +114,22 @@ const ShoppingListHistory = ({
                 )}
                 Duplicate
               </Button>
+              <Button
+                size='icon'
+                variant='ghost'
+                onClick={() => onDelete(list.id)}
+                disabled={isDeleting}
+              >
+                {isDeleting ? (
+                  <LoaderCircle className='h-4 w-4 animate-spin' />
+                ) : (
+                  <Trash2 className='h-4 w-4' />
+                )}
+              </Button>
             </div>
-          </CardHeader>
+          </div>
+        </CardHeader>
+        <CollapsibleContent className='overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
           <CardContent className='p-4'>
             {list.items.length > 0 ? (
               <div className='space-y-2'>
@@ -116,7 +161,39 @@ const ShoppingListHistory = ({
               </div>
             )}
           </CardContent>
-        </Card>
+        </CollapsibleContent>
+      </Card>
+    </Collapsible>
+  )
+}
+
+const ShoppingListHistory = ({
+  lists,
+  onDuplicate,
+  onDelete,
+  isDuplicating,
+  deletingListId,
+}: {
+  lists: GetShoppingLists
+  onDuplicate: (listId: number) => void
+  onDelete: (listId: number) => void
+  isDuplicating: boolean
+  deletingListId: number | null
+}) => {
+  if (lists.length === 0) return null
+
+  return (
+    <div className='space-y-3 border-t p-4'>
+      <div className='text-sm font-semibold'>Previous Lists</div>
+      {lists.map((list) => (
+        <ShoppingListHistoryCard
+          key={list.id}
+          list={list}
+          onDuplicate={onDuplicate}
+          onDelete={onDelete}
+          isDuplicating={isDuplicating}
+          isDeleting={deletingListId === list.id}
+        />
       ))}
     </div>
   )
@@ -131,6 +208,7 @@ const ShoppingListView = ({
   useInternalScroll = false,
   allowItemEditing = false,
   showHistory = false,
+  partner = null,
 }: {
   userId: string
   userName?: string | null
@@ -140,8 +218,18 @@ const ShoppingListView = ({
   useInternalScroll?: boolean
   allowItemEditing?: boolean
   showHistory?: boolean
+  partner?: ShoppingListPartner
 }) => {
   const utils = api.useUtils()
+  const [editingItemId, setEditingItemId] = useState<number | null>(null)
+  const [deletingHistoryListId, setDeletingHistoryListId] = useState<
+    number | null
+  >(null)
+  const [amountDrafts, setAmountDrafts] = useState<Record<number, string>>({})
+  const [newItemName, setNewItemName] = useState('')
+  const [newItemAmount, setNewItemAmount] = useState('1')
+  const [newItemUnit, setNewItemUnit] = useState('')
+
   const activeListQuery = api.shoppingList.getActive.useQuery(
     { userId },
     { enabled: !showHistory },
@@ -159,11 +247,17 @@ const ShoppingListView = ({
     ? (allListsQuery.data?.filter((list) => !list.isActive) ?? [])
     : []
 
-  const invalidateShoppingLists = async () => {
-    await Promise.all([
-      utils.shoppingList.getActive.invalidate({ userId }),
-      utils.shoppingList.getAllForUser.invalidate({ userId }),
-    ])
+  const invalidateShoppingLists = async (additionalUserIds: string[] = []) => {
+    const userIds = Array.from(
+      new Set([userId, ...additionalUserIds.filter(Boolean)]),
+    )
+
+    await Promise.all(
+      userIds.flatMap((currentUserId) => [
+        utils.shoppingList.getActive.invalidate({ userId: currentUserId }),
+        utils.shoppingList.getAllForUser.invalidate({ userId: currentUserId }),
+      ]),
+    )
   }
 
   const emailShoppingList = api.shoppingList.email.useMutation({
@@ -206,6 +300,22 @@ const ShoppingListView = ({
     },
   })
 
+  const mergeWithPartner = api.shoppingList.mergeWithPartner.useMutation({
+    onSuccess: async (result) => {
+      toast.success(
+        partner?.name
+          ? `Merged shopping list with ${partner.name}`
+          : 'Merged shopping list with partner',
+      )
+      await invalidateShoppingLists(
+        result.partnerUserId ? [result.partnerUserId] : [],
+      )
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
+
   const setItemChecked = api.shoppingList.setItemChecked.useMutation({
     onSuccess: async () => {
       await invalidateShoppingLists()
@@ -226,6 +336,19 @@ const ShoppingListView = ({
 
   const deleteItem = api.shoppingList.deleteItem.useMutation({
     onSuccess: async () => {
+      await invalidateShoppingLists()
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
+
+  const addCustomItem = api.shoppingList.addCustomItem.useMutation({
+    onSuccess: async () => {
+      toast.success('Ingredient added to shopping list')
+      setNewItemName('')
+      setNewItemAmount('1')
+      setNewItemUnit('')
       await invalidateShoppingLists()
     },
     onError: (error) => {
@@ -264,21 +387,94 @@ const ShoppingListView = ({
     })
   }
 
+  const handleDeleteHistoricalList = async (listId: number) => {
+    setDeletingHistoryListId(listId)
+
+    try {
+      await deleteList.mutateAsync({
+        listId,
+      })
+    } finally {
+      setDeletingHistoryListId(null)
+    }
+  }
+
   const handleAdjustItemAmount = async (
-    item: ShoppingListRecord['items'][number],
+    item: ShoppingListItemRecord,
     direction: 'increase' | 'decrease',
   ) => {
     const step = getShoppingAmountStep(item.unit)
     const currentAmount = toShoppingAmountNumber(item.amount)
+
     if (direction === 'decrease' && currentAmount <= step) {
       return
     }
+
     const nextAmount =
       direction === 'increase' ? currentAmount + step : currentAmount - step
+
+    setAmountDrafts((currentDrafts) => ({
+      ...currentDrafts,
+      [item.id]: String(nextAmount),
+    }))
 
     await updateItemAmount.mutateAsync({
       itemId: item.id,
       amount: nextAmount,
+    })
+  }
+
+  const handleOpenAmountEditor = (item: ShoppingListItemRecord) => {
+    setEditingItemId(item.id)
+    setAmountDrafts((currentDrafts) => ({
+      ...currentDrafts,
+      [item.id]: String(item.amount),
+    }))
+  }
+
+  const handleSaveItemAmount = async (item: ShoppingListItemRecord) => {
+    const nextAmount = toShoppingAmountNumber(
+      amountDrafts[item.id] ?? item.amount,
+    )
+
+    if (!Number.isFinite(nextAmount) || nextAmount <= 0) {
+      toast.error('Enter an amount greater than 0')
+      return
+    }
+
+    await updateItemAmount.mutateAsync({
+      itemId: item.id,
+      amount: nextAmount,
+    })
+    setEditingItemId(null)
+  }
+
+  const handleAddCustomItem = async () => {
+    const amount = toShoppingAmountNumber(newItemAmount)
+
+    if (newItemName.trim() === '') {
+      toast.error('Enter an ingredient name')
+      return
+    }
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+      toast.error('Enter an amount greater than 0')
+      return
+    }
+
+    await addCustomItem.mutateAsync({
+      userId,
+      name: newItemName.trim(),
+      amount,
+      unit: newItemUnit.trim(),
+    })
+  }
+
+  const handleMergeWithPartner = async () => {
+    if (!partner) return
+
+    await mergeWithPartner.mutateAsync({
+      userId,
     })
   }
 
@@ -287,8 +483,51 @@ const ShoppingListView = ({
     : activeListQuery.isLoading
   const hasItems = (shoppingList?.items.length ?? 0) > 0
 
+  const addIngredientForm =
+    allowItemEditing && showHistory ? (
+      <div className='space-y-3 border-t p-4'>
+        <div className='space-y-1'>
+          <div className='text-sm font-semibold'>Add ingredient</div>
+          <div className='text-xs text-muted-foreground'>
+            Add extra items that are not part of your recipe library.
+          </div>
+        </div>
+        <div className='grid gap-2 md:grid-cols-[minmax(0,1fr)_110px_120px_auto]'>
+          <Input
+            value={newItemName}
+            placeholder='Ingredient name'
+            onChange={(event) => setNewItemName(event.target.value)}
+          />
+          <Input
+            type='number'
+            min='0'
+            step='0.25'
+            value={newItemAmount}
+            placeholder='Amount'
+            onChange={(event) => setNewItemAmount(event.target.value)}
+          />
+          <Input
+            value={newItemUnit}
+            placeholder='Unit'
+            onChange={(event) => setNewItemUnit(event.target.value)}
+          />
+          <Button
+            onClick={() => void handleAddCustomItem()}
+            disabled={addCustomItem.isPending}
+          >
+            {addCustomItem.isPending ? (
+              <LoaderCircle className='mr-2 h-4 w-4 animate-spin' />
+            ) : (
+              <Plus className='mr-2 h-4 w-4' />
+            )}
+            Add item
+          </Button>
+        </div>
+      </div>
+    ) : null
+
   const body = isLoading ? (
-    <div className='flex flex-col gap-4 justify-center items-center py-16 px-6 text-center'>
+    <div className='flex flex-col items-center justify-center gap-4 px-6 py-16 text-center'>
       <LoaderCircle className='h-8 w-8 animate-spin text-muted-foreground' />
       <div className='text-sm text-muted-foreground'>
         Loading shopping list...
@@ -305,7 +544,7 @@ const ShoppingListView = ({
               item.isChecked && 'border-dashed bg-muted/40',
             )}
           >
-            <div className='flex gap-3 items-start'>
+            <div className='flex items-start gap-3'>
               <Checkbox
                 checked={item.isChecked}
                 onCheckedChange={(checked) =>
@@ -338,56 +577,126 @@ const ShoppingListView = ({
               </div>
             </div>
             {allowItemEditing ? (
-              <div className='flex flex-wrap gap-2 items-center justify-end mt-3'>
-                <Button
-                  size='icon'
-                  variant='outline'
-                  onClick={() => void handleAdjustItemAmount(item, 'decrease')}
-                  disabled={
-                    updateItemAmount.isPending ||
-                    toShoppingAmountNumber(item.amount) <=
-                      getShoppingAmountStep(item.unit)
+              <Collapsible
+                open={editingItemId === item.id}
+                onOpenChange={(open) => {
+                  if (open) {
+                    handleOpenAmountEditor(item)
+                    return
                   }
-                >
-                  <Minus className='h-4 w-4' />
-                </Button>
-                <div className='min-w-[88px] rounded-md border px-3 py-2 text-center text-sm'>
-                  {formatShoppingQuantity(item.amount, item.unit)}
+
+                  if (editingItemId === item.id) {
+                    setEditingItemId(null)
+                  }
+                }}
+              >
+                <div className='mt-3 flex flex-wrap items-center justify-end gap-2'>
+                  <Button
+                    size='icon'
+                    variant='outline'
+                    className={cn(
+                      editingItemId === item.id &&
+                        'bg-accent text-accent-foreground',
+                    )}
+                    onClick={() => {
+                      if (editingItemId === item.id) {
+                        setEditingItemId(null)
+                        return
+                      }
+
+                      handleOpenAmountEditor(item)
+                    }}
+                    aria-expanded={editingItemId === item.id}
+                    aria-label={
+                      editingItemId === item.id
+                        ? 'Close ingredient editor'
+                        : 'Open ingredient editor'
+                    }
+                  >
+                    <SquarePen className='h-4 w-4' />
+                  </Button>
+                  <Button
+                    size='icon'
+                    variant='ghost'
+                    onClick={() =>
+                      deleteItem.mutate({
+                        itemId: item.id,
+                      })
+                    }
+                    disabled={deleteItem.isPending}
+                  >
+                    <Trash2 className='h-4 w-4' />
+                  </Button>
                 </div>
-                <Button
-                  size='icon'
-                  variant='outline'
-                  onClick={() => void handleAdjustItemAmount(item, 'increase')}
-                  disabled={updateItemAmount.isPending}
-                >
-                  <Plus className='h-4 w-4' />
-                </Button>
-                <Button
-                  size='icon'
-                  variant='ghost'
-                  onClick={() =>
-                    deleteItem.mutate({
-                      itemId: item.id,
-                    })
-                  }
-                  disabled={deleteItem.isPending}
-                >
-                  <Trash2 className='h-4 w-4' />
-                </Button>
-              </div>
+                <CollapsibleContent className='overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
+                  <div className='mt-3 grid gap-2 sm:grid-cols-[auto_minmax(0,140px)_auto_auto_auto]'>
+                    <Button
+                      size='icon'
+                      variant='outline'
+                      onClick={() =>
+                        void handleAdjustItemAmount(item, 'decrease')
+                      }
+                      disabled={
+                        updateItemAmount.isPending ||
+                        toShoppingAmountNumber(item.amount) <=
+                          getShoppingAmountStep(item.unit)
+                      }
+                    >
+                      <Minus className='h-4 w-4' />
+                    </Button>
+                    <Input
+                      type='number'
+                      min='0'
+                      step={item.unit === 'grams' ? '10' : '0.25'}
+                      value={amountDrafts[item.id] ?? String(item.amount)}
+                      onChange={(event) =>
+                        setAmountDrafts((currentDrafts) => ({
+                          ...currentDrafts,
+                          [item.id]: event.target.value,
+                        }))
+                      }
+                    />
+                    <Button
+                      size='icon'
+                      variant='outline'
+                      onClick={() =>
+                        void handleAdjustItemAmount(item, 'increase')
+                      }
+                      disabled={updateItemAmount.isPending}
+                    >
+                      <Plus className='h-4 w-4' />
+                    </Button>
+                    <Button
+                      size='sm'
+                      onClick={() => void handleSaveItemAmount(item)}
+                      disabled={updateItemAmount.isPending}
+                    >
+                      Save
+                    </Button>
+                    <Button
+                      size='sm'
+                      variant='ghost'
+                      onClick={() => setEditingItemId(null)}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
             ) : null}
           </div>
         ))}
       </div>
     ) : (
-      <div className='flex flex-col gap-4 justify-center items-center py-16 px-6 text-center'>
-        <div className='p-4 rounded-full bg-muted'>
-          <ShoppingCart className='w-8 h-8 text-muted-foreground' />
+      <div className='flex flex-col items-center justify-center gap-4 px-6 py-16 text-center'>
+        <div className='rounded-full bg-muted p-4'>
+          <ShoppingCart className='h-8 w-8 text-muted-foreground' />
         </div>
         <div className='space-y-1'>
           <div className='font-medium'>This shopping list is empty</div>
           <div className='text-sm text-muted-foreground'>
-            Add a recipe from your program or start a new list.
+            Add a recipe from your program, start a new list, or add ingredients
+            manually.
           </div>
         </div>
         <Button
@@ -399,17 +708,18 @@ const ShoppingListView = ({
       </div>
     )
   ) : (
-    <div className='flex flex-col gap-4 justify-center items-center py-16 px-6 text-center'>
-      <div className='p-4 rounded-full bg-muted'>
-        <ShoppingCart className='w-8 h-8 text-muted-foreground' />
+    <div className='flex flex-col items-center justify-center gap-4 px-6 py-16 text-center'>
+      <div className='rounded-full bg-muted p-4'>
+        <ShoppingCart className='h-8 w-8 text-muted-foreground' />
       </div>
       <div className='space-y-1'>
         <div className='font-medium'>No active shopping list</div>
         <div className='text-sm text-muted-foreground'>
-          Add a recipe from your program, or create a new list from here.
+          Add a recipe from your program, create a new list, or add ingredients
+          manually.
         </div>
       </div>
-      <div className='flex flex-wrap gap-2 justify-center'>
+      <div className='flex flex-wrap justify-center gap-2'>
         {showHistory ? (
           <Button onClick={() => void handleCreateNewList()}>
             <Plus className='mr-2 h-4 w-4' />
@@ -434,11 +744,11 @@ const ShoppingListView = ({
         className,
       )}
     >
-      <CardHeader className='gap-4 border-b px-4 py-2 shrink-0'>
+      <CardHeader className='shrink-0 gap-4 border-b px-4 py-2'>
         <div className='flex flex-col gap-4 md:flex-row md:items-start md:justify-between'>
           <div className='space-y-1'>
-            <CardTitle className='flex gap-2 items-center text-xl'>
-              <ShoppingCart className='w-5 h-5' />
+            <CardTitle className='flex items-center gap-2 text-xl'>
+              <ShoppingCart className='h-5 w-5' />
               {shoppingList?.name ?? 'Shopping List'}
             </CardTitle>
             <div className='text-sm text-muted-foreground'>
@@ -474,9 +784,17 @@ const ShoppingListView = ({
                   ) : null}
                 </>
               ) : showHistory ? (
-                `${historicalLists.length} previous lists saved`
+                <>
+                  <span>{historicalLists.length} previous lists saved</span>
+                  {partner ? (
+                    <>
+                      <span className='mx-2'>•</span>
+                      <span>Partner linked: {partner.name ?? 'Partner'}</span>
+                    </>
+                  ) : null}
+                </>
               ) : (
-                'Add recipes from your plan to build your list.'
+                `Add recipes from ${userName ?? 'your plan'} to build your list.`
               )}
             </div>
           </div>
@@ -488,6 +806,21 @@ const ShoppingListView = ({
                 size='sm'
               >
                 <Link href='/user/shopping-list'>Open page</Link>
+              </Button>
+            ) : null}
+            {allowItemEditing && showHistory && partner ? (
+              <Button
+                size='sm'
+                variant='outline'
+                onClick={() => void handleMergeWithPartner()}
+                disabled={mergeWithPartner.isPending}
+              >
+                {mergeWithPartner.isPending ? (
+                  <LoaderCircle className='mr-2 h-4 w-4 animate-spin' />
+                ) : (
+                  <Copy className='mr-2 h-4 w-4' />
+                )}
+                Merge with {partner.name ?? 'partner'}
               </Button>
             ) : null}
             {showHistory ? (
@@ -550,9 +883,12 @@ const ShoppingListView = ({
               <ShoppingListHistory
                 lists={historicalLists}
                 onDuplicate={(listId) => void handleDuplicateList(listId)}
+                onDelete={(listId) => void handleDeleteHistoricalList(listId)}
                 isDuplicating={duplicateList.isPending}
+                deletingListId={deletingHistoryListId}
               />
             ) : null}
+            {addIngredientForm}
           </ScrollArea>
         ) : (
           <>
@@ -561,9 +897,12 @@ const ShoppingListView = ({
               <ShoppingListHistory
                 lists={historicalLists}
                 onDuplicate={(listId) => void handleDuplicateList(listId)}
+                onDelete={(listId) => void handleDeleteHistoricalList(listId)}
                 isDuplicating={duplicateList.isPending}
+                deletingListId={deletingHistoryListId}
               />
             ) : null}
+            {addIngredientForm}
           </>
         )}
       </CardContent>

@@ -1,5 +1,6 @@
 import { relations, sql } from 'drizzle-orm'
 import {
+  AnySQLiteColumn,
   index,
   int,
   primaryKey,
@@ -50,6 +51,9 @@ export const user = createTable(
     password: text('password'),
     currentPlanId: int('current_plan_id'),
     image: text('image'),
+    partnerId: text('partner_id').references((): AnySQLiteColumn => user.id, {
+      onDelete: 'set null',
+    }),
     isActive: int('is_active', { mode: 'boolean' }).default(true),
     isFake: int('is_fake', { mode: 'boolean' }).default(false),
     isTrainer: int('is_trainer', { mode: 'boolean' }).default(false),
@@ -66,10 +70,17 @@ export const user = createTable(
   (table) => [
     index('user_email_idx').on(table.email),
     index('user_is_creator_idx').on(table.isCreator),
+    index('user_partner_id_idx').on(table.partnerId),
   ],
 )
 
 export const userRelations = relations(user, ({ one, many }) => ({
+  partner: one(user, {
+    fields: [user.partnerId],
+    references: [user.id],
+    relationName: 'userPartner',
+  }),
+  partneredUsers: many(user, { relationName: 'userPartner' }),
   roles: many(role),
   notifications: many(notification),
   notificationsToggles: many(notificationToggle),
