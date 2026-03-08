@@ -1,27 +1,27 @@
-import { ingredientRouter } from '@/server/api/routers/ingredient'
-import { groceryStoreRouter } from '@/server/api/routers/store'
-import { testRouter } from '@/server/api/routers/testing'
-import { userRouter } from '@/server/api/routers/user'
-import { settingsRouter } from '@/server/api/routers/settings'
-import { recipeRouter } from '@/server/api/routers/recipe'
-import { planRouter } from '@/server/api/routers/plan'
-import { mealRouter } from '@/server/api/routers/meal'
-import { vegeRouter } from '@/server/api/routers/vege'
-import { userPlanRouter } from '@/server/api/routers/user-plan'
+import { logRouter } from '@/server/api/routers/admin-log'
 import { dailyLogRouter } from '@/server/api/routers/daily-log'
-import { weighInRouter } from '@/server/api/routers/weigh-in'
+import { goalsRouter } from '@/server/api/routers/goals'
+import { ingredientRouter } from '@/server/api/routers/ingredient'
+import { mealRouter } from '@/server/api/routers/meal'
 import { messageRouter } from '@/server/api/routers/message'
 import { metricsRouter } from '@/server/api/routers/metric'
-import { tagRouter } from '@/server/api/routers/tag'
-import { goalsRouter } from '@/server/api/routers/goals'
-import { trainerRouter } from '@/server/api/routers/trainer'
-import { supplementsRouter } from '@/server/api/routers/supplements'
-import { trainerNotesRouter } from '@/server/api/routers/trainer-notes'
-import { userCatagoriesRouter } from '@/server/api/routers/userCatagories'
 import { notificationRouter } from '@/server/api/routers/notification'
-import { logRouter } from '@/server/api/routers/admin-log'
+import { planRouter } from '@/server/api/routers/plan'
 import { pushSubscriptionRouter } from '@/server/api/routers/push-subscription'
-
+import { recipeRouter } from '@/server/api/routers/recipe'
+import { settingsRouter } from '@/server/api/routers/settings'
+import { shoppingListRouter } from '@/server/api/routers/shopping-list'
+import { groceryStoreRouter } from '@/server/api/routers/store'
+import { supplementsRouter } from '@/server/api/routers/supplements'
+import { tagRouter } from '@/server/api/routers/tag'
+import { testRouter } from '@/server/api/routers/testing'
+import { trainerRouter } from '@/server/api/routers/trainer'
+import { trainerNotesRouter } from '@/server/api/routers/trainer-notes'
+import { userRouter } from '@/server/api/routers/user'
+import { userPlanRouter } from '@/server/api/routers/user-plan'
+import { userCatagoriesRouter } from '@/server/api/routers/userCatagories'
+import { vegeRouter } from '@/server/api/routers/vege'
+import { weighInRouter } from '@/server/api/routers/weigh-in'
 import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc'
 
 /**
@@ -53,6 +53,7 @@ export const appRouter = createTRPCRouter({
   notifications: notificationRouter,
   adminLog: logRouter,
   pushSubscription: pushSubscriptionRouter,
+  shoppingList: shoppingListRouter,
 })
 
 // export type definition of API

@@ -2,18 +2,19 @@
 
 import { api } from '@/trpc/react'
 
-import { UserPlanView } from '@/components/user-plan/user-plan-view'
-
 import { impersonatedUserAtom } from '@/atoms'
 import { useAtom } from 'jotai'
 
+import { ShoppingListDialog } from '@/components/shopping-list/shopping-list-dialog'
+import { UserPlanView } from '@/components/user-plan/user-plan-view'
+
 export default function Home() {
-  const [impersonatedUser,] = useAtom(impersonatedUserAtom)
+  const [impersonatedUser] = useAtom(impersonatedUserAtom)
   const { data: user, isLoading } = api.user.getCurrentUser.useQuery({
     id: impersonatedUser.id,
   })
 
-  if (isLoading) return null
+  if (isLoading || !user) return null
   const plans = user?.userPlans.filter((plan) => plan.isActive)
 
   if (!plans) return null
@@ -28,6 +29,10 @@ export default function Home() {
           />
         ))}
       </div>
+      <ShoppingListDialog
+        userId={user.id}
+        userName={user.name}
+      />
     </div>
   )
 }

@@ -1,41 +1,39 @@
+import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server'
+import type { appRouter } from '~/server/api/root'
 import type { SQL } from 'drizzle-orm'
 
 export interface SearchParams {
-	[key: string]: string | string[] | undefined
+  [key: string]: string | string[] | undefined
 }
 
 export interface Option {
-	label: string
-	value: string
-	icon?: React.ComponentType<{ className?: string }>
-	withCount?: boolean
+  label: string
+  value: string
+  icon?: React.ComponentType<{ className?: string }>
+  withCount?: boolean
 }
 
 export interface DataTableFilterField<TData> {
-	label: string
-	value: keyof TData
-	placeholder?: string
-	options?: Option[]
+  label: string
+  value: keyof TData
+  placeholder?: string
+  options?: Option[]
 }
 
 export interface DataTableFilterOption<TData> {
-	id: string
-	label: string
-	value: keyof TData
-	options: Option[]
-	filterValues?: string[]
-	filterOperator?: string
-	isMulti?: boolean
+  id: string
+  label: string
+  value: keyof TData
+  options: Option[]
+  filterValues?: string[]
+  filterOperator?: string
+  isMulti?: boolean
 }
 
 export type DrizzleWhere<T> =
-	| SQL<unknown>
-	| ((aliases: T) => SQL<T> | undefined)
-	| undefined
-
-import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server'
-
-import type { appRouter } from '~/server/api/root'
+  | SQL<unknown>
+  | ((aliases: T) => SQL<T> | undefined)
+  | undefined
 
 type RouterInputs = inferRouterInputs<typeof appRouter>
 type RouterOutputs = inferRouterOutputs<typeof appRouter>
@@ -46,7 +44,7 @@ export type GetIngredientById = RouterOutputs['ingredient']['get']
 export type GetAllSupplements = RouterOutputs['supplement']['getAll']
 export type GetSupplementById = RouterOutputs['supplement']['getSupplement']
 export type GetFullSupplementById =
-	RouterOutputs['supplement']['getFullSupplement']
+  RouterOutputs['supplement']['getFullSupplement']
 
 export type GetAllGroceryStores = RouterOutputs['groceryStore']['getAll']
 export type GetGroceryStoreById = RouterOutputs['groceryStore']['get']
@@ -73,6 +71,8 @@ export type GetPlanByIdSimple = RouterOutputs['plan']['getSimple']
 export type GetAllPlansName = RouterOutputs['plan']['getAllName']
 
 export type UserPlan = RouterOutputs['userPlan']['get']
+export type GetShoppingList = RouterOutputs['shoppingList']['getActive']
+export type GetShoppingLists = RouterOutputs['shoppingList']['getAllForUser']
 
 export type GetUserGoals = RouterOutputs['goal']['getUser']
 export type GetGoal = RouterOutputs['goal']['get']
@@ -92,7 +92,7 @@ export type GetSkinfoldById = RouterOutputs['metrics']['getSkinfold']
 export type GetUserSkinfolds = RouterOutputs['metrics']['getUserSkinfolds']
 
 export type GetSupplementFromStack =
-	RouterOutputs['supplement']['getSuppFromPlan']
+  RouterOutputs['supplement']['getSuppFromPlan']
 
 export type GetAllTrainerNotes = RouterOutputs['trainerNotes']['getAllUser']
 export type GetTrainerNoteById = RouterOutputs['trainerNotes']['get']

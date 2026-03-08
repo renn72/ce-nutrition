@@ -1,9 +1,9 @@
-import { atomWithStorage } from 'jotai/utils'
 import { atom } from 'jotai'
+import { atomWithStorage } from 'jotai/utils'
 
 export const impersonatedUserAtom = atomWithStorage('impersonatedUser', {
-	name: '',
-	id: '',
+  name: '',
+  id: '',
 })
 
 export const isNavbarOpenAtom = atom(true)

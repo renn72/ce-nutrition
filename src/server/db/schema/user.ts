@@ -1,10 +1,10 @@
 import { relations, sql } from 'drizzle-orm'
 import {
-	index,
-	int,
-	primaryKey,
-	sqliteTable,
-	text,
+  index,
+  int,
+  primaryKey,
+  sqliteTable,
+  text,
 } from 'drizzle-orm/sqlite-core'
 import type { AdapterAccount } from 'next-auth/adapters'
 
@@ -12,519 +12,524 @@ import { dailyLog, tag } from './daily-logs'
 import { ingredient } from './ingredient'
 import { message } from './message'
 import {
-	bodyFat,
-	bodyWeight,
-	girthMeasurement,
-	images,
-	leanMass,
-	skinfold,
+  bodyFat,
+  bodyWeight,
+  girthMeasurement,
+  images,
+  leanMass,
+  skinfold,
 } from './metrics'
 import { notification } from './notification'
+import { shoppingList } from './shopping-list'
 import { userPlan } from './user-plan'
 
 const createTable = sqliteTable
 
 export const user = createTable(
-	'user',
-	{
-		id: text('id', { length: 255 })
-			.notNull()
-			.primaryKey()
-			.$defaultFn(() => crypto.randomUUID()),
-		name: text('name'),
-		firstName: text('first_name'),
-		lastName: text('last_name'),
-		clerkId: text('clerk_id'),
-		birthDate: int('birth_date', { mode: 'timestamp' }),
-		gender: text('gender'),
-		address: text('address'),
-		notes: text('notes'),
-		instagram: text('instagram'),
-		openLifter: text('open_lifter'),
-		phone: text('phone'),
-		email: text('email').unique(),
-		emailVerified: int('email_verified', {
-			mode: 'timestamp',
-		}),
-		password: text('password'),
-		currentPlanId: int('current_plan_id'),
-		image: text('image'),
-		isActive: int('is_active', { mode: 'boolean' }).default(true),
-		isFake: int('is_fake', { mode: 'boolean' }).default(false),
-		isTrainer: int('is_trainer', { mode: 'boolean' }).default(false),
-		isRoot: int('is_root', { mode: 'boolean' }).default(false),
-		isCreator: int('is_creator', { mode: 'boolean' }).default(false),
-		isAllTrainers: int('is_all_trainers', { mode: 'boolean' }).default(false),
-		createdAt: int('created_at', { mode: 'timestamp' })
-			.default(sql`(unixepoch())`)
-			.notNull(),
-		updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-			() => new Date(),
-		),
-	},
-	(table) => [
-		index('user_email_idx').on(table.email),
-		index('user_is_creator_idx').on(table.isCreator),
-	],
+  'user',
+  {
+    id: text('id', { length: 255 })
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    name: text('name'),
+    firstName: text('first_name'),
+    lastName: text('last_name'),
+    clerkId: text('clerk_id'),
+    birthDate: int('birth_date', { mode: 'timestamp' }),
+    gender: text('gender'),
+    address: text('address'),
+    notes: text('notes'),
+    instagram: text('instagram'),
+    openLifter: text('open_lifter'),
+    phone: text('phone'),
+    email: text('email').unique(),
+    emailVerified: int('email_verified', {
+      mode: 'timestamp',
+    }),
+    password: text('password'),
+    currentPlanId: int('current_plan_id'),
+    image: text('image'),
+    isActive: int('is_active', { mode: 'boolean' }).default(true),
+    isFake: int('is_fake', { mode: 'boolean' }).default(false),
+    isTrainer: int('is_trainer', { mode: 'boolean' }).default(false),
+    isRoot: int('is_root', { mode: 'boolean' }).default(false),
+    isCreator: int('is_creator', { mode: 'boolean' }).default(false),
+    isAllTrainers: int('is_all_trainers', { mode: 'boolean' }).default(false),
+    createdAt: int('created_at', { mode: 'timestamp' })
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+      () => new Date(),
+    ),
+  },
+  (table) => [
+    index('user_email_idx').on(table.email),
+    index('user_is_creator_idx').on(table.isCreator),
+  ],
 )
 
 export const userRelations = relations(user, ({ one, many }) => ({
-	roles: many(role),
-	notifications: many(notification),
-	notificationsToggles: many(notificationToggle),
-	messages: many(message, { relationName: 'userMessages' }),
-	sentMessages: many(message, { relationName: 'sentMessages' }),
-	accounts: many(account),
-	trainers: many(userToTrainer, { relationName: 'trainers' }),
-	clients: many(userToTrainer, { relationName: 'clients' }),
-	userPlans: many(userPlan, { relationName: 'user' }),
-	userPlansCreator: many(userPlan, { relationName: 'creator' }),
-	dailyLogs: many(dailyLog),
-	weighIns: many(weighIn, { relationName: 'user' }),
-	weighInsTrainer: many(weighIn, { relationName: 'trainer' }),
-	skinfolds: many(skinfold, { relationName: 'user' }),
-	skinfoldsCreator: many(skinfold, { relationName: 'creator' }),
-	bodyFat: many(bodyFat),
-	leanMass: many(leanMass),
-	bodyWeight: many(bodyWeight),
-	images: many(images),
-	settings: one(userSettings, {
-		fields: [user.id],
-		references: [userSettings.userId],
-	}),
-	tags: many(tag),
-	girthMeasurements: many(girthMeasurement),
-	goals: many(goals, { relationName: 'user' }),
-	goalsTrainer: many(goals, { relationName: 'trainer' }),
-	trainerNotes: many(trainerNotes, { relationName: 'user' }),
-	trainerNotesTrainer: many(trainerNotes, { relationName: 'trainer' }),
-	supplementStacks: many(supplementStack),
-	category: many(userToUserCategory),
+  roles: many(role),
+  notifications: many(notification),
+  notificationsToggles: many(notificationToggle),
+  shoppingLists: many(shoppingList, { relationName: 'shoppingLists' }),
+  shoppingListsCreator: many(shoppingList, {
+    relationName: 'shoppingListsCreator',
+  }),
+  messages: many(message, { relationName: 'userMessages' }),
+  sentMessages: many(message, { relationName: 'sentMessages' }),
+  accounts: many(account),
+  trainers: many(userToTrainer, { relationName: 'trainers' }),
+  clients: many(userToTrainer, { relationName: 'clients' }),
+  userPlans: many(userPlan, { relationName: 'user' }),
+  userPlansCreator: many(userPlan, { relationName: 'creator' }),
+  dailyLogs: many(dailyLog),
+  weighIns: many(weighIn, { relationName: 'user' }),
+  weighInsTrainer: many(weighIn, { relationName: 'trainer' }),
+  skinfolds: many(skinfold, { relationName: 'user' }),
+  skinfoldsCreator: many(skinfold, { relationName: 'creator' }),
+  bodyFat: many(bodyFat),
+  leanMass: many(leanMass),
+  bodyWeight: many(bodyWeight),
+  images: many(images),
+  settings: one(userSettings, {
+    fields: [user.id],
+    references: [userSettings.userId],
+  }),
+  tags: many(tag),
+  girthMeasurements: many(girthMeasurement),
+  goals: many(goals, { relationName: 'user' }),
+  goalsTrainer: many(goals, { relationName: 'trainer' }),
+  trainerNotes: many(trainerNotes, { relationName: 'user' }),
+  trainerNotesTrainer: many(trainerNotes, { relationName: 'trainer' }),
+  supplementStacks: many(supplementStack),
+  category: many(userToUserCategory),
 }))
 
 export const notificationToggle = createTable(
-	'notification_toggle',
-	{
-		id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-		createdAt: int('created_at', { mode: 'timestamp' })
-			.default(sql`(unixepoch())`)
-			.notNull(),
-		userId: text('user_id')
-			.notNull()
-			.references(() => user.id, {
-				onDelete: 'cascade',
-			}),
-		type: text('type'),
-		interval: text('interval'),
-		sleep: text('sleep'),
-	},
-	(table) => [index('notification_toggle_user_id_idx').on(table.userId)],
+  'notification_toggle',
+  {
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+    createdAt: int('created_at', { mode: 'timestamp' })
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, {
+        onDelete: 'cascade',
+      }),
+    type: text('type'),
+    interval: text('interval'),
+    sleep: text('sleep'),
+  },
+  (table) => [index('notification_toggle_user_id_idx').on(table.userId)],
 )
 
 export const notificationToggleRelations = relations(
-	notificationToggle,
-	({ one }) => ({
-		user: one(user, {
-			fields: [notificationToggle.userId],
-			references: [user.id],
-			relationName: 'user',
-		}),
-	}),
+  notificationToggle,
+  ({ one }) => ({
+    user: one(user, {
+      fields: [notificationToggle.userId],
+      references: [user.id],
+      relationName: 'user',
+    }),
+  }),
 )
 
 export const userToUserCategory = createTable(
-	'user_to_user_category',
-	{
-		userId: text('user_id')
-			.notNull()
-			.references(() => user.id, {
-				onDelete: 'cascade',
-			}),
-		categoryId: int('category_id')
-			.notNull()
-			.references(() => userCategory.id, {
-				onDelete: 'cascade',
-			}),
-	},
-	(table) => [index('user_to_user_category_user_id_idx').on(table.userId)],
+  'user_to_user_category',
+  {
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, {
+        onDelete: 'cascade',
+      }),
+    categoryId: int('category_id')
+      .notNull()
+      .references(() => userCategory.id, {
+        onDelete: 'cascade',
+      }),
+  },
+  (table) => [index('user_to_user_category_user_id_idx').on(table.userId)],
 )
 
 export const usertoUserCategoryRelations = relations(
-	userToUserCategory,
-	({ one }) => ({
-		user: one(user, {
-			fields: [userToUserCategory.userId],
-			references: [user.id],
-		}),
-		category: one(userCategory, {
-			fields: [userToUserCategory.categoryId],
-			references: [userCategory.id],
-		}),
-	}),
+  userToUserCategory,
+  ({ one }) => ({
+    user: one(user, {
+      fields: [userToUserCategory.userId],
+      references: [user.id],
+    }),
+    category: one(userCategory, {
+      fields: [userToUserCategory.categoryId],
+      references: [userCategory.id],
+    }),
+  }),
 )
 
 export const userCategory = createTable('user_category', {
-	id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-	name: text('name'),
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  name: text('name'),
 })
 
 export const userCategoryRelations = relations(userCategory, ({ many }) => ({
-	users: many(userToUserCategory),
+  users: many(userToUserCategory),
 }))
 
 export const supplementStack = createTable(
-	'supplement_stack',
-	{
-		id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-		createdAt: int('created_at', { mode: 'timestamp' })
-			.default(sql`(unixepoch())`)
-			.notNull(),
-		updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-			() => new Date(),
-		),
-		userId: text('user_id')
-			.notNull()
-			.references(() => user.id, {
-				onDelete: 'cascade',
-			}),
-		name: text('name'),
-		time: text('time'),
-		isTemplate: int('is_template', { mode: 'boolean' }).default(false),
-		order: int('order').default(0),
-	},
-	(table) => [index('supplement_stack_user_id_idx').on(table.userId)],
+  'supplement_stack',
+  {
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+    createdAt: int('created_at', { mode: 'timestamp' })
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+      () => new Date(),
+    ),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, {
+        onDelete: 'cascade',
+      }),
+    name: text('name'),
+    time: text('time'),
+    isTemplate: int('is_template', { mode: 'boolean' }).default(false),
+    order: int('order').default(0),
+  },
+  (table) => [index('supplement_stack_user_id_idx').on(table.userId)],
 )
 
 export const supplementStackRelations = relations(
-	supplementStack,
-	({ one, many }) => ({
-		user: one(user, {
-			fields: [supplementStack.userId],
-			references: [user.id],
-			relationName: 'user',
-		}),
-		supplements: many(supplementToSupplementStack),
-	}),
+  supplementStack,
+  ({ one, many }) => ({
+    user: one(user, {
+      fields: [supplementStack.userId],
+      references: [user.id],
+      relationName: 'user',
+    }),
+    supplements: many(supplementToSupplementStack),
+  }),
 )
 
 export const supplementToSupplementStack = createTable(
-	'supplement_to_supplement_stack',
-	{
-		id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-		supplementId: int('supplement_id')
-			.references(() => ingredient.id, {
-				onDelete: 'cascade',
-			})
-			.notNull(),
-		supplementStackId: int('supplement_stack_id')
-			.references(() => supplementStack.id, {
-				onDelete: 'cascade',
-			})
-			.notNull(),
-		size: text('size'),
-		unit: text('unit'),
-		order: int('order').default(0),
-	},
+  'supplement_to_supplement_stack',
+  {
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+    supplementId: int('supplement_id')
+      .references(() => ingredient.id, {
+        onDelete: 'cascade',
+      })
+      .notNull(),
+    supplementStackId: int('supplement_stack_id')
+      .references(() => supplementStack.id, {
+        onDelete: 'cascade',
+      })
+      .notNull(),
+    size: text('size'),
+    unit: text('unit'),
+    order: int('order').default(0),
+  },
 )
 
 export const supplementToSupplementStackRelations = relations(
-	supplementToSupplementStack,
-	({ one }) => ({
-		supplement: one(ingredient, {
-			fields: [supplementToSupplementStack.supplementId],
-			references: [ingredient.id],
-			relationName: 'supplement',
-		}),
-		supplementStack: one(supplementStack, {
-			fields: [supplementToSupplementStack.supplementStackId],
-			references: [supplementStack.id],
-			relationName: 'supplementStack',
-		}),
-	}),
+  supplementToSupplementStack,
+  ({ one }) => ({
+    supplement: one(ingredient, {
+      fields: [supplementToSupplementStack.supplementId],
+      references: [ingredient.id],
+      relationName: 'supplement',
+    }),
+    supplementStack: one(supplementStack, {
+      fields: [supplementToSupplementStack.supplementStackId],
+      references: [supplementStack.id],
+      relationName: 'supplementStack',
+    }),
+  }),
 )
 
 export const trainerNotes = createTable(
-	'trainer_notes',
-	{
-		id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-		createdAt: int('created_at', { mode: 'timestamp' })
-			.default(sql`(unixepoch())`)
-			.notNull(),
-		updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-			() => new Date(),
-		),
-		userId: text('user_id')
-			.notNull()
-			.references(() => user.id, {
-				onDelete: 'cascade',
-			}),
-		title: text('title'),
-		description: text('description'),
-		state: text('state'),
-		trainerId: text('trainer_id')
-			.notNull()
-			.references(() => user.id, {
-				onDelete: 'cascade',
-			}),
-	},
-	(table) => [index('trainer_notes_user_id_idx').on(table.userId)],
+  'trainer_notes',
+  {
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+    createdAt: int('created_at', { mode: 'timestamp' })
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+      () => new Date(),
+    ),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, {
+        onDelete: 'cascade',
+      }),
+    title: text('title'),
+    description: text('description'),
+    state: text('state'),
+    trainerId: text('trainer_id')
+      .notNull()
+      .references(() => user.id, {
+        onDelete: 'cascade',
+      }),
+  },
+  (table) => [index('trainer_notes_user_id_idx').on(table.userId)],
 )
 
 export const trainerNotesRelations = relations(trainerNotes, ({ one }) => ({
-	user: one(user, {
-		fields: [trainerNotes.userId],
-		references: [user.id],
-		relationName: 'user',
-	}),
-	trainer: one(user, {
-		fields: [trainerNotes.trainerId],
-		references: [user.id],
-		relationName: 'trainer',
-	}),
+  user: one(user, {
+    fields: [trainerNotes.userId],
+    references: [user.id],
+    relationName: 'user',
+  }),
+  trainer: one(user, {
+    fields: [trainerNotes.trainerId],
+    references: [user.id],
+    relationName: 'trainer',
+  }),
 }))
 
 export const goals = createTable(
-	'goals',
-	{
-		id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-		createdAt: int('created_at', { mode: 'timestamp' })
-			.default(sql`(unixepoch())`)
-			.notNull(),
-		updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-			() => new Date(),
-		),
-		userId: text('user_id')
-			.notNull()
-			.references(() => user.id, {
-				onDelete: 'cascade',
-			}),
-		title: text('title'),
-		description: text('description'),
-		state: text('state'),
-		completedAt: int('completed_at', { mode: 'timestamp' }),
-		trainerId: text('trainer_id')
-			.notNull()
-			.references(() => user.id, {
-				onDelete: 'cascade',
-			}),
-	},
-	(table) => [index('goals_user_id_idx').on(table.userId)],
+  'goals',
+  {
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+    createdAt: int('created_at', { mode: 'timestamp' })
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+      () => new Date(),
+    ),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, {
+        onDelete: 'cascade',
+      }),
+    title: text('title'),
+    description: text('description'),
+    state: text('state'),
+    completedAt: int('completed_at', { mode: 'timestamp' }),
+    trainerId: text('trainer_id')
+      .notNull()
+      .references(() => user.id, {
+        onDelete: 'cascade',
+      }),
+  },
+  (table) => [index('goals_user_id_idx').on(table.userId)],
 )
 
 export const goalsRelations = relations(goals, ({ one }) => ({
-	user: one(user, {
-		fields: [goals.userId],
-		references: [user.id],
-		relationName: 'user',
-	}),
-	trainer: one(user, {
-		fields: [goals.trainerId],
-		references: [user.id],
-		relationName: 'trainer',
-	}),
+  user: one(user, {
+    fields: [goals.userId],
+    references: [user.id],
+    relationName: 'user',
+  }),
+  trainer: one(user, {
+    fields: [goals.trainerId],
+    references: [user.id],
+    relationName: 'trainer',
+  }),
 }))
 
 export const userSettings = createTable(
-	'user_settings',
-	{
-		id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-		createdAt: int('created_at', { mode: 'timestamp' })
-			.default(sql`(unixepoch())`)
-			.notNull(),
-		updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-			() => new Date(),
-		),
-		userId: text('user_id')
-			.notNull()
-			.references(() => user.id, {
-				onDelete: 'cascade',
-			}),
-		defaultWater: text('default_water'),
-		defaultChartRange: text('default_chart_range'),
-		isPosing: int('is_posing', { mode: 'boolean' }).default(false),
-		isBloodGlucose: int('is_blood_glucose', { mode: 'boolean' }).default(false),
-		isSleep: int('is_sleep', { mode: 'boolean' }).default(true),
-		isSleepQuality: int('is_sleep_quality', { mode: 'boolean' }).default(true),
-		isNap: int('is_nap', { mode: 'boolean' }).default(true),
-		isWeightTraining: int('is_weight', { mode: 'boolean' }).default(true),
-		isHiit: int('is_hiit', { mode: 'boolean' }).default(true),
-		isLiss: int('is_liss', { mode: 'boolean' }).default(true),
-		isNotes: int('is_notes', { mode: 'boolean' }).default(true),
-		isSteps: int('is_steps', { mode: 'boolean' }).default(true),
-		isSauna: int('is_sauna', { mode: 'boolean' }).default(true),
-		isColdPlunge: int('is_cold_plunge', { mode: 'boolean' }).default(true),
-		isMobility: int('is_mobility', { mode: 'boolean' }).default(false),
-		isPeriodOvulaion: int('is_period_ovulaion', { mode: 'boolean' }).default(
-			false,
-		),
-		isHighLow: int('is_high_low', { mode: 'boolean' }).default(false),
-		isBulkCut: int('is_bulk_cut', { mode: 'boolean' }).default(false),
-		ovulaionStartAt: int('ovulaion_start_at', { mode: 'timestamp' }),
-		periodStartAt: int('period_start_at', { mode: 'timestamp' }),
-		cutStartAt: int('cut_start_at', { mode: 'timestamp' }),
-		cutFinishAt: int('cut_finish_at', { mode: 'timestamp' }),
-		bulkStartAt: int('bulk_start_at', { mode: 'timestamp' }),
-		bulkFinishAt: int('bulk_finish_at', { mode: 'timestamp' }),
-		periodLength: int('period_length').default(5).notNull(),
-		periodInterval: int('period_interval').default(28).notNull(),
-	},
-	(table) => [index('user_settings_user_id_idx').on(table.userId)],
+  'user_settings',
+  {
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+    createdAt: int('created_at', { mode: 'timestamp' })
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+      () => new Date(),
+    ),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, {
+        onDelete: 'cascade',
+      }),
+    defaultWater: text('default_water'),
+    defaultChartRange: text('default_chart_range'),
+    isPosing: int('is_posing', { mode: 'boolean' }).default(false),
+    isBloodGlucose: int('is_blood_glucose', { mode: 'boolean' }).default(false),
+    isSleep: int('is_sleep', { mode: 'boolean' }).default(true),
+    isSleepQuality: int('is_sleep_quality', { mode: 'boolean' }).default(true),
+    isNap: int('is_nap', { mode: 'boolean' }).default(true),
+    isWeightTraining: int('is_weight', { mode: 'boolean' }).default(true),
+    isHiit: int('is_hiit', { mode: 'boolean' }).default(true),
+    isLiss: int('is_liss', { mode: 'boolean' }).default(true),
+    isNotes: int('is_notes', { mode: 'boolean' }).default(true),
+    isSteps: int('is_steps', { mode: 'boolean' }).default(true),
+    isSauna: int('is_sauna', { mode: 'boolean' }).default(true),
+    isColdPlunge: int('is_cold_plunge', { mode: 'boolean' }).default(true),
+    isMobility: int('is_mobility', { mode: 'boolean' }).default(false),
+    isPeriodOvulaion: int('is_period_ovulaion', { mode: 'boolean' }).default(
+      false,
+    ),
+    isHighLow: int('is_high_low', { mode: 'boolean' }).default(false),
+    isBulkCut: int('is_bulk_cut', { mode: 'boolean' }).default(false),
+    ovulaionStartAt: int('ovulaion_start_at', { mode: 'timestamp' }),
+    periodStartAt: int('period_start_at', { mode: 'timestamp' }),
+    cutStartAt: int('cut_start_at', { mode: 'timestamp' }),
+    cutFinishAt: int('cut_finish_at', { mode: 'timestamp' }),
+    bulkStartAt: int('bulk_start_at', { mode: 'timestamp' }),
+    bulkFinishAt: int('bulk_finish_at', { mode: 'timestamp' }),
+    periodLength: int('period_length').default(5).notNull(),
+    periodInterval: int('period_interval').default(28).notNull(),
+  },
+  (table) => [index('user_settings_user_id_idx').on(table.userId)],
 )
 
 export const userSettingsRelations = relations(userSettings, ({ one }) => ({
-	user: one(user, {
-		fields: [userSettings.userId],
-		references: [user.id],
-	}),
+  user: one(user, {
+    fields: [userSettings.userId],
+    references: [user.id],
+  }),
 }))
 
 export const weighIn = createTable(
-	'weigh_in',
-	{
-		id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-		createdAt: int('created_at', { mode: 'timestamp' })
-			.default(sql`(unixepoch())`)
-			.notNull(),
-		userId: text('user_id')
-			.notNull()
-			.references(() => user.id),
-		trainerId: text('trainer_id')
-			.notNull()
-			.references(() => user.id),
-		date: int('date', { mode: 'timestamp' })
-			.default(sql`(unixepoch())`)
-			.notNull(),
-		bodyWeight: text('body_weight'),
-		leanMass: text('lean_mass'),
-		bodyFat: text('body_fat'),
-		bloodPressure: text('blood_pressure'),
-		image: text('image'),
-		notes: text('notes'),
-	},
-	(table) => [index('weigh_in_user_id_idx').on(table.userId)],
+  'weigh_in',
+  {
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+    createdAt: int('created_at', { mode: 'timestamp' })
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id),
+    trainerId: text('trainer_id')
+      .notNull()
+      .references(() => user.id),
+    date: int('date', { mode: 'timestamp' })
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    bodyWeight: text('body_weight'),
+    leanMass: text('lean_mass'),
+    bodyFat: text('body_fat'),
+    bloodPressure: text('blood_pressure'),
+    image: text('image'),
+    notes: text('notes'),
+  },
+  (table) => [index('weigh_in_user_id_idx').on(table.userId)],
 )
 
 export const weighInRelations = relations(weighIn, ({ one }) => ({
-	user: one(user, {
-		fields: [weighIn.userId],
-		references: [user.id],
-		relationName: 'user',
-	}),
-	trainer: one(user, {
-		fields: [weighIn.trainerId],
-		references: [user.id],
-		relationName: 'trainer',
-	}),
+  user: one(user, {
+    fields: [weighIn.userId],
+    references: [user.id],
+    relationName: 'user',
+  }),
+  trainer: one(user, {
+    fields: [weighIn.trainerId],
+    references: [user.id],
+    relationName: 'trainer',
+  }),
 }))
 
 export const userToTrainer = createTable(
-	'user_to_trainer',
-	{
-		userId: text('user_id')
-			.notNull()
-			.references(() => user.id, {
-				onDelete: 'cascade',
-			}),
-		trainerId: text('trainer_id')
-			.notNull()
-			.references(() => user.id, {
-				onDelete: 'cascade',
-			}),
-	},
-	(table) => [
-		index('user_to_trainer_user_id_idx').on(table.userId),
-		index('user_to_trainer_trainer_id_idx').on(table.trainerId),
-	],
+  'user_to_trainer',
+  {
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, {
+        onDelete: 'cascade',
+      }),
+    trainerId: text('trainer_id')
+      .notNull()
+      .references(() => user.id, {
+        onDelete: 'cascade',
+      }),
+  },
+  (table) => [
+    index('user_to_trainer_user_id_idx').on(table.userId),
+    index('user_to_trainer_trainer_id_idx').on(table.trainerId),
+  ],
 )
 
 export const role = createTable(
-	'role',
-	{
-		id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-		createdAt: int('created_at', { mode: 'timestamp' })
-			.default(sql`(unixepoch())`)
-			.notNull(),
-		updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
-			() => new Date(),
-		),
-		userId: text('user_id').references(() => user.id, {
-			onDelete: 'cascade',
-		}),
-		name: text('name'),
-	},
-	(table) => [index('role_user_id_idx').on(table.userId)],
+  'role',
+  {
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+    createdAt: int('created_at', { mode: 'timestamp' })
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+      () => new Date(),
+    ),
+    userId: text('user_id').references(() => user.id, {
+      onDelete: 'cascade',
+    }),
+    name: text('name'),
+  },
+  (table) => [index('role_user_id_idx').on(table.userId)],
 )
 
 export const account = createTable(
-	'account',
-	{
-		userId: text('user_id', { length: 255 })
-			.notNull()
-			.references(() => user.id),
-		type: text('type', { length: 255 })
-			.$type<AdapterAccount['type']>()
-			.notNull(),
-		provider: text('provider', { length: 255 }).notNull(),
-		providerAccountId: text('provider_account_id', { length: 255 }).notNull(),
-		refresh_token: text('refresh_token'),
-		access_token: text('access_token'),
-		expires_at: int('expires_at'),
-		token_type: text('token_type', { length: 255 }),
-		scope: text('scope', { length: 255 }),
-		id_token: text('id_token'),
-		session_state: text('session_state', { length: 255 }),
-	},
-	(account) => ({
-		compoundKey: primaryKey({
-			columns: [account.provider, account.providerAccountId],
-		}),
-	}),
+  'account',
+  {
+    userId: text('user_id', { length: 255 })
+      .notNull()
+      .references(() => user.id),
+    type: text('type', { length: 255 })
+      .$type<AdapterAccount['type']>()
+      .notNull(),
+    provider: text('provider', { length: 255 }).notNull(),
+    providerAccountId: text('provider_account_id', { length: 255 }).notNull(),
+    refresh_token: text('refresh_token'),
+    access_token: text('access_token'),
+    expires_at: int('expires_at'),
+    token_type: text('token_type', { length: 255 }),
+    scope: text('scope', { length: 255 }),
+    id_token: text('id_token'),
+    session_state: text('session_state', { length: 255 }),
+  },
+  (account) => ({
+    compoundKey: primaryKey({
+      columns: [account.provider, account.providerAccountId],
+    }),
+  }),
 )
 
 export const verificationToken = createTable(
-	'verification_token',
-	{
-		identifier: text('identifier', { length: 255 }).notNull(),
-		token: text('token', { length: 255 }).notNull(),
-		expires: int('expires', { mode: 'timestamp' }).notNull(),
-	},
-	(vt) => ({
-		compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-	}),
+  'verification_token',
+  {
+    identifier: text('identifier', { length: 255 }).notNull(),
+    token: text('token', { length: 255 }).notNull(),
+    expires: int('expires', { mode: 'timestamp' }).notNull(),
+  },
+  (vt) => ({
+    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
+  }),
 )
 
 export const session = createTable('session', {
-	sessionToken: text('session_token', { length: 255 }).notNull().primaryKey(),
-	userId: text('userId', { length: 255 })
-		.notNull()
-		.references(() => user.id),
-	expires: int('expires', { mode: 'timestamp' }).notNull(),
+  sessionToken: text('session_token', { length: 255 }).notNull().primaryKey(),
+  userId: text('userId', { length: 255 })
+    .notNull()
+    .references(() => user.id),
+  expires: int('expires', { mode: 'timestamp' }).notNull(),
 })
 
 export const sessionsRelations = relations(session, ({ one }) => ({
-	user: one(user, { fields: [session.userId], references: [user.id] }),
+  user: one(user, { fields: [session.userId], references: [user.id] }),
 }))
 
 export const accountsRelations = relations(account, ({ one }) => ({
-	user: one(user, { fields: [account.userId], references: [user.id] }),
+  user: one(user, { fields: [account.userId], references: [user.id] }),
 }))
 
 export const roleRelations = relations(role, ({ one }) => ({
-	user: one(user, {
-		fields: [role.userId],
-		references: [user.id],
-	}),
+  user: one(user, {
+    fields: [role.userId],
+    references: [user.id],
+  }),
 }))
 
 export const userToTrainerRelations = relations(userToTrainer, ({ one }) => ({
-	user: one(user, {
-		fields: [userToTrainer.userId],
-		references: [user.id],
-		relationName: 'trainers',
-	}),
-	trainer: one(user, {
-		fields: [userToTrainer.trainerId],
-		references: [user.id],
-		relationName: 'clients',
-	}),
+  user: one(user, {
+    fields: [userToTrainer.userId],
+    references: [user.id],
+    relationName: 'trainers',
+  }),
+  trainer: one(user, {
+    fields: [userToTrainer.trainerId],
+    references: [user.id],
+    relationName: 'clients',
+  }),
 }))

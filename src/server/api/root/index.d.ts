@@ -471,6 +471,8 @@ declare const userRelations: drizzle_orm.Relations<"user", {
     roles: drizzle_orm.Many<"role">;
     notifications: drizzle_orm.Many<"notification">;
     notificationsToggles: drizzle_orm.Many<"notification_toggle">;
+    shoppingLists: drizzle_orm.Many<"shopping_list">;
+    shoppingListsCreator: drizzle_orm.Many<"shopping_list">;
     messages: drizzle_orm.Many<"message">;
     sentMessages: drizzle_orm.Many<"message">;
     accounts: drizzle_orm.Many<"account">;
@@ -10326,6 +10328,386 @@ declare const userIngredientRelations: drizzle_orm.Relations<"user_ingredient", 
     dailyMeal: drizzle_orm.One<"daily_meal", false>;
 }>;
 
+declare const shoppingList: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
+    name: "shopping_list";
+    schema: undefined;
+    columns: {
+        id: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "id";
+            tableName: "shopping_list";
+            dataType: "number";
+            columnType: "SQLiteInteger";
+            data: number;
+            driverParam: number;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: true;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        createdAt: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "created_at";
+            tableName: "shopping_list";
+            dataType: "date";
+            columnType: "SQLiteTimestamp";
+            data: Date;
+            driverParam: number;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        updatedAt: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "updated_at";
+            tableName: "shopping_list";
+            dataType: "date";
+            columnType: "SQLiteTimestamp";
+            data: Date;
+            driverParam: number;
+            notNull: false;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        userId: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "user_id";
+            tableName: "shopping_list";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        creatorId: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "creator_id";
+            tableName: "shopping_list";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        name: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "name";
+            tableName: "shopping_list";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        isActive: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "is_active";
+            tableName: "shopping_list";
+            dataType: "boolean";
+            columnType: "SQLiteBoolean";
+            data: boolean;
+            driverParam: number;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        archivedAt: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "archived_at";
+            tableName: "shopping_list";
+            dataType: "date";
+            columnType: "SQLiteTimestamp";
+            data: Date;
+            driverParam: number;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        emailedAt: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "emailed_at";
+            tableName: "shopping_list";
+            dataType: "date";
+            columnType: "SQLiteTimestamp";
+            data: Date;
+            driverParam: number;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+    };
+    dialect: "sqlite";
+}>;
+declare const shoppingListItem: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
+    name: "shopping_list_item";
+    schema: undefined;
+    columns: {
+        id: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "id";
+            tableName: "shopping_list_item";
+            dataType: "number";
+            columnType: "SQLiteInteger";
+            data: number;
+            driverParam: number;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: true;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        createdAt: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "created_at";
+            tableName: "shopping_list_item";
+            dataType: "date";
+            columnType: "SQLiteTimestamp";
+            data: Date;
+            driverParam: number;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        updatedAt: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "updated_at";
+            tableName: "shopping_list_item";
+            dataType: "date";
+            columnType: "SQLiteTimestamp";
+            data: Date;
+            driverParam: number;
+            notNull: false;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        shoppingListId: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "shopping_list_id";
+            tableName: "shopping_list_item";
+            dataType: "number";
+            columnType: "SQLiteInteger";
+            data: number;
+            driverParam: number;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        ingredientId: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "ingredient_id";
+            tableName: "shopping_list_item";
+            dataType: "number";
+            columnType: "SQLiteInteger";
+            data: number;
+            driverParam: number;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        name: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "name";
+            tableName: "shopping_list_item";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        amount: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "amount";
+            tableName: "shopping_list_item";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        unit: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "unit";
+            tableName: "shopping_list_item";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        isChecked: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "is_checked";
+            tableName: "shopping_list_item";
+            dataType: "boolean";
+            columnType: "SQLiteBoolean";
+            data: boolean;
+            driverParam: number;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        source: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "source";
+            tableName: "shopping_list_item";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+        note: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "note";
+            tableName: "shopping_list_item";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
+    };
+    dialect: "sqlite";
+}>;
+declare const shoppingListRelations: drizzle_orm.Relations<"shopping_list", {
+    user: drizzle_orm.One<"user", true>;
+    creator: drizzle_orm.One<"user", true>;
+    items: drizzle_orm.Many<"shopping_list_item">;
+}>;
+declare const shoppingListItemRelations: drizzle_orm.Relations<"shopping_list_item", {
+    shoppingList: drizzle_orm.One<"shopping_list", true>;
+    ingredient: drizzle_orm.One<"ingredient", false>;
+}>;
+
 declare const log: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
     name: "log";
     schema: undefined;
@@ -13993,6 +14375,10 @@ declare const ______db_schema_roleRelations: typeof roleRelations;
 declare const ______db_schema_session: typeof session;
 declare const ______db_schema_sessionsRelations: typeof sessionsRelations;
 declare const ______db_schema_settings: typeof settings;
+declare const ______db_schema_shoppingList: typeof shoppingList;
+declare const ______db_schema_shoppingListItem: typeof shoppingListItem;
+declare const ______db_schema_shoppingListItemRelations: typeof shoppingListItemRelations;
+declare const ______db_schema_shoppingListRelations: typeof shoppingListRelations;
 declare const ______db_schema_skinfold: typeof skinfold;
 declare const ______db_schema_skinfoldRelations: typeof skinfoldRelations;
 declare const ______db_schema_supplementStack: typeof supplementStack;
@@ -14031,7 +14417,7 @@ declare const ______db_schema_waterLogRelations: typeof waterLogRelations;
 declare const ______db_schema_weighIn: typeof weighIn;
 declare const ______db_schema_weighInRelations: typeof weighInRelations;
 declare namespace ______db_schema {
-  export { ______db_schema_account as account, ______db_schema_accountsRelations as accountsRelations, ______db_schema_bodyFat as bodyFat, ______db_schema_bodyFatRelations as bodyFatRelations, ______db_schema_bodyWeight as bodyWeight, ______db_schema_bodyWeightRelations as bodyWeightRelations, ______db_schema_dailyLog as dailyLog, ______db_schema_dailyLogRelations as dailyLogRelations, ______db_schema_dailyMeal as dailyMeal, ______db_schema_dailyMealRelations as dailyMealRelations, ______db_schema_dailySupplement as dailySupplement, ______db_schema_dailySupplementRelations as dailySupplementRelations, ______db_schema_girthMeasurement as girthMeasurement, ______db_schema_girthMeasurementRelations as girthMeasurementRelations, ______db_schema_goals as goals, ______db_schema_goalsRelations as goalsRelations, ______db_schema_groceryStore as groceryStore, ______db_schema_groceryStoreRelations as groceryStoreRelations, ______db_schema_images as images, ______db_schema_imagesRelations as imagesRelations, ______db_schema_ingredient as ingredient, ______db_schema_ingredientAdditionOne as ingredientAdditionOne, ______db_schema_ingredientAdditionOneRelations as ingredientAdditionOneRelations, ______db_schema_ingredientAdditionThree as ingredientAdditionThree, ______db_schema_ingredientAdditionThreeRelations as ingredientAdditionThreeRelations, ______db_schema_ingredientAdditionTwo as ingredientAdditionTwo, ______db_schema_ingredientAdditionTwoRelations as ingredientAdditionTwoRelations, ______db_schema_ingredientRelations as ingredientRelations, ______db_schema_ingredientToGroceryStore as ingredientToGroceryStore, ______db_schema_ingredientToGroceryStoreRelations as ingredientToGroceryStoreRelations, ______db_schema_leanMass as leanMass, ______db_schema_leanMassRelations as leanMassRelations, ______db_schema_log as log, ______db_schema_logNew as logNew, ______db_schema_meal as meal, ______db_schema_mealRelations as mealRelations, ______db_schema_mealToRecipe as mealToRecipe, ______db_schema_mealToRecipeRelations as mealToRecipeRelations, ______db_schema_mealToVegeStack as mealToVegeStack, ______db_schema_mealToVegeStackRelations as mealToVegeStackRelations, ______db_schema_message as message, ______db_schema_messageRelations as messageRelations, ______db_schema_notification as notification, ______db_schema_notificationRelations as notificationRelations, ______db_schema_notificationToggle as notificationToggle, ______db_schema_notificationToggleRelations as notificationToggleRelations, ______db_schema_plan as plan, ______db_schema_planFolder as planFolder, ______db_schema_planFolderRelations as planFolderRelations, ______db_schema_planRelations as planRelations, ______db_schema_planToMeal as planToMeal, ______db_schema_planToMealRelations as planToMealRelations, ______db_schema_poopLog as poopLog, ______db_schema_poopLogRelations as poopLogRelations, ______db_schema_pushSubscription as pushSubscription, ______db_schema_recipe as recipe, ______db_schema_recipeRelations as recipeRelations, ______db_schema_recipeToIngredient as recipeToIngredient, ______db_schema_recipeToIngredientRelations as recipeToIngredientRelations, ______db_schema_role as role, ______db_schema_roleRelations as roleRelations, ______db_schema_session as session, ______db_schema_sessionsRelations as sessionsRelations, ______db_schema_settings as settings, ______db_schema_skinfold as skinfold, ______db_schema_skinfoldRelations as skinfoldRelations, ______db_schema_supplementStack as supplementStack, ______db_schema_supplementStackRelations as supplementStackRelations, ______db_schema_supplementToSupplementStack as supplementToSupplementStack, ______db_schema_supplementToSupplementStackRelations as supplementToSupplementStackRelations, ______db_schema_tag as tag, ______db_schema_tagRelations as tagRelations, ______db_schema_tagToDailyLog as tagToDailyLog, ______db_schema_tagToDailyLogRelations as tagToDailyLogRelations, ______db_schema_trainerNotes as trainerNotes, ______db_schema_trainerNotesRelations as trainerNotesRelations, ______db_schema_user as user, ______db_schema_userCategory as userCategory, ______db_schema_userCategoryRelations as userCategoryRelations, ______db_schema_userIngredient as userIngredient, ______db_schema_userIngredientRelations as userIngredientRelations, ______db_schema_userMeal as userMeal, ______db_schema_userMealRelations as userMealRelations, ______db_schema_userPlan as userPlan, ______db_schema_userPlanRelations as userPlanRelations, ______db_schema_userRecipe as userRecipe, ______db_schema_userRecipeRelations as userRecipeRelations, ______db_schema_userRelations as userRelations, ______db_schema_userSettings as userSettings, ______db_schema_userSettingsRelations as userSettingsRelations, ______db_schema_userToTrainer as userToTrainer, ______db_schema_userToTrainerRelations as userToTrainerRelations, ______db_schema_userToUserCategory as userToUserCategory, ______db_schema_usertoUserCategoryRelations as usertoUserCategoryRelations, ______db_schema_vegeStack as vegeStack, ______db_schema_vegeStackRelations as vegeStackRelations, ______db_schema_verificationToken as verificationToken, ______db_schema_waterLog as waterLog, ______db_schema_waterLogRelations as waterLogRelations, ______db_schema_weighIn as weighIn, ______db_schema_weighInRelations as weighInRelations };
+  export { ______db_schema_account as account, ______db_schema_accountsRelations as accountsRelations, ______db_schema_bodyFat as bodyFat, ______db_schema_bodyFatRelations as bodyFatRelations, ______db_schema_bodyWeight as bodyWeight, ______db_schema_bodyWeightRelations as bodyWeightRelations, ______db_schema_dailyLog as dailyLog, ______db_schema_dailyLogRelations as dailyLogRelations, ______db_schema_dailyMeal as dailyMeal, ______db_schema_dailyMealRelations as dailyMealRelations, ______db_schema_dailySupplement as dailySupplement, ______db_schema_dailySupplementRelations as dailySupplementRelations, ______db_schema_girthMeasurement as girthMeasurement, ______db_schema_girthMeasurementRelations as girthMeasurementRelations, ______db_schema_goals as goals, ______db_schema_goalsRelations as goalsRelations, ______db_schema_groceryStore as groceryStore, ______db_schema_groceryStoreRelations as groceryStoreRelations, ______db_schema_images as images, ______db_schema_imagesRelations as imagesRelations, ______db_schema_ingredient as ingredient, ______db_schema_ingredientAdditionOne as ingredientAdditionOne, ______db_schema_ingredientAdditionOneRelations as ingredientAdditionOneRelations, ______db_schema_ingredientAdditionThree as ingredientAdditionThree, ______db_schema_ingredientAdditionThreeRelations as ingredientAdditionThreeRelations, ______db_schema_ingredientAdditionTwo as ingredientAdditionTwo, ______db_schema_ingredientAdditionTwoRelations as ingredientAdditionTwoRelations, ______db_schema_ingredientRelations as ingredientRelations, ______db_schema_ingredientToGroceryStore as ingredientToGroceryStore, ______db_schema_ingredientToGroceryStoreRelations as ingredientToGroceryStoreRelations, ______db_schema_leanMass as leanMass, ______db_schema_leanMassRelations as leanMassRelations, ______db_schema_log as log, ______db_schema_logNew as logNew, ______db_schema_meal as meal, ______db_schema_mealRelations as mealRelations, ______db_schema_mealToRecipe as mealToRecipe, ______db_schema_mealToRecipeRelations as mealToRecipeRelations, ______db_schema_mealToVegeStack as mealToVegeStack, ______db_schema_mealToVegeStackRelations as mealToVegeStackRelations, ______db_schema_message as message, ______db_schema_messageRelations as messageRelations, ______db_schema_notification as notification, ______db_schema_notificationRelations as notificationRelations, ______db_schema_notificationToggle as notificationToggle, ______db_schema_notificationToggleRelations as notificationToggleRelations, ______db_schema_plan as plan, ______db_schema_planFolder as planFolder, ______db_schema_planFolderRelations as planFolderRelations, ______db_schema_planRelations as planRelations, ______db_schema_planToMeal as planToMeal, ______db_schema_planToMealRelations as planToMealRelations, ______db_schema_poopLog as poopLog, ______db_schema_poopLogRelations as poopLogRelations, ______db_schema_pushSubscription as pushSubscription, ______db_schema_recipe as recipe, ______db_schema_recipeRelations as recipeRelations, ______db_schema_recipeToIngredient as recipeToIngredient, ______db_schema_recipeToIngredientRelations as recipeToIngredientRelations, ______db_schema_role as role, ______db_schema_roleRelations as roleRelations, ______db_schema_session as session, ______db_schema_sessionsRelations as sessionsRelations, ______db_schema_settings as settings, ______db_schema_shoppingList as shoppingList, ______db_schema_shoppingListItem as shoppingListItem, ______db_schema_shoppingListItemRelations as shoppingListItemRelations, ______db_schema_shoppingListRelations as shoppingListRelations, ______db_schema_skinfold as skinfold, ______db_schema_skinfoldRelations as skinfoldRelations, ______db_schema_supplementStack as supplementStack, ______db_schema_supplementStackRelations as supplementStackRelations, ______db_schema_supplementToSupplementStack as supplementToSupplementStack, ______db_schema_supplementToSupplementStackRelations as supplementToSupplementStackRelations, ______db_schema_tag as tag, ______db_schema_tagRelations as tagRelations, ______db_schema_tagToDailyLog as tagToDailyLog, ______db_schema_tagToDailyLogRelations as tagToDailyLogRelations, ______db_schema_trainerNotes as trainerNotes, ______db_schema_trainerNotesRelations as trainerNotesRelations, ______db_schema_user as user, ______db_schema_userCategory as userCategory, ______db_schema_userCategoryRelations as userCategoryRelations, ______db_schema_userIngredient as userIngredient, ______db_schema_userIngredientRelations as userIngredientRelations, ______db_schema_userMeal as userMeal, ______db_schema_userMealRelations as userMealRelations, ______db_schema_userPlan as userPlan, ______db_schema_userPlanRelations as userPlanRelations, ______db_schema_userRecipe as userRecipe, ______db_schema_userRecipeRelations as userRecipeRelations, ______db_schema_userRelations as userRelations, ______db_schema_userSettings as userSettings, ______db_schema_userSettingsRelations as userSettingsRelations, ______db_schema_userToTrainer as userToTrainer, ______db_schema_userToTrainerRelations as userToTrainerRelations, ______db_schema_userToUserCategory as userToUserCategory, ______db_schema_usertoUserCategoryRelations as usertoUserCategoryRelations, ______db_schema_vegeStack as vegeStack, ______db_schema_vegeStackRelations as vegeStackRelations, ______db_schema_verificationToken as verificationToken, ______db_schema_waterLog as waterLog, ______db_schema_waterLogRelations as waterLogRelations, ______db_schema_weighIn as weighIn, ______db_schema_weighInRelations as weighInRelations };
 }
 
 /**
@@ -16274,10 +16660,10 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     updatedAt: Date | null;
                     description: string;
                     userId: string;
+                    creatorId: string;
                     finishedAt: Date | null;
                     startAt: Date | null;
                     numberOfMeals: number | null;
-                    creatorId: string;
                     favouriteAt: Date | null;
                     deletedAt: Date | null;
                     hiddenAt: Date | null;
@@ -16602,10 +16988,10 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     updatedAt: Date | null;
                     description: string;
                     userId: string;
+                    creatorId: string;
                     finishedAt: Date | null;
                     startAt: Date | null;
                     numberOfMeals: number | null;
-                    creatorId: string;
                     favouriteAt: Date | null;
                     deletedAt: Date | null;
                     hiddenAt: Date | null;
@@ -16722,10 +17108,10 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     updatedAt: Date | null;
                     description: string;
                     userId: string;
+                    creatorId: string;
                     finishedAt: Date | null;
                     startAt: Date | null;
                     numberOfMeals: number | null;
-                    creatorId: string;
                     favouriteAt: Date | null;
                     deletedAt: Date | null;
                     hiddenAt: Date | null;
@@ -17146,10 +17532,10 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     updatedAt: Date | null;
                     description: string;
                     userId: string;
+                    creatorId: string;
                     finishedAt: Date | null;
                     startAt: Date | null;
                     numberOfMeals: number | null;
-                    creatorId: string;
                     favouriteAt: Date | null;
                     deletedAt: Date | null;
                     hiddenAt: Date | null;
@@ -18413,8 +18799,8 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 createdAt: Date;
                 updatedAt: Date | null;
                 description: string | null;
-                numberOfMeals: number | null;
                 creatorId: string | null;
+                numberOfMeals: number | null;
                 favouriteAt: Date | null;
                 deletedAt: Date | null;
                 hiddenAt: Date | null;
@@ -18461,8 +18847,8 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 createdAt: Date;
                 updatedAt: Date | null;
                 description: string | null;
-                numberOfMeals: number | null;
                 creatorId: string | null;
+                numberOfMeals: number | null;
                 favouriteAt: Date | null;
                 deletedAt: Date | null;
                 hiddenAt: Date | null;
@@ -18511,8 +18897,8 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 createdAt: Date;
                 updatedAt: Date | null;
                 description: string | null;
-                numberOfMeals: number | null;
                 creatorId: string | null;
+                numberOfMeals: number | null;
                 favouriteAt: Date | null;
                 deletedAt: Date | null;
                 hiddenAt: Date | null;
@@ -18699,8 +19085,8 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 createdAt: Date;
                 updatedAt: Date | null;
                 description: string | null;
-                numberOfMeals: number | null;
                 creatorId: string | null;
+                numberOfMeals: number | null;
                 favouriteAt: Date | null;
                 deletedAt: Date | null;
                 hiddenAt: Date | null;
@@ -18889,8 +19275,8 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 createdAt: Date;
                 updatedAt: Date | null;
                 description: string | null;
-                numberOfMeals: number | null;
                 creatorId: string | null;
+                numberOfMeals: number | null;
                 favouriteAt: Date | null;
                 deletedAt: Date | null;
                 hiddenAt: Date | null;
@@ -18939,8 +19325,8 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 createdAt: Date;
                 updatedAt: Date | null;
                 description: string | null;
-                numberOfMeals: number | null;
                 creatorId: string | null;
+                numberOfMeals: number | null;
                 favouriteAt: Date | null;
                 deletedAt: Date | null;
                 hiddenAt: Date | null;
@@ -19847,10 +20233,10 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 updatedAt: Date | null;
                 description: string;
                 userId: string;
+                creatorId: string;
                 finishedAt: Date | null;
                 startAt: Date | null;
                 numberOfMeals: number | null;
-                creatorId: string;
                 favouriteAt: Date | null;
                 deletedAt: Date | null;
                 hiddenAt: Date | null;
@@ -19986,10 +20372,10 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 updatedAt: Date | null;
                 description: string;
                 userId: string;
+                creatorId: string;
                 finishedAt: Date | null;
                 startAt: Date | null;
                 numberOfMeals: number | null;
-                creatorId: string;
                 favouriteAt: Date | null;
                 deletedAt: Date | null;
                 hiddenAt: Date | null;
@@ -22313,6 +22699,226 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 userId: string;
                 subscription: string;
             } | undefined;
+            meta: object;
+        }>;
+    }>>;
+    shoppingList: _trpc_server.TRPCBuiltRouter<{
+        ctx: {
+            headers: Headers;
+            db: drizzle_orm_libsql.LibSQLDatabase<typeof ______db_schema> & {
+                $client: _libsql_client.Client;
+            };
+            session: next_auth.Session | null;
+        };
+        meta: object;
+        errorShape: {
+            data: {
+                zodError: zod.ZodFlattenedError<unknown, string> | null;
+                code: _trpc_server.TRPC_ERROR_CODE_KEY;
+                httpStatus: number;
+                path?: string;
+                stack?: string;
+            };
+            message: string;
+            code: _trpc_server.TRPC_ERROR_CODE_NUMBER;
+        };
+        transformer: true;
+    }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        getAllForUser: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                id: number;
+                name: string;
+                isActive: boolean;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string;
+                creatorId: string;
+                archivedAt: Date | null;
+                emailedAt: Date | null;
+                items: {
+                    id: number;
+                    name: string;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    source: string | null;
+                    unit: string;
+                    ingredientId: number | null;
+                    note: string | null;
+                    amount: string;
+                    shoppingListId: number;
+                    isChecked: boolean;
+                }[];
+            }[];
+            meta: object;
+        }>;
+        getActive: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                id: number;
+                name: string;
+                isActive: boolean;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string;
+                creatorId: string;
+                archivedAt: Date | null;
+                emailedAt: Date | null;
+                items: {
+                    id: number;
+                    name: string;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    source: string | null;
+                    unit: string;
+                    ingredientId: number | null;
+                    note: string | null;
+                    amount: string;
+                    shoppingListId: number;
+                    isChecked: boolean;
+                }[];
+            } | undefined;
+            meta: object;
+        }>;
+        addRecipe: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                items: {
+                    ingredientId: number;
+                    name: string;
+                    amount: number;
+                    unit: string;
+                    source?: string | null | undefined;
+                    note?: string | null | undefined;
+                }[];
+            };
+            output: {
+                id: number;
+                name: string;
+                isActive: boolean;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string;
+                creatorId: string;
+                archivedAt: Date | null;
+                emailedAt: Date | null;
+                items: {
+                    id: number;
+                    name: string;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    source: string | null;
+                    unit: string;
+                    ingredientId: number | null;
+                    note: string | null;
+                    amount: string;
+                    shoppingListId: number;
+                    isChecked: boolean;
+                }[];
+            } | undefined;
+            meta: object;
+        }>;
+        setItemChecked: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                itemId: number;
+                checked: boolean;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        updateItemAmount: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                itemId: number;
+                amount: number;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        deleteItem: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                itemId: number;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        deleteList: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                listId: number;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        createNew: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                id: number;
+                name: string;
+                isActive: boolean;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string;
+                creatorId: string;
+                archivedAt: Date | null;
+                emailedAt: Date | null;
+                items: {
+                    id: number;
+                    name: string;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    source: string | null;
+                    unit: string;
+                    ingredientId: number | null;
+                    note: string | null;
+                    amount: string;
+                    shoppingListId: number;
+                    isChecked: boolean;
+                }[];
+            } | undefined;
+            meta: object;
+        }>;
+        duplicate: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                listId: number;
+            };
+            output: {
+                id: number;
+                name: string;
+                isActive: boolean;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string;
+                creatorId: string;
+                archivedAt: Date | null;
+                emailedAt: Date | null;
+                items: {
+                    id: number;
+                    name: string;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    source: string | null;
+                    unit: string;
+                    ingredientId: number | null;
+                    note: string | null;
+                    amount: string;
+                    shoppingListId: number;
+                    isChecked: boolean;
+                }[];
+            } | undefined;
+            meta: object;
+        }>;
+        email: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                listId: number;
+            };
+            output: {
+                success: boolean;
+            };
             meta: object;
         }>;
     }>>;
@@ -24560,10 +25166,10 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     updatedAt: Date | null;
                     description: string;
                     userId: string;
+                    creatorId: string;
                     finishedAt: Date | null;
                     startAt: Date | null;
                     numberOfMeals: number | null;
-                    creatorId: string;
                     favouriteAt: Date | null;
                     deletedAt: Date | null;
                     hiddenAt: Date | null;
@@ -24888,10 +25494,10 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     updatedAt: Date | null;
                     description: string;
                     userId: string;
+                    creatorId: string;
                     finishedAt: Date | null;
                     startAt: Date | null;
                     numberOfMeals: number | null;
-                    creatorId: string;
                     favouriteAt: Date | null;
                     deletedAt: Date | null;
                     hiddenAt: Date | null;
@@ -25008,10 +25614,10 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     updatedAt: Date | null;
                     description: string;
                     userId: string;
+                    creatorId: string;
                     finishedAt: Date | null;
                     startAt: Date | null;
                     numberOfMeals: number | null;
-                    creatorId: string;
                     favouriteAt: Date | null;
                     deletedAt: Date | null;
                     hiddenAt: Date | null;
@@ -25432,10 +26038,10 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     updatedAt: Date | null;
                     description: string;
                     userId: string;
+                    creatorId: string;
                     finishedAt: Date | null;
                     startAt: Date | null;
                     numberOfMeals: number | null;
-                    creatorId: string;
                     favouriteAt: Date | null;
                     deletedAt: Date | null;
                     hiddenAt: Date | null;
@@ -26699,8 +27305,8 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 createdAt: Date;
                 updatedAt: Date | null;
                 description: string | null;
-                numberOfMeals: number | null;
                 creatorId: string | null;
+                numberOfMeals: number | null;
                 favouriteAt: Date | null;
                 deletedAt: Date | null;
                 hiddenAt: Date | null;
@@ -26747,8 +27353,8 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 createdAt: Date;
                 updatedAt: Date | null;
                 description: string | null;
-                numberOfMeals: number | null;
                 creatorId: string | null;
+                numberOfMeals: number | null;
                 favouriteAt: Date | null;
                 deletedAt: Date | null;
                 hiddenAt: Date | null;
@@ -26797,8 +27403,8 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 createdAt: Date;
                 updatedAt: Date | null;
                 description: string | null;
-                numberOfMeals: number | null;
                 creatorId: string | null;
+                numberOfMeals: number | null;
                 favouriteAt: Date | null;
                 deletedAt: Date | null;
                 hiddenAt: Date | null;
@@ -26985,8 +27591,8 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 createdAt: Date;
                 updatedAt: Date | null;
                 description: string | null;
-                numberOfMeals: number | null;
                 creatorId: string | null;
+                numberOfMeals: number | null;
                 favouriteAt: Date | null;
                 deletedAt: Date | null;
                 hiddenAt: Date | null;
@@ -27175,8 +27781,8 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 createdAt: Date;
                 updatedAt: Date | null;
                 description: string | null;
-                numberOfMeals: number | null;
                 creatorId: string | null;
+                numberOfMeals: number | null;
                 favouriteAt: Date | null;
                 deletedAt: Date | null;
                 hiddenAt: Date | null;
@@ -27225,8 +27831,8 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 createdAt: Date;
                 updatedAt: Date | null;
                 description: string | null;
-                numberOfMeals: number | null;
                 creatorId: string | null;
+                numberOfMeals: number | null;
                 favouriteAt: Date | null;
                 deletedAt: Date | null;
                 hiddenAt: Date | null;
@@ -28133,10 +28739,10 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 updatedAt: Date | null;
                 description: string;
                 userId: string;
+                creatorId: string;
                 finishedAt: Date | null;
                 startAt: Date | null;
                 numberOfMeals: number | null;
-                creatorId: string;
                 favouriteAt: Date | null;
                 deletedAt: Date | null;
                 hiddenAt: Date | null;
@@ -28272,10 +28878,10 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 updatedAt: Date | null;
                 description: string;
                 userId: string;
+                creatorId: string;
                 finishedAt: Date | null;
                 startAt: Date | null;
                 numberOfMeals: number | null;
-                creatorId: string;
                 favouriteAt: Date | null;
                 deletedAt: Date | null;
                 hiddenAt: Date | null;
@@ -30599,6 +31205,226 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 userId: string;
                 subscription: string;
             } | undefined;
+            meta: object;
+        }>;
+    }>>;
+    shoppingList: _trpc_server.TRPCBuiltRouter<{
+        ctx: {
+            headers: Headers;
+            db: drizzle_orm_libsql.LibSQLDatabase<typeof ______db_schema> & {
+                $client: _libsql_client.Client;
+            };
+            session: next_auth.Session | null;
+        };
+        meta: object;
+        errorShape: {
+            data: {
+                zodError: zod.ZodFlattenedError<unknown, string> | null;
+                code: _trpc_server.TRPC_ERROR_CODE_KEY;
+                httpStatus: number;
+                path?: string;
+                stack?: string;
+            };
+            message: string;
+            code: _trpc_server.TRPC_ERROR_CODE_NUMBER;
+        };
+        transformer: true;
+    }, _trpc_server.TRPCDecorateCreateRouterOptions<{
+        getAllForUser: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                id: number;
+                name: string;
+                isActive: boolean;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string;
+                creatorId: string;
+                archivedAt: Date | null;
+                emailedAt: Date | null;
+                items: {
+                    id: number;
+                    name: string;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    source: string | null;
+                    unit: string;
+                    ingredientId: number | null;
+                    note: string | null;
+                    amount: string;
+                    shoppingListId: number;
+                    isChecked: boolean;
+                }[];
+            }[];
+            meta: object;
+        }>;
+        getActive: _trpc_server.TRPCQueryProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                id: number;
+                name: string;
+                isActive: boolean;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string;
+                creatorId: string;
+                archivedAt: Date | null;
+                emailedAt: Date | null;
+                items: {
+                    id: number;
+                    name: string;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    source: string | null;
+                    unit: string;
+                    ingredientId: number | null;
+                    note: string | null;
+                    amount: string;
+                    shoppingListId: number;
+                    isChecked: boolean;
+                }[];
+            } | undefined;
+            meta: object;
+        }>;
+        addRecipe: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+                items: {
+                    ingredientId: number;
+                    name: string;
+                    amount: number;
+                    unit: string;
+                    source?: string | null | undefined;
+                    note?: string | null | undefined;
+                }[];
+            };
+            output: {
+                id: number;
+                name: string;
+                isActive: boolean;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string;
+                creatorId: string;
+                archivedAt: Date | null;
+                emailedAt: Date | null;
+                items: {
+                    id: number;
+                    name: string;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    source: string | null;
+                    unit: string;
+                    ingredientId: number | null;
+                    note: string | null;
+                    amount: string;
+                    shoppingListId: number;
+                    isChecked: boolean;
+                }[];
+            } | undefined;
+            meta: object;
+        }>;
+        setItemChecked: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                itemId: number;
+                checked: boolean;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        updateItemAmount: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                itemId: number;
+                amount: number;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        deleteItem: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                itemId: number;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        deleteList: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                listId: number;
+            };
+            output: boolean;
+            meta: object;
+        }>;
+        createNew: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                id: number;
+                name: string;
+                isActive: boolean;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string;
+                creatorId: string;
+                archivedAt: Date | null;
+                emailedAt: Date | null;
+                items: {
+                    id: number;
+                    name: string;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    source: string | null;
+                    unit: string;
+                    ingredientId: number | null;
+                    note: string | null;
+                    amount: string;
+                    shoppingListId: number;
+                    isChecked: boolean;
+                }[];
+            } | undefined;
+            meta: object;
+        }>;
+        duplicate: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                listId: number;
+            };
+            output: {
+                id: number;
+                name: string;
+                isActive: boolean;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string;
+                creatorId: string;
+                archivedAt: Date | null;
+                emailedAt: Date | null;
+                items: {
+                    id: number;
+                    name: string;
+                    createdAt: Date;
+                    updatedAt: Date | null;
+                    source: string | null;
+                    unit: string;
+                    ingredientId: number | null;
+                    note: string | null;
+                    amount: string;
+                    shoppingListId: number;
+                    isChecked: boolean;
+                }[];
+            } | undefined;
+            meta: object;
+        }>;
+        email: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                listId: number;
+            };
+            output: {
+                success: boolean;
+            };
             meta: object;
         }>;
     }>>;
