@@ -109,7 +109,22 @@ const CreateUserPlan = ({
 		},
 	})
 
-	const { mutate: finishPlan } = api.userPlan.finishPlan.useMutation()
+	const { mutate: updatePlan } = api.userPlan.update.useMutation({
+		onSuccess: () => {
+			toast.success('Updated')
+			ctx.user.get.invalidate()
+			if (userPlan) {
+				ctx.userPlan.get.invalidate(userPlan.id)
+			}
+			setTimeout(() => {
+				router.push(`/admin/user-program?user=${user}`)
+			}, 100)
+		},
+		onError: (e) => {
+			toast.error(JSON.stringify(e))
+			console.log(e)
+		},
+	})
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -444,9 +459,7 @@ const CreateUserPlan = ({
 	}, [plan])
 
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
-		if (userPlan) finishPlan(userPlan.id)
-		console.log('data', data)
-		createPlan({
+		const payload = {
 			name: data.name,
 			createdAt: userPlan?.createdAt || new Date(),
 			description: data.description,
@@ -491,7 +504,17 @@ const CreateUserPlan = ({
 				})),
 			})),
 			userId: userId,
-		})
+		}
+
+		if (userPlan) {
+			updatePlan({
+				id: userPlan.id,
+				...payload,
+			})
+			return
+		}
+
+		createPlan(payload)
 	}
 
 	if (userId === '') return <div>Select a user</div>

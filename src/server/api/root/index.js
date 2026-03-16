@@ -11543,6 +11543,81 @@ var userRouter = createTRPCRouter({
 // src/server/api/routers/user-plan.ts
 import { eq as eq26, and as and13 } from "drizzle-orm";
 import { z as z34 } from "zod";
+var userPlanIngredientInputSchema = z34.object({
+  ingredientId: z34.number(),
+  ingredientIndex: z34.number(),
+  recipeIndex: z34.number(),
+  mealIndex: z34.number(),
+  alternateId: z34.number().nullable(),
+  name: z34.string(),
+  serve: z34.string(),
+  serveUnit: z34.string(),
+  note: z34.string()
+});
+var userPlanRecipeInputSchema = z34.object({
+  recipeIndex: z34.number(),
+  mealIndex: z34.number(),
+  name: z34.string(),
+  note: z34.string(),
+  description: z34.string(),
+  index: z34.number(),
+  ingredients: z34.array(userPlanIngredientInputSchema)
+});
+var userPlanMealInputSchema = z34.object({
+  mealIndex: z34.number(),
+  mealTitle: z34.string(),
+  calories: z34.string(),
+  protein: z34.string().optional(),
+  targetProtein: z34.string(),
+  targetCalories: z34.string(),
+  vegeCalories: z34.string(),
+  veges: z34.string(),
+  vegeNotes: z34.string(),
+  note: z34.string(),
+  recipes: z34.array(userPlanRecipeInputSchema)
+});
+var userPlanMutationInputSchema = z34.object({
+  name: z34.string().min(1),
+  createdAt: z34.date(),
+  description: z34.string(),
+  image: z34.string(),
+  notes: z34.string(),
+  userId: z34.string(),
+  meals: z34.array(userPlanMealInputSchema)
+});
+var getUserPlanRecipesAndIngredients = (meals) => {
+  const recipes = meals.flatMap((meal2) => meal2.recipes);
+  const ingredients = recipes.flatMap((recipe2) => recipe2.ingredients);
+  return { recipes, ingredients };
+};
+var normalizeAlternateId = (alternateId) => {
+  if (alternateId === 0 || alternateId === null) {
+    return null;
+  }
+  return Number(alternateId);
+};
+var createUserPlanNotification = async ({
+  ctx,
+  userId
+}) => {
+  const notif = await ctx.db.query.notification.findMany({
+    where: and13(
+      eq26(notification.userId, userId),
+      eq26(notification.code, "user-plan_update"),
+      eq26(notification.isViewed, false)
+    )
+  });
+  if (notif.length === 0) {
+    await ctx.db.insert(notification).values({
+      userId,
+      code: "user-plan_update",
+      title: "Your user meal plan has been updated",
+      description: "You have a new user meal plan update",
+      isViewed: false,
+      isRead: false
+    });
+  }
+};
 var userPlanRouter = createTRPCRouter({
   delete: protectedProcedure.input(z34.number()).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.delete(userPlan).where(eq26(userPlan.id, input));
@@ -11622,60 +11697,14 @@ var userPlanRouter = createTRPCRouter({
     });
     return res;
   }),
-  create: protectedProcedure.input(
-    z34.object({
-      name: z34.string().min(1),
-      createdAt: z34.date(),
-      description: z34.string(),
-      image: z34.string(),
-      notes: z34.string(),
-      userId: z34.string(),
-      meals: z34.array(
-        z34.object({
-          mealIndex: z34.number(),
-          mealTitle: z34.string(),
-          calories: z34.string(),
-          protein: z34.string().optional(),
-          targetProtein: z34.string(),
-          targetCalories: z34.string(),
-          vegeCalories: z34.string(),
-          veges: z34.string(),
-          vegeNotes: z34.string(),
-          note: z34.string(),
-          recipes: z34.array(
-            z34.object({
-              recipeIndex: z34.number(),
-              mealIndex: z34.number(),
-              name: z34.string(),
-              note: z34.string(),
-              description: z34.string(),
-              index: z34.number(),
-              ingredients: z34.array(
-                z34.object({
-                  ingredientId: z34.number(),
-                  ingredientIndex: z34.number(),
-                  recipeIndex: z34.number(),
-                  mealIndex: z34.number(),
-                  alternateId: z34.number().nullable(),
-                  name: z34.string(),
-                  serve: z34.string(),
-                  serveUnit: z34.string(),
-                  note: z34.string()
-                })
-              )
-            })
-          )
-        })
-      )
-    })
-  ).mutation(async ({ input, ctx }) => {
+  create: protectedProcedure.input(userPlanMutationInputSchema).mutation(async ({ input, ctx }) => {
     const creatorId = ctx.session.user.id;
     const { meals, ...data } = input;
-    const recipes = meals.flatMap((meal2) => meal2.recipes);
-    const ingredients = recipes.flatMap((recipe2) => recipe2.ingredients);
+    const { recipes, ingredients } = getUserPlanRecipesAndIngredients(meals);
     const res = await ctx.db.insert(userPlan).values({
       ...data,
       isActive: true,
+      numberOfMeals: meals.length,
       creatorId
     }).returning({ id: plan.id });
     const resId = res?.[0]?.id;
@@ -11696,7 +11725,7 @@ var userPlanRouter = createTRPCRouter({
       ctx.db.insert(userIngredient).values(
         ingredients.map((ingredient2) => ({
           ...ingredient2,
-          alternateId: ingredient2.alternateId === 0 || ingredient2.alternateId === null ? null : Number(ingredient2.alternateId),
+          alternateId: normalizeAlternateId(ingredient2.alternateId),
           userPlanId: resId
         }))
       ).returning({ id: userIngredient.id })
@@ -11708,25 +11737,60 @@ var userPlanRouter = createTRPCRouter({
       notes: JSON.stringify(input),
       objectId: resId
     });
-    const notif = await ctx.db.query.notification.findMany({
-      where: and13(
-        eq26(notification.userId, input.userId),
-        eq26(notification.code, "user-plan_update"),
-        eq26(notification.isViewed, false)
-      )
-    });
-    if (notif.length === 0) {
-      await ctx.db.insert(notification).values({
-        userId: input.userId,
-        code: "user-plan_update",
-        title: "Your user meal plan has been updated",
-        description: "You have a new user meal plan update",
-        isViewed: false,
-        isRead: false
-      });
-    }
+    await createUserPlanNotification({ ctx, userId: input.userId });
     console.log({ res, batchRes });
     return { res, batchRes };
+  }),
+  update: protectedProcedure.input(
+    userPlanMutationInputSchema.extend({
+      id: z34.number()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    const { id, meals, ...data } = input;
+    const { recipes, ingredients } = getUserPlanRecipesAndIngredients(meals);
+    await ctx.db.transaction(async (tx) => {
+      await tx.update(userPlan).set({
+        ...data,
+        numberOfMeals: meals.length
+      }).where(eq26(userPlan.id, id));
+      await tx.delete(userIngredient).where(eq26(userIngredient.userPlanId, id));
+      await tx.delete(userRecipe).where(eq26(userRecipe.userPlanId, id));
+      await tx.delete(userMeal).where(eq26(userMeal.userPlanId, id));
+      if (meals.length > 0) {
+        await tx.insert(userMeal).values(
+          meals.map((meal2) => ({
+            ...meal2,
+            userPlanId: id
+          }))
+        );
+      }
+      if (recipes.length > 0) {
+        await tx.insert(userRecipe).values(
+          recipes.map((recipe2) => ({
+            ...recipe2,
+            userPlanId: id
+          }))
+        );
+      }
+      if (ingredients.length > 0) {
+        await tx.insert(userIngredient).values(
+          ingredients.map((ingredient2) => ({
+            ...ingredient2,
+            alternateId: normalizeAlternateId(ingredient2.alternateId),
+            userPlanId: id
+          }))
+        );
+      }
+    });
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: "User Update Plan",
+      notes: JSON.stringify(input),
+      objectId: id
+    });
+    await createUserPlanNotification({ ctx, userId: input.userId });
+    return { id };
   })
 });
 

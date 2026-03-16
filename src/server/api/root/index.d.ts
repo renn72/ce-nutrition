@@ -20632,6 +20632,52 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             };
             meta: object;
         }>;
+        update: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                name: string;
+                createdAt: Date;
+                description: string;
+                image: string;
+                notes: string;
+                userId: string;
+                meals: {
+                    mealIndex: number;
+                    mealTitle: string;
+                    calories: string;
+                    targetProtein: string;
+                    targetCalories: string;
+                    vegeCalories: string;
+                    veges: string;
+                    vegeNotes: string;
+                    note: string;
+                    recipes: {
+                        recipeIndex: number;
+                        mealIndex: number;
+                        name: string;
+                        note: string;
+                        description: string;
+                        index: number;
+                        ingredients: {
+                            ingredientId: number;
+                            ingredientIndex: number;
+                            recipeIndex: number;
+                            mealIndex: number;
+                            alternateId: number | null;
+                            name: string;
+                            serve: string;
+                            serveUnit: string;
+                            note: string;
+                        }[];
+                    }[];
+                    protein?: string | undefined;
+                }[];
+                id: number;
+            };
+            output: {
+                id: number;
+            };
+            meta: object;
+        }>;
     }>>;
     weighIn: _trpc_server.TRPCBuiltRouter<{
         ctx: {
@@ -29244,6 +29290,52 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 }[], {
                     id: number;
                 }[]];
+            };
+            meta: object;
+        }>;
+        update: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                name: string;
+                createdAt: Date;
+                description: string;
+                image: string;
+                notes: string;
+                userId: string;
+                meals: {
+                    mealIndex: number;
+                    mealTitle: string;
+                    calories: string;
+                    targetProtein: string;
+                    targetCalories: string;
+                    vegeCalories: string;
+                    veges: string;
+                    vegeNotes: string;
+                    note: string;
+                    recipes: {
+                        recipeIndex: number;
+                        mealIndex: number;
+                        name: string;
+                        note: string;
+                        description: string;
+                        index: number;
+                        ingredients: {
+                            ingredientId: number;
+                            ingredientIndex: number;
+                            recipeIndex: number;
+                            mealIndex: number;
+                            alternateId: number | null;
+                            name: string;
+                            serve: string;
+                            serveUnit: string;
+                            note: string;
+                        }[];
+                    }[];
+                    protein?: string | undefined;
+                }[];
+                id: number;
+            };
+            output: {
+                id: number;
             };
             meta: object;
         }>;
