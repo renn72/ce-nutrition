@@ -448,6 +448,7 @@ const CreateUserPlan = ({
 		console.log('data', data)
 		createPlan({
 			name: data.name,
+			createdAt: userPlan?.createdAt || new Date(),
 			description: data.description,
 			image: '',
 			notes: data.notes,

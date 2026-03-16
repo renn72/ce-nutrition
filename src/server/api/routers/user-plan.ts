@@ -115,6 +115,7 @@ export const userPlanRouter = createTRPCRouter({
 		.input(
 			z.object({
 				name: z.string().min(1),
+				createdAt: z.date(),
 				description: z.string(),
 				image: z.string(),
 				notes: z.string(),

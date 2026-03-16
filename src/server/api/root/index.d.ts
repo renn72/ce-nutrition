@@ -20579,6 +20579,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
         create: _trpc_server.TRPCMutationProcedure<{
             input: {
                 name: string;
+                createdAt: Date;
                 description: string;
                 image: string;
                 notes: string;
@@ -29193,6 +29194,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         create: _trpc_server.TRPCMutationProcedure<{
             input: {
                 name: string;
+                createdAt: Date;
                 description: string;
                 image: string;
                 notes: string;

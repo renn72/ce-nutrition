@@ -11625,6 +11625,7 @@ var userPlanRouter = createTRPCRouter({
   create: protectedProcedure.input(
     z34.object({
       name: z34.string().min(1),
+      createdAt: z34.date(),
       description: z34.string(),
       image: z34.string(),
       notes: z34.string(),
