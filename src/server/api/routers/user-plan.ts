@@ -10,8 +10,9 @@ import {
 	createTRPCContext,
 	createTRPCRouter,
 	protectedProcedure,
+	rootProtectedProcedure,
 } from '~/server/api/trpc'
-import { eq, and } from 'drizzle-orm'
+import { eq, and, inArray, isNotNull } from 'drizzle-orm'
 import { z } from 'zod'
 
 import { createLog } from '@/server/api/routers/admin-log'
@@ -333,4 +334,51 @@ export const userPlanRouter = createTRPCRouter({
 
 			return { id }
 		}),
+	deleteShortFinishedPlans: rootProtectedProcedure.mutation(async ({ ctx }) => {
+		const twelveHoursMs = 12 * 60 * 60 * 1000
+
+		const finishedPlans = await ctx.db
+			.select({
+				id: userPlan.id,
+				createdAt: userPlan.createdAt,
+				finishedAt: userPlan.finishedAt,
+			})
+			.from(userPlan)
+			.where(isNotNull(userPlan.finishedAt))
+
+		const planIdsToDelete = finishedPlans
+			.filter((plan) => {
+				if (!plan.createdAt || !plan.finishedAt) return false
+
+				const durationMs = plan.finishedAt.getTime() - plan.createdAt.getTime()
+
+				return durationMs >= 0 && durationMs < twelveHoursMs
+			})
+			.map((plan) => plan.id)
+
+		if (planIdsToDelete.length === 0) {
+			return {
+				deletedCount: 0,
+				deletedPlanIds: [],
+			}
+		}
+
+		await ctx.db.delete(userPlan).where(inArray(userPlan.id, planIdsToDelete))
+
+		createLog({
+			user: ctx.session?.user.name ?? '',
+			userId: ctx.session?.user.id ?? '',
+			task: 'Delete Short Finished User Plans',
+			notes: JSON.stringify({
+				deletedPlanIds: planIdsToDelete,
+				hoursThreshold: 12,
+			}),
+			objectId: null,
+		})
+
+		return {
+			deletedCount: planIdsToDelete.length,
+			deletedPlanIds: planIdsToDelete,
+		}
+	}),
 })

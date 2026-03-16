@@ -11541,7 +11541,7 @@ var userRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/user-plan.ts
-import { eq as eq26, and as and13 } from "drizzle-orm";
+import { eq as eq26, and as and13, inArray as inArray2, isNotNull } from "drizzle-orm";
 import { z as z34 } from "zod";
 var userPlanIngredientInputSchema = z34.object({
   ingredientId: z34.number(),
@@ -11791,6 +11791,40 @@ var userPlanRouter = createTRPCRouter({
     });
     await createUserPlanNotification({ ctx, userId: input.userId });
     return { id };
+  }),
+  deleteShortFinishedPlans: rootProtectedProcedure.mutation(async ({ ctx }) => {
+    const twelveHoursMs = 12 * 60 * 60 * 1e3;
+    const finishedPlans = await ctx.db.select({
+      id: userPlan.id,
+      createdAt: userPlan.createdAt,
+      finishedAt: userPlan.finishedAt
+    }).from(userPlan).where(isNotNull(userPlan.finishedAt));
+    const planIdsToDelete = finishedPlans.filter((plan2) => {
+      if (!plan2.createdAt || !plan2.finishedAt) return false;
+      const durationMs = plan2.finishedAt.getTime() - plan2.createdAt.getTime();
+      return durationMs >= 0 && durationMs < twelveHoursMs;
+    }).map((plan2) => plan2.id);
+    if (planIdsToDelete.length === 0) {
+      return {
+        deletedCount: 0,
+        deletedPlanIds: []
+      };
+    }
+    await ctx.db.delete(userPlan).where(inArray2(userPlan.id, planIdsToDelete));
+    createLog({
+      user: ctx.session?.user.name ?? "",
+      userId: ctx.session?.user.id ?? "",
+      task: "Delete Short Finished User Plans",
+      notes: JSON.stringify({
+        deletedPlanIds: planIdsToDelete,
+        hoursThreshold: 12
+      }),
+      objectId: null
+    });
+    return {
+      deletedCount: planIdsToDelete.length,
+      deletedPlanIds: planIdsToDelete
+    };
   })
 });
 

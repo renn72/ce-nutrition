@@ -20678,6 +20678,14 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             };
             meta: object;
         }>;
+        deleteShortFinishedPlans: _trpc_server.TRPCMutationProcedure<{
+            input: void;
+            output: {
+                deletedCount: number;
+                deletedPlanIds: number[];
+            };
+            meta: object;
+        }>;
     }>>;
     weighIn: _trpc_server.TRPCBuiltRouter<{
         ctx: {
@@ -29336,6 +29344,14 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             };
             output: {
                 id: number;
+            };
+            meta: object;
+        }>;
+        deleteShortFinishedPlans: _trpc_server.TRPCMutationProcedure<{
+            input: void;
+            output: {
+                deletedCount: number;
+                deletedPlanIds: number[];
             };
             meta: object;
         }>;

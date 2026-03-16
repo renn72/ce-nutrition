@@ -1,40 +1,35 @@
 'use client'
 
 import { api } from '@/trpc/react'
-
-import { useState } from 'react'
-
-import { useSearchParams } from 'next/navigation'
-
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 
-const UserInfo = ({ userId }: { userId: string }) => {
+const UserSuperPage = () => {
 	const ctx = api.useUtils()
 
-	const { data: user } = api.user.get.useQuery(userId || '')
-
-	if (!user) return null
+	const { mutate: deleteShortFinishedPlans, isPending } =
+		api.userPlan.deleteShortFinishedPlans.useMutation({
+			onSuccess: ({ deletedCount }) => {
+				toast.success(`Deleted ${deletedCount} finished user plans`)
+				ctx.invalidate()
+			},
+			onError: (error) => {
+				toast.error(error.message)
+			},
+		})
 
 	return (
 		<div className='flex flex-col gap-4 items-center mt-10'>
-			<div className='flex gap-4 items-center'></div>
+			<Button
+				type='button'
+				onClick={() => deleteShortFinishedPlans()}
+				disabled={isPending}
+			>
+				{isPending ? 'Deleting short finished plans...' : 'Delete short finished plans'}
+			</Button>
 		</div>
 	)
 }
 
-export default function Home() {
-	const searchParams = useSearchParams()
-	const userId = searchParams.get('user')
-
-	if (
-		userId === '' ||
-		userId === undefined ||
-		userId === null ||
-		userId === 'null'
-	)
-		return <div>Select a user</div>
-
-	return <UserInfo userId={userId} />
-}
+export default UserSuperPage
