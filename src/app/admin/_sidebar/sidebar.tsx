@@ -82,10 +82,6 @@ const data = {
 					title: 'Settings',
 					url: '/admin/user-settings',
 				},
-				{
-					title: 'User Super',
-					url: '/admin/user-super',
-				},
 			],
 		},
 		{
@@ -144,12 +140,12 @@ const data = {
 			],
 		},
 		{
-			title: '',
+			title: 'Dictator',
 			url: '#',
 			items: [
 				{
-					title: 'Super',
-					url: '/admin/super',
+					title: 'User Super',
+					url: '/admin/user-super',
 				},
 				{
 					title: 'All Skinfolds',
