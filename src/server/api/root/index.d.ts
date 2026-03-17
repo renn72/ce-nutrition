@@ -20579,7 +20579,6 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
         create: _trpc_server.TRPCMutationProcedure<{
             input: {
                 name: string;
-                createdAt: Date;
                 description: string;
                 image: string;
                 notes: string;
@@ -20615,6 +20614,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     }[];
                     protein?: string | undefined;
                 }[];
+                createdAt?: Date | undefined;
             };
             output: {
                 id: number;
@@ -20635,7 +20635,6 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
         update: _trpc_server.TRPCMutationProcedure<{
             input: {
                 name: string;
-                createdAt: Date;
                 description: string;
                 image: string;
                 notes: string;
@@ -20672,6 +20671,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                     protein?: string | undefined;
                 }[];
                 id: number;
+                createdAt?: Date | undefined;
             };
             output: {
                 id: number;
@@ -29248,7 +29248,6 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         create: _trpc_server.TRPCMutationProcedure<{
             input: {
                 name: string;
-                createdAt: Date;
                 description: string;
                 image: string;
                 notes: string;
@@ -29284,6 +29283,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     }[];
                     protein?: string | undefined;
                 }[];
+                createdAt?: Date | undefined;
             };
             output: {
                 id: number;
@@ -29304,7 +29304,6 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         update: _trpc_server.TRPCMutationProcedure<{
             input: {
                 name: string;
-                createdAt: Date;
                 description: string;
                 image: string;
                 notes: string;
@@ -29341,6 +29340,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                     protein?: string | undefined;
                 }[];
                 id: number;
+                createdAt?: Date | undefined;
             };
             output: {
                 id: number;

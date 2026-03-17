@@ -57,7 +57,7 @@ const userPlanMealInputSchema = z.object({
 
 const userPlanMutationInputSchema = z.object({
 	name: z.string().min(1),
-	createdAt: z.date(),
+	createdAt: z.date().optional(),
 	description: z.string(),
 	image: z.string(),
 	notes: z.string(),

@@ -11578,7 +11578,7 @@ var userPlanMealInputSchema = z34.object({
 });
 var userPlanMutationInputSchema = z34.object({
   name: z34.string().min(1),
-  createdAt: z34.date(),
+  createdAt: z34.date().optional(),
   description: z34.string(),
   image: z34.string(),
   notes: z34.string(),
