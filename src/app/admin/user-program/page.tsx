@@ -350,7 +350,7 @@ const ProgramCard = ({
 	)
 
 	return (
-		<Collapsible defaultOpen={isActive}>
+		<Collapsible defaultOpen={false}>
 			<Card
 				className={cn(
 					'overflow-hidden rounded-[32px] border py-0 shadow-sm',
