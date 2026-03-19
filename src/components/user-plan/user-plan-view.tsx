@@ -218,7 +218,7 @@ const UserPlanRecipe = ({
         <div className='flex items-start justify-between gap-3'>
           <div className='min-w-0 flex-1 overflow-hidden'>
             <div
-              className='truncate pr-1 text-[13px] font-semibold leading-5 text-foreground'
+              className='max-w-[10.5rem] truncate pr-1 text-[13px] font-semibold leading-5 text-foreground'
               title={recipe.name}
             >
               {recipe.name}
