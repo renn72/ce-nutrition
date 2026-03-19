@@ -81,6 +81,36 @@ const planAccentPalette = [
     options:
       'border-amber-500/15 bg-amber-500/[0.095] text-amber-700 dark:text-amber-300',
   },
+  {
+    header: 'bg-cyan-500/[0.04]',
+    stat: 'border-cyan-500/15 bg-cyan-500/[0.085]',
+    statText: 'text-cyan-700/80 dark:text-cyan-300/80',
+    section: 'border-cyan-500/12 bg-cyan-500/[0.04]',
+    dot: 'bg-cyan-500/75',
+    average: 'border-cyan-500/15 bg-cyan-500/[0.095] text-foreground',
+    options:
+      'border-cyan-500/15 bg-cyan-500/[0.095] text-cyan-700 dark:text-cyan-300',
+  },
+  {
+    header: 'bg-fuchsia-500/[0.04]',
+    stat: 'border-fuchsia-500/15 bg-fuchsia-500/[0.085]',
+    statText: 'text-fuchsia-700/80 dark:text-fuchsia-300/80',
+    section: 'border-fuchsia-500/12 bg-fuchsia-500/[0.04]',
+    dot: 'bg-fuchsia-500/75',
+    average: 'border-fuchsia-500/15 bg-fuchsia-500/[0.095] text-foreground',
+    options:
+      'border-fuchsia-500/15 bg-fuchsia-500/[0.095] text-fuchsia-700 dark:text-fuchsia-300',
+  },
+  {
+    header: 'bg-lime-500/[0.04]',
+    stat: 'border-lime-500/15 bg-lime-500/[0.085]',
+    statText: 'text-lime-700/80 dark:text-lime-300/80',
+    section: 'border-lime-500/12 bg-lime-500/[0.04]',
+    dot: 'bg-lime-500/75',
+    average: 'border-lime-500/15 bg-lime-500/[0.095] text-foreground',
+    options:
+      'border-lime-500/15 bg-lime-500/[0.095] text-lime-700 dark:text-lime-300',
+  },
 ] as const
 
 const recipeAccentStyles = {
