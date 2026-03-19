@@ -50,20 +50,27 @@ const ShoppingListDialog = ({
           </span>
         </Button>
       </DialogTrigger>
-      <DialogContent className='top-0 left-0 flex h-[100svh] max-h-[100svh] min-h-0 w-screen max-w-none translate-x-0 translate-y-0 flex-col overflow-hidden rounded-none border-0 p-0 sm:rounded-none'>
+      <DialogContent className='top-0 left-0 flex h-[100svh] max-h-[100svh] min-h-0 w-screen max-w-none translate-x-0 translate-y-0 flex-col overflow-hidden rounded-none border-0 bg-background p-0 sm:rounded-none'>
         <DialogHeader className='sr-only'>
           <DialogTitle>Shopping list</DialogTitle>
           <DialogDescription>
             Review, tick off, and email your shopping list.
           </DialogDescription>
         </DialogHeader>
-        <ShoppingListView
-          userId={userId}
-          userName={userName}
-          showPageLink={true}
-          isFullHeight={true}
-          useInternalScroll={true}
-        />
+        <div className='flex min-h-0 flex-1 flex-col bg-muted/[0.18]'>
+          <div className='flex justify-center px-3 pt-2'>
+            <div className='h-1.5 w-12 rounded-full bg-sky-500/18' />
+          </div>
+          <div className='min-h-0 flex-1 px-0 pb-0 pt-2'>
+            <ShoppingListView
+              userId={userId}
+              userName={userName}
+              showPageLink={true}
+              isFullHeight={true}
+              useInternalScroll={true}
+            />
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   )
