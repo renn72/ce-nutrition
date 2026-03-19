@@ -32,9 +32,9 @@ const formatCompactNumber = (value: number | string) => Number(value).toFixed(0)
 
 const mealAccentStyles = {
   section:
-    'border-border/60 bg-[linear-gradient(180deg,hsl(var(--primary)/0.035),transparent_58%)]',
-  dot: 'bg-primary/45',
-  average: 'border-border/60 bg-primary/[0.045] text-foreground',
+    'border-primary/12 bg-[linear-gradient(180deg,hsl(var(--primary)/0.06),transparent_82%)]',
+  dot: 'bg-primary/60',
+  average: 'border-primary/12 bg-primary/[0.075] text-foreground',
 } as const
 
 const SummaryChip = ({
@@ -52,7 +52,8 @@ const SummaryChip = ({
         'inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-semibold leading-none',
         tone === 'muted' &&
           'border-border/60 bg-muted/70 text-muted-foreground',
-        tone === 'primary' && 'border-primary/20 bg-primary/10 text-primary',
+        tone === 'primary' &&
+          'border-primary/15 bg-primary/[0.08] text-primary',
         tone === 'success' &&
           'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
       )}
@@ -214,7 +215,7 @@ const UserPlanRecipe = ({
       presented={isOpen}
       onPresentedChange={setIsOpen}
     >
-      <Sheet.Trigger className='w-full overflow-hidden rounded-[20px] border border-border/70 bg-gradient-to-r from-background via-background to-primary/[0.025] px-3 py-2 text-left shadow-[0_16px_30px_-28px_hsl(var(--foreground)/0.75)] transition-transform active:scale-[0.99]'>
+      <Sheet.Trigger className='w-full overflow-hidden rounded-[20px] border border-primary/10 bg-[linear-gradient(135deg,hsl(var(--primary)/0.055),transparent_82%)] px-3 py-2 text-left shadow-[0_16px_30px_-28px_hsl(var(--foreground)/0.75)] transition-transform active:scale-[0.99]'>
         <div className='flex items-start justify-between gap-3'>
           <div className='min-w-0 flex-1 overflow-hidden'>
             <div
@@ -228,7 +229,7 @@ const UserPlanRecipe = ({
               {ingredientCount === 1 ? 'ingredient' : 'ingredients'}
             </div>
           </div>
-          <div className='shrink-0 rounded-2xl border border-primary/10 bg-primary/[0.06] px-2 py-1 text-[10px] font-semibold text-primary'>
+          <div className='shrink-0 rounded-2xl border border-primary/15 bg-primary/[0.09] px-2 py-1 text-[10px] font-semibold text-primary'>
             {formatCompactNumber(cals)} cal
           </div>
         </div>
@@ -391,7 +392,7 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
 
   return (
     <Card className='gap-0 overflow-hidden rounded-[28px] border-border/70 py-0 shadow-[0_20px_48px_-32px_hsl(var(--foreground)/0.45)]'>
-      <CardHeader className='gap-3 border-b border-border/60 bg-[linear-gradient(180deg,hsl(var(--primary)/0.08),transparent)] px-3 pb-3 pt-4'>
+      <CardHeader className='gap-3 border-b border-border/60 bg-[linear-gradient(180deg,hsl(var(--primary)/0.09),transparent_86%)] px-3 pb-3 pt-4'>
         <div className='flex items-start justify-between gap-3'>
           <div className='min-w-0'>
             <div className='text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground'>
@@ -407,13 +408,13 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
           </div>
         </div>
         <div className='grid grid-cols-2 gap-2'>
-          <div className='rounded-2xl border border-border/60 bg-background/85 px-2.5 py-2'>
+          <div className='rounded-2xl border border-primary/10 bg-primary/[0.05] px-2.5 py-2'>
             <div className='text-[10px] uppercase tracking-[0.14em] text-muted-foreground'>
               Meals
             </div>
             <div className='mt-1 text-sm font-semibold'>{mealCount}</div>
           </div>
-          <div className='rounded-2xl border border-primary/10 bg-primary/[0.04] px-2.5 py-2'>
+          <div className='rounded-2xl border border-primary/12 bg-primary/[0.07] px-2.5 py-2'>
             <div className='text-[10px] uppercase tracking-[0.14em] text-muted-foreground'>
               Recipes
             </div>
@@ -478,7 +479,7 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
                 <SummaryChip
                   label='Options'
                   value={mealRecipes.length.toString()}
-                  tone='muted'
+                  tone='primary'
                 />
               </div>
 
