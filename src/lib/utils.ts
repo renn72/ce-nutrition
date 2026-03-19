@@ -48,6 +48,21 @@ export function formatDate(
 	}).format(new Date(date))
 }
 
+export function formatMetricTiming(timing?: string | null) {
+	if (!timing) return undefined
+
+	const match = timing.match(/^(\d{1,2}):(\d{2})$/)
+	if (!match) return timing
+
+	const hour24 = Number(match[1])
+	const minute = match[2]
+	if (Number.isNaN(hour24) || hour24 < 0 || hour24 > 23) return timing
+
+	const period = hour24 >= 12 ? 'PM' : 'AM'
+	const hour12 = hour24 % 12 || 12
+	return `${hour12}:${minute} ${period}`
+}
+
 export function calculateMealMacros(ingredients: any[] | undefined) {
 	if (!ingredients)
 		return { cals: 0, protein: 0, carbs: 0, fat: 0, calsWFibre: 0 }

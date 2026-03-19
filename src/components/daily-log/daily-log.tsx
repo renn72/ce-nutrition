@@ -2,7 +2,7 @@
 
 import { api } from '@/trpc/react'
 
-import { cn } from '@/lib/utils'
+import { cn, formatMetricTiming } from '@/lib/utils'
 import type { GetDailyLogById, GetUserById } from '@/types'
 import { CircleX, CircleParking } from 'lucide-react'
 import { Link } from 'next-view-transitions'
@@ -17,6 +17,7 @@ const Text = ({
 	isWidthFull = false,
 	isNumber = false,
 	fixed = 1,
+	subtitle,
 }: {
 	suffix?: string
 	title: string
@@ -24,6 +25,7 @@ const Text = ({
 	isWidthFull?: boolean
 	isNumber?: boolean
 	fixed?: number
+	subtitle?: string
 }) => {
 	const text = isNumber
 		? textRaw && textRaw !== ''
@@ -41,13 +43,18 @@ const Text = ({
 			<div className='text-muted-foreground'>{title}</div>
 			<div
 				className={cn(
-					'text-sm font-semibold ',
+					'flex flex-col text-sm font-semibold ',
 					text ? 'text-secondary-foreground' : 'text-muted-foreground/70',
 					'max-w-[calc(100vw-50px)]',
 					isWidthFull ? 'text-wrap' : 'truncate',
 				)}
 			>
-				{text ? text + suffix : '...'}
+				<span>{text ? text + suffix : '...'}</span>
+				{subtitle ? (
+					<span className='font-medium leading-none text-[10px] text-muted-foreground'>
+						{subtitle}
+					</span>
+				) : null}
 			</div>
 		</div>
 	)
@@ -112,6 +119,7 @@ const Logs = ({
 					suffix='kg'
 					isNumber={true}
 					fixed={2}
+					subtitle={formatMetricTiming(todaysDailyLog?.morningWeightTiming)}
 				/>
 				{isSleep && (
 					<Text
@@ -152,6 +160,9 @@ const Logs = ({
 						suffix=''
 						isNumber={true}
 						fixed={1}
+						subtitle={formatMetricTiming(
+							todaysDailyLog?.fastedBloodGlucoseTiming,
+						)}
 					/>
 				)}
 				{(isAdmin || isLogPage) && (

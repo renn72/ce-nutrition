@@ -834,6 +834,7 @@ var dailyLog = createTable4(
     }),
     date: text4("date").notNull(),
     morningWeight: text4("morning_weight"),
+    morningWeightTiming: text4("morning_weight_time"),
     notes: text4("notes"),
     fastedBloodGlucose: text4("fasted_blood_glucose"),
     fastedBloodGlucoseTiming: text4("fasted_blood_glucose_time"),
@@ -2385,6 +2386,7 @@ var post = {
     z3.object({
       date: z3.string(),
       morningWeight: z3.string().optional(),
+      morningWeightTiming: z3.string().optional(),
       fastedBloodGlucose: z3.string().optional(),
       notes: z3.string().optional(),
       sleep: z3.string().optional(),
@@ -2792,6 +2794,7 @@ var updateDl = {
       id: z4.number(),
       date: z4.string(),
       morningWeight: z4.string().optional(),
+      morningWeightTiming: z4.string().optional(),
       notes: z4.string().optional(),
       sleep: z4.string().optional(),
       sleepQuality: z4.string().optional(),
@@ -2810,6 +2813,7 @@ var updateDl = {
       id,
       date,
       morningWeight,
+      morningWeightTiming,
       notes,
       sleep,
       sleepQuality,
@@ -2826,6 +2830,7 @@ var updateDl = {
     const res = await ctx.db.update(dailyLog).set({
       date,
       morningWeight,
+      morningWeightTiming,
       notes,
       sleep,
       sleepQuality,
@@ -3595,6 +3600,41 @@ var updateDl = {
       return res2;
     }
     const res = await ctx.db.update(dailyLog).set({ morningWeight: input.morningWeight }).where(
+      and2(
+        eq2(dailyLog.date, input.date),
+        eq2(dailyLog.userId, ctx.session.user.id)
+      )
+    );
+    return res;
+  }),
+  updateWeightTiming: protectedProcedure.input(
+    z4.object({
+      date: z4.string(),
+      morningWeightTiming: z4.string()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    const log2 = await ctx.db.query.dailyLog.findFirst({
+      where: and2(
+        eq2(dailyLog.date, input.date),
+        eq2(dailyLog.userId, ctx.session.user.id)
+      )
+    });
+    createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      task: `Update Weight Timing`,
+      notes: JSON.stringify(input),
+      objectId: null
+    });
+    if (!log2) {
+      const res2 = await ctx.db.insert(dailyLog).values({
+        date: input.date,
+        morningWeightTiming: input.morningWeightTiming,
+        userId: ctx.session.user.id
+      });
+      return res2;
+    }
+    const res = await ctx.db.update(dailyLog).set({ morningWeightTiming: input.morningWeightTiming }).where(
       and2(
         eq2(dailyLog.date, input.date),
         eq2(dailyLog.userId, ctx.session.user.id)

@@ -12854,6 +12854,25 @@ declare const dailyLog: drizzle_orm_sqlite_core.SQLiteTableWithColumns<{
         }, {}, {
             length: number | undefined;
         }>;
+        morningWeightTiming: drizzle_orm_sqlite_core.SQLiteColumn<{
+            name: "morning_weight_time";
+            tableName: "daily_log";
+            dataType: "string";
+            columnType: "SQLiteText";
+            data: string;
+            driverParam: string;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {
+            length: number | undefined;
+        }>;
         notes: drizzle_orm_sqlite_core.SQLiteColumn<{
             name: "notes";
             tableName: "daily_log";
@@ -14733,6 +14752,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 userId: string;
                 sleep: string | null;
                 morningWeight: string | null;
+                morningWeightTiming: string | null;
                 fastedBloodGlucose: string | null;
                 fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
@@ -14930,6 +14950,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 userId: string;
                 sleep: string | null;
                 morningWeight: string | null;
+                morningWeightTiming: string | null;
                 fastedBloodGlucose: string | null;
                 fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
@@ -15129,6 +15150,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 userId: string;
                 sleep: string | null;
                 morningWeight: string | null;
+                morningWeightTiming: string | null;
                 fastedBloodGlucose: string | null;
                 fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
@@ -15326,6 +15348,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 userId: string;
                 sleep: string | null;
                 morningWeight: string | null;
+                morningWeightTiming: string | null;
                 fastedBloodGlucose: string | null;
                 fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
@@ -15378,6 +15401,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 userId: string;
                 sleep: string | null;
                 morningWeight: string | null;
+                morningWeightTiming: string | null;
                 fastedBloodGlucose: string | null;
                 fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
@@ -15569,6 +15593,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 date: string;
                 userId: string;
                 morningWeight?: string | undefined;
+                morningWeightTiming?: string | undefined;
                 notes?: string | undefined;
                 sleep?: string | undefined;
                 sleepQuality?: string | undefined;
@@ -15768,6 +15793,14 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        updateWeightTiming: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                morningWeightTiming: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         updateBloodGlucose: _trpc_server.TRPCMutationProcedure<{
             input: {
                 date: string;
@@ -15831,6 +15864,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
                 date: string;
                 userId: string;
                 morningWeight?: string | undefined;
+                morningWeightTiming?: string | undefined;
                 fastedBloodGlucose?: string | undefined;
                 notes?: string | undefined;
                 sleep?: string | undefined;
@@ -23402,6 +23436,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 userId: string;
                 sleep: string | null;
                 morningWeight: string | null;
+                morningWeightTiming: string | null;
                 fastedBloodGlucose: string | null;
                 fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
@@ -23599,6 +23634,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 userId: string;
                 sleep: string | null;
                 morningWeight: string | null;
+                morningWeightTiming: string | null;
                 fastedBloodGlucose: string | null;
                 fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
@@ -23798,6 +23834,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 userId: string;
                 sleep: string | null;
                 morningWeight: string | null;
+                morningWeightTiming: string | null;
                 fastedBloodGlucose: string | null;
                 fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
@@ -23995,6 +24032,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 userId: string;
                 sleep: string | null;
                 morningWeight: string | null;
+                morningWeightTiming: string | null;
                 fastedBloodGlucose: string | null;
                 fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
@@ -24047,6 +24085,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 userId: string;
                 sleep: string | null;
                 morningWeight: string | null;
+                morningWeightTiming: string | null;
                 fastedBloodGlucose: string | null;
                 fastedBloodGlucoseTiming: string | null;
                 sleepQuality: string | null;
@@ -24238,6 +24277,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 date: string;
                 userId: string;
                 morningWeight?: string | undefined;
+                morningWeightTiming?: string | undefined;
                 notes?: string | undefined;
                 sleep?: string | undefined;
                 sleepQuality?: string | undefined;
@@ -24437,6 +24477,14 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        updateWeightTiming: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                date: string;
+                morningWeightTiming: string;
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         updateBloodGlucose: _trpc_server.TRPCMutationProcedure<{
             input: {
                 date: string;
@@ -24500,6 +24548,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
                 date: string;
                 userId: string;
                 morningWeight?: string | undefined;
+                morningWeightTiming?: string | undefined;
                 fastedBloodGlucose?: string | undefined;
                 notes?: string | undefined;
                 sleep?: string | undefined;

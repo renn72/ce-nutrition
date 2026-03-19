@@ -53,6 +53,7 @@ export const post = {
 			z.object({
 				date: z.string(),
 				morningWeight: z.string().optional(),
+				morningWeightTiming: z.string().optional(),
 				fastedBloodGlucose: z.string().optional(),
 				notes: z.string().optional(),
 				sleep: z.string().optional(),

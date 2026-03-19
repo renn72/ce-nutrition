@@ -1,11 +1,13 @@
 'use client'
 
 import { api } from '@/trpc/react'
+
 import { memo, useMemo } from 'react'
 
 import {
-	cn,
 	calculateMealMacros,
+	cn,
+	formatMetricTiming,
 	getRecipeDetailsFromDailyLog,
 } from '@/lib/utils'
 import type { GetDailyLogById, GetUserWRoles } from '@/types'
@@ -41,7 +43,6 @@ import {
 	PersonSimpleTaiChiIcon,
 	PersonSimpleIcon,
 } from '@phosphor-icons/react'
-
 import { Link } from 'next-view-transitions'
 
 import { Badge } from '@/components/ui/badge'
@@ -53,20 +54,6 @@ const formatNumber = (
 ) => {
 	if (val === undefined || val === null || val === '') return undefined
 	return Number(val).toFixed(fixed)
-}
-
-const formatBloodGlucoseTiming = (timing?: string | null) => {
-	if (!timing) return undefined
-	const match = timing.match(/^(\d{1,2}):(\d{2})$/)
-	if (!match) return timing
-
-	const hour24 = Number(match[1])
-	const minute = match[2]
-	if (Number.isNaN(hour24) || hour24 < 0 || hour24 > 23) return timing
-
-	const period = hour24 >= 12 ? 'PM' : 'AM'
-	const hour12 = hour24 % 12 || 12
-	return `${hour12}:${minute} ${period}`
 }
 
 const MetricItem = memo(
@@ -340,6 +327,7 @@ const Log = memo(
 							prevValue={formatNumber(yesterdaysDailyLog?.morningWeight, 2)}
 							suffix='kg'
 							icon={Scale}
+							subtitle={formatMetricTiming(todaysDailyLog?.morningWeightTiming)}
 						/>
 
 						{isSleep && (
@@ -392,7 +380,7 @@ const Log = memo(
 								suffix='mmol/L'
 								icon={Droplet}
 								accuracy={0}
-								subtitle={formatBloodGlucoseTiming(
+								subtitle={formatMetricTiming(
 									todaysDailyLog?.fastedBloodGlucoseTiming,
 								)}
 							/>

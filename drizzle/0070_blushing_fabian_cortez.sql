@@ -1,0 +1,1 @@
+ALTER TABLE `daily_log` ADD `morning_weight_time` text;

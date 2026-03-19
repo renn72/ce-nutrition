@@ -17,6 +17,7 @@ export const updateDl = {
 				id: z.number(),
 				date: z.string(),
 				morningWeight: z.string().optional(),
+				morningWeightTiming: z.string().optional(),
 				notes: z.string().optional(),
 				sleep: z.string().optional(),
 				sleepQuality: z.string().optional(),
@@ -36,6 +37,7 @@ export const updateDl = {
 				id,
 				date,
 				morningWeight,
+				morningWeightTiming,
 				notes,
 				sleep,
 				sleepQuality,
@@ -54,6 +56,7 @@ export const updateDl = {
 				.set({
 					date: date,
 					morningWeight,
+					morningWeightTiming,
 					notes,
 					sleep,
 					sleepQuality,
@@ -1015,6 +1018,49 @@ export const updateDl = {
 			const res = await ctx.db
 				.update(dailyLog)
 				.set({ morningWeight: input.morningWeight })
+				.where(
+					and(
+						eq(dailyLog.date, input.date),
+						eq(dailyLog.userId, ctx.session.user.id),
+					),
+				)
+
+			return res
+		}),
+	updateWeightTiming: protectedProcedure
+		.input(
+			z.object({
+				date: z.string(),
+				morningWeightTiming: z.string(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const log = await ctx.db.query.dailyLog.findFirst({
+				where: and(
+					eq(dailyLog.date, input.date),
+					eq(dailyLog.userId, ctx.session.user.id),
+				),
+			})
+			createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				task: `Update Weight Timing`,
+				notes: JSON.stringify(input),
+				objectId: null,
+			})
+
+			if (!log) {
+				const res = await ctx.db.insert(dailyLog).values({
+					date: input.date,
+					morningWeightTiming: input.morningWeightTiming,
+					userId: ctx.session.user.id,
+				})
+				return res
+			}
+
+			const res = await ctx.db
+				.update(dailyLog)
+				.set({ morningWeightTiming: input.morningWeightTiming })
 				.where(
 					and(
 						eq(dailyLog.date, input.date),

@@ -24,6 +24,7 @@ export const dailyLog = createTable(
 			}),
 		date: text('date').notNull(),
 		morningWeight: text('morning_weight'),
+		morningWeightTiming: text('morning_weight_time'),
 		notes: text('notes'),
 		fastedBloodGlucose: text('fasted_blood_glucose'),
 		fastedBloodGlucoseTiming: text('fasted_blood_glucose_time'),
