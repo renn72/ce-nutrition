@@ -22,10 +22,11 @@ export default function Home() {
   return (
     <div className='my-16'>
       <div className='flex flex-col gap-4 w-full '>
-        {plans?.map((plan) => (
+        {plans?.map((plan, index) => (
           <UserPlanView
             key={plan.id}
             userPlan={plan}
+            accentIndex={index}
           />
         ))}
       </div>

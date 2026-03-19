@@ -30,11 +30,58 @@ const hasText = (value?: string | null) => Boolean(value?.trim())
 
 const formatCompactNumber = (value: number | string) => Number(value).toFixed(0)
 
-const mealAccentStyles = {
-  section: 'border-sky-500/12 bg-sky-500/[0.045]',
-  dot: 'bg-sky-500/75',
-  average: 'border-sky-500/15 bg-sky-500/[0.1] text-foreground',
-} as const
+const planAccentPalette = [
+  {
+    header: 'bg-sky-500/[0.045]',
+    stat: 'border-sky-500/15 bg-sky-500/[0.09]',
+    statText: 'text-sky-700/80 dark:text-sky-300/80',
+    section: 'border-sky-500/12 bg-sky-500/[0.045]',
+    dot: 'bg-sky-500/75',
+    average: 'border-sky-500/15 bg-sky-500/[0.1] text-foreground',
+    options:
+      'border-sky-500/15 bg-sky-500/[0.1] text-sky-700 dark:text-sky-300',
+  },
+  {
+    header: 'bg-teal-500/[0.045]',
+    stat: 'border-teal-500/15 bg-teal-500/[0.09]',
+    statText: 'text-teal-700/80 dark:text-teal-300/80',
+    section: 'border-teal-500/12 bg-teal-500/[0.045]',
+    dot: 'bg-teal-500/75',
+    average: 'border-teal-500/15 bg-teal-500/[0.1] text-foreground',
+    options:
+      'border-teal-500/15 bg-teal-500/[0.1] text-teal-700 dark:text-teal-300',
+  },
+  {
+    header: 'bg-violet-500/[0.045]',
+    stat: 'border-violet-500/15 bg-violet-500/[0.09]',
+    statText: 'text-violet-700/80 dark:text-violet-300/80',
+    section: 'border-violet-500/12 bg-violet-500/[0.045]',
+    dot: 'bg-violet-500/75',
+    average: 'border-violet-500/15 bg-violet-500/[0.1] text-foreground',
+    options:
+      'border-violet-500/15 bg-violet-500/[0.1] text-violet-700 dark:text-violet-300',
+  },
+  {
+    header: 'bg-rose-500/[0.04]',
+    stat: 'border-rose-500/15 bg-rose-500/[0.085]',
+    statText: 'text-rose-700/80 dark:text-rose-300/80',
+    section: 'border-rose-500/12 bg-rose-500/[0.04]',
+    dot: 'bg-rose-500/75',
+    average: 'border-rose-500/15 bg-rose-500/[0.095] text-foreground',
+    options:
+      'border-rose-500/15 bg-rose-500/[0.095] text-rose-700 dark:text-rose-300',
+  },
+  {
+    header: 'bg-amber-500/[0.04]',
+    stat: 'border-amber-500/15 bg-amber-500/[0.085]',
+    statText: 'text-amber-700/80 dark:text-amber-300/80',
+    section: 'border-amber-500/12 bg-amber-500/[0.04]',
+    dot: 'bg-amber-500/75',
+    average: 'border-amber-500/15 bg-amber-500/[0.095] text-foreground',
+    options:
+      'border-amber-500/15 bg-amber-500/[0.095] text-amber-700 dark:text-amber-300',
+  },
+] as const
 
 const recipeAccentStyles = {
   card: 'border-border/60 bg-card',
@@ -47,10 +94,12 @@ const SummaryChip = ({
   label,
   value,
   tone = 'muted',
+  className,
 }: {
   label: string
   value: string
   tone?: 'muted' | 'primary' | 'success'
+  className?: string
 }) => {
   return (
     <div
@@ -62,6 +111,7 @@ const SummaryChip = ({
           'border-primary/15 bg-primary/[0.08] text-primary',
         tone === 'success' &&
           'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+        className,
       )}
     >
       <span className='uppercase opacity-70 tracking-[0.14em]'>{label}</span>
@@ -407,13 +457,27 @@ const UserPlanRecipe = ({
   )
 }
 
-const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
+const UserPlanView = ({
+  userPlan,
+  accentIndex = 0,
+}: {
+  userPlan: UserPlan
+  accentIndex?: number
+}) => {
   const mealCount = userPlan?.userMeals.length
   const recipeCount = userPlan?.userRecipes.length
+  const mealAccentStyles =
+    planAccentPalette[accentIndex % planAccentPalette.length] ??
+    planAccentPalette[0]
 
   return (
     <Card className='overflow-hidden gap-0 py-0 rounded-none shadow-sm border-border/70'>
-      <CardHeader className='gap-1 px-3 pt-4 pb-3 border-b border-border/60 bg-[linear-gradient(180deg,hsl(var(--primary)/0.045),transparent_100%)]'>
+      <CardHeader
+        className={cn(
+          'gap-1 px-3 pt-4 pb-3 border-b border-border/60',
+          mealAccentStyles.header,
+        )}
+      >
         <div className='flex gap-3 justify-between items-start'>
           <div className='min-w-0'>
             <div className='font-semibold uppercase text-[10px] tracking-[0.16em] text-muted-foreground'>
@@ -425,8 +489,18 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
           </div>
         </div>
         <div className='grid grid-cols-2 gap-2'>
-          <div className='py-1.5 px-2.5 rounded-2xl border border-sky-500/15 bg-sky-500/[0.09]'>
-            <div className='uppercase text-[10px] tracking-[0.14em] text-sky-700/80 dark:text-sky-300/80'>
+          <div
+            className={cn(
+              'py-1.5 px-2.5 rounded-2xl border',
+              mealAccentStyles.stat,
+            )}
+          >
+            <div
+              className={cn(
+                'uppercase text-[10px] tracking-[0.14em]',
+                mealAccentStyles.statText,
+              )}
+            >
               Meals
             </div>
             <div className='mt-1 text-sm font-semibold'>{mealCount}</div>
@@ -500,7 +574,8 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
                 <SummaryChip
                   label='Options'
                   value={mealRecipes.length.toString()}
-                  tone='primary'
+                  tone='muted'
+                  className={mealAccentStyles.options}
                 />
               </div>
 
