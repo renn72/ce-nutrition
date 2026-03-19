@@ -30,36 +30,12 @@ const hasText = (value?: string | null) => Boolean(value?.trim())
 
 const formatCompactNumber = (value: number | string) => Number(value).toFixed(0)
 
-const mealAccentStyles = [
-  {
-    section:
-      'border-sky-200/70 bg-[linear-gradient(180deg,rgba(14,165,233,0.09),transparent_58%)]',
-    dot: 'bg-sky-500/80',
-    average:
-      'border-sky-200/70 bg-sky-500/[0.09] text-sky-900 dark:text-sky-50',
-  },
-  {
-    section:
-      'border-amber-200/70 bg-[linear-gradient(180deg,rgba(245,158,11,0.09),transparent_58%)]',
-    dot: 'bg-amber-500/80',
-    average:
-      'border-amber-200/70 bg-amber-500/[0.09] text-amber-950 dark:text-amber-50',
-  },
-  {
-    section:
-      'border-emerald-200/70 bg-[linear-gradient(180deg,rgba(16,185,129,0.09),transparent_58%)]',
-    dot: 'bg-emerald-500/80',
-    average:
-      'border-emerald-200/70 bg-emerald-500/[0.09] text-emerald-950 dark:text-emerald-50',
-  },
-  {
-    section:
-      'border-rose-200/70 bg-[linear-gradient(180deg,rgba(244,63,94,0.08),transparent_58%)]',
-    dot: 'bg-rose-500/75',
-    average:
-      'border-rose-200/70 bg-rose-500/[0.08] text-rose-950 dark:text-rose-50',
-  },
-] as const
+const mealAccentStyles = {
+  section:
+    'border-border/60 bg-[linear-gradient(180deg,hsl(var(--primary)/0.035),transparent_58%)]',
+  dot: 'bg-primary/45',
+  average: 'border-border/60 bg-primary/[0.045] text-foreground',
+} as const
 
 const SummaryChip = ({
   label,
@@ -238,7 +214,7 @@ const UserPlanRecipe = ({
       presented={isOpen}
       onPresentedChange={setIsOpen}
     >
-      <Sheet.Trigger className='w-full overflow-hidden rounded-[20px] border border-border/70 bg-gradient-to-r from-background via-background to-primary/[0.05] px-3 py-2 text-left shadow-[0_16px_30px_-28px_hsl(var(--foreground)/0.75)] transition-transform active:scale-[0.99]'>
+      <Sheet.Trigger className='w-full overflow-hidden rounded-[20px] border border-border/70 bg-gradient-to-r from-background via-background to-primary/[0.025] px-3 py-2 text-left shadow-[0_16px_30px_-28px_hsl(var(--foreground)/0.75)] transition-transform active:scale-[0.99]'>
         <div className='flex items-start justify-between gap-3'>
           <div className='min-w-0 flex-1 overflow-hidden'>
             <div
@@ -252,7 +228,7 @@ const UserPlanRecipe = ({
               {ingredientCount === 1 ? 'ingredient' : 'ingredients'}
             </div>
           </div>
-          <div className='shrink-0 rounded-2xl border border-primary/15 bg-primary/10 px-2 py-1 text-[10px] font-semibold text-primary'>
+          <div className='shrink-0 rounded-2xl border border-primary/10 bg-primary/[0.06] px-2 py-1 text-[10px] font-semibold text-primary'>
             {formatCompactNumber(cals)} cal
           </div>
         </div>
@@ -431,14 +407,14 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
           </div>
         </div>
         <div className='grid grid-cols-2 gap-2'>
-          <div className='rounded-2xl border border-sky-200/70 bg-sky-500/[0.09] px-2.5 py-2'>
-            <div className='text-[10px] uppercase tracking-[0.14em] text-sky-700/80 dark:text-sky-300/80'>
+          <div className='rounded-2xl border border-border/60 bg-background/85 px-2.5 py-2'>
+            <div className='text-[10px] uppercase tracking-[0.14em] text-muted-foreground'>
               Meals
             </div>
             <div className='mt-1 text-sm font-semibold'>{mealCount}</div>
           </div>
-          <div className='rounded-2xl border border-amber-200/70 bg-amber-500/[0.09] px-2.5 py-2'>
-            <div className='text-[10px] uppercase tracking-[0.14em] text-amber-700/80 dark:text-amber-300/80'>
+          <div className='rounded-2xl border border-primary/10 bg-primary/[0.04] px-2.5 py-2'>
+            <div className='text-[10px] uppercase tracking-[0.14em] text-muted-foreground'>
               Recipes
             </div>
             <div className='mt-1 text-sm font-semibold'>{recipeCount}</div>
@@ -447,7 +423,7 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
       </CardHeader>
       <CardContent className='flex flex-col gap-3 px-3 py-3'>
         {userPlan.userMeals.map((meal, index) => {
-          const mealAccent = mealAccentStyles[index % mealAccentStyles.length]
+          const mealAccent = mealAccentStyles
           const mealRecipes = userPlan.userRecipes.filter(
             (recipe) => recipe.mealIndex === meal.mealIndex,
           )
@@ -502,7 +478,7 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
                 <SummaryChip
                   label='Options'
                   value={mealRecipes.length.toString()}
-                  tone='primary'
+                  tone='muted'
                 />
               </div>
 
