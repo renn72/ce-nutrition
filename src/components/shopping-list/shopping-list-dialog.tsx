@@ -41,29 +41,36 @@ const ShoppingListDialog = ({
       <DialogTrigger asChild>
         <Button
           size='icon'
-          className='fixed right-4 bottom-20 z-40 h-14 w-14 rounded-full shadow-lg md:bottom-6'
+          className='fixed right-4 bottom-20 z-40 h-14 w-14 rounded-full border border-sky-500/20 bg-sky-500/[0.12] text-sky-700 shadow-sm backdrop-blur dark:text-sky-300 md:bottom-6'
         >
           <ShoppingCart className='h-6 w-6' />
           <span className='sr-only'>Open shopping list</span>
-          <span className='absolute -top-1 -right-1 rounded-full bg-accent px-2 py-0.5 text-xs text-accent-foreground'>
+          <span className='absolute -top-1 -right-1 rounded-full border border-background/80 bg-background px-2 py-0.5 text-[11px] font-semibold text-foreground shadow-sm'>
             {remainingCount}
           </span>
         </Button>
       </DialogTrigger>
-      <DialogContent className='top-0 left-0 flex h-[100svh] max-h-[100svh] min-h-0 w-screen max-w-none translate-x-0 translate-y-0 flex-col overflow-hidden rounded-none border-0 p-0 sm:rounded-none'>
+      <DialogContent className='top-0 left-0 flex h-[100svh] max-h-[100svh] min-h-0 w-screen max-w-none translate-x-0 translate-y-0 flex-col overflow-hidden rounded-none border-0 bg-background p-0 sm:rounded-none'>
         <DialogHeader className='sr-only'>
           <DialogTitle>Shopping list</DialogTitle>
           <DialogDescription>
             Review, tick off, and email your shopping list.
           </DialogDescription>
         </DialogHeader>
-        <ShoppingListView
-          userId={userId}
-          userName={userName}
-          showPageLink={true}
-          isFullHeight={true}
-          useInternalScroll={true}
-        />
+        <div className='flex min-h-0 flex-1 flex-col bg-muted/[0.18]'>
+          <div className='flex justify-center px-3 pt-2'>
+            <div className='h-1.5 w-12 rounded-full bg-sky-500/18' />
+          </div>
+          <div className='min-h-0 flex-1 px-0 pb-0 pt-2'>
+            <ShoppingListView
+              userId={userId}
+              userName={userName}
+              showPageLink={true}
+              isFullHeight={true}
+              useInternalScroll={true}
+            />
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   )

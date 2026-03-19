@@ -43,12 +43,43 @@ type ShoppingListPartner = {
   name: string | null
 } | null
 
+const shoppingListAccentStyles = {
+  header: 'bg-sky-500/[0.045]',
+  stat: 'border-sky-500/15 bg-sky-500/[0.09]',
+  statText: 'text-sky-700/80 dark:text-sky-300/80',
+  section: 'border-sky-500/12 bg-sky-500/[0.04]',
+  pill: 'border-sky-500/15 bg-sky-500/[0.1] text-sky-700 dark:text-sky-300',
+} as const
+
 const formatShoppingTextList = (value?: string | null, separator = ', ') =>
   (value ?? '')
     .split('\n')
     .map((entry) => entry.trim())
     .filter(Boolean)
     .join(separator)
+
+const SummaryChip = ({
+  label,
+  value,
+  className,
+}: {
+  label: string
+  value: string
+  className?: string
+}) => {
+  return (
+    <div
+      className={cn(
+        'inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-semibold leading-none',
+        'border-border/60 bg-background/90 text-foreground',
+        className,
+      )}
+    >
+      <span className='uppercase opacity-70 tracking-[0.14em]'>{label}</span>
+      <span>{value}</span>
+    </div>
+  )
+}
 
 const ShoppingListHistoryCard = ({
   list,
@@ -70,32 +101,42 @@ const ShoppingListHistoryCard = ({
       open={isOpen}
       onOpenChange={setIsOpen}
     >
-      <Card className='gap-0'>
-        <CardHeader className='gap-3 border-b py-4'>
-          <div className='flex flex-col gap-3 md:flex-row md:items-start md:justify-between'>
+      <Card className='gap-0 overflow-hidden rounded-[24px] border-border/70 shadow-sm'>
+        <CardHeader className='gap-3 border-b border-border/60 bg-muted/25 px-3 py-3'>
+          <div className='flex flex-col gap-3'>
             <div className='space-y-1'>
-              <CardTitle className='text-base'>{list.name}</CardTitle>
-              <div className='text-xs text-muted-foreground'>
-                {list.items.length} items
-                <span className='mx-2'>•</span>
-                Updated{' '}
-                {formatDate(list.updatedAt ?? list.createdAt, {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                })}
+              <div className='font-semibold uppercase text-[10px] tracking-[0.16em] text-muted-foreground'>
+                Previous list
+              </div>
+              <CardTitle className='text-base font-semibold tracking-tight text-foreground/85'>
+                {list.name}
+              </CardTitle>
+              <div className='mt-1 flex flex-wrap gap-1.5'>
+                <SummaryChip
+                  label='Items'
+                  value={String(list.items.length)}
+                />
+                <SummaryChip
+                  label='Updated'
+                  value={formatDate(list.updatedAt ?? list.createdAt, {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                />
               </div>
             </div>
-            <div className='flex flex-wrap gap-2'>
+            <div className='flex flex-wrap gap-1.5'>
               <CollapsibleTrigger asChild>
                 <Button
                   size='sm'
                   variant='outline'
+                  className='h-8 rounded-full border-border/70 bg-background/90 px-3 text-xs font-semibold shadow-none'
                 >
                   Ingredients
                   <ChevronDown
                     className={cn(
-                      'ml-2 h-4 w-4 transition-transform duration-200',
+                      'ml-1.5 h-4 w-4 transition-transform duration-200',
                       isOpen && 'rotate-180',
                     )}
                   />
@@ -104,6 +145,7 @@ const ShoppingListHistoryCard = ({
               <Button
                 size='sm'
                 variant='outline'
+                className='h-8 rounded-full border-border/70 bg-background/90 px-3 text-xs font-semibold shadow-none'
                 onClick={() => onDuplicate(list.id)}
                 disabled={isDuplicating}
               >
@@ -117,6 +159,7 @@ const ShoppingListHistoryCard = ({
               <Button
                 size='icon'
                 variant='ghost'
+                className='h-8 w-8 rounded-full text-muted-foreground'
                 onClick={() => onDelete(list.id)}
                 disabled={isDeleting}
               >
@@ -130,25 +173,30 @@ const ShoppingListHistoryCard = ({
           </div>
         </CardHeader>
         <CollapsibleContent className='overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
-          <CardContent className='p-4'>
+          <CardContent className='bg-card px-3 py-3'>
             {list.items.length > 0 ? (
               <div className='space-y-2'>
                 {list.items.map((item) => (
                   <div
                     key={item.id}
-                    className='rounded-xl border px-3 py-2 text-sm'
+                    className='rounded-[20px] border border-border/70 bg-background/90 px-3 py-2.5 text-sm shadow-sm'
                   >
-                    <div
-                      className={cn(
-                        'font-medium',
-                        item.isChecked && 'text-muted-foreground line-through',
-                      )}
-                    >
-                      {formatShoppingQuantity(item.amount, item.unit)}{' '}
-                      {item.name}
+                    <div className='flex items-start justify-between gap-2'>
+                      <div
+                        className={cn(
+                          'min-w-0 flex-1 font-medium',
+                          item.isChecked &&
+                            'text-muted-foreground line-through',
+                        )}
+                      >
+                        {item.name}
+                      </div>
+                      <div className='shrink-0 rounded-full border border-border/60 bg-muted/50 px-2.5 py-1 text-[11px] font-semibold'>
+                        {formatShoppingQuantity(item.amount, item.unit)}
+                      </div>
                     </div>
                     {item.source ? (
-                      <div className='text-xs text-muted-foreground'>
+                      <div className='mt-1 text-xs text-muted-foreground'>
                         From {formatShoppingTextList(item.source)}
                       </div>
                     ) : null}
@@ -156,7 +204,7 @@ const ShoppingListHistoryCard = ({
                 ))}
               </div>
             ) : (
-              <div className='text-sm text-muted-foreground'>
+              <div className='rounded-[20px] border border-dashed border-border/70 bg-background/90 px-3 py-3 text-sm text-muted-foreground'>
                 This list does not contain any ingredients.
               </div>
             )}
@@ -183,18 +231,22 @@ const ShoppingListHistory = ({
   if (lists.length === 0) return null
 
   return (
-    <div className='space-y-3 border-t p-4'>
-      <div className='text-sm font-semibold'>Previous Lists</div>
-      {lists.map((list) => (
-        <ShoppingListHistoryCard
-          key={list.id}
-          list={list}
-          onDuplicate={onDuplicate}
-          onDelete={onDelete}
-          isDuplicating={isDuplicating}
-          isDeleting={deletingListId === list.id}
-        />
-      ))}
+    <div className='border-t border-border/60 px-3 py-3'>
+      <div className='mb-3 font-semibold uppercase text-[10px] tracking-[0.16em] text-muted-foreground'>
+        Previous lists
+      </div>
+      <div className='space-y-3'>
+        {lists.map((list) => (
+          <ShoppingListHistoryCard
+            key={list.id}
+            list={list}
+            onDuplicate={onDuplicate}
+            onDelete={onDelete}
+            isDuplicating={isDuplicating}
+            isDeleting={deletingListId === list.id}
+          />
+        ))}
+      </div>
     </div>
   )
 }
@@ -482,66 +534,94 @@ const ShoppingListView = ({
     ? allListsQuery.isLoading
     : activeListQuery.isLoading
   const hasItems = (shoppingList?.items.length ?? 0) > 0
+  const remainingCount =
+    shoppingList?.items.filter((item) => !item.isChecked).length ?? 0
+  const totalCount = shoppingList?.items.length ?? 0
+  const updatedLabel =
+    shoppingList?.updatedAt || shoppingList?.createdAt
+      ? formatDate(shoppingList.updatedAt ?? shoppingList.createdAt, {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+        })
+      : null
 
   const addIngredientForm =
     allowItemEditing && showHistory ? (
-      <div className='space-y-3 border-t p-4'>
-        <div className='space-y-1'>
-          <div className='text-sm font-semibold'>Add ingredient</div>
-          <div className='text-xs text-muted-foreground'>
-            Add extra items that are not part of your recipe library.
+      <div className='border-t border-border/60 px-3 py-3'>
+        <div className='rounded-[24px] border border-border/70 bg-card px-3 py-3 shadow-sm'>
+          <div className='space-y-1'>
+            <div className='font-semibold uppercase text-[10px] tracking-[0.16em] text-muted-foreground'>
+              Add ingredient
+            </div>
+            <div className='text-sm font-semibold tracking-tight text-foreground/85'>
+              Add custom items
+            </div>
+            <div className='text-xs leading-5 text-muted-foreground'>
+              Add extra items that are not part of your recipe library.
+            </div>
           </div>
-        </div>
-        <div className='grid gap-2 md:grid-cols-[minmax(0,1fr)_110px_120px_auto]'>
-          <Input
-            value={newItemName}
-            placeholder='Ingredient name'
-            onChange={(event) => setNewItemName(event.target.value)}
-          />
-          <Input
-            type='number'
-            min='0'
-            step='0.25'
-            value={newItemAmount}
-            placeholder='Amount'
-            onChange={(event) => setNewItemAmount(event.target.value)}
-          />
-          <Input
-            value={newItemUnit}
-            placeholder='Unit'
-            onChange={(event) => setNewItemUnit(event.target.value)}
-          />
-          <Button
-            onClick={() => void handleAddCustomItem()}
-            disabled={addCustomItem.isPending}
-          >
-            {addCustomItem.isPending ? (
-              <LoaderCircle className='mr-2 h-4 w-4 animate-spin' />
-            ) : (
-              <Plus className='mr-2 h-4 w-4' />
-            )}
-            Add item
-          </Button>
+          <div className='mt-3 grid gap-2 sm:grid-cols-[minmax(0,1fr)_110px_120px_auto]'>
+            <Input
+              value={newItemName}
+              placeholder='Ingredient name'
+              className='h-10 rounded-2xl border-border/70 bg-background/90'
+              onChange={(event) => setNewItemName(event.target.value)}
+            />
+            <Input
+              type='number'
+              min='0'
+              step='0.25'
+              value={newItemAmount}
+              placeholder='Amount'
+              className='h-10 rounded-2xl border-border/70 bg-background/90'
+              onChange={(event) => setNewItemAmount(event.target.value)}
+            />
+            <Input
+              value={newItemUnit}
+              placeholder='Unit'
+              className='h-10 rounded-2xl border-border/70 bg-background/90'
+              onChange={(event) => setNewItemUnit(event.target.value)}
+            />
+            <Button
+              className='h-10 rounded-2xl'
+              onClick={() => void handleAddCustomItem()}
+              disabled={addCustomItem.isPending}
+            >
+              {addCustomItem.isPending ? (
+                <LoaderCircle className='mr-2 h-4 w-4 animate-spin' />
+              ) : (
+                <Plus className='mr-2 h-4 w-4' />
+              )}
+              Add item
+            </Button>
+          </div>
         </div>
       </div>
     ) : null
 
   const body = isLoading ? (
-    <div className='flex flex-col items-center justify-center gap-4 px-6 py-16 text-center'>
-      <LoaderCircle className='h-8 w-8 animate-spin text-muted-foreground' />
-      <div className='text-sm text-muted-foreground'>
-        Loading shopping list...
+    <div className='p-3'>
+      <div className='flex flex-col items-center justify-center gap-4 rounded-[26px] border border-border/70 bg-card px-6 py-16 text-center shadow-sm'>
+        <div className='rounded-full border border-sky-500/15 bg-sky-500/[0.08] p-4'>
+          <LoaderCircle className='h-8 w-8 animate-spin text-sky-700/80 dark:text-sky-300/80' />
+        </div>
+        <div className='text-sm text-muted-foreground'>
+          Loading shopping list...
+        </div>
       </div>
     </div>
   ) : shoppingList ? (
     shoppingList.items.length > 0 ? (
-      <div className='flex flex-col gap-3 p-4'>
+      <div className='flex flex-col gap-2.5 p-3'>
         {shoppingList.items.map((item: ShoppingListItemRecord) => (
           <div
             key={item.id}
             className={cn(
-              'rounded-2xl border p-4 transition-colors',
-              item.isChecked && 'border-dashed bg-muted/40',
+              'rounded-[24px] border px-3 py-3 shadow-sm transition-colors',
+              item.isChecked
+                ? 'border-border/60 bg-muted/35'
+                : shoppingListAccentStyles.section,
             )}
           >
             <div className='flex items-start gap-3'>
@@ -553,24 +633,38 @@ const ShoppingListView = ({
                     checked: checked === true,
                   })
                 }
-                className='mt-1'
+                className='mt-0.5 border-border/70 data-[state=checked]:border-sky-500/35 data-[state=checked]:bg-sky-500/90 data-[state=checked]:text-white'
               />
-              <div className='flex-1 space-y-1'>
-                <div
-                  className={cn(
-                    'font-medium',
-                    item.isChecked && 'text-muted-foreground line-through',
-                  )}
-                >
-                  {formatShoppingQuantity(item.amount, item.unit)} {item.name}
+              <div className='min-w-0 flex-1'>
+                <div className='flex items-start justify-between gap-2'>
+                  <div className='min-w-0 flex-1'>
+                    <div
+                      className={cn(
+                        'text-sm font-semibold leading-5 text-foreground/85',
+                        item.isChecked && 'text-muted-foreground line-through',
+                      )}
+                    >
+                      {item.name}
+                    </div>
+                  </div>
+                  <div
+                    className={cn(
+                      'shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-semibold',
+                      item.isChecked
+                        ? 'border-border/60 bg-background/90 text-muted-foreground'
+                        : shoppingListAccentStyles.pill,
+                    )}
+                  >
+                    {formatShoppingQuantity(item.amount, item.unit)}
+                  </div>
                 </div>
                 {item.source ? (
-                  <div className='text-xs text-muted-foreground'>
+                  <div className='mt-1 text-xs leading-5 text-muted-foreground'>
                     From {formatShoppingTextList(item.source)}
                   </div>
                 ) : null}
                 {item.note ? (
-                  <div className='text-xs text-muted-foreground'>
+                  <div className='mt-1 text-xs leading-5 text-muted-foreground'>
                     {formatShoppingTextList(item.note, ' • ')}
                   </div>
                 ) : null}
@@ -590,13 +684,14 @@ const ShoppingListView = ({
                   }
                 }}
               >
-                <div className='mt-3 flex flex-wrap items-center justify-end gap-2'>
+                <div className='mt-3 flex flex-wrap items-center justify-end gap-1.5'>
                   <Button
                     size='icon'
                     variant='outline'
                     className={cn(
+                      'h-8 w-8 rounded-full border-border/70 bg-background/90 shadow-none',
                       editingItemId === item.id &&
-                        'bg-accent text-accent-foreground',
+                        'border-sky-500/20 bg-sky-500/[0.12] text-sky-700 dark:text-sky-300',
                     )}
                     onClick={() => {
                       if (editingItemId === item.id) {
@@ -618,6 +713,7 @@ const ShoppingListView = ({
                   <Button
                     size='icon'
                     variant='ghost'
+                    className='h-8 w-8 rounded-full text-muted-foreground'
                     onClick={() =>
                       deleteItem.mutate({
                         itemId: item.id,
@@ -629,59 +725,65 @@ const ShoppingListView = ({
                   </Button>
                 </div>
                 <CollapsibleContent className='overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
-                  <div className='mt-3 grid grid-cols-[auto_minmax(0,1fr)_auto] gap-2'>
-                    <Button
-                      size='icon'
-                      variant='outline'
-                      onClick={() =>
-                        void handleAdjustItemAmount(item, 'decrease')
-                      }
-                      disabled={
-                        updateItemAmount.isPending ||
-                        toShoppingAmountNumber(item.amount) <=
-                          getShoppingAmountStep(item.unit)
-                      }
-                    >
-                      <Minus className='h-4 w-4' />
-                    </Button>
-                    <Input
-                      type='number'
-                      min='0'
-                      step={item.unit === 'grams' ? '10' : '0.25'}
-                      className='min-w-[120px] flex-1'
-                      value={amountDrafts[item.id] ?? String(item.amount)}
-                      onChange={(event) =>
-                        setAmountDrafts((currentDrafts) => ({
-                          ...currentDrafts,
-                          [item.id]: event.target.value,
-                        }))
-                      }
-                    />
-                    <Button
-                      size='icon'
-                      variant='outline'
-                      onClick={() =>
-                        void handleAdjustItemAmount(item, 'increase')
-                      }
-                      disabled={updateItemAmount.isPending}
-                    >
-                      <Plus className='h-4 w-4' />
-                    </Button>
-                    <div className='col-start-2 col-end-4 flex flex-wrap gap-2'>
+                  <div className='mt-3 rounded-[20px] border border-border/70 bg-background/90 p-2.5 shadow-sm'>
+                    <div className='grid grid-cols-[auto_minmax(0,1fr)_auto] gap-2'>
                       <Button
-                        size='sm'
-                        onClick={() => void handleSaveItemAmount(item)}
+                        size='icon'
+                        variant='outline'
+                        className='h-10 w-10 rounded-2xl border-border/70 bg-background shadow-none'
+                        onClick={() =>
+                          void handleAdjustItemAmount(item, 'decrease')
+                        }
+                        disabled={
+                          updateItemAmount.isPending ||
+                          toShoppingAmountNumber(item.amount) <=
+                            getShoppingAmountStep(item.unit)
+                        }
+                      >
+                        <Minus className='h-4 w-4' />
+                      </Button>
+                      <Input
+                        type='number'
+                        min='0'
+                        step={item.unit === 'grams' ? '10' : '0.25'}
+                        className='min-w-[120px] h-10 flex-1 rounded-2xl border-border/70 bg-background'
+                        value={amountDrafts[item.id] ?? String(item.amount)}
+                        onChange={(event) =>
+                          setAmountDrafts((currentDrafts) => ({
+                            ...currentDrafts,
+                            [item.id]: event.target.value,
+                          }))
+                        }
+                      />
+                      <Button
+                        size='icon'
+                        variant='outline'
+                        className='h-10 w-10 rounded-2xl border-border/70 bg-background shadow-none'
+                        onClick={() =>
+                          void handleAdjustItemAmount(item, 'increase')
+                        }
                         disabled={updateItemAmount.isPending}
                       >
-                        Save
+                        <Plus className='h-4 w-4' />
                       </Button>
-                      <Button
-                        size='sm'
-                        variant='ghost'
-                        onClick={() => setEditingItemId(null)}
-                      >
-                        Cancel
-                      </Button>
+                      <div className='col-start-2 col-end-4 flex flex-wrap gap-2 pt-1'>
+                        <Button
+                          size='sm'
+                          className='h-8 rounded-full px-3'
+                          onClick={() => void handleSaveItemAmount(item)}
+                          disabled={updateItemAmount.isPending}
+                        >
+                          Save
+                        </Button>
+                        <Button
+                          size='sm'
+                          variant='ghost'
+                          className='h-8 rounded-full px-3'
+                          onClick={() => setEditingItemId(null)}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </CollapsibleContent>
@@ -691,50 +793,63 @@ const ShoppingListView = ({
         ))}
       </div>
     ) : (
-      <div className='flex flex-col items-center justify-center gap-4 px-6 py-16 text-center'>
-        <div className='rounded-full bg-muted p-4'>
-          <ShoppingCart className='h-8 w-8 text-muted-foreground' />
-        </div>
-        <div className='space-y-1'>
-          <div className='font-medium'>This shopping list is empty</div>
-          <div className='text-sm text-muted-foreground'>
-            Add a recipe from your program, start a new list, or add ingredients
-            manually.
+      <div className='p-3'>
+        <div className='flex flex-col items-center justify-center gap-4 rounded-[26px] border border-border/70 bg-card px-6 py-16 text-center shadow-sm'>
+          <div className='rounded-full border border-sky-500/15 bg-sky-500/[0.08] p-4'>
+            <ShoppingCart className='h-8 w-8 text-sky-700/80 dark:text-sky-300/80' />
           </div>
+          <div className='space-y-1'>
+            <div className='font-semibold tracking-tight text-foreground/85'>
+              This shopping list is empty
+            </div>
+            <div className='text-sm leading-6 text-muted-foreground'>
+              Add a recipe from your program, start a new list, or add
+              ingredients manually.
+            </div>
+          </div>
+          <Button
+            asChild
+            variant='outline'
+            className='h-10 rounded-full border-border/70 bg-background/90 px-4'
+          >
+            <Link href='/user/program'>Open program</Link>
+          </Button>
         </div>
-        <Button
-          asChild
-          variant='outline'
-        >
-          <Link href='/user/program'>Open program</Link>
-        </Button>
       </div>
     )
   ) : (
-    <div className='flex flex-col items-center justify-center gap-4 px-6 py-16 text-center'>
-      <div className='rounded-full bg-muted p-4'>
-        <ShoppingCart className='h-8 w-8 text-muted-foreground' />
-      </div>
-      <div className='space-y-1'>
-        <div className='font-medium'>No active shopping list</div>
-        <div className='text-sm text-muted-foreground'>
-          Add a recipe from your program, create a new list, or add ingredients
-          manually.
+    <div className='p-3'>
+      <div className='flex flex-col items-center justify-center gap-4 rounded-[26px] border border-border/70 bg-card px-6 py-16 text-center shadow-sm'>
+        <div className='rounded-full border border-sky-500/15 bg-sky-500/[0.08] p-4'>
+          <ShoppingCart className='h-8 w-8 text-sky-700/80 dark:text-sky-300/80' />
         </div>
-      </div>
-      <div className='flex flex-wrap justify-center gap-2'>
-        {showHistory ? (
-          <Button onClick={() => void handleCreateNewList()}>
-            <Plus className='mr-2 h-4 w-4' />
-            Create list
+        <div className='space-y-1'>
+          <div className='font-semibold tracking-tight text-foreground/85'>
+            No active shopping list
+          </div>
+          <div className='text-sm leading-6 text-muted-foreground'>
+            Add a recipe from your program, create a new list, or add
+            ingredients manually.
+          </div>
+        </div>
+        <div className='flex flex-wrap justify-center gap-2'>
+          {showHistory ? (
+            <Button
+              className='h-10 rounded-full px-4'
+              onClick={() => void handleCreateNewList()}
+            >
+              <Plus className='mr-2 h-4 w-4' />
+              Create list
+            </Button>
+          ) : null}
+          <Button
+            asChild
+            variant='outline'
+            className='h-10 rounded-full border-border/70 bg-background/90 px-4'
+          >
+            <Link href='/user/program'>Open program</Link>
           </Button>
-        ) : null}
-        <Button
-          asChild
-          variant='outline'
-        >
-          <Link href='/user/program'>Open program</Link>
-        </Button>
+        </div>
       </div>
     </div>
   )
@@ -742,138 +857,168 @@ const ShoppingListView = ({
   return (
     <Card
       className={cn(
-        'gap-0 overflow-hidden',
+        'gap-0 overflow-hidden border-border/70 shadow-sm',
         isFullHeight && 'h-full min-h-0 rounded-none border-0 shadow-none',
+        !isFullHeight && 'rounded-[28px]',
         className,
       )}
     >
-      <CardHeader className='shrink-0 gap-4 border-b px-4 py-2'>
-        <div className='flex flex-col gap-4 md:flex-row md:items-start md:justify-between'>
-          <div className='space-y-1'>
-            <CardTitle className='flex items-center gap-2 text-xl'>
-              <ShoppingCart className='h-5 w-5' />
-              {shoppingList?.name ?? 'Shopping List'}
-            </CardTitle>
-            <div className='text-sm text-muted-foreground'>
-              {isLoading ? (
-                'Loading shopping list...'
-              ) : hasItems ? (
-                <>
-                  <span>
-                    {
-                      shoppingList?.items.filter(
-                        (item: ShoppingListItemRecord) => !item.isChecked,
-                      ).length
-                    }{' '}
-                    left to buy
-                  </span>
-                  <span className='mx-2'>•</span>
-                  <span>{shoppingList?.items.length ?? 0} total items</span>
-                  {shoppingList?.updatedAt || shoppingList?.createdAt ? (
-                    <>
-                      <span className='mx-2'>•</span>
-                      <span>
-                        Updated{' '}
-                        {formatDate(
-                          shoppingList.updatedAt ?? shoppingList.createdAt,
-                          {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                          },
-                        )}
-                      </span>
-                    </>
-                  ) : null}
-                </>
-              ) : showHistory ? (
-                <>
-                  <span>{historicalLists.length} previous lists saved</span>
-                  {partner ? (
-                    <>
-                      <span className='mx-2'>•</span>
-                      <span>Partner linked: {partner.name ?? 'Partner'}</span>
-                    </>
-                  ) : null}
-                </>
-              ) : (
-                `Add recipes from ${userName ?? 'your plan'} to build your list.`
-              )}
+      <CardHeader
+        className={cn(
+          'shrink-0 gap-3 border-b border-border/60 px-3 py-4',
+          shoppingListAccentStyles.header,
+          isFullHeight && 'pt-[max(1rem,env(safe-area-inset-top))]',
+        )}
+      >
+        <div className='flex flex-col gap-3'>
+          <div className='flex flex-col gap-3 md:flex-row md:items-start md:justify-between'>
+            <div className='min-w-0 space-y-1'>
+              <div className='font-semibold uppercase text-[10px] tracking-[0.16em] text-muted-foreground'>
+                Shopping list
+              </div>
+              <CardTitle className='flex items-center gap-2 text-lg font-bold tracking-tight text-foreground/85'>
+                <ShoppingCart className='h-5 w-5' />
+                <span className='truncate'>
+                  {shoppingList?.name ?? 'Shopping List'}
+                </span>
+              </CardTitle>
+              <div className='text-xs leading-5 text-muted-foreground'>
+                {isLoading ? (
+                  'Loading shopping list...'
+                ) : hasItems ? (
+                  <>
+                    <span>{remainingCount} left to buy</span>
+                    <span className='mx-2'>•</span>
+                    <span>{totalCount} total items</span>
+                    {updatedLabel ? (
+                      <>
+                        <span className='mx-2'>•</span>
+                        <span>Updated {updatedLabel}</span>
+                      </>
+                    ) : null}
+                  </>
+                ) : showHistory ? (
+                  <>
+                    <span>{historicalLists.length} previous lists saved</span>
+                    {partner ? (
+                      <>
+                        <span className='mx-2'>•</span>
+                        <span>Partner linked: {partner.name ?? 'Partner'}</span>
+                      </>
+                    ) : null}
+                  </>
+                ) : (
+                  `Add recipes from ${userName ?? 'your plan'} to build your list.`
+                )}
+              </div>
+            </div>
+            <div className='flex flex-wrap gap-1.5'>
+              {showPageLink ? (
+                <Button
+                  asChild
+                  variant='outline'
+                  size='sm'
+                  className='h-8 rounded-full border-border/70 bg-background/90 px-3 text-xs font-semibold shadow-none'
+                >
+                  <Link href='/user/shopping-list'>Open page</Link>
+                </Button>
+              ) : null}
+              {allowItemEditing && showHistory && partner ? (
+                <Button
+                  size='sm'
+                  variant='outline'
+                  className='h-8 rounded-full border-border/70 bg-background/90 px-3 text-xs font-semibold shadow-none'
+                  onClick={() => void handleMergeWithPartner()}
+                  disabled={mergeWithPartner.isPending}
+                >
+                  {mergeWithPartner.isPending ? (
+                    <LoaderCircle className='mr-2 h-4 w-4 animate-spin' />
+                  ) : (
+                    <Copy className='mr-2 h-4 w-4' />
+                  )}
+                  Merge with {partner.name ?? 'partner'}
+                </Button>
+              ) : null}
+              {showHistory ? (
+                <Button
+                  size='sm'
+                  variant='outline'
+                  className='h-8 rounded-full border-border/70 bg-background/90 px-3 text-xs font-semibold shadow-none'
+                  onClick={() => void handleCreateNewList()}
+                  disabled={createNewList.isPending}
+                >
+                  {createNewList.isPending ? (
+                    <LoaderCircle className='mr-2 h-4 w-4 animate-spin' />
+                  ) : (
+                    <Plus className='mr-2 h-4 w-4' />
+                  )}
+                  New list
+                </Button>
+              ) : null}
+              <Button
+                size='sm'
+                variant='outline'
+                className='h-8 rounded-full border-border/70 bg-background/90 px-3 text-xs font-semibold shadow-none'
+                onClick={() => void handleDeleteCurrentList()}
+                disabled={!shoppingList || deleteList.isPending}
+              >
+                {deleteList.isPending ? (
+                  <LoaderCircle className='mr-2 h-4 w-4 animate-spin' />
+                ) : (
+                  <Trash2 className='mr-2 h-4 w-4' />
+                )}
+                Delete list
+              </Button>
+              <Button
+                size='sm'
+                className='h-8 rounded-full px-3 text-xs font-semibold'
+                onClick={() => void handleEmailList()}
+                disabled={
+                  !hasItems || emailShoppingList.isPending || !shoppingList
+                }
+              >
+                {emailShoppingList.isPending ? (
+                  <LoaderCircle className='mr-2 h-4 w-4 animate-spin' />
+                ) : (
+                  <Mail className='mr-2 h-4 w-4' />
+                )}
+                Email list
+              </Button>
             </div>
           </div>
-          <div className='flex flex-wrap gap-1'>
-            {showPageLink ? (
-              <Button
-                asChild
-                variant='outline'
-                size='sm'
-              >
-                <Link href='/user/shopping-list'>Open page</Link>
-              </Button>
-            ) : null}
-            {allowItemEditing && showHistory && partner ? (
-              <Button
-                size='sm'
-                variant='outline'
-                onClick={() => void handleMergeWithPartner()}
-                disabled={mergeWithPartner.isPending}
-              >
-                {mergeWithPartner.isPending ? (
-                  <LoaderCircle className='mr-2 h-4 w-4 animate-spin' />
-                ) : (
-                  <Copy className='mr-2 h-4 w-4' />
-                )}
-                Merge with {partner.name ?? 'partner'}
-              </Button>
-            ) : null}
-            {showHistory ? (
-              <Button
-                size='sm'
-                variant='outline'
-                onClick={() => void handleCreateNewList()}
-                disabled={createNewList.isPending}
-              >
-                {createNewList.isPending ? (
-                  <LoaderCircle className='mr-2 h-4 w-4 animate-spin' />
-                ) : (
-                  <Plus className='mr-2 h-4 w-4' />
-                )}
-                New list
-              </Button>
-            ) : null}
-            <Button
-              size='sm'
-              variant='outline'
-              onClick={() => void handleDeleteCurrentList()}
-              disabled={!shoppingList || deleteList.isPending}
-            >
-              {deleteList.isPending ? (
-                <LoaderCircle className='mr-2 h-4 w-4 animate-spin' />
-              ) : (
-                <Trash2 className='mr-2 h-4 w-4' />
+          <div className='grid grid-cols-2 gap-2'>
+            <div
+              className={cn(
+                'rounded-2xl border px-2.5 py-1.5',
+                shoppingListAccentStyles.stat,
               )}
-              Delete list
-            </Button>
-            <Button
-              size='sm'
-              onClick={() => void handleEmailList()}
-              disabled={
-                !hasItems || emailShoppingList.isPending || !shoppingList
-              }
             >
-              {emailShoppingList.isPending ? (
-                <LoaderCircle className='mr-2 h-4 w-4 animate-spin' />
-              ) : (
-                <Mail className='mr-2 h-4 w-4' />
-              )}
-              Email list
-            </Button>
+              <div
+                className={cn(
+                  'uppercase text-[10px] tracking-[0.14em]',
+                  shoppingListAccentStyles.statText,
+                )}
+              >
+                {showHistory ? 'Active items' : 'Left to buy'}
+              </div>
+              <div className='mt-1 text-sm font-semibold'>
+                {showHistory ? totalCount : remainingCount}
+              </div>
+            </div>
+            <div className='rounded-2xl border border-border/60 bg-background/90 px-2.5 py-1.5'>
+              <div className='uppercase text-[10px] tracking-[0.14em] text-muted-foreground'>
+                {showHistory ? 'Saved lists' : 'Total items'}
+              </div>
+              <div className='mt-1 text-sm font-semibold'>
+                {showHistory ? historicalLists.length : totalCount}
+              </div>
+            </div>
           </div>
         </div>
       </CardHeader>
       <CardContent
         className={cn(
-          'p-0',
+          'bg-muted/[0.18] p-0',
           isFullHeight && useInternalScroll && 'flex min-h-0 flex-1 flex-col',
         )}
       >
