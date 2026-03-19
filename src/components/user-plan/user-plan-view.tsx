@@ -32,9 +32,9 @@ const formatCompactNumber = (value: number | string) => Number(value).toFixed(0)
 
 const mealAccentStyles = {
   section:
-    'border-primary/12 bg-[linear-gradient(180deg,hsl(var(--primary)/0.06),transparent_82%)]',
+    'border-primary/15 bg-[linear-gradient(180deg,hsl(var(--primary)/0.08),transparent_88%)]',
   dot: 'bg-primary/60',
-  average: 'border-primary/12 bg-primary/[0.075] text-foreground',
+  average: 'border-primary/15 bg-primary/[0.1] text-foreground',
 } as const
 
 const SummaryChip = ({
@@ -215,7 +215,7 @@ const UserPlanRecipe = ({
       presented={isOpen}
       onPresentedChange={setIsOpen}
     >
-      <Sheet.Trigger className='w-full overflow-hidden rounded-[20px] border border-primary/10 bg-[linear-gradient(135deg,hsl(var(--primary)/0.055),transparent_82%)] px-3 py-2 text-left shadow-[0_16px_30px_-28px_hsl(var(--foreground)/0.75)] transition-transform active:scale-[0.99]'>
+      <Sheet.Trigger className='w-full overflow-hidden rounded-[18px] border border-primary/15 bg-[linear-gradient(135deg,hsl(var(--primary)/0.08),transparent_88%)] px-2.5 py-2 text-left shadow-[0_16px_30px_-28px_hsl(var(--foreground)/0.75)] transition-transform active:scale-[0.99]'>
         <div className='flex items-start justify-between gap-3'>
           <div className='min-w-0 flex-1 overflow-hidden'>
             <div
@@ -241,7 +241,7 @@ const UserPlanRecipe = ({
           ].map((item) => (
             <div
               key={item.label}
-              className='rounded-2xl bg-muted/70 px-2 py-1.5'
+              className='rounded-2xl border border-primary/10 bg-background/85 px-2 py-1'
             >
               <div className='text-[10px] uppercase tracking-[0.12em] text-muted-foreground'>
                 {item.label}
@@ -392,7 +392,7 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
 
   return (
     <Card className='gap-0 overflow-hidden rounded-[28px] border-border/70 py-0 shadow-[0_20px_48px_-32px_hsl(var(--foreground)/0.45)]'>
-      <CardHeader className='gap-3 border-b border-border/60 bg-[linear-gradient(180deg,hsl(var(--primary)/0.09),transparent_86%)] px-3 pb-3 pt-4'>
+      <CardHeader className='gap-3 border-b border-border/60 bg-[linear-gradient(180deg,hsl(var(--primary)/0.1),transparent_90%)] px-3 pb-3 pt-4'>
         <div className='flex items-start justify-between gap-3'>
           <div className='min-w-0'>
             <div className='text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground'>
@@ -408,21 +408,21 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
           </div>
         </div>
         <div className='grid grid-cols-2 gap-2'>
-          <div className='rounded-2xl border border-primary/10 bg-primary/[0.05] px-2.5 py-2'>
-            <div className='text-[10px] uppercase tracking-[0.14em] text-muted-foreground'>
+          <div className='rounded-2xl border border-primary/15 bg-primary/[0.08] px-2.5 py-2'>
+            <div className='text-[10px] uppercase tracking-[0.14em] text-primary/80'>
               Meals
             </div>
             <div className='mt-1 text-sm font-semibold'>{mealCount}</div>
           </div>
-          <div className='rounded-2xl border border-primary/12 bg-primary/[0.07] px-2.5 py-2'>
-            <div className='text-[10px] uppercase tracking-[0.14em] text-muted-foreground'>
+          <div className='rounded-2xl border border-amber-500/15 bg-amber-500/[0.08] px-2.5 py-2'>
+            <div className='text-[10px] uppercase tracking-[0.14em] text-amber-700/80 dark:text-amber-300/80'>
               Recipes
             </div>
             <div className='mt-1 text-sm font-semibold'>{recipeCount}</div>
           </div>
         </div>
       </CardHeader>
-      <CardContent className='flex flex-col gap-3 px-3 py-3'>
+      <CardContent className='flex flex-col gap-2.5 px-2.5 py-2.5'>
         {userPlan.userMeals.map((meal, index) => {
           const mealAccent = mealAccentStyles
           const mealRecipes = userPlan.userRecipes.filter(
@@ -459,11 +459,11 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
               key={meal.id}
               aria-label={meal.mealTitle}
               className={cn(
-                'rounded-[24px] border px-3 py-3 shadow-[0_14px_30px_-24px_hsl(var(--foreground)/0.55)]',
+                'rounded-[22px] border px-2.5 py-2.5 shadow-[0_14px_30px_-24px_hsl(var(--foreground)/0.55)]',
                 mealAccent.section,
               )}
             >
-              <div className='flex items-start justify-between gap-3'>
+              <div className='flex items-start justify-between gap-2.5'>
                 <div className='min-w-0'>
                   <div className='flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground'>
                     <span
@@ -483,15 +483,15 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
                 />
               </div>
 
-              <div className='mt-3 flex flex-wrap gap-2'>
+              <div className='mt-2 flex flex-wrap gap-2'>
                 <div
                   className={cn(
-                    'rounded-2xl border px-2.5 py-2',
+                    'rounded-2xl border px-2.5 py-1.5',
                     mealAccent.average,
                   )}
                 >
                   <div className='text-[10px] font-semibold uppercase tracking-[0.14em] opacity-75'>
-                    Average
+                    Target macros
                   </div>
                   <div className='mt-1 flex items-center gap-3 text-[11px] font-semibold'>
                     <span>
@@ -508,7 +508,7 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
                 </div>
               </div>
 
-              <div className='mt-3 grid gap-2'>
+              <div className='mt-2 grid gap-1.5'>
                 {mealRecipes.length > 0 ? (
                   mealRecipes.map((recipe) => (
                     <UserPlanRecipe
@@ -526,7 +526,7 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
               </div>
 
               {hasText(meal.veges) ? (
-                <div className='mt-3 flex items-center gap-2 rounded-[20px] border border-emerald-500/20 bg-emerald-500/[0.08] px-2.5 py-2.5'>
+                <div className='mt-2 flex items-center gap-2 rounded-[18px] border border-emerald-500/20 bg-emerald-500/[0.1] px-2.5 py-2'>
                   <div className='min-w-0 flex-1'>
                     <div className='text-[10px] font-semibold uppercase tracking-[0.14em] text-emerald-700/80 dark:text-emerald-300/80'>
                       Vegetable side
