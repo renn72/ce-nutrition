@@ -221,10 +221,12 @@ const UserPlanRecipe = ({
   userPlan,
   mealIndex,
   recipeIndex,
+  accentStyles,
 }: {
   userPlan: UserPlan
   mealIndex: number | null
   recipeIndex: number | null
+  accentStyles: (typeof planAccentPalette)[number]
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [scale, setScale] = useState(1)
@@ -260,6 +262,11 @@ const UserPlanRecipe = ({
   const { cals, protein, carbs, fat } = getRecipeDetailsForDailyLog(
     userPlan,
     recipe.id,
+  )
+  const recipeIngredients = userPlan.userIngredients.filter(
+    (ingredient) =>
+      ingredient.mealIndex === mealIndex &&
+      ingredient.recipeIndex === recipeIndex,
   )
 
   const handleAddToShoppingList = async () => {
@@ -365,108 +372,193 @@ const UserPlanRecipe = ({
                     action='dismiss'
                   />
                 </div>
-                <div className='flex flex-col gap-2 px-4'>
-                  <Sheet.Title className='text-lg font-semibold'>
-                    {recipe.name}
-                  </Sheet.Title>
-                  <Sheet.Description className='flex gap-1 justify-between items-center py-1 px-4 text-xs font-normal rounded-full shadow-md bg-primary text-background'>
-                    <span>{`${(Number(cals) * scale).toFixed(0)} cals`}</span>
-                    <span>{`${(Number(protein) * scale).toFixed(0)} protein`}</span>
-                    <span>{`${(Number(carbs) * scale).toFixed(0)} carbs`}</span>
-                    <span>{`${(Number(fat) * scale).toFixed(0)} fat`}</span>
-                  </Sheet.Description>
-                  <div className='grid grid-cols-4 gap-2 place-items-center mt-4'>
-                    <Label>Serves</Label>
-                    <div className='flex col-span-3 gap-3 items-center w-full'>
+                <div className='flex flex-col gap-4 px-4'>
+                  <div
+                    className={cn(
+                      'rounded-[28px] border px-4 py-4',
+                      accentStyles.section,
+                    )}
+                  >
+                    <div className='flex items-start justify-between gap-3'>
+                      <div className='min-w-0'>
+                        <div className='text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground'>
+                          Recipe view
+                        </div>
+                        <Sheet.Title className='mt-1 text-xl font-semibold leading-7 text-foreground'>
+                          {recipe.name}
+                        </Sheet.Title>
+                      </div>
+                      <div
+                        className={cn(
+                          'rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em]',
+                          accentStyles.options,
+                        )}
+                      >
+                        {ingredientCount} items
+                      </div>
+                    </div>
+                    <Sheet.Description className='mt-2 text-sm leading-5 text-muted-foreground'>
+                      Adjust the serve size, review ingredients, then add this
+                      recipe to the shopping list.
+                    </Sheet.Description>
+                    <div className='mt-4 grid grid-cols-2 gap-2'>
+                      {[
+                        {
+                          label: 'Calories',
+                          value: `${(Number(cals) * scale).toFixed(0)} cal`,
+                        },
+                        {
+                          label: 'Protein',
+                          value: `${(Number(protein) * scale).toFixed(0)}g`,
+                        },
+                        {
+                          label: 'Carbs',
+                          value: `${(Number(carbs) * scale).toFixed(0)}g`,
+                        },
+                        {
+                          label: 'Fat',
+                          value: `${(Number(fat) * scale).toFixed(0)}g`,
+                        },
+                      ].map((item) => (
+                        <div
+                          key={item.label}
+                          className={cn(
+                            'rounded-2xl border px-3 py-2',
+                            accentStyles.average,
+                          )}
+                        >
+                          <div className='text-[10px] font-semibold uppercase tracking-[0.14em] opacity-70'>
+                            {item.label}
+                          </div>
+                          <div className='mt-1 text-sm font-semibold'>
+                            {item.value}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className='rounded-[24px] border border-border/70 bg-card px-4 py-4 shadow-sm'>
+                    <div className='flex items-center justify-between gap-3'>
+                      <Label className='text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground'>
+                        Serves
+                      </Label>
+                      <button
+                        type='button'
+                        className='inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/70 bg-background text-muted-foreground transition-colors hover:text-foreground'
+                        onClick={() => {
+                          setScale(1)
+                        }}
+                        aria-label='Reset serves'
+                      >
+                        <RotateCcw className='h-4 w-4' />
+                      </button>
+                    </div>
+                    <div className='mt-3 flex items-center gap-3'>
                       <Input
                         placeholder='Scale'
-                        className='max-w-[52px]'
+                        className='h-11 w-20 rounded-2xl border-border/70 text-center text-base font-semibold'
                         type='number'
                         value={scale}
                         onChange={(e) => {
                           setScale(Number(e.target.value))
                         }}
                       />
-                      <Slider
-                        min={0}
-                        max={10}
-                        step={0.25}
-                        value={[scale]}
-                        onValueChange={(newValue) => {
-                          if (!newValue[0]) return
-                          setScale(newValue[0])
-                        }}
-                      />
-                      <RotateCcw
-                        size={32}
-                        className='text-muted-foreground'
-                        onClick={() => {
-                          setScale(1)
-                        }}
-                      />
+                      <div className='flex-1'>
+                        <Slider
+                          min={0}
+                          max={10}
+                          step={0.25}
+                          value={[scale]}
+                          onValueChange={(newValue) => {
+                            if (!newValue[0]) return
+                            setScale(newValue[0])
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <Button
+                      type='button'
+                      className='mt-4 h-11 w-full rounded-2xl'
+                      onClick={() => void handleAddToShoppingList()}
+                      disabled={addRecipeToShoppingList.isPending}
+                    >
+                      {addRecipeToShoppingList.isPending ? (
+                        <RotateCcw className='mr-2 h-4 w-4 animate-spin' />
+                      ) : (
+                        <ShoppingCart className='mr-2 h-4 w-4' />
+                      )}
+                      Add to shopping list
+                    </Button>
+                  </div>
+                </div>
+                <ScrollArea className='h-[calc(90vh-390px)] px-4 pb-0 pt-0'>
+                  <div className='pb-4'>
+                    <div className='mb-3 flex items-end justify-between gap-3'>
+                      <div>
+                        <div className='text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground'>
+                          Ingredients
+                        </div>
+                        <div className='mt-1 text-sm text-muted-foreground'>
+                          Everything needed for this recipe at the selected
+                          serve size.
+                        </div>
+                      </div>
+                    </div>
+                    <div className='flex flex-col gap-2'>
+                      {recipeIngredients.map((ingredient) => {
+                        const serve = scale * Number(ingredient.serve)
+                        const calories =
+                          (Number(serve) /
+                            Number(ingredient.ingredient?.serveSize)) *
+                          Number(ingredient.ingredient?.caloriesWOFibre)
+                        const altSize =
+                          (calories /
+                            Number(
+                              ingredient.alternateIngredient?.caloriesWOFibre,
+                            )) *
+                          Number(ingredient.alternateIngredient?.serveSize)
+                        return (
+                          <div
+                            key={ingredient.id}
+                            className='rounded-[22px] border border-border/70 bg-card px-3 py-3 shadow-sm'
+                          >
+                            <div className='flex items-start justify-between gap-3'>
+                              <div className='min-w-0'>
+                                <div className='truncate text-sm font-semibold text-foreground'>
+                                  {ingredient.name}
+                                </div>
+                                {ingredient.alternateIngredient ? (
+                                  <div className='mt-1 truncate text-xs text-muted-foreground'>
+                                    or {ingredient.alternateIngredient.name}
+                                  </div>
+                                ) : null}
+                              </div>
+                              <div className='rounded-full border border-border/70 bg-background px-2.5 py-1 text-xs font-semibold'>
+                                {`${serve.toFixed(0)}${
+                                  ingredient.serveUnit === 'each'
+                                    ? 'ea'
+                                    : ingredient.serveUnit === 'grams'
+                                      ? 'g'
+                                      : ingredient.serveUnit
+                                }`}
+                              </div>
+                            </div>
+                            {ingredient.alternateIngredient ? (
+                              <div className='mt-3 flex items-center justify-between gap-3 rounded-2xl border border-dashed border-border/60 bg-muted/40 px-3 py-2 text-xs'>
+                                <span className='truncate text-muted-foreground'>
+                                  Alternate serve
+                                </span>
+                                <span className='shrink-0 font-semibold text-foreground'>
+                                  {`${altSize.toFixed(0)}${ingredient.alternateIngredient?.serveUnit?.slice(0, 1)}`}
+                                </span>
+                              </div>
+                            ) : null}
+                          </div>
+                        )
+                      })}
                     </div>
                   </div>
-                  <Button
-                    type='button'
-                    className='w-full'
-                    onClick={() => void handleAddToShoppingList()}
-                    disabled={addRecipeToShoppingList.isPending}
-                  >
-                    {addRecipeToShoppingList.isPending ? (
-                      <RotateCcw className='mr-2 w-4 h-4 animate-spin' />
-                    ) : (
-                      <ShoppingCart className='mr-2 w-4 h-4' />
-                    )}
-                    Add to shopping list
-                  </Button>
-                </div>
-                <ScrollArea className='px-0 pt-0 h-[calc(90vh-240px)]'>
-                  {userPlan.userIngredients
-                    .filter(
-                      (ingredient) =>
-                        ingredient.mealIndex === mealIndex &&
-                        ingredient.recipeIndex === recipeIndex,
-                    )
-                    .map((ingredient) => {
-                      const serve = scale * Number(ingredient.serve)
-                      const calories =
-                        (Number(serve) /
-                          Number(ingredient.ingredient?.serveSize)) *
-                        Number(ingredient.ingredient?.caloriesWOFibre)
-                      const altSize =
-                        (calories /
-                          Number(
-                            ingredient.alternateIngredient?.caloriesWOFibre,
-                          )) *
-                        Number(ingredient.alternateIngredient?.serveSize)
-                      return (
-                        <div
-                          key={ingredient.id}
-                          className='flex flex-col gap-0'
-                        >
-                          <div className='grid grid-cols-6 py-2 px-1 w-full text-sm bg-secondary'>
-                            <div className='col-span-5 truncate'>
-                              {ingredient.name}
-                            </div>
-                            <div className='place-self-end'>{`${serve.toFixed(0)}${
-                              ingredient.serveUnit === 'each'
-                                ? 'ea'
-                                : ingredient.serveUnit === 'grams'
-                                  ? 'g'
-                                  : ingredient.serveUnit
-                            }`}</div>
-                          </div>
-                          {ingredient.alternateIngredient ? (
-                            <div className='grid grid-cols-6 py-0 px-1 w-full text-xs font-light bg-secondary'>
-                              <div className='col-span-5 truncate'>
-                                or {ingredient.alternateIngredient.name}
-                              </div>
-                              <div className='place-self-end'>{`${altSize.toFixed(0)}${ingredient.alternateIngredient?.serveUnit?.slice(0, 1)}`}</div>
-                            </div>
-                          ) : null}
-                        </div>
-                      )
-                    })}
                 </ScrollArea>
               </div>
               <Sheet.Trigger
@@ -642,6 +734,7 @@ const UserPlanView = ({
                       userPlan={userPlan}
                       mealIndex={meal.mealIndex}
                       recipeIndex={recipe.recipeIndex}
+                      accentStyles={mealAccentStyles}
                     />
                   ))
                 ) : (
