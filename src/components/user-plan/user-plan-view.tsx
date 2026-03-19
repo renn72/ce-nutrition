@@ -37,10 +37,10 @@ const mealAccentStyles = {
 } as const
 
 const recipeAccentStyles = {
-  card: 'border-emerald-500/12 bg-emerald-500/[0.05]',
-  pill: 'border-emerald-500/15 bg-emerald-500/[0.12] text-emerald-700 dark:text-emerald-300',
-  macro: 'border-emerald-500/10 bg-emerald-500/[0.045]',
-  stat: 'border-emerald-500/15 bg-emerald-500/[0.09]',
+  card: 'border-border/60 bg-card',
+  pill: 'border-border/60 bg-muted/80 text-foreground',
+  macro: 'border-border/60 bg-background/90',
+  stat: 'border-border/60 bg-background/90',
 } as const
 
 const SummaryChip = ({
@@ -223,7 +223,7 @@ const UserPlanRecipe = ({
     >
       <Sheet.Trigger
         className={cn(
-          'overflow-hidden py-2 px-2.5 w-full text-left border transition-transform rounded-[18px] shadow-[0_14px_22px_-20px_hsl(var(--foreground)/0.55)] active:scale-[0.99]',
+          'overflow-hidden py-2 px-2.5 w-full text-left border transition-transform rounded-[18px] shadow-sm active:scale-[0.99]',
           recipeAccentStyles.card,
         )}
       >
@@ -410,7 +410,7 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
   const recipeCount = userPlan?.userRecipes.length
 
   return (
-    <Card className='overflow-hidden gap-0 py-0 rounded-none border-border/70 shadow-[0_20px_48px_-32px_hsl(var(--foreground)/0.45)]'>
+    <Card className='overflow-hidden gap-0 py-0 rounded-none border-border/70 shadow-sm'>
       <CardHeader className='gap-3 px-3 pt-4 pb-3 border-b border-border/60 bg-[linear-gradient(180deg,hsl(var(--primary)/0.045),transparent_100%)]'>
         <div className='flex gap-3 justify-between items-start'>
           <div className='min-w-0'>
@@ -439,7 +439,7 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
               recipeAccentStyles.stat,
             )}
           >
-            <div className='uppercase text-[10px] tracking-[0.14em] text-emerald-700/80 dark:text-emerald-300/80'>
+            <div className='uppercase text-[10px] tracking-[0.14em] text-muted-foreground'>
               Recipes
             </div>
             <div className='mt-1 text-sm font-semibold'>{recipeCount}</div>
@@ -482,7 +482,7 @@ const UserPlanView = ({ userPlan }: { userPlan: UserPlan }) => {
             <section
               key={meal.id}
               className={cn(
-                'rounded-[22px] border px-2.5 py-2.5 shadow-[0_14px_26px_-24px_hsl(var(--foreground)/0.5)]',
+                'rounded-[22px] border px-2.5 py-2.5 shadow-sm',
                 mealAccent.section,
               )}
             >
