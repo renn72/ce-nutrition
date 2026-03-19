@@ -41,11 +41,11 @@ const ShoppingListDialog = ({
       <DialogTrigger asChild>
         <Button
           size='icon'
-          className='fixed right-4 bottom-20 z-40 h-14 w-14 rounded-full border border-sky-500/20 bg-sky-500/[0.12] text-sky-700 shadow-sm backdrop-blur dark:text-sky-300 md:bottom-6'
+          className='fixed right-4 bottom-20 z-40 h-14 w-14 rounded-full shadow-lg md:bottom-6'
         >
           <ShoppingCart className='h-6 w-6' />
           <span className='sr-only'>Open shopping list</span>
-          <span className='absolute -top-1 -right-1 rounded-full border border-background/80 bg-background px-2 py-0.5 text-[11px] font-semibold text-foreground shadow-sm'>
+          <span className='absolute -top-1 -right-1 rounded-full bg-accent px-2 py-0.5 text-xs text-accent-foreground'>
             {remainingCount}
           </span>
         </Button>
