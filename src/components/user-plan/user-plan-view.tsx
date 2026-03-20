@@ -319,7 +319,7 @@ const UserPlanRecipe = ({
 				<div className='flex gap-3 justify-between items-start'>
 					<div className='overflow-hidden flex-1 min-w-0'>
 						<div
-							className='pr-1 font-semibold leading-5 max-w-[10.5rem] truncate text-[13px] text-foreground'
+							className='pr-1 font-semibold leading-5 max-w-[14.5rem] truncate text-[13px] text-foreground'
 							title={recipe?.name || ''}
 						>
 							{recipe.name}
@@ -515,11 +515,11 @@ const UserPlanRecipe = ({
 													>
 														<div className='flex gap-3 justify-between items-start'>
 															<div className='min-w-0'>
-																<div className='text-sm font-semibold truncate text-foreground'>
+																<div className='text-sm font-semibold max-w-[16.5rem] truncate text-foreground'>
 																	{ingredient.name}
 																</div>
 																{ingredient.alternateIngredient ? (
-																	<div className='mt-1 text-xs truncate text-muted-foreground'>
+																	<div className='mt-1 text-xs truncate max-w-[16.5rem] text-muted-foreground'>
 																		or {ingredient.alternateIngredient.name}
 																	</div>
 																) : null}
