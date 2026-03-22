@@ -1,6 +1,7 @@
 [variables]
 CI = 'true'
 NIXPACKS_METADATA = 'node'
+NIXPACKS_NODE_VERSION = '22'
 NODE_ENV = 'production'
 NPM_CONFIG_PRODUCTION = 'false'
 
@@ -15,8 +16,7 @@ cacheDirectories = [
 [phases.install]
 dependsOn = ['setup']
 cmds = [
-'corepack enable',
-'corepack prepare pnpm@10.18.1 --activate',
+'npm install -g pnpm@10.18.1',
 'pnpm i --frozen-lockfile',
 ]
 cacheDirectories = ['/root/.local/share/pnpm/store/v3']
