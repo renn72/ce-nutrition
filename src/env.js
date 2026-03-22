@@ -25,6 +25,7 @@ export const env = createEnv({
 		UPLOADTHING_TOKEN: z.string(),
 
 		ZEN_API_KEY: z.string(),
+		ZEN_MODEL: z.string(),
 
 		NODE_ENV: z
 			.enum(['development', 'test', 'production'])
@@ -64,6 +65,7 @@ export const env = createEnv({
 		VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
 
 		ZEN_API_KEY: process.env.ZEN_API_KEY,
+		ZEN_MODEL: process.env.ZEN_MODEL,
 
 		UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
 		// NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
