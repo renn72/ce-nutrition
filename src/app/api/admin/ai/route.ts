@@ -166,14 +166,17 @@ export async function POST(request: Request) {
 			? `Response format:
 - Return only 4-6 short bullet points.
 - Do not use subheadings.
+- format respone as markdown
 - Keep every point tightly grounded in the logs.`
 			: `Response format:
 - Start with a 1-2 sentence summary.
-- Then add 3-6 short bullet points.
-- Keep the overall response concise and directly tied to the logs.`
+- Focus on trends, adherence, recovery, digestion, hydration, symptoms, and anything a coach should notice when clearly supported by the logs.
+- use short headings and bullet points when they improve readability
+- Keep the overall response concise and directly tied to the logs.
+- format respone as markdown with nice headings
+`
 
 	const prompt = `${parsedBody.data.dailyLogsText}
-
 Task:
 Give a summary of the information in these daily logs over this time frame and any insights you might have.
 Keep the relevant, and specific to the provided information only.
@@ -185,36 +188,55 @@ Field notes:
 - "low" days refer to low carb/calories.
 
 Focus on trends, adherence, recovery, digestion, hydration, symptoms, and anything a coach should notice when clearly supported by the logs.
-i prefer short headings with bullet points underneath
 ${responseFormatInstructions}`
 
 	try {
-		const upstreamResponse = await fetch(
-			`${normalizeZenBaseUrl(env.ZEN_ENDPOINT)}/chat/completions`,
+		const endpoint = `${normalizeZenBaseUrl(env.ZEN_ENDPOINT)}/chat/completions`
+		const messages = [
 			{
-				method: 'POST',
-				headers: {
-					Authorization: `Bearer ${env.ZEN_API_KEY}`,
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					model: env.ZEN_MODEL,
-					stream: true,
-					temperature: 0.3,
-					messages: [
-						{
-							role: 'system',
-							content:
-								'You are an experienced nutrition and coaching assistant reviewing client daily logs for an admin dashboard. Keep responses concise, relevant, and grounded only in the provided logs.',
-						},
-						{
-							role: 'user',
-							content: prompt,
-						},
-					],
-				}),
+				role: 'system',
+				content:
+					'You are an experienced nutrition and coaching assistant reviewing client daily logs for an admin dashboard. Keep responses concise, relevant, and grounded only in the provided logs.',
 			},
+			{
+				role: 'user',
+				content: prompt,
+			},
+		]
+
+		console.log(
+			'Zen AI insight request context',
+			JSON.stringify(
+				{
+					userId: parsedBody.data.userId,
+					rangeDays: parsedBody.data.rangeDays,
+					rangeLabel: parsedBody.data.rangeLabel,
+					rangeStart: parsedBody.data.rangeStart,
+					rangeEnd: parsedBody.data.rangeEnd,
+					sourceLogCount: parsedBody.data.sourceLogCount,
+					detailLevel: parsedBody.data.detailLevel,
+					model: env.ZEN_MODEL,
+					endpoint,
+					messages,
+				},
+				null,
+				2,
+			),
 		)
+
+		const upstreamResponse = await fetch(endpoint, {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${env.ZEN_API_KEY}`,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				model: env.ZEN_MODEL,
+				stream: true,
+				temperature: 0.3,
+				messages,
+			}),
+		})
 
 		if (!upstreamResponse.ok || !upstreamResponse.body) {
 			const errorText = await upstreamResponse.text().catch(() => '')
