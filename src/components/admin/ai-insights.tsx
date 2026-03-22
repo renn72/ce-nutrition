@@ -100,6 +100,41 @@ const InsightMarkdown = ({
 	)
 }
 
+const SavedInsight = ({ content }: { content: string }) => {
+	const [isExpanded, setIsExpanded] = useState(false)
+	return (
+		<ScrollArea
+			className={cn(
+				'rounded-lg border bg-card',
+				isExpanded ? 'h-full' : 'h-72',
+			)}
+		>
+			<div className='relative p-4'>
+				{isExpanded ? (
+					<Button
+						variant='outline'
+						size='sm'
+						className='absolute top-2 right-4'
+						onMouseDown={() => setIsExpanded(false)}
+					>
+						Collapse
+					</Button>
+				) : (
+					<Button
+						variant='outline'
+						size='sm'
+						className='absolute top-2 right-4'
+						onMouseDown={() => setIsExpanded(true)}
+					>
+						Expand
+					</Button>
+				)}
+				<InsightMarkdown content={content} />
+			</div>
+		</ScrollArea>
+	)
+}
+
 const AiInsights = ({ userId }: { userId: string }) => {
 	const [insights, setInsights] = useState<SavedInsight[]>([])
 	const [isLoadingInsights, setIsLoadingInsights] = useState(true)
@@ -403,8 +438,8 @@ const AiInsights = ({ userId }: { userId: string }) => {
 						) : (
 							<div className='flex flex-col gap-4'>
 								{insights.map((insight) => (
-									<Card key={insight.id} className='gap-4 py-5'>
-										<CardHeader className='pb-0'>
+									<Card key={insight.id} className='gap-4 py-5 bg-background'>
+										<CardHeader className='pb-0 bg-background'>
 											<div className='flex gap-4 justify-between items-start'>
 												<div className='flex flex-col gap-1'>
 													<CardTitle className='text-base'>
@@ -428,11 +463,7 @@ const AiInsights = ({ userId }: { userId: string }) => {
 											</div>
 										</CardHeader>
 										<CardContent>
-											<ScrollArea className='h-56 rounded-lg border bg-muted/20'>
-												<div className='p-4'>
-													<InsightMarkdown content={insight.content} />
-												</div>
-											</ScrollArea>
+											<SavedInsight content={insight.content} />
 										</CardContent>
 									</Card>
 								))}
