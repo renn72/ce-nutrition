@@ -9,289 +9,352 @@ export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 const getInsightsQuerySchema = z.object({
-  userId: z.string().min(1),
+	userId: z.string().min(1),
+})
+
+const deleteInsightQuerySchema = z.object({
+	userId: z.string().min(1),
+	insightId: z.coerce.number().int().positive(),
 })
 
 const generateInsightBodySchema = z.object({
-  userId: z.string().min(1),
-  rangeDays: z.union([z.literal(7), z.literal(30), z.literal(90)]),
-  rangeLabel: z.string().min(1),
-  rangeStart: z.string().min(1),
-  rangeEnd: z.string().min(1),
-  sourceLogCount: z.number().int().positive(),
-  dailyLogsText: z.string().min(1),
+	userId: z.string().min(1),
+	rangeDays: z.union([z.literal(7), z.literal(30), z.literal(90)]),
+	rangeLabel: z.string().min(1),
+	rangeStart: z.string().min(1),
+	rangeEnd: z.string().min(1),
+	sourceLogCount: z.number().int().positive(),
+	dailyLogsText: z.string().min(1),
 })
 
 const normalizeZenBaseUrl = (endpoint: string) =>
-  endpoint
-    .replace(/\/chat\/completions\/?$/, '')
-    .replace(/\/completions\/?$/, '')
+	endpoint
+		.replace(/\/chat\/completions\/?$/, '')
+		.replace(/\/completions\/?$/, '')
 
 const extractChunkText = (payload: unknown) => {
-  if (!payload || typeof payload !== 'object') return ''
+	if (!payload || typeof payload !== 'object') return ''
 
-  const choices = Reflect.get(payload, 'choices')
-  if (!Array.isArray(choices) || choices.length === 0) return ''
+	const choices = Reflect.get(payload, 'choices')
+	if (!Array.isArray(choices) || choices.length === 0) return ''
 
-  const firstChoice = choices[0]
-  if (!firstChoice || typeof firstChoice !== 'object') return ''
+	const firstChoice = choices[0]
+	if (!firstChoice || typeof firstChoice !== 'object') return ''
 
-  const delta = Reflect.get(firstChoice, 'delta')
-  const message = Reflect.get(firstChoice, 'message')
-  const container =
-    delta && typeof delta === 'object'
-      ? delta
-      : message && typeof message === 'object'
-        ? message
-        : null
+	const delta = Reflect.get(firstChoice, 'delta')
+	const message = Reflect.get(firstChoice, 'message')
+	const container =
+		delta && typeof delta === 'object'
+			? delta
+			: message && typeof message === 'object'
+				? message
+				: null
 
-  if (!container) return ''
+	if (!container) return ''
 
-  const content = Reflect.get(container, 'content')
+	const content = Reflect.get(container, 'content')
 
-  if (typeof content === 'string') return content
-  if (!Array.isArray(content)) return ''
+	if (typeof content === 'string') return content
+	if (!Array.isArray(content)) return ''
 
-  return content
-    .map((part) => {
-      if (typeof part === 'string') return part
-      if (!part || typeof part !== 'object') return ''
+	return content
+		.map((part) => {
+			if (typeof part === 'string') return part
+			if (!part || typeof part !== 'object') return ''
 
-      const text = Reflect.get(part, 'text')
-      return typeof text === 'string' ? text : ''
-    })
-    .join('')
+			const text = Reflect.get(part, 'text')
+			return typeof text === 'string' ? text : ''
+		})
+		.join('')
 }
 
 const requireTrainerSession = async () => {
-  const session = await auth()
-  if (!session?.user?.id || !session.user.isTrainer) return null
-  return session
+	const session = await auth()
+	if (!session?.user?.id || !session.user.isTrainer) return null
+	return session
 }
 
 const canAccessClient = async ({
-  trainerId,
-  userId,
-  isAdmin,
+	trainerId,
+	userId,
+	isAdmin,
 }: {
-  trainerId: string
-  userId: string
-  isAdmin: boolean
+	trainerId: string
+	userId: string
+	isAdmin: boolean
 }) => {
-  if (isAdmin || trainerId === userId) return true
+	if (isAdmin || trainerId === userId) return true
 
-  const trainerLink = await db.query.userToTrainer.findFirst({
-    where: and(
-      eq(userToTrainer.userId, userId),
-      eq(userToTrainer.trainerId, trainerId),
-    ),
-    columns: {
-      userId: true,
-    },
-  })
+	const trainerLink = await db.query.userToTrainer.findFirst({
+		where: and(
+			eq(userToTrainer.userId, userId),
+			eq(userToTrainer.trainerId, trainerId),
+		),
+		columns: {
+			userId: true,
+		},
+	})
 
-  return Boolean(trainerLink)
+	return Boolean(trainerLink)
 }
 
 export async function GET(request: Request) {
-  const session = await requireTrainerSession()
-  if (!session) {
-    return Response.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+	const session = await requireTrainerSession()
+	if (!session) {
+		return Response.json({ error: 'Unauthorized' }, { status: 401 })
+	}
 
-  const parsedQuery = getInsightsQuerySchema.safeParse(
-    Object.fromEntries(new URL(request.url).searchParams.entries()),
-  )
+	const parsedQuery = getInsightsQuerySchema.safeParse(
+		Object.fromEntries(new URL(request.url).searchParams.entries()),
+	)
 
-  if (!parsedQuery.success) {
-    return Response.json({ error: 'Missing userId' }, { status: 400 })
-  }
+	if (!parsedQuery.success) {
+		return Response.json({ error: 'Missing userId' }, { status: 400 })
+	}
 
-  const hasAccess = await canAccessClient({
-    trainerId: session.user.id,
-    userId: parsedQuery.data.userId,
-    isAdmin: session.user.isAdmin,
-  })
+	const hasAccess = await canAccessClient({
+		trainerId: session.user.id,
+		userId: parsedQuery.data.userId,
+		isAdmin: session.user.isAdmin,
+	})
 
-  if (!hasAccess) {
-    return Response.json({ error: 'Forbidden' }, { status: 403 })
-  }
+	if (!hasAccess) {
+		return Response.json({ error: 'Forbidden' }, { status: 403 })
+	}
 
-  const insights = await db.query.aiInsight.findMany({
-    where: eq(aiInsight.userId, parsedQuery.data.userId),
-    orderBy: (data, { desc }) => [desc(data.createdAt)],
-  })
+	const insights = await db.query.aiInsight.findMany({
+		where: eq(aiInsight.userId, parsedQuery.data.userId),
+		orderBy: (data, { desc }) => [desc(data.createdAt)],
+	})
 
-  return Response.json(
-    { insights },
-    {
-      headers: {
-        'Cache-Control': 'no-store',
-      },
-    },
-  )
+	return Response.json(
+		{ insights },
+		{
+			headers: {
+				'Cache-Control': 'no-store',
+			},
+		},
+	)
 }
 
 export async function POST(request: Request) {
-  const session = await requireTrainerSession()
-  if (!session) {
-    return Response.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+	const session = await requireTrainerSession()
+	if (!session) {
+		return Response.json({ error: 'Unauthorized' }, { status: 401 })
+	}
 
-  const body = await request.json().catch(() => null)
-  const parsedBody = generateInsightBodySchema.safeParse(body)
+	const body = await request.json().catch(() => null)
+	const parsedBody = generateInsightBodySchema.safeParse(body)
 
-  if (!parsedBody.success) {
-    return Response.json({ error: 'Invalid insight request' }, { status: 400 })
-  }
+	if (!parsedBody.success) {
+		return Response.json({ error: 'Invalid insight request' }, { status: 400 })
+	}
 
-  const hasAccess = await canAccessClient({
-    trainerId: session.user.id,
-    userId: parsedBody.data.userId,
-    isAdmin: session.user.isAdmin,
-  })
+	const hasAccess = await canAccessClient({
+		trainerId: session.user.id,
+		userId: parsedBody.data.userId,
+		isAdmin: session.user.isAdmin,
+	})
 
-  if (!hasAccess) {
-    return Response.json({ error: 'Forbidden' }, { status: 403 })
-  }
+	if (!hasAccess) {
+		return Response.json({ error: 'Forbidden' }, { status: 403 })
+	}
 
-  const prompt = `${parsedBody.data.dailyLogsText}
+	const prompt = `${parsedBody.data.dailyLogsText}
 
 Task:
-Give a summary of the information in these daily logs over this time frame and any insights you might have.
-Focus on trends, adherence, recovery, digestion, hydration, symptoms, training, and anything a coach should notice.
-Be specific when the logs support a conclusion, and briefly call out missing or inconsistent data instead of guessing.
-Use short headings and bullet points when they improve readability.`
+Give a sharpe summary of the information in these daily logs over this time frame and any insights you might have.
+Keep the response brief and relevant to the provided information only.
+Do not infer details that are not supported by the logs. If important information is missing, mention that briefly.
 
-  try {
-    const upstreamResponse = await fetch(
-      `${normalizeZenBaseUrl(env.ZEN_ENDPOINT)}/chat/completions`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${env.ZEN_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: env.ZEN_MODEL,
-          stream: true,
-          temperature: 0.3,
-          messages: [
-            {
-              role: 'system',
-              content:
-                'You are an experienced nutrition and coaching assistant reviewing client daily logs for an admin dashboard.',
-            },
-            {
-              role: 'user',
-              content: prompt,
-            },
-          ],
-        }),
-      },
-    )
+Field notes:
+- The "weight" field represents minutes of weight training, not body weight.
+- "high" days refer to high carb/calories.
+- "low" days refer to low carb/calories.
 
-    if (!upstreamResponse.ok || !upstreamResponse.body) {
-      const errorText = await upstreamResponse.text().catch(() => '')
-      console.error('Zen AI request failed', errorText)
-      return Response.json(
-        { error: 'Could not generate AI insight' },
-        { status: 502 },
-      )
-    }
+Focus on trends, adherence, recovery, digestion, hydration, symptoms, and anything a coach should notice when clearly supported by the logs.
+Prefer:
+- concise wording`
 
-    const reader = upstreamResponse.body.getReader()
-    const decoder = new TextDecoder()
-    const encoder = new TextEncoder()
-    let buffer = ''
-    let fullText = ''
-    let isSaved = false
+	try {
+		const upstreamResponse = await fetch(
+			`${normalizeZenBaseUrl(env.ZEN_ENDPOINT)}/chat/completions`,
+			{
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${env.ZEN_API_KEY}`,
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					model: env.ZEN_MODEL,
+					stream: true,
+					temperature: 0.3,
+					messages: [
+						{
+							role: 'system',
+							content:
+								'You are an experienced nutrition and coaching assistant reviewing client daily logs for an admin dashboard.',
+						},
+						{
+							role: 'user',
+							content: prompt,
+						},
+					],
+				}),
+			},
+		)
 
-    const persistInsight = async () => {
-      if (isSaved) return
-      isSaved = true
+		if (!upstreamResponse.ok || !upstreamResponse.body) {
+			const errorText = await upstreamResponse.text().catch(() => '')
+			console.error('Zen AI request failed', errorText)
+			return Response.json(
+				{ error: 'Could not generate AI insight' },
+				{ status: 502 },
+			)
+		}
 
-      const content = fullText.trim()
-      if (!content) return
+		const reader = upstreamResponse.body.getReader()
+		const decoder = new TextDecoder()
+		const encoder = new TextEncoder()
+		let buffer = ''
+		let fullText = ''
+		let isSaved = false
 
-      try {
-        await db.insert(aiInsight).values({
-          userId: parsedBody.data.userId,
-          rangeDays: parsedBody.data.rangeDays,
-          rangeLabel: parsedBody.data.rangeLabel,
-          rangeStart: parsedBody.data.rangeStart,
-          rangeEnd: parsedBody.data.rangeEnd,
-          sourceLogCount: parsedBody.data.sourceLogCount,
-          model: env.ZEN_MODEL,
-          content,
-        })
-      } catch (error) {
-        console.error('Failed to save AI insight', error)
-      }
-    }
+		const persistInsight = async () => {
+			if (isSaved) return
+			isSaved = true
 
-    const processBuffer = (
-      controller: ReadableStreamDefaultController<Uint8Array>,
-    ) => {
-      const lines = buffer.split('\n')
-      buffer = lines.pop() ?? ''
+			const content = fullText.trim()
+			if (!content) return
 
-      for (const rawLine of lines) {
-        const line = rawLine.trim()
-        if (!line.startsWith('data:')) continue
+			try {
+				await db.insert(aiInsight).values({
+					userId: parsedBody.data.userId,
+					rangeDays: parsedBody.data.rangeDays,
+					rangeLabel: parsedBody.data.rangeLabel,
+					rangeStart: parsedBody.data.rangeStart,
+					rangeEnd: parsedBody.data.rangeEnd,
+					sourceLogCount: parsedBody.data.sourceLogCount,
+					model: env.ZEN_MODEL,
+					content,
+				})
+			} catch (error) {
+				console.error('Failed to save AI insight', error)
+			}
+		}
 
-        const data = line.slice(5).trim()
-        if (!data || data === '[DONE]') continue
+		const processBuffer = (
+			controller: ReadableStreamDefaultController<Uint8Array>,
+		) => {
+			const lines = buffer.split('\n')
+			buffer = lines.pop() ?? ''
 
-        try {
-          const chunkText = extractChunkText(JSON.parse(data))
-          if (!chunkText) continue
+			for (const rawLine of lines) {
+				const line = rawLine.trim()
+				if (!line.startsWith('data:')) continue
 
-          fullText += chunkText
-          controller.enqueue(encoder.encode(chunkText))
-        } catch (error) {
-          console.error('Failed to parse Zen AI chunk', error)
-        }
-      }
-    }
+				const data = line.slice(5).trim()
+				if (!data || data === '[DONE]') continue
 
-    const stream = new ReadableStream<Uint8Array>({
-      start(controller) {
-        const pump = async () => {
-          try {
-            while (true) {
-              const { done, value } = await reader.read()
-              if (done) break
+				try {
+					const chunkText = extractChunkText(JSON.parse(data))
+					if (!chunkText) continue
 
-              buffer += decoder.decode(value, { stream: true })
-              processBuffer(controller)
-            }
+					fullText += chunkText
+					controller.enqueue(encoder.encode(chunkText))
+				} catch (error) {
+					console.error('Failed to parse Zen AI chunk', error)
+				}
+			}
+		}
 
-            buffer += decoder.decode()
-            processBuffer(controller)
-            await persistInsight()
-            controller.close()
-          } catch (error) {
-            console.error('Zen AI stream proxy failed', error)
-            controller.error(error)
-          }
-        }
+		const stream = new ReadableStream<Uint8Array>({
+			start(controller) {
+				const pump = async () => {
+					try {
+						while (true) {
+							const { done, value } = await reader.read()
+							if (done) break
 
-        void pump()
-      },
-    })
+							buffer += decoder.decode(value, { stream: true })
+							processBuffer(controller)
+						}
 
-    return new Response(stream, {
-      headers: {
-        'Cache-Control': 'no-store',
-        'Content-Type': 'text/plain; charset=utf-8',
-      },
-    })
-  } catch (error) {
-    console.error('AI insight generation failed', error)
-    return Response.json(
-      { error: 'Could not generate AI insight' },
-      { status: 500 },
-    )
-  }
+						buffer += decoder.decode()
+						processBuffer(controller)
+						await persistInsight()
+						controller.close()
+					} catch (error) {
+						console.error('Zen AI stream proxy failed', error)
+						controller.error(error)
+					}
+				}
+
+				void pump()
+			},
+		})
+
+		return new Response(stream, {
+			headers: {
+				'Cache-Control': 'no-store',
+				'Content-Type': 'text/plain; charset=utf-8',
+			},
+		})
+	} catch (error) {
+		console.error('AI insight generation failed', error)
+		return Response.json(
+			{ error: 'Could not generate AI insight' },
+			{ status: 500 },
+		)
+	}
+}
+
+export async function DELETE(request: Request) {
+	const session = await requireTrainerSession()
+	if (!session) {
+		return Response.json({ error: 'Unauthorized' }, { status: 401 })
+	}
+
+	const parsedQuery = deleteInsightQuerySchema.safeParse(
+		Object.fromEntries(new URL(request.url).searchParams.entries()),
+	)
+
+	if (!parsedQuery.success) {
+		return Response.json({ error: 'Invalid delete request' }, { status: 400 })
+	}
+
+	const hasAccess = await canAccessClient({
+		trainerId: session.user.id,
+		userId: parsedQuery.data.userId,
+		isAdmin: session.user.isAdmin,
+	})
+
+	if (!hasAccess) {
+		return Response.json({ error: 'Forbidden' }, { status: 403 })
+	}
+
+	const existingInsight = await db.query.aiInsight.findFirst({
+		where: and(
+			eq(aiInsight.id, parsedQuery.data.insightId),
+			eq(aiInsight.userId, parsedQuery.data.userId),
+		),
+		columns: {
+			id: true,
+		},
+	})
+
+	if (!existingInsight) {
+		return Response.json({ error: 'Insight not found' }, { status: 404 })
+	}
+
+	await db
+		.delete(aiInsight)
+		.where(
+			and(
+				eq(aiInsight.id, parsedQuery.data.insightId),
+				eq(aiInsight.userId, parsedQuery.data.userId),
+			),
+		)
+
+	return Response.json({ success: true })
 }
