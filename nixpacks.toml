@@ -7,34 +7,22 @@ NPM_CONFIG_PRODUCTION = 'false'
 
 [phases.build]
 dependsOn = ['install']
-cmds = ['pnpm run build']
-cacheDirectories = [
-'.next/cache',
-'node_modules/.cache',
-]
+cmds = ['npm run build']
+cacheDirectories = ['.next/cache', 'node_modules/.cache']
 
 [phases.install]
 dependsOn = ['setup']
-cmds = [
-'npm install -g pnpm@10.18.1',
-'pnpm i --frozen-lockfile',
-]
+cmds = ['npx pnpm@10.18.1 install --frozen-lockfile --prod=false']
 cacheDirectories = ['/root/.local/share/pnpm/store/v3']
 paths = ['/app/node_modules/.bin']
 
 [phases.setup]
-nixPkgs = [
-'nodejs_22',
-'openssl',
-'sqlite',
+nixPkgs = ['nodejs_22', 'openssl', 'sqlite']
+nixLibs = ['gcc-unwrapped', 'libuuid', 'libGL']
+nixOverlays = [
+  'https://github.com/railwayapp/nix-npm-overlay/archive/main.tar.gz',
 ]
-nixLibs = [
-'gcc-unwrapped',
-'libuuid',
-'libGL',
-]
-nixOverlays = ['https://github.com/railwayapp/nix-npm-overlay/archive/main.tar.gz']
 nixpkgsArchive = 'ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7'
 
 [start]
-cmd = 'pnpm run start'
+cmd = 'npm run start'
