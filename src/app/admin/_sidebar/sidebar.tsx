@@ -43,10 +43,6 @@ const data = {
 					url: '/admin/user-info',
 				},
 				{
-					title: 'Calendar',
-					url: '/admin/calendar',
-				},
-				{
 					title: 'Logs',
 					url: '/admin/user-logs',
 				},
