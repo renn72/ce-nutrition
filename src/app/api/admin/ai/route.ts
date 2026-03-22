@@ -24,6 +24,7 @@ const generateInsightBodySchema = z.object({
 	rangeStart: z.string().min(1),
 	rangeEnd: z.string().min(1),
 	sourceLogCount: z.number().int().positive(),
+	detailLevel: z.enum(['short', 'long']).default('long'),
 	dailyLogsText: z.string().min(1),
 })
 
@@ -160,11 +161,22 @@ export async function POST(request: Request) {
 		return Response.json({ error: 'Forbidden' }, { status: 403 })
 	}
 
+	const responseFormatInstructions =
+		parsedBody.data.detailLevel === 'short'
+			? `Response format:
+- Return only 4-6 short bullet points.
+- Do not use subheadings.
+- Keep every point tightly grounded in the logs.`
+			: `Response format:
+- Start with a 1-2 sentence summary.
+- Then add 3-6 short bullet points.
+- Keep the overall response concise and directly tied to the logs.`
+
 	const prompt = `${parsedBody.data.dailyLogsText}
 
 Task:
-Give a sharpe summary of the information in these daily logs over this time frame and any insights you might have.
-Keep the response brief and relevant to the provided information only.
+Give a summary of the information in these daily logs over this time frame and any insights you might have.
+Keep the relevant, and specific to the provided information only.
 Do not infer details that are not supported by the logs. If important information is missing, mention that briefly.
 
 Field notes:
@@ -173,8 +185,8 @@ Field notes:
 - "low" days refer to low carb/calories.
 
 Focus on trends, adherence, recovery, digestion, hydration, symptoms, and anything a coach should notice when clearly supported by the logs.
-Prefer:
-- concise wording`
+i prefer short headings with bullet points underneath
+${responseFormatInstructions}`
 
 	try {
 		const upstreamResponse = await fetch(
@@ -193,7 +205,7 @@ Prefer:
 						{
 							role: 'system',
 							content:
-								'You are an experienced nutrition and coaching assistant reviewing client daily logs for an admin dashboard.',
+								'You are an experienced nutrition and coaching assistant reviewing client daily logs for an admin dashboard. Keep responses concise, relevant, and grounded only in the provided logs.',
 						},
 						{
 							role: 'user',

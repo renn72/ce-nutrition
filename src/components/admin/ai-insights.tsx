@@ -5,458 +5,481 @@ import { api } from '@/trpc/react'
 import { useEffect, useState } from 'react'
 
 import {
-	buildClipboardText,
-	formatRangeLabel,
-	getRangeDateInfo,
-	getVisibleLogsForDays,
+  buildClipboardText,
+  formatRangeLabel,
+  getRangeDateInfo,
+  getVisibleLogsForDays,
 } from '@/lib/daily-log-export'
 import { cn } from '@/lib/utils'
 import { Trash2 } from 'lucide-react'
-import type { Components } from 'react-markdown'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { toast } from 'sonner'
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 import { Spinner } from '@/components/spinner'
 
+type DetailLevel = 'short' | 'long'
+type RangeValue = 7 | 30 | 90
+
 type SavedInsight = {
-	id: number
-	userId: string
-	rangeDays: number
-	rangeLabel: string
-	rangeStart: string
-	rangeEnd: string
-	sourceLogCount: number
-	model: string
-	content: string
-	createdAt: string
+  id: number
+  userId: string
+  rangeDays: number
+  rangeLabel: string
+  rangeStart: string
+  rangeEnd: string
+  sourceLogCount: number
+  content: string
+  createdAt: string | Date
 }
 
-const RANGE_OPTIONS = [
-	{ label: '1 Week', value: 7 },
-	{ label: '1 Month', value: 30 },
-	{ label: '3 Months', value: 90 },
-] as const
+const RANGE_OPTIONS: Array<{ label: string; value: RangeValue }> = [
+  { label: '1 Week', value: 7 },
+  { label: '1 Month', value: 30 },
+  { label: '3 Months', value: 90 },
+]
 
-const formatInsightTimestamp = (value: string) =>
-	new Date(value).toLocaleString('en-AU', {
-		dateStyle: 'medium',
-		timeStyle: 'short',
-	})
-
-const markdownComponents: Components = {
-	h1: ({ children }) => (
-		<h1 className='mt-6 text-xl font-semibold first:mt-0'>{children}</h1>
-	),
-	h2: ({ children }) => (
-		<h2 className='mt-6 text-lg font-semibold first:mt-0'>{children}</h2>
-	),
-	h3: ({ children }) => (
-		<h3 className='mt-5 text-base font-semibold first:mt-0'>{children}</h3>
-	),
-	p: ({ children }) => <p className='mt-3 leading-7 first:mt-0'>{children}</p>,
-	ul: ({ children }) => (
-		<ul className='pl-6 mt-3 space-y-1 list-disc first:mt-0'>{children}</ul>
-	),
-	ol: ({ children }) => (
-		<ol className='pl-6 mt-3 space-y-1 list-decimal first:mt-0'>{children}</ol>
-	),
-	li: ({ children }) => <li className='leading-7'>{children}</li>,
-	blockquote: ({ children }) => (
-		<blockquote className='pl-4 mt-4 italic border-l-2 first:mt-0 border-border text-muted-foreground'>
-			{children}
-		</blockquote>
-	),
-	hr: () => <hr className='my-5 border-border' />,
-	a: ({ children, href, ...props }) => (
-		<a
-			{...props}
-			href={href}
-			target='_blank'
-			rel='noreferrer'
-			className='font-medium underline text-primary underline-offset-4'
-		>
-			{children}
-		</a>
-	),
-	table: ({ children }) => (
-		<div className='overflow-x-auto mt-4 first:mt-0'>
-			<table className='w-full text-sm border-collapse'>{children}</table>
-		</div>
-	),
-	th: ({ children }) => (
-		<th className='py-2 px-3 font-medium text-left border border-border bg-muted'>
-			{children}
-		</th>
-	),
-	td: ({ children }) => (
-		<td className='py-2 px-3 align-top border border-border'>{children}</td>
-	),
-	pre: ({ children }) => (
-		<pre className='overflow-x-auto p-4 mt-4 text-xs leading-6 rounded-lg border first:mt-0 bg-muted/40'>
-			{children}
-		</pre>
-	),
-	code: ({ children, className, ...props }) => {
-		const content = String(children).replace(/\n$/, '')
-		const isInline = !className && !content.includes('\n')
-
-		return (
-			<code
-				{...props}
-				className={cn(
-					'font-mono',
-					isInline ? 'rounded bg-muted px-1.5 py-0.5 text-[0.85em]' : 'text-xs',
-					className,
-				)}
-			>
-				{content}
-			</code>
-		)
-	},
-}
+const formatInsightTimestamp = (value: string | Date) =>
+  new Date(value).toLocaleString('en-AU', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  })
 
 const InsightMarkdown = ({
-	content,
-	className,
+  content,
+  className,
 }: {
-	content: string
-	className?: string
-}) => (
-	<div className={cn('text-sm', className)}>
-		<ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
-			{content}
-		</ReactMarkdown>
-	</div>
-)
-
-const SavedInsight = ({ content }: { content: string }) => {
-	const [isExpanded, setIsExpanded] = useState(false)
-	return (
-		<ScrollArea
-			className={cn(
-				'mt-3 rounded-md border bg-muted/20 transition-all duration-150',
-				isExpanded ? 'h-full' : 'h-72',
-			)}
-		>
-			<div className='relative p-4'>
-				{isExpanded ? (
-					<Button
-						variant='outline'
-						size='sm'
-						className='absolute top-2 right-4'
-						onMouseDown={() => setIsExpanded(false)}
-					>
-						Condense
-					</Button>
-				) : (
-					<Button
-						variant='outline'
-						size='sm'
-						className='absolute top-2 right-4'
-						onMouseDown={() => setIsExpanded(true)}
-					>
-						Expand
-					</Button>
-				)}
-				<InsightMarkdown content={content} />
-			</div>
-		</ScrollArea>
-	)
+  content: string
+  className?: string
+}) => {
+  return (
+    <div
+      className={cn(
+        'text-sm leading-6',
+        '[&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4',
+        '[&_blockquote]:mb-3 [&_blockquote]:border-l-2 [&_blockquote]:pl-4 [&_blockquote]:italic',
+        '[&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.85em]',
+        '[&_h1]:mt-6 [&_h1]:text-base [&_h1]:font-semibold [&_h1:first-child]:mt-0',
+        '[&_h2]:mt-6 [&_h2]:text-base [&_h2]:font-semibold [&_h2:first-child]:mt-0',
+        '[&_h3]:mt-5 [&_h3]:font-semibold [&_h3:first-child]:mt-0',
+        '[&_li]:leading-6',
+        '[&_ol]:mb-3 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-5 [&_ol:last-child]:mb-0',
+        '[&_p]:mb-3 [&_p:last-child]:mb-0',
+        '[&_pre]:mb-3 [&_pre]:overflow-x-auto [&_pre]:rounded-lg [&_pre]:bg-muted [&_pre]:p-3 [&_pre]:text-sm [&_pre:last-child]:mb-0',
+        '[&_pre_code]:bg-transparent [&_pre_code]:p-0',
+        '[&_table]:mb-3 [&_table]:w-full [&_table]:border-collapse [&_table]:text-sm [&_table:last-child]:mb-0',
+        '[&_td]:border [&_td]:px-2 [&_td]:py-1',
+        '[&_th]:border [&_th]:bg-muted [&_th]:px-2 [&_th]:py-1 [&_th]:text-left',
+        '[&_ul]:mb-3 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5 [&_ul:last-child]:mb-0',
+        className,
+      )}
+    >
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+    </div>
+  )
 }
 
 const AiInsights = ({ userId }: { userId: string }) => {
-	const [insights, setInsights] = useState<SavedInsight[]>([])
-	const [isLoadingInsights, setIsLoadingInsights] = useState(true)
-	const [isStreaming, setIsStreaming] = useState(false)
-	const [deletingInsightId, setDeletingInsightId] = useState<number | null>(
-		null,
-	)
-	const [activeRange, setActiveRange] = useState<number | null>(null)
-	const [streamedInsight, setStreamedInsight] = useState('')
+  const [insights, setInsights] = useState<SavedInsight[]>([])
+  const [isLoadingInsights, setIsLoadingInsights] = useState(true)
+  const [isStreaming, setIsStreaming] = useState(false)
+  const [streamedInsight, setStreamedInsight] = useState('')
+  const [selectedRange, setSelectedRange] = useState<RangeValue>(7)
+  const [detailLevel, setDetailLevel] = useState<DetailLevel>('long')
+  const [lastReviewLabel, setLastReviewLabel] = useState<string | null>(null)
+  const [insightPendingDelete, setInsightPendingDelete] =
+    useState<SavedInsight | null>(null)
+  const [isDeletingInsight, setIsDeletingInsight] = useState(false)
 
-	const { data: selectedUser } = api.user.getName.useQuery(userId)
-	const {
-		data: dailyLogs = [],
-		isLoading: isLoadingLogs,
-		refetch: refetchDailyLogs,
-	} = api.dailyLog.getAllUser.useQuery(userId)
+  const { data: selectedUser } = api.user.getName.useQuery(userId)
+  const { data: dailyLogs = [], isLoading: isLoadingLogs } =
+    api.dailyLog.getAllUser.useQuery(userId)
 
-	const loadInsights = async () => {
-		setIsLoadingInsights(true)
+  const selectedLogs = getVisibleLogsForDays(dailyLogs, selectedRange)
+  const selectedRangeLabel = formatRangeLabel(String(selectedRange))
+  const selectedRangeInfo = getRangeDateInfo(selectedLogs)
 
-		try {
-			const response = await fetch(
-				`/api/admin/ai?userId=${encodeURIComponent(userId)}`,
-				{
-					cache: 'no-store',
-				},
-			)
+  const loadInsights = async () => {
+    setIsLoadingInsights(true)
 
-			if (!response.ok) {
-				throw new Error('Could not load saved insights')
-			}
+    try {
+      const response = await fetch(
+        `/api/admin/ai?userId=${encodeURIComponent(userId)}`,
+        {
+          cache: 'no-store',
+        },
+      )
 
-			const data = (await response.json()) as { insights: SavedInsight[] }
-			setInsights(data.insights)
-		} catch (error) {
-			console.error(error)
-			toast.error('Could not load saved insights')
-		} finally {
-			setIsLoadingInsights(false)
-		}
-	}
+      if (!response.ok) {
+        throw new Error('Could not load saved insights')
+      }
 
-	useEffect(() => {
-		setActiveRange(null)
-		setStreamedInsight('')
-		void loadInsights()
-	}, [userId])
+      const data = (await response.json()) as { insights: SavedInsight[] }
+      setInsights(data.insights)
+    } catch (error) {
+      console.error(error)
+      toast.error('Could not load saved insights')
+    } finally {
+      setIsLoadingInsights(false)
+    }
+  }
 
-	const handleDeleteInsight = async (insightId: number) => {
-		if (!window.confirm('Delete this saved insight?')) return
+  useEffect(() => {
+    setInsights([])
+    setIsLoadingInsights(true)
+    setIsStreaming(false)
+    setStreamedInsight('')
+    setSelectedRange(7)
+    setDetailLevel('long')
+    setLastReviewLabel(null)
+    setInsightPendingDelete(null)
+    void loadInsights()
+  }, [userId])
 
-		setDeletingInsightId(insightId)
+  const handleGenerateInsight = async () => {
+    if (selectedLogs.length === 0) {
+      toast.error(`No daily logs found for the last ${selectedRange} days`)
+      return
+    }
 
-		try {
-			const response = await fetch(
-				`/api/admin/ai?userId=${encodeURIComponent(userId)}&insightId=${insightId}`,
-				{
-					method: 'DELETE',
-				},
-			)
+    setIsStreaming(true)
+    setStreamedInsight('')
+    setLastReviewLabel(
+      `${selectedRangeLabel} review · ${
+        detailLevel === 'long' ? 'long format' : 'short format'
+      }`,
+    )
 
-			if (!response.ok) {
-				const errorData = (await response.json().catch(() => null)) as {
-					error?: string
-				} | null
-				throw new Error(errorData?.error ?? 'Could not delete insight')
-			}
+    try {
+      const response = await fetch('/api/admin/ai', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId,
+          rangeDays: selectedRange,
+          rangeLabel: selectedRangeLabel,
+          rangeStart: selectedRangeInfo.startDate,
+          rangeEnd: selectedRangeInfo.endDate,
+          sourceLogCount: selectedLogs.length,
+          detailLevel,
+          dailyLogsText: buildClipboardText({
+            dailyLogs: selectedLogs,
+            toggleValue: String(selectedRange),
+          }),
+        }),
+      })
 
-			setInsights((currentInsights) =>
-				currentInsights.filter((insight) => insight.id !== insightId),
-			)
-			toast.success('Insight deleted')
-		} catch (error) {
-			console.error(error)
-			toast.error(
-				error instanceof Error ? error.message : 'Could not delete insight',
-			)
-		} finally {
-			setDeletingInsightId(null)
-		}
-	}
+      if (!response.ok) {
+        const errorData = (await response.json().catch(() => null)) as {
+          error?: string
+        } | null
+        throw new Error(errorData?.error ?? 'Could not generate AI insight')
+      }
 
-	const handleGenerateInsight = async (rangeDays: 7 | 30 | 90) => {
-		const selectedLogs = getVisibleLogsForDays(dailyLogs, rangeDays)
+      if (!response.body) {
+        throw new Error('The AI provider did not return a stream')
+      }
 
-		if (selectedLogs.length === 0) {
-			toast.error(`No daily logs found for the last ${rangeDays} days`)
-			return
-		}
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let nextInsight = ''
 
-		const { startDate, endDate } = getRangeDateInfo(selectedLogs)
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
 
-		setActiveRange(rangeDays)
-		setIsStreaming(true)
-		setStreamedInsight('')
+        nextInsight += decoder.decode(value, { stream: true })
+        setStreamedInsight(nextInsight)
+      }
 
-		try {
-			const response = await fetch('/api/admin/ai', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					userId,
-					rangeDays,
-					rangeLabel: formatRangeLabel(String(rangeDays)),
-					rangeStart: startDate,
-					rangeEnd: endDate,
-					sourceLogCount: selectedLogs.length,
-					dailyLogsText: buildClipboardText({
-						dailyLogs: selectedLogs,
-						toggleValue: String(rangeDays),
-					}),
-				}),
-			})
+      nextInsight += decoder.decode()
+      setStreamedInsight(nextInsight)
 
-			if (!response.ok) {
-				const errorData = (await response.json().catch(() => null)) as {
-					error?: string
-				} | null
-				throw new Error(errorData?.error ?? 'Could not generate AI insight')
-			}
+      await loadInsights()
+      toast.success('AI insight saved')
+    } catch (error) {
+      console.error(error)
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : 'Could not generate AI insight',
+      )
+    } finally {
+      setIsStreaming(false)
+    }
+  }
 
-			if (!response.body) {
-				throw new Error('The AI provider did not return a stream')
-			}
+  const handleDeleteInsight = async () => {
+    if (!insightPendingDelete) return
 
-			const reader = response.body.getReader()
-			const decoder = new TextDecoder()
-			let nextInsight = ''
+    setIsDeletingInsight(true)
 
-			while (true) {
-				const { done, value } = await reader.read()
-				if (done) break
+    try {
+      const params = new URLSearchParams({
+        userId,
+        insightId: String(insightPendingDelete.id),
+      })
 
-				nextInsight += decoder.decode(value, { stream: true })
-				setStreamedInsight(nextInsight)
-			}
+      const response = await fetch(`/api/admin/ai?${params.toString()}`, {
+        method: 'DELETE',
+      })
 
-			nextInsight += decoder.decode()
-			setStreamedInsight(nextInsight)
+      if (!response.ok) {
+        const errorData = (await response.json().catch(() => null)) as {
+          error?: string
+        } | null
+        throw new Error(errorData?.error ?? 'Could not delete AI insight')
+      }
 
-			await Promise.all([loadInsights(), refetchDailyLogs()])
-			toast.success('AI insight saved')
-		} catch (error) {
-			console.error(error)
-			toast.error(
-				error instanceof Error
-					? error.message
-					: 'Could not generate AI insight',
-			)
-		} finally {
-			setIsStreaming(false)
-		}
-	}
+      await loadInsights()
+      setInsightPendingDelete(null)
+      toast.success('AI insight deleted')
+    } catch (error) {
+      console.error(error)
+      toast.error(
+        error instanceof Error ? error.message : 'Could not delete AI insight',
+      )
+    } finally {
+      setIsDeletingInsight(false)
+    }
+  }
 
-	const selectedUserName =
-		selectedUser?.firstName?.trim() ||
-		selectedUser?.name?.trim() ||
-		'this client'
+  const selectedUserName =
+    selectedUser?.firstName?.trim() ||
+    selectedUser?.name?.trim() ||
+    'this client'
 
-	return (
-		<div className='flex flex-col gap-6 py-6 px-4 mx-auto w-full max-w-6xl md:px-6'>
-			<div className='flex flex-col gap-1'>
-				<h1 className='text-2xl font-semibold'>AI Insights</h1>
-				<p className='text-sm text-muted-foreground'>
-					Generate a streamed summary from {selectedUserName}&apos;s recent
-					daily logs and keep the previous insights on file.
-				</p>
-			</div>
+  return (
+    <>
+      <div className='mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 md:px-6'>
+        <div className='flex flex-col gap-1'>
+          <h1 className='text-2xl font-semibold'>AI Insights</h1>
+          <p className='text-sm text-muted-foreground'>
+            Review {selectedUserName}&apos;s recent daily logs, stream the
+            response into the page, and keep past insights on file.
+          </p>
+        </div>
 
-			<Card>
-				<CardHeader>
-					<CardTitle>Generate insight</CardTitle>
-					<CardDescription>
-						The prompt uses the same daily-log export format as the admin logs
-						copy action.
-					</CardDescription>
-				</CardHeader>
-				<CardContent className='flex flex-col gap-4'>
-					<div className='flex flex-wrap gap-3'>
-						{RANGE_OPTIONS.map((option) => (
-							<Button
-								key={option.value}
-								variant={activeRange === option.value ? 'default' : 'outline'}
-								disabled={isStreaming || isLoadingLogs}
-								onClick={() =>
-									void handleGenerateInsight(option.value as 7 | 30 | 90)
-								}
-							>
-								{option.label}
-							</Button>
-						))}
-					</div>
-					<p className='text-sm text-muted-foreground'>
-						{isLoadingLogs
-							? 'Loading daily logs...'
-							: `${dailyLogs.length} daily logs available for review.`}
-					</p>
-				</CardContent>
-			</Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Generate review</CardTitle>
+            <CardDescription>
+              The export uses the same daily-log payload as the admin logs copy
+              action.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className='flex flex-col gap-5'>
+            <div className='flex flex-col gap-3'>
+              <div className='text-sm font-medium'>Time range</div>
+              <div className='flex flex-wrap gap-3'>
+                {RANGE_OPTIONS.map((option) => (
+                  <Button
+                    key={option.value}
+                    type='button'
+                    variant={
+                      selectedRange === option.value ? 'default' : 'outline'
+                    }
+                    disabled={isStreaming || isLoadingLogs}
+                    onClick={() => setSelectedRange(option.value)}
+                  >
+                    {option.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
 
-			<Card>
-				<CardHeader>
-					<CardTitle>Latest response</CardTitle>
-					<CardDescription>
-						{activeRange
-							? `Streaming insight for the last ${formatRangeLabel(String(activeRange)).toLowerCase()}.`
-							: 'Pick a timeframe to generate a new insight.'}
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					{isStreaming && streamedInsight === '' ? (
-						<Spinner />
-					) : (
-						<>
-							{streamedInsight ? (
-								<div className='p-4'>
-									<InsightMarkdown content={streamedInsight} />
-								</div>
-							) : (
-								<div className='p-4 text-sm text-muted-foreground'>
-									No insight generated yet.
-								</div>
-							)}
-						</>
-					)}
-				</CardContent>
-			</Card>
+            <div className='flex flex-col gap-3'>
+              <div className='text-sm font-medium'>Review length</div>
+              <ToggleGroup
+                type='single'
+                variant='outline'
+                value={detailLevel}
+                onValueChange={(value) => {
+                  if (value === 'short' || value === 'long') {
+                    setDetailLevel(value)
+                  }
+                }}
+                className='justify-start'
+              >
+                <ToggleGroupItem value='long'>Long</ToggleGroupItem>
+                <ToggleGroupItem value='short'>Short</ToggleGroupItem>
+              </ToggleGroup>
+            </div>
 
-			<Card>
-				<CardHeader>
-					<CardTitle>Saved insights</CardTitle>
-					<CardDescription>
-						Previous AI summaries for {selectedUserName}.
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					{isLoadingInsights ? (
-						<Spinner />
-					) : insights.length === 0 ? (
-						<div className='p-4 text-sm rounded-lg border border-dashed text-muted-foreground'>
-							No saved insights yet.
-						</div>
-					) : (
-						<div className='flex flex-col gap-4'>
-							{insights.map((insight) => (
-								<div
-									key={insight.id}
-									className='p-4 rounded-lg border bg-background'
-								>
-									<div className='flex gap-3 justify-between items-start'>
-										<div className='flex flex-col gap-1'>
-											<div className='text-sm font-medium'>
-												{insight.rangeLabel} insight
-											</div>
-											<div className='text-xs text-muted-foreground'>
-												{formatInsightTimestamp(insight.createdAt)} ·{' '}
-												{insight.rangeStart} to {insight.rangeEnd} ·{' '}
-												{insight.sourceLogCount} logs
-											</div>
-										</div>
-										<Button
-											type='button'
-											variant='ghost'
-											size='icon'
-											aria-label='Delete insight'
-											disabled={deletingInsightId === insight.id}
-											onClick={() => void handleDeleteInsight(insight.id)}
-										>
-											<Trash2 className='w-4 h-4' />
-										</Button>
-									</div>
-									<SavedInsight content={insight.content} />
-								</div>
-							))}
-						</div>
-					)}
-				</CardContent>
-			</Card>
-		</div>
-	)
+            <div className='flex flex-col gap-2 text-sm text-muted-foreground'>
+              <p>
+                {isLoadingLogs
+                  ? 'Loading daily logs...'
+                  : selectedLogs.length === 0
+                    ? 'No daily logs were found for the selected range.'
+                    : `${selectedLogs.length} logs selected from ${selectedRangeInfo.startDate} to ${selectedRangeInfo.endDate}.`}
+              </p>
+              <p>
+                {detailLevel === 'long'
+                  ? 'Long reviews keep a short summary plus supporting points.'
+                  : 'Short reviews return 4-6 relevant points without subheadings.'}
+              </p>
+            </div>
+
+            <div>
+              <Button
+                type='button'
+                disabled={
+                  isLoadingLogs || isStreaming || selectedLogs.length === 0
+                }
+                onClick={() => void handleGenerateInsight()}
+              >
+                {isStreaming ? 'Reviewing...' : 'Activate review'}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Latest response</CardTitle>
+            <CardDescription>
+              {lastReviewLabel
+                ? `Streaming ${lastReviewLabel.toLowerCase()}.`
+                : 'Choose a range and length, then activate a review.'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isStreaming && streamedInsight === '' ? (
+              <Spinner />
+            ) : (
+              <ScrollArea className='h-[28rem] rounded-lg border bg-muted/20'>
+                <div className='p-4'>
+                  {streamedInsight ? (
+                    <InsightMarkdown content={streamedInsight} />
+                  ) : (
+                    <div className='text-sm text-muted-foreground'>
+                      No review has been generated yet.
+                    </div>
+                  )}
+                </div>
+              </ScrollArea>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Saved insights</CardTitle>
+            <CardDescription>
+              Previous AI summaries for {selectedUserName}.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoadingInsights ? (
+              <Spinner />
+            ) : insights.length === 0 ? (
+              <div className='rounded-lg border border-dashed p-4 text-sm text-muted-foreground'>
+                No saved insights yet.
+              </div>
+            ) : (
+              <div className='flex flex-col gap-4'>
+                {insights.map((insight) => (
+                  <Card
+                    key={insight.id}
+                    className='gap-4 py-5'
+                  >
+                    <CardHeader className='pb-0'>
+                      <div className='flex items-start justify-between gap-4'>
+                        <div className='flex flex-col gap-1'>
+                          <CardTitle className='text-base'>
+                            {insight.rangeLabel} insight
+                          </CardTitle>
+                          <CardDescription>
+                            {formatInsightTimestamp(insight.createdAt)} ·{' '}
+                            {insight.rangeStart} to {insight.rangeEnd} ·{' '}
+                            {insight.sourceLogCount} logs
+                          </CardDescription>
+                        </div>
+                        <Button
+                          type='button'
+                          size='icon'
+                          variant='ghost'
+                          onClick={() => setInsightPendingDelete(insight)}
+                          aria-label={`Delete ${insight.rangeLabel} insight`}
+                        >
+                          <Trash2 className='h-4 w-4' />
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <ScrollArea className='h-56 rounded-lg border bg-muted/20'>
+                        <div className='p-4'>
+                          <InsightMarkdown content={insight.content} />
+                        </div>
+                      </ScrollArea>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <AlertDialog
+        open={Boolean(insightPendingDelete)}
+        onOpenChange={(open) => {
+          if (!open && !isDeletingInsight) {
+            setInsightPendingDelete(null)
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete saved insight?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This removes the selected AI insight from {selectedUserName}
+              &apos;s history and cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeletingInsight}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
+              onClick={(event) => {
+                event.preventDefault()
+                void handleDeleteInsight()
+              }}
+              disabled={isDeletingInsight}
+            >
+              {isDeletingInsight ? 'Deleting...' : 'Delete insight'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  )
 }
 
 export { AiInsights }
