@@ -15,6 +15,7 @@
     "tsup:run": "rm ./src/server/api/root/index.d.ts ; rm ./src/server/api/root/index.js ; tsup --tsconfig tsconfig-tsup.json"
   },
   "dependencies": {
+    "@ai-sdk/openai-compatible": "^2.0.37",
     "@auth/drizzle-adapter": "^1.10.0",
     "@biomejs/biome": "^2.2.0",
     "@dnd-kit/core": "^6.3.1",
@@ -128,7 +129,7 @@
     "valtio": "^2.1.5",
     "vaul": "^1.1.2",
     "web-push": "^3.6.7",
-    "zod": "^4.0.17"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.6.2",
