@@ -15,7 +15,8 @@ cacheDirectories = [
 [phases.install]
 dependsOn = ['setup']
 cmds = [
-'npm install -g corepack@0.24.1 && corepack enable',
+'corepack enable',
+'corepack prepare pnpm@10.18.1 --activate',
 'pnpm i --frozen-lockfile',
 ]
 cacheDirectories = ['/root/.local/share/pnpm/store/v3']
@@ -23,8 +24,7 @@ paths = ['/app/node_modules/.bin']
 
 [phases.setup]
 nixPkgs = [
-'nodejs_18',
-'pnpm-9_x',
+'nodejs_22',
 'openssl',
 'sqlite',
 ]
