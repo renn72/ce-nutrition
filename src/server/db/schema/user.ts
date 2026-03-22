@@ -9,6 +9,7 @@ import {
 } from 'drizzle-orm/sqlite-core'
 import type { AdapterAccount } from 'next-auth/adapters'
 
+import { aiInsight } from './ai-insight'
 import { dailyLog, tag } from './daily-logs'
 import { ingredient } from './ingredient'
 import { message } from './message'
@@ -96,6 +97,7 @@ export const userRelations = relations(user, ({ one, many }) => ({
   userPlans: many(userPlan, { relationName: 'user' }),
   userPlansCreator: many(userPlan, { relationName: 'creator' }),
   dailyLogs: many(dailyLog),
+  aiInsights: many(aiInsight),
   weighIns: many(weighIn, { relationName: 'user' }),
   weighInsTrainer: many(weighIn, { relationName: 'trainer' }),
   skinfolds: many(skinfold, { relationName: 'user' }),

@@ -5,8 +5,14 @@ import { api } from '@/trpc/react'
 import { useEffect, useMemo, useState } from 'react'
 
 import { useClientMediaQuery } from '@/hooks/use-client-media-query'
-import { cn, getFormattedDate, getRecipeDetailsFromDailyLog } from '@/lib/utils'
-import type { GetAllDailyLogs } from '@/types'
+import {
+  buildClipboardDailyLogs,
+  buildClipboardText,
+  getVisibleLogsForDays,
+  getVisibleLogsForRange,
+  type DailyLogRecord,
+} from '@/lib/daily-log-export'
+import { cn, getFormattedDate } from '@/lib/utils'
 import { SpinnerGapIcon } from '@phosphor-icons/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Copy } from 'lucide-react'
@@ -29,11 +35,6 @@ import { DailyLogCard } from '@/components/daily-log/daily-log-card'
 
 import { DateRangePicker } from './date-range-picker'
 
-const DAY_IN_MS = 86400000
-const OMIT_EXPORT_KEYS = new Set(['id', 'createdAt', 'updatedAt'])
-
-type DailyLogRecord = NonNullable<GetAllDailyLogs>[number]
-
 const Spinner = () => (
   <div className='flex flex-col justify-center items-center mt-20'>
     <SpinnerGapIcon
@@ -42,159 +43,6 @@ const Spinner = () => (
     />
   </div>
 )
-
-const isPresent = <T,>(value: T | null | undefined): value is T =>
-  value !== null && value !== undefined
-
-const getVisibleLogsForDays = (dailyLogs: DailyLogRecord[], days: number) => {
-  const logsByDate = new Map(dailyLogs.map((log) => [log.date, log]))
-
-  return Array.from({ length: days }, (_, i) => {
-    const date = new Date(Date.now() - i * DAY_IN_MS)
-    return logsByDate.get(date.toDateString())
-  }).filter(isPresent)
-}
-
-const getVisibleLogsForRange = (
-  dailyLogs: DailyLogRecord[],
-  from?: Date,
-  to?: Date,
-) => {
-  return [...dailyLogs]
-    .filter((log) => {
-      const logDate = new Date(log.date)
-      const isAfterFrom = !from || logDate >= from
-      const isBeforeTo = !to || logDate <= to
-
-      return isAfterFrom && isBeforeTo
-    })
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-}
-
-const shouldOmitExportKey = (key: string) =>
-  OMIT_EXPORT_KEYS.has(key) || key.endsWith('Id')
-
-const sanitizeExportValue = (value: unknown): unknown => {
-  if (value === null || value === undefined) return undefined
-  if (Array.isArray(value)) {
-    return value.map(sanitizeExportValue).filter(isPresent)
-  }
-  if (value instanceof Date) return value.toISOString()
-  if (typeof value !== 'object') return value
-
-  const entries = Object.entries(value).flatMap(([key, entryValue]) => {
-    if (shouldOmitExportKey(key)) return []
-
-    const sanitizedValue = sanitizeExportValue(entryValue)
-    if (sanitizedValue === undefined) return []
-
-    return [[key, sanitizedValue] as const]
-  })
-
-  if (entries.length === 0) return undefined
-
-  return Object.fromEntries(entries)
-}
-
-const buildClipboardDailyLogs = (dailyLogs: DailyLogRecord[]) => {
-  return dailyLogs
-    .map((dailyLog) =>
-      sanitizeExportValue({
-        ...dailyLog,
-        dailyMeals: dailyLog.dailyMeals.map((meal) => {
-          const { cals, protein, carbs, fat } = getRecipeDetailsFromDailyLog(
-            dailyLog,
-            meal.mealIndex ?? 0,
-          )
-
-          return {
-            recipeName: meal.recipe?.[0]?.name ?? '',
-            calories: Number(cals),
-            carbs: Number(carbs),
-            protein: Number(protein),
-            fat: Number(fat),
-          }
-        }),
-        supplements: dailyLog.supplements.map((supplementLog) => ({
-          ...supplementLog,
-          supplement: supplementLog.supplement
-            ? {
-                name: supplementLog.supplement.name,
-                serveSize: supplementLog.supplement.serveSize,
-                serveUnit: supplementLog.supplement.serveUnit,
-              }
-            : undefined,
-        })),
-      }),
-    )
-    .filter(isPresent)
-}
-
-const formatRangeLabel = (toggleValue: string) => {
-  switch (toggleValue) {
-    case '7':
-      return 'Week'
-    case '30':
-      return 'Month'
-    case '90':
-      return '3 Months'
-    case '365':
-      return 'Year'
-    case 'range':
-      return 'Custom Range'
-    default:
-      return toggleValue
-  }
-}
-
-const formatRangeDates = (
-  dailyLogs: DailyLogRecord[],
-  from?: Date,
-  to?: Date,
-) => {
-  const fallbackFrom = dailyLogs.at(-1)?.date
-  const fallbackTo = dailyLogs.at(0)?.date
-
-  const startDate = from
-    ? getFormattedDate(from)
-    : fallbackFrom
-      ? getFormattedDate(new Date(fallbackFrom))
-      : 'Unknown'
-  const endDate = to
-    ? getFormattedDate(to)
-    : fallbackTo
-      ? getFormattedDate(new Date(fallbackTo))
-      : 'Unknown'
-
-  return `${startDate} to ${endDate}`
-}
-
-const buildClipboardText = ({
-  dailyLogs,
-  toggleValue,
-  from,
-  to,
-}: {
-  dailyLogs: DailyLogRecord[]
-  toggleValue: string
-  from?: Date
-  to?: Date
-}) => {
-  const logsJson = JSON.stringify(buildClipboardDailyLogs(dailyLogs), null, 2)
-  const rangeLabel = formatRangeLabel(toggleValue)
-  const rangeDates = formatRangeDates(dailyLogs, from, to)
-
-  return `${logsJson}
-
-Context:
-- These are daily user health, nutrition, supplement, hydration, and symptom logs exported from the admin user logs page.
-- Selected range: ${rangeLabel}.
-- Covered dates: ${rangeDates}.
-- Each object represents one day.
-- dailyMeals only includes recipeName and calculated calories, carbs, protein, and fat for each meal.
-- supplements keep only the nested supplement name, serveSize, and serveUnit.
-- Null fields, ids, createdAt, updatedAt, and all *Id fields were removed from the export.`
-}
 
 const DailyLogs = ({
   userId,
@@ -221,7 +69,7 @@ const DailyLogs = ({
     <>
       {dailyLogs.map((dailyLog) => {
         const date = new Date(dailyLog.date)
-        const yesterdaysDate = new Date(date.getTime() - DAY_IN_MS)
+        const yesterdaysDate = new Date(date.getTime() - 86400000)
         const yesterdaysDailyLog = comparisonLogs.find(
           (log) => log.date === yesterdaysDate.toDateString(),
         )

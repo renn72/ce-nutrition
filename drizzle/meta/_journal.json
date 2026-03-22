@@ -498,6 +498,13 @@
       "when": 1773954943285,
       "tag": "0070_blushing_fabian_cortez",
       "breakpoints": true
+    },
+    {
+      "idx": 71,
+      "version": "6",
+      "when": 1774146896474,
+      "tag": "0071_empty_wallop",
+      "breakpoints": true
     }
   ]
 }
