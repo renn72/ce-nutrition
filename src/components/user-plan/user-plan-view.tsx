@@ -515,11 +515,11 @@ const UserPlanRecipe = ({
 													>
 														<div className='flex gap-3 justify-between items-start'>
 															<div className='min-w-0'>
-																<div className='text-sm font-semibold max-w-[16.5rem] truncate text-foreground'>
+																<div className='text-sm font-semibold max-w-[16.5rem] word-wrap text-foreground'>
 																	{ingredient.name}
 																</div>
 																{ingredient.alternateIngredient ? (
-																	<div className='mt-1 text-xs truncate max-w-[16.5rem] text-muted-foreground'>
+																	<div className='mt-1 text-xs max-w-[16.5rem] text-muted-foreground'>
 																		or {ingredient.alternateIngredient.name}
 																	</div>
 																) : null}
