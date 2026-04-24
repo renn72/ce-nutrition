@@ -459,6 +459,7 @@ const CreateUserPlan = ({
 	}, [plan])
 
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
+		console.log('hi')
 		const payload = {
 			name: data.name,
 			createdAt: userPlan?.createdAt || new Date(),
@@ -541,10 +542,13 @@ const CreateUserPlan = ({
 								<Button
 									variant='outline'
 									className='flex items-center'
-									onMouseDown={(e) => {
+									onClick={(e) => {
+										console.log('click')
 										e.preventDefault()
 										setSelectedPlanId(0)
 										setSelectedPlan(null)
+										router.push(`/admin/user-program?user=${user}`)
+
 										form.reset()
 									}}
 								>

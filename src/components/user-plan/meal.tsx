@@ -1,5 +1,7 @@
 'use client'
 
+import { nanoid } from 'nanoid'
+
 import { Switch } from '@/components/ui/switch'
 import { api } from '@/trpc/react'
 
@@ -624,7 +626,7 @@ const Meal = ({
 					<div className='flex flex-col col-span-4 gap-4 text-sm tracking-tighter select-none md:text-base md:tracking-tight'>
 						{recipeField.fields.map((recipe, recipeIndex) => (
 							<Recipe
-								key={recipe.name}
+								key={recipe.id || nanoid()}
 								form={form}
 								mealIndex={index}
 								recipeIndex={recipeIndex}
