@@ -518,7 +518,10 @@ const ProgramCard = ({
 														<div className='flex flex-col gap-1 mt-2 text-sm leading-6 text-foreground/85'>
 															{mealInstructions.map(
 																(instruction, instructionIndex) => (
-																	<p key={`${instructionIndex}-${instruction}`}>
+																	<p
+																		key={`${instructionIndex}-${instruction}`}
+																		className='whitespace-pre-line'
+																	>
 																		{instruction}
 																	</p>
 																),
@@ -678,7 +681,7 @@ const ProgramCard = ({
 											<div className='text-xs uppercase tracking-[0.22em] text-muted-foreground'>
 												Instructions for each meal
 											</div>
-											<div className='mt-2 text-sm leading-6 text-muted-foreground'>
+											<div className='mt-2 text-sm leading-6 whitespace-pre-line text-muted-foreground'>
 												{plan.notes || 'No instructions supplied.'}
 											</div>
 										</div>

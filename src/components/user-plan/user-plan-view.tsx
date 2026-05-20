@@ -753,7 +753,10 @@ const UserPlanView = ({
 											<div className='flex flex-col gap-1 mt-1 text-xs font-medium leading-5 text-foreground/85'>
 												{mealInstructions.map(
 													(instruction, instructionIndex) => (
-														<p key={`${instructionIndex}-${instruction}`}>
+														<p
+															key={`${instructionIndex}-${instruction}`}
+															className='whitespace-pre-line'
+														>
 															{instruction}
 														</p>
 													),

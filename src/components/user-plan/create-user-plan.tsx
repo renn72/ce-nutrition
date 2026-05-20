@@ -26,6 +26,7 @@ import {
 	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 
 import { Meal } from '@/components/user-plan/meal'
 import { PlanFolders } from './plan-folders'
@@ -587,24 +588,24 @@ const CreateUserPlan = ({
 										</FormItem>
 									)}
 								/>
-								<FormField
-									control={form.control}
-									name='notes'
-									render={({ field }) => (
-										<FormItem className='w-full'>
-											<FormLabel>Instructions for each meal</FormLabel>
-											<FormControl>
-												<Input
-													placeholder='Instructions for each meal'
-													{...field}
-													type='text'
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
 							</div>
+							<FormField
+								control={form.control}
+								name='notes'
+								render={({ field }) => (
+									<FormItem className='w-full'>
+										<FormLabel>Instructions for each meal</FormLabel>
+										<FormControl>
+											<Textarea
+												placeholder='Instructions for each meal'
+												rows={3}
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 							<div className='flex flex-col gap-2 mt-4'>
 								<div className='flex flex-col gap-3 rounded-lg'>
 									{mealsField.fields.map((field, index) => (
