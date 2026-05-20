@@ -14,6 +14,11 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from '@/components/ui/collapsible'
+import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
@@ -572,10 +577,13 @@ const UserPlanRecipe = ({
 const UserPlanView = ({
 	userPlan,
 	accentIndex = 0,
+	isDefaultOpen = true,
 }: {
 	userPlan: UserPlan
 	accentIndex?: number
+	isDefaultOpen?: boolean
 }) => {
+	const [isPlanOpen, setIsPlanOpen] = useState(isDefaultOpen)
 	const mealCount = userPlan?.userMeals.length
 	const recipeCount = userPlan?.userRecipes.length
 	const mealAccentStyles =
@@ -583,178 +591,198 @@ const UserPlanView = ({
 		planAccentPalette[0]
 
 	return (
-		<Card className='overflow-hidden gap-0 py-0 rounded-none shadow-sm border-border/70'>
-			<CardHeader
-				className={cn(
-					'gap-1 px-3 pt-4 pb-3 border-b border-border/60',
-					mealAccentStyles.header,
-				)}
-			>
-				<div className='flex gap-3 justify-between items-start'>
-					<div className='min-w-0'>
-						<div className='font-semibold uppercase text-[10px] tracking-[0.16em] text-muted-foreground'>
-							Active plan
-						</div>
-						<h1 className='mt-0 text-lg font-bold tracking-tight text-foreground/80'>
-							{userPlan?.name}
-						</h1>
-					</div>
-				</div>
-				<div className='grid grid-cols-2 gap-2'>
-					<div
+		<Collapsible open={isPlanOpen} onOpenChange={setIsPlanOpen} asChild>
+			<Card className='overflow-hidden gap-0 py-0 rounded-none shadow-sm border-border/70'>
+				<CollapsibleTrigger asChild>
+					<CardHeader
+						role='button'
+						tabIndex={0}
+						onKeyDown={(event) => {
+							if (event.key !== 'Enter' && event.key !== ' ') return
+							event.preventDefault()
+							event.currentTarget.click()
+						}}
 						className={cn(
-							'py-1.5 px-2.5 rounded-2xl border',
-							mealAccentStyles.stat,
+							'gap-1 px-3 pt-4 pb-3 border-b border-border/60 cursor-pointer select-none',
+							mealAccentStyles.header,
 						)}
 					>
-						<div
-							className={cn(
-								'uppercase text-[10px] tracking-[0.14em]',
-								mealAccentStyles.statText,
-							)}
-						>
-							Meals
-						</div>
-						<div className='mt-1 text-sm font-semibold'>{mealCount}</div>
-					</div>
-					<div
-						className={cn(
-							'py-1.5 px-2.5 rounded-2xl border',
-							recipeAccentStyles.stat,
-						)}
-					>
-						<div className='uppercase text-[10px] tracking-[0.14em] text-muted-foreground'>
-							Recipes
-						</div>
-						<div className='mt-1 text-sm font-semibold'>{recipeCount}</div>
-					</div>
-				</div>
-			</CardHeader>
-			<CardContent className='flex flex-col gap-2.5 py-2.5 px-2.5'>
-				{userPlan?.userMeals.map((meal, index) => {
-					const mealAccent = mealAccentStyles
-					const mealRecipes = userPlan.userRecipes.filter(
-						(recipe) => recipe.mealIndex === meal.mealIndex,
-					)
-
-					const averageMealMacros =
-						mealRecipes.length > 0
-							? mealRecipes.reduce(
-									(acc, recipe) => {
-										const recipeMacros = getRecipeDetailsForDailyLog(
-											userPlan,
-											recipe.id,
-										)
-
-										return {
-											cals: acc.cals + Number(recipeMacros.cals),
-											protein: acc.protein + Number(recipeMacros.protein),
-										}
-									},
-									{ cals: 0, protein: 0 },
-								)
-							: null
-
-					const averageCalories = averageMealMacros
-						? averageMealMacros.cals / mealRecipes.length
-						: null
-					const averageProtein = averageMealMacros
-						? averageMealMacros.protein / mealRecipes.length
-						: null
-
-					return (
-						<section
-							key={meal.id}
-							className={cn(
-								'rounded-[22px] border px-2.5 py-2.5 shadow-sm',
-								mealAccent.section,
-							)}
-						>
-							<div className='flex gap-2.5 justify-between items-start'>
-								<div className='min-w-0'>
-									<div className='flex gap-1.5 items-center font-semibold uppercase text-[10px] tracking-[0.16em] text-muted-foreground'>
-										<span
-											aria-hidden
-											className={cn('h-2 w-2 rounded-full', mealAccent.dot)}
-										/>
-										<span>Meal {index + 1}</span>
-									</div>
-									<h2 className='text-sm font-semibold leading-5 truncate'>
-										{meal.mealTitle}
-									</h2>
+						<div className='flex gap-3 justify-between items-start'>
+							<div className='min-w-0'>
+								<div className='font-semibold uppercase text-[10px] tracking-[0.16em] text-muted-foreground'>
+									Active plan
 								</div>
-								<SummaryChip
-									label='Options'
-									value={mealRecipes.length.toString()}
-									tone='muted'
-									className={mealAccentStyles.options}
-								/>
+								<h1 className='mt-0 text-lg font-bold tracking-tight text-foreground/80'>
+									{userPlan?.name}
+								</h1>
 							</div>
-
-							<div className='flex flex-wrap gap-2 mt-2'>
+							<ChevronDown
+								className={cn(
+									'mt-1 h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200',
+									isPlanOpen && 'rotate-180',
+								)}
+								aria-hidden
+							/>
+						</div>
+						<div className='grid grid-cols-2 gap-2'>
+							<div
+								className={cn(
+									'py-1.5 px-2.5 rounded-2xl border',
+									mealAccentStyles.stat,
+								)}
+							>
 								<div
 									className={cn(
-										'rounded-2xl border px-2.5 py-1.5',
-										mealAccent.average,
+										'uppercase text-[10px] tracking-[0.14em]',
+										mealAccentStyles.statText,
 									)}
 								>
-									<div className='font-semibold uppercase opacity-75 text-[10px] tracking-[0.14em]'>
-										Target macros
-									</div>
-									<div className='flex gap-3 items-center mt-1 font-semibold text-[11px]'>
-										<span>
-											{averageCalories !== null
-												? `${averageCalories.toFixed(0)} cal`
-												: '-- cal'}
-										</span>
-										<span>
-											{averageProtein !== null
-												? `${averageProtein.toFixed(0)}g protein`
-												: '-- g protein'}
-										</span>
-									</div>
+									Meals
 								</div>
+								<div className='mt-1 text-sm font-semibold'>{mealCount}</div>
 							</div>
-
-							<div className='grid gap-1.5 mt-2'>
-								{mealRecipes.length > 0 ? (
-									mealRecipes.map((recipe) => (
-										<UserPlanRecipe
-											key={recipe.id}
-											userPlan={userPlan}
-											mealIndex={meal.mealIndex}
-											recipeIndex={recipe.recipeIndex}
-											accentStyles={mealAccentStyles}
-										/>
-									))
-								) : (
-									<div className='py-3 px-3 text-xs rounded-2xl border border-dashed border-border/70 text-muted-foreground'>
-										No recipe options added to this meal yet.
-									</div>
+							<div
+								className={cn(
+									'py-1.5 px-2.5 rounded-2xl border',
+									recipeAccentStyles.stat,
 								)}
+							>
+								<div className='uppercase text-[10px] tracking-[0.14em] text-muted-foreground'>
+									Recipes
+								</div>
+								<div className='mt-1 text-sm font-semibold'>{recipeCount}</div>
 							</div>
+						</div>
+					</CardHeader>
+				</CollapsibleTrigger>
+				<CollapsibleContent className='overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
+					<CardContent className='flex flex-col gap-2.5 py-2.5 px-2.5'>
+						{userPlan?.userMeals.map((meal, index) => {
+							const mealAccent = mealAccentStyles
+							const mealRecipes = userPlan.userRecipes.filter(
+								(recipe) => recipe.mealIndex === meal.mealIndex,
+							)
 
-							{hasText(meal.veges) ? (
-								<div className='flex gap-2 items-center py-2 px-2.5 mt-2 border rounded-[18px] border-emerald-500/20 bg-emerald-500/[0.1]'>
-									<div className='flex-1 min-w-0'>
-										<div className='font-semibold uppercase text-[10px] tracking-[0.14em] text-emerald-700/80 dark:text-emerald-300/80'>
-											Vegetable side
+							const averageMealMacros =
+								mealRecipes.length > 0
+									? mealRecipes.reduce(
+											(acc, recipe) => {
+												const recipeMacros = getRecipeDetailsForDailyLog(
+													userPlan,
+													recipe.id,
+												)
+
+												return {
+													cals: acc.cals + Number(recipeMacros.cals),
+													protein: acc.protein + Number(recipeMacros.protein),
+												}
+											},
+											{ cals: 0, protein: 0 },
+										)
+									: null
+
+							const averageCalories = averageMealMacros
+								? averageMealMacros.cals / mealRecipes.length
+								: null
+							const averageProtein = averageMealMacros
+								? averageMealMacros.protein / mealRecipes.length
+								: null
+
+							return (
+								<section
+									key={meal.id}
+									className={cn(
+										'rounded-[22px] border px-2.5 py-2.5 shadow-sm',
+										mealAccent.section,
+									)}
+								>
+									<div className='flex gap-2.5 justify-between items-start'>
+										<div className='min-w-0'>
+											<div className='flex gap-1.5 items-center font-semibold uppercase text-[10px] tracking-[0.16em] text-muted-foreground'>
+												<span
+													aria-hidden
+													className={cn('h-2 w-2 rounded-full', mealAccent.dot)}
+												/>
+												<span>Meal {index + 1}</span>
+											</div>
+											<h2 className='text-sm font-semibold leading-5 truncate'>
+												{meal.mealTitle}
+											</h2>
 										</div>
-										<div className='mt-0.5 text-xs font-medium dark:text-emerald-50 truncate text-emerald-950'>
-											{meal.vegeNotes || meal.veges}
+										<SummaryChip
+											label='Options'
+											value={mealRecipes.length.toString()}
+											tone='muted'
+											className={mealAccentStyles.options}
+										/>
+									</div>
+
+									<div className='flex flex-wrap gap-2 mt-2'>
+										<div
+											className={cn(
+												'rounded-2xl border px-2.5 py-1.5',
+												mealAccent.average,
+											)}
+										>
+											<div className='font-semibold uppercase opacity-75 text-[10px] tracking-[0.14em]'>
+												Target macros
+											</div>
+											<div className='flex gap-3 items-center mt-1 font-semibold text-[11px]'>
+												<span>
+													{averageCalories !== null
+														? `${averageCalories.toFixed(0)} cal`
+														: '-- cal'}
+												</span>
+												<span>
+													{averageProtein !== null
+														? `${averageProtein.toFixed(0)}g protein`
+														: '-- g protein'}
+												</span>
+											</div>
 										</div>
 									</div>
-									<UserPlanVege
-										userPlan={userPlan}
-										mealIndex={meal.mealIndex}
-									/>
-								</div>
-							) : null}
-						</section>
-					)
-				})}
-			</CardContent>
-		</Card>
+
+									<div className='grid gap-1.5 mt-2'>
+										{mealRecipes.length > 0 ? (
+											mealRecipes.map((recipe) => (
+												<UserPlanRecipe
+													key={recipe.id}
+													userPlan={userPlan}
+													mealIndex={meal.mealIndex}
+													recipeIndex={recipe.recipeIndex}
+													accentStyles={mealAccentStyles}
+												/>
+											))
+										) : (
+											<div className='py-3 px-3 text-xs rounded-2xl border border-dashed border-border/70 text-muted-foreground'>
+												No recipe options added to this meal yet.
+											</div>
+										)}
+									</div>
+
+									{hasText(meal.veges) ? (
+										<div className='flex gap-2 items-center py-2 px-2.5 mt-2 border rounded-[18px] border-emerald-500/20 bg-emerald-500/[0.1]'>
+											<div className='flex-1 min-w-0'>
+												<div className='font-semibold uppercase text-[10px] tracking-[0.14em] text-emerald-700/80 dark:text-emerald-300/80'>
+													Vegetable side
+												</div>
+												<div className='mt-0.5 text-xs font-medium dark:text-emerald-50 truncate text-emerald-950'>
+													{meal.vegeNotes || meal.veges}
+												</div>
+											</div>
+											<UserPlanVege
+												userPlan={userPlan}
+												mealIndex={meal.mealIndex}
+											/>
+										</div>
+									) : null}
+								</section>
+							)
+						})}
+					</CardContent>
+				</CollapsibleContent>
+			</Card>
+		</Collapsible>
 	)
 }
 
