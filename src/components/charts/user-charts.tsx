@@ -6,9 +6,12 @@ import { useIsMobile } from '@/hooks/use-mobile'
 import {
 	cn,
 	getRecipeDetailsFromDailyLog,
+	getUserBloodGlucoseSuffix,
+	getUserBloodGlucoseUnit,
 	getUserWeightSuffix,
 	getUserWeightUnit,
 	kgToUserWeight,
+	mmolToUserBloodGlucose,
 } from '@/lib/utils'
 import type { GetAllDailyLogs, GetUserWRoles as GetUserById } from '@/types'
 import { useAtom, useAtomValue } from 'jotai'
@@ -325,10 +328,14 @@ const UserCharts = ({
 	)
 	const userWeightUnit = getUserWeightUnit(currentUser?.settings)
 	const userWeightSuffix = getUserWeightSuffix(userWeightUnit)
+	const userBloodGlucoseUnit = getUserBloodGlucoseUnit(currentUser?.settings)
+	const userBloodGlucoseSuffix = getUserBloodGlucoseSuffix(userBloodGlucoseUnit)
 	const chartSelectChoices = selectChoices.map((choice) =>
 		choice.value === 'morningWeight'
 			? { ...choice, label: `Body Weight (${userWeightSuffix})` }
-			: choice,
+			: choice.value === 'bloodGlucose'
+				? { ...choice, label: `Blood Glucose (${userBloodGlucoseSuffix})` }
+				: choice,
 	)
 
 	const [leftChartZoom, setLeftChartZoom] = useAtom(leftChartZoomAtom)
@@ -338,7 +345,10 @@ const UserCharts = ({
 		?.map((log) => {
 			return {
 				morningWeight: kgToUserWeight(log.morningWeight, userWeightUnit),
-				bloodGlucose: log.fastedBloodGlucose,
+				bloodGlucose: mmolToUserBloodGlucose(
+					log.fastedBloodGlucose,
+					userBloodGlucoseUnit,
+				),
 				sleep: log.sleep,
 				sleepQuality: log.sleepQuality,
 				hiit: log.isHiit,

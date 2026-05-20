@@ -24,9 +24,7 @@ const NumberInput = ({
 	const formatValue = (nextValue: number | null) => {
 		if (nextValue === null) return ''
 
-		return nextValue % 1 === 0
-			? nextValue.toString()
-			: nextValue.toFixed(fixed)
+		return nextValue % 1 === 0 ? nextValue.toString() : nextValue.toFixed(fixed)
 	}
 
 	const [inputValue, setInputValue] = useState(() => formatValue(value))
@@ -36,7 +34,7 @@ const NumberInput = ({
 	}, [fixed, value])
 
 	return (
-		<div className='flex relative items-center w-60 h-16 rounded-lg border'>
+		<div className='flex relative items-center h-16 rounded-lg border w-68'>
 			<Input
 				placeholder=''
 				className={cn(

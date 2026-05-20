@@ -11465,6 +11465,34 @@ var update = {
       )
     );
   }),
+  updateUserBloodGlucoseUnit: protectedProcedure.input(
+    z33.object({
+      id: z33.number(),
+      state: z33.enum(["mmol/L", "mg/dl"])
+    })
+  ).mutation(async ({ ctx, input }) => {
+    const existingTag = await ctx.db.query.userSettingsTags.findFirst({
+      where: (tag2, { and: and16, eq: eq30 }) => and16(
+        eq30(tag2.userSettingsId, input.id),
+        eq30(tag2.name, "user_blood_glucose")
+      )
+    });
+    if (!existingTag) {
+      return ctx.db.insert(userSettingsTags).values({
+        userSettingsId: input.id,
+        name: "user_blood_glucose",
+        state: input.state
+      });
+    }
+    return ctx.db.update(userSettingsTags).set({
+      state: input.state
+    }).where(
+      and13(
+        eq25(userSettingsTags.userSettingsId, input.id),
+        eq25(userSettingsTags.name, "user_blood_glucose")
+      )
+    );
+  }),
   updateIsPosing: protectedProcedure.input(z33.object({ id: z33.string(), isPosing: z33.boolean() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.update(userSettings).set({
       isPosing: input.isPosing

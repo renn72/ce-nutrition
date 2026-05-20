@@ -9,9 +9,12 @@ import {
 	cn,
 	formatMetricTiming,
 	getRecipeDetailsFromDailyLog,
+	getUserBloodGlucoseSuffix,
+	getUserBloodGlucoseUnit,
 	getUserWeightSuffix,
 	getUserWeightUnit,
 	kgToUserWeight,
+	mmolToUserBloodGlucose,
 } from '@/lib/utils'
 import type { GetDailyLogById, GetUserWRoles } from '@/types'
 import {
@@ -195,6 +198,10 @@ const Log = memo(
 
 		const userWeightUnit = getUserWeightUnit(currentUser?.settings)
 		const userWeightSuffix = getUserWeightSuffix(userWeightUnit)
+		const userBloodGlucoseUnit = getUserBloodGlucoseUnit(currentUser?.settings)
+		const userBloodGlucoseSuffix =
+			getUserBloodGlucoseSuffix(userBloodGlucoseUnit)
+		const bloodGlucoseFixed = userBloodGlucoseUnit === 'mg/dl' ? 0 : 1
 
 		const poopCount = useMemo(
 			() => todaysDailyLog?.poopLogs?.length || 0,
@@ -385,15 +392,24 @@ const Log = memo(
 
 						{isBloodGlucose && (
 							<MetricItem
-								label='Glucose'
-								value={formatNumber(todaysDailyLog?.fastedBloodGlucose, 1)}
-								prevValue={formatNumber(
-									yesterdaysDailyLog?.fastedBloodGlucose,
-									1,
+								label='Blood Glucose'
+								value={formatNumber(
+									mmolToUserBloodGlucose(
+										todaysDailyLog?.fastedBloodGlucose,
+										userBloodGlucoseUnit,
+									),
+									bloodGlucoseFixed,
 								)}
-								suffix='mmol/L'
+								prevValue={formatNumber(
+									mmolToUserBloodGlucose(
+										yesterdaysDailyLog?.fastedBloodGlucose,
+										userBloodGlucoseUnit,
+									),
+									bloodGlucoseFixed,
+								)}
+								suffix={userBloodGlucoseSuffix}
 								icon={Droplet}
-								accuracy={0}
+								accuracy={bloodGlucoseFixed}
 								subtitle={formatMetricTiming(
 									todaysDailyLog?.fastedBloodGlucoseTiming,
 								)}

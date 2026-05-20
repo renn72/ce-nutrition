@@ -16624,6 +16624,14 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        updateUserBloodGlucoseUnit: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+                state: "mmol/L" | "mg/dl";
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         updateIsPosing: _trpc_server.TRPCMutationProcedure<{
             input: {
                 id: string;
@@ -25352,6 +25360,14 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             input: {
                 id: number;
                 state: "kilograms" | "pounds";
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateUserBloodGlucoseUnit: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+                state: "mmol/L" | "mg/dl";
             };
             output: _libsql_client.ResultSet;
             meta: object;

@@ -4,7 +4,11 @@ import { api } from '@/trpc/react'
 
 import { useEffect, useState } from 'react'
 
-import { cn } from '@/lib/utils'
+import {
+	cn,
+	getUserBloodGlucoseUnit,
+	type UserBloodGlucoseUnit,
+} from '@/lib/utils'
 import type { GetUserById } from '@/types'
 import { ChevronDownIcon, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
@@ -60,6 +64,15 @@ const getUserWeightUnit = (currentUser: GetUserById): UserWeightUnit => {
 const getUserWeightLabel = (value: UserWeightUnit) =>
 	userWeightOptions.find((option) => option.value === value)?.label ??
 	'Kilograms'
+
+const bloodGlucoseOptions = [
+	{ value: 'mmol/L', label: 'mmol/L' },
+	{ value: 'mg/dl', label: 'mg/dl' },
+] satisfies Array<{ value: UserBloodGlucoseUnit; label: string }>
+
+const getBloodGlucoseLabel = (value: UserBloodGlucoseUnit) =>
+	bloodGlucoseOptions.find((option) => option.value === value)?.label ??
+	'mmol/L'
 
 const DefaultWater = ({ currentUser }: { currentUser: GetUserById }) => {
 	const [water, setWater] = useState(
@@ -142,11 +155,13 @@ const UserWeight = ({ currentUser }: { currentUser: GetUserById }) => {
 			},
 			onSettled: () => {
 				ctx.user.invalidate()
+				ctx.dailyLog.invalidate()
 			},
 			onError: () => {
 				setUnit(getUserWeightUnit(currentUser))
 				toast.error('error')
 				ctx.user.invalidate()
+				ctx.dailyLog.invalidate()
 			},
 		})
 
@@ -176,6 +191,65 @@ const UserWeight = ({ currentUser }: { currentUser: GetUserById }) => {
 				<SelectContent align='end'>
 					<SelectGroup>
 						{userWeightOptions.map((option) => (
+							<SelectItem key={option.value} value={option.value}>
+								{option.label}
+							</SelectItem>
+						))}
+					</SelectGroup>
+				</SelectContent>
+			</Select>
+		</div>
+	)
+}
+
+const UserBloodGlucose = ({ currentUser }: { currentUser: GetUserById }) => {
+	const ctx = api.useUtils()
+	const [unit, setUnit] = useState<UserBloodGlucoseUnit>(() =>
+		getUserBloodGlucoseUnit(currentUser.settings),
+	)
+	const { mutate: updateUserBloodGlucoseUnit, isPending } =
+		api.user.updateUserBloodGlucoseUnit.useMutation({
+			onSuccess: () => {
+				toast.success('Updated')
+			},
+			onSettled: () => {
+				ctx.user.invalidate()
+				ctx.dailyLog.invalidate()
+			},
+			onError: () => {
+				setUnit(getUserBloodGlucoseUnit(currentUser.settings))
+				toast.error('error')
+				ctx.user.invalidate()
+				ctx.dailyLog.invalidate()
+			},
+		})
+
+	return (
+		<div className='flex flex-row gap-3 justify-between items-center py-2 px-3 rounded-lg border'>
+			<div className='space-y-0.5'>
+				<Label>Blood Glucose</Label>
+				<div className='text-sm text-muted-foreground'>
+					Choose the unit used for blood glucose.
+				</div>
+			</div>
+			<Select
+				disabled={isPending}
+				value={unit}
+				onValueChange={(value) => {
+					const nextUnit = value as UserBloodGlucoseUnit
+					setUnit(nextUnit)
+					updateUserBloodGlucoseUnit({
+						id: currentUser.settings.id,
+						state: nextUnit,
+					})
+				}}
+			>
+				<SelectTrigger className='w-[150px] font-semibold'>
+					<SelectValue>{getBloodGlucoseLabel(unit)}</SelectValue>
+				</SelectTrigger>
+				<SelectContent align='end'>
+					<SelectGroup>
+						{bloodGlucoseOptions.map((option) => (
 							<SelectItem key={option.value} value={option.value}>
 								{option.label}
 							</SelectItem>
@@ -1635,6 +1709,7 @@ const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
 				<h2 className='text-base font-semibold'>Defaults</h2>
 				<DefaultWater currentUser={currentUser} />
 				<UserWeight currentUser={currentUser} />
+				<UserBloodGlucose currentUser={currentUser} />
 			</div>
 			<div className='flex flex-col gap-1 p-4 w-full rounded-lg border'>
 				<h2 className='text-base font-semibold' id='daily-log-settings'>

@@ -65,6 +65,7 @@ const DailyLogForm = ({
 								todaysLog={todaysLog}
 								prevLog={prevLog}
 								date={date}
+								currentUser={currentUser}
 							/>
 						) : null}
 						{currentUser?.settings?.isSleep ? (

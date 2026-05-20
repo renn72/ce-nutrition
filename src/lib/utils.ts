@@ -115,6 +115,46 @@ export function userWeightToKg(
 	return unit === 'pounds' ? numericValue / POUNDS_PER_KILOGRAM : numericValue
 }
 
+export type UserBloodGlucoseUnit = 'mmol/L' | 'mg/dl'
+
+export function getUserBloodGlucoseUnit(
+	settings: UserSettingsWithTags,
+): UserBloodGlucoseUnit {
+	const bloodGlucoseTag = settings?.tags?.find(
+		(tag) => tag.name === 'user_blood_glucose',
+	)
+
+	return bloodGlucoseTag?.state === 'mg/dl' ? 'mg/dl' : 'mmol/L'
+}
+
+export function getUserBloodGlucoseSuffix(unit: UserBloodGlucoseUnit) {
+	return unit
+}
+
+export function mmolToUserBloodGlucose(
+	value: string | number | null | undefined,
+	unit: UserBloodGlucoseUnit,
+) {
+	if (value === undefined || value === null || value === '') return null
+
+	const numericValue = Number(value)
+	if (Number.isNaN(numericValue)) return null
+
+	return unit === 'mg/dl' ? numericValue * 18 : numericValue
+}
+
+export function userBloodGlucoseToMmol(
+	value: string | number | null | undefined,
+	unit: UserBloodGlucoseUnit,
+) {
+	if (value === undefined || value === null || value === '') return null
+
+	const numericValue = Number(value)
+	if (Number.isNaN(numericValue)) return null
+
+	return unit === 'mg/dl' ? numericValue / 18 : numericValue
+}
+
 export function calculateMealMacros(ingredients: any[] | undefined) {
 	if (!ingredients)
 		return { cals: 0, protein: 0, carbs: 0, fat: 0, calsWFibre: 0 }
