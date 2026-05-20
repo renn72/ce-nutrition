@@ -626,7 +626,7 @@ const Meal = ({
 					<div className='flex flex-col col-span-4 gap-4 text-sm tracking-tighter select-none md:text-base md:tracking-tight'>
 						{recipeField.fields.map((recipe, recipeIndex) => (
 							<Recipe
-								key={recipe.id || nanoid()}
+								key={recipe.id}
 								form={form}
 								mealIndex={index}
 								recipeIndex={recipeIndex}
