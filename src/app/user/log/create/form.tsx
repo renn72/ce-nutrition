@@ -1,5 +1,6 @@
 'use client'
 
+import { cn } from '@/lib/utils'
 import type { GetDailyLogById, GetUserById } from '@/types'
 
 import { Card, CardContent } from '@/components/ui/card'
@@ -20,8 +21,6 @@ import { SleepQuality } from './_field/sleep-quality'
 import { Steps } from './_field/steps'
 import { Weight } from './_field/weight'
 import { WeightTraining } from './_field/weight-training'
-
-import { cn } from '@/lib/utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -55,7 +54,12 @@ const DailyLogForm = ({
 			>
 				<CardContent className='p-2'>
 					<div className='grid grid-cols-2 gap-2 xl:grid-cols-2'>
-						<Weight todaysLog={todaysLog} prevLog={prevLog} date={date} />
+						<Weight
+							todaysLog={todaysLog}
+							prevLog={prevLog}
+							date={date}
+							currentUser={currentUser}
+						/>
 						{currentUser?.settings?.isBloodGlucose ? (
 							<BloodGlucose
 								todaysLog={todaysLog}

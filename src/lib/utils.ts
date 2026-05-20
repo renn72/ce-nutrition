@@ -63,6 +63,58 @@ export function formatMetricTiming(timing?: string | null) {
 	return `${hour12}:${minute} ${period}`
 }
 
+export type UserWeightUnit = 'kilograms' | 'pounds'
+
+type UserSettingsWithTags =
+	| {
+			tags?: Array<{
+				name: string | null
+				state: string | null
+			}>
+	  }
+	| null
+	| undefined
+
+const POUNDS_PER_KILOGRAM = 2.2046226218
+
+export function getUserWeightUnit(
+	settings: UserSettingsWithTags,
+): UserWeightUnit {
+	const userWeightTag = settings?.tags?.find(
+		(tag) => tag.name === 'user_weight',
+	)
+
+	return userWeightTag?.state === 'pounds' ? 'pounds' : 'kilograms'
+}
+
+export function getUserWeightSuffix(unit: UserWeightUnit) {
+	return unit === 'pounds' ? 'lb' : 'kg'
+}
+
+export function kgToUserWeight(
+	value: string | number | null | undefined,
+	unit: UserWeightUnit,
+) {
+	if (value === undefined || value === null || value === '') return null
+
+	const numericValue = Number(value)
+	if (Number.isNaN(numericValue)) return null
+
+	return unit === 'pounds' ? numericValue * POUNDS_PER_KILOGRAM : numericValue
+}
+
+export function userWeightToKg(
+	value: string | number | null | undefined,
+	unit: UserWeightUnit,
+) {
+	if (value === undefined || value === null || value === '') return null
+
+	const numericValue = Number(value)
+	if (Number.isNaN(numericValue)) return null
+
+	return unit === 'pounds' ? numericValue / POUNDS_PER_KILOGRAM : numericValue
+}
+
 export function calculateMealMacros(ingredients: any[] | undefined) {
 	if (!ingredients)
 		return { cals: 0, protein: 0, carbs: 0, fat: 0, calsWFibre: 0 }

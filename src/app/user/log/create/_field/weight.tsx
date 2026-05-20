@@ -4,8 +4,14 @@ import { api } from '@/trpc/react'
 
 import { useState } from 'react'
 
-import { cn } from '@/lib/utils'
-import type { GetDailyLogById } from '@/types'
+import {
+  cn,
+  getUserWeightSuffix,
+  getUserWeightUnit,
+  kgToUserWeight,
+  userWeightToKg,
+} from '@/lib/utils'
+import type { GetDailyLogById, GetUserById } from '@/types'
 import { Scale } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -28,16 +34,21 @@ const Weight = ({
   todaysLog,
   prevLog,
   date,
+  currentUser,
 }: {
   todaysLog: GetDailyLogById | null
   prevLog: GetDailyLogById | null
   date?: string | null
+  currentUser: GetUserById
 }) => {
+  const userWeightUnit = getUserWeightUnit(currentUser.settings)
+  const userWeightSuffix = getUserWeightSuffix(userWeightUnit)
+
   const [weight, setWeight] = useState<number | null>(() =>
     todaysLog?.morningWeight
-      ? Number(todaysLog?.morningWeight)
+      ? kgToUserWeight(todaysLog?.morningWeight, userWeightUnit)
       : prevLog?.morningWeight
-        ? Number(prevLog?.morningWeight)
+        ? kgToUserWeight(prevLog?.morningWeight, userWeightUnit)
         : null,
   )
   const [weightTiming, setWeightTiming] = useState<string>(
@@ -68,9 +79,15 @@ const Weight = ({
     <DialogWrapper
       title='Weight'
       icon={Scale}
-      value={todaysLog?.morningWeight ?? ''}
-      prevValue={prevLog?.morningWeight ?? ''}
+      value={
+        kgToUserWeight(todaysLog?.morningWeight, userWeightUnit)?.toFixed(1) ??
+        ''
+      }
+      prevValue={
+        kgToUserWeight(prevLog?.morningWeight, userWeightUnit)?.toFixed(1) ?? ''
+      }
       fixed={1}
+      postfix={userWeightSuffix}
     >
       <DialogHeader>
         <DialogTitle>Weight</DialogTitle>
@@ -98,7 +115,7 @@ const Weight = ({
           setValue={setWeight}
           fixed={1}
           scale={0.1}
-          postfix='kg'
+          postfix={userWeightSuffix}
         />
         <div
           aria-hidden={!isTimingEnabled}
@@ -124,11 +141,14 @@ const Weight = ({
             size='lg'
             onClick={async () => {
               if (!weight) return
+              const weightKg = userWeightToKg(weight, userWeightUnit)
+              if (!weightKg) return
+
               const currentDate = todaysLogDate.toDateString()
               await Promise.all([
                 updateWeight({
                   date: currentDate,
-                  morningWeight: weight.toFixed(2),
+                  morningWeight: weightKg.toFixed(2),
                 }),
                 updateWeightTiming({
                   date: currentDate,

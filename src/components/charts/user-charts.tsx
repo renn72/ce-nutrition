@@ -1,14 +1,19 @@
 'use client'
 
-import { cn, getRecipeDetailsFromDailyLog } from '@/lib/utils'
+import { api } from '@/trpc/react'
+
+import { useIsMobile } from '@/hooks/use-mobile'
+import {
+	cn,
+	getRecipeDetailsFromDailyLog,
+	getUserWeightSuffix,
+	getUserWeightUnit,
+	kgToUserWeight,
+} from '@/lib/utils'
 import type { GetAllDailyLogs, GetUserWRoles as GetUserById } from '@/types'
 import { useAtom, useAtomValue } from 'jotai'
 import { CircleMinus, CirclePlus } from 'lucide-react'
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts'
-
-import { useIsMobile } from '@/hooks/use-mobile'
-
-import { api } from '@/trpc/react'
 
 import {
 	ChartContainer,
@@ -318,6 +323,13 @@ const UserCharts = ({
 	const { data: userSkinfolds } = api.metrics.getUserSkinfolds.useQuery(
 		currentUser?.id || '',
 	)
+	const userWeightUnit = getUserWeightUnit(currentUser?.settings)
+	const userWeightSuffix = getUserWeightSuffix(userWeightUnit)
+	const chartSelectChoices = selectChoices.map((choice) =>
+		choice.value === 'morningWeight'
+			? { ...choice, label: `Body Weight (${userWeightSuffix})` }
+			: choice,
+	)
 
 	const [leftChartZoom, setLeftChartZoom] = useAtom(leftChartZoomAtom)
 	const [rightChartZoom, setRightChartZoom] = useAtom(rightChartZoomAtom)
@@ -325,7 +337,7 @@ const UserCharts = ({
 	const data = dailyLogs
 		?.map((log) => {
 			return {
-				morningWeight: log.morningWeight,
+				morningWeight: kgToUserWeight(log.morningWeight, userWeightUnit),
 				bloodGlucose: log.fastedBloodGlucose,
 				sleep: log.sleep,
 				sleepQuality: log.sleepQuality,
@@ -461,7 +473,7 @@ const UserCharts = ({
 						<SelectValue placeholder='Select' />
 					</SelectTrigger>
 					<SelectContent>
-						{selectChoices.map((choice) => (
+						{chartSelectChoices.map((choice) => (
 							<SelectItem value={choice.value} key={choice.value}>
 								{choice.label}
 							</SelectItem>
@@ -484,7 +496,7 @@ const UserCharts = ({
 					</SelectTrigger>
 					<SelectContent>
 						<SelectItem value={'none'}>None</SelectItem>
-						{selectChoices.map((choice) => (
+						{chartSelectChoices.map((choice) => (
 							<SelectItem value={choice.value} key={choice.value}>
 								{choice.label}
 							</SelectItem>

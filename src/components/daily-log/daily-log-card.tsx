@@ -9,8 +9,19 @@ import {
 	cn,
 	formatMetricTiming,
 	getRecipeDetailsFromDailyLog,
+	getUserWeightSuffix,
+	getUserWeightUnit,
+	kgToUserWeight,
 } from '@/lib/utils'
 import type { GetDailyLogById, GetUserWRoles } from '@/types'
+import {
+	BreadIcon,
+	DropIcon,
+	FireIcon,
+	PersonSimpleHikeIcon,
+	PersonSimpleIcon,
+	PersonSimpleTaiChiIcon,
+} from '@phosphor-icons/react'
 import {
 	Activity,
 	ArrowDown,
@@ -34,15 +45,6 @@ import {
 	ThermometerSun,
 	Toilet,
 } from 'lucide-react'
-
-import {
-	BreadIcon,
-	DropIcon,
-	FireIcon,
-	PersonSimpleHikeIcon,
-	PersonSimpleTaiChiIcon,
-	PersonSimpleIcon,
-} from '@phosphor-icons/react'
 import { Link } from 'next-view-transitions'
 
 import { Badge } from '@/components/ui/badge'
@@ -191,6 +193,9 @@ const Log = memo(
 		const isBulkDay = todaysDailyLog?.isBulk === true
 		const isCutDay = todaysDailyLog?.isCut === true
 
+		const userWeightUnit = getUserWeightUnit(currentUser?.settings)
+		const userWeightSuffix = getUserWeightSuffix(userWeightUnit)
+
 		const poopCount = useMemo(
 			() => todaysDailyLog?.poopLogs?.length || 0,
 			[todaysDailyLog?.poopLogs],
@@ -323,9 +328,18 @@ const Log = memo(
 					<div className='grid grid-cols-2 gap-2 xl:grid-cols-2'>
 						<MetricItem
 							label='Weight'
-							value={formatNumber(todaysDailyLog?.morningWeight, 2)}
-							prevValue={formatNumber(yesterdaysDailyLog?.morningWeight, 2)}
-							suffix='kg'
+							value={formatNumber(
+								kgToUserWeight(todaysDailyLog?.morningWeight, userWeightUnit),
+								2,
+							)}
+							prevValue={formatNumber(
+								kgToUserWeight(
+									yesterdaysDailyLog?.morningWeight,
+									userWeightUnit,
+								),
+								2,
+							)}
+							suffix={userWeightSuffix}
 							icon={Scale}
 							subtitle={formatMetricTiming(todaysDailyLog?.morningWeightTiming)}
 						/>
