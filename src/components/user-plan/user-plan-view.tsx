@@ -662,6 +662,9 @@ const UserPlanView = ({
 							const mealRecipes = userPlan.userRecipes.filter(
 								(recipe) => recipe.mealIndex === meal.mealIndex,
 							)
+							const mealInstructions = [userPlan.notes, meal.note].filter(
+								hasText,
+							)
 
 							const averageMealMacros =
 								mealRecipes.length > 0
@@ -741,6 +744,23 @@ const UserPlanView = ({
 											</div>
 										</div>
 									</div>
+
+									{mealInstructions.length > 0 ? (
+										<div className='py-2 px-2.5 mt-2 border rounded-[18px] border-primary/15 bg-background/75'>
+											<div className='font-semibold uppercase text-[10px] tracking-[0.14em] text-muted-foreground'>
+												Meal Instruction
+											</div>
+											<div className='flex flex-col gap-1 mt-1 text-xs font-medium leading-5 text-foreground/85'>
+												{mealInstructions.map(
+													(instruction, instructionIndex) => (
+														<p key={`${instructionIndex}-${instruction}`}>
+															{instruction}
+														</p>
+													),
+												)}
+											</div>
+										</div>
+									) : null}
 
 									<div className='grid gap-1.5 mt-2'>
 										{mealRecipes.length > 0 ? (

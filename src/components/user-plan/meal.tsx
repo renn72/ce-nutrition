@@ -456,9 +456,13 @@ const Meal = ({
 						name={`meals.${index}.note`}
 						render={({ field }) => (
 							<FormItem className='w-full'>
-								<FormLabel>Note</FormLabel>
+								<FormLabel>Instructions for Meal</FormLabel>
 								<FormControl>
-									<Input placeholder='Notes' {...field} type='text' />
+									<Input
+										placeholder='Instructions for Meal'
+										{...field}
+										type='text'
+									/>
 								</FormControl>
 								<FormMessage />
 							</FormItem>

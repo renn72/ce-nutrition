@@ -60,6 +60,8 @@ const EMPTY_MACROS: MacroTotals = {
 	fat: 0,
 }
 
+const hasText = (value?: string | null) => Boolean(value?.trim())
+
 const formatDateLabel = (date: Date | null | undefined) => {
 	if (!date) return 'Present'
 
@@ -320,6 +322,7 @@ const ProgramCard = ({
 
 		return {
 			meal,
+			mealInstructions: [plan.notes, meal.note].filter(hasText),
 			recipes,
 			averageMacros:
 				recipes.length === 0
@@ -461,7 +464,10 @@ const ProgramCard = ({
 								</div>
 								<div className='grid gap-3 xl:grid-cols-2'>
 									{mealDetails.map(
-										({ meal, recipes, averageMacros }, index) => (
+										(
+											{ meal, mealInstructions, recipes, averageMacros },
+											index,
+										) => (
 											<div
 												key={meal.id}
 												className='p-4 border rounded-[24px] border-border/60 bg-muted/20'
@@ -504,6 +510,22 @@ const ProgramCard = ({
 														value={formatMacroValue('fat', averageMacros.fat)}
 													/>
 												</div>
+												{mealInstructions.length > 0 ? (
+													<div className='py-3 px-3 mt-4 rounded-2xl border border-primary/15 bg-background/75'>
+														<div className='text-xs uppercase tracking-[0.22em] text-muted-foreground'>
+															Meal Instruction
+														</div>
+														<div className='flex flex-col gap-1 mt-2 text-sm leading-6 text-foreground/85'>
+															{mealInstructions.map(
+																(instruction, instructionIndex) => (
+																	<p key={`${instructionIndex}-${instruction}`}>
+																		{instruction}
+																	</p>
+																),
+															)}
+														</div>
+													</div>
+												) : null}
 												<div className='mt-4 space-y-2'>
 													{recipes.map((recipe) => (
 														<div
@@ -637,9 +659,9 @@ const ProgramCard = ({
 								</Card>
 								<Card className='py-0 border rounded-[28px] border-border/60 bg-background/80'>
 									<CardHeader className='py-5 px-5'>
-										<CardTitle className='text-lg'>Notes</CardTitle>
+										<CardTitle className='text-lg'>Instructions</CardTitle>
 										<CardDescription>
-											The extra context that sits behind the plan.
+											The extra context that sits behind the program.
 										</CardDescription>
 									</CardHeader>
 									<CardContent className='px-5 pb-5 space-y-4'>
@@ -654,10 +676,10 @@ const ProgramCard = ({
 										<Separator />
 										<div>
 											<div className='text-xs uppercase tracking-[0.22em] text-muted-foreground'>
-												Plan notes
+												Instructions for each meal
 											</div>
 											<div className='mt-2 text-sm leading-6 text-muted-foreground'>
-												{plan.notes || 'No notes supplied.'}
+												{plan.notes || 'No instructions supplied.'}
 											</div>
 										</div>
 									</CardContent>

@@ -146,7 +146,7 @@ const CreateUserPlan = ({
 					vege: meal.veges || '',
 					vegeNotes: meal.vegeNotes || '',
 					protein: '',
-					note: '',
+					note: meal.note || '',
 					recipes: userPlan?.userRecipes
 						.filter((recipe) => recipe.mealIndex === mealIndex)
 						.map((recipe) => ({
@@ -421,7 +421,7 @@ const CreateUserPlan = ({
 						vege: meal.vege || '',
 						vegeNotes: meal.vegeNotes || '',
 						protein: '',
-						note: '',
+						note: meal.notes || '',
 						recipes:
 							meal?.mealToRecipe.map((recipe, recipeIndex) => ({
 								recipeId: recipeIndex.toString(),
@@ -592,9 +592,13 @@ const CreateUserPlan = ({
 									name='notes'
 									render={({ field }) => (
 										<FormItem className='w-full'>
-											<FormLabel>Notes</FormLabel>
+											<FormLabel>Instructions for each meal</FormLabel>
 											<FormControl>
-												<Input placeholder='Notes' {...field} type='text' />
+												<Input
+													placeholder='Instructions for each meal'
+													{...field}
+													type='text'
+												/>
 											</FormControl>
 											<FormMessage />
 										</FormItem>
