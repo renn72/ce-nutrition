@@ -2,14 +2,16 @@
 
 import { api } from '@/trpc/react'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import { cn } from '@/lib/utils'
 import type { GetUserById } from '@/types'
-import { RefreshCw } from 'lucide-react'
+import { ChevronDownIcon, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
+import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible'
 import {
 	Dialog,
 	DialogContent,
@@ -20,18 +22,11 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible'
-
-import { ChevronDownIcon } from 'lucide-react'
-
-import { Calendar } from '@/components/ui/calendar'
 import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
 } from '@/components/ui/popover'
-
 import {
 	Select,
 	SelectContent,
@@ -40,11 +35,31 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
 
 const formatDateDdMmYyyy = (date: Date | null | undefined) => {
 	if (!date) return 'Select date'
 	return new Intl.DateTimeFormat('en-GB').format(date)
 }
+
+type UserWeightUnit = 'kilograms' | 'pounds'
+
+const userWeightOptions = [
+	{ value: 'kilograms', label: 'Kilograms' },
+	{ value: 'pounds', label: 'Pounds' },
+] satisfies Array<{ value: UserWeightUnit; label: string }>
+
+const getUserWeightUnit = (currentUser: GetUserById): UserWeightUnit => {
+	const userWeightTag = currentUser.settings.tags.find(
+		(tag) => tag.name === 'user_weight',
+	)
+
+	return userWeightTag?.state === 'pounds' ? 'pounds' : 'kilograms'
+}
+
+const getUserWeightLabel = (value: UserWeightUnit) =>
+	userWeightOptions.find((option) => option.value === value)?.label ??
+	'Kilograms'
 
 const DefaultWater = ({ currentUser }: { currentUser: GetUserById }) => {
 	const [water, setWater] = useState(
@@ -112,6 +127,63 @@ const DefaultWater = ({ currentUser }: { currentUser: GetUserById }) => {
 				</Button>
 			</div>
 		</DialogWrapper>
+	)
+}
+
+const UserWeight = ({ currentUser }: { currentUser: GetUserById }) => {
+	const ctx = api.useUtils()
+	const [unit, setUnit] = useState<UserWeightUnit>(() =>
+		getUserWeightUnit(currentUser),
+	)
+	const { mutate: updateUserWeightUnit, isPending } =
+		api.user.updateUserWeightUnit.useMutation({
+			onSuccess: () => {
+				toast.success('Updated')
+			},
+			onSettled: () => {
+				ctx.user.invalidate()
+			},
+			onError: () => {
+				setUnit(getUserWeightUnit(currentUser))
+				toast.error('error')
+				ctx.user.invalidate()
+			},
+		})
+
+	return (
+		<div className='flex flex-row gap-3 justify-between items-center py-2 px-3 rounded-lg border'>
+			<div className='space-y-0.5'>
+				<Label>User Weight</Label>
+				<div className='text-sm text-muted-foreground'>
+					Choose the unit used for body weight.
+				</div>
+			</div>
+			<Select
+				disabled={isPending}
+				value={unit}
+				onValueChange={(value) => {
+					const nextUnit = value as UserWeightUnit
+					setUnit(nextUnit)
+					updateUserWeightUnit({
+						id: currentUser.settings.id,
+						state: nextUnit,
+					})
+				}}
+			>
+				<SelectTrigger className='w-[150px] font-semibold'>
+					<SelectValue>{getUserWeightLabel(unit)}</SelectValue>
+				</SelectTrigger>
+				<SelectContent align='end'>
+					<SelectGroup>
+						{userWeightOptions.map((option) => (
+							<SelectItem key={option.value} value={option.value}>
+								{option.label}
+							</SelectItem>
+						))}
+					</SelectGroup>
+				</SelectContent>
+			</Select>
+		</div>
 	)
 }
 
@@ -1562,6 +1634,7 @@ const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
 			>
 				<h2 className='text-base font-semibold'>Defaults</h2>
 				<DefaultWater currentUser={currentUser} />
+				<UserWeight currentUser={currentUser} />
 			</div>
 			<div className='flex flex-col gap-1 p-4 w-full rounded-lg border'>
 				<h2 className='text-base font-semibold' id='daily-log-settings'>

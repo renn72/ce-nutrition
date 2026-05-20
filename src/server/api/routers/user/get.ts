@@ -183,7 +183,11 @@ export const get = {
           password: false,
         },
         with: {
-          settings: true,
+          settings: {
+            with: {
+              tags: true,
+            },
+          },
           partner: {
             columns: {
               id: true,
@@ -245,7 +249,11 @@ export const get = {
           name: true,
         },
         with: {
-          settings: true,
+          settings: {
+            with: {
+              tags: true,
+            },
+          },
           roles: true,
           supplementStacks: {
             where: (ss, { eq }) => eq(ss.isTemplate, false),
@@ -325,7 +333,11 @@ export const get = {
         },
         with: {
           images: true,
-          settings: true,
+          settings: {
+            with: {
+              tags: true,
+            },
+          },
           partner: {
             columns: {
               id: true,
@@ -389,7 +401,11 @@ export const get = {
           id: true,
         },
         with: {
-          settings: true,
+          settings: {
+            with: {
+              tags: true,
+            },
+          },
           partner: {
             columns: {
               id: true,
@@ -427,7 +443,11 @@ export const get = {
         password: false,
       },
       with: {
-        settings: true,
+        settings: {
+          with: {
+            tags: true,
+          },
+        },
         partner: {
           columns: {
             id: true,

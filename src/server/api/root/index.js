@@ -25,6 +25,9 @@ var env = createEnv({
     EMAIL_FROM: z.string(),
     VAPID_PRIVATE_KEY: z.string(),
     UPLOADTHING_TOKEN: z.string(),
+    ZEN_API_KEY: z.string(),
+    ZEN_MODEL: z.string(),
+    ZEN_ENDPOINT: z.string().url().default("https://opencode.ai/zen/v1/chat/completions"),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development")
   },
   /**
@@ -54,6 +57,9 @@ var env = createEnv({
     EMAIL_FROM: process.env.EMAIL_FROM,
     NEXT_PUBLIC_VAPID_PUBLIC_KEY: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
     VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
+    ZEN_API_KEY: process.env.ZEN_API_KEY,
+    ZEN_MODEL: process.env.ZEN_MODEL,
+    ZEN_ENDPOINT: process.env.ZEN_ENDPOINT,
     UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
@@ -80,6 +86,8 @@ var schema_exports = {};
 __export(schema_exports, {
   account: () => account,
   accountsRelations: () => accountsRelations,
+  aiInsight: () => aiInsight,
+  aiInsightRelations: () => aiInsightRelations,
   bodyFat: () => bodyFat,
   bodyFatRelations: () => bodyFatRelations,
   bodyWeight: () => bodyWeight,
@@ -172,6 +180,8 @@ __export(schema_exports, {
   userRelations: () => userRelations,
   userSettings: () => userSettings,
   userSettingsRelations: () => userSettingsRelations,
+  userSettingsTags: () => userSettingsTags,
+  userSettingsTagsRelations: () => userSettingsTagsRelations,
   userToTrainer: () => userToTrainer,
   userToTrainerRelations: () => userToTrainerRelations,
   userToUserCategory: () => userToUserCategory,
@@ -186,77 +196,109 @@ __export(schema_exports, {
 });
 
 // src/server/db/schema/user.ts
-import { relations as relations9, sql as sql9 } from "drizzle-orm";
+import { relations as relations10, sql as sql10 } from "drizzle-orm";
 import {
-  index as index9,
-  int as int9,
+  index as index10,
+  int as int10,
   primaryKey,
-  sqliteTable as sqliteTable9,
-  text as text9
+  sqliteTable as sqliteTable10,
+  text as text10
 } from "drizzle-orm/sqlite-core";
 
-// src/server/db/schema/daily-logs.ts
-import { relations as relations4, sql as sql4 } from "drizzle-orm";
-import { index as index4, int as int4, sqliteTable as sqliteTable4, text as text4 } from "drizzle-orm/sqlite-core";
-
-// src/server/db/schema/ingredient.ts
-import { relations as relations3, sql as sql3 } from "drizzle-orm";
-import { int as int3, sqliteTable as sqliteTable3, text as text3, index as index3 } from "drizzle-orm/sqlite-core";
-
-// src/server/db/schema/recipe.ts
+// src/server/db/schema/ai-insight.ts
 import { relations, sql } from "drizzle-orm";
 import { index, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 var createTable = sqliteTable;
-var recipe = createTable(
+var aiInsight = createTable(
+  "ai_insight",
+  {
+    id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
+    userId: text("user_id").notNull().references(() => user.id, {
+      onDelete: "cascade"
+    }),
+    rangeDays: int("range_days", { mode: "number" }).notNull(),
+    rangeLabel: text("range_label").notNull(),
+    rangeStart: text("range_start").notNull(),
+    rangeEnd: text("range_end").notNull(),
+    sourceLogCount: int("source_log_count", { mode: "number" }).notNull(),
+    model: text("model").notNull(),
+    content: text("content").notNull()
+  },
+  (table) => [
+    index("ai_insight_user_id_idx").on(table.userId),
+    index("ai_insight_created_at_idx").on(table.createdAt)
+  ]
+);
+var aiInsightRelations = relations(aiInsight, ({ one }) => ({
+  user: one(user, {
+    fields: [aiInsight.userId],
+    references: [user.id]
+  })
+}));
+
+// src/server/db/schema/daily-logs.ts
+import { relations as relations5, sql as sql5 } from "drizzle-orm";
+import { index as index5, int as int5, sqliteTable as sqliteTable5, text as text5 } from "drizzle-orm/sqlite-core";
+
+// src/server/db/schema/ingredient.ts
+import { relations as relations4, sql as sql4 } from "drizzle-orm";
+import { int as int4, sqliteTable as sqliteTable4, text as text4, index as index4 } from "drizzle-orm/sqlite-core";
+
+// src/server/db/schema/recipe.ts
+import { relations as relations2, sql as sql2 } from "drizzle-orm";
+import { index as index2, int as int2, sqliteTable as sqliteTable2, text as text2 } from "drizzle-orm/sqlite-core";
+var createTable2 = sqliteTable2;
+var recipe = createTable2(
   "recipe",
   {
-    id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
-    updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
+    id: int2("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int2("created_at", { mode: "timestamp" }).default(sql2`(unixepoch())`).notNull(),
+    updatedAt: int2("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     ),
-    name: text("name").notNull(),
-    description: text("description").notNull(),
-    image: text("image").notNull(),
-    notes: text("notes").notNull(),
-    calories: int("calories", { mode: "number" }).notNull(),
-    creatorId: text("creator_id").references(() => user.id).notNull(),
-    isUserRecipe: int("is_user_recipe", { mode: "boolean" }).default(false),
-    isGlobal: int("is_global", { mode: "boolean" }).default(false),
-    recipeCategory: text("recipe_category").notNull(),
-    favouriteAt: int("favourite_at", { mode: "timestamp" }),
-    deletedAt: int("deleted_at", { mode: "timestamp" }),
-    hiddenAt: int("hidden_at", { mode: "timestamp" })
+    name: text2("name").notNull(),
+    description: text2("description").notNull(),
+    image: text2("image").notNull(),
+    notes: text2("notes").notNull(),
+    calories: int2("calories", { mode: "number" }).notNull(),
+    creatorId: text2("creator_id").references(() => user.id).notNull(),
+    isUserRecipe: int2("is_user_recipe", { mode: "boolean" }).default(false),
+    isGlobal: int2("is_global", { mode: "boolean" }).default(false),
+    recipeCategory: text2("recipe_category").notNull(),
+    favouriteAt: int2("favourite_at", { mode: "timestamp" }),
+    deletedAt: int2("deleted_at", { mode: "timestamp" }),
+    hiddenAt: int2("hidden_at", { mode: "timestamp" })
   },
   (table) => [
-    index("recipe_user_id_idx").on(table.creatorId),
-    index("recipe_is_user_recipe_idx").on(table.isUserRecipe)
+    index2("recipe_user_id_idx").on(table.creatorId),
+    index2("recipe_is_user_recipe_idx").on(table.isUserRecipe)
   ]
 );
-var recipeToIngredient = createTable(
+var recipeToIngredient = createTable2(
   "recipe_to_ingredient",
   {
-    id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
-    recipeId: int("recipe_id").references(() => recipe.id, {
+    id: int2("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int2("created_at", { mode: "timestamp" }).default(sql2`(unixepoch())`).notNull(),
+    recipeId: int2("recipe_id").references(() => recipe.id, {
       onDelete: "cascade"
     }).notNull(),
-    ingredientId: int("ingredient_id").references(() => ingredient.id, {
+    ingredientId: int2("ingredient_id").references(() => ingredient.id, {
       onDelete: "cascade"
     }).notNull(),
-    index: int("index", { mode: "number" }).notNull(),
-    alternateId: int("alternate_id").references(() => ingredient.id),
-    serveSize: text("serve").notNull(),
-    serveUnit: text("serve_unit").notNull(),
-    note: text("note"),
-    isUserCreated: int("is_user_created", { mode: "boolean" }).default(false)
+    index: int2("index", { mode: "number" }).notNull(),
+    alternateId: int2("alternate_id").references(() => ingredient.id),
+    serveSize: text2("serve").notNull(),
+    serveUnit: text2("serve_unit").notNull(),
+    note: text2("note"),
+    isUserCreated: int2("is_user_created", { mode: "boolean" }).default(false)
   },
   (table) => [
-    index("recipe_to_ingredient_recipe_id_index").on(table.recipeId),
-    index("recipe_to_ingredient_ingredient_id_index").on(table.ingredientId)
+    index2("recipe_to_ingredient_recipe_id_index").on(table.recipeId),
+    index2("recipe_to_ingredient_ingredient_id_index").on(table.ingredientId)
   ]
 );
-var recipeToIngredientRelations = relations(
+var recipeToIngredientRelations = relations2(
   recipeToIngredient,
   ({ one }) => ({
     recipe: one(recipe, {
@@ -275,133 +317,133 @@ var recipeToIngredientRelations = relations(
     })
   })
 );
-var recipeRelations = relations(recipe, ({ one, many }) => ({
+var recipeRelations = relations2(recipe, ({ one, many }) => ({
   creator: one(user, { fields: [recipe.creatorId], references: [user.id] }),
   recipeToIngredient: many(recipeToIngredient)
 }));
 
 // src/server/db/schema/user-plan.ts
-import { relations as relations2, sql as sql2 } from "drizzle-orm";
-import { index as index2, int as int2, sqliteTable as sqliteTable2, text as text2 } from "drizzle-orm/sqlite-core";
-var createTable2 = sqliteTable2;
-var userPlan = createTable2(
+import { relations as relations3, sql as sql3 } from "drizzle-orm";
+import { index as index3, int as int3, sqliteTable as sqliteTable3, text as text3 } from "drizzle-orm/sqlite-core";
+var createTable3 = sqliteTable3;
+var userPlan = createTable3(
   "user_plan",
   {
-    id: int2("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int2("created_at", { mode: "timestamp" }).default(sql2`(unixepoch())`).notNull(),
-    updatedAt: int2("updated_at", { mode: "timestamp" }).$onUpdate(
+    id: int3("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int3("created_at", { mode: "timestamp" }).default(sql3`(unixepoch())`).notNull(),
+    updatedAt: int3("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     ),
-    finishedAt: int2("finished_at", { mode: "timestamp" }),
-    startAt: int2("start_at", { mode: "timestamp" }),
-    isActive: int2("is_active", { mode: "boolean" }),
-    name: text2("name").notNull(),
-    description: text2("description").notNull(),
-    image: text2("image").notNull(),
-    notes: text2("notes").notNull(),
-    numberOfMeals: int2("number_of_meals", { mode: "number" }),
-    creatorId: text2("creator_id").references(() => user.id, {
+    finishedAt: int3("finished_at", { mode: "timestamp" }),
+    startAt: int3("start_at", { mode: "timestamp" }),
+    isActive: int3("is_active", { mode: "boolean" }),
+    name: text3("name").notNull(),
+    description: text3("description").notNull(),
+    image: text3("image").notNull(),
+    notes: text3("notes").notNull(),
+    numberOfMeals: int3("number_of_meals", { mode: "number" }),
+    creatorId: text3("creator_id").references(() => user.id, {
       onDelete: "cascade"
     }).notNull(),
-    userId: text2("user_id").references(() => user.id, {
+    userId: text3("user_id").references(() => user.id, {
       onDelete: "cascade"
     }).notNull(),
-    favouriteAt: int2("favourite_at", { mode: "timestamp" }),
-    deletedAt: int2("deleted_at", { mode: "timestamp" }),
-    hiddenAt: int2("hidden_at", { mode: "timestamp" })
+    favouriteAt: int3("favourite_at", { mode: "timestamp" }),
+    deletedAt: int3("deleted_at", { mode: "timestamp" }),
+    hiddenAt: int3("hidden_at", { mode: "timestamp" })
   },
-  (table) => [index2("user_plan_user_id_idx").on(table.userId)]
+  (table) => [index3("user_plan_user_id_idx").on(table.userId)]
 );
-var userMeal = createTable2(
+var userMeal = createTable3(
   "user_meal",
   {
-    id: int2("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int2("created_at", { mode: "timestamp" }).default(sql2`(unixepoch())`).notNull(),
-    updatedAt: int2("updated_at", { mode: "timestamp" }).$onUpdate(
+    id: int3("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int3("created_at", { mode: "timestamp" }).default(sql3`(unixepoch())`).notNull(),
+    updatedAt: int3("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     ),
-    userPlanId: int2("user_plan_id").references(() => userPlan.id, {
+    userPlanId: int3("user_plan_id").references(() => userPlan.id, {
       onDelete: "cascade"
     }).notNull(),
-    mealIndex: int2("index", { mode: "number" }),
-    mealTitle: text2("meal_title"),
-    calories: text2("calories"),
-    protein: text2("protein"),
-    targetProtein: text2("target_protein"),
-    targetCalories: text2("target_calories"),
-    vegeCalories: text2("vege_calories"),
-    veges: text2("veges"),
-    vegeNotes: text2("vege_notes"),
-    note: text2("note")
+    mealIndex: int3("index", { mode: "number" }),
+    mealTitle: text3("meal_title"),
+    calories: text3("calories"),
+    protein: text3("protein"),
+    targetProtein: text3("target_protein"),
+    targetCalories: text3("target_calories"),
+    vegeCalories: text3("vege_calories"),
+    veges: text3("veges"),
+    vegeNotes: text3("vege_notes"),
+    note: text3("note")
   },
-  (table) => [index2("user_meal_user_plan_id_idx").on(table.userPlanId)]
+  (table) => [index3("user_meal_user_plan_id_idx").on(table.userPlanId)]
 );
-var userRecipe = createTable2(
+var userRecipe = createTable3(
   "user_recipe",
   {
-    id: int2("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int2("created_at", { mode: "timestamp" }).default(sql2`(unixepoch())`).notNull(),
-    updatedAt: int2("updated_at", { mode: "timestamp" }).$onUpdate(
+    id: int3("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int3("created_at", { mode: "timestamp" }).default(sql3`(unixepoch())`).notNull(),
+    updatedAt: int3("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     ),
-    mealIndex: int2("meal_index", { mode: "number" }),
-    recipeIndex: int2("recipe_index", { mode: "number" }),
-    userPlanId: int2("user_plan_id").references(() => userPlan.id, {
+    mealIndex: int3("meal_index", { mode: "number" }),
+    recipeIndex: int3("recipe_index", { mode: "number" }),
+    userPlanId: int3("user_plan_id").references(() => userPlan.id, {
       onDelete: "cascade"
     }),
-    dailyMealId: int2("daily_meal_id").references(() => dailyMeal.id, {
+    dailyMealId: int3("daily_meal_id").references(() => dailyMeal.id, {
       onDelete: "cascade"
     }),
-    parentId: int2("parent_id"),
-    name: text2("name"),
-    index: int2("index", { mode: "number" }),
-    serve: text2("serve"),
-    serveUnit: text2("serve_unit"),
-    note: text2("note"),
-    isLog: int2("is_log", { mode: "boolean" }),
-    dailyLogId: int2("daily_log_id").references(() => dailyLog.id),
-    isUserCreated: int2("is_user_created", { mode: "boolean" }).default(false)
+    parentId: int3("parent_id"),
+    name: text3("name"),
+    index: int3("index", { mode: "number" }),
+    serve: text3("serve"),
+    serveUnit: text3("serve_unit"),
+    note: text3("note"),
+    isLog: int3("is_log", { mode: "boolean" }),
+    dailyLogId: int3("daily_log_id").references(() => dailyLog.id),
+    isUserCreated: int3("is_user_created", { mode: "boolean" }).default(false)
   },
   (table) => [
-    index2("user_recipe_daily_meal_id_index").on(table.dailyMealId),
-    index2("user_recipe_user_plan_id_idx").on(table.userPlanId),
-    index2("user_recipe_daily_log_id_idx").on(table.dailyLogId)
+    index3("user_recipe_daily_meal_id_index").on(table.dailyMealId),
+    index3("user_recipe_user_plan_id_idx").on(table.userPlanId),
+    index3("user_recipe_daily_log_id_idx").on(table.dailyLogId)
   ]
 );
-var userIngredient = createTable2(
+var userIngredient = createTable3(
   "user_ingredient",
   {
-    id: int2("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int2("created_at", { mode: "timestamp" }).default(sql2`(unixepoch())`).notNull(),
-    updatedAt: int2("updated_at", { mode: "timestamp" }).$onUpdate(
+    id: int3("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int3("created_at", { mode: "timestamp" }).default(sql3`(unixepoch())`).notNull(),
+    updatedAt: int3("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     ),
-    ingredientId: int2("ingredient_id").references(() => ingredient.id, {
+    ingredientId: int3("ingredient_id").references(() => ingredient.id, {
       onDelete: "cascade"
     }).notNull(),
-    userPlanId: int2("user_plan_id").references(() => userPlan.id, {
+    userPlanId: int3("user_plan_id").references(() => userPlan.id, {
       onDelete: "cascade"
     }),
-    dailyMealId: int2("daily_meal_id").references(() => dailyMeal.id, {
+    dailyMealId: int3("daily_meal_id").references(() => dailyMeal.id, {
       onDelete: "cascade"
     }),
-    name: text2("name"),
-    mealIndex: int2("meal_index", { mode: "number" }),
-    recipeIndex: int2("recipe_index", { mode: "number" }),
-    alternateId: int2("alternate_id").references(() => ingredient.id),
-    serve: text2("serve"),
-    serveUnit: text2("serve_unit"),
-    note: text2("note"),
-    dailyLogId: int2("daily_log_id").references(() => dailyLog.id),
-    isUserCreated: int2("is_user_created", { mode: "boolean" }).default(false)
+    name: text3("name"),
+    mealIndex: int3("meal_index", { mode: "number" }),
+    recipeIndex: int3("recipe_index", { mode: "number" }),
+    alternateId: int3("alternate_id").references(() => ingredient.id),
+    serve: text3("serve"),
+    serveUnit: text3("serve_unit"),
+    note: text3("note"),
+    dailyLogId: int3("daily_log_id").references(() => dailyLog.id),
+    isUserCreated: int3("is_user_created", { mode: "boolean" }).default(false)
   },
   (table) => [
-    index2("user_ingredient_daily_meal_id_index").on(table.dailyMealId),
-    index2("user_ingredient_user_plan_id_idx").on(table.userPlanId),
-    index2("user_ingredient_daily_log_id_idx").on(table.dailyLogId)
+    index3("user_ingredient_daily_meal_id_index").on(table.dailyMealId),
+    index3("user_ingredient_user_plan_id_idx").on(table.userPlanId),
+    index3("user_ingredient_daily_log_id_idx").on(table.dailyLogId)
   ]
 );
-var userPlanRelations = relations2(userPlan, ({ one, many }) => ({
+var userPlanRelations = relations3(userPlan, ({ one, many }) => ({
   user: one(user, {
     fields: [userPlan.userId],
     references: [user.id],
@@ -416,13 +458,13 @@ var userPlanRelations = relations2(userPlan, ({ one, many }) => ({
   userRecipes: many(userRecipe),
   userIngredients: many(userIngredient)
 }));
-var userMealRelations = relations2(userMeal, ({ one }) => ({
+var userMealRelations = relations3(userMeal, ({ one }) => ({
   userPlan: one(userPlan, {
     fields: [userMeal.userPlanId],
     references: [userPlan.id]
   })
 }));
-var userRecipeRelations = relations2(userRecipe, ({ one }) => ({
+var userRecipeRelations = relations3(userRecipe, ({ one }) => ({
   userPlan: one(userPlan, {
     fields: [userRecipe.userPlanId],
     references: [userPlan.id]
@@ -432,7 +474,7 @@ var userRecipeRelations = relations2(userRecipe, ({ one }) => ({
     references: [dailyMeal.id]
   })
 }));
-var userIngredientRelations = relations2(userIngredient, ({ one }) => ({
+var userIngredientRelations = relations3(userIngredient, ({ one }) => ({
   ingredient: one(ingredient, {
     fields: [userIngredient.ingredientId],
     references: [ingredient.id],
@@ -454,309 +496,309 @@ var userIngredientRelations = relations2(userIngredient, ({ one }) => ({
 }));
 
 // src/server/db/schema/ingredient.ts
-var createTable3 = sqliteTable3;
-var ingredient = createTable3(
+var createTable4 = sqliteTable4;
+var ingredient = createTable4(
   "ingredient",
   {
-    id: int3("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int3("created_at", { mode: "timestamp" }).default(sql3`(unixepoch())`).notNull(),
-    updatedAt: int3("updated_at", { mode: "timestamp" }).$onUpdate(
+    id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
+    updatedAt: int4("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     ),
-    userId: text3("user_id").references(() => user.id),
-    favouriteAt: int3("favourite_at", { mode: "timestamp" }),
-    deletedAt: int3("deleted_at", { mode: "timestamp" }),
-    hiddenAt: int3("hidden_at", { mode: "timestamp" }),
-    isAusFood: int3("is_aus_food", { mode: "boolean" }),
-    isAllStores: int3("is_all_stores", { mode: "boolean" }).default(true),
-    serveSize: text3("serve_size"),
-    serveUnit: text3("serve_unit"),
-    publicFoodKey: text3("public_food_key"),
-    classification: text3("classification"),
-    foodName: text3("food_name"),
-    name: text3("name"),
-    caloriesWFibre: text3("calories_w_fibre"),
-    caloriesWOFibre: text3("calories_wo_fibre"),
-    protein: text3("protein"),
-    fatTotal: text3("fat_total"),
-    totalDietaryFibre: text3("total_dietary_fibre"),
-    totalSugars: text3("total_sugars"),
-    starch: text3("starch"),
-    resistantStarch: text3("resistant_starch"),
-    availableCarbohydrateWithoutSugarAlcohols: text3(
+    userId: text4("user_id").references(() => user.id),
+    favouriteAt: int4("favourite_at", { mode: "timestamp" }),
+    deletedAt: int4("deleted_at", { mode: "timestamp" }),
+    hiddenAt: int4("hidden_at", { mode: "timestamp" }),
+    isAusFood: int4("is_aus_food", { mode: "boolean" }),
+    isAllStores: int4("is_all_stores", { mode: "boolean" }).default(true),
+    serveSize: text4("serve_size"),
+    serveUnit: text4("serve_unit"),
+    publicFoodKey: text4("public_food_key"),
+    classification: text4("classification"),
+    foodName: text4("food_name"),
+    name: text4("name"),
+    caloriesWFibre: text4("calories_w_fibre"),
+    caloriesWOFibre: text4("calories_wo_fibre"),
+    protein: text4("protein"),
+    fatTotal: text4("fat_total"),
+    totalDietaryFibre: text4("total_dietary_fibre"),
+    totalSugars: text4("total_sugars"),
+    starch: text4("starch"),
+    resistantStarch: text4("resistant_starch"),
+    availableCarbohydrateWithoutSugarAlcohols: text4(
       "available_carbohydrate_without_sugar_alcohols"
     ),
-    availableCarbohydrateWithSugarAlcohols: text3(
+    availableCarbohydrateWithSugarAlcohols: text4(
       "available_carbohydrate_with_sugar_alcohols"
     ),
-    isUserCreated: int3("is_user_created", { mode: "boolean" }).default(false),
-    isSupplement: int3("is_supplement", { mode: "boolean" }).default(false),
-    isPrivate: int3("is_private", { mode: "boolean" }).default(false),
-    viewableBy: text3("viewable_by"),
-    intervale: text3("intervale"),
-    notes: text3("notes")
+    isUserCreated: int4("is_user_created", { mode: "boolean" }).default(false),
+    isSupplement: int4("is_supplement", { mode: "boolean" }).default(false),
+    isPrivate: int4("is_private", { mode: "boolean" }).default(false),
+    viewableBy: text4("viewable_by"),
+    intervale: text4("intervale"),
+    notes: text4("notes")
   }
 );
-var ingredientAdditionOne = createTable3("ingredient_addition_one", {
-  id: int3("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int3("created_at", { mode: "timestamp" }).default(sql3`(unixepoch())`).notNull(),
-  updatedAt: int3("updated_at", { mode: "timestamp" }).$onUpdate(
+var ingredientAdditionOne = createTable4("ingredient_addition_one", {
+  id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
+  updatedAt: int4("updated_at", { mode: "timestamp" }).$onUpdate(
     () => /* @__PURE__ */ new Date()
   ),
-  ingredientId: int3("ingredient_id").references(() => ingredient.id, {
+  ingredientId: int4("ingredient_id").references(() => ingredient.id, {
     onDelete: "cascade"
   }),
-  energyWithDietaryFibre: text3("energy_with_dietary_fibre"),
-  energyWithoutDietaryFibre: text3("energy_without_dietary_fibre"),
-  addedSugars: text3("added_sugars"),
-  freeSugars: text3("free_sugars"),
-  moisture: text3("moisture"),
-  nitrogen: text3("nitrogen"),
-  alcohol: text3("alcohol"),
-  fructose: text3("fructose"),
-  glucose: text3("glucose"),
-  sucrose: text3("sucrose"),
-  maltose: text3("maltose"),
-  lactose: text3("lactose"),
-  galactose: text3("galactose"),
-  maltotrios: text3("maltotrios"),
-  ash: text3("ash"),
-  dextrin: text3("dextrin"),
-  glycerol: text3("glycerol"),
-  glycogen: text3("glycogen"),
-  inulin: text3("inulin"),
-  erythritol: text3("erythritol"),
-  maltitol: text3("maltitol"),
-  mannitol: text3("mannitol"),
-  xylitol: text3("xylitol"),
-  maltodextrin: text3("maltodextrin"),
-  oligosaccharides: text3("oligosaccharides"),
-  polydextrose: text3("polydextrose"),
-  raffinose: text3("raffinose"),
-  stachyose: text3("stachyose"),
-  sorbitol: text3("sorbitol")
+  energyWithDietaryFibre: text4("energy_with_dietary_fibre"),
+  energyWithoutDietaryFibre: text4("energy_without_dietary_fibre"),
+  addedSugars: text4("added_sugars"),
+  freeSugars: text4("free_sugars"),
+  moisture: text4("moisture"),
+  nitrogen: text4("nitrogen"),
+  alcohol: text4("alcohol"),
+  fructose: text4("fructose"),
+  glucose: text4("glucose"),
+  sucrose: text4("sucrose"),
+  maltose: text4("maltose"),
+  lactose: text4("lactose"),
+  galactose: text4("galactose"),
+  maltotrios: text4("maltotrios"),
+  ash: text4("ash"),
+  dextrin: text4("dextrin"),
+  glycerol: text4("glycerol"),
+  glycogen: text4("glycogen"),
+  inulin: text4("inulin"),
+  erythritol: text4("erythritol"),
+  maltitol: text4("maltitol"),
+  mannitol: text4("mannitol"),
+  xylitol: text4("xylitol"),
+  maltodextrin: text4("maltodextrin"),
+  oligosaccharides: text4("oligosaccharides"),
+  polydextrose: text4("polydextrose"),
+  raffinose: text4("raffinose"),
+  stachyose: text4("stachyose"),
+  sorbitol: text4("sorbitol")
 });
-var ingredientAdditionTwo = createTable3("ingredient_addition_two", {
-  id: int3("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int3("created_at", { mode: "timestamp" }).default(sql3`(unixepoch())`).notNull(),
-  updatedAt: int3("updated_at", { mode: "timestamp" }).$onUpdate(
+var ingredientAdditionTwo = createTable4("ingredient_addition_two", {
+  id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
+  updatedAt: int4("updated_at", { mode: "timestamp" }).$onUpdate(
     () => /* @__PURE__ */ new Date()
   ),
-  ingredientId: int3("ingredient_id").references(() => ingredient.id, {
+  ingredientId: int4("ingredient_id").references(() => ingredient.id, {
     onDelete: "cascade"
   }),
-  aceticAcid: text3("acetic_acid"),
-  citricAcid: text3("citric_acid"),
-  fumaricAcid: text3("fumaric_acid"),
-  lacticAcid: text3("lactic_acid"),
-  malicAcid: text3("malic_acid"),
-  oxalicAcid: text3("oxalic_acid"),
-  propionicAcid: text3("propionic_acid"),
-  quinicAcid: text3("quinic_acid"),
-  shikimicAcid: text3("shikimic_acid"),
-  succinicAcid: text3("succinic_acid"),
-  tartaricAcid: text3("tartaric_acid"),
-  aluminium: text3("aluminium"),
-  antimony: text3("antimony"),
-  arsenic: text3("arsenic"),
-  cadmium: text3("cadmium"),
-  calcium: text3("calcium"),
-  chromium: text3("chromium"),
-  chloride: text3("chloride"),
-  cobalt: text3("cobalt"),
-  copper: text3("copper"),
-  fluoride: text3("fluoride"),
-  iodine: text3("iodine"),
-  iron: text3("iron"),
-  lead: text3("lead"),
-  magnesium: text3("magnesium"),
-  manganese: text3("manganese"),
-  mercury: text3("mercury"),
-  molybdenum: text3("molybdenum"),
-  nickel: text3("nickel"),
-  phosphorus: text3("phosphorus"),
-  potassium: text3("potassium"),
-  selenium: text3("selenium"),
-  sodium: text3("sodium"),
-  sulphur: text3("sulphur"),
-  tin: text3("tin"),
-  zinc: text3("zinc"),
-  retinol: text3("retinol"),
-  alphaCarotene: text3("alpha_carotene"),
-  betaCarotene: text3("beta_carotene"),
-  cryptoxanthin: text3("cryptoxanthin"),
-  betaCaroteneEquivalents: text3("beta_carotene_equivalents"),
-  vitaminARetinolEquivalents: text3("vitamin_a_retinol_equivalents"),
-  lutein: text3("lutein"),
-  lycopene: text3("lycopene"),
-  xanthophyl: text3("xanthophyl"),
-  thiamin: text3("thiamin"),
-  riboflavin: text3("riboflavin"),
-  niacin: text3("niacin"),
-  niacinDerivedFromTryptophan: text3("niacin_derived_from_tryptophan"),
-  niacinDerivedEquivalents: text3("niacin_derived_equivalents"),
-  pantothenicAcid: text3("pantothenic_acid"),
-  pyridoxine: text3("pyridoxine"),
-  biotin: text3("biotin"),
-  cobalamin: text3("cobalamin"),
-  folateNatural: text3("folate_natural"),
-  folicAcid: text3("folic_acid"),
-  totalFolates: text3("total_folates"),
-  dietaryFolateEquivalents: text3("dietary_folate_equivalents"),
-  vitaminC: text3("vitamin_c"),
-  cholecalciferol: text3("cholecalciferol"),
-  ergocalciferol: text3("ergocalciferol"),
-  hydroxyCholecalciferol: text3("hydroxy_cholecalciferol"),
-  hydroxyErgocalciferol: text3("hydroxy_ergocalciferol"),
-  vitaminDEquivalents: text3("vitamin_d_equivalents"),
-  alphaTocopherol: text3("alpha_tocopherol"),
-  alphaTocotrienol: text3("alpha_tocotrienol"),
-  betaTocopherol: text3("beta_tocopherol"),
-  betaTocotrienol: text3("beta_tocotrienol"),
-  deltaTocopherol: text3("delta_tocopherol"),
-  deltaTocotrienol: text3("delta_tocotrienol"),
-  gammaTocopherol: text3("gamma_tocopherol"),
-  gammaTocotrienol: text3("gamma_tocotrienol"),
-  vitaminE: text3("vitamin_e")
+  aceticAcid: text4("acetic_acid"),
+  citricAcid: text4("citric_acid"),
+  fumaricAcid: text4("fumaric_acid"),
+  lacticAcid: text4("lactic_acid"),
+  malicAcid: text4("malic_acid"),
+  oxalicAcid: text4("oxalic_acid"),
+  propionicAcid: text4("propionic_acid"),
+  quinicAcid: text4("quinic_acid"),
+  shikimicAcid: text4("shikimic_acid"),
+  succinicAcid: text4("succinic_acid"),
+  tartaricAcid: text4("tartaric_acid"),
+  aluminium: text4("aluminium"),
+  antimony: text4("antimony"),
+  arsenic: text4("arsenic"),
+  cadmium: text4("cadmium"),
+  calcium: text4("calcium"),
+  chromium: text4("chromium"),
+  chloride: text4("chloride"),
+  cobalt: text4("cobalt"),
+  copper: text4("copper"),
+  fluoride: text4("fluoride"),
+  iodine: text4("iodine"),
+  iron: text4("iron"),
+  lead: text4("lead"),
+  magnesium: text4("magnesium"),
+  manganese: text4("manganese"),
+  mercury: text4("mercury"),
+  molybdenum: text4("molybdenum"),
+  nickel: text4("nickel"),
+  phosphorus: text4("phosphorus"),
+  potassium: text4("potassium"),
+  selenium: text4("selenium"),
+  sodium: text4("sodium"),
+  sulphur: text4("sulphur"),
+  tin: text4("tin"),
+  zinc: text4("zinc"),
+  retinol: text4("retinol"),
+  alphaCarotene: text4("alpha_carotene"),
+  betaCarotene: text4("beta_carotene"),
+  cryptoxanthin: text4("cryptoxanthin"),
+  betaCaroteneEquivalents: text4("beta_carotene_equivalents"),
+  vitaminARetinolEquivalents: text4("vitamin_a_retinol_equivalents"),
+  lutein: text4("lutein"),
+  lycopene: text4("lycopene"),
+  xanthophyl: text4("xanthophyl"),
+  thiamin: text4("thiamin"),
+  riboflavin: text4("riboflavin"),
+  niacin: text4("niacin"),
+  niacinDerivedFromTryptophan: text4("niacin_derived_from_tryptophan"),
+  niacinDerivedEquivalents: text4("niacin_derived_equivalents"),
+  pantothenicAcid: text4("pantothenic_acid"),
+  pyridoxine: text4("pyridoxine"),
+  biotin: text4("biotin"),
+  cobalamin: text4("cobalamin"),
+  folateNatural: text4("folate_natural"),
+  folicAcid: text4("folic_acid"),
+  totalFolates: text4("total_folates"),
+  dietaryFolateEquivalents: text4("dietary_folate_equivalents"),
+  vitaminC: text4("vitamin_c"),
+  cholecalciferol: text4("cholecalciferol"),
+  ergocalciferol: text4("ergocalciferol"),
+  hydroxyCholecalciferol: text4("hydroxy_cholecalciferol"),
+  hydroxyErgocalciferol: text4("hydroxy_ergocalciferol"),
+  vitaminDEquivalents: text4("vitamin_d_equivalents"),
+  alphaTocopherol: text4("alpha_tocopherol"),
+  alphaTocotrienol: text4("alpha_tocotrienol"),
+  betaTocopherol: text4("beta_tocopherol"),
+  betaTocotrienol: text4("beta_tocotrienol"),
+  deltaTocopherol: text4("delta_tocopherol"),
+  deltaTocotrienol: text4("delta_tocotrienol"),
+  gammaTocopherol: text4("gamma_tocopherol"),
+  gammaTocotrienol: text4("gamma_tocotrienol"),
+  vitaminE: text4("vitamin_e")
 });
-var ingredientAdditionThree = createTable3(
+var ingredientAdditionThree = createTable4(
   "ingredient_addition_three",
   {
-    id: int3("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int3("created_at", { mode: "timestamp" }).default(sql3`(unixepoch())`).notNull(),
-    updatedAt: int3("updated_at", { mode: "timestamp" }).$onUpdate(
+    id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
+    updatedAt: int4("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     ),
-    ingredientId: int3("ingredient_id").references(() => ingredient.id, {
+    ingredientId: int4("ingredient_id").references(() => ingredient.id, {
       onDelete: "cascade"
     }),
-    totalSaturatedFattyAcids: text3("total_saturated_fatty_acids"),
-    totalMonounsaturatedFattyAcids: text3("total_monounsaturated_fatty_acids"),
-    totalPolyunsaturatedFattyAcids: text3("total_polyunsaturated_fatty_acids"),
-    totalLongChainOmega3FattyAcids: text3(
+    totalSaturatedFattyAcids: text4("total_saturated_fatty_acids"),
+    totalMonounsaturatedFattyAcids: text4("total_monounsaturated_fatty_acids"),
+    totalPolyunsaturatedFattyAcids: text4("total_polyunsaturated_fatty_acids"),
+    totalLongChainOmega3FattyAcids: text4(
       "total_long_chain_omega_3_fatty_acids"
     ),
-    totalTransFattyAcids: text3("total_trans_fatty_acids"),
-    caffeine: text3("caffeine"),
-    cholesterol: text3("cholesterol"),
-    alanine: text3("alanine"),
-    arginine: text3("arginine"),
-    asparticAcid: text3("aspartic_acid"),
-    cystinePlusCysteine: text3("cystine_plus_cysteine"),
-    glutamicAcid: text3("glutamic_acid"),
-    glycine: text3("glycine"),
-    histidine: text3("histidine"),
-    isoleucine: text3("isoleucine"),
-    leucine: text3("leucine"),
-    lysine: text3("lysine"),
-    methionine: text3("methionine"),
-    phenylalanine: text3("phenylalanine"),
-    proline: text3("proline"),
-    serine: text3("serine"),
-    threonine: text3("threonine"),
-    tyrosine: text3("tyrosine"),
-    tryptophan: text3("tryptophan"),
-    valine: text3("valine"),
-    c4: text3("c4"),
-    c6: text3("c6"),
-    c8: text3("c8"),
-    c10: text3("c10"),
-    c11: text3("c11"),
-    c12: text3("c12"),
-    c13: text3("c13"),
-    c14: text3("c14"),
-    c15: text3("c15"),
-    c16: text3("c16"),
-    c17: text3("c17"),
-    c18: text3("c18"),
-    c19: text3("c19"),
-    c20: text3("c20"),
-    c21: text3("c21"),
-    c22: text3("c22"),
-    c23: text3("c23"),
-    c24: text3("c24"),
-    totalSaturatedFattyAcidsEquated: text3(
+    totalTransFattyAcids: text4("total_trans_fatty_acids"),
+    caffeine: text4("caffeine"),
+    cholesterol: text4("cholesterol"),
+    alanine: text4("alanine"),
+    arginine: text4("arginine"),
+    asparticAcid: text4("aspartic_acid"),
+    cystinePlusCysteine: text4("cystine_plus_cysteine"),
+    glutamicAcid: text4("glutamic_acid"),
+    glycine: text4("glycine"),
+    histidine: text4("histidine"),
+    isoleucine: text4("isoleucine"),
+    leucine: text4("leucine"),
+    lysine: text4("lysine"),
+    methionine: text4("methionine"),
+    phenylalanine: text4("phenylalanine"),
+    proline: text4("proline"),
+    serine: text4("serine"),
+    threonine: text4("threonine"),
+    tyrosine: text4("tyrosine"),
+    tryptophan: text4("tryptophan"),
+    valine: text4("valine"),
+    c4: text4("c4"),
+    c6: text4("c6"),
+    c8: text4("c8"),
+    c10: text4("c10"),
+    c11: text4("c11"),
+    c12: text4("c12"),
+    c13: text4("c13"),
+    c14: text4("c14"),
+    c15: text4("c15"),
+    c16: text4("c16"),
+    c17: text4("c17"),
+    c18: text4("c18"),
+    c19: text4("c19"),
+    c20: text4("c20"),
+    c21: text4("c21"),
+    c22: text4("c22"),
+    c23: text4("c23"),
+    c24: text4("c24"),
+    totalSaturatedFattyAcidsEquated: text4(
       "total_saturated_fatty_acids_equated"
     ),
-    c10_1: text3("c10_1"),
-    c12_1: text3("c12_1"),
-    c14_1: text3("c14_1"),
-    c15_1: text3("c15_1"),
-    c16_1: text3("c16_1"),
-    c17_1: text3("c17_1"),
-    c18_1: text3("c18_1"),
-    c18_1w5: text3("c18_1w5"),
-    c18_1w6: text3("c18_1w6"),
-    c18_1w7: text3("c18_1w7"),
-    c18_1w9: text3("c18_1w9"),
-    c20_1: text3("c20_1"),
-    c20_1w9: text3("c20_1w9"),
-    c20_1w13: text3("c20_1w13"),
-    c20_1w11: text3("c20_1w11"),
-    c22_1: text3("c22_1"),
-    c22_1w9: text3("c22_1w9"),
-    c22_1w11: text3("c22_1w11"),
-    c24_1: text3("c24_1"),
-    c24_1w9: text3("c24_1w9"),
-    c24_1w11: text3("c24_1w11"),
-    c24_1w13: text3("c24_1w13"),
-    totalMonounsaturatedFattyAcidsEquated: text3(
+    c10_1: text4("c10_1"),
+    c12_1: text4("c12_1"),
+    c14_1: text4("c14_1"),
+    c15_1: text4("c15_1"),
+    c16_1: text4("c16_1"),
+    c17_1: text4("c17_1"),
+    c18_1: text4("c18_1"),
+    c18_1w5: text4("c18_1w5"),
+    c18_1w6: text4("c18_1w6"),
+    c18_1w7: text4("c18_1w7"),
+    c18_1w9: text4("c18_1w9"),
+    c20_1: text4("c20_1"),
+    c20_1w9: text4("c20_1w9"),
+    c20_1w13: text4("c20_1w13"),
+    c20_1w11: text4("c20_1w11"),
+    c22_1: text4("c22_1"),
+    c22_1w9: text4("c22_1w9"),
+    c22_1w11: text4("c22_1w11"),
+    c24_1: text4("c24_1"),
+    c24_1w9: text4("c24_1w9"),
+    c24_1w11: text4("c24_1w11"),
+    c24_1w13: text4("c24_1w13"),
+    totalMonounsaturatedFattyAcidsEquated: text4(
       "total_monounsaturated_fatty_acids_equated"
     ),
-    c12_2: text3("c12_2"),
-    c16_2w4: text3("c16_2w4"),
-    c16_3: text3("c16_3"),
-    c18_2w6: text3("c18_2w6"),
-    c18_3w3: text3("c18_3w3"),
-    c18_3w4: text3("c18_3w4"),
-    c18_3w6: text3("c18_3w6"),
-    c18_4w1: text3("c18_4w1"),
-    c18_4w3: text3("c18_4w3"),
-    c20_2: text3("c20_2"),
-    c20_2w6: text3("c20_2w6"),
-    c20_3: text3("c20_3"),
-    c20_3w3: text3("c20_3w3"),
-    c20_3w6: text3("c20_3w6"),
-    c20_4: text3("c20_4"),
-    c20_4w3: text3("c20_4w3"),
-    c20_4w6: text3("c20_4w6"),
-    c20_5w3: text3("c20_5w3"),
-    c21_5w3: text3("c21_5w3"),
-    c22_2: text3("c22_2"),
-    c22_2w6: text3("c22_2w6"),
-    c22_4w6: text3("c22_4w6"),
-    c22_5w3: text3("c22_5w3"),
-    c22_5w6: text3("c22_5w6"),
-    c22_6w3: text3("c22_6w3"),
-    totalPolyunsaturatedFattyAcidsEquated: text3(
+    c12_2: text4("c12_2"),
+    c16_2w4: text4("c16_2w4"),
+    c16_3: text4("c16_3"),
+    c18_2w6: text4("c18_2w6"),
+    c18_3w3: text4("c18_3w3"),
+    c18_3w4: text4("c18_3w4"),
+    c18_3w6: text4("c18_3w6"),
+    c18_4w1: text4("c18_4w1"),
+    c18_4w3: text4("c18_4w3"),
+    c20_2: text4("c20_2"),
+    c20_2w6: text4("c20_2w6"),
+    c20_3: text4("c20_3"),
+    c20_3w3: text4("c20_3w3"),
+    c20_3w6: text4("c20_3w6"),
+    c20_4: text4("c20_4"),
+    c20_4w3: text4("c20_4w3"),
+    c20_4w6: text4("c20_4w6"),
+    c20_5w3: text4("c20_5w3"),
+    c21_5w3: text4("c21_5w3"),
+    c22_2: text4("c22_2"),
+    c22_2w6: text4("c22_2w6"),
+    c22_4w6: text4("c22_4w6"),
+    c22_5w3: text4("c22_5w3"),
+    c22_5w6: text4("c22_5w6"),
+    c22_6w3: text4("c22_6w3"),
+    totalPolyunsaturatedFattyAcidsEquated: text4(
       "total_polyunsaturated_fatty_acids_equated"
     )
   }
 );
-var groceryStore = createTable3("grocery_store", {
-  id: int3("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int3("created_at", { mode: "timestamp" }).default(sql3`(unixepoch())`).notNull(),
-  name: text3("name"),
-  location: text3("locations")
+var groceryStore = createTable4("grocery_store", {
+  id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
+  name: text4("name"),
+  location: text4("locations")
 });
-var ingredientToGroceryStore = createTable3(
+var ingredientToGroceryStore = createTable4(
   "ingredient_to_grocery_store",
   {
-    id: int3("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int3("created_at", { mode: "timestamp" }).default(sql3`(unixepoch())`).notNull(),
-    ingredientId: int3("ingredient_id").references(() => ingredient.id, {
+    id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
+    ingredientId: int4("ingredient_id").references(() => ingredient.id, {
       onDelete: "cascade"
     }),
-    groceryStoreId: int3("grocery_store_id").references(() => groceryStore.id, {
+    groceryStoreId: int4("grocery_store_id").references(() => groceryStore.id, {
       onDelete: "cascade"
     })
   },
-  (table) => [index3("ingredient_to_grocery_store_ingredient_id_index").on(table.ingredientId)]
+  (table) => [index4("ingredient_to_grocery_store_ingredient_id_index").on(table.ingredientId)]
 );
-var groceryStoreRelations = relations3(groceryStore, ({ many }) => ({
+var groceryStoreRelations = relations4(groceryStore, ({ many }) => ({
   ingredientToGroceryStore: many(ingredientToGroceryStore)
 }));
-var ingredientToGroceryStoreRelations = relations3(
+var ingredientToGroceryStoreRelations = relations4(
   ingredientToGroceryStore,
   ({ one }) => ({
     ingredient: one(ingredient, {
@@ -769,7 +811,7 @@ var ingredientToGroceryStoreRelations = relations3(
     })
   })
 );
-var ingredientRelations = relations3(ingredient, ({ one, many }) => ({
+var ingredientRelations = relations4(ingredient, ({ one, many }) => ({
   user: one(user, { fields: [ingredient.userId], references: [user.id] }),
   recipeToIngredient: many(recipeToIngredient, { relationName: "ingredient" }),
   recipeToIngredientAlternate: many(recipeToIngredient, { relationName: "alternateIngredient" }),
@@ -791,7 +833,7 @@ var ingredientRelations = relations3(ingredient, ({ one, many }) => ({
   supplementStack: many(supplementToSupplementStack),
   dailySupplements: many(dailySupplement)
 }));
-var ingredientAdditionOneRelations = relations3(
+var ingredientAdditionOneRelations = relations4(
   ingredientAdditionOne,
   ({ one }) => ({
     ingredient: one(ingredient, {
@@ -800,7 +842,7 @@ var ingredientAdditionOneRelations = relations3(
     })
   })
 );
-var ingredientAdditionTwoRelations = relations3(
+var ingredientAdditionTwoRelations = relations4(
   ingredientAdditionTwo,
   ({ one }) => ({
     ingredient: one(ingredient, {
@@ -809,7 +851,7 @@ var ingredientAdditionTwoRelations = relations3(
     })
   })
 );
-var ingredientAdditionThreeRelations = relations3(
+var ingredientAdditionThreeRelations = relations4(
   ingredientAdditionThree,
   ({ one }) => ({
     ingredient: one(ingredient, {
@@ -820,65 +862,65 @@ var ingredientAdditionThreeRelations = relations3(
 );
 
 // src/server/db/schema/daily-logs.ts
-var createTable4 = sqliteTable4;
-var dailyLog = createTable4(
+var createTable5 = sqliteTable5;
+var dailyLog = createTable5(
   "daily_log",
   {
-    id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
-    updatedAt: int4("updated_at", { mode: "timestamp" }).$onUpdate(
+    id: int5("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int5("created_at", { mode: "timestamp" }).default(sql5`(unixepoch())`).notNull(),
+    updatedAt: int5("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     ),
-    userId: text4("user_id").notNull().references(() => user.id, {
+    userId: text5("user_id").notNull().references(() => user.id, {
       onDelete: "cascade"
     }),
-    date: text4("date").notNull(),
-    morningWeight: text4("morning_weight"),
-    morningWeightTiming: text4("morning_weight_time"),
-    notes: text4("notes"),
-    fastedBloodGlucose: text4("fasted_blood_glucose"),
-    fastedBloodGlucoseTiming: text4("fasted_blood_glucose_time"),
-    sleep: text4("sleep"),
-    sleepQuality: text4("sleep_quality"),
-    isHiit: int4("is_hiit", { mode: "boolean" }),
-    isCardio: int4("is_cardio", { mode: "boolean" }),
-    isLift: int4("is_lift", { mode: "boolean" }),
-    isLiss: int4("is_liss", { mode: "boolean" }),
-    isPeriod: int4("is_period", { mode: "boolean" }),
-    isOvulation: int4("is_ovulation", { mode: "boolean" }),
-    isBulk: int4("is_bulk", { mode: "boolean" }),
-    isCut: int4("is_cut", { mode: "boolean" }),
-    isHigh: int4("is_high", { mode: "boolean" }),
-    isLow: int4("is_low", { mode: "boolean" }),
-    isStarred: int4("is_starred", { mode: "boolean" }).default(false),
-    hiit: text4("hiit"),
-    cardio: text4("cardio"),
-    weight: text4("weight"),
-    liss: text4("liss"),
-    posing: text4("posing"),
-    steps: text4("steps"),
-    sauna: text4("sauna"),
-    mobility: text4("mobility"),
-    coldPlunge: text4("cold_plunge"),
-    cardioType: text4("cardio_type"),
-    image: text4("image"),
-    frontImage: text4("front_image"),
-    sideImage: text4("side_image"),
-    backImage: text4("back_image"),
-    frontImageSvg: text4("front_image_svg"),
-    sideImageSvg: text4("side_image_svg"),
-    backImageSvg: text4("back_image_svg"),
-    frontPoseImage: text4("front_pose_image"),
-    sidePoseImage: text4("side_pose_image"),
-    backPoseImage: text4("back_pose_image"),
-    spareImageOne: text4("spare_image"),
-    spareImageTwo: text4("spare_image"),
-    waistMeasurement: text4("waist_measurement"),
-    nap: text4("nap")
+    date: text5("date").notNull(),
+    morningWeight: text5("morning_weight"),
+    morningWeightTiming: text5("morning_weight_time"),
+    notes: text5("notes"),
+    fastedBloodGlucose: text5("fasted_blood_glucose"),
+    fastedBloodGlucoseTiming: text5("fasted_blood_glucose_time"),
+    sleep: text5("sleep"),
+    sleepQuality: text5("sleep_quality"),
+    isHiit: int5("is_hiit", { mode: "boolean" }),
+    isCardio: int5("is_cardio", { mode: "boolean" }),
+    isLift: int5("is_lift", { mode: "boolean" }),
+    isLiss: int5("is_liss", { mode: "boolean" }),
+    isPeriod: int5("is_period", { mode: "boolean" }),
+    isOvulation: int5("is_ovulation", { mode: "boolean" }),
+    isBulk: int5("is_bulk", { mode: "boolean" }),
+    isCut: int5("is_cut", { mode: "boolean" }),
+    isHigh: int5("is_high", { mode: "boolean" }),
+    isLow: int5("is_low", { mode: "boolean" }),
+    isStarred: int5("is_starred", { mode: "boolean" }).default(false),
+    hiit: text5("hiit"),
+    cardio: text5("cardio"),
+    weight: text5("weight"),
+    liss: text5("liss"),
+    posing: text5("posing"),
+    steps: text5("steps"),
+    sauna: text5("sauna"),
+    mobility: text5("mobility"),
+    coldPlunge: text5("cold_plunge"),
+    cardioType: text5("cardio_type"),
+    image: text5("image"),
+    frontImage: text5("front_image"),
+    sideImage: text5("side_image"),
+    backImage: text5("back_image"),
+    frontImageSvg: text5("front_image_svg"),
+    sideImageSvg: text5("side_image_svg"),
+    backImageSvg: text5("back_image_svg"),
+    frontPoseImage: text5("front_pose_image"),
+    sidePoseImage: text5("side_pose_image"),
+    backPoseImage: text5("back_pose_image"),
+    spareImageOne: text5("spare_image"),
+    spareImageTwo: text5("spare_image"),
+    waistMeasurement: text5("waist_measurement"),
+    nap: text5("nap")
   },
-  (table) => [index4("daily_log_user_id_index").on(table.userId)]
+  (table) => [index5("daily_log_user_id_index").on(table.userId)]
 );
-var dailyLogRelations = relations4(dailyLog, ({ one, many }) => ({
+var dailyLogRelations = relations5(dailyLog, ({ one, many }) => ({
   user: one(user, { fields: [dailyLog.userId], references: [user.id] }),
   dailyMeals: many(dailyMeal),
   waterLogs: many(waterLog),
@@ -886,27 +928,27 @@ var dailyLogRelations = relations4(dailyLog, ({ one, many }) => ({
   tags: many(tagToDailyLog),
   supplements: many(dailySupplement)
 }));
-var dailySupplement = createTable4(
+var dailySupplement = createTable5(
   "daily_supplement",
   {
-    id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
-    dailyLogId: int4("daily_log_id").notNull().references(() => dailyLog.id, {
+    id: int5("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int5("created_at", { mode: "timestamp" }).default(sql5`(unixepoch())`).notNull(),
+    dailyLogId: int5("daily_log_id").notNull().references(() => dailyLog.id, {
       onDelete: "cascade"
     }),
-    supplementId: int4("supplement_id").notNull().references(() => ingredient.id, {
+    supplementId: int5("supplement_id").notNull().references(() => ingredient.id, {
       onDelete: "cascade"
     }),
-    amount: text4("amount"),
-    unit: text4("unit"),
-    time: text4("time"),
-    notes: text4("notes")
+    amount: text5("amount"),
+    unit: text5("unit"),
+    time: text5("time"),
+    notes: text5("notes")
   },
   (table) => [
-    index4("daily_supplement_daily_log_id_index").on(table.dailyLogId)
+    index5("daily_supplement_daily_log_id_index").on(table.dailyLogId)
   ]
 );
-var dailySupplementRelations = relations4(
+var dailySupplementRelations = relations5(
   dailySupplement,
   ({ one }) => ({
     dailyLog: one(dailyLog, {
@@ -921,37 +963,37 @@ var dailySupplementRelations = relations4(
     })
   })
 );
-var tag = createTable4("tag", {
-  id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
-  name: text4("name").notNull(),
-  icon: text4("icon").notNull(),
-  color: text4("color").notNull(),
-  userId: text4("user_id").notNull().references(() => user.id, {
+var tag = createTable5("tag", {
+  id: int5("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  createdAt: int5("created_at", { mode: "timestamp" }).default(sql5`(unixepoch())`).notNull(),
+  name: text5("name").notNull(),
+  icon: text5("icon").notNull(),
+  color: text5("color").notNull(),
+  userId: text5("user_id").notNull().references(() => user.id, {
     onDelete: "cascade"
   })
 });
-var tagRelations = relations4(tag, ({ one, many }) => ({
+var tagRelations = relations5(tag, ({ one, many }) => ({
   user: one(user, {
     fields: [tag.userId],
     references: [user.id]
   }),
   dailyLogs: many(tagToDailyLog)
 }));
-var tagToDailyLog = createTable4(
+var tagToDailyLog = createTable5(
   "tag_to_daily_log",
   {
-    id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    tagId: int4("tag_id").notNull().references(() => tag.id, {
+    id: int5("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    tagId: int5("tag_id").notNull().references(() => tag.id, {
       onDelete: "cascade"
     }),
-    dailyLogId: int4("daily_log_id").notNull().references(() => dailyLog.id, {
+    dailyLogId: int5("daily_log_id").notNull().references(() => dailyLog.id, {
       onDelete: "cascade"
     })
   },
-  (table) => [index4("tag_to_daily_log_tag_id_index").on(table.tagId)]
+  (table) => [index5("tag_to_daily_log_tag_id_index").on(table.tagId)]
 );
-var tagToDailyLogRelations = relations4(tagToDailyLog, ({ one }) => ({
+var tagToDailyLogRelations = relations5(tagToDailyLog, ({ one }) => ({
   tag: one(tag, {
     fields: [tagToDailyLog.tagId],
     references: [tag.id]
@@ -961,58 +1003,58 @@ var tagToDailyLogRelations = relations4(tagToDailyLog, ({ one }) => ({
     references: [dailyLog.id]
   })
 }));
-var poopLog = createTable4(
+var poopLog = createTable5(
   "poop_log",
   {
-    id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
-    dailyLogId: int4("daily_log_id").notNull().references(() => dailyLog.id, {
+    id: int5("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int5("created_at", { mode: "timestamp" }).default(sql5`(unixepoch())`).notNull(),
+    dailyLogId: int5("daily_log_id").notNull().references(() => dailyLog.id, {
       onDelete: "cascade"
     })
   },
-  (table) => [index4("poop_log_daily_log_id_index").on(table.dailyLogId)]
+  (table) => [index5("poop_log_daily_log_id_index").on(table.dailyLogId)]
 );
-var poopLogRelations = relations4(poopLog, ({ one, many }) => ({
+var poopLogRelations = relations5(poopLog, ({ one, many }) => ({
   dailyLog: one(dailyLog, {
     fields: [poopLog.dailyLogId],
     references: [dailyLog.id]
   })
 }));
-var waterLog = createTable4(
+var waterLog = createTable5(
   "water_log",
   {
-    id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
-    dailyLogId: int4("daily_log_id").notNull().references(() => dailyLog.id, {
+    id: int5("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int5("created_at", { mode: "timestamp" }).default(sql5`(unixepoch())`).notNull(),
+    dailyLogId: int5("daily_log_id").notNull().references(() => dailyLog.id, {
       onDelete: "cascade"
     }),
-    amount: text4("water")
+    amount: text5("water")
   },
-  (table) => [index4("water_log_daily_log_id_index").on(table.dailyLogId)]
+  (table) => [index5("water_log_daily_log_id_index").on(table.dailyLogId)]
 );
-var waterLogRelations = relations4(waterLog, ({ one, many }) => ({
+var waterLogRelations = relations5(waterLog, ({ one, many }) => ({
   dailyLog: one(dailyLog, {
     fields: [waterLog.dailyLogId],
     references: [dailyLog.id]
   })
 }));
-var dailyMeal = createTable4(
+var dailyMeal = createTable5(
   "daily_meal",
   {
-    id: int4("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int4("created_at", { mode: "timestamp" }).default(sql4`(unixepoch())`).notNull(),
-    dailyLogId: int4("daily_log_id").notNull().references(() => dailyLog.id, {
+    id: int5("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int5("created_at", { mode: "timestamp" }).default(sql5`(unixepoch())`).notNull(),
+    dailyLogId: int5("daily_log_id").notNull().references(() => dailyLog.id, {
       onDelete: "cascade"
     }),
-    mealIndex: int4("meal_index", { mode: "number" }),
-    date: int4("date", { mode: "timestamp" }),
-    recipeId: int4("recipe_id"),
-    vegeCalories: text4("vege_calories"),
-    veges: text4("veges")
+    mealIndex: int5("meal_index", { mode: "number" }),
+    date: int5("date", { mode: "timestamp" }),
+    recipeId: int5("recipe_id"),
+    vegeCalories: text5("vege_calories"),
+    veges: text5("veges")
   },
-  (table) => [index4("daily_meal_daily_log_id_index").on(table.dailyLogId)]
+  (table) => [index5("daily_meal_daily_log_id_index").on(table.dailyLogId)]
 );
-var dailyMealRelations = relations4(dailyMeal, ({ one, many }) => ({
+var dailyMealRelations = relations5(dailyMeal, ({ one, many }) => ({
   dailyLog: one(dailyLog, {
     fields: [dailyMeal.dailyLogId],
     references: [dailyLog.id]
@@ -1022,36 +1064,36 @@ var dailyMealRelations = relations4(dailyMeal, ({ one, many }) => ({
 }));
 
 // src/server/db/schema/message.ts
-import { relations as relations5, sql as sql5 } from "drizzle-orm";
-import { int as int5, sqliteTable as sqliteTable5, text as text5, index as index5 } from "drizzle-orm/sqlite-core";
-var createTable5 = sqliteTable5;
-var message = createTable5(
+import { relations as relations6, sql as sql6 } from "drizzle-orm";
+import { int as int6, sqliteTable as sqliteTable6, text as text6, index as index6 } from "drizzle-orm/sqlite-core";
+var createTable6 = sqliteTable6;
+var message = createTable6(
   "message",
   {
-    id: int5("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int5("created_at", { mode: "timestamp" }).default(sql5`(unixepoch())`).notNull(),
-    userId: text5("user_id").references(() => user.id, {
+    id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
+    userId: text6("user_id").references(() => user.id, {
       onDelete: "cascade"
     }),
-    subject: text5("subject"),
-    isImportant: int5("is_important", { mode: "boolean" }),
-    isRead: int5("is_read", { mode: "boolean" }).default(false),
-    isViewed: int5("is_viewed", { mode: "boolean" }).default(false),
-    isDeleted: int5("is_deleted", { mode: "boolean" }).default(false),
-    isNotified: int5("is_notified", { mode: "boolean" }).default(false),
-    message: text5("message"),
-    image: text5("image"),
-    fromUserId: text5("from_user_id").references(() => user.id, {
+    subject: text6("subject"),
+    isImportant: int6("is_important", { mode: "boolean" }),
+    isRead: int6("is_read", { mode: "boolean" }).default(false),
+    isViewed: int6("is_viewed", { mode: "boolean" }).default(false),
+    isDeleted: int6("is_deleted", { mode: "boolean" }).default(false),
+    isNotified: int6("is_notified", { mode: "boolean" }).default(false),
+    message: text6("message"),
+    image: text6("image"),
+    fromUserId: text6("from_user_id").references(() => user.id, {
       onDelete: "cascade"
     })
   },
   (table) => [
-    index5("message_user_id_idx").on(table.userId),
-    index5("message_from_user_id_idx").on(table.fromUserId),
-    index5("message_is_read_idx").on(table.isRead)
+    index6("message_user_id_idx").on(table.userId),
+    index6("message_from_user_id_idx").on(table.fromUserId),
+    index6("message_is_read_idx").on(table.isRead)
   ]
 );
-var messageRelations = relations5(message, ({ one }) => ({
+var messageRelations = relations6(message, ({ one }) => ({
   user: one(user, {
     fields: [message.userId],
     references: [user.id],
@@ -1065,84 +1107,84 @@ var messageRelations = relations5(message, ({ one }) => ({
 }));
 
 // src/server/db/schema/metrics.ts
-import { relations as relations6, sql as sql6 } from "drizzle-orm";
-import { index as index6, int as int6, sqliteTable as sqliteTable6, text as text6 } from "drizzle-orm/sqlite-core";
-var createTable6 = sqliteTable6;
-var skinfold = createTable6(
+import { relations as relations7, sql as sql7 } from "drizzle-orm";
+import { index as index7, int as int7, sqliteTable as sqliteTable7, text as text7 } from "drizzle-orm/sqlite-core";
+var createTable7 = sqliteTable7;
+var skinfold = createTable7(
   "skinfold",
   {
-    id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
-    userId: text6("user_id").notNull().references(() => user.id),
-    creatorId: text6("creator_id").references(() => user.id),
-    date: text6("date").notNull(),
-    chin: text6("chin"),
-    cheek: text6("cheek"),
-    lowerAbdominal: text6("lower_abdominal"),
-    pectoral: text6("pectoral"),
-    biceps: text6("biceps"),
-    triceps: text6("triceps"),
-    subscapular: text6("subscapular"),
-    midAxillary: text6("mid_axillary"),
-    suprailiac: text6("suprailiac"),
-    umbilical: text6("umbilical"),
-    lowerBack: text6("lower_back"),
-    quadriceps: text6("quadriceps"),
-    hamstrings: text6("hamstrings"),
-    medialCalf: text6("medial_calf"),
-    knee: text6("knee"),
-    shoulder: text6("shoulder"),
-    notes: text6("notes"),
-    formula: text6("formula"),
-    test: text6("test")
+    id: int7("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int7("created_at", { mode: "timestamp" }).default(sql7`(unixepoch())`).notNull(),
+    userId: text7("user_id").notNull().references(() => user.id),
+    creatorId: text7("creator_id").references(() => user.id),
+    date: text7("date").notNull(),
+    chin: text7("chin"),
+    cheek: text7("cheek"),
+    lowerAbdominal: text7("lower_abdominal"),
+    pectoral: text7("pectoral"),
+    biceps: text7("biceps"),
+    triceps: text7("triceps"),
+    subscapular: text7("subscapular"),
+    midAxillary: text7("mid_axillary"),
+    suprailiac: text7("suprailiac"),
+    umbilical: text7("umbilical"),
+    lowerBack: text7("lower_back"),
+    quadriceps: text7("quadriceps"),
+    hamstrings: text7("hamstrings"),
+    medialCalf: text7("medial_calf"),
+    knee: text7("knee"),
+    shoulder: text7("shoulder"),
+    notes: text7("notes"),
+    formula: text7("formula"),
+    test: text7("test")
   },
-  (table) => [index6("skinfold_user_id_idx").on(table.userId)]
+  (table) => [index7("skinfold_user_id_idx").on(table.userId)]
 );
-var girthMeasurement = createTable6("girth_measurement", {
-  id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
-  userId: text6("user_id").notNull().references(() => user.id, {
+var girthMeasurement = createTable7("girth_measurement", {
+  id: int7("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  createdAt: int7("created_at", { mode: "timestamp" }).default(sql7`(unixepoch())`).notNull(),
+  userId: text7("user_id").notNull().references(() => user.id, {
     onDelete: "cascade"
   }),
-  date: text6("date").notNull(),
-  waist: text6("waist"),
-  glutePeak: text6("glute_peaks"),
-  bicep: text6("bicep"),
-  cheastPeak: text6("chest_peak"),
-  thighPeak: text6("thigh_peak"),
-  calfPeak: text6("calf_peak"),
-  frontRelaxedImage: text6("front_relaxed_image"),
-  frontPosedImage: text6("front_posed_image"),
-  sideRelaxedImage: text6("side_relaxed_image"),
-  sidePosedImage: text6("side_posed_image"),
-  backRelaxedImage: text6("back_relaxed_image"),
-  backPosedImage: text6("back_posed_image"),
-  gluteRelaxedImage: text6("glute_relaxed_image"),
-  glutePosedImage: text6("glute_posed_image"),
-  isDailyLog: int6("is_daily_log", { mode: "boolean" }).default(false)
+  date: text7("date").notNull(),
+  waist: text7("waist"),
+  glutePeak: text7("glute_peaks"),
+  bicep: text7("bicep"),
+  cheastPeak: text7("chest_peak"),
+  thighPeak: text7("thigh_peak"),
+  calfPeak: text7("calf_peak"),
+  frontRelaxedImage: text7("front_relaxed_image"),
+  frontPosedImage: text7("front_posed_image"),
+  sideRelaxedImage: text7("side_relaxed_image"),
+  sidePosedImage: text7("side_posed_image"),
+  backRelaxedImage: text7("back_relaxed_image"),
+  backPosedImage: text7("back_posed_image"),
+  gluteRelaxedImage: text7("glute_relaxed_image"),
+  glutePosedImage: text7("glute_posed_image"),
+  isDailyLog: int7("is_daily_log", { mode: "boolean" }).default(false)
 });
-var images = createTable6(
+var images = createTable7(
   "images",
   {
-    id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
-    userId: text6("user_id").notNull().references(() => user.id, {
+    id: int7("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int7("created_at", { mode: "timestamp" }).default(sql7`(unixepoch())`).notNull(),
+    userId: text7("user_id").notNull().references(() => user.id, {
       onDelete: "cascade"
     }),
-    name: text6("name").notNull(),
-    date: text6("date").notNull(),
-    image: text6("image").notNull(),
-    svg: text6("svg")
+    name: text7("name").notNull(),
+    date: text7("date").notNull(),
+    image: text7("image").notNull(),
+    svg: text7("svg")
   },
-  (table) => [index6("images_user_id_idx").on(table.userId)]
+  (table) => [index7("images_user_id_idx").on(table.userId)]
 );
-var imagesRelations = relations6(images, ({ one }) => ({
+var imagesRelations = relations7(images, ({ one }) => ({
   user: one(user, {
     fields: [images.userId],
     references: [user.id]
   })
 }));
-var girthMeasurementRelations = relations6(
+var girthMeasurementRelations = relations7(
   girthMeasurement,
   ({ one }) => ({
     user: one(user, {
@@ -1151,7 +1193,7 @@ var girthMeasurementRelations = relations6(
     })
   })
 );
-var skinfoldRelations = relations6(skinfold, ({ one, many }) => ({
+var skinfoldRelations = relations7(skinfold, ({ one, many }) => ({
   user: one(user, {
     fields: [skinfold.userId],
     references: [user.id],
@@ -1166,23 +1208,23 @@ var skinfoldRelations = relations6(skinfold, ({ one, many }) => ({
   leanMass: many(leanMass),
   bodyWeight: many(bodyWeight)
 }));
-var bodyFat = createTable6(
+var bodyFat = createTable7(
   "body_fat",
   {
-    id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
-    userId: text6("user_id").notNull().references(() => user.id),
-    date: text6("date").notNull(),
-    bodyFat: text6("body_fat"),
-    notes: text6("notes"),
-    formula: text6("formula"),
-    skinfoldId: int6("skinfold_id").references(() => skinfold.id, {
+    id: int7("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int7("created_at", { mode: "timestamp" }).default(sql7`(unixepoch())`).notNull(),
+    userId: text7("user_id").notNull().references(() => user.id),
+    date: text7("date").notNull(),
+    bodyFat: text7("body_fat"),
+    notes: text7("notes"),
+    formula: text7("formula"),
+    skinfoldId: int7("skinfold_id").references(() => skinfold.id, {
       onDelete: "cascade"
     })
   },
-  (table) => [index6("body_fat_user_id_idx").on(table.userId)]
+  (table) => [index7("body_fat_user_id_idx").on(table.userId)]
 );
-var bodyFatRelations = relations6(bodyFat, ({ one }) => ({
+var bodyFatRelations = relations7(bodyFat, ({ one }) => ({
   user: one(user, {
     fields: [bodyFat.userId],
     references: [user.id]
@@ -1192,23 +1234,23 @@ var bodyFatRelations = relations6(bodyFat, ({ one }) => ({
     references: [skinfold.id]
   })
 }));
-var leanMass = createTable6(
+var leanMass = createTable7(
   "lean_mass",
   {
-    id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
-    userId: text6("user_id").notNull().references(() => user.id),
-    date: text6("date").notNull(),
-    leanMass: text6("lean_mass"),
-    notes: text6("notes"),
-    formula: text6("formula"),
-    skinfoldId: int6("skinfold_id").references(() => skinfold.id, {
+    id: int7("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int7("created_at", { mode: "timestamp" }).default(sql7`(unixepoch())`).notNull(),
+    userId: text7("user_id").notNull().references(() => user.id),
+    date: text7("date").notNull(),
+    leanMass: text7("lean_mass"),
+    notes: text7("notes"),
+    formula: text7("formula"),
+    skinfoldId: int7("skinfold_id").references(() => skinfold.id, {
       onDelete: "cascade"
     })
   },
-  (table) => [index6("lean_mass_user_id_idx").on(table.userId)]
+  (table) => [index7("lean_mass_user_id_idx").on(table.userId)]
 );
-var leanMassRelations = relations6(leanMass, ({ one }) => ({
+var leanMassRelations = relations7(leanMass, ({ one }) => ({
   user: one(user, {
     fields: [leanMass.userId],
     references: [user.id]
@@ -1218,23 +1260,23 @@ var leanMassRelations = relations6(leanMass, ({ one }) => ({
     references: [skinfold.id]
   })
 }));
-var bodyWeight = createTable6(
+var bodyWeight = createTable7(
   "body_weight",
   {
-    id: int6("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int6("created_at", { mode: "timestamp" }).default(sql6`(unixepoch())`).notNull(),
-    userId: text6("user_id").notNull().references(() => user.id),
-    date: text6("date").notNull(),
-    bodyWeight: text6("body_weight"),
-    source: text6("source"),
-    notes: text6("notes"),
-    skinfoldId: int6("skinfold_id").references(() => skinfold.id, {
+    id: int7("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int7("created_at", { mode: "timestamp" }).default(sql7`(unixepoch())`).notNull(),
+    userId: text7("user_id").notNull().references(() => user.id),
+    date: text7("date").notNull(),
+    bodyWeight: text7("body_weight"),
+    source: text7("source"),
+    notes: text7("notes"),
+    skinfoldId: int7("skinfold_id").references(() => skinfold.id, {
       onDelete: "cascade"
     })
   },
-  (table) => [index6("body_weight_user_id_idx").on(table.userId)]
+  (table) => [index7("body_weight_user_id_idx").on(table.userId)]
 );
-var bodyWeightRelations = relations6(bodyWeight, ({ one }) => ({
+var bodyWeightRelations = relations7(bodyWeight, ({ one }) => ({
   user: one(user, {
     fields: [bodyWeight.userId],
     references: [user.id]
@@ -1246,32 +1288,32 @@ var bodyWeightRelations = relations6(bodyWeight, ({ one }) => ({
 }));
 
 // src/server/db/schema/notification.ts
-import { relations as relations7, sql as sql7 } from "drizzle-orm";
-import { index as index7, int as int7, sqliteTable as sqliteTable7, text as text7 } from "drizzle-orm/sqlite-core";
-var createTable7 = sqliteTable7;
-var notification = createTable7(
+import { relations as relations8, sql as sql8 } from "drizzle-orm";
+import { index as index8, int as int8, sqliteTable as sqliteTable8, text as text8 } from "drizzle-orm/sqlite-core";
+var createTable8 = sqliteTable8;
+var notification = createTable8(
   "notification",
   {
-    id: int7("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int7("created_at", { mode: "timestamp" }).default(sql7`(unixepoch())`).notNull(),
-    userId: text7("user_id").references(() => user.id, {
+    id: int8("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int8("created_at", { mode: "timestamp" }).default(sql8`(unixepoch())`).notNull(),
+    userId: text8("user_id").references(() => user.id, {
       onDelete: "cascade"
     }),
-    code: text7("code"),
-    title: text7("title"),
-    description: text7("description"),
-    isRead: int7("is_read", { mode: "boolean" }).default(false),
-    isViewed: int7("is_viewed", { mode: "boolean" }).default(false),
-    isDeleted: int7("is_deleted", { mode: "boolean" }).default(false),
-    isNotified: int7("is_notified", { mode: "boolean" }).default(false),
-    notes: text7("notes")
+    code: text8("code"),
+    title: text8("title"),
+    description: text8("description"),
+    isRead: int8("is_read", { mode: "boolean" }).default(false),
+    isViewed: int8("is_viewed", { mode: "boolean" }).default(false),
+    isDeleted: int8("is_deleted", { mode: "boolean" }).default(false),
+    isNotified: int8("is_notified", { mode: "boolean" }).default(false),
+    notes: text8("notes")
   },
   (table) => [
-    index7("notification_user_id_idx").on(table.userId),
-    index7("notification_is_read_idx").on(table.isRead)
+    index8("notification_user_id_idx").on(table.userId),
+    index8("notification_is_read_idx").on(table.isRead)
   ]
 );
-var notificationRelations = relations7(notification, ({ one }) => ({
+var notificationRelations = relations8(notification, ({ one }) => ({
   user: one(user, {
     fields: [notification.userId],
     references: [user.id]
@@ -1279,61 +1321,61 @@ var notificationRelations = relations7(notification, ({ one }) => ({
 }));
 
 // src/server/db/schema/shopping-list.ts
-import { relations as relations8, sql as sql8 } from "drizzle-orm";
-import { index as index8, int as int8, sqliteTable as sqliteTable8, text as text8 } from "drizzle-orm/sqlite-core";
-var createTable8 = sqliteTable8;
-var shoppingList = createTable8(
+import { relations as relations9, sql as sql9 } from "drizzle-orm";
+import { index as index9, int as int9, sqliteTable as sqliteTable9, text as text9 } from "drizzle-orm/sqlite-core";
+var createTable9 = sqliteTable9;
+var shoppingList = createTable9(
   "shopping_list",
   {
-    id: int8("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int8("created_at", { mode: "timestamp" }).default(sql8`(unixepoch())`).notNull(),
-    updatedAt: int8("updated_at", { mode: "timestamp" }).$onUpdate(
+    id: int9("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int9("created_at", { mode: "timestamp" }).default(sql9`(unixepoch())`).notNull(),
+    updatedAt: int9("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     ),
-    userId: text8("user_id").references(() => user.id, {
+    userId: text9("user_id").references(() => user.id, {
       onDelete: "cascade"
     }).notNull(),
-    creatorId: text8("creator_id").references(() => user.id, {
+    creatorId: text9("creator_id").references(() => user.id, {
       onDelete: "cascade"
     }).notNull(),
-    name: text8("name").notNull(),
-    isActive: int8("is_active", { mode: "boolean" }).default(true).notNull(),
-    archivedAt: int8("archived_at", { mode: "timestamp" }),
-    emailedAt: int8("emailed_at", { mode: "timestamp" })
+    name: text9("name").notNull(),
+    isActive: int9("is_active", { mode: "boolean" }).default(true).notNull(),
+    archivedAt: int9("archived_at", { mode: "timestamp" }),
+    emailedAt: int9("emailed_at", { mode: "timestamp" })
   },
   (table) => [
-    index8("shopping_list_user_id_idx").on(table.userId),
-    index8("shopping_list_creator_id_idx").on(table.creatorId),
-    index8("shopping_list_user_active_idx").on(table.userId, table.isActive)
+    index9("shopping_list_user_id_idx").on(table.userId),
+    index9("shopping_list_creator_id_idx").on(table.creatorId),
+    index9("shopping_list_user_active_idx").on(table.userId, table.isActive)
   ]
 );
-var shoppingListItem = createTable8(
+var shoppingListItem = createTable9(
   "shopping_list_item",
   {
-    id: int8("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int8("created_at", { mode: "timestamp" }).default(sql8`(unixepoch())`).notNull(),
-    updatedAt: int8("updated_at", { mode: "timestamp" }).$onUpdate(
+    id: int9("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int9("created_at", { mode: "timestamp" }).default(sql9`(unixepoch())`).notNull(),
+    updatedAt: int9("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     ),
-    shoppingListId: int8("shopping_list_id").references(() => shoppingList.id, {
+    shoppingListId: int9("shopping_list_id").references(() => shoppingList.id, {
       onDelete: "cascade"
     }).notNull(),
-    ingredientId: int8("ingredient_id").references(() => ingredient.id, {
+    ingredientId: int9("ingredient_id").references(() => ingredient.id, {
       onDelete: "set null"
     }),
-    name: text8("name").notNull(),
-    amount: text8("amount").notNull(),
-    unit: text8("unit").notNull(),
-    isChecked: int8("is_checked", { mode: "boolean" }).default(false).notNull(),
-    source: text8("source"),
-    note: text8("note")
+    name: text9("name").notNull(),
+    amount: text9("amount").notNull(),
+    unit: text9("unit").notNull(),
+    isChecked: int9("is_checked", { mode: "boolean" }).default(false).notNull(),
+    source: text9("source"),
+    note: text9("note")
   },
   (table) => [
-    index8("shopping_list_item_list_id_idx").on(table.shoppingListId),
-    index8("shopping_list_item_ingredient_id_idx").on(table.ingredientId)
+    index9("shopping_list_item_list_id_idx").on(table.shoppingListId),
+    index9("shopping_list_item_ingredient_id_idx").on(table.ingredientId)
   ]
 );
-var shoppingListRelations = relations8(
+var shoppingListRelations = relations9(
   shoppingList,
   ({ one, many }) => ({
     user: one(user, {
@@ -1349,7 +1391,7 @@ var shoppingListRelations = relations8(
     items: many(shoppingListItem)
   })
 );
-var shoppingListItemRelations = relations8(
+var shoppingListItemRelations = relations9(
   shoppingListItem,
   ({ one }) => ({
     shoppingList: one(shoppingList, {
@@ -1364,50 +1406,50 @@ var shoppingListItemRelations = relations8(
 );
 
 // src/server/db/schema/user.ts
-var createTable9 = sqliteTable9;
-var user = createTable9(
+var createTable10 = sqliteTable10;
+var user = createTable10(
   "user",
   {
-    id: text9("id", { length: 255 }).notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
-    name: text9("name"),
-    firstName: text9("first_name"),
-    lastName: text9("last_name"),
-    clerkId: text9("clerk_id"),
-    birthDate: int9("birth_date", { mode: "timestamp" }),
-    gender: text9("gender"),
-    address: text9("address"),
-    notes: text9("notes"),
-    instagram: text9("instagram"),
-    openLifter: text9("open_lifter"),
-    phone: text9("phone"),
-    email: text9("email").unique(),
-    emailVerified: int9("email_verified", {
+    id: text10("id", { length: 255 }).notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+    name: text10("name"),
+    firstName: text10("first_name"),
+    lastName: text10("last_name"),
+    clerkId: text10("clerk_id"),
+    birthDate: int10("birth_date", { mode: "timestamp" }),
+    gender: text10("gender"),
+    address: text10("address"),
+    notes: text10("notes"),
+    instagram: text10("instagram"),
+    openLifter: text10("open_lifter"),
+    phone: text10("phone"),
+    email: text10("email").unique(),
+    emailVerified: int10("email_verified", {
       mode: "timestamp"
     }),
-    password: text9("password"),
-    currentPlanId: int9("current_plan_id"),
-    image: text9("image"),
-    partnerId: text9("partner_id").references(() => user.id, {
+    password: text10("password"),
+    currentPlanId: int10("current_plan_id"),
+    image: text10("image"),
+    partnerId: text10("partner_id").references(() => user.id, {
       onDelete: "set null"
     }),
-    isActive: int9("is_active", { mode: "boolean" }).default(true),
-    isFake: int9("is_fake", { mode: "boolean" }).default(false),
-    isTrainer: int9("is_trainer", { mode: "boolean" }).default(false),
-    isRoot: int9("is_root", { mode: "boolean" }).default(false),
-    isCreator: int9("is_creator", { mode: "boolean" }).default(false),
-    isAllTrainers: int9("is_all_trainers", { mode: "boolean" }).default(false),
-    createdAt: int9("created_at", { mode: "timestamp" }).default(sql9`(unixepoch())`).notNull(),
-    updatedAt: int9("updated_at", { mode: "timestamp" }).$onUpdate(
+    isActive: int10("is_active", { mode: "boolean" }).default(true),
+    isFake: int10("is_fake", { mode: "boolean" }).default(false),
+    isTrainer: int10("is_trainer", { mode: "boolean" }).default(false),
+    isRoot: int10("is_root", { mode: "boolean" }).default(false),
+    isCreator: int10("is_creator", { mode: "boolean" }).default(false),
+    isAllTrainers: int10("is_all_trainers", { mode: "boolean" }).default(false),
+    createdAt: int10("created_at", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
+    updatedAt: int10("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     )
   },
   (table) => [
-    index9("user_email_idx").on(table.email),
-    index9("user_is_creator_idx").on(table.isCreator),
-    index9("user_partner_id_idx").on(table.partnerId)
+    index10("user_email_idx").on(table.email),
+    index10("user_is_creator_idx").on(table.isCreator),
+    index10("user_partner_id_idx").on(table.partnerId)
   ]
 );
-var userRelations = relations9(user, ({ one, many }) => ({
+var userRelations = relations10(user, ({ one, many }) => ({
   partner: one(user, {
     fields: [user.partnerId],
     references: [user.id],
@@ -1429,6 +1471,7 @@ var userRelations = relations9(user, ({ one, many }) => ({
   userPlans: many(userPlan, { relationName: "user" }),
   userPlansCreator: many(userPlan, { relationName: "creator" }),
   dailyLogs: many(dailyLog),
+  aiInsights: many(aiInsight),
   weighIns: many(weighIn, { relationName: "user" }),
   weighInsTrainer: many(weighIn, { relationName: "trainer" }),
   skinfolds: many(skinfold, { relationName: "user" }),
@@ -1450,21 +1493,21 @@ var userRelations = relations9(user, ({ one, many }) => ({
   supplementStacks: many(supplementStack),
   category: many(userToUserCategory)
 }));
-var notificationToggle = createTable9(
+var notificationToggle = createTable10(
   "notification_toggle",
   {
-    id: int9("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int9("created_at", { mode: "timestamp" }).default(sql9`(unixepoch())`).notNull(),
-    userId: text9("user_id").notNull().references(() => user.id, {
+    id: int10("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int10("created_at", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
+    userId: text10("user_id").notNull().references(() => user.id, {
       onDelete: "cascade"
     }),
-    type: text9("type"),
-    interval: text9("interval"),
-    sleep: text9("sleep")
+    type: text10("type"),
+    interval: text10("interval"),
+    sleep: text10("sleep")
   },
-  (table) => [index9("notification_toggle_user_id_idx").on(table.userId)]
+  (table) => [index10("notification_toggle_user_id_idx").on(table.userId)]
 );
-var notificationToggleRelations = relations9(
+var notificationToggleRelations = relations10(
   notificationToggle,
   ({ one }) => ({
     user: one(user, {
@@ -1474,19 +1517,19 @@ var notificationToggleRelations = relations9(
     })
   })
 );
-var userToUserCategory = createTable9(
+var userToUserCategory = createTable10(
   "user_to_user_category",
   {
-    userId: text9("user_id").notNull().references(() => user.id, {
+    userId: text10("user_id").notNull().references(() => user.id, {
       onDelete: "cascade"
     }),
-    categoryId: int9("category_id").notNull().references(() => userCategory.id, {
+    categoryId: int10("category_id").notNull().references(() => userCategory.id, {
       onDelete: "cascade"
     })
   },
-  (table) => [index9("user_to_user_category_user_id_idx").on(table.userId)]
+  (table) => [index10("user_to_user_category_user_id_idx").on(table.userId)]
 );
-var usertoUserCategoryRelations = relations9(
+var usertoUserCategoryRelations = relations10(
   userToUserCategory,
   ({ one }) => ({
     user: one(user, {
@@ -1499,32 +1542,32 @@ var usertoUserCategoryRelations = relations9(
     })
   })
 );
-var userCategory = createTable9("user_category", {
-  id: int9("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  name: text9("name")
+var userCategory = createTable10("user_category", {
+  id: int10("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  name: text10("name")
 });
-var userCategoryRelations = relations9(userCategory, ({ many }) => ({
+var userCategoryRelations = relations10(userCategory, ({ many }) => ({
   users: many(userToUserCategory)
 }));
-var supplementStack = createTable9(
+var supplementStack = createTable10(
   "supplement_stack",
   {
-    id: int9("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int9("created_at", { mode: "timestamp" }).default(sql9`(unixepoch())`).notNull(),
-    updatedAt: int9("updated_at", { mode: "timestamp" }).$onUpdate(
+    id: int10("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int10("created_at", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
+    updatedAt: int10("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     ),
-    userId: text9("user_id").notNull().references(() => user.id, {
+    userId: text10("user_id").notNull().references(() => user.id, {
       onDelete: "cascade"
     }),
-    name: text9("name"),
-    time: text9("time"),
-    isTemplate: int9("is_template", { mode: "boolean" }).default(false),
-    order: int9("order").default(0)
+    name: text10("name"),
+    time: text10("time"),
+    isTemplate: int10("is_template", { mode: "boolean" }).default(false),
+    order: int10("order").default(0)
   },
-  (table) => [index9("supplement_stack_user_id_idx").on(table.userId)]
+  (table) => [index10("supplement_stack_user_id_idx").on(table.userId)]
 );
-var supplementStackRelations = relations9(
+var supplementStackRelations = relations10(
   supplementStack,
   ({ one, many }) => ({
     user: one(user, {
@@ -1535,22 +1578,22 @@ var supplementStackRelations = relations9(
     supplements: many(supplementToSupplementStack)
   })
 );
-var supplementToSupplementStack = createTable9(
+var supplementToSupplementStack = createTable10(
   "supplement_to_supplement_stack",
   {
-    id: int9("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    supplementId: int9("supplement_id").references(() => ingredient.id, {
+    id: int10("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    supplementId: int10("supplement_id").references(() => ingredient.id, {
       onDelete: "cascade"
     }).notNull(),
-    supplementStackId: int9("supplement_stack_id").references(() => supplementStack.id, {
+    supplementStackId: int10("supplement_stack_id").references(() => supplementStack.id, {
       onDelete: "cascade"
     }).notNull(),
-    size: text9("size"),
-    unit: text9("unit"),
-    order: int9("order").default(0)
+    size: text10("size"),
+    unit: text10("unit"),
+    order: int10("order").default(0)
   }
 );
-var supplementToSupplementStackRelations = relations9(
+var supplementToSupplementStackRelations = relations10(
   supplementToSupplementStack,
   ({ one }) => ({
     supplement: one(ingredient, {
@@ -1565,27 +1608,27 @@ var supplementToSupplementStackRelations = relations9(
     })
   })
 );
-var trainerNotes = createTable9(
+var trainerNotes = createTable10(
   "trainer_notes",
   {
-    id: int9("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int9("created_at", { mode: "timestamp" }).default(sql9`(unixepoch())`).notNull(),
-    updatedAt: int9("updated_at", { mode: "timestamp" }).$onUpdate(
+    id: int10("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int10("created_at", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
+    updatedAt: int10("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     ),
-    userId: text9("user_id").notNull().references(() => user.id, {
+    userId: text10("user_id").notNull().references(() => user.id, {
       onDelete: "cascade"
     }),
-    title: text9("title"),
-    description: text9("description"),
-    state: text9("state"),
-    trainerId: text9("trainer_id").notNull().references(() => user.id, {
+    title: text10("title"),
+    description: text10("description"),
+    state: text10("state"),
+    trainerId: text10("trainer_id").notNull().references(() => user.id, {
       onDelete: "cascade"
     })
   },
-  (table) => [index9("trainer_notes_user_id_idx").on(table.userId)]
+  (table) => [index10("trainer_notes_user_id_idx").on(table.userId)]
 );
-var trainerNotesRelations = relations9(trainerNotes, ({ one }) => ({
+var trainerNotesRelations = relations10(trainerNotes, ({ one }) => ({
   user: one(user, {
     fields: [trainerNotes.userId],
     references: [user.id],
@@ -1597,28 +1640,28 @@ var trainerNotesRelations = relations9(trainerNotes, ({ one }) => ({
     relationName: "trainer"
   })
 }));
-var goals = createTable9(
+var goals = createTable10(
   "goals",
   {
-    id: int9("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int9("created_at", { mode: "timestamp" }).default(sql9`(unixepoch())`).notNull(),
-    updatedAt: int9("updated_at", { mode: "timestamp" }).$onUpdate(
+    id: int10("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int10("created_at", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
+    updatedAt: int10("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     ),
-    userId: text9("user_id").notNull().references(() => user.id, {
+    userId: text10("user_id").notNull().references(() => user.id, {
       onDelete: "cascade"
     }),
-    title: text9("title"),
-    description: text9("description"),
-    state: text9("state"),
-    completedAt: int9("completed_at", { mode: "timestamp" }),
-    trainerId: text9("trainer_id").notNull().references(() => user.id, {
+    title: text10("title"),
+    description: text10("description"),
+    state: text10("state"),
+    completedAt: int10("completed_at", { mode: "timestamp" }),
+    trainerId: text10("trainer_id").notNull().references(() => user.id, {
       onDelete: "cascade"
     })
   },
-  (table) => [index9("goals_user_id_idx").on(table.userId)]
+  (table) => [index10("goals_user_id_idx").on(table.userId)]
 );
-var goalsRelations = relations9(goals, ({ one }) => ({
+var goalsRelations = relations10(goals, ({ one }) => ({
   user: one(user, {
     fields: [goals.userId],
     references: [user.id],
@@ -1630,72 +1673,103 @@ var goalsRelations = relations9(goals, ({ one }) => ({
     relationName: "trainer"
   })
 }));
-var userSettings = createTable9(
+var userSettings = createTable10(
   "user_settings",
   {
-    id: int9("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int9("created_at", { mode: "timestamp" }).default(sql9`(unixepoch())`).notNull(),
-    updatedAt: int9("updated_at", { mode: "timestamp" }).$onUpdate(
+    id: int10("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int10("created_at", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
+    updatedAt: int10("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     ),
-    userId: text9("user_id").notNull().references(() => user.id, {
+    userId: text10("user_id").notNull().references(() => user.id, {
       onDelete: "cascade"
     }),
-    defaultWater: text9("default_water"),
-    defaultChartRange: text9("default_chart_range"),
-    isPosing: int9("is_posing", { mode: "boolean" }).default(false),
-    isBloodGlucose: int9("is_blood_glucose", { mode: "boolean" }).default(false),
-    isSleep: int9("is_sleep", { mode: "boolean" }).default(true),
-    isSleepQuality: int9("is_sleep_quality", { mode: "boolean" }).default(true),
-    isNap: int9("is_nap", { mode: "boolean" }).default(true),
-    isWeightTraining: int9("is_weight", { mode: "boolean" }).default(true),
-    isHiit: int9("is_hiit", { mode: "boolean" }).default(true),
-    isLiss: int9("is_liss", { mode: "boolean" }).default(true),
-    isNotes: int9("is_notes", { mode: "boolean" }).default(true),
-    isSteps: int9("is_steps", { mode: "boolean" }).default(true),
-    isSauna: int9("is_sauna", { mode: "boolean" }).default(true),
-    isColdPlunge: int9("is_cold_plunge", { mode: "boolean" }).default(true),
-    isMobility: int9("is_mobility", { mode: "boolean" }).default(false),
-    isPeriodOvulaion: int9("is_period_ovulaion", { mode: "boolean" }).default(
+    defaultWater: text10("default_water"),
+    defaultChartRange: text10("default_chart_range"),
+    isPosing: int10("is_posing", { mode: "boolean" }).default(false),
+    isBloodGlucose: int10("is_blood_glucose", { mode: "boolean" }).default(false),
+    isSleep: int10("is_sleep", { mode: "boolean" }).default(true),
+    isSleepQuality: int10("is_sleep_quality", { mode: "boolean" }).default(true),
+    isNap: int10("is_nap", { mode: "boolean" }).default(true),
+    isWeightTraining: int10("is_weight", { mode: "boolean" }).default(true),
+    isHiit: int10("is_hiit", { mode: "boolean" }).default(true),
+    isLiss: int10("is_liss", { mode: "boolean" }).default(true),
+    isNotes: int10("is_notes", { mode: "boolean" }).default(true),
+    isSteps: int10("is_steps", { mode: "boolean" }).default(true),
+    isSauna: int10("is_sauna", { mode: "boolean" }).default(true),
+    isColdPlunge: int10("is_cold_plunge", { mode: "boolean" }).default(true),
+    isMobility: int10("is_mobility", { mode: "boolean" }).default(false),
+    isPeriodOvulaion: int10("is_period_ovulaion", { mode: "boolean" }).default(
       false
     ),
-    isHighLow: int9("is_high_low", { mode: "boolean" }).default(false),
-    isBulkCut: int9("is_bulk_cut", { mode: "boolean" }).default(false),
-    ovulaionStartAt: int9("ovulaion_start_at", { mode: "timestamp" }),
-    periodStartAt: int9("period_start_at", { mode: "timestamp" }),
-    cutStartAt: int9("cut_start_at", { mode: "timestamp" }),
-    cutFinishAt: int9("cut_finish_at", { mode: "timestamp" }),
-    bulkStartAt: int9("bulk_start_at", { mode: "timestamp" }),
-    bulkFinishAt: int9("bulk_finish_at", { mode: "timestamp" }),
-    periodLength: int9("period_length").default(5).notNull(),
-    periodInterval: int9("period_interval").default(28).notNull()
+    isHighLow: int10("is_high_low", { mode: "boolean" }).default(false),
+    isBulkCut: int10("is_bulk_cut", { mode: "boolean" }).default(false),
+    ovulaionStartAt: int10("ovulaion_start_at", { mode: "timestamp" }),
+    periodStartAt: int10("period_start_at", { mode: "timestamp" }),
+    cutStartAt: int10("cut_start_at", { mode: "timestamp" }),
+    cutFinishAt: int10("cut_finish_at", { mode: "timestamp" }),
+    bulkStartAt: int10("bulk_start_at", { mode: "timestamp" }),
+    bulkFinishAt: int10("bulk_finish_at", { mode: "timestamp" }),
+    periodLength: int10("period_length").default(5).notNull(),
+    periodInterval: int10("period_interval").default(28).notNull()
   },
-  (table) => [index9("user_settings_user_id_idx").on(table.userId)]
+  (table) => [index10("user_settings_user_id_idx").on(table.userId)]
 );
-var userSettingsRelations = relations9(userSettings, ({ one }) => ({
-  user: one(user, {
-    fields: [userSettings.userId],
-    references: [user.id]
+var userSettingsTags = createTable10(
+  "user_settings_tags",
+  {
+    id: int10("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int10("created_at", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
+    updatedAt: int10("updated_at", { mode: "timestamp" }).$onUpdate(
+      () => /* @__PURE__ */ new Date()
+    ),
+    userSettingsId: int10("user_settings_id").notNull().references(() => userSettings.id, {
+      onDelete: "cascade"
+    }),
+    name: text10("name"),
+    state: text10("state")
+  },
+  (table) => [
+    index10("user_settings_tags_user_settings_id_idx").on(table.userSettingsId)
+  ]
+);
+var userSettingsRelations = relations10(
+  userSettings,
+  ({ one, many }) => ({
+    user: one(user, {
+      fields: [userSettings.userId],
+      references: [user.id]
+    }),
+    tags: many(userSettingsTags)
   })
-}));
-var weighIn = createTable9(
+);
+var userSettingsTagsRelations = relations10(
+  userSettingsTags,
+  ({ one }) => ({
+    userSettings: one(userSettings, {
+      fields: [userSettingsTags.userSettingsId],
+      references: [userSettings.id]
+    })
+  })
+);
+var weighIn = createTable10(
   "weigh_in",
   {
-    id: int9("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int9("created_at", { mode: "timestamp" }).default(sql9`(unixepoch())`).notNull(),
-    userId: text9("user_id").notNull().references(() => user.id),
-    trainerId: text9("trainer_id").notNull().references(() => user.id),
-    date: int9("date", { mode: "timestamp" }).default(sql9`(unixepoch())`).notNull(),
-    bodyWeight: text9("body_weight"),
-    leanMass: text9("lean_mass"),
-    bodyFat: text9("body_fat"),
-    bloodPressure: text9("blood_pressure"),
-    image: text9("image"),
-    notes: text9("notes")
+    id: int10("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int10("created_at", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
+    userId: text10("user_id").notNull().references(() => user.id),
+    trainerId: text10("trainer_id").notNull().references(() => user.id),
+    date: int10("date", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
+    bodyWeight: text10("body_weight"),
+    leanMass: text10("lean_mass"),
+    bodyFat: text10("body_fat"),
+    bloodPressure: text10("blood_pressure"),
+    image: text10("image"),
+    notes: text10("notes")
   },
-  (table) => [index9("weigh_in_user_id_idx").on(table.userId)]
+  (table) => [index10("weigh_in_user_id_idx").on(table.userId)]
 );
-var weighInRelations = relations9(weighIn, ({ one }) => ({
+var weighInRelations = relations10(weighIn, ({ one }) => ({
   user: one(user, {
     fields: [weighIn.userId],
     references: [user.id],
@@ -1707,50 +1781,50 @@ var weighInRelations = relations9(weighIn, ({ one }) => ({
     relationName: "trainer"
   })
 }));
-var userToTrainer = createTable9(
+var userToTrainer = createTable10(
   "user_to_trainer",
   {
-    userId: text9("user_id").notNull().references(() => user.id, {
+    userId: text10("user_id").notNull().references(() => user.id, {
       onDelete: "cascade"
     }),
-    trainerId: text9("trainer_id").notNull().references(() => user.id, {
+    trainerId: text10("trainer_id").notNull().references(() => user.id, {
       onDelete: "cascade"
     })
   },
   (table) => [
-    index9("user_to_trainer_user_id_idx").on(table.userId),
-    index9("user_to_trainer_trainer_id_idx").on(table.trainerId)
+    index10("user_to_trainer_user_id_idx").on(table.userId),
+    index10("user_to_trainer_trainer_id_idx").on(table.trainerId)
   ]
 );
-var role = createTable9(
+var role = createTable10(
   "role",
   {
-    id: int9("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int9("created_at", { mode: "timestamp" }).default(sql9`(unixepoch())`).notNull(),
-    updatedAt: int9("updated_at", { mode: "timestamp" }).$onUpdate(
+    id: int10("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int10("created_at", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
+    updatedAt: int10("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     ),
-    userId: text9("user_id").references(() => user.id, {
+    userId: text10("user_id").references(() => user.id, {
       onDelete: "cascade"
     }),
-    name: text9("name")
+    name: text10("name")
   },
-  (table) => [index9("role_user_id_idx").on(table.userId)]
+  (table) => [index10("role_user_id_idx").on(table.userId)]
 );
-var account = createTable9(
+var account = createTable10(
   "account",
   {
-    userId: text9("user_id", { length: 255 }).notNull().references(() => user.id),
-    type: text9("type", { length: 255 }).$type().notNull(),
-    provider: text9("provider", { length: 255 }).notNull(),
-    providerAccountId: text9("provider_account_id", { length: 255 }).notNull(),
-    refresh_token: text9("refresh_token"),
-    access_token: text9("access_token"),
-    expires_at: int9("expires_at"),
-    token_type: text9("token_type", { length: 255 }),
-    scope: text9("scope", { length: 255 }),
-    id_token: text9("id_token"),
-    session_state: text9("session_state", { length: 255 })
+    userId: text10("user_id", { length: 255 }).notNull().references(() => user.id),
+    type: text10("type", { length: 255 }).$type().notNull(),
+    provider: text10("provider", { length: 255 }).notNull(),
+    providerAccountId: text10("provider_account_id", { length: 255 }).notNull(),
+    refresh_token: text10("refresh_token"),
+    access_token: text10("access_token"),
+    expires_at: int10("expires_at"),
+    token_type: text10("token_type", { length: 255 }),
+    scope: text10("scope", { length: 255 }),
+    id_token: text10("id_token"),
+    session_state: text10("session_state", { length: 255 })
   },
   (account2) => ({
     compoundKey: primaryKey({
@@ -1758,35 +1832,35 @@ var account = createTable9(
     })
   })
 );
-var verificationToken = createTable9(
+var verificationToken = createTable10(
   "verification_token",
   {
-    identifier: text9("identifier", { length: 255 }).notNull(),
-    token: text9("token", { length: 255 }).notNull(),
-    expires: int9("expires", { mode: "timestamp" }).notNull()
+    identifier: text10("identifier", { length: 255 }).notNull(),
+    token: text10("token", { length: 255 }).notNull(),
+    expires: int10("expires", { mode: "timestamp" }).notNull()
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] })
   })
 );
-var session = createTable9("session", {
-  sessionToken: text9("session_token", { length: 255 }).notNull().primaryKey(),
-  userId: text9("userId", { length: 255 }).notNull().references(() => user.id),
-  expires: int9("expires", { mode: "timestamp" }).notNull()
+var session = createTable10("session", {
+  sessionToken: text10("session_token", { length: 255 }).notNull().primaryKey(),
+  userId: text10("userId", { length: 255 }).notNull().references(() => user.id),
+  expires: int10("expires", { mode: "timestamp" }).notNull()
 });
-var sessionsRelations = relations9(session, ({ one }) => ({
+var sessionsRelations = relations10(session, ({ one }) => ({
   user: one(user, { fields: [session.userId], references: [user.id] })
 }));
-var accountsRelations = relations9(account, ({ one }) => ({
+var accountsRelations = relations10(account, ({ one }) => ({
   user: one(user, { fields: [account.userId], references: [user.id] })
 }));
-var roleRelations = relations9(role, ({ one }) => ({
+var roleRelations = relations10(role, ({ one }) => ({
   user: one(user, {
     fields: [role.userId],
     references: [user.id]
   })
 }));
-var userToTrainerRelations = relations9(userToTrainer, ({ one }) => ({
+var userToTrainerRelations = relations10(userToTrainer, ({ one }) => ({
   user: one(user, {
     fields: [userToTrainer.userId],
     references: [user.id],
@@ -1800,99 +1874,99 @@ var userToTrainerRelations = relations9(userToTrainer, ({ one }) => ({
 }));
 
 // src/server/db/schema/settings.ts
-import { int as int10, sqliteTable as sqliteTable10 } from "drizzle-orm/sqlite-core";
-var createTable10 = sqliteTable10;
-var settings = createTable10("settings", {
-  id: int10("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  isCaloriesWithFibre: int10("is_calories_with_fibre", { mode: "boolean" })
+import { int as int11, sqliteTable as sqliteTable11 } from "drizzle-orm/sqlite-core";
+var createTable11 = sqliteTable11;
+var settings = createTable11("settings", {
+  id: int11("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  isCaloriesWithFibre: int11("is_calories_with_fibre", { mode: "boolean" })
 });
 
 // src/server/db/schema/plan.ts
-import { relations as relations11, sql as sql11 } from "drizzle-orm";
-import { int as int12, sqliteTable as sqliteTable12, text as text11, index as index11 } from "drizzle-orm/sqlite-core";
+import { relations as relations12, sql as sql12 } from "drizzle-orm";
+import { int as int13, sqliteTable as sqliteTable13, text as text12, index as index12 } from "drizzle-orm/sqlite-core";
 
 // src/server/db/schema/meal.ts
-import { relations as relations10, sql as sql10 } from "drizzle-orm";
-import { index as index10, int as int11, sqliteTable as sqliteTable11, text as text10 } from "drizzle-orm/sqlite-core";
-var createTable11 = sqliteTable11;
-var meal = createTable11(
+import { relations as relations11, sql as sql11 } from "drizzle-orm";
+import { index as index11, int as int12, sqliteTable as sqliteTable12, text as text11 } from "drizzle-orm/sqlite-core";
+var createTable12 = sqliteTable12;
+var meal = createTable12(
   "meal",
   {
-    id: int11("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int11("created_at", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
-    updatedAt: int11("updated_at", { mode: "timestamp" }).$onUpdate(
+    id: int12("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int12("created_at", { mode: "timestamp" }).default(sql11`(unixepoch())`).notNull(),
+    updatedAt: int12("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     ),
-    planId: int11("plan_id").references(() => plan.id, {
+    planId: int12("plan_id").references(() => plan.id, {
       onDelete: "cascade"
     }),
-    name: text10("name"),
-    description: text10("description"),
-    image: text10("image"),
-    notes: text10("notes"),
-    creatorId: text10("creator_id").references(() => user.id),
-    mealCategory: text10("meal_category"),
-    favouriteAt: int11("favourite_at", { mode: "timestamp" }),
-    deletedAt: int11("deleted_at", { mode: "timestamp" }),
-    hiddenAt: int11("hidden_at", { mode: "timestamp" }),
-    vegeNotes: text10("vege_notes"),
-    vege: text10("vege"),
-    vegeCalories: text10("vege_calories"),
-    mealIndex: int11("index", { mode: "number" }),
-    calories: text10("calories")
+    name: text11("name"),
+    description: text11("description"),
+    image: text11("image"),
+    notes: text11("notes"),
+    creatorId: text11("creator_id").references(() => user.id),
+    mealCategory: text11("meal_category"),
+    favouriteAt: int12("favourite_at", { mode: "timestamp" }),
+    deletedAt: int12("deleted_at", { mode: "timestamp" }),
+    hiddenAt: int12("hidden_at", { mode: "timestamp" }),
+    vegeNotes: text11("vege_notes"),
+    vege: text11("vege"),
+    vegeCalories: text11("vege_calories"),
+    mealIndex: int12("index", { mode: "number" }),
+    calories: text11("calories")
   },
-  (table) => [index10("meal_plan_id_idx").on(table.planId)]
+  (table) => [index11("meal_plan_id_idx").on(table.planId)]
 );
-var mealToRecipe = createTable11(
+var mealToRecipe = createTable12(
   "meal_to_recipe",
   {
-    id: int11("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int11("created_at", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
-    mealId: int11("meal_id").references(() => meal.id, {
+    id: int12("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int12("created_at", { mode: "timestamp" }).default(sql11`(unixepoch())`).notNull(),
+    mealId: int12("meal_id").references(() => meal.id, {
       onDelete: "cascade"
     }),
-    recipeId: int11("recipe_id").references(() => recipe.id, {
+    recipeId: int12("recipe_id").references(() => recipe.id, {
       onDelete: "cascade"
     }),
-    index: int11("index", { mode: "number" }).notNull(),
-    note: text10("note")
+    index: int12("index", { mode: "number" }).notNull(),
+    note: text11("note")
   },
   (table) => [
-    index10("meal_to_recipe_meal_id_idx").on(table.mealId),
-    index10("meal_to_recipe_recipe_id_idx").on(table.recipeId)
+    index11("meal_to_recipe_meal_id_idx").on(table.mealId),
+    index11("meal_to_recipe_recipe_id_idx").on(table.recipeId)
   ]
 );
-var vegeStack = createTable11("vege_stack", {
-  id: int11("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int11("created_at", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
-  updatedAt: int11("updated_at", { mode: "timestamp" }).$onUpdate(
+var vegeStack = createTable12("vege_stack", {
+  id: int12("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  createdAt: int12("created_at", { mode: "timestamp" }).default(sql11`(unixepoch())`).notNull(),
+  updatedAt: int12("updated_at", { mode: "timestamp" }).$onUpdate(
     () => /* @__PURE__ */ new Date()
   ),
-  name: text10("name"),
-  veges: text10("veges"),
-  notes: text10("notes"),
-  calories: text10("calories")
+  name: text11("name"),
+  veges: text11("veges"),
+  notes: text11("notes"),
+  calories: text11("calories")
 });
-var mealToVegeStack = createTable11(
+var mealToVegeStack = createTable12(
   "meal_to_vege_stack",
   {
-    id: int11("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int11("created_at", { mode: "timestamp" }).default(sql10`(unixepoch())`).notNull(),
-    mealId: int11("meal_id").references(() => meal.id, {
+    id: int12("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int12("created_at", { mode: "timestamp" }).default(sql11`(unixepoch())`).notNull(),
+    mealId: int12("meal_id").references(() => meal.id, {
       onDelete: "cascade"
     }),
-    vegeStackId: int11("vege_stack_id").references(() => vegeStack.id, {
+    vegeStackId: int12("vege_stack_id").references(() => vegeStack.id, {
       onDelete: "cascade"
     }),
-    calories: text10("calories"),
-    note: text10("note")
+    calories: text11("calories"),
+    note: text11("note")
   },
   (table) => [
-    index10("meal_to_vege_meal_id_idx").on(table.mealId),
-    index10("meal_to_vege_vege_id_idx").on(table.vegeStackId)
+    index11("meal_to_vege_meal_id_idx").on(table.mealId),
+    index11("meal_to_vege_vege_id_idx").on(table.vegeStackId)
   ]
 );
-var mealRelations = relations10(meal, ({ one, many }) => ({
+var mealRelations = relations11(meal, ({ one, many }) => ({
   creator: one(user, { fields: [meal.creatorId], references: [user.id] }),
   mealToRecipe: many(mealToRecipe),
   mealToVegeStack: many(mealToVegeStack),
@@ -1902,10 +1976,10 @@ var mealRelations = relations10(meal, ({ one, many }) => ({
     references: [plan.id]
   })
 }));
-var vegeStackRelations = relations10(vegeStack, ({ one, many }) => ({
+var vegeStackRelations = relations11(vegeStack, ({ one, many }) => ({
   mealToVegeStack: many(mealToVegeStack)
 }));
-var mealToVegeStackRelations = relations10(
+var mealToVegeStackRelations = relations11(
   mealToVegeStack,
   ({ one }) => ({
     meal: one(meal, {
@@ -1918,7 +1992,7 @@ var mealToVegeStackRelations = relations10(
     })
   })
 );
-var mealToRecipeRelations = relations10(mealToRecipe, ({ one }) => ({
+var mealToRecipeRelations = relations11(mealToRecipe, ({ one }) => ({
   meal: one(meal, {
     fields: [mealToRecipe.mealId],
     references: [meal.id]
@@ -1930,56 +2004,56 @@ var mealToRecipeRelations = relations10(mealToRecipe, ({ one }) => ({
 }));
 
 // src/server/db/schema/plan.ts
-var createTable12 = sqliteTable12;
-var plan = createTable12(
+var createTable13 = sqliteTable13;
+var plan = createTable13(
   "plan",
   {
-    id: int12("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int12("created_at", { mode: "timestamp" }).default(sql11`(unixepoch())`).notNull(),
-    updatedAt: int12("updated_at", { mode: "timestamp" }).$onUpdate(
+    id: int13("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int13("created_at", { mode: "timestamp" }).default(sql12`(unixepoch())`).notNull(),
+    updatedAt: int13("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     ),
-    name: text11("name"),
-    description: text11("description"),
-    image: text11("image"),
-    notes: text11("notes"),
-    numberOfMeals: int12("number_of_meals", { mode: "number" }),
-    creatorId: text11("creator_id").references(() => user.id),
-    isGlobal: int12("is_global", { mode: "boolean" }).default(false),
-    planCategory: text11("recipe_category"),
-    favouriteAt: int12("favourite_at", { mode: "timestamp" }),
-    deletedAt: int12("deleted_at", { mode: "timestamp" }),
-    hiddenAt: int12("hidden_at", { mode: "timestamp" }),
-    planFolderId: int12("plan_folder_id").references(() => planFolder.id)
+    name: text12("name"),
+    description: text12("description"),
+    image: text12("image"),
+    notes: text12("notes"),
+    numberOfMeals: int13("number_of_meals", { mode: "number" }),
+    creatorId: text12("creator_id").references(() => user.id),
+    isGlobal: int13("is_global", { mode: "boolean" }).default(false),
+    planCategory: text12("recipe_category"),
+    favouriteAt: int13("favourite_at", { mode: "timestamp" }),
+    deletedAt: int13("deleted_at", { mode: "timestamp" }),
+    hiddenAt: int13("hidden_at", { mode: "timestamp" }),
+    planFolderId: int13("plan_folder_id").references(() => planFolder.id)
   },
   (table) => [
-    index11("plan_user_id_idx").on(table.creatorId),
-    index11("plan_createAt_id_idx").on(table.createdAt)
+    index12("plan_user_id_idx").on(table.creatorId),
+    index12("plan_createAt_id_idx").on(table.createdAt)
   ]
 );
-var planToMeal = createTable12(
+var planToMeal = createTable13(
   "plan_to_meal",
   {
-    id: int12("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int12("created_at", { mode: "timestamp" }).default(sql11`(unixepoch())`).notNull(),
-    planId: int12("plan_id").references(() => plan.id, {
+    id: int13("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int13("created_at", { mode: "timestamp" }).default(sql12`(unixepoch())`).notNull(),
+    planId: int13("plan_id").references(() => plan.id, {
       onDelete: "cascade"
     }),
-    mealId: int12("meal_id").references(() => meal.id, {
+    mealId: int13("meal_id").references(() => meal.id, {
       onDelete: "cascade"
     }),
-    mealIndex: int12("index", { mode: "number" }),
-    mealTitle: text11("meal_title"),
-    calories: text11("calories"),
-    vegeCalories: text11("vege_calories"),
-    note: text11("note")
+    mealIndex: int13("index", { mode: "number" }),
+    mealTitle: text12("meal_title"),
+    calories: text12("calories"),
+    vegeCalories: text12("vege_calories"),
+    note: text12("note")
   },
   (table) => [
-    index11("plan_to_meal_plan_id_idx").on(table.planId),
-    index11("plan_to_meal_meal_id_idx").on(table.mealId)
+    index12("plan_to_meal_plan_id_idx").on(table.planId),
+    index12("plan_to_meal_meal_id_idx").on(table.mealId)
   ]
 );
-var planRelations = relations11(plan, ({ one, many }) => ({
+var planRelations = relations12(plan, ({ one, many }) => ({
   creator: one(user, { fields: [plan.creatorId], references: [user.id] }),
   planToMeal: many(planToMeal),
   meals: many(meal),
@@ -1988,7 +2062,7 @@ var planRelations = relations11(plan, ({ one, many }) => ({
     references: [planFolder.id]
   })
 }));
-var planToMealRelations = relations11(planToMeal, ({ one }) => ({
+var planToMealRelations = relations12(planToMeal, ({ one }) => ({
   meal: one(meal, {
     fields: [planToMeal.mealId],
     references: [meal.id]
@@ -1998,13 +2072,13 @@ var planToMealRelations = relations11(planToMeal, ({ one }) => ({
     references: [plan.id]
   })
 }));
-var planFolder = createTable12("plan_folder", {
-  id: int12("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int12("created_at", { mode: "timestamp" }).default(sql11`(unixepoch())`).notNull(),
-  name: text11("name"),
-  parentId: int12("parent_id")
+var planFolder = createTable13("plan_folder", {
+  id: int13("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  createdAt: int13("created_at", { mode: "timestamp" }).default(sql12`(unixepoch())`).notNull(),
+  name: text12("name"),
+  parentId: int13("parent_id")
 });
-var planFolderRelations = relations11(planFolder, ({ one, many }) => ({
+var planFolderRelations = relations12(planFolder, ({ one, many }) => ({
   plans: many(plan),
   parent: one(planFolder, {
     fields: [planFolder.parentId],
@@ -2013,51 +2087,51 @@ var planFolderRelations = relations11(planFolder, ({ one, many }) => ({
 }));
 
 // src/server/db/schema/log.ts
-import { sql as sql12 } from "drizzle-orm";
-import { int as int13, sqliteTable as sqliteTable13, text as text12 } from "drizzle-orm/sqlite-core";
-var createTable13 = sqliteTable13;
-var log = createTable13("log", {
-  id: int13("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int13("created_at", { mode: "timestamp" }).default(sql12`(unixepoch())`).notNull(),
-  objectId: int13("object_id"),
-  task: text12("task"),
-  notes: text12("notes"),
-  user: text12("user"),
-  userId: text12("user_id")
-});
-var logNew = createTable13("log_new", {
-  id: int13("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  createdAt: int13("created_at", { mode: "timestamp" }).default(sql12`(unixepoch())`).notNull(),
-  input: text12("input"),
-  type: text12("type"),
-  path: text12("path"),
-  duration: int13("duration"),
-  source: text12("source"),
-  info: text12("info"),
-  error: text12("error"),
-  user: text12("user"),
-  userId: text12("user_id")
-});
-
-// src/server/db/schema/push-subscription.ts
 import { sql as sql13 } from "drizzle-orm";
 import { int as int14, sqliteTable as sqliteTable14, text as text13 } from "drizzle-orm/sqlite-core";
 var createTable14 = sqliteTable14;
-var pushSubscription = createTable14(
+var log = createTable14("log", {
+  id: int14("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  createdAt: int14("created_at", { mode: "timestamp" }).default(sql13`(unixepoch())`).notNull(),
+  objectId: int14("object_id"),
+  task: text13("task"),
+  notes: text13("notes"),
+  user: text13("user"),
+  userId: text13("user_id")
+});
+var logNew = createTable14("log_new", {
+  id: int14("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  createdAt: int14("created_at", { mode: "timestamp" }).default(sql13`(unixepoch())`).notNull(),
+  input: text13("input"),
+  type: text13("type"),
+  path: text13("path"),
+  duration: int14("duration"),
+  source: text13("source"),
+  info: text13("info"),
+  error: text13("error"),
+  user: text13("user"),
+  userId: text13("user_id")
+});
+
+// src/server/db/schema/push-subscription.ts
+import { sql as sql14 } from "drizzle-orm";
+import { int as int15, sqliteTable as sqliteTable15, text as text14 } from "drizzle-orm/sqlite-core";
+var createTable15 = sqliteTable15;
+var pushSubscription = createTable15(
   "push_subscription",
   {
-    id: int14("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    createdAt: int14("created_at", { mode: "timestamp" }).default(sql13`(unixepoch())`).notNull(),
-    updatedAt: int14("updated_at", { mode: "timestamp" }).$onUpdate(
+    id: int15("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    createdAt: int15("created_at", { mode: "timestamp" }).default(sql14`(unixepoch())`).notNull(),
+    updatedAt: int15("updated_at", { mode: "timestamp" }).$onUpdate(
       () => /* @__PURE__ */ new Date()
     ),
-    subscription: text13("subscription").notNull(),
-    userId: text13("user_id").notNull()
+    subscription: text14("subscription").notNull(),
+    userId: text14("user_id").notNull()
   }
 );
 
 // src/server/db/index.ts
-var createTable15 = sqliteTableCreator((name) => `${name}`);
+var createTable16 = sqliteTableCreator((name) => `${name}`);
 var globalForDb = globalThis;
 var client = globalForDb.client ?? createClient({
   url: env.DATABASE_URL
@@ -4386,7 +4460,7 @@ import { z as z10 } from "zod";
 var ingredientRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.ingredient.findMany({
-      where: (ingredient2, { isNull: isNull2, and: and15, eq: eq30 }) => and15(
+      where: (ingredient2, { isNull: isNull2, and: and16, eq: eq30 }) => and16(
         isNull2(ingredient2.hiddenAt),
         isNull2(ingredient2.deletedAt),
         eq30(ingredient2.isSupplement, false),
@@ -4412,7 +4486,7 @@ var ingredientRouter = createTRPCRouter({
   }),
   getAllFav: protectedProcedure.query(async ({ ctx }) => {
     const res = await ctx.db.query.ingredient.findMany({
-      where: (ingredient2, { isNull: isNull2, and: and15, eq: eq30 }) => and15(
+      where: (ingredient2, { isNull: isNull2, and: and16, eq: eq30 }) => and16(
         isNull2(ingredient2.hiddenAt),
         isNull2(ingredient2.deletedAt),
         eq30(ingredient2.isSupplement, false),
@@ -5649,7 +5723,7 @@ var recipeRouter = createTRPCRouter({
   }),
   getAllUserCreated: protectedProcedure.input(z17.object({ userId: z17.string() })).query(async ({ ctx, input }) => {
     const res = await ctx.db.query.recipe.findMany({
-      where: (recipe2, { eq: eq30, and: and15 }) => and15(
+      where: (recipe2, { eq: eq30, and: and16 }) => and16(
         eq30(recipe2.creatorId, input.userId),
         eq30(recipe2.isUserRecipe, true)
       ),
@@ -7052,7 +7126,7 @@ var supplementsRouter = createTRPCRouter({
     })
   ).mutation(async ({ ctx, input }) => {
     const template = await ctx.db.query.supplementStack.findFirst({
-      where: (stack, { eq: eq30, and: and15 }) => and15(eq30(stack.id, input.templateId), eq30(stack.isTemplate, true)),
+      where: (stack, { eq: eq30, and: and16 }) => and16(eq30(stack.id, input.templateId), eq30(stack.isTemplate, true)),
       with: {
         supplements: true
       }
@@ -7086,7 +7160,7 @@ var supplementsRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session?.user?.id;
     const res = await ctx.db.query.ingredient.findMany({
-      where: (ingredient2, { isNull: isNull2, and: and15, eq: eq30 }) => and15(
+      where: (ingredient2, { isNull: isNull2, and: and16, eq: eq30 }) => and16(
         isNull2(ingredient2.hiddenAt),
         isNull2(ingredient2.deletedAt),
         eq30(ingredient2.isSupplement, true),
@@ -8099,9 +8173,9 @@ var BaseGenerator = class {
     const extraConfigBuilder = table[ExtraConfigBuilder];
     const extraConfigColumns = table[ExtraConfigColumns];
     const extraConfig = extraConfigBuilder?.(extraConfigColumns ?? {});
-    const builtIndexes = (Array.isArray(extraConfig) ? extraConfig : Object.values(extraConfig ?? {})).map((b) => b?.build(table)).filter((b) => b !== void 0).filter((index12) => !(is(index12, PgCheck) || is(index12, MySqlCheck) || is(index12, SQLiteCheck)));
+    const builtIndexes = (Array.isArray(extraConfig) ? extraConfig : Object.values(extraConfig ?? {})).map((b) => b?.build(table)).filter((b) => b !== void 0).filter((index13) => !(is(index13, PgCheck) || is(index13, MySqlCheck) || is(index13, SQLiteCheck)));
     const fks = builtIndexes.filter(
-      (index12) => is(index12, PgForeignKey) || is(index12, MySqlForeignKey) || is(index12, SQLiteForeignKey)
+      (index13) => is(index13, PgForeignKey) || is(index13, MySqlForeignKey) || is(index13, SQLiteForeignKey)
     );
     if (!this.relational) {
       this.generateForeignKeys(fks);
@@ -8110,26 +8184,26 @@ var BaseGenerator = class {
       const indexes = extraConfig ?? {};
       dbml.newLine().tab().insert("indexes {").newLine();
       for (const indexName in indexes) {
-        const index12 = indexes[indexName].build(table);
+        const index13 = indexes[indexName].build(table);
         dbml.tab(2);
-        if (is(index12, PgIndex) || is(index12, MySqlIndex) || is(index12, SQLiteIndex)) {
-          const configColumns = index12.config.columns.flatMap(
+        if (is(index13, PgIndex) || is(index13, MySqlIndex) || is(index13, SQLiteIndex)) {
+          const configColumns = index13.config.columns.flatMap(
             (entry) => is(entry, SQL) ? entry.queryChunks.filter((v) => is(v, Column)) : entry
           );
           const idxColumns = wrapColumns(
             configColumns,
             this.buildQueryConfig.escapeName
           );
-          const idxProperties = index12.config.name ? ` [name: '${index12.config.name}'${index12.config.unique ? ", unique" : ""}]` : "";
+          const idxProperties = index13.config.name ? ` [name: '${index13.config.name}'${index13.config.unique ? ", unique" : ""}]` : "";
           dbml.insert(`${idxColumns}${idxProperties}`);
         }
-        if (is(index12, PgPrimaryKey) || is(index12, MySqlPrimaryKey) || is(index12, SQLitePrimaryKey)) {
-          const pkColumns = wrapColumns(index12.columns, this.buildQueryConfig.escapeName);
+        if (is(index13, PgPrimaryKey) || is(index13, MySqlPrimaryKey) || is(index13, SQLitePrimaryKey)) {
+          const pkColumns = wrapColumns(index13.columns, this.buildQueryConfig.escapeName);
           dbml.insert(`${pkColumns} [pk]`);
         }
-        if (is(index12, PgUniqueConstraint) || is(index12, MySqlUniqueConstraint) || is(index12, SQLiteUniqueConstraint)) {
-          const uqColumns = wrapColumns(index12.columns, this.buildQueryConfig.escapeName);
-          const uqProperties = index12.name ? `[name: '${index12.name}', unique]` : "[unique]";
+        if (is(index13, PgUniqueConstraint) || is(index13, MySqlUniqueConstraint) || is(index13, SQLiteUniqueConstraint)) {
+          const uqColumns = wrapColumns(index13.columns, this.buildQueryConfig.escapeName);
+          const uqProperties = index13.name ? `[name: '${index13.name}', unique]` : "[unique]";
           dbml.insert(`${uqColumns} ${uqProperties}`);
         }
         dbml.newLine();
@@ -8172,12 +8246,12 @@ var BaseGenerator = class {
     const left = {};
     const right = {};
     for (let i = 0; i < relations_.length; i++) {
-      const relations12 = relations_[i].config({
+      const relations13 = relations_[i].config({
         one: createOne(relations_[i].table),
         many: createMany(relations_[i].table)
       });
-      for (const relationName in relations12) {
-        const relation = relations12[relationName];
+      for (const relationName in relations13) {
+        const relation = relations13[relationName];
         const tableNames = [
           relations_[i].table[TableName],
           relation.referencedTableName
@@ -8228,7 +8302,7 @@ var BaseGenerator = class {
   generate() {
     const generatedEnums = [];
     const generatedTables = [];
-    const relations12 = [];
+    const relations13 = [];
     for (const key in this.schema) {
       const value = this.schema[key];
       if (isPgEnum(value)) {
@@ -8236,11 +8310,11 @@ var BaseGenerator = class {
       } else if (is(value, PgTable) || is(value, MySqlTable) || is(value, SQLiteTable)) {
         generatedTables.push(this.generateTable(value));
       } else if (is(value, Relations)) {
-        relations12.push(value);
+        relations13.push(value);
       }
     }
     if (this.relational) {
-      this.generateRelations(relations12);
+      this.generateRelations(relations13);
     }
     const dbml = new DBML().concatAll(generatedEnums).concatAll(generatedTables).concatAll(this.generatedRefs).build();
     return dbml;
@@ -10455,7 +10529,7 @@ var generation = {
 
 // src/server/api/routers/user/get.ts
 import { TRPCError as TRPCError8 } from "@trpc/server";
-import { eq as eq21, sql as sql14 } from "drizzle-orm";
+import { eq as eq21, sql as sql15 } from "drizzle-orm";
 import { z as z29 } from "zod";
 var get3 = {
   getName: protectedProcedure.input(z29.string()).query(async ({ ctx, input }) => {
@@ -10523,7 +10597,7 @@ var get3 = {
         userId: dailyLog.userId,
         updatedAt: dailyLog.updatedAt,
         // Assign 1 to the most recent log for each userId
-        rowNumber: sql14`row_number() OVER (PARTITION BY ${dailyLog.userId} ORDER BY ${dailyLog.updatedAt} DESC)`.as(
+        rowNumber: sql15`row_number() OVER (PARTITION BY ${dailyLog.userId} ORDER BY ${dailyLog.updatedAt} DESC)`.as(
           "rn"
         )
       }).from(dailyLog)
@@ -10570,7 +10644,7 @@ var get3 = {
         userId: dailyLog.userId,
         updatedAt: dailyLog.updatedAt,
         // Assign 1 to the most recent log for each userId
-        rowNumber: sql14`row_number() OVER (PARTITION BY ${dailyLog.userId} ORDER BY ${dailyLog.updatedAt} DESC)`.as(
+        rowNumber: sql15`row_number() OVER (PARTITION BY ${dailyLog.userId} ORDER BY ${dailyLog.updatedAt} DESC)`.as(
           "rn"
         )
       }).from(dailyLog)
@@ -10598,7 +10672,11 @@ var get3 = {
         password: false
       },
       with: {
-        settings: true,
+        settings: {
+          with: {
+            tags: true
+          }
+        },
         partner: {
           columns: {
             id: true,
@@ -10655,7 +10733,11 @@ var get3 = {
         name: true
       },
       with: {
-        settings: true,
+        settings: {
+          with: {
+            tags: true
+          }
+        },
         roles: true,
         supplementStacks: {
           where: (ss, { eq: eq30 }) => eq30(ss.isTemplate, false),
@@ -10725,7 +10807,11 @@ var get3 = {
       },
       with: {
         images: true,
-        settings: true,
+        settings: {
+          with: {
+            tags: true
+          }
+        },
         partner: {
           columns: {
             id: true,
@@ -10784,7 +10870,11 @@ var get3 = {
         id: true
       },
       with: {
-        settings: true,
+        settings: {
+          with: {
+            tags: true
+          }
+        },
         partner: {
           columns: {
             id: true,
@@ -10822,7 +10912,11 @@ var get3 = {
         password: false
       },
       with: {
-        settings: true,
+        settings: {
+          with: {
+            tags: true
+          }
+        },
         partner: {
           columns: {
             id: true,
@@ -10937,7 +11031,7 @@ var notifications = {
     })
   ).mutation(async ({ input, ctx }) => {
     const res = await ctx.db.query.notificationToggle.findFirst({
-      where: (toggle, { eq: eq30, and: and15 }) => and15(eq30(toggle.userId, input.userId), eq30(toggle.type, input.type))
+      where: (toggle, { eq: eq30, and: and16 }) => and16(eq30(toggle.userId, input.userId), eq30(toggle.type, input.type))
     });
     createLog({
       user: ctx.session.user.name,
@@ -11021,7 +11115,7 @@ var roles = {
   }),
   updateRoleNotifyFrontImage: protectedProcedure.input(z32.object({ userId: z32.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role2, { eq: eq30, and: and15 }) => and15(
+      where: (role2, { eq: eq30, and: and16 }) => and16(
         eq30(role2.userId, input.userId),
         eq30(role2.name, "notify-trainer-front-image")
       )
@@ -11045,7 +11139,7 @@ var roles = {
   }),
   updateRoleNotifyTrainerAllImages: protectedProcedure.input(z32.object({ userId: z32.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role2, { eq: eq30, and: and15 }) => and15(
+      where: (role2, { eq: eq30, and: and16 }) => and16(
         eq30(role2.userId, input.userId),
         eq30(role2.name, "notify-trainer-all-images")
       )
@@ -11069,7 +11163,7 @@ var roles = {
   }),
   updateRoleBodyBuilderImages: protectedProcedure.input(z32.object({ userId: z32.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role2, { eq: eq30, and: and15 }) => and15(
+      where: (role2, { eq: eq30, and: and16 }) => and16(
         eq30(role2.userId, input.userId),
         eq30(role2.name, "body-builder-images")
       )
@@ -11086,7 +11180,7 @@ var roles = {
   }),
   updateRoleSupplementDisclaimer: protectedProcedure.input(z32.object({ userId: z32.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role2, { eq: eq30, and: and15 }) => and15(
+      where: (role2, { eq: eq30, and: and16 }) => and16(
         eq30(role2.userId, input.userId),
         eq30(role2.name, "supplement_disclaimer_v1")
       )
@@ -11110,7 +11204,7 @@ var roles = {
   }),
   updateRoleSupplements: protectedProcedure.input(z32.object({ userId: z32.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role2, { eq: eq30, and: and15 }) => and15(eq30(role2.userId, input.userId), eq30(role2.name, "supplements"))
+      where: (role2, { eq: eq30, and: and16 }) => and16(eq30(role2.userId, input.userId), eq30(role2.name, "supplements"))
     });
     if (res) {
       await ctx.db.delete(role).where(eq24(role.id, res.id));
@@ -11131,7 +11225,7 @@ var roles = {
   }),
   updateRoleCreateMeals: protectedProcedure.input(z32.object({ userId: z32.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role2, { eq: eq30, and: and15 }) => and15(eq30(role2.userId, input.userId), eq30(role2.name, "create-meals"))
+      where: (role2, { eq: eq30, and: and16 }) => and16(eq30(role2.userId, input.userId), eq30(role2.name, "create-meals"))
     });
     if (res) {
       await ctx.db.delete(role).where(eq24(role.id, res.id));
@@ -11152,7 +11246,7 @@ var roles = {
   }),
   updateRoleAdmin: protectedProcedure.input(z32.object({ userId: z32.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
-      where: (role2, { eq: eq30, and: and15 }) => and15(eq30(role2.userId, input.userId), eq30(role2.name, "admin"))
+      where: (role2, { eq: eq30, and: and16 }) => and16(eq30(role2.userId, input.userId), eq30(role2.name, "admin"))
     });
     if (res) {
       await ctx.db.delete(role).where(eq24(role.id, res.id));
@@ -11176,7 +11270,7 @@ var roles = {
 // src/server/api/routers/user/update.ts
 import { TRPCError as TRPCError9 } from "@trpc/server";
 import { hash as hash3 } from "bcryptjs";
-import { eq as eq25, inArray } from "drizzle-orm";
+import { and as and13, eq as eq25, inArray } from "drizzle-orm";
 import { z as z33 } from "zod";
 var assertAuthenticated2 = (ctx) => {
   const sessionUser = ctx.session?.user;
@@ -11345,6 +11439,31 @@ var update = {
       defaultWater: input.water.toString()
     }).where(eq25(userSettings.id, input.id));
     return res;
+  }),
+  updateUserWeightUnit: protectedProcedure.input(
+    z33.object({
+      id: z33.number(),
+      state: z33.enum(["kilograms", "pounds"])
+    })
+  ).mutation(async ({ ctx, input }) => {
+    const existingTag = await ctx.db.query.userSettingsTags.findFirst({
+      where: (tag2, { and: and16, eq: eq30 }) => and16(eq30(tag2.userSettingsId, input.id), eq30(tag2.name, "user_weight"))
+    });
+    if (!existingTag) {
+      return ctx.db.insert(userSettingsTags).values({
+        userSettingsId: input.id,
+        name: "user_weight",
+        state: input.state
+      });
+    }
+    return ctx.db.update(userSettingsTags).set({
+      state: input.state
+    }).where(
+      and13(
+        eq25(userSettingsTags.userSettingsId, input.id),
+        eq25(userSettingsTags.name, "user_weight")
+      )
+    );
   }),
   updateIsPosing: protectedProcedure.input(z33.object({ id: z33.string(), isPosing: z33.boolean() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.update(userSettings).set({
@@ -11581,7 +11700,7 @@ var userRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/user-plan.ts
-import { eq as eq26, and as and13, inArray as inArray2, isNotNull } from "drizzle-orm";
+import { eq as eq26, and as and14, inArray as inArray2, isNotNull } from "drizzle-orm";
 import { z as z34 } from "zod";
 var userPlanIngredientInputSchema = z34.object({
   ingredientId: z34.number(),
@@ -11641,7 +11760,7 @@ var createUserPlanNotification = async ({
   userId
 }) => {
   const notif = await ctx.db.query.notification.findMany({
-    where: and13(
+    where: and14(
       eq26(notification.userId, userId),
       eq26(notification.code, "user-plan_update"),
       eq26(notification.isViewed, false)
@@ -11707,7 +11826,7 @@ var userPlanRouter = createTRPCRouter({
   }),
   getUserActivePlan: protectedProcedure.input(z34.string()).query(async ({ input, ctx }) => {
     const res = await ctx.db.query.userPlan.findMany({
-      where: and13(eq26(userPlan.userId, input), eq26(userPlan.isActive, true)),
+      where: and14(eq26(userPlan.userId, input), eq26(userPlan.isActive, true)),
       with: {
         userMeals: true,
         userRecipes: true,
@@ -11869,7 +11988,7 @@ var userPlanRouter = createTRPCRouter({
 });
 
 // src/server/api/routers/userCatagories.ts
-import { and as and14, eq as eq27 } from "drizzle-orm";
+import { and as and15, eq as eq27 } from "drizzle-orm";
 import { z as z35 } from "zod";
 var userCatagoriesRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -11901,7 +12020,7 @@ var userCatagoriesRouter = createTRPCRouter({
   }),
   removeFromUser: protectedProcedure.input(z35.object({ userId: z35.string(), categoryId: z35.number() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.delete(userToUserCategory).where(
-      and14(
+      and15(
         eq27(userToUserCategory.userId, input.userId),
         eq27(userToUserCategory.categoryId, input.categoryId)
       )

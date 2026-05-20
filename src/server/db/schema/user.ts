@@ -389,12 +389,49 @@ export const userSettings = createTable(
   (table) => [index('user_settings_user_id_idx').on(table.userId)],
 )
 
-export const userSettingsRelations = relations(userSettings, ({ one }) => ({
-  user: one(user, {
-    fields: [userSettings.userId],
-    references: [user.id],
+export const userSettingsTags = createTable(
+  'user_settings_tags',
+  {
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+    createdAt: int('created_at', { mode: 'timestamp' })
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    updatedAt: int('updated_at', { mode: 'timestamp' }).$onUpdate(
+      () => new Date(),
+    ),
+    userSettingsId: int('user_settings_id')
+      .notNull()
+      .references(() => userSettings.id, {
+        onDelete: 'cascade',
+      }),
+    name: text('name'),
+    state: text('state'),
+  },
+  (table) => [
+    index('user_settings_tags_user_settings_id_idx').on(table.userSettingsId),
+  ],
+)
+
+export const userSettingsRelations = relations(
+  userSettings,
+  ({ one, many }) => ({
+    user: one(user, {
+      fields: [userSettings.userId],
+      references: [user.id],
+    }),
+    tags: many(userSettingsTags),
   }),
-}))
+)
+
+export const userSettingsTagsRelations = relations(
+  userSettingsTags,
+  ({ one }) => ({
+    userSettings: one(userSettings, {
+      fields: [userSettingsTags.userSettingsId],
+      references: [userSettings.id],
+    }),
+  }),
+)
 
 export const weighIn = createTable(
   'weigh_in',
