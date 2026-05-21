@@ -2,7 +2,13 @@
 
 import { useState } from 'react'
 
-import { cn } from '@/lib/utils'
+import {
+	cn,
+	formatUserWater,
+	mlToUserWater,
+	type UserWaterUnit,
+	userWaterToMl,
+} from '@/lib/utils'
 import type { GetAllDailyLogs } from '@/types'
 import NumberFlow from '@number-flow/react'
 import { Sheet } from '@silk-hq/components'
@@ -27,6 +33,8 @@ const WaterBottomSheet = ({
 	setSize,
 	today,
 	setToday,
+	userWaterUnit,
+	userWaterSuffix,
 }: {
 	dailyLogs: GetAllDailyLogs | null | undefined
 	deleteWaterLog: ({ id }: { id: number }) => void
@@ -35,6 +43,8 @@ const WaterBottomSheet = ({
 	setSize: React.Dispatch<React.SetStateAction<number>>
 	today: Date
 	setToday: React.Dispatch<React.SetStateAction<Date>>
+	userWaterUnit: UserWaterUnit
+	userWaterSuffix: string
 }) => {
 	const [isOpen, setIsOpen] = useState(false)
 
@@ -42,10 +52,16 @@ const WaterBottomSheet = ({
 		return dailyLog.date === today.toDateString()
 	})
 
-	const totalWater =
+	const totalWaterMl =
 		todaysDailyLog?.waterLogs.reduce((acc, curr) => {
 			return acc + Number(curr.amount)
 		}, 0) ?? 0
+	const totalWater = Number(
+		formatUserWater(
+			mlToUserWater(totalWaterMl, userWaterUnit),
+			userWaterUnit,
+		) || 0,
+	)
 
 	return (
 		<Sheet.Root license='non-commercial'>
@@ -110,10 +126,14 @@ const WaterBottomSheet = ({
 													const log = dailyLogs?.find(
 														(log) => log.date === props.date.toDateString(),
 													)
-													let totalWater =
+													const totalWaterMl =
 														log?.waterLogs.reduce((acc, curr) => {
 															return acc + Number(curr.amount)
 														}, 0) ?? 0
+													const totalWater = mlToUserWater(
+														totalWaterMl,
+														userWaterUnit,
+													)
 													if (props.date > new Date())
 														return <div>{props.date.getDate()}</div>
 													return (
@@ -122,9 +142,9 @@ const WaterBottomSheet = ({
 																{props.date.getDate()}
 															</div>
 															<div className='font-medium text-[0.7rem] text-muted-foreground'>
-																{totalWater === 0
+																{totalWaterMl === 0
 																	? '.'
-																	: (totalWater / 1000).toFixed(1)}
+																	: formatUserWater(totalWater, userWaterUnit)}
 															</div>
 														</div>
 													)
@@ -149,7 +169,9 @@ const WaterBottomSheet = ({
 											value={totalWater}
 											className='ml-2 text-lg text-primary'
 										/>
-										<span className='text-xs text-primary/50 ml-[1px]'>ml</span>
+										<span className='text-xs text-primary/50 ml-[1px]'>
+											{userWaterSuffix}
+										</span>
 									</div>
 								</div>
 								<div className='flex gap-2 justify-around items-center mx-4'>
@@ -160,18 +182,22 @@ const WaterBottomSheet = ({
 												setSize(Number(e.target.value))
 											}}
 											type='number'
+											step={userWaterUnit === 'mls' ? 1 : 0.01}
 											className='px-4 w-28'
 										/>
 										<span className='absolute right-2 top-1/2 text-xs -translate-y-1/2 text-primary/50 mt-[1px]'>
-											ml
+											{userWaterSuffix}
 										</span>
 									</div>
 									<Button
 										size='sm'
 										onClick={() => {
+											const waterMl = userWaterToMl(size, userWaterUnit)
+											if (waterMl === null) return
+
 											addWaterLog({
 												date: today.toDateString(),
-												amount: size,
+												amount: Math.round(waterMl),
 											})
 										}}
 									>
@@ -201,7 +227,11 @@ const WaterBottomSheet = ({
 														)}
 													</div>
 													<div className='col-span-2 font-medium text-muted-foreground'>
-														{waterLog.amount}ml
+														{formatUserWater(
+															mlToUserWater(waterLog.amount, userWaterUnit),
+															userWaterUnit,
+														)}
+														{userWaterSuffix}
 													</div>
 													<div className='justify-self-end'>
 														<Trash2

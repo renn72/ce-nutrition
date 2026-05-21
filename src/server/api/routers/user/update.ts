@@ -331,6 +331,39 @@ export const update = {
 					),
 				)
 		}),
+	updateUserWaterUnit: protectedProcedure
+		.input(
+			z.object({
+				id: z.number(),
+				state: z.enum(['mls', 'litres', 'gallons', 'quarts']),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const existingTag = await ctx.db.query.userSettingsTags.findFirst({
+				where: (tag, { and, eq }) =>
+					and(eq(tag.userSettingsId, input.id), eq(tag.name, 'user_water')),
+			})
+
+			if (!existingTag) {
+				return ctx.db.insert(userSettingsTags).values({
+					userSettingsId: input.id,
+					name: 'user_water',
+					state: input.state,
+				})
+			}
+
+			return ctx.db
+				.update(userSettingsTags)
+				.set({
+					state: input.state,
+				})
+				.where(
+					and(
+						eq(userSettingsTags.userSettingsId, input.id),
+						eq(userSettingsTags.name, 'user_water'),
+					),
+				)
+		}),
 	updateIsPosing: protectedProcedure
 		.input(z.object({ id: z.string(), isPosing: z.boolean() }))
 		.mutation(async ({ ctx, input }) => {

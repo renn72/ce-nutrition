@@ -6,8 +6,14 @@ import { useEffect, useState } from 'react'
 
 import {
 	cn,
+	formatUserWater,
 	getUserBloodGlucoseUnit,
+	getUserWaterSuffix,
+	getUserWaterUnit,
+	mlToUserWater,
+	userWaterToMl,
 	type UserBloodGlucoseUnit,
+	type UserWaterUnit,
 } from '@/lib/utils'
 import type { GetUserById } from '@/types'
 import { ChevronDownIcon, RefreshCw } from 'lucide-react'
@@ -74,13 +80,35 @@ const getBloodGlucoseLabel = (value: UserBloodGlucoseUnit) =>
 	bloodGlucoseOptions.find((option) => option.value === value)?.label ??
 	'mmol/L'
 
+const waterOptions = [
+	{ value: 'mls', label: 'mls' },
+	{ value: 'litres', label: 'Litres' },
+	{ value: 'gallons', label: 'Gallons' },
+	{ value: 'quarts', label: 'Quarts' },
+] satisfies Array<{ value: UserWaterUnit; label: string }>
+
+const getWaterLabel = (value: UserWaterUnit) =>
+	waterOptions.find((option) => option.value === value)?.label ?? 'mls'
+
 const DefaultWater = ({ currentUser }: { currentUser: GetUserById }) => {
-	const [water, setWater] = useState(
-		Number(currentUser?.settings?.defaultWater),
+	const waterUnit = getUserWaterUnit(currentUser.settings)
+	const waterSuffix = getUserWaterSuffix(waterUnit)
+	const defaultWater = mlToUserWater(
+		currentUser?.settings?.defaultWater,
+		waterUnit,
 	)
+	const defaultWaterInput = Number(
+		formatUserWater(defaultWater, waterUnit) || 0,
+	)
+	const [water, setWater] = useState(defaultWaterInput)
 	const [isOpen, setIsOpen] = useState(false)
 	const [isSaving, setIsSaving] = useState(false)
 	const ctx = api.useUtils()
+
+	useEffect(() => {
+		setWater(defaultWaterInput)
+	}, [defaultWaterInput])
+
 	const { mutate: updateWater } = api.user.updateWater.useMutation({
 		onSuccess: () => {
 			ctx.user.invalidate()
@@ -103,7 +131,7 @@ const DefaultWater = ({ currentUser }: { currentUser: GetUserById }) => {
 	return (
 		<DialogWrapper
 			title='Default Water'
-			value={`${currentUser?.settings?.defaultWater}ml`}
+			value={`${formatUserWater(defaultWaterInput, waterUnit)}${waterSuffix}`}
 			isOpen={isOpen}
 			setIsOpen={setIsOpen}
 		>
@@ -115,6 +143,7 @@ const DefaultWater = ({ currentUser }: { currentUser: GetUserById }) => {
 				<div className='text-sm font-medium text-muted-foreground'>
 					<Input
 						type='number'
+						step={waterUnit === 'mls' ? 1 : 0.01}
 						className='w-full'
 						value={water}
 						onChange={(e) => {
@@ -126,8 +155,11 @@ const DefaultWater = ({ currentUser }: { currentUser: GetUserById }) => {
 					disabled={isSaving}
 					className='relative'
 					onClick={() => {
+						const waterMl = userWaterToMl(water, waterUnit)
+						if (waterMl === null) return
+
 						updateWater({
-							water: water,
+							water: Math.round(waterMl),
 							id: Number(currentUser?.settings?.id),
 						})
 					}}
@@ -140,6 +172,65 @@ const DefaultWater = ({ currentUser }: { currentUser: GetUserById }) => {
 				</Button>
 			</div>
 		</DialogWrapper>
+	)
+}
+
+const UserWater = ({ currentUser }: { currentUser: GetUserById }) => {
+	const ctx = api.useUtils()
+	const [unit, setUnit] = useState<UserWaterUnit>(() =>
+		getUserWaterUnit(currentUser.settings),
+	)
+	const { mutate: updateUserWaterUnit, isPending } =
+		api.user.updateUserWaterUnit.useMutation({
+			onSuccess: () => {
+				toast.success('Updated')
+			},
+			onSettled: () => {
+				ctx.user.invalidate()
+				ctx.dailyLog.invalidate()
+			},
+			onError: () => {
+				setUnit(getUserWaterUnit(currentUser.settings))
+				toast.error('error')
+				ctx.user.invalidate()
+				ctx.dailyLog.invalidate()
+			},
+		})
+
+	return (
+		<div className='flex flex-row gap-3 justify-between items-center py-2 px-3 rounded-lg border'>
+			<div className='space-y-0.5'>
+				<Label>Water</Label>
+				<div className='text-sm text-muted-foreground'>
+					Choose the unit used for water logs.
+				</div>
+			</div>
+			<Select
+				disabled={isPending}
+				value={unit}
+				onValueChange={(value) => {
+					const nextUnit = value as UserWaterUnit
+					setUnit(nextUnit)
+					updateUserWaterUnit({
+						id: currentUser.settings.id,
+						state: nextUnit,
+					})
+				}}
+			>
+				<SelectTrigger className='w-[150px] font-semibold'>
+					<SelectValue>{getWaterLabel(unit)}</SelectValue>
+				</SelectTrigger>
+				<SelectContent align='end'>
+					<SelectGroup>
+						{waterOptions.map((option) => (
+							<SelectItem key={option.value} value={option.value}>
+								{option.label}
+							</SelectItem>
+						))}
+					</SelectGroup>
+				</SelectContent>
+			</Select>
+		</div>
 	)
 }
 
@@ -1708,6 +1799,7 @@ const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
 			>
 				<h2 className='text-base font-semibold'>Defaults</h2>
 				<DefaultWater currentUser={currentUser} />
+				<UserWater currentUser={currentUser} />
 				<UserWeight currentUser={currentUser} />
 				<UserBloodGlucose currentUser={currentUser} />
 			</div>

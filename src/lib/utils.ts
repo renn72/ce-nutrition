@@ -155,6 +155,83 @@ export function userBloodGlucoseToMmol(
 	return unit === 'mg/dl' ? numericValue / 18 : numericValue
 }
 
+export type UserWaterUnit = 'mls' | 'litres' | 'gallons' | 'quarts'
+
+const MILLILITRES_PER_LITRE = 1000
+const MILLILITRES_PER_GALLON = 3785.411784
+const MILLILITRES_PER_QUART = 946.352946
+
+export function getUserWaterUnit(
+	settings: UserSettingsWithTags,
+): UserWaterUnit {
+	const waterTag = settings?.tags?.find((tag) => tag.name === 'user_water')
+
+	if (waterTag?.state === 'litres') return 'litres'
+	if (waterTag?.state === 'gallons') return 'gallons'
+	if (waterTag?.state === 'quarts') return 'quarts'
+
+	return 'mls'
+}
+
+export function getUserWaterSuffix(unit: UserWaterUnit) {
+	if (unit === 'litres') return 'L'
+	if (unit === 'gallons') return 'gal'
+	if (unit === 'quarts') return 'qt'
+
+	return 'ml'
+}
+
+export function getUserWaterFixed(unit: UserWaterUnit) {
+	if (unit === 'mls') return 0
+	if (unit === 'litres') return 2
+
+	return 3
+}
+
+export function mlToUserWater(
+	value: string | number | null | undefined,
+	unit: UserWaterUnit,
+) {
+	if (value === undefined || value === null || value === '') return null
+
+	const numericValue = Number(value)
+	if (Number.isNaN(numericValue)) return null
+
+	if (unit === 'litres') return numericValue / MILLILITRES_PER_LITRE
+	if (unit === 'gallons') return numericValue / MILLILITRES_PER_GALLON
+	if (unit === 'quarts') return numericValue / MILLILITRES_PER_QUART
+
+	return numericValue
+}
+
+export function userWaterToMl(
+	value: string | number | null | undefined,
+	unit: UserWaterUnit,
+) {
+	if (value === undefined || value === null || value === '') return null
+
+	const numericValue = Number(value)
+	if (Number.isNaN(numericValue)) return null
+
+	if (unit === 'litres') return numericValue * MILLILITRES_PER_LITRE
+	if (unit === 'gallons') return numericValue * MILLILITRES_PER_GALLON
+	if (unit === 'quarts') return numericValue * MILLILITRES_PER_QUART
+
+	return numericValue
+}
+
+export function formatUserWater(
+	value: string | number | null | undefined,
+	unit: UserWaterUnit,
+) {
+	if (value === undefined || value === null || value === '') return ''
+
+	const numericValue = Number(value)
+	if (Number.isNaN(numericValue)) return ''
+
+	return numericValue.toFixed(getUserWaterFixed(unit))
+}
+
 export function calculateMealMacros(ingredients: any[] | undefined) {
 	if (!ingredients)
 		return { cals: 0, protein: 0, carbs: 0, fat: 0, calsWFibre: 0 }

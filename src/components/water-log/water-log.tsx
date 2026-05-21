@@ -2,11 +2,18 @@
 
 import { api } from '@/trpc/react'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import type { GetAllDailyLogs } from '@/types'
+import {
+	formatUserWater,
+	getUserWaterFixed,
+	getUserWaterSuffix,
+	getUserWaterUnit,
+	mlToUserWater,
+	userWaterToMl,
+} from '@/lib/utils'
+import type { GetAllDailyLogs, GetUserWRoles } from '@/types'
 import NumberFlow from '@number-flow/react'
-import { GlassWater } from 'lucide-react'
 import { PintGlassIcon } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
@@ -28,14 +35,27 @@ const WaterLog = ({
 	dailyLogs,
 	defaultAmount,
 	settingsId,
+	currentUser,
 }: {
 	dailyLogs: GetAllDailyLogs | null | undefined
 	defaultAmount: number
 	userId: string
 	settingsId: number
+	currentUser: NonNullable<GetUserWRoles>
 }) => {
 	const ctx = api.useUtils()
-	const [size, setSize] = useState(() => defaultAmount)
+	const userWaterUnit = getUserWaterUnit(currentUser.settings)
+	const userWaterSuffix = getUserWaterSuffix(userWaterUnit)
+	const waterFixed = getUserWaterFixed(userWaterUnit)
+	const defaultDisplayAmount = Number(
+		formatUserWater(
+			mlToUserWater(defaultAmount, userWaterUnit),
+			userWaterUnit,
+		) || defaultAmount,
+	)
+	const waterScale = userWaterUnit === 'mls' ? 5 : 0.01
+	const waterBigScale = userWaterUnit === 'mls' ? 50 : 0.1
+	const [size, setSize] = useState(() => defaultDisplayAmount)
 	const [isOpen, setIsOpen] = useState(false)
 
 	const [timeoutCodeAdd, setTimeoutCodeAdd] = useState<NodeJS.Timeout | null>(
@@ -45,6 +65,10 @@ const WaterLog = ({
 		useState<NodeJS.Timeout | null>(null)
 
 	const [day, setDay] = useState<Date>(new Date())
+
+	useEffect(() => {
+		setSize(defaultDisplayAmount)
+	}, [defaultDisplayAmount])
 
 	const { mutate: addWaterLog } = api.dailyLog.addWaterLog.useMutation({
 		onMutate: async (newWaterLog) => {
@@ -137,15 +161,24 @@ const WaterLog = ({
 		(dailyLog) => dailyLog.date === today.toDateString(),
 	)
 
-	const totalWater =
+	const totalWaterMl =
 		todaysDailyLog?.waterLogs.reduce((acc, curr) => {
 			return acc + Number(curr.amount)
 		}, 0) ?? 0
+	const totalWater = Number(
+		formatUserWater(
+			mlToUserWater(totalWaterMl, userWaterUnit),
+			userWaterUnit,
+		) || 0,
+	)
 
 	return (
 		<div className='flex relative flex-col gap-0 items-center w-full'>
 			<div className='w-full text-lg font-bold text-center'>
 				<NumberFlow value={totalWater ?? 0} />
+				<span className='ml-1 text-xs text-muted-foreground'>
+					{userWaterSuffix}
+				</span>
 			</div>
 
 			<div className='grid grid-cols-1 gap-2 place-items-center h-12'>
@@ -170,19 +203,23 @@ const WaterLog = ({
 							<NumberInputForm
 								value={size.toString()}
 								setValue={(value) => setSize(Number(value))}
-								scale={5}
-								bigScale={50}
+								scale={waterScale}
+								bigScale={waterBigScale}
+								fixed={waterFixed}
 								placeholder='0'
-								postfix='ml'
+								postfix={userWaterSuffix}
 								isBig={true}
 							/>
 							<div className='flex gap-6 items-center'>
 								<Button
 									className=''
 									onClick={() => {
+										const waterMl = userWaterToMl(size, userWaterUnit)
+										if (waterMl === null) return
+
 										addWaterLog({
 											date: today.toDateString(),
-											amount: size,
+											amount: Math.round(waterMl),
 										})
 									}}
 								>
@@ -191,8 +228,11 @@ const WaterLog = ({
 								<Button
 									variant='outline'
 									onClick={() => {
+										const waterMl = userWaterToMl(size, userWaterUnit)
+										if (waterMl === null) return
+
 										updateWater({
-											water: Number(size),
+											water: Math.round(waterMl),
 											id: settingsId,
 										})
 									}}
@@ -213,6 +253,8 @@ const WaterLog = ({
 				addWaterLog={addWaterLog}
 				size={size}
 				setSize={setSize}
+				userWaterUnit={userWaterUnit}
+				userWaterSuffix={userWaterSuffix}
 			/>
 		</div>
 	)

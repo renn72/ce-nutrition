@@ -8,9 +8,12 @@ import {
 	getRecipeDetailsFromDailyLog,
 	getUserBloodGlucoseSuffix,
 	getUserBloodGlucoseUnit,
+	getUserWaterSuffix,
+	getUserWaterUnit,
 	getUserWeightSuffix,
 	getUserWeightUnit,
 	kgToUserWeight,
+	mlToUserWater,
 	mmolToUserBloodGlucose,
 } from '@/lib/utils'
 import type { GetAllDailyLogs, GetUserWRoles as GetUserById } from '@/types'
@@ -76,6 +79,7 @@ const selectChoices = [
 
 const Chart = ({
 	data,
+	waterChartZoomConst,
 }: {
 	data:
 		| {
@@ -104,6 +108,7 @@ const Chart = ({
 				isPeriod: boolean | null | undefined
 		  }[]
 		| undefined
+	waterChartZoomConst: number
 }) => {
 	const leftValue = useAtomValue(chartSelectValueLeftAtom)
 	const rightValue = useAtomValue(chartSelectValueRightAtom)
@@ -111,8 +116,8 @@ const Chart = ({
 	const leftChartZoom = useAtomValue(leftChartZoomAtom)
 	const rightChartZoom = useAtomValue(rightChartZoomAtom)
 
-	let leftChartZoomConst = leftValue === 'water' ? 100 : 1
-	let rightChartZoomConst = rightValue === 'water' ? 100 : 1
+	let leftChartZoomConst = leftValue === 'water' ? waterChartZoomConst : 1
+	let rightChartZoomConst = rightValue === 'water' ? waterChartZoomConst : 1
 
 	leftChartZoomConst = leftValue === 'carbs' ? 10 : leftChartZoomConst
 	leftChartZoomConst = leftValue === 'protein' ? 5 : leftChartZoomConst
@@ -233,7 +238,7 @@ const Chart = ({
 					yAxisId='left'
 					orientation='left'
 					width={30}
-					allowDecimals={false}
+					allowDecimals={leftValue === 'water'}
 					padding={{ top: 5, bottom: 0 }}
 					interval='preserveStartEnd'
 					dataKey={leftValue}
@@ -256,7 +261,7 @@ const Chart = ({
 						yAxisId='right'
 						orientation='right'
 						width={30}
-						allowDecimals={false}
+						allowDecimals={rightValue === 'water'}
 						padding={{ top: 5, bottom: 0 }}
 						interval='preserveStartEnd'
 						dataKey={rightValue}
@@ -330,12 +335,17 @@ const UserCharts = ({
 	const userWeightSuffix = getUserWeightSuffix(userWeightUnit)
 	const userBloodGlucoseUnit = getUserBloodGlucoseUnit(currentUser?.settings)
 	const userBloodGlucoseSuffix = getUserBloodGlucoseSuffix(userBloodGlucoseUnit)
+	const userWaterUnit = getUserWaterUnit(currentUser?.settings)
+	const userWaterSuffix = getUserWaterSuffix(userWaterUnit)
+	const waterChartZoomConst = userWaterUnit === 'mls' ? 100 : 0.25
 	const chartSelectChoices = selectChoices.map((choice) =>
 		choice.value === 'morningWeight'
 			? { ...choice, label: `Body Weight (${userWeightSuffix})` }
 			: choice.value === 'bloodGlucose'
 				? { ...choice, label: `Blood Glucose (${userBloodGlucoseSuffix})` }
-				: choice,
+				: choice.value === 'water'
+					? { ...choice, label: `Water (${userWaterSuffix})` }
+					: choice,
 	)
 
 	const [leftChartZoom, setLeftChartZoom] = useAtom(leftChartZoomAtom)
@@ -363,7 +373,10 @@ const UserCharts = ({
 				date: log.date,
 				toilet: log.poopLogs.length,
 				isPeriod: log.isPeriod,
-				water: log.waterLogs.reduce((acc, log) => acc + Number(log.amount), 0),
+				water: mlToUserWater(
+					log.waterLogs.reduce((acc, log) => acc + Number(log.amount), 0),
+					userWaterUnit,
+				),
 				calories: log.dailyMeals.reduce((acc, meal) => {
 					const { cals } = getRecipeDetailsFromDailyLog(
 						log,
@@ -515,9 +528,9 @@ const UserCharts = ({
 				</Select>
 			</div>
 			{selectValueLeft === 'bodyFat' || selectValueLeft === 'leanMass' ? (
-				<Chart data={skinfolds} />
+				<Chart data={skinfolds} waterChartZoomConst={waterChartZoomConst} />
 			) : (
-				<Chart data={data} />
+				<Chart data={data} waterChartZoomConst={waterChartZoomConst} />
 			)}
 			<div className='flex gap-2 justify-between w-full'>
 				<div className='flex gap-2 items-center'>

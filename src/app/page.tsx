@@ -141,6 +141,7 @@ const Mobile = ({
 							<WaterLog
 								userId={userId}
 								dailyLogs={dailyLogs}
+								currentUser={currentUser}
 								defaultAmount={Number(
 									currentUser?.settings?.defaultWater ?? 600,
 								)}
