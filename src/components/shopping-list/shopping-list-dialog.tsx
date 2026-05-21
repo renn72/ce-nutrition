@@ -2,6 +2,7 @@
 
 import { api } from '@/trpc/react'
 
+import type { UserShoppingWeightUnit } from '@/lib/shopping-list'
 import type { GetShoppingList } from '@/types'
 import { ShoppingCart } from 'lucide-react'
 
@@ -22,9 +23,11 @@ type ActiveShoppingList = NonNullable<GetShoppingList>
 const ShoppingListDialog = ({
   userId,
   userName,
+  shoppingWeightUnit = 'grams',
 }: {
   userId: string
   userName?: string | null
+  shoppingWeightUnit?: UserShoppingWeightUnit
 }) => {
   const { data: shoppingList } = api.shoppingList.getActive.useQuery({ userId })
 
@@ -68,6 +71,7 @@ const ShoppingListDialog = ({
               showPageLink={true}
               isFullHeight={true}
               useInternalScroll={true}
+              shoppingWeightUnit={shoppingWeightUnit}
             />
           </div>
         </div>

@@ -3,6 +3,7 @@
 import { api } from '@/trpc/react'
 
 import { impersonatedUserAtom } from '@/atoms'
+import { getUserShoppingWeightUnit } from '@/lib/shopping-list'
 import { useAtomValue } from 'jotai'
 
 import { ShoppingListView } from '@/components/shopping-list/shopping-list-view'
@@ -23,6 +24,7 @@ export default function ShoppingListPage() {
         allowItemEditing={true}
         showHistory={true}
         partner={user.partner}
+        shoppingWeightUnit={getUserShoppingWeightUnit(user.settings)}
       />
     </div>
   )

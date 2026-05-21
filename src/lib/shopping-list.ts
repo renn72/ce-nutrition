@@ -15,6 +15,30 @@ export type ShoppingListRecipeItemInput = z.infer<
 >
 
 const roundAmount = (amount: number) => Math.round(amount * 100) / 100
+const GRAMS_PER_POUND = 453.59237
+const OUNCES_PER_POUND = 16
+
+export type UserShoppingWeightUnit = 'grams' | 'pounds'
+
+type UserSettingsWithTags =
+  | {
+      tags?: Array<{
+        name: string | null
+        state: string | null
+      }>
+    }
+  | null
+  | undefined
+
+export function getUserShoppingWeightUnit(
+  settings: UserSettingsWithTags,
+): UserShoppingWeightUnit {
+  const shoppingWeightTag = settings?.tags?.find(
+    (tag) => tag.name === 'user_shopping_weight',
+  )
+
+  return shoppingWeightTag?.state === 'pounds' ? 'pounds' : 'grams'
+}
 
 export const toShoppingAmountNumber = (
   amount: number | string | null | undefined,
@@ -27,9 +51,69 @@ export const toShoppingAmountNumber = (
   return parsedAmount
 }
 
-export const formatShoppingUnit = (unit: string) => {
+export const isShoppingWeightUnit = (unit: string | null | undefined) =>
+  unit === 'grams' || unit === 'g'
+
+export const gramsToShoppingWeight = (
+  amount: number | string | null | undefined,
+  unitPreference: UserShoppingWeightUnit,
+) => {
+  const numericAmount = toShoppingAmountNumber(amount)
+
+  return unitPreference === 'pounds'
+    ? numericAmount / GRAMS_PER_POUND
+    : numericAmount
+}
+
+export const shoppingWeightToGrams = (
+  amount: number | string | null | undefined,
+  unitPreference: UserShoppingWeightUnit,
+) => {
+  const numericAmount = toShoppingAmountNumber(amount)
+
+  return unitPreference === 'pounds'
+    ? numericAmount * GRAMS_PER_POUND
+    : numericAmount
+}
+
+export const getShoppingDisplayAmount = (
+  amount: number | string | null | undefined,
+  unit: string | null | undefined,
+  unitPreference: UserShoppingWeightUnit,
+) => {
+  if (!isShoppingWeightUnit(unit)) return toShoppingAmountNumber(amount)
+
+  return gramsToShoppingWeight(amount, unitPreference)
+}
+
+export const getShoppingStorageAmount = (
+  amount: number | string | null | undefined,
+  unit: string | null | undefined,
+  unitPreference: UserShoppingWeightUnit,
+) => {
+  if (!isShoppingWeightUnit(unit)) return toShoppingAmountNumber(amount)
+
+  return shoppingWeightToGrams(amount, unitPreference)
+}
+
+export const getShoppingAmountStep = (
+  unit: string | null | undefined,
+  unitPreference: UserShoppingWeightUnit = 'grams',
+) => {
+  if (unit === 'grams')
+    return unitPreference === 'pounds' ? 1 / OUNCES_PER_POUND : 10
+  if (unit === 'g')
+    return unitPreference === 'pounds' ? 1 / OUNCES_PER_POUND : 10
+  return 1
+}
+
+export const formatShoppingUnit = (
+  unit: string,
+  unitPreference: UserShoppingWeightUnit = 'grams',
+) => {
   if (unit === 'each') return 'ea'
-  if (unit === 'grams') return 'g'
+  if (unit === 'grams' || unit === 'g')
+    return unitPreference === 'pounds' ? 'lb' : 'g'
   return unit
 }
 
@@ -46,14 +130,34 @@ export const formatShoppingAmount = (
     .replace(/(\.\d*[1-9])0+$/, '$1')
 }
 
+const formatShoppingImperialWeight = (
+  amount: number | string | null | undefined,
+) => {
+  const totalOunceTenths = Math.round(
+    gramsToShoppingWeight(amount, 'pounds') * OUNCES_PER_POUND * 10,
+  )
+  const pounds = Math.floor(totalOunceTenths / (OUNCES_PER_POUND * 10))
+  const ounceTenths = totalOunceTenths % (OUNCES_PER_POUND * 10)
+  const ounces = (ounceTenths / 10).toFixed(1)
+
+  if (pounds > 0 && ounceTenths > 0) return `${pounds} lb ${ounces} oz`
+  if (pounds > 0) return `${pounds} lb`
+
+  return `${ounces} oz`
+}
+
 export const formatShoppingQuantity = (
   amount: number | string | null | undefined,
   unit: string | null | undefined,
-) => `${formatShoppingAmount(amount)} ${formatShoppingUnit(unit ?? '')}`.trim()
+  unitPreference: UserShoppingWeightUnit = 'grams',
+) => {
+  if (isShoppingWeightUnit(unit) && unitPreference === 'pounds') {
+    return formatShoppingImperialWeight(amount)
+  }
 
-export const getShoppingAmountStep = (unit: string | null | undefined) => {
-  if (unit === 'grams') return 10
-  return 1
+  return `${formatShoppingAmount(
+    getShoppingDisplayAmount(amount, unit, unitPreference),
+  )} ${formatShoppingUnit(unit ?? '', unitPreference)}`.trim()
 }
 
 export const buildShoppingListItemsFromRecipe = ({

@@ -1,5 +1,6 @@
 import {
   formatShoppingAmount,
+  getUserShoppingWeightUnit,
   shoppingListRecipeItemInputSchema,
   toShoppingAmountNumber,
 } from '@/lib/shopping-list'
@@ -11,9 +12,9 @@ import {
 import { user } from '@/server/db/schema/user'
 import { TRPCError } from '@trpc/server'
 import {
-  createTRPCContext,
   createTRPCRouter,
   protectedProcedure,
+  type createTRPCContext,
 } from '~/server/api/trpc'
 import { and, asc, desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
@@ -153,6 +154,11 @@ const assertUserAccess = async (ctx: TRPCContext, userId: string) => {
       partnerId: true,
     },
     with: {
+      settings: {
+        with: {
+          tags: true,
+        },
+      },
       partner: {
         columns: {
           id: true,
@@ -744,6 +750,7 @@ export const shoppingListRouter = createTRPCRouter({
             source: item.source,
             note: item.note,
           })),
+          shoppingWeightUnit: getUserShoppingWeightUnit(targetUser.settings),
         },
       })
 

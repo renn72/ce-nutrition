@@ -3,6 +3,7 @@
 import { api } from '@/trpc/react'
 
 import { impersonatedUserAtom } from '@/atoms'
+import { getUserShoppingWeightUnit } from '@/lib/shopping-list'
 import { useAtom } from 'jotai'
 
 import { ShoppingListDialog } from '@/components/shopping-list/shopping-list-dialog'
@@ -16,6 +17,7 @@ export default function Home() {
 
 	if (isLoading || !user) return null
 	const plans = user?.userPlans.filter((plan) => plan.isActive)
+	const shoppingWeightUnit = getUserShoppingWeightUnit(user.settings)
 
 	if (!plans) return null
 
@@ -28,10 +30,15 @@ export default function Home() {
 						userPlan={plan}
 						accentIndex={index}
 						isDefaultOpen={false}
+						shoppingWeightUnit={shoppingWeightUnit}
 					/>
 				))}
 			</div>
-			<ShoppingListDialog userId={user.id} userName={user.name} />
+			<ShoppingListDialog
+				userId={user.id}
+				userName={user.name}
+				shoppingWeightUnit={shoppingWeightUnit}
+			/>
 		</div>
 	)
 }

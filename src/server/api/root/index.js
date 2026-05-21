@@ -5920,14 +5920,32 @@ var shoppingListRecipeItemInputSchema = z19.object({
   source: z19.string().nullable().optional(),
   note: z19.string().nullable().optional()
 });
+var GRAMS_PER_POUND = 453.59237;
+var OUNCES_PER_POUND = 16;
+function getUserShoppingWeightUnit(settings2) {
+  const shoppingWeightTag = settings2?.tags?.find(
+    (tag2) => tag2.name === "user_shopping_weight"
+  );
+  return shoppingWeightTag?.state === "pounds" ? "pounds" : "grams";
+}
 var toShoppingAmountNumber = (amount) => {
   const parsedAmount = typeof amount === "number" ? amount : Number.parseFloat(amount ?? "0");
   if (!Number.isFinite(parsedAmount)) return 0;
   return parsedAmount;
 };
-var formatShoppingUnit = (unit) => {
+var isShoppingWeightUnit = (unit) => unit === "grams" || unit === "g";
+var gramsToShoppingWeight = (amount, unitPreference) => {
+  const numericAmount = toShoppingAmountNumber(amount);
+  return unitPreference === "pounds" ? numericAmount / GRAMS_PER_POUND : numericAmount;
+};
+var getShoppingDisplayAmount = (amount, unit, unitPreference) => {
+  if (!isShoppingWeightUnit(unit)) return toShoppingAmountNumber(amount);
+  return gramsToShoppingWeight(amount, unitPreference);
+};
+var formatShoppingUnit = (unit, unitPreference = "grams") => {
   if (unit === "each") return "ea";
-  if (unit === "grams") return "g";
+  if (unit === "grams" || unit === "g")
+    return unitPreference === "pounds" ? "lb" : "g";
   return unit;
 };
 var formatShoppingAmount = (amount) => {
@@ -5935,7 +5953,25 @@ var formatShoppingAmount = (amount) => {
   if (Number.isInteger(numericAmount)) return numericAmount.toString();
   return numericAmount.toFixed(numericAmount >= 10 ? 1 : 2).replace(/\.0+$/, "").replace(/(\.\d*[1-9])0+$/, "$1");
 };
-var formatShoppingQuantity = (amount, unit) => `${formatShoppingAmount(amount)} ${formatShoppingUnit(unit ?? "")}`.trim();
+var formatShoppingImperialWeight = (amount) => {
+  const totalOunceTenths = Math.round(
+    gramsToShoppingWeight(amount, "pounds") * OUNCES_PER_POUND * 10
+  );
+  const pounds = Math.floor(totalOunceTenths / (OUNCES_PER_POUND * 10));
+  const ounceTenths = totalOunceTenths % (OUNCES_PER_POUND * 10);
+  const ounces = (ounceTenths / 10).toFixed(1);
+  if (pounds > 0 && ounceTenths > 0) return `${pounds} lb ${ounces} oz`;
+  if (pounds > 0) return `${pounds} lb`;
+  return `${ounces} oz`;
+};
+var formatShoppingQuantity = (amount, unit, unitPreference = "grams") => {
+  if (isShoppingWeightUnit(unit) && unitPreference === "pounds") {
+    return formatShoppingImperialWeight(amount);
+  }
+  return `${formatShoppingAmount(
+    getShoppingDisplayAmount(amount, unit, unitPreference)
+  )} ${formatShoppingUnit(unit ?? "", unitPreference)}`.trim();
+};
 
 // src/server/api/utils/send-shopping-list-email.ts
 var escapeHtml = (value) => value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
@@ -5944,7 +5980,7 @@ var renderItemText = (shoppingList2) => shoppingList2.items.map((item) => {
   const source = formatTextList(item.source);
   const note = formatTextList(item.note);
   const meta = [source, note].filter(Boolean).join(" | ");
-  return `${item.isChecked ? "[x]" : "[ ]"} ${formatShoppingQuantity(item.amount, item.unit)} ${item.name}${meta ? ` - ${meta}` : ""}`;
+  return `${item.isChecked ? "[x]" : "[ ]"} ${formatShoppingQuantity(item.amount, item.unit, shoppingList2.shoppingWeightUnit)} ${item.name}${meta ? ` - ${meta}` : ""}`;
 }).join("\n");
 var renderItemRows = (shoppingList2, checked) => shoppingList2.items.filter((item) => item.isChecked === checked).map((item) => {
   const source = formatTextList(item.source);
@@ -5953,7 +5989,7 @@ var renderItemRows = (shoppingList2, checked) => shoppingList2.items.filter((ite
 				<tr>
 					<td style="padding:14px 16px;border-bottom:1px solid #e5e7eb;vertical-align:top;">
 						<div style="font-size:16px;font-weight:600;color:#111827;">
-							${escapeHtml(formatShoppingQuantity(item.amount, item.unit))} ${escapeHtml(item.name)}
+							${escapeHtml(formatShoppingQuantity(item.amount, item.unit, shoppingList2.shoppingWeightUnit))} ${escapeHtml(item.name)}
 						</div>
 						${source ? `<div style="margin-top:4px;color:#6b7280;font-size:13px;">From ${escapeHtml(source)}</div>` : ""}
 						${note ? `<div style="margin-top:4px;color:#6b7280;font-size:12px;">${escapeHtml(note)}</div>` : ""}
@@ -6146,6 +6182,11 @@ var assertUserAccess = async (ctx, userId) => {
       partnerId: true
     },
     with: {
+      settings: {
+        with: {
+          tags: true
+        }
+      },
       partner: {
         columns: {
           id: true,
@@ -6591,7 +6632,8 @@ var shoppingListRouter = createTRPCRouter({
           isChecked: item.isChecked,
           source: item.source,
           note: item.note
-        }))
+        })),
+        shoppingWeightUnit: getUserShoppingWeightUnit(targetUser.settings)
       }
     });
     await ctx.db.update(shoppingList).set({
@@ -11515,6 +11557,34 @@ var update = {
       and13(
         eq25(userSettingsTags.userSettingsId, input.id),
         eq25(userSettingsTags.name, "user_water")
+      )
+    );
+  }),
+  updateUserShoppingWeightUnit: protectedProcedure.input(
+    z33.object({
+      id: z33.number(),
+      state: z33.enum(["grams", "pounds"])
+    })
+  ).mutation(async ({ ctx, input }) => {
+    const existingTag = await ctx.db.query.userSettingsTags.findFirst({
+      where: (tag2, { and: and16, eq: eq30 }) => and16(
+        eq30(tag2.userSettingsId, input.id),
+        eq30(tag2.name, "user_shopping_weight")
+      )
+    });
+    if (!existingTag) {
+      return ctx.db.insert(userSettingsTags).values({
+        userSettingsId: input.id,
+        name: "user_shopping_weight",
+        state: input.state
+      });
+    }
+    return ctx.db.update(userSettingsTags).set({
+      state: input.state
+    }).where(
+      and13(
+        eq25(userSettingsTags.userSettingsId, input.id),
+        eq25(userSettingsTags.name, "user_shopping_weight")
       )
     );
   }),

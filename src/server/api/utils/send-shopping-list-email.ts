@@ -1,5 +1,8 @@
 import { env } from '@/env'
-import { formatShoppingQuantity } from '@/lib/shopping-list'
+import {
+  formatShoppingQuantity,
+  type UserShoppingWeightUnit,
+} from '@/lib/shopping-list'
 
 interface ShoppingListEmailItem {
   name: string
@@ -14,6 +17,7 @@ interface ShoppingListEmailPayload {
   name: string
   updatedAt: Date
   items: ShoppingListEmailItem[]
+  shoppingWeightUnit: UserShoppingWeightUnit
 }
 
 const escapeHtml = (value: string) =>
@@ -38,7 +42,7 @@ const renderItemText = (shoppingList: ShoppingListEmailPayload) =>
       const note = formatTextList(item.note)
       const meta = [source, note].filter(Boolean).join(' | ')
 
-      return `${item.isChecked ? '[x]' : '[ ]'} ${formatShoppingQuantity(item.amount, item.unit)} ${item.name}${meta ? ` - ${meta}` : ''}`
+      return `${item.isChecked ? '[x]' : '[ ]'} ${formatShoppingQuantity(item.amount, item.unit, shoppingList.shoppingWeightUnit)} ${item.name}${meta ? ` - ${meta}` : ''}`
     })
     .join('\n')
 
@@ -56,7 +60,7 @@ const renderItemRows = (
 				<tr>
 					<td style="padding:14px 16px;border-bottom:1px solid #e5e7eb;vertical-align:top;">
 						<div style="font-size:16px;font-weight:600;color:#111827;">
-							${escapeHtml(formatShoppingQuantity(item.amount, item.unit))} ${escapeHtml(item.name)}
+							${escapeHtml(formatShoppingQuantity(item.amount, item.unit, shoppingList.shoppingWeightUnit))} ${escapeHtml(item.name)}
 						</div>
 						${
               source

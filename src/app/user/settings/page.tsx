@@ -5,6 +5,10 @@ import { api } from '@/trpc/react'
 import { useEffect, useState } from 'react'
 
 import {
+	getUserShoppingWeightUnit,
+	type UserShoppingWeightUnit,
+} from '@/lib/shopping-list'
+import {
 	cn,
 	formatUserWater,
 	getUserBloodGlucoseUnit,
@@ -89,6 +93,15 @@ const waterOptions = [
 
 const getWaterLabel = (value: UserWaterUnit) =>
 	waterOptions.find((option) => option.value === value)?.label ?? 'mls'
+
+const shoppingWeightOptions = [
+	{ value: 'grams', label: 'Grams' },
+	{ value: 'pounds', label: 'Pounds / ounces' },
+] satisfies Array<{ value: UserShoppingWeightUnit; label: string }>
+
+const getShoppingWeightLabel = (value: UserShoppingWeightUnit) =>
+	shoppingWeightOptions.find((option) => option.value === value)?.label ??
+	'Grams'
 
 const DefaultWater = ({ currentUser }: { currentUser: GetUserById }) => {
 	const waterUnit = getUserWaterUnit(currentUser.settings)
@@ -223,6 +236,65 @@ const UserWater = ({ currentUser }: { currentUser: GetUserById }) => {
 				<SelectContent align='end'>
 					<SelectGroup>
 						{waterOptions.map((option) => (
+							<SelectItem key={option.value} value={option.value}>
+								{option.label}
+							</SelectItem>
+						))}
+					</SelectGroup>
+				</SelectContent>
+			</Select>
+		</div>
+	)
+}
+
+const UserShoppingWeight = ({ currentUser }: { currentUser: GetUserById }) => {
+	const ctx = api.useUtils()
+	const [unit, setUnit] = useState<UserShoppingWeightUnit>(() =>
+		getUserShoppingWeightUnit(currentUser.settings),
+	)
+	const { mutate: updateUserShoppingWeightUnit, isPending } =
+		api.user.updateUserShoppingWeightUnit.useMutation({
+			onSuccess: () => {
+				toast.success('Updated')
+			},
+			onSettled: () => {
+				ctx.user.invalidate()
+				ctx.shoppingList.invalidate()
+			},
+			onError: () => {
+				setUnit(getUserShoppingWeightUnit(currentUser.settings))
+				toast.error('error')
+				ctx.user.invalidate()
+				ctx.shoppingList.invalidate()
+			},
+		})
+
+	return (
+		<div className='flex flex-row gap-3 justify-between items-center py-2 px-3 rounded-lg border'>
+			<div className='space-y-0.5'>
+				<Label>Menu Weight</Label>
+				<div className='text-sm text-muted-foreground'>
+					Choose the unit used for gram-based menu and shopping list items.
+				</div>
+			</div>
+			<Select
+				disabled={isPending}
+				value={unit}
+				onValueChange={(value) => {
+					const nextUnit = value as UserShoppingWeightUnit
+					setUnit(nextUnit)
+					updateUserShoppingWeightUnit({
+						id: currentUser.settings.id,
+						state: nextUnit,
+					})
+				}}
+			>
+				<SelectTrigger className='w-[150px] font-semibold'>
+					<SelectValue>{getShoppingWeightLabel(unit)}</SelectValue>
+				</SelectTrigger>
+				<SelectContent align='end'>
+					<SelectGroup>
+						{shoppingWeightOptions.map((option) => (
 							<SelectItem key={option.value} value={option.value}>
 								{option.label}
 							</SelectItem>
@@ -1800,6 +1872,7 @@ const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
 				<h2 className='text-base font-semibold'>Defaults</h2>
 				<DefaultWater currentUser={currentUser} />
 				<UserWater currentUser={currentUser} />
+				<UserShoppingWeight currentUser={currentUser} />
 				<UserWeight currentUser={currentUser} />
 				<UserBloodGlucose currentUser={currentUser} />
 			</div>

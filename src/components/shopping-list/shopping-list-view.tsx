@@ -7,7 +7,10 @@ import { useState } from 'react'
 import {
   formatShoppingQuantity,
   getShoppingAmountStep,
+  getShoppingDisplayAmount,
+  getShoppingStorageAmount,
   toShoppingAmountNumber,
+  type UserShoppingWeightUnit,
 } from '@/lib/shopping-list'
 import { cn, formatDate } from '@/lib/utils'
 import type { GetShoppingList, GetShoppingLists } from '@/types'
@@ -87,12 +90,14 @@ const ShoppingListHistoryCard = ({
   onDelete,
   isDuplicating,
   isDeleting,
+  shoppingWeightUnit,
 }: {
   list: GetShoppingLists[number]
   onDuplicate: (listId: number) => void
   onDelete: (listId: number) => void
   isDuplicating: boolean
   isDeleting: boolean
+  shoppingWeightUnit: UserShoppingWeightUnit
 }) => {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -192,7 +197,11 @@ const ShoppingListHistoryCard = ({
                         {item.name}
                       </div>
                       <div className='shrink-0 rounded-full border border-border/60 bg-muted/50 px-2.5 py-1 text-[11px] font-semibold'>
-                        {formatShoppingQuantity(item.amount, item.unit)}
+                        {formatShoppingQuantity(
+                          item.amount,
+                          item.unit,
+                          shoppingWeightUnit,
+                        )}
                       </div>
                     </div>
                     {item.source ? (
@@ -221,12 +230,14 @@ const ShoppingListHistory = ({
   onDelete,
   isDuplicating,
   deletingListId,
+  shoppingWeightUnit,
 }: {
   lists: GetShoppingLists
   onDuplicate: (listId: number) => void
   onDelete: (listId: number) => void
   isDuplicating: boolean
   deletingListId: number | null
+  shoppingWeightUnit: UserShoppingWeightUnit
 }) => {
   if (lists.length === 0) return null
 
@@ -244,6 +255,7 @@ const ShoppingListHistory = ({
             onDelete={onDelete}
             isDuplicating={isDuplicating}
             isDeleting={deletingListId === list.id}
+            shoppingWeightUnit={shoppingWeightUnit}
           />
         ))}
       </div>
@@ -261,6 +273,7 @@ const ShoppingListView = ({
   allowItemEditing = false,
   showHistory = false,
   partner = null,
+  shoppingWeightUnit = 'grams',
 }: {
   userId: string
   userName?: string | null
@@ -271,6 +284,7 @@ const ShoppingListView = ({
   allowItemEditing?: boolean
   showHistory?: boolean
   partner?: ShoppingListPartner
+  shoppingWeightUnit?: UserShoppingWeightUnit
 }) => {
   const utils = api.useUtils()
   const [editingItemId, setEditingItemId] = useState<number | null>(null)
@@ -455,8 +469,12 @@ const ShoppingListView = ({
     item: ShoppingListItemRecord,
     direction: 'increase' | 'decrease',
   ) => {
-    const step = getShoppingAmountStep(item.unit)
-    const currentAmount = toShoppingAmountNumber(item.amount)
+    const step = getShoppingAmountStep(item.unit, shoppingWeightUnit)
+    const currentAmount = getShoppingDisplayAmount(
+      item.amount,
+      item.unit,
+      shoppingWeightUnit,
+    )
 
     if (direction === 'decrease' && currentAmount <= step) {
       return
@@ -472,7 +490,11 @@ const ShoppingListView = ({
 
     await updateItemAmount.mutateAsync({
       itemId: item.id,
-      amount: nextAmount,
+      amount: getShoppingStorageAmount(
+        nextAmount,
+        item.unit,
+        shoppingWeightUnit,
+      ),
     })
   }
 
@@ -480,7 +502,9 @@ const ShoppingListView = ({
     setEditingItemId(item.id)
     setAmountDrafts((currentDrafts) => ({
       ...currentDrafts,
-      [item.id]: String(item.amount),
+      [item.id]: String(
+        getShoppingDisplayAmount(item.amount, item.unit, shoppingWeightUnit),
+      ),
     }))
   }
 
@@ -496,7 +520,11 @@ const ShoppingListView = ({
 
     await updateItemAmount.mutateAsync({
       itemId: item.id,
-      amount: nextAmount,
+      amount: getShoppingStorageAmount(
+        nextAmount,
+        item.unit,
+        shoppingWeightUnit,
+      ),
     })
     setEditingItemId(null)
   }
@@ -517,7 +545,11 @@ const ShoppingListView = ({
     await addCustomItem.mutateAsync({
       userId,
       name: newItemName.trim(),
-      amount,
+      amount: getShoppingStorageAmount(
+        amount,
+        newItemUnit.trim(),
+        shoppingWeightUnit,
+      ),
       unit: newItemUnit.trim(),
     })
   }
@@ -655,7 +687,11 @@ const ShoppingListView = ({
                         : shoppingListAccentStyles.pill,
                     )}
                   >
-                    {formatShoppingQuantity(item.amount, item.unit)}
+                    {formatShoppingQuantity(
+                      item.amount,
+                      item.unit,
+                      shoppingWeightUnit,
+                    )}
                   </div>
                 </div>
                 {item.source ? (
@@ -736,8 +772,12 @@ const ShoppingListView = ({
                         }
                         disabled={
                           updateItemAmount.isPending ||
-                          toShoppingAmountNumber(item.amount) <=
-                            getShoppingAmountStep(item.unit)
+                          getShoppingDisplayAmount(
+                            item.amount,
+                            item.unit,
+                            shoppingWeightUnit,
+                          ) <=
+                            getShoppingAmountStep(item.unit, shoppingWeightUnit)
                         }
                       >
                         <Minus className='h-4 w-4' />
@@ -745,9 +785,21 @@ const ShoppingListView = ({
                       <Input
                         type='number'
                         min='0'
-                        step={item.unit === 'grams' ? '10' : '0.25'}
+                        step={getShoppingAmountStep(
+                          item.unit,
+                          shoppingWeightUnit,
+                        )}
                         className='min-w-[120px] h-10 flex-1 rounded-2xl border-border/70 bg-background'
-                        value={amountDrafts[item.id] ?? String(item.amount)}
+                        value={
+                          amountDrafts[item.id] ??
+                          String(
+                            getShoppingDisplayAmount(
+                              item.amount,
+                              item.unit,
+                              shoppingWeightUnit,
+                            ),
+                          )
+                        }
                         onChange={(event) =>
                           setAmountDrafts((currentDrafts) => ({
                             ...currentDrafts,
@@ -1035,6 +1087,7 @@ const ShoppingListView = ({
                 onDelete={(listId) => void handleDeleteHistoricalList(listId)}
                 isDuplicating={duplicateList.isPending}
                 deletingListId={deletingHistoryListId}
+                shoppingWeightUnit={shoppingWeightUnit}
               />
             ) : null}
           </ScrollArea>
@@ -1049,6 +1102,7 @@ const ShoppingListView = ({
                 onDelete={(listId) => void handleDeleteHistoricalList(listId)}
                 isDuplicating={duplicateList.isPending}
                 deletingListId={deletingHistoryListId}
+                shoppingWeightUnit={shoppingWeightUnit}
               />
             ) : null}
           </>

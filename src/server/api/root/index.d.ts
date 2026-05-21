@@ -16640,6 +16640,14 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             output: _libsql_client.ResultSet;
             meta: object;
         }>;
+        updateUserShoppingWeightUnit: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+                state: "pounds" | "grams";
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
         updateIsPosing: _trpc_server.TRPCMutationProcedure<{
             input: {
                 id: string;
@@ -25384,6 +25392,14 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             input: {
                 id: number;
                 state: "mls" | "litres" | "gallons" | "quarts";
+            };
+            output: _libsql_client.ResultSet;
+            meta: object;
+        }>;
+        updateUserShoppingWeightUnit: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                id: number;
+                state: "pounds" | "grams";
             };
             output: _libsql_client.ResultSet;
             meta: object;

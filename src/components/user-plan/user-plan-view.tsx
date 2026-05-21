@@ -4,7 +4,11 @@ import { api } from '@/trpc/react'
 
 import { useState } from 'react'
 
-import { buildShoppingListItemsFromRecipe } from '@/lib/shopping-list'
+import {
+	buildShoppingListItemsFromRecipe,
+	formatShoppingQuantity,
+	type UserShoppingWeightUnit,
+} from '@/lib/shopping-list'
 import { cn, getRecipeDetailsForDailyLog } from '@/lib/utils'
 import type { UserPlan } from '@/types'
 import { Sheet } from '@silk-hq/components'
@@ -227,11 +231,13 @@ const UserPlanRecipe = ({
 	mealIndex,
 	recipeIndex,
 	accentStyles,
+	shoppingWeightUnit,
 }: {
 	userPlan: UserPlan
 	mealIndex: number | null
 	recipeIndex: number | null
 	accentStyles: (typeof planAccentPalette)[number]
+	shoppingWeightUnit: UserShoppingWeightUnit
 }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [scale, setScale] = useState(1)
@@ -513,6 +519,7 @@ const UserPlanRecipe = ({
 															ingredient.alternateIngredient?.caloriesWOFibre,
 														)) *
 													Number(ingredient.alternateIngredient?.serveSize)
+												console.log(ingredient)
 												return (
 													<div
 														key={ingredient.id}
@@ -530,13 +537,11 @@ const UserPlanRecipe = ({
 																) : null}
 															</div>
 															<div className='py-1 px-2.5 text-xs font-semibold rounded-full border border-border/70 bg-background'>
-																{`${serve.toFixed(0)}${
-																	ingredient.serveUnit === 'each'
-																		? 'ea'
-																		: ingredient.serveUnit === 'grams'
-																			? 'g'
-																			: ingredient.serveUnit
-																}`}
+																{formatShoppingQuantity(
+																	serve,
+																	ingredient.ingredient.serveUnit,
+																	shoppingWeightUnit,
+																)}
 															</div>
 														</div>
 														{ingredient.alternateIngredient ? (
@@ -545,7 +550,11 @@ const UserPlanRecipe = ({
 																	Alternate serve
 																</span>
 																<span className='font-semibold shrink-0 text-foreground'>
-																	{`${altSize.toFixed(0)}${ingredient.alternateIngredient?.serveUnit?.slice(0, 1)}`}
+																	{formatShoppingQuantity(
+																		altSize,
+																		ingredient.alternateIngredient?.serveUnit,
+																		shoppingWeightUnit,
+																	)}
 																</span>
 															</div>
 														) : null}
@@ -578,10 +587,12 @@ const UserPlanView = ({
 	userPlan,
 	accentIndex = 0,
 	isDefaultOpen = true,
+	shoppingWeightUnit = 'grams',
 }: {
 	userPlan: UserPlan
 	accentIndex?: number
 	isDefaultOpen?: boolean
+	shoppingWeightUnit?: UserShoppingWeightUnit
 }) => {
 	const [isPlanOpen, setIsPlanOpen] = useState(isDefaultOpen)
 	const mealCount = userPlan?.userMeals.length
@@ -774,6 +785,7 @@ const UserPlanView = ({
 													mealIndex={meal.mealIndex}
 													recipeIndex={recipe.recipeIndex}
 													accentStyles={mealAccentStyles}
+													shoppingWeightUnit={shoppingWeightUnit}
 												/>
 											))
 										) : (

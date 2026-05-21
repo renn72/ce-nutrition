@@ -1,6 +1,6 @@
 import { createLog } from '@/server/api/routers/admin-log'
 import { TRPCError } from '@trpc/server'
-import { createTRPCContext, protectedProcedure } from '~/server/api/trpc'
+import { protectedProcedure, type createTRPCContext } from '~/server/api/trpc'
 import { user, userSettings, userSettingsTags } from '~/server/db/schema/user'
 import { hash } from 'bcryptjs'
 import { and, eq, inArray } from 'drizzle-orm'
@@ -361,6 +361,42 @@ export const update = {
 					and(
 						eq(userSettingsTags.userSettingsId, input.id),
 						eq(userSettingsTags.name, 'user_water'),
+					),
+				)
+		}),
+	updateUserShoppingWeightUnit: protectedProcedure
+		.input(
+			z.object({
+				id: z.number(),
+				state: z.enum(['grams', 'pounds']),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const existingTag = await ctx.db.query.userSettingsTags.findFirst({
+				where: (tag, { and, eq }) =>
+					and(
+						eq(tag.userSettingsId, input.id),
+						eq(tag.name, 'user_shopping_weight'),
+					),
+			})
+
+			if (!existingTag) {
+				return ctx.db.insert(userSettingsTags).values({
+					userSettingsId: input.id,
+					name: 'user_shopping_weight',
+					state: input.state,
+				})
+			}
+
+			return ctx.db
+				.update(userSettingsTags)
+				.set({
+					state: input.state,
+				})
+				.where(
+					and(
+						eq(userSettingsTags.userSettingsId, input.id),
+						eq(userSettingsTags.name, 'user_shopping_weight'),
 					),
 				)
 		}),
