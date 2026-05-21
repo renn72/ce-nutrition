@@ -89,6 +89,7 @@ const waterOptions = [
 	{ value: 'litres', label: 'Litres' },
 	{ value: 'gallons', label: 'Gallons' },
 	{ value: 'quarts', label: 'Quarts' },
+	{ value: 'boots', label: 'Boots' },
 ] satisfies Array<{ value: UserWaterUnit; label: string }>
 
 const getWaterLabel = (value: UserWaterUnit) =>
@@ -216,6 +217,7 @@ const UserWater = ({ currentUser }: { currentUser: GetUserById }) => {
 				<Label>Water</Label>
 				<div className='text-sm text-muted-foreground'>
 					Choose the unit used for water logs.
+					<div className='text-[0.6rem]'>1 Boot = 634.27mls</div>
 				</div>
 			</div>
 			<Select
@@ -230,7 +232,7 @@ const UserWater = ({ currentUser }: { currentUser: GetUserById }) => {
 					})
 				}}
 			>
-				<SelectTrigger className='w-[150px] font-semibold'>
+				<SelectTrigger className='font-semibold w-[150px]'>
 					<SelectValue>{getWaterLabel(unit)}</SelectValue>
 				</SelectTrigger>
 				<SelectContent align='end'>
@@ -274,7 +276,7 @@ const UserShoppingWeight = ({ currentUser }: { currentUser: GetUserById }) => {
 			<div className='space-y-0.5'>
 				<Label>Menu Weight</Label>
 				<div className='text-sm text-muted-foreground'>
-					Choose the unit used for gram-based menu and shopping list items.
+					Choose the unit used for the menu and shopping list items.
 				</div>
 			</div>
 			<Select
@@ -289,7 +291,7 @@ const UserShoppingWeight = ({ currentUser }: { currentUser: GetUserById }) => {
 					})
 				}}
 			>
-				<SelectTrigger className='w-[150px] font-semibold'>
+				<SelectTrigger className='font-semibold w-[150px]'>
 					<SelectValue>{getShoppingWeightLabel(unit)}</SelectValue>
 				</SelectTrigger>
 				<SelectContent align='end'>
@@ -348,7 +350,7 @@ const UserWeight = ({ currentUser }: { currentUser: GetUserById }) => {
 					})
 				}}
 			>
-				<SelectTrigger className='w-[150px] font-semibold'>
+				<SelectTrigger className='font-semibold w-[150px]'>
 					<SelectValue>{getUserWeightLabel(unit)}</SelectValue>
 				</SelectTrigger>
 				<SelectContent align='end'>
@@ -407,7 +409,7 @@ const UserBloodGlucose = ({ currentUser }: { currentUser: GetUserById }) => {
 					})
 				}}
 			>
-				<SelectTrigger className='w-[150px] font-semibold'>
+				<SelectTrigger className='font-semibold w-[150px]'>
 					<SelectValue>{getBloodGlucoseLabel(unit)}</SelectValue>
 				</SelectTrigger>
 				<SelectContent align='end'>
@@ -1871,10 +1873,10 @@ const Settings = ({ currentUser }: { currentUser: GetUserById }) => {
 			>
 				<h2 className='text-base font-semibold'>Defaults</h2>
 				<DefaultWater currentUser={currentUser} />
-				<UserWater currentUser={currentUser} />
 				<UserShoppingWeight currentUser={currentUser} />
 				<UserWeight currentUser={currentUser} />
 				<UserBloodGlucose currentUser={currentUser} />
+				<UserWater currentUser={currentUser} />
 			</div>
 			<div className='flex flex-col gap-1 p-4 w-full rounded-lg border'>
 				<h2 className='text-base font-semibold' id='daily-log-settings'>

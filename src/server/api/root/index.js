@@ -11538,7 +11538,7 @@ var update = {
   updateUserWaterUnit: protectedProcedure.input(
     z33.object({
       id: z33.number(),
-      state: z33.enum(["mls", "litres", "gallons", "quarts"])
+      state: z33.enum(["mls", "litres", "gallons", "quarts", "boots"])
     })
   ).mutation(async ({ ctx, input }) => {
     const existingTag = await ctx.db.query.userSettingsTags.findFirst({

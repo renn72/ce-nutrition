@@ -155,11 +155,12 @@ export function userBloodGlucoseToMmol(
 	return unit === 'mg/dl' ? numericValue / 18 : numericValue
 }
 
-export type UserWaterUnit = 'mls' | 'litres' | 'gallons' | 'quarts'
+export type UserWaterUnit = 'mls' | 'litres' | 'gallons' | 'quarts' | 'boots'
 
 const MILLILITRES_PER_LITRE = 1000
 const MILLILITRES_PER_GALLON = 3785.411784
 const MILLILITRES_PER_QUART = 946.352946
+const MILLILITRES_PER_BOOT = 634.27
 
 export function getUserWaterUnit(
 	settings: UserSettingsWithTags,
@@ -169,6 +170,7 @@ export function getUserWaterUnit(
 	if (waterTag?.state === 'litres') return 'litres'
 	if (waterTag?.state === 'gallons') return 'gallons'
 	if (waterTag?.state === 'quarts') return 'quarts'
+	if (waterTag?.state === 'boots') return 'boots'
 
 	return 'mls'
 }
@@ -177,6 +179,7 @@ export function getUserWaterSuffix(unit: UserWaterUnit) {
 	if (unit === 'litres') return 'L'
 	if (unit === 'gallons') return 'gal'
 	if (unit === 'quarts') return 'qt'
+	if (unit === 'boots') return 'bts'
 
 	return 'ml'
 }
@@ -184,6 +187,7 @@ export function getUserWaterSuffix(unit: UserWaterUnit) {
 export function getUserWaterFixed(unit: UserWaterUnit) {
 	if (unit === 'mls') return 0
 	if (unit === 'litres') return 2
+	if (unit === 'boots') return 2
 
 	return 3
 }
@@ -200,6 +204,7 @@ export function mlToUserWater(
 	if (unit === 'litres') return numericValue / MILLILITRES_PER_LITRE
 	if (unit === 'gallons') return numericValue / MILLILITRES_PER_GALLON
 	if (unit === 'quarts') return numericValue / MILLILITRES_PER_QUART
+	if (unit === 'boots') return numericValue / MILLILITRES_PER_BOOT
 
 	return numericValue
 }
@@ -216,6 +221,7 @@ export function userWaterToMl(
 	if (unit === 'litres') return numericValue * MILLILITRES_PER_LITRE
 	if (unit === 'gallons') return numericValue * MILLILITRES_PER_GALLON
 	if (unit === 'quarts') return numericValue * MILLILITRES_PER_QUART
+	if (unit === 'boots') return numericValue * MILLILITRES_PER_BOOT
 
 	return numericValue
 }

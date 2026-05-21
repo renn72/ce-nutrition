@@ -16635,7 +16635,7 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
         updateUserWaterUnit: _trpc_server.TRPCMutationProcedure<{
             input: {
                 id: number;
-                state: "mls" | "litres" | "gallons" | "quarts";
+                state: "mls" | "litres" | "gallons" | "quarts" | "boots";
             };
             output: _libsql_client.ResultSet;
             meta: object;
@@ -25391,7 +25391,7 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
         updateUserWaterUnit: _trpc_server.TRPCMutationProcedure<{
             input: {
                 id: number;
-                state: "mls" | "litres" | "gallons" | "quarts";
+                state: "mls" | "litres" | "gallons" | "quarts" | "boots";
             };
             output: _libsql_client.ResultSet;
             meta: object;

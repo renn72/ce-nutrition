@@ -335,7 +335,7 @@ export const update = {
 		.input(
 			z.object({
 				id: z.number(),
-				state: z.enum(['mls', 'litres', 'gallons', 'quarts']),
+				state: z.enum(['mls', 'litres', 'gallons', 'quarts', 'boots']),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
