@@ -191,7 +191,7 @@ const Meal = ({
 					size='sm'
 					variant='outline'
 					type='multiple'
-					className='flex flex-col justify-start items-start w-full gap-0 overflow-hidden rounded-2xl border border-border/60 bg-muted/70 p-1 shadow-sm'
+					className='flex overflow-hidden flex-col gap-0 justify-start items-start p-1 w-full rounded-lg border shadow-sm border-border/60 bg-muted/70'
 					value={selectedPlans}
 					onValueChange={setSelectedPlans}
 				>
@@ -209,7 +209,7 @@ const Meal = ({
 						return (
 							<div
 								key={plan.id}
-								className='flex justify-between items-center w-full border-b border-border/70 px-1 py-1 last:border-b-0'
+								className='flex justify-between items-center py-1 px-1 w-full border-b last:border-b-0 border-border/70'
 							>
 								<div className='pl-2 text-sm font-bold tracking-tight truncate text-primary/85'>
 									{plan.name}
@@ -320,7 +320,7 @@ const Meal = ({
 					})
 				}}
 			>
-				<div className='flex flex-col gap-2 ml-2'>
+				<div className='flex flex-col gap-2 w-full'>
 					{selectValue !== '' ? (
 						<ToggleGroupItem
 							value={selectValue}
@@ -402,17 +402,18 @@ const Meal = ({
 							)
 
 							return (
-								<div key={plan.id} className='flex flex-col'>
-									<div className='flex gap-4 items-center'>
-										<h3 className='font-semibold text-primary/80'>
-											{plan.name}
-										</h3>
-									</div>
+								<div
+									key={plan.id}
+									className='flex flex-col w-full rounded-lg border border-border/70 bg-muted'
+								>
+									<h3 className='py-2 px-2 font-semibold text-primary/80'>
+										{plan.name}
+									</h3>
 									{!isMacrosHidden && (
 										<div className='flex justify-center w-full'>
 											<div
 												className={cn(
-													'text-[0.7rem] flex gap-4 font-medium bg-secondary text-secondary-foreground rounded-full px-2 py-[2px]',
+													'text-[0.7rem] flex gap-4 font-medium bg-background text-secondary-foreground rounded-full px-2 py-[2px]',
 												)}
 											>
 												<div>{`${cals.toFixed(0)}cals`}</div>
@@ -708,7 +709,7 @@ const MealList = ({
 							/>
 						</div>
 					</div>
-					<ScrollArea className='px-2 pt-4 h-[calc(95vh-130px)]'>
+					<ScrollArea className='px-2 pt-2 h-[calc(95vh-130px)]'>
 						<div className='flex flex-col gap-2 mb-2'>
 							{refinedPlans && activePlans && (
 								<Meal

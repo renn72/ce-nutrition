@@ -231,7 +231,7 @@ const MealBottomSheet = ({
 														<div
 															key={meal.id}
 															className={cn(
-																'flex flex-col gap-2 py-2 px-4 w-full rounded-full',
+																'flex flex-col gap-2 py-2 px-4 w-full rounded-full border border-border/60',
 																mealColour,
 															)}
 														>
