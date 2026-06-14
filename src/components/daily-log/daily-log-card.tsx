@@ -187,6 +187,9 @@ const Log = memo(
 		const isNotes = isAdmin || currentUser?.settings?.isNotes
 		const isSteps = isAdmin || currentUser?.settings?.isSteps
 		const isPosing = isAdmin || currentUser?.settings?.isPosing
+		const isMacrosHidden = currentUser?.roles?.some(
+			(role) => role.name === 'hide-macro-from-user',
+		)
 
 		const isPeriodEnabled = currentUser?.settings?.periodStartAt ?? false
 		const isPeriod = todaysDailyLog?.isPeriod ?? false
@@ -513,40 +516,44 @@ const Log = memo(
 								accuracy={0}
 							/>
 						)}
-						<MetricItem
-							label='Calories'
-							value={formatNumber(mealsMacros?.cals, 0)}
-							prevValue={formatNumber(yesterdayMealsMacros?.cals, 0)}
-							suffix='cals'
-							icon={FireIcon}
-							accuracy={0}
-						/>
-						<div className='grid grid-cols-3 col-span-2 gap-1'>
-							<MetricItem
-								label='Carbs'
-								value={formatNumber(mealsMacros?.carbs, 0)}
-								prevValue={formatNumber(mealsMacros?.carbs, 0)}
-								suffix='g'
-								icon={BreadIcon}
-								accuracy={0}
-							/>
-							<MetricItem
-								label='Protein'
-								value={formatNumber(mealsMacros?.protein, 0)}
-								prevValue={formatNumber(mealsMacros?.protein, 0)}
-								suffix='g'
-								icon={Beef}
-								accuracy={0}
-							/>
-							<MetricItem
-								label='Fat'
-								value={formatNumber(mealsMacros?.fat, 0)}
-								prevValue={formatNumber(mealsMacros?.fat, 0)}
-								suffix='g'
-								icon={DropIcon}
-								accuracy={0}
-							/>
-						</div>
+						{!isMacrosHidden && (
+							<>
+								<MetricItem
+									label='Calories'
+									value={formatNumber(mealsMacros?.cals, 0)}
+									prevValue={formatNumber(yesterdayMealsMacros?.cals, 0)}
+									suffix='cals'
+									icon={FireIcon}
+									accuracy={0}
+								/>
+								<div className='grid grid-cols-3 col-span-2 gap-1'>
+									<MetricItem
+										label='Carbs'
+										value={formatNumber(mealsMacros?.carbs, 0)}
+										prevValue={formatNumber(mealsMacros?.carbs, 0)}
+										suffix='g'
+										icon={BreadIcon}
+										accuracy={0}
+									/>
+									<MetricItem
+										label='Protein'
+										value={formatNumber(mealsMacros?.protein, 0)}
+										prevValue={formatNumber(mealsMacros?.protein, 0)}
+										suffix='g'
+										icon={Beef}
+										accuracy={0}
+									/>
+									<MetricItem
+										label='Fat'
+										value={formatNumber(mealsMacros?.fat, 0)}
+										prevValue={formatNumber(mealsMacros?.fat, 0)}
+										suffix='g'
+										icon={DropIcon}
+										accuracy={0}
+									/>
+								</div>
+							</>
+						)}
 					</div>
 
 					{isNotes && todaysDailyLog?.notes && (
