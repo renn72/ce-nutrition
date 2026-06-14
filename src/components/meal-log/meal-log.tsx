@@ -209,12 +209,12 @@ const Meal = ({
 						return (
 							<div
 								key={plan.id}
-								className='flex justify-between items-center py-1 px-1 w-full border-b last:border-b-0 border-border/70'
+								className='flex gap-2 justify-between items-center py-1 px-1 w-full border-b last:border-b-0 border-border/70'
 							>
-								<div className='pl-2 text-sm font-bold tracking-tight truncate text-primary/85'>
+								<div className='flex-1 min-w-0 pl-2 text-sm font-bold tracking-tight truncate text-primary/85'>
 									{plan.name}
 								</div>
-								<div className='shrink-0'>
+								<div className='flex gap-1 items-center shrink-0'>
 									<ToggleGroupItem
 										value={planId}
 										aria-label={
@@ -275,7 +275,7 @@ const Meal = ({
 										}}
 									>
 										<NotebookPen size={18} strokeWidth={2} />
-										<span className='pt-[4px]'>Log Plan</span>
+										<span className='pt-[4px]'>Log</span>
 									</Button>
 								</div>
 							</div>
@@ -589,9 +589,9 @@ const MealList = ({
 	if (!currentUser) return null
 
 	return (
-		<Sheet.Content className='relative h-full rounded-t-3xl min-h-[200px] max-h-[98vh] bg-background'>
-			<div className='flex flex-col justify-between h-full'>
-				<div className='flex flex-col'>
+		<Sheet.Content className='overflow-x-hidden relative w-full max-w-full h-full rounded-t-3xl min-h-[200px] max-h-[98vh] bg-background'>
+			<div className='flex overflow-x-hidden flex-col justify-between w-full max-w-full h-full'>
+				<div className='flex overflow-x-hidden flex-col w-full max-w-full'>
 					<div className='flex justify-center pt-1'>
 						<Sheet.Handle
 							className='rounded-full border-0 w-[50px] h-[6px] bg-primary/20'
@@ -709,8 +709,8 @@ const MealList = ({
 							/>
 						</div>
 					</div>
-					<ScrollArea className='px-2 pt-2 h-[calc(95vh-130px)]'>
-						<div className='flex flex-col gap-2 mb-2'>
+					<ScrollArea className='overflow-x-hidden px-2 pt-2 w-full max-w-full h-[calc(95vh-130px)]'>
+						<div className='flex overflow-x-hidden flex-col gap-2 mb-2 w-full max-w-full'>
 							{refinedPlans && activePlans && (
 								<Meal
 									setIsSheetOpen={setIsSheetOpen}
@@ -835,7 +835,7 @@ const MealLog = ({
 						</div>
 					</div>
 					<Sheet.Portal>
-						<Sheet.View className='z-[999] h-[100vh] bg-black/50'>
+						<Sheet.View className='overflow-x-hidden z-[999] w-full max-w-full h-[100vh] bg-black/50'>
 							{todaysLog && (
 								<MealList
 									currentMeal={currentMeal}
