@@ -3,7 +3,12 @@
 import { api } from '@/trpc/react'
 
 import { compareItems, rankItem } from '@tanstack/match-sorter-utils'
-import { FileText, ListChevronsDownUp, ListChevronsUpDown } from 'lucide-react'
+import {
+	ArrowRightLeft,
+	FileText,
+	ListChevronsDownUp,
+	ListChevronsUpDown,
+} from 'lucide-react'
 import { useState } from 'react'
 
 import {
@@ -96,35 +101,43 @@ const Tree = ({
 
 	return (
 		<div>
-			<div className='flex gap-1 justify-start mb-1'>
-				<Button
-					aria-label='Expand all plan categories'
-					className='w-8 h-8'
-					disabled={visibleCategoryIds.length === 0}
-					onClick={() => {
-						setDefaultExpandedIds(visibleCategoryIds)
-						setTreeExpandKey((key) => key + 1)
-					}}
-					size='icon'
-					type='button'
-					variant='ghost'
-				>
-					<ListChevronsUpDown className='w-4 h-4' />
-				</Button>
-				<Button
-					aria-label='Collapse all plan categories'
-					className='w-8 h-8'
-					disabled={visibleCategoryIds.length === 0}
-					onClick={() => {
-						setDefaultExpandedIds([])
-						setTreeExpandKey((key) => key + 1)
-					}}
-					size='icon'
-					type='button'
-					variant='ghost'
-				>
-					<ListChevronsDownUp className='w-4 h-4' />
-				</Button>
+			<div className='flex justify-start mb-1'>
+				<div className='inline-flex items-center rounded-md border border-border/60 bg-background shadow-sm'>
+					<Button
+						aria-label='Expand all plan categories'
+						className='w-8 h-8 rounded-sm shadow-none'
+						disabled={visibleCategoryIds.length === 0}
+						onClick={() => {
+							setDefaultExpandedIds(visibleCategoryIds)
+							setTreeExpandKey((key) => key + 1)
+						}}
+						size='icon'
+						type='button'
+						variant='ghost'
+					>
+						<ListChevronsUpDown className='w-4 h-4' />
+					</Button>
+					<span
+						aria-hidden='true'
+						className='flex h-8 w-5 items-center justify-center border-x border-border/60 text-muted-foreground/60'
+					>
+						<ArrowRightLeft className='w-3 h-3' />
+					</span>
+					<Button
+						aria-label='Collapse all plan categories'
+						className='w-8 h-8 rounded-sm shadow-none'
+						disabled={visibleCategoryIds.length === 0}
+						onClick={() => {
+							setDefaultExpandedIds([])
+							setTreeExpandKey((key) => key + 1)
+						}}
+						size='icon'
+						type='button'
+						variant='ghost'
+					>
+						<ListChevronsDownUp className='w-4 h-4' />
+					</Button>
+				</div>
 			</div>
 			<TreeProvider defaultExpandedIds={defaultExpandedIds} key={treeExpandKey}>
 				<TreeView>
