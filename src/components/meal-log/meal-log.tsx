@@ -26,6 +26,7 @@ import {
 	ClipboardPlus,
 	Eye,
 	EyeOff,
+	NotebookPen,
 } from 'lucide-react'
 import { BowlSteamIcon } from '@phosphor-icons/react'
 import { toast } from 'sonner'
@@ -185,7 +186,7 @@ const Meal = ({
 
 	return (
 		<div className='flex flex-col gap-0 items-start w-full'>
-			<div className='pb-4'>
+			<div className='pb-4 w-full'>
 				<ToggleGroup
 					orientation='vertical'
 					size='sm'
@@ -210,77 +211,77 @@ const Meal = ({
 							<div
 								key={plan.id}
 								className={cn(
-									'flex gap-1 items-center w-full rounded-full border border-border/60 bg-muted/70 p-1 shadow-sm',
-									isPlanVisible && 'border-primary/20 bg-secondary',
+									'flex justify-between items-center w-full rounded-full border border-border/60 bg-muted/70 p-1 shadow-sm',
+									isPlanVisible && 'border-primary/10 bg-secondary',
 								)}
 							>
-								<div className='min-w-0 flex-1 px-2'>
-									<div className='truncate text-xs font-semibold tracking-tight text-primary/85'>
-										{plan.name}
-									</div>
+								<div className='pl-2 text-sm font-bold tracking-tight truncate text-primary/85'>
+									{plan.name}
 								</div>
-								<ToggleGroupItem
-									value={planId}
-									aria-label={
-										isPlanVisible ? `Hide ${plan.name}` : `Show ${plan.name}`
-									}
-									className={cn(
-										'h-9 w-9 shrink-0 rounded-full border-0 p-0 shadow-none',
-										'bg-background/80 text-muted-foreground hover:bg-background hover:text-primary',
-										'data-[state=on]:bg-foreground data-[state=on]:text-background data-[state=on]:shadow-none',
-									)}
-								>
-									{isPlanVisible ? (
-										<Eye size={16} strokeWidth={2.2} />
-									) : (
-										<EyeOff size={16} strokeWidth={2.2} />
-									)}
-								</ToggleGroupItem>
-								<Button
-									type='button'
-									variant='outline'
-									size='sm'
-									disabled={
-										isLogPlanDisabled || loggingPlanId === activePlan.id
-									}
-									className='h-9 shrink-0 gap-1.5 rounded-full px-3 text-xs font-semibold'
-									onClick={async (e) => {
-										e.preventDefault()
-										e.stopPropagation()
-
-										if (!logId || planMealsToLog.length === 0) return
-
-										setLoggingPlanId(activePlan.id)
-
-										try {
-											for (const meal of planMealsToLog) {
-												await addMealAsync({
-													userId,
-													planId: activePlan.id,
-													mealIndex: meal.mealIndex,
-													recipeIndex: meal.recipeIndex,
-													recipeId: meal.recipeId,
-													date,
-													logId,
-												})
-											}
-
-											toast.success(
-												`Logged ${planMealsToLog.length} meals from ${activePlan.name}`,
-											)
-											setIsSheetOpen(false)
-										} catch (_error) {
-											toast.error(
-												`Failed to log remaining meals from ${activePlan.name}`,
-											)
-										} finally {
-											setLoggingPlanId(null)
+								<div className='shrink-0'>
+									<ToggleGroupItem
+										value={planId}
+										aria-label={
+											isPlanVisible ? `Hide ${plan.name}` : `Show ${plan.name}`
 										}
-									}}
-								>
-									<ClipboardPlus size={14} strokeWidth={2.2} />
-									<span>Log</span>
-								</Button>
+										className={cn(
+											'h-9 w-9 shrink-0 rounded-full border-0 p-0 shadow-none',
+											'bg-background/80 text-muted-foreground hover:bg-background hover:text-primary',
+											'data-[state=on]:bg-foreground data-[state=on]:text-background data-[state=on]:shadow-none',
+										)}
+									>
+										{isPlanVisible ? (
+											<Eye size={16} strokeWidth={2.2} />
+										) : (
+											<EyeOff size={16} strokeWidth={2.2} />
+										)}
+									</ToggleGroupItem>
+									<Button
+										type='button'
+										variant='outline'
+										size='sm'
+										disabled={
+											isLogPlanDisabled || loggingPlanId === activePlan.id
+										}
+										className='gap-1.5 px-3 h-9 text-xs font-semibold rounded-full shrink-0'
+										onClick={async (e) => {
+											e.preventDefault()
+											e.stopPropagation()
+
+											if (!logId || planMealsToLog.length === 0) return
+
+											setLoggingPlanId(activePlan.id)
+
+											try {
+												for (const meal of planMealsToLog) {
+													await addMealAsync({
+														userId,
+														planId: activePlan.id,
+														mealIndex: meal.mealIndex,
+														recipeIndex: meal.recipeIndex,
+														recipeId: meal.recipeId,
+														date,
+														logId,
+													})
+												}
+
+												toast.success(
+													`Logged ${planMealsToLog.length} meals from ${activePlan.name}`,
+												)
+												setIsSheetOpen(false)
+											} catch (_error) {
+												toast.error(
+													`Failed to log remaining meals from ${activePlan.name}`,
+												)
+											} finally {
+												setLoggingPlanId(null)
+											}
+										}}
+									>
+										<NotebookPen size={18} strokeWidth={2} />
+										<span className='pt-[4px]'>Log Plan</span>
+									</Button>
+								</div>
 							</div>
 						)
 					})}
