@@ -23,7 +23,6 @@ import {
 	ArrowBigRightDash,
 	CalendarIcon,
 	ChevronDown,
-	ClipboardPlus,
 	Eye,
 	EyeOff,
 	NotebookPen,
@@ -192,7 +191,7 @@ const Meal = ({
 					size='sm'
 					variant='outline'
 					type='multiple'
-					className='flex flex-col justify-start items-start w-full'
+					className='flex flex-col justify-start items-start w-full gap-0 overflow-hidden rounded-2xl border border-border/60 bg-muted/70 p-1 shadow-sm'
 					value={selectedPlans}
 					onValueChange={setSelectedPlans}
 				>
@@ -210,10 +209,7 @@ const Meal = ({
 						return (
 							<div
 								key={plan.id}
-								className={cn(
-									'flex justify-between items-center w-full rounded-full border border-border/60 bg-muted/70 p-1 shadow-sm',
-									isPlanVisible && 'border-primary/10 bg-secondary',
-								)}
+								className='flex justify-between items-center w-full border-b border-border/70 px-1 py-1 last:border-b-0'
 							>
 								<div className='pl-2 text-sm font-bold tracking-tight truncate text-primary/85'>
 									{plan.name}
