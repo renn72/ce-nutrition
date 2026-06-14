@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 import type { GetUserById } from '@/types'
-import { ChevronDownIcon } from 'lucide-react'
+import { ChevronDownIcon, XIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -26,6 +26,11 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 import { Reminders } from './reminders'
 
@@ -1087,31 +1092,55 @@ const Partner = ({ currentUser }: { currentUser: GetUserById }) => {
           shared active list.
         </div>
       </div>
-      <Select
-        value={currentUser.partner?.id ?? 'none'}
-        onValueChange={(value) => {
-          setPartner({
-            userId: currentUser.id,
-            partnerId: value === 'none' ? null : value,
-          })
-        }}
-        disabled={isLoading || isPending}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder='Select partner' />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value='none'>No partner</SelectItem>
-          {availablePartners.map((partnerUser) => (
-            <SelectItem
-              key={partnerUser.id}
-              value={partnerUser.id}
-            >
-              {partnerUser.name ?? partnerUser.email ?? partnerUser.id}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <div className='flex items-center gap-2'>
+        <Select
+          value={currentUser.partner?.id ?? 'none'}
+          onValueChange={(value) => {
+            setPartner({
+              userId: currentUser.id,
+              partnerId: value === 'none' ? null : value,
+            })
+          }}
+          disabled={isLoading || isPending}
+        >
+          <SelectTrigger className='flex-1'>
+            <SelectValue placeholder='Select partner' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='none'>No partner</SelectItem>
+            {availablePartners.map((partnerUser) => (
+              <SelectItem
+                key={partnerUser.id}
+                value={partnerUser.id}
+              >
+                {partnerUser.name ?? partnerUser.email ?? partnerUser.id}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {currentUser.partner ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type='button'
+                variant='outline'
+                size='icon'
+                aria-label='Remove partner link'
+                disabled={isLoading || isPending}
+                onClick={() => {
+                  setPartner({
+                    userId: currentUser.id,
+                    partnerId: null,
+                  })
+                }}
+              >
+                <XIcon className='h-4 w-4' />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Remove partner link</TooltipContent>
+          </Tooltip>
+        ) : null}
+      </div>
     </div>
   )
 }
