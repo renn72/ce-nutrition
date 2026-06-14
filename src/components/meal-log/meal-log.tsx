@@ -23,6 +23,9 @@ import {
 	ArrowBigRightDash,
 	CalendarIcon,
 	ChevronDown,
+	ClipboardPlus,
+	Eye,
+	EyeOff,
 } from 'lucide-react'
 import { BowlSteamIcon } from '@phosphor-icons/react'
 import { toast } from 'sonner'
@@ -197,21 +200,41 @@ const Meal = ({
 						const activePlan = activePlans.find((p) => p?.id === plan.id)
 						if (!activePlan) return null
 
+						const planId = plan.id.toString()
+						const isPlanVisible = selectedPlans.includes(planId)
 						const planMealsToLog = getPlanMealsToLog(activePlan, nextMealIndex)
 						const logId = todaysLog?.id ?? null
 						const isLogPlanDisabled = !logId || planMealsToLog.length === 0
 
 						return (
-							<div key={plan.id} className='flex gap-2 items-center w-full'>
+							<div
+								key={plan.id}
+								className={cn(
+									'flex gap-1 items-center w-full rounded-full border border-border/60 bg-muted/70 p-1 shadow-sm',
+									isPlanVisible && 'border-primary/20 bg-secondary',
+								)}
+							>
+								<div className='min-w-0 flex-1 px-2'>
+									<div className='truncate text-xs font-semibold tracking-tight text-primary/85'>
+										{plan.name}
+									</div>
+								</div>
 								<ToggleGroupItem
-									value={plan.id.toString()}
+									value={planId}
+									aria-label={
+										isPlanVisible ? `Hide ${plan.name}` : `Show ${plan.name}`
+									}
 									className={cn(
-										'text-xs px-2 tracking-tight h-6 leading-tight',
+										'h-9 w-9 shrink-0 rounded-full border-0 p-0 shadow-none',
+										'bg-background/80 text-muted-foreground hover:bg-background hover:text-primary',
 										'data-[state=on]:bg-foreground data-[state=on]:text-background data-[state=on]:shadow-none',
-										'rounded-full font-semibold flex-1 min-w-0 justify-start items-center',
 									)}
 								>
-									<div className='pt-[3px] truncate'>{plan.name}</div>
+									{isPlanVisible ? (
+										<Eye size={16} strokeWidth={2.2} />
+									) : (
+										<EyeOff size={16} strokeWidth={2.2} />
+									)}
 								</ToggleGroupItem>
 								<Button
 									type='button'
@@ -220,7 +243,7 @@ const Meal = ({
 									disabled={
 										isLogPlanDisabled || loggingPlanId === activePlan.id
 									}
-									className='px-3 h-7 text-xs font-semibold rounded-full'
+									className='h-9 shrink-0 gap-1.5 rounded-full px-3 text-xs font-semibold'
 									onClick={async (e) => {
 										e.preventDefault()
 										e.stopPropagation()
@@ -255,7 +278,8 @@ const Meal = ({
 										}
 									}}
 								>
-									Log Plan
+									<ClipboardPlus size={14} strokeWidth={2.2} />
+									<span>Log</span>
 								</Button>
 							</div>
 						)
