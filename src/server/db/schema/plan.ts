@@ -24,6 +24,7 @@ export const plan = createTable(
 		creatorId: text('creator_id').references(() => user.id),
 		isGlobal: int('is_global', { mode: 'boolean' }).default(false),
 		planCategory: text('recipe_category'),
+		planTags: text('plan_tags'),
 		favouriteAt: int('favourite_at', { mode: 'timestamp' }),
 		deletedAt: int('deleted_at', { mode: 'timestamp' }),
 		hiddenAt: int('hidden_at', { mode: 'timestamp' }),

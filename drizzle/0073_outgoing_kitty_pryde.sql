@@ -1,0 +1,1 @@
+ALTER TABLE `plan` ADD `plan_tags` text;
