@@ -11286,6 +11286,27 @@ var roles = {
     });
     return res;
   }),
+  updateRoleHideMacrosFromUser: protectedProcedure.input(z32.object({ userId: z32.string() })).mutation(async ({ ctx, input }) => {
+    const res = await ctx.db.query.role.findFirst({
+      where: (role2, { eq: eq30, and: and16 }) => and16(eq30(role2.userId, input.userId), eq30(role2.name, "hide-macro-from-user"))
+    });
+    if (res) {
+      await ctx.db.delete(role).where(eq24(role.id, res.id));
+    } else {
+      await ctx.db.insert(role).values({
+        userId: input.userId,
+        name: "hide-macro-from-user"
+      });
+    }
+    void createLog({
+      user: ctx.session.user.name,
+      userId: ctx.session.user.id,
+      objectId: null,
+      task: "toggle user macro visibility",
+      notes: JSON.stringify(input)
+    });
+    return res;
+  }),
   updateRoleAdmin: protectedProcedure.input(z32.object({ userId: z32.string() })).mutation(async ({ ctx, input }) => {
     const res = await ctx.db.query.role.findFirst({
       where: (role2, { eq: eq30, and: and16 }) => and16(eq30(role2.userId, input.userId), eq30(role2.name, "admin"))

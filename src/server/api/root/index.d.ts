@@ -16488,6 +16488,19 @@ declare const appRouter: _trpc_server.TRPCBuiltRouter<{
             } | undefined;
             meta: object;
         }>;
+        updateRoleHideMacrosFromUser: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                id: number;
+                name: string | null;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string | null;
+            } | undefined;
+            meta: object;
+        }>;
         updateRoleAdmin: _trpc_server.TRPCMutationProcedure<{
             input: {
                 userId: string;
@@ -25232,6 +25245,19 @@ declare const createCaller: _trpc_server.TRPCRouterCaller<{
             meta: object;
         }>;
         updateRoleCreateMeals: _trpc_server.TRPCMutationProcedure<{
+            input: {
+                userId: string;
+            };
+            output: {
+                id: number;
+                name: string | null;
+                createdAt: Date;
+                updatedAt: Date | null;
+                userId: string | null;
+            } | undefined;
+            meta: object;
+        }>;
+        updateRoleHideMacrosFromUser: _trpc_server.TRPCMutationProcedure<{
             input: {
                 userId: string;
             };

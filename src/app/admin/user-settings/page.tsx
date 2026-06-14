@@ -886,6 +886,45 @@ const CreateMeals = ({ currentUser }: { currentUser: GetUserById }) => {
   )
 }
 
+const HideMacrosFromUser = ({ currentUser }: { currentUser: GetUserById }) => {
+  const ctx = api.useUtils()
+  const [isHideMacrosFromUser, setIsHideMacrosFromUser] = useState<boolean>(
+    !!currentUser.roles.find((role) => role.name === 'hide-macro-from-user'),
+  )
+  const { mutate: updateRoleHideMacrosFromUser } =
+    api.user.updateRoleHideMacrosFromUser.useMutation({
+      onSuccess: () => {
+        toast.success('Updated')
+      },
+      onSettled: () => {
+        void ctx.user.invalidate()
+      },
+      onError: (_err) => {
+        toast.error('error')
+        void ctx.user.invalidate()
+      },
+    })
+  return (
+    <div className='flex flex-row gap-4 justify-between items-center p-3 rounded-lg border shadow-sm'>
+      <div className='space-y-0.5'>
+        <Label>Hide Macros</Label>
+        <div className='text-sm text-muted-foreground'>
+          Hides macros from the client.
+        </div>
+      </div>
+      <Switch
+        checked={isHideMacrosFromUser === true}
+        onCheckedChange={(checked) => {
+          setIsHideMacrosFromUser(checked)
+          updateRoleHideMacrosFromUser({
+            userId: currentUser.id,
+          })
+        }}
+      />
+    </div>
+  )
+}
+
 const BodyBuilderImages = ({ currentUser }: { currentUser: GetUserById }) => {
   const ctx = api.useUtils()
   const [isBodyBuilderImages, setIsBodyBuilderImages] = useState<boolean>(
@@ -1094,6 +1133,7 @@ const Settings = ({ user }: { user: GetUserById }) => {
         <h2 className='text-base font-semibold'>Plans</h2>
         <CreateMeals currentUser={user} />
         <Supplements currentUser={user} />
+        <HideMacrosFromUser currentUser={user} />
       </div>
       <div className='flex flex-col gap-2 p-4 w-full max-w-lg rounded-lg border'>
         <h2 className='text-base font-semibold'>Daily Log</h2>

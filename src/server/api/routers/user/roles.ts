@@ -186,6 +186,33 @@ export const roles = {
 
 			return res
 		}),
+	updateRoleHideMacrosFromUser: protectedProcedure
+		.input(z.object({ userId: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const res = await ctx.db.query.role.findFirst({
+				where: (role, { eq, and }) =>
+					and(eq(role.userId, input.userId), eq(role.name, 'hide-macro-from-user')),
+			})
+
+			if (res) {
+				await ctx.db.delete(role).where(eq(role.id, res.id))
+			} else {
+				await ctx.db.insert(role).values({
+					userId: input.userId,
+					name: 'hide-macro-from-user',
+				})
+			}
+
+			void createLog({
+				user: ctx.session.user.name,
+				userId: ctx.session.user.id,
+				objectId: null,
+				task: 'toggle user macro visibility',
+				notes: JSON.stringify(input),
+			})
+
+			return res
+		}),
 	updateRoleAdmin: protectedProcedure
 		.input(z.object({ userId: z.string() }))
 		.mutation(async ({ ctx, input }) => {
