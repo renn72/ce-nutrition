@@ -327,7 +327,7 @@ const Meal = ({
 							className={cn(
 								'text-sm truncate max-w-[600px]  py-3 px-4 data-[state=on]:bg-blue-900/70 relative',
 								'data-[state=on]:text-slate-100 data-[state=on]:shadow-none',
-								'shadow-sm flex flex-col w-[calc(100vw-2rem)] gap-0 h-fit',
+								'shadow-sm flex flex-col w-full gap-0 h-fit',
 								'hover:text-primary hover:bg-background',
 							)}
 						>
@@ -404,7 +404,7 @@ const Meal = ({
 							return (
 								<div
 									key={plan.id}
-									className='flex flex-col w-full rounded-lg border border-border/70 bg-muted'
+									className='flex flex-col px-2 w-full rounded-lg border border-border/70 bg-muted'
 								>
 									<h3 className='py-2 px-2 font-semibold text-primary/80'>
 										{plan.name}
@@ -442,7 +442,7 @@ const Meal = ({
 													className={cn(
 														'text-sm truncate max-w-[600px]  py-3 px-4 data-[state=on]:bg-blue-900/70 relative',
 														'data-[state=on]:text-slate-100 data-[state=on]:shadow-none',
-														'h-full shadow-sm flex flex-col w-[calc(100vw-2rem)] gap-0',
+														'h-full shadow-sm flex flex-col w-full gap-0',
 														'hover:text-primary',
 														mealColour,
 													)}
