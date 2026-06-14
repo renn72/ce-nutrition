@@ -53,14 +53,14 @@ const currentUserAtom = atomWithStorage<GetCurrentUserMeals | null>(
 export const dynamic = 'force-dynamic'
 
 const mealColourMap: Record<number, string> = {
-	0: 'bg-blue-700/10',
-	1: 'bg-green-700/10',
-	2: 'bg-yellow-700/10',
-	3: 'bg-red-700/10',
-	4: 'bg-purple-700/10',
-	5: 'bg-pink-700/10',
-	6: 'bg-cyan-700/10',
-	7: 'bg-sky-700/10',
+	0: 'bg-blue-700/10 dark:bg-blue-500/25',
+	1: 'bg-green-700/10 dark:bg-green-500/25',
+	2: 'bg-yellow-700/10 dark:bg-yellow-500/25',
+	3: 'bg-red-700/10 dark:bg-red-500/25',
+	4: 'bg-purple-700/10 dark:bg-purple-500/25',
+	5: 'bg-pink-700/10 dark:bg-pink-500/25',
+	6: 'bg-cyan-700/10 dark:bg-cyan-500/25',
+	7: 'bg-sky-700/10 dark:bg-sky-500/25',
 }
 
 type PlanMealToLog = {
