@@ -18,6 +18,9 @@ export default function Home() {
 	if (isLoading || !user) return null
 	const plans = user?.userPlans.filter((plan) => plan.isActive)
 	const shoppingWeightUnit = getUserShoppingWeightUnit(user.settings)
+	const isMacrosHidden = user.roles.some(
+		(role) => role.name === 'hide-macro-from-user',
+	)
 
 	if (!plans) return null
 
@@ -31,6 +34,7 @@ export default function Home() {
 						accentIndex={index}
 						isDefaultOpen={false}
 						shoppingWeightUnit={shoppingWeightUnit}
+						isMacrosHidden={isMacrosHidden}
 					/>
 				))}
 			</div>

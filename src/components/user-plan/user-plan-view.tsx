@@ -232,12 +232,14 @@ const UserPlanRecipe = ({
 	recipeIndex,
 	accentStyles,
 	shoppingWeightUnit,
+	isMacrosHidden,
 }: {
 	userPlan: UserPlan
 	mealIndex: number | null
 	recipeIndex: number | null
 	accentStyles: (typeof planAccentPalette)[number]
 	shoppingWeightUnit: UserShoppingWeightUnit
+	isMacrosHidden: boolean
 }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [scale, setScale] = useState(1)
@@ -340,37 +342,41 @@ const UserPlanRecipe = ({
 							{ingredientCount === 1 ? 'ingredient' : 'ingredients'}
 						</div>
 					</div>
-					<div
-						className={cn(
-							'py-1 px-2 font-semibold rounded-2xl border shrink-0 text-[10px]',
-							recipeAccentStyles.pill,
-						)}
-					>
-						{formatCompactNumber(cals)} cal
-					</div>
-				</div>
-				<div className='grid grid-cols-3 gap-1.5 mt-2'>
-					{[
-						{ label: 'Protein', value: `${formatCompactNumber(protein)}g` },
-						{ label: 'Carbs', value: `${formatCompactNumber(carbs)}g` },
-						{ label: 'Fat', value: `${formatCompactNumber(fat)}g` },
-					].map((item) => (
+					{!isMacrosHidden && (
 						<div
-							key={item.label}
 							className={cn(
-								'py-1 px-2 rounded-2xl border',
-								recipeAccentStyles.macro,
+								'py-1 px-2 font-semibold rounded-2xl border shrink-0 text-[10px]',
+								recipeAccentStyles.pill,
 							)}
 						>
-							<div className='uppercase text-[10px] tracking-[0.12em] text-muted-foreground'>
-								{item.label}
-							</div>
-							<div className='mt-0.5 font-semibold leading-none text-[11px]'>
-								{item.value}
-							</div>
+							{formatCompactNumber(cals)} cal
 						</div>
-					))}
+					)}
 				</div>
+				{!isMacrosHidden && (
+					<div className='grid grid-cols-3 gap-1.5 mt-2'>
+						{[
+							{ label: 'Protein', value: `${formatCompactNumber(protein)}g` },
+							{ label: 'Carbs', value: `${formatCompactNumber(carbs)}g` },
+							{ label: 'Fat', value: `${formatCompactNumber(fat)}g` },
+						].map((item) => (
+							<div
+								key={item.label}
+								className={cn(
+									'py-1 px-2 rounded-2xl border',
+									recipeAccentStyles.macro,
+								)}
+							>
+								<div className='uppercase text-[10px] tracking-[0.12em] text-muted-foreground'>
+									{item.label}
+								</div>
+								<div className='mt-0.5 font-semibold leading-none text-[11px]'>
+									{item.value}
+								</div>
+							</div>
+						))}
+					</div>
+				)}
 			</Sheet.Trigger>
 			<Sheet.Portal>
 				<Sheet.View className='z-[999] h-[100vh] bg-black/50'>
@@ -409,41 +415,43 @@ const UserPlanRecipe = ({
 													{ingredientCount} items
 												</div>
 											</div>
-											<div className='grid grid-cols-2 gap-2 mt-4'>
-												{[
-													{
-														label: 'Calories',
-														value: `${(Number(cals) * scale).toFixed(0)} cal`,
-													},
-													{
-														label: 'Protein',
-														value: `${(Number(protein) * scale).toFixed(0)}g`,
-													},
-													{
-														label: 'Carbs',
-														value: `${(Number(carbs) * scale).toFixed(0)}g`,
-													},
-													{
-														label: 'Fat',
-														value: `${(Number(fat) * scale).toFixed(0)}g`,
-													},
-												].map((item) => (
-													<div
-														key={item.label}
-														className={cn(
-															'rounded-2xl border px-3 py-2',
-															accentStyles.average,
-														)}
-													>
-														<div className='font-semibold uppercase opacity-70 text-[10px] tracking-[0.14em]'>
-															{item.label}
+											{!isMacrosHidden && (
+												<div className='grid grid-cols-2 gap-2 mt-4'>
+													{[
+														{
+															label: 'Calories',
+															value: `${(Number(cals) * scale).toFixed(0)} cal`,
+														},
+														{
+															label: 'Protein',
+															value: `${(Number(protein) * scale).toFixed(0)}g`,
+														},
+														{
+															label: 'Carbs',
+															value: `${(Number(carbs) * scale).toFixed(0)}g`,
+														},
+														{
+															label: 'Fat',
+															value: `${(Number(fat) * scale).toFixed(0)}g`,
+														},
+													].map((item) => (
+														<div
+															key={item.label}
+															className={cn(
+																'rounded-2xl border px-3 py-2',
+																accentStyles.average,
+															)}
+														>
+															<div className='font-semibold uppercase opacity-70 text-[10px] tracking-[0.14em]'>
+																{item.label}
+															</div>
+															<div className='mt-1 text-sm font-semibold'>
+																{item.value}
+															</div>
 														</div>
-														<div className='mt-1 text-sm font-semibold'>
-															{item.value}
-														</div>
-													</div>
-												))}
-											</div>
+													))}
+												</div>
+											)}
 										</div>
 
 										<div className='py-4 px-4 border shadow-sm rounded-[24px] border-border/70 bg-card'>
@@ -588,11 +596,13 @@ const UserPlanView = ({
 	accentIndex = 0,
 	isDefaultOpen = true,
 	shoppingWeightUnit = 'grams',
+	isMacrosHidden = false,
 }: {
 	userPlan: UserPlan
 	accentIndex?: number
 	isDefaultOpen?: boolean
 	shoppingWeightUnit?: UserShoppingWeightUnit
+	isMacrosHidden?: boolean
 }) => {
 	const [isPlanOpen, setIsPlanOpen] = useState(isDefaultOpen)
 	const mealCount = userPlan?.userMeals.length
@@ -731,30 +741,32 @@ const UserPlanView = ({
 										/>
 									</div>
 
-									<div className='flex flex-wrap gap-2 mt-2'>
-										<div
-											className={cn(
-												'rounded-2xl border px-2.5 py-1.5',
-												mealAccent.average,
-											)}
-										>
-											<div className='font-semibold uppercase opacity-75 text-[10px] tracking-[0.14em]'>
-												Target macros
-											</div>
-											<div className='flex gap-3 items-center mt-1 font-semibold text-[11px]'>
-												<span>
-													{averageCalories !== null
-														? `${averageCalories.toFixed(0)} cal`
-														: '-- cal'}
-												</span>
-												<span>
-													{averageProtein !== null
-														? `${averageProtein.toFixed(0)}g protein`
-														: '-- g protein'}
-												</span>
+									{!isMacrosHidden && (
+										<div className='flex flex-wrap gap-2 mt-2'>
+											<div
+												className={cn(
+													'rounded-2xl border px-2.5 py-1.5',
+													mealAccent.average,
+												)}
+											>
+												<div className='font-semibold uppercase opacity-75 text-[10px] tracking-[0.14em]'>
+													Target macros
+												</div>
+												<div className='flex gap-3 items-center mt-1 font-semibold text-[11px]'>
+													<span>
+														{averageCalories !== null
+															? `${averageCalories.toFixed(0)} cal`
+															: '-- cal'}
+													</span>
+													<span>
+														{averageProtein !== null
+															? `${averageProtein.toFixed(0)}g protein`
+															: '-- g protein'}
+													</span>
+												</div>
 											</div>
 										</div>
-									</div>
+									)}
 
 									{mealInstructions.length > 0 ? (
 										<div className='py-2 px-2.5 mt-2 border rounded-[18px] border-primary/15 bg-background/75'>
@@ -786,6 +798,7 @@ const UserPlanView = ({
 													recipeIndex={recipe.recipeIndex}
 													accentStyles={mealAccentStyles}
 													shoppingWeightUnit={shoppingWeightUnit}
+													isMacrosHidden={isMacrosHidden}
 												/>
 											))
 										) : (
