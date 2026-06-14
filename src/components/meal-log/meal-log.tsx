@@ -211,7 +211,7 @@ const Meal = ({
 								key={plan.id}
 								className='flex gap-2 justify-between items-center py-1 px-1 w-full border-b last:border-b-0 border-border/70'
 							>
-								<div className='flex-1 min-w-0 pl-2 text-sm font-bold tracking-tight truncate text-primary/85'>
+								<div className='flex-1 pl-2 min-w-0 text-sm font-bold tracking-tight truncate text-primary/85'>
 									{plan.name}
 								</div>
 								<div className='flex gap-1 items-center shrink-0'>
@@ -664,15 +664,15 @@ const MealList = ({
 							<Sheet.Description className='hidden'>Meal Log</Sheet.Description>
 						</div>
 						{!isMacrosHidden && (
-							<div className='flex justify-center items-baseline'>
-								<div className='flex gap-2 items-center'>
+							<div className='flex justify-center items-baseline tracking-tighter'>
+								<div className='flex gap-0 items-baseline'>
 									<NumberFlow
 										value={mealsMacros?.cals ?? 0}
 										className='ml-2 text-xl font-semibold text-primary'
 									/>
 									<span className='text-xs text-primary/50 ml-[1px]'>cals</span>
 								</div>
-								<div className='flex gap-2 items-center'>
+								<div className='flex gap-0 items-baseline'>
 									<NumberFlow
 										value={mealsMacros?.carbs ?? 0}
 										className='ml-2 text-xl font-semibold text-primary'
@@ -681,7 +681,7 @@ const MealList = ({
 										carbs
 									</span>
 								</div>
-								<div className='flex gap-2 items-center'>
+								<div className='flex gap-0 items-baseline'>
 									<NumberFlow
 										value={mealsMacros?.protein ?? 0}
 										className='ml-2 text-xl font-semibold text-primary'
@@ -690,7 +690,7 @@ const MealList = ({
 										protein
 									</span>
 								</div>
-								<div className='flex gap-2 items-center'>
+								<div className='flex gap-0 items-baseline'>
 									<NumberFlow
 										value={mealsMacros?.fat ?? 0}
 										className='ml-2 text-xl font-semibold text-primary'
@@ -709,7 +709,7 @@ const MealList = ({
 							/>
 						</div>
 					</div>
-					<ScrollArea className='overflow-x-hidden px-2 pt-2 w-full max-w-full h-[calc(95vh-130px)]'>
+					<ScrollArea className='overflow-x-hidden px-2 pt-2 w-full max-w-full h-[calc(95vh-135px)]'>
 						<div className='flex overflow-x-hidden flex-col gap-2 mb-2 w-full max-w-full'>
 							{refinedPlans && activePlans && (
 								<Meal
@@ -835,7 +835,7 @@ const MealLog = ({
 						</div>
 					</div>
 					<Sheet.Portal>
-						<Sheet.View className='overflow-x-hidden z-[999] w-full max-w-full h-[100vh] bg-black/50'>
+						<Sheet.View className='overflow-x-hidden w-full max-w-full z-[999] h-[100vh] bg-black/50'>
 							{todaysLog && (
 								<MealList
 									currentMeal={currentMeal}
