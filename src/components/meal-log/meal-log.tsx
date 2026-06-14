@@ -184,14 +184,14 @@ const Meal = ({
 	const selectedRecipeMacros = getRecipeDetailsFromDailyLog(todaysLog, index)
 
 	return (
-		<div className='flex flex-col gap-0 items-start w-full'>
+		<div className='flex flex-col gap-0 items-start w-full min-w-0'>
 			<div className='pb-4 w-full'>
 				<ToggleGroup
 					orientation='vertical'
 					size='sm'
 					variant='outline'
 					type='multiple'
-					className='flex overflow-hidden flex-col gap-0 justify-start items-start p-1 w-full rounded-lg border shadow-sm border-border/60 bg-muted/70'
+					className='flex overflow-hidden flex-col gap-0 justify-start items-start p-1 w-full max-w-full rounded-lg border shadow-sm border-border/60 bg-muted/70'
 					value={selectedPlans}
 					onValueChange={setSelectedPlans}
 				>
@@ -288,7 +288,7 @@ const Meal = ({
 				size='sm'
 				variant='outline'
 				type='single'
-				className='justify-start w-full'
+				className='justify-start w-full max-w-full'
 				value={selectValue}
 				onValueChange={(value) => {
 					if (value === '' && selectValue !== '') {
@@ -320,14 +320,14 @@ const Meal = ({
 					})
 				}}
 			>
-				<div className='flex flex-col gap-2 w-full'>
+				<div className='flex flex-col gap-2 w-full min-w-0 max-w-full'>
 					{selectValue !== '' ? (
 						<ToggleGroupItem
 							value={selectValue}
 							className={cn(
-								'text-sm truncate max-w-[600px]  py-3 px-4 data-[state=on]:bg-blue-900/70 relative',
+								'text-sm truncate max-w-full py-3 px-4 data-[state=on]:bg-blue-900/70 relative',
 								'data-[state=on]:text-slate-100 data-[state=on]:shadow-none',
-								'shadow-sm flex flex-col w-full gap-0 h-fit',
+								'shadow-sm flex flex-col w-full min-w-0 gap-0 h-fit',
 								'hover:text-primary hover:bg-background',
 							)}
 						>
@@ -404,7 +404,7 @@ const Meal = ({
 							return (
 								<div
 									key={plan.id}
-									className='flex flex-col px-2 w-full rounded-lg border border-border/70 bg-muted'
+									className='flex flex-col px-2 w-full min-w-0 max-w-full rounded-lg border border-border/70 bg-muted'
 								>
 									<h3 className='py-2 px-2 font-semibold text-primary/80'>
 										{plan.name}
@@ -423,7 +423,7 @@ const Meal = ({
 											</div>
 										</div>
 									)}
-									<div className='flex flex-col gap-2 items-center py-2 w-full'>
+									<div className='flex flex-col gap-2 items-center py-2 w-full min-w-0'>
 										{plan.userRecipes?.map((recipe) => {
 											if (recipe.id === Number(selectValue)) return null
 											const meal =
@@ -440,9 +440,9 @@ const Meal = ({
 													key={recipe?.id}
 													value={recipe?.id.toString() ?? ''}
 													className={cn(
-														'text-sm truncate max-w-[600px]  py-3 px-4 data-[state=on]:bg-blue-900/70 relative',
+														'text-sm truncate max-w-full py-3 px-4 data-[state=on]:bg-blue-900/70 relative',
 														'data-[state=on]:text-slate-100 data-[state=on]:shadow-none',
-														'h-full shadow-sm flex flex-col w-full gap-0',
+														'h-full shadow-sm flex flex-col w-full min-w-0 gap-0',
 														'hover:text-primary',
 														mealColour,
 													)}
@@ -589,9 +589,9 @@ const MealList = ({
 	if (!currentUser) return null
 
 	return (
-		<Sheet.Content className='overflow-x-hidden relative w-full max-w-full h-full rounded-t-3xl min-h-[200px] max-h-[98vh] bg-background'>
-			<div className='flex overflow-x-hidden flex-col justify-between w-full max-w-full h-full'>
-				<div className='flex overflow-x-hidden flex-col w-full max-w-full'>
+		<Sheet.Content className='relative w-full max-w-full h-full rounded-t-3xl min-h-[200px] max-h-[98vh] bg-background'>
+			<div className='flex flex-col justify-between w-full max-w-full h-full'>
+				<div className='flex flex-col w-full max-w-full'>
 					<div className='flex justify-center pt-1'>
 						<Sheet.Handle
 							className='rounded-full border-0 w-[50px] h-[6px] bg-primary/20'
@@ -709,8 +709,8 @@ const MealList = ({
 							/>
 						</div>
 					</div>
-					<ScrollArea className='overflow-x-hidden px-2 pt-2 w-full max-w-full h-[calc(95vh-135px)]'>
-						<div className='flex overflow-x-hidden flex-col gap-2 mb-2 w-full max-w-full'>
+					<ScrollArea className='pt-2 w-full max-w-full h-[calc(95vh-135px)]'>
+						<div className='flex flex-col gap-2 px-2 pr-4 mb-2 w-full min-w-0 max-w-full'>
 							{refinedPlans && activePlans && (
 								<Meal
 									setIsSheetOpen={setIsSheetOpen}
@@ -835,7 +835,7 @@ const MealLog = ({
 						</div>
 					</div>
 					<Sheet.Portal>
-						<Sheet.View className='overflow-x-hidden w-full max-w-full z-[999] h-[100vh] bg-black/50'>
+						<Sheet.View className='w-full max-w-full z-[999] h-[100vh] bg-black/50'>
 							{todaysLog && (
 								<MealList
 									currentMeal={currentMeal}
