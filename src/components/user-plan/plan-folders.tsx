@@ -3,7 +3,7 @@
 import { api } from '@/trpc/react'
 
 import { compareItems, rankItem } from '@tanstack/match-sorter-utils'
-import { ChevronsDown, ChevronsUp, FileText } from 'lucide-react'
+import { FileText, ListMinus, ListPlus } from 'lucide-react'
 import { useState } from 'react'
 
 import {
@@ -109,7 +109,7 @@ const Tree = ({
 					type='button'
 					variant='ghost'
 				>
-					<ChevronsDown className='w-4 h-4' />
+					<ListPlus className='w-4 h-4' />
 				</Button>
 				<Button
 					aria-label='Collapse all plan categories'
@@ -123,7 +123,7 @@ const Tree = ({
 					type='button'
 					variant='ghost'
 				>
-					<ChevronsUp className='w-4 h-4' />
+					<ListMinus className='w-4 h-4' />
 				</Button>
 			</div>
 			<TreeProvider defaultExpandedIds={defaultExpandedIds} key={treeExpandKey}>
