@@ -26,6 +26,17 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 
 import { Button } from '@/components/ui/button'
 
+const mealColourMap: Record<number, string> = {
+	0: 'bg-blue-700/10',
+	1: 'bg-green-700/10',
+	2: 'bg-yellow-700/10',
+	3: 'bg-red-700/10',
+	4: 'bg-purple-700/10',
+	5: 'bg-pink-700/10',
+	6: 'bg-cyan-700/10',
+	7: 'bg-sky-700/10',
+}
+
 const MealBottomSheet = ({
 	currentUser,
 	dailyLogs,
@@ -214,14 +225,19 @@ const MealBottomSheet = ({
 															todaysDailyLog,
 															meal.mealIndex ?? 0,
 														)
+													const mealColour =
+														mealColourMap[meal.mealIndex ?? 0] ?? 'bg-secondary'
 													return (
 														<div
 															key={meal.id}
-															className='flex flex-col gap-2 py-2 px-4 w-full rounded-full bg-secondary'
+															className={cn(
+																'flex flex-col gap-2 py-2 px-4 w-full rounded-full',
+																mealColour,
+															)}
 														>
 															<div className='grid grid-cols-9 gap-0 items-baseline w-full text-sm'>
-																<div className='col-span-1 font-normal text-primary'>
-																	<div className='flex justify-center items-center w-6 h-6 rounded-full bg-primary/20 pt-[1px]'>
+																<div className='col-span-1 font-normal text-muted-foreground'>
+																	<div className='flex justify-center items-center w-6 h-6 rounded-full bg-muted pt-[1px]'>
 																		{Number(meal.mealIndex) + 1}
 																	</div>
 																</div>
