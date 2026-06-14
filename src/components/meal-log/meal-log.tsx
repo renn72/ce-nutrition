@@ -404,7 +404,7 @@ const Meal = ({
 							return (
 								<div
 									key={plan.id}
-									className='flex flex-col px-8 w-full min-w-0 max-w-full rounded-lg border border-border/70 bg-muted'
+									className='flex flex-col px-2 w-full min-w-0 max-w-full rounded-lg border border-border/70 bg-muted'
 								>
 									<h3 className='py-2 px-2 font-semibold text-primary/80'>
 										{plan.name}
@@ -440,9 +440,9 @@ const Meal = ({
 													key={recipe?.id}
 													value={recipe?.id.toString() ?? ''}
 													className={cn(
-														'text-sm truncate max-w-full py-3 px-4 data-[state=on]:bg-blue-900/70 relative',
+														'text-sm truncate max-w-[600px] py-3 px-4 data-[state=on]:bg-blue-900/70 relative',
 														'data-[state=on]:text-slate-100 data-[state=on]:shadow-none',
-														'h-full shadow-sm flex flex-col w-full min-w-0 gap-0',
+														'h-full shadow-sm flex flex-col gap-0 w-full',
 														'hover:text-primary',
 														mealColour,
 													)}
@@ -450,7 +450,7 @@ const Meal = ({
 													<div className='flex'>
 														<div className='font-semibold truncate'>
 															{recipe?.name && recipe?.name?.length > 41
-																? `${recipe?.name.slice(0, 41)}...`
+																? `${recipe?.name.slice(0, 36)}...`
 																: recipe?.name}
 														</div>
 														{!isMacrosHidden && (
