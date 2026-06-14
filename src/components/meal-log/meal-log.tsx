@@ -122,6 +122,7 @@ const Meal = ({
 	userId,
 	index,
 	setIsSheetOpen,
+	isMacrosHidden,
 }: {
 	date: Date
 	todaysLog: GetDailyLogById | null | undefined
@@ -130,6 +131,7 @@ const Meal = ({
 	userId: string
 	index: number
 	setIsSheetOpen: React.Dispatch<React.SetStateAction<boolean>>
+	isMacrosHidden: boolean
 }) => {
 	const [selectValue, setSelectValue] = useState<string>('')
 	const [recipeName, setRecipeName] = useState<string>('')
@@ -314,24 +316,28 @@ const Meal = ({
 										? `${recipeName.slice(0, 41)}...`
 										: recipeName}
 								</div>
-								<div
-									className={cn(
-										'absolute -top-1 right-1 text-[0.6rem] font-light',
-										'text-white/60',
-									)}
-								>{`${selectedRecipeMacros.cals} cals`}</div>
+								{!isMacrosHidden && (
+									<div
+										className={cn(
+											'absolute -top-1 right-1 text-[0.6rem] font-light',
+											'text-white/60',
+										)}
+									>{`${selectedRecipeMacros.cals} cals`}</div>
+								)}
 							</div>
 
-							<div
-								className={cn(
-									'text-xs flex gap-4 font-medium',
-									'text-white/60',
-								)}
-							>
-								<div>{`C:${selectedRecipeMacros.carbs}g`}</div>
-								<div>{`P:${selectedRecipeMacros.protein}g`}</div>
-								<div>{`F:${selectedRecipeMacros.fat}g`}</div>
-							</div>
+							{!isMacrosHidden && (
+								<div
+									className={cn(
+										'text-xs flex gap-4 font-medium',
+										'text-white/60',
+									)}
+								>
+									<div>{`C:${selectedRecipeMacros.carbs}g`}</div>
+									<div>{`P:${selectedRecipeMacros.protein}g`}</div>
+									<div>{`F:${selectedRecipeMacros.fat}g`}</div>
+								</div>
+							)}
 						</ToggleGroupItem>
 					) : null}
 					{allPlans
@@ -381,18 +387,20 @@ const Meal = ({
 											{plan.name}
 										</h3>
 									</div>
-									<div className='flex justify-center w-full'>
-										<div
-											className={cn(
-												'text-[0.7rem] flex gap-4 font-medium bg-secondary text-secondary-foreground rounded-full px-2 py-[2px]',
-											)}
-										>
-											<div>{`${cals.toFixed(0)}cals`}</div>
-											<div>{`C:${carbs.toFixed(1)}g`}</div>
-											<div>{`P:${protein.toFixed(1)}g`}</div>
-											<div>{`F:${fat.toFixed(1)}g`}</div>
+									{!isMacrosHidden && (
+										<div className='flex justify-center w-full'>
+											<div
+												className={cn(
+													'text-[0.7rem] flex gap-4 font-medium bg-secondary text-secondary-foreground rounded-full px-2 py-[2px]',
+												)}
+											>
+												<div>{`${cals.toFixed(0)}cals`}</div>
+												<div>{`C:${carbs.toFixed(1)}g`}</div>
+												<div>{`P:${protein.toFixed(1)}g`}</div>
+												<div>{`F:${fat.toFixed(1)}g`}</div>
+											</div>
 										</div>
-									</div>
+									)}
 									<div className='flex flex-col gap-2 items-center py-2 w-full'>
 										{plan.userRecipes?.map((recipe) => {
 											if (recipe.id === Number(selectValue)) return null
@@ -428,14 +436,16 @@ const Meal = ({
 																? `${recipe?.name.slice(0, 41)}...`
 																: recipe?.name}
 														</div>
-														<div
-															className={cn(
-																'absolute -top-1 right-1 text-[0.6rem] font-light',
-																selectValue === recipe?.id.toString()
-																	? 'text-white/60'
-																	: 'text-muted-foreground',
-															)}
-														>{`${cals} cals`}</div>
+														{!isMacrosHidden && (
+															<div
+																className={cn(
+																	'absolute -top-1 right-1 text-[0.6rem] font-light',
+																	selectValue === recipe?.id.toString()
+																		? 'text-white/60'
+																		: 'text-muted-foreground',
+																)}
+															>{`${cals} cals`}</div>
+														)}
 														<div
 															className={cn(
 																'absolute -top-1 left-1 text-[0.6rem] font-medium',
@@ -446,18 +456,20 @@ const Meal = ({
 														>{`${meal}`}</div>
 													</div>
 
-													<div
-														className={cn(
-															'text-xs flex gap-4 font-medium',
-															selectValue === recipe?.id.toString()
-																? 'text-white/60'
-																: 'text-muted-foreground',
-														)}
-													>
-														<div>{`C:${carbs}g`}</div>
-														<div>{`P:${protein}g`}</div>
-														<div>{`F:${fat}g`}</div>
-													</div>
+													{!isMacrosHidden && (
+														<div
+															className={cn(
+																'text-xs flex gap-4 font-medium',
+																selectValue === recipe?.id.toString()
+																	? 'text-white/60'
+																	: 'text-muted-foreground',
+															)}
+														>
+															<div>{`C:${carbs}g`}</div>
+															<div>{`P:${protein}g`}</div>
+															<div>{`F:${fat}g`}</div>
+														</div>
+													)}
 												</ToggleGroupItem>
 											)
 										})}
@@ -495,6 +507,9 @@ const MealList = ({
 	const isUserCreateRecipe = currentUser?.roles.find(
 		(role) => role.name === 'create-meals',
 	)
+	const isMacrosHidden =
+		currentUser?.roles.some((role) => role.name === 'hide-macro-from-user') ??
+		false
 	const activePlans = currentUser?.userPlans.filter((plan) => plan.isActive)
 	const refinedPlans = activePlans?.map((plan) => {
 		return {
@@ -631,38 +646,42 @@ const MealList = ({
 
 							<Sheet.Description className='hidden'>Meal Log</Sheet.Description>
 						</div>
-						<div className='flex justify-center items-baseline'>
-							<div className='flex gap-2 items-center'>
-								<NumberFlow
-									value={mealsMacros?.cals ?? 0}
-									className='ml-2 text-xl font-semibold text-primary'
-								/>
-								<span className='text-xs text-primary/50 ml-[1px]'>cals</span>
+						{!isMacrosHidden && (
+							<div className='flex justify-center items-baseline'>
+								<div className='flex gap-2 items-center'>
+									<NumberFlow
+										value={mealsMacros?.cals ?? 0}
+										className='ml-2 text-xl font-semibold text-primary'
+									/>
+									<span className='text-xs text-primary/50 ml-[1px]'>cals</span>
+								</div>
+								<div className='flex gap-2 items-center'>
+									<NumberFlow
+										value={mealsMacros?.carbs ?? 0}
+										className='ml-2 text-xl font-semibold text-primary'
+									/>
+									<span className='text-xs text-primary/50 ml-[1px]'>
+										carbs
+									</span>
+								</div>
+								<div className='flex gap-2 items-center'>
+									<NumberFlow
+										value={mealsMacros?.protein ?? 0}
+										className='ml-2 text-xl font-semibold text-primary'
+									/>
+									<span className='text-xs text-primary/50 ml-[1px]'>
+										protein
+									</span>
+								</div>
+								<div className='flex gap-2 items-center'>
+									<NumberFlow
+										value={mealsMacros?.fat ?? 0}
+										className='ml-2 text-xl font-semibold text-primary'
+									/>
+									<span className='text-xs text-primary/50 ml-[1px]'>fat</span>
+								</div>
 							</div>
-							<div className='flex gap-2 items-center'>
-								<NumberFlow
-									value={mealsMacros?.carbs ?? 0}
-									className='ml-2 text-xl font-semibold text-primary'
-								/>
-								<span className='text-xs text-primary/50 ml-[1px]'>carbs</span>
-							</div>
-							<div className='flex gap-2 items-center'>
-								<NumberFlow
-									value={mealsMacros?.protein ?? 0}
-									className='ml-2 text-xl font-semibold text-primary'
-								/>
-								<span className='text-xs text-primary/50 ml-[1px]'>
-									protein
-								</span>
-							</div>
-							<div className='flex gap-2 items-center'>
-								<NumberFlow
-									value={mealsMacros?.fat ?? 0}
-									className='ml-2 text-xl font-semibold text-primary'
-								/>
-								<span className='text-xs text-primary/50 ml-[1px]'>fat</span>
-							</div>
-						</div>
+						)}
 						<div className='flex absolute right-2 top-14 gap-2 items-center'>
 							<Label className='mt-1 text-xs'>All Meals</Label>
 							<Checkbox
@@ -684,6 +703,7 @@ const MealList = ({
 									todaysLog={todaysLog}
 									userId={currentUser.id}
 									index={currentMeal}
+									isMacrosHidden={isMacrosHidden}
 								/>
 							)}
 							{isUserCreateRecipe && todaysLog ? (
