@@ -5,7 +5,7 @@ import { api } from '@/trpc/react'
 import { useState } from 'react'
 
 import { getRecipeDetailsFromDailyLog } from '@/lib/utils'
-import type { GetDailyLogById } from '@/types'
+import type { GetCurrentUserMeals, GetDailyLogById } from '@/types'
 import NumberFlow from '@number-flow/react'
 import { Sheet } from '@silk-hq/components'
 import { ChevronDown, ListCollapse, Trash2 } from 'lucide-react'
@@ -27,8 +27,10 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
 
 const MealBottomSheet = ({
+	currentUser,
 	dailyLogs,
 }: {
+	currentUser: GetCurrentUserMeals | null | undefined
 	dailyLogs: GetDailyLogById[] | null | undefined
 }) => {
 	const ctx = api.useUtils()
@@ -46,6 +48,9 @@ const MealBottomSheet = ({
 		if (!dailyLog.date) return false
 		return dailyLog.date === today.toDateString()
 	})
+	const isMacrosHidden = currentUser?.roles.some(
+		(role) => role.name === 'hide-macro-from-user',
+	)
 
 	if (!todaysDailyLog) return null
 
@@ -151,44 +156,46 @@ const MealBottomSheet = ({
 											Meal Log
 										</Sheet.Description>
 									</div>
-									<div className='flex items-baseline'>
-										<div className='flex gap-2 items-center'>
-											<NumberFlow
-												value={mealsMacros?.cals ?? 0}
-												className='ml-2 text-lg text-primary'
-											/>
-											<span className='text-xs text-primary/50 ml-[1px]'>
-												cals
-											</span>
+									{!isMacrosHidden && (
+										<div className='flex items-baseline'>
+											<div className='flex gap-1 items-baseline'>
+												<NumberFlow
+													value={mealsMacros?.cals ?? 0}
+													className='ml-2 text-lg text-primary'
+												/>
+												<span className='text-xs text-primary/50 ml-[1px]'>
+													cals
+												</span>
+											</div>
+											<div className='flex gap-2 items-baseline'>
+												<NumberFlow
+													value={mealsMacros?.carbs ?? 0}
+													className='ml-2 text-lg text-primary'
+												/>
+												<span className='text-xs text-primary/50 ml-[1px]'>
+													carbs
+												</span>
+											</div>
+											<div className='flex gap-2 items-baseline'>
+												<NumberFlow
+													value={mealsMacros?.protein ?? 0}
+													className='ml-2 text-lg text-primary'
+												/>
+												<span className='text-xs text-primary/50 ml-[1px]'>
+													protein
+												</span>
+											</div>
+											<div className='flex gap-2 items-baseline'>
+												<NumberFlow
+													value={mealsMacros?.fat ?? 0}
+													className='ml-2 text-lg text-primary'
+												/>
+												<span className='text-xs text-primary/50 ml-[1px]'>
+													fat
+												</span>
+											</div>
 										</div>
-										<div className='flex gap-2 items-center'>
-											<NumberFlow
-												value={mealsMacros?.carbs ?? 0}
-												className='ml-2 text-lg text-primary'
-											/>
-											<span className='text-xs text-primary/50 ml-[1px]'>
-												carbs
-											</span>
-										</div>
-										<div className='flex gap-2 items-center'>
-											<NumberFlow
-												value={mealsMacros?.protein ?? 0}
-												className='ml-2 text-lg text-primary'
-											/>
-											<span className='text-xs text-primary/50 ml-[1px]'>
-												protein
-											</span>
-										</div>
-										<div className='flex gap-2 items-center'>
-											<NumberFlow
-												value={mealsMacros?.fat ?? 0}
-												className='ml-2 text-lg text-primary'
-											/>
-											<span className='text-xs text-primary/50 ml-[1px]'>
-												fat
-											</span>
-										</div>
-									</div>
+									)}
 								</div>
 
 								<ScrollArea className='px-2 pt-0 h-[calc(90vh-160px)]'>
@@ -253,12 +260,14 @@ const MealBottomSheet = ({
 																	/>
 																</div>
 															</div>
-															<div className='grid grid-cols-4 gap-2 place-items-center px-4 w-full text-xs'>
-																<div>{`${cals} cals`}</div>
-																<div>{`C:${carbs}g`}</div>
-																<div>{`P:${protein}g`}</div>
-																<div>{`F:${fat}g`}</div>
-															</div>
+															{!isMacrosHidden && (
+																<div className='grid grid-cols-4 gap-2 place-items-center px-4 w-full text-xs'>
+																	<div>{`${cals} cals`}</div>
+																	<div>{`C:${carbs}g`}</div>
+																	<div>{`P:${protein}g`}</div>
+																	<div>{`F:${fat}g`}</div>
+																</div>
+															)}
 														</div>
 													)
 												})
