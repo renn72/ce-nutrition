@@ -404,7 +404,7 @@ const Meal = ({
 							return (
 								<div
 									key={plan.id}
-									className='flex flex-col px-2 w-full min-w-0 max-w-full rounded-lg border border-border/70 bg-muted'
+									className='flex flex-col px-8 w-full min-w-0 max-w-full rounded-lg border border-border/70 bg-muted'
 								>
 									<h3 className='py-2 px-2 font-semibold text-primary/80'>
 										{plan.name}
@@ -443,7 +443,7 @@ const Meal = ({
 														'text-sm truncate max-w-full py-3 px-4 data-[state=on]:bg-blue-900/70 relative',
 														'data-[state=on]:text-slate-100 data-[state=on]:shadow-none',
 														'h-full shadow-sm flex flex-col w-full min-w-0 gap-0',
-														'hover:text-primary',
+														'hover:text-primary min-w-[200px]',
 														mealColour,
 													)}
 												>
@@ -710,7 +710,7 @@ const MealList = ({
 						</div>
 					</div>
 					<ScrollArea className='pt-2 w-full max-w-full h-[calc(95vh-135px)]'>
-						<div className='flex flex-col gap-2 px-2 pr-4 mb-2 w-full min-w-0 max-w-full'>
+						<div className='flex flex-col gap-2 px-2 mb-2 w-full min-w-0 max-w-full'>
 							{refinedPlans && activePlans && (
 								<Meal
 									setIsSheetOpen={setIsSheetOpen}
