@@ -52,15 +52,15 @@ const currentUserAtom = atomWithStorage<GetCurrentUserMeals | null>(
 
 export const dynamic = 'force-dynamic'
 
-const mealColourMap = {
-	0: 'text-blue-700/70',
-	1: 'text-green-700/70',
-	2: 'text-yellow-700/70',
-	3: 'text-red-700/70',
-	4: 'text-purple-700/70',
-	5: 'text-pink-700/70',
-	6: 'text-cyan-700/70',
-	7: 'text-sky-700/70',
+const mealColourMap: Record<number, string> = {
+	0: 'bg-blue-700/10',
+	1: 'bg-green-700/10',
+	2: 'bg-yellow-700/10',
+	3: 'bg-red-700/10',
+	4: 'bg-purple-700/10',
+	5: 'bg-pink-700/10',
+	6: 'bg-cyan-700/10',
+	7: 'bg-sky-700/10',
 }
 
 type PlanMealToLog = {
@@ -411,11 +411,8 @@ const Meal = ({
 											const { cals, protein, carbs, fat } =
 												getRecipeDetailsForDailyLog(planForMacros, recipe.id)
 
-											// @ts-ignore
 											const mealColour =
-												// @ts-ignore
-												mealColourMap[recipe.mealIndex ?? 0] ??
-												'text-muted-foreground'
+												mealColourMap[recipe.mealIndex ?? 0] ?? 'bg-secondary'
 											return (
 												<ToggleGroupItem
 													key={recipe?.id}
@@ -424,10 +421,8 @@ const Meal = ({
 														'text-sm truncate max-w-[600px]  py-3 px-4 data-[state=on]:bg-blue-900/70 relative',
 														'data-[state=on]:text-slate-100 data-[state=on]:shadow-none',
 														'h-full shadow-sm flex flex-col w-[calc(100vw-2rem)] gap-0',
-														'hover:text-primary hover:bg-background',
-														isAllMeals && (recipe.mealIndex ?? 0) % 2 === 1
-															? 'bg-secondary'
-															: '',
+														'hover:text-primary',
+														mealColour,
 													)}
 												>
 													<div className='flex'>
@@ -451,7 +446,7 @@ const Meal = ({
 																'absolute -top-1 left-1 text-[0.6rem] font-medium',
 																selectValue === recipe?.id.toString()
 																	? 'text-white/60'
-																	: mealColour,
+																	: 'text-muted-foreground',
 															)}
 														>{`${meal}`}</div>
 													</div>
