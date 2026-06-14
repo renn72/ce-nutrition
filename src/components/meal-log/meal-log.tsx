@@ -206,12 +206,12 @@ const Meal = ({
 								<ToggleGroupItem
 									value={plan.id.toString()}
 									className={cn(
-										'text-xs py-1 px-2 tracking-tight h-min',
+										'text-xs px-2 tracking-tight h-6 leading-tight',
 										'data-[state=on]:bg-foreground data-[state=on]:text-background data-[state=on]:shadow-none',
-										'rounded-full font-semibold flex-1 min-w-0 justify-start',
+										'rounded-full font-semibold flex-1 min-w-0 justify-start items-center',
 									)}
 								>
-									<span className='truncate'>{plan.name}</span>
+									<div className='pt-[3px] truncate'>{plan.name}</div>
 								</ToggleGroupItem>
 								<Button
 									type='button'
