@@ -211,8 +211,10 @@ const Meal = ({
 								key={plan.id}
 								className='flex gap-2 justify-between items-center py-1 px-1 w-full border-b last:border-b-0 border-border/70'
 							>
-								<div className='flex-1 pl-2 min-w-0 text-sm font-bold tracking-tight truncate text-primary/85'>
-									{plan.name}
+								<div className='pl-2 text-sm font-bold tracking-tight truncate text-primary/85 shrink'>
+									{plan.name.length > 30
+										? `${plan.name.slice(0, 26)}...`
+										: plan.name}
 								</div>
 								<div className='flex gap-1 items-center shrink-0'>
 									<ToggleGroupItem
