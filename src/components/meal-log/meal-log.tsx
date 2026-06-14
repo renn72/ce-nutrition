@@ -443,7 +443,7 @@ const Meal = ({
 														'text-sm truncate max-w-full py-3 px-4 data-[state=on]:bg-blue-900/70 relative',
 														'data-[state=on]:text-slate-100 data-[state=on]:shadow-none',
 														'h-full shadow-sm flex flex-col w-full min-w-0 gap-0',
-														'hover:text-primary min-w-[200px]',
+														'hover:text-primary',
 														mealColour,
 													)}
 												>
